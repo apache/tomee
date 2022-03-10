@@ -346,6 +346,7 @@
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
       <version>3.1.5</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -357,6 +358,7 @@
       <groupId>org.apache.geronimo.config</groupId>
       <artifactId>geronimo-config-impl</artifactId>
       <version>1.2.3</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -388,17 +390,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-health</artifactId>
-      <version>2.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-health-common</artifactId>
       <version>2.0.1</version>
       <exclusions>
@@ -410,8 +401,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-metrics</artifactId>
-      <version>1.0.6</version>
+      <artifactId>geronimo-health</artifactId>
+      <version>2.0.1</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -432,8 +424,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-openapi-impl</artifactId>
-      <version>1.0.15</version>
+      <artifactId>geronimo-metrics</artifactId>
+      <version>1.0.6</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -443,8 +436,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-opentracing</artifactId>
-      <version>1.0.3</version>
+      <artifactId>geronimo-openapi-impl</artifactId>
+      <version>1.0.15</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -464,9 +458,22 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-opentracing</artifactId>
+      <version>1.0.3</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
       <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -478,6 +485,7 @@
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
       <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -489,6 +497,7 @@
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
       <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -500,6 +509,7 @@
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
       <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -511,6 +521,7 @@
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
       <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -555,6 +566,7 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
       <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -586,8 +598,21 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-impl</artifactId>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -608,8 +633,32 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-spi</artifactId>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
       <version>2.0.27-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-web</artifactId>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -652,7 +701,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
+      <artifactId>tomcat-catalina-ha</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -663,7 +712,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina-ha</artifactId>
+      <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -707,7 +756,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper</artifactId>
+      <artifactId>tomcat-jasper-el</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -718,7 +767,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper-el</artifactId>
+      <artifactId>tomcat-jasper</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -817,17 +866,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-util</artifactId>
-      <version>${tomcat.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-util-scan</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
@@ -839,7 +877,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-websocket</artifactId>
+      <artifactId>tomcat-util</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -851,6 +889,17 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-websocket-api</artifactId>
+      <version>${tomcat.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-websocket</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -949,17 +998,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
       <version>${project.version}</version>
       <exclusions>
@@ -972,6 +1010,17 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-cxf</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
