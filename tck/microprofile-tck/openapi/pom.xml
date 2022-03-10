@@ -95,9 +95,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.openapi</groupId>
-      <artifactId>microprofile-openapi-api</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-openapi-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -108,8 +108,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

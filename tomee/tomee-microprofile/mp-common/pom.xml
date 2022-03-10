@@ -50,9 +50,9 @@
 
     <!-- MicroProfile -->
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-config-api-shade</artifactId>
+      <version>${project.groupId}</version>
     </dependency>
 
     <dependency>
@@ -63,9 +63,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-jwt-auth-api-shade</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -75,9 +75,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-      <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>${microprofile.fault-tolerance.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-fault-tolerance-api-shade</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -93,13 +93,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.health</groupId>
-      <artifactId>microprofile-health-api</artifactId>
-      <version>${microprofile.health.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-health-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>jakarta.inject</groupId>
-          <artifactId>jakarta.inject</artifactId>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -112,9 +112,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.metrics</groupId>
-      <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-metrics-api-shade</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -125,13 +125,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.rest.client</groupId>
-      <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>jakarta.inject</groupId>
-          <artifactId>jakarta.inject</artifactId>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -170,9 +170,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.openapi</groupId>
-      <artifactId>microprofile-openapi-api</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-openapi-api-shade</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -193,9 +193,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.opentracing</groupId>
-      <artifactId>microprofile-opentracing-api</artifactId>
-      <version>${microprofile.opentracing.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-opentracing-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>

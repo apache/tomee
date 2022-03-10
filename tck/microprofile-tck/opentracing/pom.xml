@@ -83,9 +83,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.opentracing</groupId>
-      <artifactId>microprofile-opentracing-api</artifactId>
-      <version>${microprofile.opentracing.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-opentracing-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

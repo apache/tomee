@@ -38,5 +38,12 @@
     <module>bval-jsr-shade</module>
     <module>commons-dbcp2-shade</module>
     <module>commons-fileupload-shade</module>
+    <module>microprofile-config-api-shade</module>
+    <module>microprofile.opentracing.version-shade</module>
+    <module>microprofile-fault-tolerance-api-shade</module>
+    <module>microprofile-health-api-shade</module>
+    <module>microprofile-jwt-auth-api-shade</module>
+    <module>microprofile-metrics-api-shade</module>
+    <module>microprofile-openapi-api-shade</module>
   </modules>
 </project>

@@ -113,14 +113,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.rest.client</groupId>
-      <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>jakarta.inject</groupId>
-          <artifactId>jakarta.inject</artifactId>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
         </exclusion>
       </exclusions>      
     </dependency>

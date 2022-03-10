@@ -97,9 +97,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-config-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

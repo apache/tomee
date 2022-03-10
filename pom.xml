@@ -1739,6 +1739,7 @@
         <artifactId>commons-discovery</artifactId>
         <version>${commons-discovery.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
@@ -1781,7 +1782,6 @@
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>*</artifactId>
           </exclusion>
-
         </exclusions>
       </dependency>
       <dependency>
