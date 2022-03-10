@@ -105,6 +105,7 @@
       <artifactId>johnzon-mapper</artifactId>
       <classifier>jakarta</classifier>
     </dependency>
+
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>

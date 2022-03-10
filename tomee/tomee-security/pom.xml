@@ -64,6 +64,16 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-ejb</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
 
     <!-- Test -->
     <dependency>
