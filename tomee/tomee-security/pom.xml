@@ -86,6 +86,11 @@
       <classifier>jakarta</classifier>
     </dependency>
     <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-el22</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>bval-jsr-shade</artifactId>
     </dependency>
