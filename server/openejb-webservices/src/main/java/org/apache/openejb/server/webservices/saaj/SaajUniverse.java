@@ -40,11 +40,10 @@ public class SaajUniverse {
         }
     }
 
-    enum Type {DEFAULT, AXIS1, AXIS2, SUN}
+    enum Type {DEFAULT, AXIS2, SUN}
 
     public static final Type DEFAULT = Type.DEFAULT;
     public static final Type SUN = Type.SUN;
-    public static final Type AXIS1 = Type.AXIS1;
     public static final Type AXIS2 = Type.AXIS2;
 
     private static final ThreadLocal<LinkedList<Type>> CURRENT_UNIVERSE =

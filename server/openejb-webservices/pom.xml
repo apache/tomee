@@ -88,8 +88,9 @@
 
     <!-- Test only dependencies -->
     <dependency>
-      <groupId>axis</groupId>
-      <artifactId>axis</artifactId>
+      <groupId>org.apache.axis2</groupId>
+      <artifactId>axis2-saaj</artifactId>
+      <version>1.8.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

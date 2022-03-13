@@ -34,11 +34,6 @@ class SaajFactoryFinder {
     private static final Map<String, Map<String, String>> SAAJ_FACTORIES = new HashMap<String, Map<String, String>>();
 
     static {
-        SAAJ_FACTORIES.put(SaajUniverse.Type.AXIS1.toString(), createSAAJInfo(
-            "org.apache.axis.soap.MessageFactoryImpl",
-            "org.apache.axis.soap.SOAPFactoryImpl",
-            "org.apache.axis.soap.SOAPConnectionFactoryImpl",
-            "org.apache.axis.soap.SAAJMetaFactoryImpl"));
         SAAJ_FACTORIES.put(SaajUniverse.Type.AXIS2.toString(), createSAAJInfo(
             "org.apache.axis2.saaj.MessageFactoryImpl",
             "org.apache.axis2.saaj.SOAPFactoryImpl",
