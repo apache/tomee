@@ -62,6 +62,13 @@
               </transformers>
               <relocations>
                 <relocation>
+                  <pattern>javax.annotation</pattern>
+                  <shadedPattern>jakarta.annotation</shadedPattern>
+                  <excludes>
+                    <exclude>javax.annotation.processing.**</exclude>
+                  </excludes>
+                </relocation>
+                <relocation>
                   <pattern>javax.enterprise</pattern>
                   <shadedPattern>jakarta.enterprise</shadedPattern>
                   <excludes>
@@ -71,6 +78,10 @@
                 <relocation>
                   <pattern>javax.inject</pattern>
                   <shadedPattern>jakarta.inject</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.interceptor</pattern>
+                  <shadedPattern>jakarta.interceptor</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>javax.validation</pattern>

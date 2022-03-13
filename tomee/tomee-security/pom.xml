@@ -85,6 +85,10 @@
       <artifactId>openwebbeans-ee</artifactId>
       <classifier>jakarta</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>bval-jsr-shade</artifactId>
+    </dependency>
 
     <!-- Test -->
     <dependency>

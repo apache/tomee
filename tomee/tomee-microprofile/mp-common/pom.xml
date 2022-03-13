@@ -52,7 +52,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>microprofile-config-api-shade</artifactId>
-      <version>${project.groupId}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
