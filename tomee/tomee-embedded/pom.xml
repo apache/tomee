@@ -276,6 +276,10 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
       <scope>compile</scope>
@@ -290,10 +294,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-myfaces</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.myfaces.core</groupId>
-      <artifactId>myfaces-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
