@@ -1107,8 +1107,8 @@
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
+            <groupId>org.apache.bval</groupId>
+            <artifactId>bval-jsr</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1198,40 +1198,12 @@
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-          </exclusion>
-          <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.jmdns</groupId>
-            <artifactId>jmdns</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.inject.extensions</groupId>
-            <artifactId>guice-multibindings</artifactId>
-          </exclusion>
-          <exclusion>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1432,19 +1404,11 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
             <artifactId>howl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

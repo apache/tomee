@@ -16,10 +16,6 @@
  */
 package org.apache.tomee.security;
 
-import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
-import org.junit.Assert;
-import org.junit.Test;
-
 import jakarta.el.ELProcessor;
 import jakarta.el.ELResolver;
 import jakarta.enterprise.inject.Vetoed;
@@ -29,9 +25,11 @@ import jakarta.inject.Named;
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.PasswordHash;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
