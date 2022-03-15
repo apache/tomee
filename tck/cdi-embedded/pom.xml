@@ -204,8 +204,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.apache.activemq</groupId>
           <artifactId>activemq-broker</artifactId>
-          <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>
     </dependency>

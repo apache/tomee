@@ -139,29 +139,9 @@
       <version>1.0.3</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.microprofile.rest.client</groupId>
-      <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-policy</artifactId>
-      <version>${wss4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>${wss4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>${wss4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>${wss4j.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- is this required -->

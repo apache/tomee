@@ -57,6 +57,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+      <version>1.2.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>com.sun.istack</groupId>
       <artifactId>istack-commons-runtime</artifactId>
       <version>4.0.1</version>
@@ -679,6 +690,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
+      <artifactId>bval-jsr-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>commons-dbcp2-shade</artifactId>
       <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
@@ -703,6 +725,28 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
       <version>9.1-M1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>mbean-annotation-api</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1064,6 +1108,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-bundleutils</artifactId>
+      <version>4.20</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
       <version>4.20</version>
       <exclusions>
@@ -1120,6 +1175,17 @@
     <dependency>
       <groupId>org.apache.yoko</groupId>
       <artifactId>yoko-rmi-spec</artifactId>
+      <version>1.4</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.yoko</groupId>
+      <artifactId>yoko-spec-corba</artifactId>
       <version>1.4</version>
       <exclusions>
         <exclusion>
@@ -1206,9 +1272,53 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.3.4</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.jvnet.staxex</groupId>
       <artifactId>stax-ex</artifactId>
       <version>2.0.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.objectweb.howl</groupId>
+      <artifactId>howl</artifactId>
+      <version>1.0.1-1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.21</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <version>1.7.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

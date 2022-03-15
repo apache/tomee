@@ -1198,12 +1198,8 @@
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-ra</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1216,11 +1212,23 @@
         <groupId>${project.groupId}</groupId>
         <artifactId>activemq-client-shade</artifactId>
         <version>${project.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>activemq-kahadb-store-shade</artifactId>
         <version>${project.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
@@ -1228,134 +1236,15 @@
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.fusesource.mqtt-client</groupId>
-            <artifactId>mqtt-client</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.fusesource.fuse-extra</groupId>
-            <artifactId>fusemq-leveldb</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.inject.extensions</groupId>
-            <artifactId>guice-multibindings</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-          </exclusion>
-          <exclusion>
-            <artifactId>icu4j</artifactId>
-            <groupId>com.ibm.icu</groupId>
-          </exclusion>
-          <exclusion>
-            <artifactId>jasypt</artifactId>
-            <groupId>org.jasypt</groupId>
-          </exclusion>
-          <exclusion>
-            <groupId>activesoap</groupId>
-            <artifactId>jaxp-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>mx4j</groupId>
-            <artifactId>mx4j</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>mx4j</groupId>
-            <artifactId>mx4j-jmx</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>mx4j</groupId>
-            <artifactId>mx4j-remote</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>mx4j</groupId>
-            <artifactId>mx4j-tools</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>mx4j</groupId>
-            <artifactId>mx4j-impl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>activemq-jaas</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-primitives</groupId>
-            <artifactId>commons-primitives</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>axion</groupId>
-            <artifactId>axion</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>regexp</groupId>
-            <artifactId>regexp</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.jmdns</groupId>
-            <artifactId>jmdns</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.directory.server</groupId>
-            <artifactId>apacheds-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>nlog4j</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-          </exclusion>
-          <exclusion>
-            <artifactId>jasypt</artifactId>
-            <groupId>org.jasypt</groupId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-openwire-legacy</artifactId>
+        <version>${org.apache.activemq.version}</version>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
@@ -1535,8 +1424,8 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-        <artifactId>commons-dbcp2-shade</artifactId>
         <groupId>org.apache.tomee</groupId>
+        <artifactId>commons-dbcp2-shade</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1563,6 +1452,11 @@
       <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-catalina</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-juli</artifactId>
         <version>${tomcat.version}</version>
       </dependency>
       <dependency>
@@ -2019,12 +1913,6 @@
         <groupId>org.apache.tomee</groupId>
         <artifactId>taglibs-shade</artifactId>
 	      <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <!-- Jackson required by OpenAPI Impl and ActiveMQ Broker -->
       <dependency>

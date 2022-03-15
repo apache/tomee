@@ -82,9 +82,9 @@
       <version>9.0.0-M8-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
-      <version>5.10.0</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>activemq-broker-shade</artifactId>
+      <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <!-- test deps -->

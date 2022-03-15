@@ -41,6 +41,17 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+      <version>1.2.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
       <artifactId>geronimo-javamail_1.6_mail</artifactId>
       <version>1.0.1</version>
@@ -132,6 +143,17 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
       <version>9.1-M1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>mbean-annotation-api</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
