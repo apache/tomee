@@ -55,6 +55,12 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-ws-addr</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -71,15 +77,27 @@
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf.version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-search</artifactId>
       <version>${cxf.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.rest.client</groupId>
+          <artifactId>microprofile-rest-client-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.json</groupId>
+          <artifactId>jakarta.json-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
