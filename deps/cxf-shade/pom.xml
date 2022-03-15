@@ -55,12 +55,14 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf.version}</version>
+      <!--
       <exclusions>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-rt-ws-addr</artifactId>
         </exclusion>
       </exclusions>
+      -->
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -160,6 +162,17 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>microprofile-rest-client-api-shade</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.rest.client</groupId>
+          <artifactId>microprofile-rest-client-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.neethi</groupId>
+      <artifactId>neethi</artifactId>
+      <version>3.0.3</version>
     </dependency>
 
     <!-- is this required -->
