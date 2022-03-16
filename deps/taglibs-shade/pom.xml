@@ -127,6 +127,14 @@
                   <pattern>trac</pattern>
                   <shadedPattern>openejb.shade.trax</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>javax.servlet</pattern>
+                  <shadedPattern>jakarta.servlet</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.el</pattern>
+                  <shadedPattern>jakarta.el</shadedPattern>
+                </relocation>
               </relocations>
               <filters>
                 <filter>

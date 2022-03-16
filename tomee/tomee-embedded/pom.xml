@@ -308,10 +308,6 @@
           <artifactId>jakartaee-api</artifactId>
           <groupId>${project.groupId}</groupId>
         </exclusion>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>org.apache.geronimo.specs</groupId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
