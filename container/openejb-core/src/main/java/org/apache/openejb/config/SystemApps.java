@@ -26,7 +26,6 @@ import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.mgmt.MEJBBean;
 import org.apache.openejb.security.internal.InternalSecurityInterceptor;
 
 /**
@@ -49,7 +48,6 @@ public class SystemApps {
         //
         ejbJar.addEnterpriseBean(singleton(DeployerEjb.class));
         ejbJar.addEnterpriseBean(singleton(ConfigurationInfoEjb.class));
-        ejbJar.addEnterpriseBean(singleton(MEJBBean.class));
         ejbJar.addInterceptor(new Interceptor(InternalSecurityInterceptor.class));
         ejbJar.getAssemblyDescriptor().addInterceptorBinding(new InterceptorBinding("*", InternalSecurityInterceptor.class.getName()));
         module.getMbeans().add(JMXDeployer.class.getName());
