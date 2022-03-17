@@ -69,6 +69,10 @@
                   </excludes>
                 </relocation>
                 <relocation>
+                  <pattern>javax.el</pattern>
+                  <shadedPattern>jakarta.el</shadedPattern>
+                </relocation>
+                <relocation>
                   <pattern>javax.enterprise</pattern>
                   <shadedPattern>jakarta.enterprise</shadedPattern>
                   <excludes>
