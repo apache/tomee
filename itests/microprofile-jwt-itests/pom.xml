@@ -71,9 +71,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>1.1</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-jwt-auth-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
