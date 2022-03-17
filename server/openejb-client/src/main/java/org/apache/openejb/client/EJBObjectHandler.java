@@ -166,7 +166,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 } else if (m.equals(HASHCODE)) {
                     return this.hashCode();
                 } else {
-                    throw new UnsupportedOperationException("Unkown method: " + m);
+                    throw new UnsupportedOperationException("Unknown method: " + m);
                 }
 
             } else if (m.getDeclaringClass() == EJBObjectProxy.class) {
@@ -178,7 +178,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 } else if (m.getName().equals("readResolve")) {
                     return null;
                 } else {
-                    throw new UnsupportedOperationException("Unkown method: " + m);
+                    throw new UnsupportedOperationException("Unknown method: " + m);
                 }
 
             } else if (m.getDeclaringClass() == jakarta.ejb.EJBObject.class) {
@@ -194,7 +194,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                 } else if (m.equals(REMOVE)) {
                     return remove(m, a, p);
                 } else {
-                    throw new UnsupportedOperationException("Unkown method: " + m);
+                    throw new UnsupportedOperationException("Unknown method: " + m);
                 }
 
             } else {
@@ -207,7 +207,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             invalidateAllHandlers(getRegistryId());
             throw convertException(getCause(e), m);
             /*
-            * Application exceptions must be reported dirctly to the client. They
+            * Application exceptions must be reported directly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
