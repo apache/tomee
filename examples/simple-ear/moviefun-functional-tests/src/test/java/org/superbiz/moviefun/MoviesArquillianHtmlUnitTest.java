@@ -22,11 +22,13 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.net.URL;
 
 import static org.junit.Assert.assertTrue;
@@ -37,7 +39,8 @@ public class MoviesArquillianHtmlUnitTest {
 
     @Deployment
     public static EnterpriseArchive createDeployment() {
-        final EnterpriseArchive enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:8.0.6-TT.5-SNAPSHOT")
+        final String earCoordinates = "org.superbiz:moviefun-ear:ear:"+System.getProperty("tomee.version");
+        final EnterpriseArchive enterpriseArchive = Maven.resolver().resolve(earCoordinates)
                 .withoutTransitivity().asSingle(EnterpriseArchive.class);
 
         System.out.println(enterpriseArchive.toString(true));

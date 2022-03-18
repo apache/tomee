@@ -31,6 +31,10 @@
   <packaging>ejb</packaging>
   <name>TomEE :: Examples :: Resources/JMX Example :: EJB Module</name>
 
+  <properties>
+    <tomee.version>${project.version}</tomee.version>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
