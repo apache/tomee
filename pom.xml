@@ -1427,6 +1427,12 @@
         <groupId>org.apache.tomee</groupId>
         <artifactId>commons-dbcp2-shade</artifactId>
         <version>${project.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
