@@ -218,6 +218,7 @@ public class GenerateBoms {
                     .or(startsWith("geronimo-").and(endsWith("_spec")))
                     .or(startsWith("jakarta.").and(endsWith("-api")))
                     .or(startsWith("microprofile-").and(endsWith("-api")))
+                    .or(startsWith("microprofile-").and(endsWith("-api-shade")))
                     .or(startsWith("tomcat-").and(endsWith("-api")));
 
             final List<Artifact> apiArtifacts = distribution.getArtifacts().stream()
