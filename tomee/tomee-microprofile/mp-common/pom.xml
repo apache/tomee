@@ -99,12 +99,12 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.geronimo.safeguard</groupId>
-      <artifactId>safeguard-impl</artifactId>
-      <version>${microprofile.fault-tolerance.impl.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>safeguard-impl-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
+          <groupId>org.apache.geronimo.safeguard</groupId>
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>

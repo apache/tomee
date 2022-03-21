@@ -46,5 +46,6 @@
     <module>microprofile-metrics-api-shade</module>
     <module>microprofile-openapi-api-shade</module>
     <module>microprofile-rest-client-api-shade</module>
+    <module>safeguard-impl</module>
   </modules>
 </project>

@@ -1311,6 +1311,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
+      <artifactId>safeguard-impl-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>sxc-shade</artifactId>
       <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>

@@ -26,6 +26,8 @@ import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.BeforeEvent;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
 
@@ -74,6 +76,8 @@ public class TomEEMicroProfileListener {
                     containerUrls.add(src.getLocation());
                 }
             } catch(final ClassNotFoundException e) {
+                Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), TomEEMicroProfileListener.class)
+                      .error("Can't load MicroProfile extension " + extension, e);
                 // ignored
             }
         }
