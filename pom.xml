@@ -113,7 +113,7 @@
     <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
     <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
-    <openjpa.version>3.2.1</openjpa.version>
+    <openjpa.version>3.2.2</openjpa.version>
     <openwebbeans.version>2.0.26</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.16</johnzon.version>
