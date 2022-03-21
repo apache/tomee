@@ -53,6 +53,12 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>microprofile-config-api-shade</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-config-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -125,6 +131,12 @@
       <artifactId>geronimo-health</artifactId>
       <version>${microprofile.health.impl.version}</version>
       <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-health-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

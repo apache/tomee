@@ -80,7 +80,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.beanvalidation.tck</groupId>
+      <groupId>jakarta.validation</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <scope>test</scope>
@@ -132,7 +132,7 @@
               <stripVersion>true</stripVersion>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.hibernate.beanvalidation.tck</groupId>
+                  <groupId>jakarta.validation</groupId>
                   <artifactId>beanvalidation-tck-tests</artifactId>
                   <type>xml</type>
                   <classifier>suite</classifier>
@@ -174,6 +174,7 @@
           <threadCount>1</threadCount>
         </configuration>
         <dependencies>
+          <!-- failsafe has dependencies on javax -->
           <dependency>
             <groupId>org.apache.tomee.bom</groupId>
             <artifactId>jaxb-runtime</artifactId>
