@@ -18,7 +18,7 @@ package org.apache.tomee.microprofile.tck.openapi;
 
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
-import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocolDeploymentPackager;
+import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocolDeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;

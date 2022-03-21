@@ -90,6 +90,22 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.cdi.tck</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -105,7 +121,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.cdi.tck</groupId>
+      <groupId>jakarta.enterprise</groupId>
       <artifactId>cdi-tck-impl</artifactId>
       <version>${cdi-tck.version}</version>
       <exclusions>
@@ -172,6 +188,12 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-jasper-el</artifactId>
       <version>${tomcat.version}</version>
       <scope>test</scope>
     </dependency>

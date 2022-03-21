@@ -109,12 +109,28 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.cdi.tck</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.jboss.cdi.tck</groupId>
+      <groupId>jakarta.enterprise</groupId>
       <artifactId>cdi-tck-impl</artifactId>
-      <version>${cdi.tck.20.version}</version>
+      <version>${cdi-tck.version}</version>
       <exclusions>
         <exclusion>
           <groupId>jakarta.xml.soap</groupId>

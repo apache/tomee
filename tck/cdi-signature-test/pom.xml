@@ -34,7 +34,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.cdi.tck</groupId>
+      <groupId>jakarta.enterprise</groupId>
       <artifactId>cdi-tck-impl</artifactId>
       <version>${cdi-tck.version}</version>
       <exclusions>
@@ -91,7 +91,7 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.jboss.cdi.tck</groupId>
+                  <groupId>jakarta.enterprise</groupId>
                   <artifactId>cdi-tck-impl</artifactId>
                   <version>${cdi-tck.version}</version>
                   <type>jar</type>
@@ -119,7 +119,7 @@
         </executions>
         <configuration>
           <packages>jakarta.inject,jakarta.decorator</packages>
-          <sigfile>${project.build.directory}/api-signature/cdi-api-jdk7.sig</sigfile>
+          <sigfile>${project.build.directory}/api-signature/cdi-api-jdk8.sig</sigfile>
         </configuration>
       </plugin>
 

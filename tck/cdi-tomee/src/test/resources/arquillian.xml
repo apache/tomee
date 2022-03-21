@@ -56,8 +56,8 @@
       <property name="additionalLibs">
         target/test-classes/org
         target/test-classes/META-INF
-          mvn:org.apache.openwebbeans:openwebbeans-porting:${openwebbeans.version}
-        mvn:org.jboss.cdi.tck:cdi-tck-ext-lib:${cdi-tck.version}
+        mvn:org.apache.openwebbeans:openwebbeans-porting:${openwebbeans.version}:jar:jakarta
+        mvn:jakarta.enterprise:cdi-tck-ext-lib:${cdi-tck.version}
       </property>
     </configuration>
   </container>

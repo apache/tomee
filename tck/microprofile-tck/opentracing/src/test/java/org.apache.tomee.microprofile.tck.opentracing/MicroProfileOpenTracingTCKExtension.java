@@ -18,7 +18,7 @@ package org.apache.tomee.microprofile.tck.opentracing;
 
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
+import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocol;
 
 public class MicroProfileOpenTracingTCKExtension implements LoadableExtension {
     @Override

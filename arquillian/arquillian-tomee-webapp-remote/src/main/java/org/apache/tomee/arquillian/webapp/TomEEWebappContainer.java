@@ -26,7 +26,7 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.tomee.installer.Installer;
 import org.apache.tomee.installer.Paths;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
-import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
+import org.jboss.arquillian.protocol.servlet5.ServletMethodExecutor;
 
 import java.io.File;
 import java.io.IOException;

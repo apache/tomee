@@ -578,7 +578,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -611,7 +611,7 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>3.2.2-SNAPSHOT</version>
+      <version>3.2.2</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
