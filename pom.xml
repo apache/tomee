@@ -475,10 +475,10 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <release>11</release>
+          <!--
           <verbose>true</verbose>
           <fork>true</fork>
           <executable>/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/javac</executable>
-          <!--
           -->
         </configuration>
       </plugin>
