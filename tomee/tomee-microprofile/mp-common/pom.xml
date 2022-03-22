@@ -66,6 +66,12 @@
       <artifactId>geronimo-config-impl</artifactId>
       <version>${microprofile.config.impl.version}</version>
       <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-config-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -136,7 +142,17 @@
           <groupId>*</groupId>
           <artifactId>microprofile-health-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>geronimo-health-common</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-health-common</artifactId>
+      <version>${microprofile.health.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
@@ -255,6 +271,18 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-opentracing</artifactId>
+      <version>${microprofile.opentracing.impl.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo</groupId>
+          <artifactId>geronimo-opentracing-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-opentracing-common</artifactId>
       <version>${microprofile.opentracing.impl.version}</version>
       <classifier>jakarta</classifier>
     </dependency>

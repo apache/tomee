@@ -42,7 +42,15 @@
           <archive combine.children="append">
             <manifest>
               <Main-Class>org.apache.tomee.embedded.Main</Main-Class>
+              <!-- the following is not really required if we shade everything together
+              Moreover, it generates a lot of stacktraces because Tomcat reads the class-path
+              attribute from the manifest and tries to resolve entries based on tomee-embedded
+              https://github.com/apache/tomcat/blob/main/java/org/apache/tomcat/util/scan/StandardJarScanner.java#L467
+
+              We end up with things like
+              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/9.0.0-M8-SNAPSHOT/tomee-config-9.0.0-M8-SNAPSHOT.jar
               <addClasspath>true</addClasspath>
+              -->
             </manifest>
             <manifestEntries>
               <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>

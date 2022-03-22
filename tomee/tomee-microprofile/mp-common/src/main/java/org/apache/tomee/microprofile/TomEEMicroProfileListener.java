@@ -75,7 +75,7 @@ public class TomEEMicroProfileListener {
                 if (src != null) {
                     containerUrls.add(src.getLocation());
                 }
-            } catch(final ClassNotFoundException e) {
+            } catch(final ClassNotFoundException | NoClassDefFoundError e) {
                 Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), TomEEMicroProfileListener.class)
                       .error("Can't load MicroProfile extension " + extension, e);
                 // ignored

@@ -139,7 +139,7 @@
 
     <batchee.version>1.0.2-SNAPSHOT</batchee.version>
 
-    <version.arquillian>1.1.13.Final</version.arquillian>
+    <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <version.arquillian-protocol-servlet-jakarta>1.7.0.Alpha10</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
@@ -231,7 +231,7 @@
     <!-- 1.1 Implementation not started yet -->
     <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
     <microprofile.fault-tolerance.impl.version>1.2.1</microprofile.fault-tolerance.impl.version>
-    <microprofile.health.version>1.0</microprofile.health.version>
+    <microprofile.health.version>3.0-RC3</microprofile.health.version>
     <microprofile.health.impl.version>2.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>3.0.1</microprofile.metrics.version>
     <microprofile.metrics.impl.version>1.0.6</microprofile.metrics.impl.version>
@@ -266,6 +266,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
           <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>3.0.0-M1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
@@ -527,6 +532,11 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.swizzle</groupId>
