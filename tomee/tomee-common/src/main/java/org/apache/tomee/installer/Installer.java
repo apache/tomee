@@ -253,7 +253,7 @@ public class Installer implements InstallerInterface {
                             "    limitations under the License.\n" +
                             "-->\n" +
                             "<tomee>\n" +
-                            "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n\n" +
+                            "  <!-- see https://tomee.apache.org/latest/docs/admin/configuration/containers.html -->\n\n" +
                             "  <!-- activate next line to be able to deploy applications in apps -->\n" +
                             "  <!-- <Deployments dir=\"apps\" /> -->\n" +
                             "</tomee>\n", alerts);

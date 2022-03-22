@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 <tomee>
-  <!-- see http://tomee.apache.org/containers-and-resources.html -->
+  <!-- see https://tomee.apache.org/latest/docs/admin/configuration/containers.html -->
 
   <!-- activate next line to be able to deploy applications in apps -->
   <!-- <Deployments dir="apps" /> -->
