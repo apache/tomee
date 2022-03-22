@@ -63,7 +63,7 @@ public class InvalidSignatureTest {
 
         final ArrayList<String> output = new ArrayList<>();
         final TomEE tomee = TomEE.microprofile()
-                 .debug(5005, true)
+                 //.debug(5005, true)
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
                 .watch("org.apache.tomee.microprofile.jwt.", "\n", output::add)

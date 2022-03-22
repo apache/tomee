@@ -172,6 +172,18 @@
       <artifactId>geronimo-metrics</artifactId>
       <version>${microprofile.metrics.impl.version}</version>
       <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo</groupId>
+          <artifactId>geronimo-metrics-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-metrics-common</artifactId>
+      <version>${microprofile.metrics.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
