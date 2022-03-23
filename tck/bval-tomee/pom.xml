@@ -84,6 +84,20 @@
       <artifactId>beanvalidation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.validation</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.interceptor</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testng</groupId>
