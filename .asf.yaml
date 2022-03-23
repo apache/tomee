@@ -38,6 +38,7 @@ github:
     tomee-1.7.x: {}
     tomee-7.0.x: {}
     tomee-7.1.x: {}
+    tomee-8.x: {}
 notifications:
   commits:      commits@tomee.apache.org
   issues:       dev@tomee.apache.org
