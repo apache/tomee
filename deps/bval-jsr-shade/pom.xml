@@ -29,6 +29,10 @@
   <name>TomEE :: Deps :: Apache BVal JSR shade</name>
 
   <dependencies>
+    <!--
+    We need to use the latest 2.0.6-SNAPSHOT to perform the relocate even though the work has been done already.
+    But the defaultConstraints.properties isn't done and therefor we still need our shade dependency
+    -->
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
@@ -90,6 +94,10 @@
                 <relocation>
                   <pattern>javax.validation</pattern>
                   <shadedPattern>jakarta.validation</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.xml.bind</pattern>
+                  <shadedPattern>jakarta.xml.bind</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
