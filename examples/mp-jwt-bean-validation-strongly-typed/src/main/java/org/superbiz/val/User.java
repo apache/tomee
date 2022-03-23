@@ -16,7 +16,7 @@
  */
 package org.superbiz.val;
 
-import javax.validation.Payload;
+import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -26,7 +26,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Allowed("user")
-@javax.validation.Constraint(validatedBy = {})
+@jakarta.validation.Constraint(validatedBy = {})
 @Documented
 @Target({METHOD, ANNOTATION_TYPE})
 @Retention(RUNTIME)

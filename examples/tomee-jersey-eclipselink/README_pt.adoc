@@ -89,7 +89,7 @@ public class PersonService {
     }
 ----
 
-Agora que temos uma classe de serviço, definindo os recursos fornecidos pelo aplicativo, estendemos a classe `javax.ws.rs.core.Application` e adicionamos nosso `PersonService`:
+Agora que temos uma classe de serviço, definindo os recursos fornecidos pelo aplicativo, estendemos a classe `jakarta.ws.rs.core.Application` e adicionamos nosso `PersonService`:
 
 [source,java]
 ----
@@ -117,7 +117,7 @@ Isso pode ser feito em `webapp/WEB-INF/web.xml`:
     <servlet-name>Jersey Web Application</servlet-name>
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
     <init-param>
-      <param-name>javax.ws.rs.Application</param-name>
+      <param-name>jakarta.ws.rs.Application</param-name>
       <param-value>org.superbiz.service.JerseyApplication</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>

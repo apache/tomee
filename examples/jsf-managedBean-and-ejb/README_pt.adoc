@@ -36,7 +36,7 @@ Primeiro declararemos o `FacesServlet` no `web.xml`
 ----
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 ----
@@ -86,7 +86,7 @@ O bean com escopo de request `calculatorBean` está disponível aqui e usamos EL
 ----
 package org.superbiz.jsf;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 @Local
 public interface Calculator {
@@ -100,8 +100,8 @@ public interface Calculator {
 ----
 package org.superbiz.jsf;
 
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.faces.bean.ManagedBean;
 
 @ManagedBean
 public class CalculatorBean {
@@ -148,7 +148,7 @@ public class CalculatorBean {
 ----
 package org.superbiz.jsf;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class CalculatorImpl implements Calculator {
@@ -177,7 +177,7 @@ public class CalculatorImpl implements Calculator {
     <!-- Faces Servlet -->
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

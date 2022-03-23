@@ -39,9 +39,9 @@ Para usar o MicroProfile Rest Client, são necessárias 3 alterações no seu pr
  package org.superbiz.rest;
 
  import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
- import javax.enterprise.context.Dependent;
- import javax.ws.rs.*;
- import javax.ws.rs.core.MediaType;
+ import jakarta.enterprise.context.Dependent;
+ import jakarta.ws.rs.*;
+ import jakarta.ws.rs.core.MediaType;
  import java.util.List;
 
  @Dependent
@@ -94,7 +94,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertTrue;
 

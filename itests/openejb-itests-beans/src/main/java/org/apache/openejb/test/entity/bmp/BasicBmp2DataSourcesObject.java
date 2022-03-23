@@ -21,7 +21,7 @@ import java.util.Properties;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public interface BasicBmp2DataSourcesObject extends javax.ejb.EJBObject {
+public interface BasicBmp2DataSourcesObject extends jakarta.ejb.EJBObject {
 
     /**
      * Reverses the string passed in then returns it

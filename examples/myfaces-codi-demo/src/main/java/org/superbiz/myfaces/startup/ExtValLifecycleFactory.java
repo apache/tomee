@@ -24,11 +24,11 @@ import org.apache.myfaces.extensions.validator.core.proxy.DefaultProxyHelper;
 import org.apache.myfaces.extensions.validator.core.proxy.ProxyHelper;
 import org.apache.myfaces.extensions.validator.core.startup.AbstractStartupListener;
 
-import javax.faces.FacesException;
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseListener;
-import javax.faces.lifecycle.Lifecycle;
-import javax.faces.lifecycle.LifecycleFactory;
+import jakarta.faces.FacesException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.PhaseListener;
+import jakarta.faces.lifecycle.Lifecycle;
+import jakarta.faces.lifecycle.LifecycleFactory;
 import java.util.Iterator;
 
 //TODO remove it after upgrading to ExtVal r8+

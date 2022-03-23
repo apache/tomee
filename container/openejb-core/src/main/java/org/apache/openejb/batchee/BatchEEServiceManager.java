@@ -31,7 +31,7 @@ import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.classloader.Unwrappable;
 import org.apache.webbeans.config.WebBeansContext;
 
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeanManager;
 import java.util.Properties;
 
 public class BatchEEServiceManager implements ServicesManagerLocator {

@@ -19,7 +19,7 @@ package org.openejb;
 
 import org.apache.openejb.spi.ApplicationServer;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 /**
  * @version $Revision$ $Date$

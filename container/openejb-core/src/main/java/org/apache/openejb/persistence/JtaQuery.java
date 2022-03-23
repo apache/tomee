@@ -17,12 +17,12 @@
 
 package org.apache.openejb.persistence;
 
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.LockModeType;
-import javax.persistence.Parameter;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.Parameter;
+import jakarta.persistence.Query;
+import jakarta.persistence.TemporalType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -240,105 +240,105 @@ public class JtaQuery implements Query {
 
     // JPA 2.0
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getFirstResult()
+     * @see jakarta.persistence.Query#getFirstResult()
      */
     public int getFirstResult() {
         return query.getFirstResult();
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getFlushMode()
+     * @see jakarta.persistence.Query#getFlushMode()
      */
     public FlushModeType getFlushMode() {
         return query.getFlushMode();
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getHints()
+     * @see jakarta.persistence.Query#getHints()
      */
     public Map<String, Object> getHints() {
         return query.getHints();
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getLockMode()
+     * @see jakarta.persistence.Query#getLockMode()
      */
     public LockModeType getLockMode() {
         return query.getLockMode();
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getMaxResults()
+     * @see jakarta.persistence.Query#getMaxResults()
      */
     public int getMaxResults() {
         return query.getMaxResults();
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameter(java.lang.String)
+     * @see jakarta.persistence.Query#getParameter(java.lang.String)
      */
     public Parameter<?> getParameter(final String name) {
         return query.getParameter(name);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameter(int)
+     * @see jakarta.persistence.Query#getParameter(int)
      */
     public Parameter<?> getParameter(final int position) {
         return query.getParameter(position);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameter(java.lang.String, java.lang.Class)
+     * @see jakarta.persistence.Query#getParameter(java.lang.String, java.lang.Class)
      */
     public <T> Parameter<T> getParameter(final String name, final Class<T> type) {
         return query.getParameter(name, type);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameter(int, java.lang.Class)
+     * @see jakarta.persistence.Query#getParameter(int, java.lang.Class)
      */
     public <T> Parameter<T> getParameter(final int position, final Class<T> type) {
         return query.getParameter(position, type);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameterValue(javax.persistence.Parameter)
+     * @see jakarta.persistence.Query#getParameterValue(jakarta.persistence.Parameter)
      */
     public <T> T getParameterValue(final Parameter<T> param) {
         return query.getParameterValue(param);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameterValue(java.lang.String)
+     * @see jakarta.persistence.Query#getParameterValue(java.lang.String)
      */
     public Object getParameterValue(final String name) {
         return query.getParameterValue(name);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameterValue(int)
+     * @see jakarta.persistence.Query#getParameterValue(int)
      */
     public Object getParameterValue(final int position) {
         return query.getParameterValue(position);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#getParameters()
+     * @see jakarta.persistence.Query#getParameters()
      */
     public Set<Parameter<?>> getParameters() {
         return query.getParameters();
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#isBound(javax.persistence.Parameter)
+     * @see jakarta.persistence.Query#isBound(jakarta.persistence.Parameter)
      */
     public boolean isBound(final Parameter<?> param) {
         return query.isBound(param);
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#setLockMode(javax.persistence.LockModeType)
+     * @see jakarta.persistence.Query#setLockMode(jakarta.persistence.LockModeType)
      */
     public Query setLockMode(final LockModeType lockMode) {
         if (!underTx) {
@@ -353,7 +353,7 @@ public class JtaQuery implements Query {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#setParameter(javax.persistence.Parameter, java.lang.Object)
+     * @see jakarta.persistence.Query#setParameter(jakarta.persistence.Parameter, java.lang.Object)
      */
     public <T> Query setParameter(final Parameter<T> param, final T value) {
         if (!underTx) {
@@ -368,7 +368,7 @@ public class JtaQuery implements Query {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#setParameter(javax.persistence.Parameter, java.util.Calendar, javax.persistence.TemporalType)
+     * @see jakarta.persistence.Query#setParameter(jakarta.persistence.Parameter, java.util.Calendar, jakarta.persistence.TemporalType)
      */
     public Query setParameter(final Parameter<Calendar> param, final Calendar value, final TemporalType temporalType) {
         if (!underTx) {
@@ -383,7 +383,7 @@ public class JtaQuery implements Query {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#setParameter(javax.persistence.Parameter, java.util.Date, javax.persistence.TemporalType)
+     * @see jakarta.persistence.Query#setParameter(jakarta.persistence.Parameter, java.util.Date, jakarta.persistence.TemporalType)
      */
     public Query setParameter(final Parameter<Date> param, final Date value, final TemporalType temporalType) {
         if (!underTx) {
@@ -398,7 +398,7 @@ public class JtaQuery implements Query {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.Query#unwrap(java.lang.Class)
+     * @see jakarta.persistence.Query#unwrap(java.lang.Class)
      */
     public <T> T unwrap(final Class<T> cls) {
         unwrap = true;

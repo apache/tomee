@@ -33,9 +33,9 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServicePool;
 import org.apache.openejb.util.CountingLatch;
 
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import jakarta.ejb.ConcurrentAccessTimeoutException;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.IOException;
@@ -201,8 +201,8 @@ public class FullPoolFailoverTest extends TestCase {
         // then it should fail back to red
         try {
             counter.hit();
-            fail("Expected javax.ejb.EJBException");
-        } catch (javax.ejb.EJBException e) {
+            fail("Expected jakarta.ejb.EJBException");
+        } catch (jakarta.ejb.EJBException e) {
         }
 
         // there should be no hits on any server, both connection pools are fully busy

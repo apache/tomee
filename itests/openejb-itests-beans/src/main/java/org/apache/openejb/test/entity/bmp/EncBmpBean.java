@@ -28,24 +28,24 @@ import org.apache.openejb.test.stateless.BasicStatelessHome;
 import org.apache.openejb.test.stateless.BasicStatelessObject;
 import org.junit.Assert;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnectionFactory;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.rmi.RemoteException;
 
-public class EncBmpBean implements javax.ejb.EntityBean {
+public class EncBmpBean implements jakarta.ejb.EntityBean {
 
     private int primaryKey;
     private String firstName;
@@ -61,11 +61,11 @@ public class EncBmpBean implements javax.ejb.EntityBean {
      * Maps to EncBmpHome.findEmptyCollection
      *
      * @return
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      * @see EncBmpHome#findEmptyCollection()
      */
     public java.util.Collection ejbFindEmptyCollection()
-        throws javax.ejb.FinderException, java.rmi.RemoteException {
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException {
         return new java.util.Vector();
     }
 
@@ -74,11 +74,11 @@ public class EncBmpBean implements javax.ejb.EntityBean {
      *
      * @param primaryKey
      * @return
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      * @see EncBmpHome#findByPrimaryKey(Integer)
      */
     public Integer ejbFindByPrimaryKey(final Integer primaryKey)
-        throws javax.ejb.FinderException {
+        throws jakarta.ejb.FinderException {
         return new Integer(-1);
     }
 
@@ -87,16 +87,16 @@ public class EncBmpBean implements javax.ejb.EntityBean {
      *
      * @param name
      * @return
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see EncBmpHome#create
      */
     public Integer ejbCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         return new Integer(-1);
     }
 
     public void ejbPostCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
     }
 
 

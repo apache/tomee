@@ -21,10 +21,10 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.junit.runner.RunWith;
 
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Lock;
-import javax.interceptor.AroundInvoke;
+import jakarta.ejb.ConcurrencyManagement;
+import jakarta.ejb.ConcurrencyManagementType;
+import jakarta.ejb.Lock;
+import jakarta.interceptor.AroundInvoke;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidConcurrencyAttributeTest extends TestCase {

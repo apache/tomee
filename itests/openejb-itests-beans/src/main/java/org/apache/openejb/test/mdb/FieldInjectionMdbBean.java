@@ -28,22 +28,22 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 import org.apache.openejb.test.stateless.BasicStatelessHome;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.MessageDrivenContext;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnectionFactory;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.MessageDrivenBean;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, MessageListener {
@@ -306,7 +306,7 @@ public class FieldInjectionMdbBean implements EncMdbObject, MessageDrivenBean, M
         }
     }
 
-    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+    private void testJmsConnection(final jakarta.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
         final MessageProducer producer = session.createProducer(topic);

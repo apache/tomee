@@ -29,15 +29,15 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 
-import javax.annotation.Resource;
-import javax.ejb.EJBContext;
-import javax.ejb.TimerService;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.TimerService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.xml.ws.WebServiceContext;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.xml.ws.WebServiceContext;
 
 /**
  * @version $Rev$ $Date$

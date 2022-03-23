@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.ejb.business;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
 * @version $Rev$ $Date$

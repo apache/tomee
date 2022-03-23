@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.bmp.remote;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 public interface BigFinder extends EJBObject {
 }

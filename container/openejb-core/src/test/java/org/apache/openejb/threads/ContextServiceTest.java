@@ -24,10 +24,10 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.enterprise.concurrent.ContextService;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
+import jakarta.enterprise.concurrent.ContextService;
 import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertFalse;

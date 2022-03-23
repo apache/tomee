@@ -24,7 +24,7 @@ import org.apache.openejb.junit.jee.transaction.Transaction;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.jupiter.api.extension.*;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.lang.reflect.Method;
 
 public class TransactionExtension implements AfterTestExecutionCallback {

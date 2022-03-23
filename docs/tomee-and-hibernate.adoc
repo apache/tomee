@@ -75,14 +75,14 @@ Using the `<tomee-home>/conf/system.properties` file or any other valid
 means of setting `java.lang.System.getProperties()`, the following
 standard properties can set the detault for any `persistence.xml` file.
 
-* `javax.persistence.provider`
-* `javax.persistence.transactionType`
-* `javax.persistence.jtaDataSource`
-* `javax.persistence.nonJtaDataSource`
+* `jakarta.persistence.provider`
+* `jakarta.persistence.transactionType`
+* `jakarta.persistence.jtaDataSource`
+* `jakarta.persistence.nonJtaDataSource`
 
 So, for example, Hibernate can become the default provider via setting
 
-`CATALINA_OPTS=-Djavax.persistence.provider=org.hibernate.ejb.HibernatePersistence`
+`CATALINA_OPTS=-Djakarta.persistence.provider=org.hibernate.ejb.HibernatePersistence`
 
 You *must* of course add the Hibernate libraries to `<tomee-home>/lib/`
 for this to work.

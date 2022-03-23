@@ -16,7 +16,7 @@
  */
 package org.superbiz.cdi.produces.field;
 
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Produces;
 
 public class LogFactory {
 

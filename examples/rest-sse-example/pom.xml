@@ -21,12 +21,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-sse-example</artifactId>
   <packaging>war</packaging>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: REST SSE Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
-    <version.openjpa>3.0.0</version.openjpa>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
+    <version.openjpa>3.2.2-SNAPSHOT</version.openjpa>
   </properties>
   <repositories>
     <repository>
@@ -101,8 +101,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.1-M1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EJBHome;
-import javax.ejb.FinderException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.FinderException;
 import java.rmi.RemoteException;
 
 public interface QueryDataHome extends EJBHome {

@@ -26,7 +26,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.openejb.maven.util.MavenLogStreamFactory;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;

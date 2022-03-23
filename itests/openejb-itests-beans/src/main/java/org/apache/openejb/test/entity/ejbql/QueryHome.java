@@ -19,8 +19,8 @@ package org.apache.openejb.test.entity.ejbql;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import javax.ejb.EJBHome;
-import javax.ejb.FinderException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.FinderException;
 
 public interface QueryHome extends EJBHome {
     public QueryRemote findByPrimaryKey(Integer primaryKey) throws FinderException, RemoteException;

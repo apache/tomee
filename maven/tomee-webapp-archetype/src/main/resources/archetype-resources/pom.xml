@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <version>[JAVAEE]</version>
       <scope>provided</scope>
     </dependency>
@@ -86,7 +86,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.9.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -130,10 +130,33 @@
         </executions>
         <dependencies>
           <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jakartaee-api</artifactId>
+            <version>[JAVAEE]</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.serp</groupId>
+            <artifactId>serp</artifactId>
+            <version>1.15.1</version>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
             <!-- set the version to be the same as the level in your runtime -->
             <version>[OPENJPA]</version>
+            <classifier>jakarta</classifier>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
           </dependency>
         </dependencies>
       </plugin>

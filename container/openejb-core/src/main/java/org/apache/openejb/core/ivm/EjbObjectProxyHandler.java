@@ -31,10 +31,10 @@ import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.AccessLocalException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
+import jakarta.ejb.AccessLocalException;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;

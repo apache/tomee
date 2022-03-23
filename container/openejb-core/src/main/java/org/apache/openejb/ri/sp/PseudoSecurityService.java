@@ -21,7 +21,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.security.ProtectionDomain;

@@ -26,7 +26,7 @@ import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Properties;
 

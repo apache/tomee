@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
 
 /**
  * @version $Revision$ $Date$

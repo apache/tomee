@@ -33,7 +33,7 @@ import org.junit.runners.model.Statement;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;

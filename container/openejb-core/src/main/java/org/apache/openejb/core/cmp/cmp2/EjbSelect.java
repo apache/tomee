@@ -22,7 +22,7 @@ import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.cmp.CmpContainer;
 
-import javax.ejb.FinderException;
+import jakarta.ejb.FinderException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 

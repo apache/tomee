@@ -16,7 +16,7 @@
  */
 package org.superbiz
 
-import javax.ejb.{LocalBean, Lock, LockType, Singleton}
+import jakarta.ejb.{LocalBean, Lock, LockType, Singleton}
 
 object GreetingService {
   val DefaultName = "Scala"

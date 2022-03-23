@@ -51,8 +51,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;

@@ -18,9 +18,9 @@ package org.apache.openejb.deployment.entity.cmp.ejbql;
 
 import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBHome;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.FinderException;
 import java.rmi.RemoteException;
 
 

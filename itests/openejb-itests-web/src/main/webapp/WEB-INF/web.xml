@@ -222,17 +222,17 @@
   </resource-ref>
   <resource-ref>
     <res-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/coonnectionFactory</res-ref-name>
-    <res-type>javax.jms.ConnectionFactory</res-type>
+    <res-type>jakarta.jms.ConnectionFactory</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
   <resource-ref>
     <res-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/queueCoonnectionFactory</res-ref-name>
-    <res-type>javax.jms.QueueConnectionFactory</res-type>
+    <res-type>jakarta.jms.QueueConnectionFactory</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
   <resource-ref>
     <res-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/topicCoonnectionFactory</res-ref-name>
-    <res-type>javax.jms.TopicConnectionFactory</res-type>
+    <res-type>jakarta.jms.TopicConnectionFactory</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
   <persistence-context-ref>

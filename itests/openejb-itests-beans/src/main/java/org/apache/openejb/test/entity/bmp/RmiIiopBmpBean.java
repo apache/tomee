@@ -18,18 +18,18 @@ package org.apache.openejb.test.entity.bmp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.EntityContext;
-import javax.ejb.Handle;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.Handle;
+import jakarta.ejb.RemoveException;
 import javax.naming.InitialContext;
 
 import org.apache.openejb.test.object.ObjectGraph;
 
-public class RmiIiopBmpBean implements javax.ejb.EntityBean {
+public class RmiIiopBmpBean implements jakarta.ejb.EntityBean {
     private int primaryKey;
     private String firstName;
     private String lastName;
@@ -44,11 +44,11 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
      * Maps to RmiIiopBmpHome.findEmptyCollection
      *
      * @return
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      * @see RmiIiopBmpHome#sum
      */
     public java.util.Collection ejbFindEmptyCollection()
-        throws javax.ejb.FinderException, java.rmi.RemoteException {
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException {
         return new java.util.Vector();
     }
 
@@ -57,11 +57,11 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
      *
      * @param primaryKey
      * @return
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      * @see RmiIiopBmpHome#sum
      */
     public Integer ejbFindByPrimaryKey(final Integer primaryKey)
-        throws javax.ejb.FinderException {
+        throws jakarta.ejb.FinderException {
         return new Integer(-1);
     }
 
@@ -70,16 +70,16 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
      *
      * @param name
      * @return
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see RmiIiopBmpHome#create
      */
     public Integer ejbCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         return new Integer(-1);
     }
 
     public void ejbPostCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
     }
 
 
@@ -272,7 +272,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public EJBHome returnEJBHome() throws javax.ejb.EJBException {
+    public EJBHome returnEJBHome() throws jakarta.ejb.EJBException {
         EJBHome data = null;
 
         try {
@@ -282,12 +282,12 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBHome() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBHome() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -297,7 +297,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -314,7 +314,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public EJBObject returnEJBObject() throws javax.ejb.EJBException {
+    public EJBObject returnEJBObject() throws jakarta.ejb.EJBException {
         EncBmpObject data = null;
 
         try {
@@ -324,12 +324,12 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
             data = home.create("Test01 BmpBean");
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBObject() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBObject() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -340,7 +340,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -357,7 +357,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public EJBMetaData returnEJBMetaData() throws javax.ejb.EJBException {
+    public EJBMetaData returnEJBMetaData() throws jakarta.ejb.EJBException {
         EJBMetaData data = null;
 
         try {
@@ -367,12 +367,12 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
             data = home.getEJBMetaData();
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBMetaData() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBMetaData() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -383,7 +383,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -400,7 +400,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public Handle returnHandle() throws javax.ejb.EJBException {
+    public Handle returnHandle() throws jakarta.ejb.EJBException {
         Handle data = null;
 
         try {
@@ -411,12 +411,12 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
             data = object.getHandle();
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedHandle() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedHandle() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -427,7 +427,7 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object.getHandle());
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }

@@ -19,7 +19,7 @@ package org.superbiz.mbean;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;

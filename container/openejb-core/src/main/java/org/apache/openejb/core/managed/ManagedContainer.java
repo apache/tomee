@@ -55,22 +55,22 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SynchronizationType;
-import javax.transaction.Transaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SynchronizationType;
+import jakarta.transaction.Transaction;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
@@ -468,7 +468,7 @@ public class ManagedContainer implements RpcContainer {
                  * in a transaction.  Unfortunately, the Java EE 5 TCK has tests that ignore the
                  * restrictions in 4.4.4 and expect beans in transactions can be removed via their
                  * home or component interface.   The test to see if the bean instance implements
-                 * javax.ejb.SessionBean is a workaround for passing the TCK while the tests in
+                 * jakarta.ejb.SessionBean is a workaround for passing the TCK while the tests in
                  * question can be challenged or the spec can be changed/updated.
                  */
                 if (instance != null && instance.bean instanceof SessionBean) {

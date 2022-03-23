@@ -12,7 +12,7 @@ body are optional.
 
 [source,xml]
 ----
-<Resource id="myJmsConnectionFactory" type="javax.jms.ConnectionFactory">
+<Resource id="myJmsConnectionFactory" type="jakarta.jms.ConnectionFactory">
     connectionMaxIdleTime = 15 Minutes
     connectionMaxWaitTime = 5 seconds
     poolMaxSize = 10
@@ -25,12 +25,12 @@ body are optional.
 Alternatively, a JmsConnectionFactory can be declared via properties in
 the `<tomee-home>/conf/system.properties` file or via Java
 VirtualMachine `-D` properties. The properties can also be used when
-embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+embedding TomEE via the `jakarta.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
 [source,properties]
 ----
-myJmsConnectionFactory = new://Resource?type=javax.jms.ConnectionFactory
+myJmsConnectionFactory = new://Resource?type=jakarta.jms.ConnectionFactory
 myJmsConnectionFactory.connectionMaxIdleTime = 15 Minutes
 myJmsConnectionFactory.connectionMaxWaitTime = 5 seconds
 myJmsConnectionFactory.poolMaxSize = 10

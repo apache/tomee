@@ -57,15 +57,15 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.annotation.WebListener;
-import javax.servlet.annotation.WebServlet;
-import javax.ws.rs.core.Application;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.ws.rs.core.Application;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -296,7 +296,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     // skip jaxrs servlets
                     boolean skip = false;
                     for (final ParamValueInfo pvi : info.initParams) {
-                        if ("javax.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
+                        if ("jakarta.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
                             skip = true;
                         }
                     }

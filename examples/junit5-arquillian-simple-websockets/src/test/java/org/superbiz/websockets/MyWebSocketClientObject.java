@@ -17,8 +17,8 @@
 
 package org.superbiz.websockets;
 
-import javax.websocket.ClientEndpoint;
-import javax.websocket.OnMessage;
+import jakarta.websocket.ClientEndpoint;
+import jakarta.websocket.OnMessage;
 import java.util.concurrent.CountDownLatch;
 
 @ClientEndpoint

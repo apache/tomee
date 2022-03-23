@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import javax.ejb.FinderException;
+import jakarta.ejb.FinderException;
 
 public class ManyOwningSideBean_ManyOwningSideBean extends ManyOwningSideBean {
     public Integer id;

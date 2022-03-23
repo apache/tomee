@@ -24,7 +24,7 @@ import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.webbeans.config.WebBeansContext;
 
 import javax.naming.Context;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.util.Collection;
 import java.util.Map;
 

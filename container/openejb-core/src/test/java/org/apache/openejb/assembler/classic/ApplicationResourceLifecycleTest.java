@@ -23,9 +23,9 @@ import org.apache.openejb.testing.Module;
 import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

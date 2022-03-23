@@ -13,9 +13,9 @@ Both lookup and injection of an EntityManager can be configured via the
 ----
 package org.superbiz;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
-import javax.ejb.Stateless;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 
 @Stateless

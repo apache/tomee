@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.jaxws;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(portName = "HelloWSPort")
 public interface Hello {

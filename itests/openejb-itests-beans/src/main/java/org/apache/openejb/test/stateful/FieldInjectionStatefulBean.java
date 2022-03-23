@@ -25,21 +25,21 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 import org.apache.openejb.test.stateless.BasicStatelessPojoBean;
 
-import javax.ejb.CreateException;
-import javax.ejb.SessionContext;
-import javax.ejb.SessionBean;
-import javax.ejb.EJBException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.EJBException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
-import javax.jms.ConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.JMSException;
 import java.rmi.RemoteException;
 
 public class FieldInjectionStatefulBean implements SessionBean {
@@ -82,7 +82,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
      * Maps to EncStatefulHome.create
      *
      * @param name
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see EncStatefulHome#create
      */
     public void ejbCreate(final String name) throws CreateException {
@@ -291,7 +291,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
         }
     }
 
-    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+    private void testJmsConnection(final jakarta.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
         final MessageProducer producer = session.createProducer(topic);

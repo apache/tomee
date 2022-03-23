@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.arquillian.tests.cmp;
 
-public interface MyRemoteHome extends javax.ejb.EJBHome {
+public interface MyRemoteHome extends jakarta.ejb.EJBHome {
 
     public MyRemoteObject createObject(String name)
-            throws javax.ejb.CreateException, java.rmi.RemoteException;
+            throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 
     public MyRemoteObject findByPrimaryKey(Integer primarykey)
-            throws javax.ejb.FinderException, java.rmi.RemoteException;
+            throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     public java.util.Collection findEmptyCollection()
-            throws javax.ejb.FinderException, java.rmi.RemoteException;
+            throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
 }

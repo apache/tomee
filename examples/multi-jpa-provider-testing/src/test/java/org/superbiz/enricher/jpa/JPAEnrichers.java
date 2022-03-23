@@ -28,7 +28,7 @@ public final class JPAEnrichers {
     }
 
     public static WebArchive addJPAProvider(final WebArchive war) {
-        final String provider = System.getProperty("javax.persistence.provider");
+        final String provider = System.getProperty("jakarta.persistence.provider");
         if (provider != null && provider.contains("hibernate")) {
             new HibernateEnricher().process(war);
         } else { // default

@@ -18,16 +18,16 @@ Você pode ver a simplicidade de usar o objeto JMSContext para enviar e consumir
 ----
 package org.superbiz.jms;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
+import jakarta.jms.Queue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 @Stateless
 @Path("message")
@@ -255,7 +255,7 @@ Running org.superbiz.jms.CustomJmsServiceTest
 31-Mar-2020 20:38:11.573 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean CustomJmsService: Container(type=STATELESS, id=Default Stateless Container)
 31-Mar-2020 20:38:11.573 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Stateless Container)
 31-Mar-2020 20:38:11.581 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default JMS Connection Factory, type=Resource, provider-id=Default JMS Connection Factory)
-31-Mar-2020 20:38:11.582 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'javax.jms.ConnectionFactory for 'CustomJmsService'.
+31-Mar-2020 20:38:11.582 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'jakarta.jms.ConnectionFactory for 'CustomJmsService'.
 31-Mar-2020 20:38:11.582 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default JMS Resource Adapter, type=Resource, provider-id=Default JMS Resource Adapter)
 31-Mar-2020 20:38:11.583 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Unmanaged JDBC Database, type=Resource, provider-id=Default Unmanaged JDBC Database)
 31-Mar-2020 20:38:11.583 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=Default Unmanaged JDBC Database)
@@ -283,7 +283,7 @@ Running org.superbiz.jms.CustomJmsServiceTest
 31-Mar-2020 20:38:12.534 INFO [http-nio-34427-exec-3] org.apache.geronimo.connector.outbound.GenericConnectionManager$InterceptorsImpl.<init> No runtime TransactionSupport
 31-Mar-2020 20:38:12.545 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'java:comp/env/org.superbiz.jms.CustomJmsService/cf' in bean CustomJmsService to Resource(id=Default JMS Connection Factory)
 31-Mar-2020 20:38:12.546 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=messageQueue, type=Resource, provider-id=Default Queue)
-31-Mar-2020 20:38:12.546 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'messageQueue' of type 'javax.jms.Queue for 'CustomJmsService'.
+31-Mar-2020 20:38:12.546 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'messageQueue' of type 'jakarta.jms.Queue for 'CustomJmsService'.
 31-Mar-2020 20:38:12.546 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=messageQueue)
 31-Mar-2020 20:38:12.554 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.processResourceEnvRef Auto-linking resource-env-ref 'java:comp/env/messageQueue' in bean CustomJmsService to Resource(id=messageQueue)
 31-Mar-2020 20:38:12.554 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)

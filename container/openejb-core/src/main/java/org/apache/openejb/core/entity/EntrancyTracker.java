@@ -20,7 +20,7 @@ package org.apache.openejb.core.entity;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;

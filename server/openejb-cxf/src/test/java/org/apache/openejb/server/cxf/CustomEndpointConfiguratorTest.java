@@ -30,9 +30,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import javax.jws.WebService;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Singleton;
+import jakarta.jws.WebService;
 import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;

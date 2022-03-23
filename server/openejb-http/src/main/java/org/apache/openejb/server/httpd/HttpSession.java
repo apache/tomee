@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
-public interface HttpSession extends javax.servlet.http.HttpSession {
+public interface HttpSession extends jakarta.servlet.http.HttpSession {
 
     public void removeAttribute(String name);
 

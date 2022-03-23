@@ -27,8 +27,8 @@ import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.NoSuchEJBException;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.NoSuchEJBException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.concurrent.CountDownLatch;

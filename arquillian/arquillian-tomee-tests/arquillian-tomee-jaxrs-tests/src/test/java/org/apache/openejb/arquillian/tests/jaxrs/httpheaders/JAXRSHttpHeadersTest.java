@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests the {@link javax.ws.rs.core.HttpHeaders} methods.
+ * Tests the {@link jakarta.ws.rs.core.HttpHeaders} methods.
  */
 @RunWith(Arquillian.class)
 public class JAXRSHttpHeadersTest extends JaxrsTest {
@@ -48,7 +48,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given no
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given no
      * acceptable languages, that it will return the server default locale back.
      *
      * @throws java.io.IOException
@@ -60,7 +60,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given a
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given a
      * language, it will be the only language in the list.
      *
      * @throws java.io.IOException
@@ -74,7 +74,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
 
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given multiple
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given multiple
      * languages, all will be returned in the list.                             
      *
      * @throws java.io.IOException
@@ -90,7 +90,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given multiple
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getAcceptableLanguages()} that if given multiple
      * languages, all will be returned in the list sorted by their quality
      * value.
      *
@@ -105,7 +105,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
 
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableMediaTypes()} that if given a
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getAcceptableMediaTypes()} that if given a
      * single Accept header value, it is returned.
      *
      * @throws java.io.IOException
@@ -120,7 +120,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getAcceptableMediaTypes()} that if given
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getAcceptableMediaTypes()} that if given
      * multiple Accept header values, the values are sorted by q-value.
      *
      * @throws java.io.IOException
@@ -136,7 +136,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
 
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getMediaType()} that if given a text/plain, the
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getMediaType()} that if given a text/plain, the
      * method will return text/plain.
      *
      * @throws java.io.IOException
@@ -155,7 +155,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getMediaType()} when a non-standard content type
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getMediaType()} when a non-standard content type
      * is sent in.
      *
      * @throws java.io.IOException
@@ -174,7 +174,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getMediaType()} when no request entity is given.
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getMediaType()} when no request entity is given.
      *
      * @throws java.io.IOException
      */
@@ -190,7 +190,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getLanguage()} when no language is given in the
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getLanguage()} when no language is given in the
      * request.
      *
      * @throws java.io.IOException
@@ -209,7 +209,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getLanguage()} when English language is given in
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getLanguage()} when English language is given in
      * the request.
      *
      * @throws java.io.IOException
@@ -229,7 +229,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getLanguage()} when Chinese language is given in
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getLanguage()} when Chinese language is given in
      * the request.
      *
      * @throws java.io.IOException
@@ -249,7 +249,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getCookies()} when no cookies are given.
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getCookies()} when no cookies are given.
      *
      * @throws java.io.IOException
      */
@@ -265,7 +265,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getCookies()} when given a single cookie.
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getCookies()} when given a single cookie.
      *
      * @throws java.io.IOException
      */
@@ -280,7 +280,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getCookies()} when given multiple cookies.
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getCookies()} when given multiple cookies.
      *
      * @throws java.io.IOException
      */
@@ -297,7 +297,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when given a null
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeader(String)} when given a null
      * value.
      *
      * @throws java.io.IOException
@@ -311,7 +311,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting header
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting header
      * values for a non-existent header name.
      *
      * @throws java.io.IOException
@@ -325,7 +325,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting header
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting header
      * value for a single header name.
      *
      * @throws java.io.IOException
@@ -341,7 +341,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting
      * multiple header value for a single header name.
      *
      * @throws java.io.IOException
@@ -358,7 +358,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeader(String)} when requesting
      * multiple header value for a single header name when using
      * case-insensitive names.
      *
@@ -376,7 +376,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeaders()} when making a basic
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeaders()} when making a basic
      * HttpClient request.
      *
      * @throws java.io.IOException
@@ -395,7 +395,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeaders()} when having a custom
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeaders()} when having a custom
      * header.
      *
      * @throws java.io.IOException
@@ -412,7 +412,7 @@ public class JAXRSHttpHeadersTest extends JaxrsTest {
     }
 
     /**
-     * Tests {@link javax.ws.rs.core.HttpHeaders#getRequestHeaders()} when having multiple values
+     * Tests {@link jakarta.ws.rs.core.HttpHeaders#getRequestHeaders()} when having multiple values
      * and multiple custom headers.
      *
      * @throws java.io.IOException

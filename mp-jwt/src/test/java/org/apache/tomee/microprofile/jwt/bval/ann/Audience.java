@@ -18,9 +18,9 @@ package org.apache.tomee.microprofile.jwt.bval.ann;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -34,7 +34,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @RequireClaim("aud")
 @Documented
-@javax.validation.Constraint(validatedBy = {Audience.Constraint.class})
+@jakarta.validation.Constraint(validatedBy = {Audience.Constraint.class})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
 public @interface Audience {

@@ -23,7 +23,7 @@ import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;

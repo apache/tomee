@@ -18,7 +18,7 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.openejb.server.rest.InternalApplication;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

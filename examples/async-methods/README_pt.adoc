@@ -138,7 +138,7 @@ INFO - openejb.home = /home/soro/git/apache/tomee/examples/async-methods
 INFO - openejb.base = /home/soro/git/apache/tomee/examples/async-methods
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@22f71333
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

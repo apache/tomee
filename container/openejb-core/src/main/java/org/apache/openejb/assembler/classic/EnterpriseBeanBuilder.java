@@ -31,12 +31,12 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SynchronizationType;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SynchronizationType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;

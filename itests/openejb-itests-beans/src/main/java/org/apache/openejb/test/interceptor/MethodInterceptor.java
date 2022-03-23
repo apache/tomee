@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.test.interceptor;
 
-import javax.annotation.PostConstruct;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 
 /**

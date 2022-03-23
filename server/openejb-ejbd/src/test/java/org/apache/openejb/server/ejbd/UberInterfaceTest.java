@@ -31,9 +31,9 @@ import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServicePool;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.jws.WebService;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
+import jakarta.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.Serializable;

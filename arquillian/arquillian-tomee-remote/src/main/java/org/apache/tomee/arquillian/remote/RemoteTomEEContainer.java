@@ -27,7 +27,7 @@ import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.util.NetworkUtil;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
-import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
+import org.jboss.arquillian.protocol.servlet5.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 
 import javax.naming.NamingException;

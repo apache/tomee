@@ -4,7 +4,7 @@
 = Configurando JSON-B
 
 Este ejemplo muestra cómo personalizar jsonb para una aplicación JAX-RS.
-JSONB es el nuevo estándar `javaee-api: 8.0` para la serialización /
+JSONB es el nuevo estándar `jakartaee-api: 8.0` para la serialización /
 deserialización de json. Se necesitan pocas anotaciones y `JsonbConfig`
 ofrece muchas configuraciones.
 
@@ -43,8 +43,8 @@ todos las clases y métodos anotados con `@ Path` sin especificarlos.
 
 [source,java]
 ----
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("api")
 public class JAXRSApplication extends Application {
@@ -61,12 +61,12 @@ Clase jaxrs simple con un método GET
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ejb.Stateless;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import org.superbiz.model.User;
 
@@ -97,12 +97,12 @@ serialización / deserialización JSONB
 
 [source,java]
 ----
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-import javax.json.bind.config.PropertyNamingStrategy;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
+import jakarta.json.bind.config.PropertyNamingStrategy;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class JSONBConfiguration implements ContextResolver<Jsonb> {
@@ -282,7 +282,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 === Dentro del jar
 
-`javaee-api: 8.0` incorpora todas las dependencias necesarias para activar una aplicación REST que funcione.
+`jakartaee-api: 8.0` incorpora todas las dependencias necesarias para activar una aplicación REST que funcione.
 
 Si miramos el jar construido por maven, veremos que la aplicación en sí es bastante pequeña:
 

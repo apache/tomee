@@ -47,13 +47,13 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.junit.AfterClass;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.LocalHome;
-import javax.ejb.RemoteHome;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.SessionContext;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -289,7 +289,7 @@ public class LegacyInterfaceTest extends TestCase {
 
     @LocalHome(MyLocalHome.class)
     @RemoteHome(MyRemoteHome.class)
-    public static abstract class MyCmpBean implements javax.ejb.EntityBean {
+    public static abstract class MyCmpBean implements jakarta.ejb.EntityBean {
 
         // CMP
         public abstract Integer getId();
@@ -334,24 +334,24 @@ public class LegacyInterfaceTest extends TestCase {
 
     @LocalHome(MyLocalHome.class)
     @RemoteHome(MyRemoteHome.class)
-    public class MyBmpBean implements javax.ejb.EntityBean {
+    public class MyBmpBean implements jakarta.ejb.EntityBean {
 
         public void doit() {
         }
 
-        public java.util.Collection ejbFindEmptyCollection() throws javax.ejb.FinderException, java.rmi.RemoteException {
+        public java.util.Collection ejbFindEmptyCollection() throws jakarta.ejb.FinderException, java.rmi.RemoteException {
             return new java.util.Vector();
         }
 
-        public Integer ejbFindByPrimaryKey(final Integer primaryKey) throws javax.ejb.FinderException {
+        public Integer ejbFindByPrimaryKey(final Integer primaryKey) throws jakarta.ejb.FinderException {
             return -1;
         }
 
-        public Integer ejbCreateObject(final String name) throws javax.ejb.CreateException {
+        public Integer ejbCreateObject(final String name) throws jakarta.ejb.CreateException {
             return -1;
         }
 
-        public void ejbPostCreateObject(final String name) throws javax.ejb.CreateException {
+        public void ejbPostCreateObject(final String name) throws jakarta.ejb.CreateException {
         }
 
 
@@ -377,39 +377,39 @@ public class LegacyInterfaceTest extends TestCase {
         }
     }
 
-    public interface MyRemoteHome extends javax.ejb.EJBHome {
+    public interface MyRemoteHome extends jakarta.ejb.EJBHome {
 
         public MyRemoteObject createObject(String name)
-            throws javax.ejb.CreateException, java.rmi.RemoteException;
+            throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 
         public MyRemoteObject findByPrimaryKey(Integer primarykey)
-            throws javax.ejb.FinderException, java.rmi.RemoteException;
+            throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
         public java.util.Collection findEmptyCollection()
-            throws javax.ejb.FinderException, java.rmi.RemoteException;
+            throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     }
 
-    public interface MyRemoteObject extends javax.ejb.EJBObject {
+    public interface MyRemoteObject extends jakarta.ejb.EJBObject {
 
         public void doit() throws RemoteException;
 
     }
 
-    public interface MyLocalHome extends javax.ejb.EJBLocalHome {
+    public interface MyLocalHome extends jakarta.ejb.EJBLocalHome {
 
         public MyLocalObject createObject(String name)
-            throws javax.ejb.CreateException;
+            throws jakarta.ejb.CreateException;
 
         public MyLocalObject findByPrimaryKey(Integer primarykey)
-            throws javax.ejb.FinderException;
+            throws jakarta.ejb.FinderException;
 
         public java.util.Collection findEmptyCollection()
-            throws javax.ejb.FinderException;
+            throws jakarta.ejb.FinderException;
 
     }
 
-    public interface MyLocalObject extends javax.ejb.EJBLocalObject {
+    public interface MyLocalObject extends jakarta.ejb.EJBLocalObject {
 
         public void doit();
 
@@ -417,12 +417,12 @@ public class LegacyInterfaceTest extends TestCase {
 
     @LocalHome(MySessionLocalHome.class)
     @RemoteHome(MySessionRemoteHome.class)
-    public static class MySingletonBean implements javax.ejb.SessionBean {
+    public static class MySingletonBean implements jakarta.ejb.SessionBean {
 
         public void doit() {
         }
 
-        public void ejbCreateObject() throws javax.ejb.CreateException {
+        public void ejbCreateObject() throws jakarta.ejb.CreateException {
         }
 
         public void ejbActivate() throws EJBException, RemoteException {
@@ -438,21 +438,21 @@ public class LegacyInterfaceTest extends TestCase {
         }
     }
 
-    public interface MySessionRemoteHome extends javax.ejb.EJBHome {
+    public interface MySessionRemoteHome extends jakarta.ejb.EJBHome {
         public MySessionRemoteObject createObject()
-            throws javax.ejb.CreateException, java.rmi.RemoteException;
+            throws jakarta.ejb.CreateException, java.rmi.RemoteException;
     }
 
-    public interface MySessionRemoteObject extends javax.ejb.EJBObject {
+    public interface MySessionRemoteObject extends jakarta.ejb.EJBObject {
         public void doit();
     }
 
-    public interface MySessionLocalHome extends javax.ejb.EJBLocalHome {
+    public interface MySessionLocalHome extends jakarta.ejb.EJBLocalHome {
         public MySessionLocalObject createObject()
-            throws javax.ejb.CreateException;
+            throws jakarta.ejb.CreateException;
     }
 
-    public interface MySessionLocalObject extends javax.ejb.EJBLocalObject {
+    public interface MySessionLocalObject extends jakarta.ejb.EJBLocalObject {
         public void doit();
     }
 

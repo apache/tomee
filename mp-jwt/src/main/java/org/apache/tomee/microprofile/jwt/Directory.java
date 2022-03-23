@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
-import javax.validation.Payload;
+import jakarta.validation.Payload;
 import java.io.File;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -29,7 +29,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
-@javax.validation.Constraint(validatedBy = {Directory.Constraint.class})
+@jakarta.validation.Constraint(validatedBy = {Directory.Constraint.class})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
 public @interface Directory {

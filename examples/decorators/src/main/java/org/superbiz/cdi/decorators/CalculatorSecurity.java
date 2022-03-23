@@ -16,11 +16,11 @@
  */
 package org.superbiz.cdi.decorators;
 
-import javax.annotation.Resource;
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.ejb.SessionContext;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.ejb.SessionContext;
+import jakarta.inject.Inject;
 
 @Decorator
 public class CalculatorSecurity implements Calculator {

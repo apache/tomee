@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 
 public class Adapters {
 

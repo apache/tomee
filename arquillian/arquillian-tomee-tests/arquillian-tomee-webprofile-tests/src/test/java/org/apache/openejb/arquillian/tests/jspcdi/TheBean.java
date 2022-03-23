@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.jspcdi;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 import java.util.List;
 
 import static java.util.Arrays.asList;

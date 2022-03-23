@@ -389,22 +389,22 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.EJBMetaData getEJBMetaData(final ProxyInfo info) {
+    public jakarta.ejb.EJBMetaData getEJBMetaData(final ProxyInfo info) {
         return clientObjectFactory.getEJBMetaData(info);
     }
 
     @Override
-    public javax.ejb.Handle getHandle(final ProxyInfo info) {
+    public jakarta.ejb.Handle getHandle(final ProxyInfo info) {
         return clientObjectFactory.getHandle(info);
     }
 
     @Override
-    public javax.ejb.HomeHandle getHomeHandle(final ProxyInfo info) {
+    public jakarta.ejb.HomeHandle getHomeHandle(final ProxyInfo info) {
         return clientObjectFactory.getHomeHandle(info);
     }
 
     @Override
-    public javax.ejb.EJBObject getEJBObject(final ProxyInfo info) {
+    public jakarta.ejb.EJBObject getEJBObject(final ProxyInfo info) {
         return clientObjectFactory.getEJBObject(info);
     }
 
@@ -414,7 +414,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.EJBHome getEJBHome(final ProxyInfo info) {
+    public jakarta.ejb.EJBHome getEJBHome(final ProxyInfo info) {
         return clientObjectFactory.getEJBHome(info);
     }
 

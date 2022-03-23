@@ -177,7 +177,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                     return super.loadClass(name, resolve);
                 }
             }
-        } else if (name.startsWith("javax.faces.") || name.startsWith("org.apache.webbeans.jsf")) {
+        } else if (name.startsWith("jakarta.faces.") || name.startsWith("org.apache.webbeans.jsf")) {
             synchronized (this) {
                 delegate = false;
                 try {
@@ -462,7 +462,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             return loader == null ? Collections.<URL>emptyEnumeration() : loader.getResources(name);
         }
 
-        if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
+        if ("META-INF/services/jakarta.servlet.ServletContainerInitializer".equals(name)) {
             final Collection<URL> list = new ArrayList<>(Collections.list(super.getResources(name)));
             final Iterator<URL> it = list.iterator();
             while (it.hasNext()) {
@@ -474,7 +474,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             }
             return Collections.enumeration(list);
         }
-        if ("META-INF/services/javax.websocket.ContainerProvider".equals(name)) {
+        if ("META-INF/services/jakarta.websocket.ContainerProvider".equals(name)) {
             final Collection<URL> list = new ArrayList<>(Collections.list(super.getResources(name)));
             final Iterator<URL> it = list.iterator();
             while (it.hasNext()) {

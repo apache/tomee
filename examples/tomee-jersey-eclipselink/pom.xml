@@ -20,20 +20,20 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>tomee-jersey-eclipselink</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: TomEE, Jersey, Eclipselink</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.eclipselink>2.7.7</version.eclipselink>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
     <arquillian_universe.version>1.2.0.1</arquillian_universe.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.1-M1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -62,7 +62,7 @@
       <version>1.12</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.ws.rs</groupId>
+          <groupId>jakarta.ws.rs</groupId>
           <artifactId>jsr311-api</artifactId>
         </exclusion>
         <exclusion>
@@ -74,7 +74,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>
@@ -139,11 +139,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.11-SNAPSHOT</version>
+        <version>9.0.0-M8-SNAPSHOT</version>
         <configuration>
           <systemVariables>
             <com.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager>true</com.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager>

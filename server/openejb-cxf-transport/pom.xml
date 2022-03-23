@@ -19,7 +19,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -38,7 +38,7 @@
       <exclusions>
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-xjc</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.activation</groupId>
@@ -46,23 +46,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -70,33 +54,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-management</artifactId>
-      <version>${cxf.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 </project>

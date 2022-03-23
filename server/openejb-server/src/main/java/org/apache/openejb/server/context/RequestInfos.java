@@ -19,7 +19,7 @@ package org.apache.openejb.server.context;
 import org.apache.openejb.server.stream.CountingInputStream;
 import org.apache.openejb.server.stream.CountingOutputStream;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;

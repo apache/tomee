@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.cmp;
 
-public interface MyLocalObject extends javax.ejb.EJBLocalObject {
+public interface MyLocalObject extends jakarta.ejb.EJBLocalObject {
 
     public void doit();
 

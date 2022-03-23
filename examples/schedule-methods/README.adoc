@@ -12,11 +12,11 @@ right to edit this page._
 ----
 package org.superbiz.corn;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Schedule;
-import javax.ejb.Schedules;
-import javax.ejb.Singleton;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Schedules;
+import jakarta.ejb.Singleton;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -65,7 +65,7 @@ package org.superbiz.corn;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -101,7 +101,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/schedule-methods
 INFO - openejb.base = /Users/dblevins/examples/schedule-methods
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/schedule-methods/target/classes

@@ -27,8 +27,8 @@ import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.util.Properties;
 
 // just a sample showing how to implement a datasourcecreator

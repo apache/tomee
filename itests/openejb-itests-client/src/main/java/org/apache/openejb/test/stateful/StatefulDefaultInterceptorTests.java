@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateful;
 
-// import javax.ejb.EJB;
+// import jakarta.ejb.EJB;
 
 // public class StatelessInterceptorTests extends AnnotatedFieldInjectionStatelessLocalTestClient {
 public class StatefulDefaultInterceptorTests extends BasicStatefulLocalTestClient {

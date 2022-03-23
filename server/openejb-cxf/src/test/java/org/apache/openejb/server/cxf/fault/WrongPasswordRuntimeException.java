@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.cxf.fault;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 /**
  * @version $Rev$

@@ -31,10 +31,10 @@ import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

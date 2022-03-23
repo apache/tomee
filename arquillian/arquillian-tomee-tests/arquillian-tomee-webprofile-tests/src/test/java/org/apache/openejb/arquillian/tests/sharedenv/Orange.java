@@ -17,9 +17,9 @@
 
 package org.apache.openejb.arquillian.tests.sharedenv;
 
-import javax.annotation.Resource;
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Singleton;
 
 
 @Singleton

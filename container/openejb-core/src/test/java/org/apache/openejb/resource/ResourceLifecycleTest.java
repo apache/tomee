@@ -26,9 +26,9 @@ import org.junit.runner.RunWith;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

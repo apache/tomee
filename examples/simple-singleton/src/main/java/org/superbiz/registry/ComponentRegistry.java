@@ -16,15 +16,15 @@
  */
 package org.superbiz.registry;
 
-import javax.ejb.Lock;
-import javax.ejb.Singleton;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
+import static jakarta.ejb.LockType.READ;
+import static jakarta.ejb.LockType.WRITE;
 
 @Singleton
 @Lock(READ)

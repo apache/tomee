@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.entity.bmp;
 
-import javax.ejb.EJBMetaData;
-import javax.ejb.ObjectNotFoundException;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.ObjectNotFoundException;
 
 /**
  * [3] Should be run as the third test suite of the BasicBmpTestClients

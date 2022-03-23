@@ -19,9 +19,9 @@ package org.apache.openejb.threads.impl;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.threads.task.CUTask;
 
-import javax.enterprise.concurrent.ContextService;
-import javax.enterprise.concurrent.ManagedTask;
-import javax.transaction.Transaction;
+import jakarta.enterprise.concurrent.ContextService;
+import jakarta.enterprise.concurrent.ManagedTask;
+import jakarta.transaction.Transaction;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

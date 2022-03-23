@@ -17,7 +17,7 @@
 
 package org.apache.openejb.junit.ejbs;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 @Local
 public interface BasicEjbLocal {

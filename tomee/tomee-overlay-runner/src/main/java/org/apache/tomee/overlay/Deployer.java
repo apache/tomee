@@ -21,7 +21,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 // mainly to avoid classloading issue since TomcatWebAppBuilder is added on the fly to tomcat classloader
 public final class Deployer {

@@ -33,8 +33,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;

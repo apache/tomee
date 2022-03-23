@@ -29,7 +29,7 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,11 +129,11 @@ public class AutoConfigResourceRefsTest extends TestCase {
     public static class WidgetBean implements Widget {
 
         @Resource
-        javax.jms.Queue redQueue;
+        jakarta.jms.Queue redQueue;
         @Resource
-        javax.jms.Queue blueQueue;
+        jakarta.jms.Queue blueQueue;
         @Resource
-        javax.jms.Queue greenQueue;
+        jakarta.jms.Queue greenQueue;
 
         @Resource
         javax.sql.DataSource yellowDataSource;

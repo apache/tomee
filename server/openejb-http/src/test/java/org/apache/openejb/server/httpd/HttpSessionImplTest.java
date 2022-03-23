@@ -26,8 +26,8 @@ import org.junit.Test;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,7 +45,7 @@ public class HttpSessionImplTest {
     @Test
     public void run() throws URISyntaxException {
         final HttpRequest req = new HttpRequestImpl(new URI("http://localhost:1234/foo"));
-        final javax.servlet.http.HttpSession session = req.getSession();
+        final jakarta.servlet.http.HttpSession session = req.getSession();
         Reflections.set(session, "listeners", Collections.<Object>singletonList(new HttpSessionListener() {
             private int count = 0;
 

@@ -31,7 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
@@ -64,7 +64,7 @@ public class ApplicationFromWebXmlTest {
         return new WebApp()
             .contextRoot("foo")
             .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "javax.ws.rs.Application", XmlApplication.class.getName())
+            .addInitParam("REST Application", "jakarta.ws.rs.Application", XmlApplication.class.getName())
             .addServletMapping("REST Application", "/bar/*");
     }
 

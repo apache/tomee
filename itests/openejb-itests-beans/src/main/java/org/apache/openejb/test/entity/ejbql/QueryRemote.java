@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 public interface QueryRemote extends EJBObject {
 }

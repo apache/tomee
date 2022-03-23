@@ -46,7 +46,7 @@ import org.apache.openejb.config.rules.ValidationBase;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 
-import javax.enterprise.inject.spi.DefinitionException;
+import jakarta.enterprise.inject.spi.DefinitionException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.jee.wls;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * @version $Rev$ $Date$

@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -44,17 +44,6 @@
       <groupId>com.sun.activation</groupId>
       <artifactId>jakarta.activation</artifactId>
       <version>1.2.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>2.3.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -76,7 +65,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>2.3.9</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -152,8 +141,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.1-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -165,6 +154,17 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>mbean-annotation-api</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

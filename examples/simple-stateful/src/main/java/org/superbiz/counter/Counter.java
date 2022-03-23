@@ -16,7 +16,7 @@
  */
 package org.superbiz.counter;
 
-import javax.ejb.Stateful;
+import jakarta.ejb.Stateful;
 
 /**
  * This is an EJB 3 style pojo stateful session bean

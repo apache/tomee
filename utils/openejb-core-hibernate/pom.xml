@@ -23,7 +23,7 @@
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-core-hibernate</artifactId>
@@ -40,16 +40,8 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openjpa</groupId>
-          <artifactId>openjpa</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.bval</groupId>
-          <artifactId>bval-jsr</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-jdk14</artifactId>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -58,11 +50,11 @@
       <artifactId>hibernate-entitymanager</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.hibernate.javax.persistence</groupId>
+          <groupId>org.hibernate.jakarta.persistence</groupId>
           <artifactId>hibernate-jpa-2.0-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.jboss.spec.javax.transaction</groupId>
+          <groupId>org.jboss.spec.jakarta.transaction</groupId>
           <artifactId>jboss-transaction-api_1.1_spec</artifactId>
         </exclusion>
         <exclusion>
@@ -76,7 +68,7 @@
       <artifactId>hibernate-validator</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>javax.validation</groupId>
+          <groupId>jakarta.validation</groupId>
           <artifactId>validation-api</artifactId>
         </exclusion>
         <exclusion>

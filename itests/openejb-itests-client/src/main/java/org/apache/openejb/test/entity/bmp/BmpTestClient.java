@@ -18,9 +18,9 @@ package org.apache.openejb.test.entity.bmp;
 
 import org.apache.openejb.test.TestManager;
 
-import javax.ejb.EJBMetaData;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 import javax.naming.InitialContext;
 import java.util.Properties;
 

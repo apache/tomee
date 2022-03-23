@@ -27,7 +27,7 @@ import org.apache.openejb.util.reflection.Reflections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.jms.JMSConnectionFactoryDefinition;
+import jakarta.jms.JMSConnectionFactoryDefinition;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.util.List;

@@ -75,7 +75,7 @@ fi
 #echo OPENEJB_HOME = $OPENEJB_HOME
 
 OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar"
-OPENEJB_JAVAEE_JAR=$(echo "$OPENEJB_HOME"/lib/javaee-api*)
+OPENEJB_JAVAEE_JAR=$(echo "$OPENEJB_HOME"/lib/jakartaee-api*)
 OPENEJB_CP="$OPENEJB_CORE_JAR:$OPENEJB_JAVAEE_JAR"
 OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 

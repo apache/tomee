@@ -24,7 +24,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.IAnnotationFinder;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
@@ -78,13 +78,13 @@ public class CheckAnnotations extends ValidationBase {
 
             final List<Annotation> declaredAnnotations = Arrays.asList(annotations);
             for (final Annotation declaredAnn : declaredAnnotations) {
-                if (declaredAnn.annotationType().getName().equals("javax.ejb.Stateful")) {
+                if (declaredAnn.annotationType().getName().equals("jakarta.ejb.Stateful")) {
                     warn(component, "annotation.invalid.stateful.webservice", clazz.getName());
                 }
-                if (declaredAnn.annotationType().getName().equals("javax.annotation.ManagedBean")) {
+                if (declaredAnn.annotationType().getName().equals("jakarta.annotation.ManagedBean")) {
                     warn(component, "annotation.invalid.managedbean.webservice", clazz.getName());
                 }
-                if (declaredAnn.annotationType().getName().equals("javax.ejb.MessageDriven")) {
+                if (declaredAnn.annotationType().getName().equals("jakarta.ejb.MessageDriven")) {
                     warn(component, "annotation.invalid.messagedriven.webservice", clazz.getName());
                 }
 

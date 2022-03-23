@@ -18,17 +18,17 @@ package org.apache.openejb.client;
 
 import org.apache.openejb.client.proxy.InvocationHandler;
 
-import javax.ejb.AccessLocalException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.TransactionRequiredLocalException;
-import javax.ejb.TransactionRolledbackLocalException;
-import javax.transaction.TransactionRequiredException;
-import javax.transaction.TransactionRolledbackException;
+import jakarta.ejb.AccessLocalException;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EJBTransactionRolledbackException;
+import jakarta.ejb.NoSuchEJBException;
+import jakarta.ejb.TransactionRequiredLocalException;
+import jakarta.ejb.TransactionRolledbackLocalException;
+import jakarta.transaction.TransactionRequiredException;
+import jakarta.transaction.TransactionRolledbackException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -241,7 +241,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
             /**
              * If a client attempts to invoke a method on a removed bean's business interface,
-             * we must throw a javax.ejb.NoSuchEJBException. If the business interface is a
+             * we must throw a jakarta.ejb.NoSuchEJBException. If the business interface is a
              * remote business interface that extends java.rmi.Remote, the
              * java.rmi.NoSuchObjectException is thrown to the client instead.
              * See EJB 3.0, section 4.4

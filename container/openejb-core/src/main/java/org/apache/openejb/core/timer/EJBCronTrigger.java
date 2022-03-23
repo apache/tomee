@@ -21,7 +21,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.quartz.impl.triggers.CronTriggerImpl;
 
-import javax.ejb.ScheduleExpression;
+import jakarta.ejb.ScheduleExpression;
 import java.io.Serializable;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;

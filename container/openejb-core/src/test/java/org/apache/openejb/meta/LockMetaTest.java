@@ -18,8 +18,8 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

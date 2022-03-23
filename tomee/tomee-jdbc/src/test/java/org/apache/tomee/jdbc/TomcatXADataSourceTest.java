@@ -29,14 +29,14 @@ import org.hsqldb.jdbc.pool.JDBCXADataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 import javax.sql.ConnectionEventListener;
 import javax.sql.DataSource;
 import javax.sql.StatementEventListener;
 import javax.sql.XAConnection;
-import javax.transaction.Synchronization;
+import jakarta.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 import java.sql.Connection;
 import java.sql.SQLException;

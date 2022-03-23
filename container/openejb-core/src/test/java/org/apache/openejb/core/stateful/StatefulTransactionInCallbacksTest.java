@@ -26,14 +26,14 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.Remove;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.Remove;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

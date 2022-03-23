@@ -24,9 +24,9 @@ import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
+import jakarta.ejb.Local;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
 
 @RunWith(ValidationRunner.class)
 public class LocalBeanAnnotatedLocalTest {

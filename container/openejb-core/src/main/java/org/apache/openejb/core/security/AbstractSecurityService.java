@@ -34,12 +34,12 @@ import org.apache.openejb.util.Logger;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
-import javax.security.jacc.EJBMethodPermission;
-import javax.security.jacc.PolicyConfigurationFactory;
-import javax.security.jacc.PolicyContext;
-import javax.security.jacc.PolicyContextException;
-import javax.security.jacc.PolicyContextHandler;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.security.jacc.EJBMethodPermission;
+import jakarta.security.jacc.PolicyConfigurationFactory;
+import jakarta.security.jacc.PolicyContext;
+import jakarta.security.jacc.PolicyContextException;
+import jakarta.security.jacc.PolicyContextHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
@@ -74,7 +74,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
     protected static final String KEY_SUBJECT = "javax.security.auth.Subject.container";
-    protected static final String KEY_REQUEST = "javax.servlet.http.HttpServletRequest";
+    protected static final String KEY_REQUEST = "jakarta.servlet.http.HttpServletRequest";
     protected static final Set<String> KEYS = new HashSet<>(asList(KEY_REQUEST, KEY_SUBJECT));
 
     private static final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
@@ -402,7 +402,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     protected static void installJacc() {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
-        final String providerKey = "javax.security.jacc.PolicyConfigurationFactory.provider";
+        final String providerKey = "jakarta.security.jacc.PolicyConfigurationFactory.provider";
         try {
             if (JavaSecurityManagers.getSystemProperty(providerKey) == null) {
                 JavaSecurityManagers.setSystemProperty(providerKey, JaccProvider.Factory.class.getName());
@@ -410,7 +410,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
                 Thread.currentThread().setContextClassLoader(cl);
             }
 
-            // Force the loading of the javax.security.jacc.PolicyConfigurationFactory.provider
+            // Force the loading of the jakarta.security.jacc.PolicyConfigurationFactory.provider
             // Hopefully it will be cached thereafter and ClassNotFoundExceptions thrown
             // from the equivalent call in JaccPermissionsBuilder can be avoided.
             PolicyConfigurationFactory.getPolicyConfigurationFactory();
@@ -421,7 +421,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         }
 
         // check the system provided provider first - if for some reason it isn't loaded, load it
-        final String systemPolicyProvider = SystemInstance.get().getOptions().getProperties().getProperty("javax.security.jacc.policy.provider");
+        final String systemPolicyProvider = SystemInstance.get().getOptions().getProperties().getProperty("jakarta.security.jacc.policy.provider");
         if (systemPolicyProvider != null && Policy.getPolicy() == null) {
             installPolicy(systemPolicyProvider);
         }

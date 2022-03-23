@@ -23,11 +23,11 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MVC (CXF-based) with Hibernate</name>
   <description>OpenEJB :: Web Examples :: MVC 1.0 - Deltaspike - Hibernate</description>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
     <version.deltaspike>1.9.3</version.deltaspike>
     <version.krazo>1.1.0-M1</version.krazo>
     <version.arquillian>1.1.13.Final</version.arquillian>
@@ -49,11 +49,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.11-SNAPSHOT</version>
+        <version>9.0.0-M8-SNAPSHOT</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
           <libs>
@@ -102,8 +105,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.1-M1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -194,7 +197,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

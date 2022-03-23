@@ -17,10 +17,10 @@
 
 package org.apache.openejb.arquillian.tests.listenerremote;
 
-import javax.ejb.EJB;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.ejb.EJB;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 
 public class RemoteServletSessionListener implements HttpSessionListener {

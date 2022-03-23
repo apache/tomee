@@ -26,9 +26,9 @@ import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.RemoveException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;

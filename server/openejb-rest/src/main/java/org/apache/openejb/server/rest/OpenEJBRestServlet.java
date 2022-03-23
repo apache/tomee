@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.rest;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 
 /**
  * Nothing to do, cf AnnotationDeployer.deploy().

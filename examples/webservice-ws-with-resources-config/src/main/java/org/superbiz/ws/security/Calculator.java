@@ -16,7 +16,7 @@
  */
 package org.superbiz.ws.security;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService
 public interface Calculator {

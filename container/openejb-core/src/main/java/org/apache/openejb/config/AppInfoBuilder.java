@@ -98,7 +98,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -744,10 +744,10 @@ class AppInfoBuilder {
         public static final String OPENJPA_SEQUENCE = "openjpa.Sequence";
         public static final String PREFIX_SEQUENCE = "org.apache.openejb.openjpa.PrefixTableJdbcSeq";
 
-        public static final String PROVIDER_PROP = "javax.persistence.provider";
-        public static final String TRANSACTIONTYPE_PROP = "javax.persistence.transactionType";
-        public static final String JTADATASOURCE_PROP = "javax.persistence.jtaDataSource";
-        public static final String NON_JTADATASOURCE_PROP = "javax.persistence.nonJtaDataSource";
+        public static final String PROVIDER_PROP = "jakarta.persistence.provider";
+        public static final String TRANSACTIONTYPE_PROP = "jakarta.persistence.transactionType";
+        public static final String JTADATASOURCE_PROP = "jakarta.persistence.jtaDataSource";
+        public static final String NON_JTADATASOURCE_PROP = "jakarta.persistence.nonJtaDataSource";
         private static final String DEFAULT_PERSISTENCE_PROVIDER = PersistenceBootstrap.DEFAULT_PROVIDER;
         public static final String FORCE_PROVIDER_ENV = "openejb.jpa.force." + PROVIDER_PROP;
 
@@ -943,7 +943,7 @@ class AppInfoBuilder {
             // Apply the overrides that apply to just this persistence unit
             override(appModule.getProperties(), info);
 
-            for (final String key : asList("javax.persistence.jtaDataSource", "javax.persistence.nonJtaDataSource")) {
+            for (final String key : asList("jakarta.persistence.jtaDataSource", "jakarta.persistence.nonJtaDataSource")) {
                 final String ds = info.properties.getProperty(key);
                 if (ds != null && !ds.contains(":") /* java:, openejb:, other: namespace */ ) {
                     info.properties.setProperty(key, "java:openejb/Resource/" + ds);

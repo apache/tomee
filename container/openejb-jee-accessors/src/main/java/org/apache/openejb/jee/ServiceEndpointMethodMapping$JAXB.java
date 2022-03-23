@@ -25,7 +25,7 @@ import org.metatype.sxc.util.XoXMLStreamWriter;
 import org.w3c.dom.Element;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;

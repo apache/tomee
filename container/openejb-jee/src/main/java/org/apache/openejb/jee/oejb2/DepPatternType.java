@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.jee.oejb2;
 
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for patternType complex type.

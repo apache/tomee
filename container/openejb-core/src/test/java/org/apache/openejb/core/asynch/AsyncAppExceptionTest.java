@@ -24,10 +24,10 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import javax.ejb.ApplicationException;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.ejb.ApplicationException;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

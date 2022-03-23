@@ -24,8 +24,8 @@ import org.apache.catalina.valves.ValveBase;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;

@@ -32,9 +32,9 @@ import org.jboss.testharness.impl.packaging.ear.PersistenceXml;
 import org.jboss.testharness.impl.packaging.jsr303.ValidationXml;
 import org.jboss.testharness.spi.Containers;
 
-import javax.ejb.EJBException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.validation.ValidationException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.validation.ValidationException;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;

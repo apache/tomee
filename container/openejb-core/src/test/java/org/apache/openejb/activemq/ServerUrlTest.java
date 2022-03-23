@@ -25,13 +25,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.resource.ResourceException;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.resource.ResourceException;
 import java.util.Properties;
 
 @SimpleLog
@@ -48,7 +48,7 @@ public class ServerUrlTest {
                 .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
                 .p("amq.BrokerXmlConfig", "broker:(vm://broker)?useJmx=true")
                 .p("amq.ServerUrl", "vm://broker")
-                .p("amqcf", "new://Resource?type=javax.jms.ConnectionFactory")
+                .p("amqcf", "new://Resource?type=jakarta.jms.ConnectionFactory")
                 .p("amqcf.ResourceAdapter", "amq")
 
                 .build();

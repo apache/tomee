@@ -12,8 +12,8 @@ Usable by EJB, Interceptor, Servlet, Filter, or Listener
 ----
 package org.superbiz.refs;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 
 @Stateless

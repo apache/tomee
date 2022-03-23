@@ -18,7 +18,7 @@ package org.superbiz.model;
 
 import java.io.Serializable;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import javax.mvc.RedirectScoped;
 
 @Named("message")

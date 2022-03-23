@@ -21,10 +21,10 @@ The test case shows how to interact with CXF API in order to configure the clien
 ----
 package org.superbiz.calculator;
 
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
@@ -60,7 +60,7 @@ public class CalculatorImpl implements CalculatorWs {
 ----
 package org.superbiz.calculator;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 //START SNIPPET: code
 /**
@@ -132,8 +132,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
 import junit.framework.TestCase;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.frontend.ClientProxy;

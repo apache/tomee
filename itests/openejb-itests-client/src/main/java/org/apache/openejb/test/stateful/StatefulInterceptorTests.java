@@ -19,7 +19,7 @@ package org.apache.openejb.test.stateful;
 import java.util.ArrayList;
 import java.util.Map;
 
-// import javax.ejb.EJB;
+// import jakarta.ejb.EJB;
 
 // public class StatefulInterceptorTests extends AnnotatedFieldInjectionStatefulLocalTestClient {
 public class StatefulInterceptorTests extends BasicStatefulLocalTestClient {

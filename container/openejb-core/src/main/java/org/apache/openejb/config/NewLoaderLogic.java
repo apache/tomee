@@ -87,7 +87,7 @@ public class NewLoaderLogic {
     }
 
     public static Set<String> callers() {
-        return callers(Filters.classes("javax.ejb.embeddable.EJBContainer", "javax.naming.InitialContext"));
+        return callers(Filters.classes("jakarta.ejb.embeddable.EJBContainer", "javax.naming.InitialContext"));
     }
 
     public static Set<String> callers(final Filter start) {

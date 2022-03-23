@@ -18,9 +18,9 @@ package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.activemq.command.ActiveMQMapMessage;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.MessageFormatException;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.MessageFormatException;
 import java.util.Enumeration;
 import java.util.Map;
 

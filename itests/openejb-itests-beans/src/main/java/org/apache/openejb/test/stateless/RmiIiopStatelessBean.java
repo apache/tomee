@@ -18,18 +18,18 @@ package org.apache.openejb.test.stateless;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
-import javax.ejb.SessionContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 
 import org.apache.openejb.test.object.ObjectGraph;
 import org.apache.openejb.test.object.Color;
 
-public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
+public class RmiIiopStatelessBean implements jakarta.ejb.SessionBean {
 
     private String name;
     private SessionContext ejbContext;
@@ -227,7 +227,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
         return data;
     }
 
-    public EJBHome returnEJBHome() throws javax.ejb.EJBException {
+    public EJBHome returnEJBHome() throws jakarta.ejb.EJBException {
         EJBHome data = null;
 
         try {
@@ -237,12 +237,12 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBHome() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBHome() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -252,7 +252,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -269,7 +269,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
         return data;
     }
 
-    public EJBObject returnEJBObject() throws javax.ejb.EJBException {
+    public EJBObject returnEJBObject() throws jakarta.ejb.EJBException {
         EncStatelessObject data = null;
 
         try {
@@ -279,12 +279,12 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
             data = home.create();
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBObject() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBObject() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -295,7 +295,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -312,7 +312,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
         return data;
     }
 
-    public EJBMetaData returnEJBMetaData() throws javax.ejb.EJBException {
+    public EJBMetaData returnEJBMetaData() throws jakarta.ejb.EJBException {
         EJBMetaData data = null;
 
         try {
@@ -322,12 +322,12 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
             data = home.getEJBMetaData();
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBMetaData() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBMetaData() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -338,7 +338,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -355,7 +355,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
         return data;
     }
 
-    public Handle returnHandle() throws javax.ejb.EJBException {
+    public Handle returnHandle() throws jakarta.ejb.EJBException {
         Handle data = null;
 
         try {
@@ -366,12 +366,12 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
             data = object.getHandle();
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedHandle() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedHandle() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -382,7 +382,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
             data = new ObjectGraph(object.getHandle());
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -460,9 +460,9 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean {
     }
 
     /**
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      */
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void ejbCreate() throws jakarta.ejb.CreateException {
         this.name = "nameless automaton";
     }
 

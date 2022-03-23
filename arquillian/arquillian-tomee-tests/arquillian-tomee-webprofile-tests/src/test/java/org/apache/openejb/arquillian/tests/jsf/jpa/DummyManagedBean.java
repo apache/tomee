@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.arquillian.tests.jsf.jpa;
 
-import javax.faces.bean.ManagedBean;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 
 @ManagedBean
 public class DummyManagedBean {

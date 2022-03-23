@@ -20,10 +20,10 @@ import junit.framework.TestCase;
 import org.superbiz.injection.secure.api.RunAsEmployee;
 import org.superbiz.injection.secure.api.RunAsManager;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
-import javax.ejb.Stateless;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;

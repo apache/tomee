@@ -25,12 +25,12 @@ import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.AroundTimeout;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.AroundTimeout;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import java.util.List;
 
 @RunWith(ValidationRunner.class)

@@ -16,7 +16,7 @@
  */
 package org.superbiz.interceptors;
 
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.InvocationContext;
 import java.util.ArrayList;
 import java.util.List;
 

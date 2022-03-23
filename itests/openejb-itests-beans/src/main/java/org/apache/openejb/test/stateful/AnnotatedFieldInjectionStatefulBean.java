@@ -23,26 +23,26 @@ import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 import org.apache.openejb.test.stateless.BasicStatelessPojoBean;
 import org.apache.openejb.test.TestFailureException;
 
-import javax.ejb.RemoteHome;
-import javax.ejb.Stateless;
-import javax.ejb.SessionContext;
-import javax.ejb.EJB;
-import javax.ejb.CreateException;
-import javax.ejb.Init;
-import javax.ejb.Remove;
-import javax.annotation.Resource;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.EJB;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.Init;
+import jakarta.ejb.Remove;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
-import javax.jms.ConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.JMSException;
 
 import org.junit.Assert;
 import junit.framework.AssertionFailedError;
@@ -298,7 +298,7 @@ public class AnnotatedFieldInjectionStatefulBean {
         }
     }
 
-    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+    private void testJmsConnection(final jakarta.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
         final MessageProducer producer = session.createProducer(topic);

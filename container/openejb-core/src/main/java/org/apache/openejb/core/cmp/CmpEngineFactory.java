@@ -19,8 +19,8 @@ package org.apache.openejb.core.cmp;
 
 import org.apache.openejb.OpenEJBException;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 public interface CmpEngineFactory {
 

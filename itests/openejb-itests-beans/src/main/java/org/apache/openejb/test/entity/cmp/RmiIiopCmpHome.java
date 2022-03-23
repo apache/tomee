@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-public interface RmiIiopCmpHome extends javax.ejb.EJBHome {
+public interface RmiIiopCmpHome extends jakarta.ejb.EJBHome {
 
     public RmiIiopCmpObject create(String name)
-        throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 
     public RmiIiopCmpObject findByPrimaryKey(Integer primarykey)
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
 }

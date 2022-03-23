@@ -25,22 +25,22 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.reflection.Reflections;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.FlushModeType;
-import javax.persistence.LockModeType;
-import javax.persistence.Query;
-import javax.persistence.StoredProcedureQuery;
-import javax.persistence.SynchronizationType;
-import javax.persistence.TransactionRequiredException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.Query;
+import jakarta.persistence.StoredProcedureQuery;
+import jakarta.persistence.SynchronizationType;
+import jakarta.persistence.TransactionRequiredException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.metamodel.Metamodel;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -422,7 +422,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
 
     // JPA 2.0
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#createNamedQuery(java.lang.String, java.lang.Class)
+     * @see jakarta.persistence.EntityManager#createNamedQuery(java.lang.String, java.lang.Class)
      */
     public <T> TypedQuery<T> createNamedQuery(final String name, final Class<T> resultClass) {
         final Timer timer = Op.createNamedQuery.start(this.timer, this);
@@ -434,7 +434,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#createQuery(javax.persistence.criteria.CriteriaQuery)
+     * @see jakarta.persistence.EntityManager#createQuery(jakarta.persistence.criteria.CriteriaQuery)
      */
     public <T> TypedQuery<T> createQuery(final CriteriaQuery<T> criteriaQuery) {
         final Timer timer = Op.createQuery.start(this.timer, this);
@@ -446,7 +446,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#createQuery(java.lang.String, java.lang.Class)
+     * @see jakarta.persistence.EntityManager#createQuery(java.lang.String, java.lang.Class)
      */
     public <T> TypedQuery<T> createQuery(final String qlString, final Class<T> resultClass) {
         final Timer timer = Op.createQuery.start(this.timer, this);
@@ -458,7 +458,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#detach(java.lang.Object)
+     * @see jakarta.persistence.EntityManager#detach(java.lang.Object)
      */
     public void detach(final Object entity) {
         final Timer timer = Op.detach.start(this.timer, this);
@@ -472,7 +472,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, java.util.Map)
+     * @see jakarta.persistence.EntityManager#find(java.lang.Class, java.lang.Object, java.util.Map)
      */
     public <T> T find(final Class<T> entityClass, final Object primaryKey, final Map<String, Object> properties) {
         final EntityManager entityManager = getEntityManager();
@@ -489,7 +489,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, javax.persistence.LockModeType)
+     * @see jakarta.persistence.EntityManager#find(java.lang.Class, java.lang.Object, jakarta.persistence.LockModeType)
      */
     public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode) {
         final EntityManager entityManager = getEntityManager();
@@ -506,7 +506,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object, javax.persistence.LockModeType, java.util.Map)
+     * @see jakarta.persistence.EntityManager#find(java.lang.Class, java.lang.Object, jakarta.persistence.LockModeType, java.util.Map)
      */
     public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode, final Map<String, Object> properties) {
         final EntityManager entityManager = getEntityManager();
@@ -523,14 +523,14 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#getEntityManagerFactory()
+     * @see jakarta.persistence.EntityManager#getEntityManagerFactory()
      */
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#getLockMode(java.lang.Object)
+     * @see jakarta.persistence.EntityManager#getLockMode(java.lang.Object)
      */
     public LockModeType getLockMode(final Object entity) {
         assertTransactionActive();
@@ -543,7 +543,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#getMetamodel()
+     * @see jakarta.persistence.EntityManager#getMetamodel()
      */
     public Metamodel getMetamodel() {
         final EntityManager entityManager = getEntityManager();
@@ -560,7 +560,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#getProperties()
+     * @see jakarta.persistence.EntityManager#getProperties()
      */
     public Map<String, Object> getProperties() {
         final EntityManager entityManager = getEntityManager();
@@ -577,7 +577,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#getCriteriaBuilder()
+     * @see jakarta.persistence.EntityManager#getCriteriaBuilder()
      */
     public CriteriaBuilder getCriteriaBuilder() {
         final EntityManager entityManager = getEntityManager();
@@ -594,7 +594,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#lock(java.lang.Object, javax.persistence.LockModeType, java.util.Map)
+     * @see jakarta.persistence.EntityManager#lock(java.lang.Object, jakarta.persistence.LockModeType, java.util.Map)
      */
     public void lock(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
         assertTransactionActive();
@@ -607,7 +607,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#refresh(java.lang.Object, java.util.Map)
+     * @see jakarta.persistence.EntityManager#refresh(java.lang.Object, java.util.Map)
      */
     public void refresh(final Object entity, final Map<String, Object> properties) {
         assertTransactionActive();
@@ -620,7 +620,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#refresh(java.lang.Object, javax.persistence.LockModeType)
+     * @see jakarta.persistence.EntityManager#refresh(java.lang.Object, jakarta.persistence.LockModeType)
      */
     public void refresh(final Object entity, final LockModeType lockMode) {
         assertTransactionActive();
@@ -633,7 +633,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#refresh(java.lang.Object, javax.persistence.LockModeType, java.util.Map)
+     * @see jakarta.persistence.EntityManager#refresh(java.lang.Object, jakarta.persistence.LockModeType, java.util.Map)
      */
     public void refresh(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
         assertTransactionActive();
@@ -646,7 +646,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#setProperty(java.lang.String, java.lang.Object)
+     * @see jakarta.persistence.EntityManager#setProperty(java.lang.String, java.lang.Object)
      */
     public void setProperty(final String name, final Object value) {
         final EntityManager entityManager = getEntityManager();
@@ -663,7 +663,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see javax.persistence.EntityManager#unwrap(java.lang.Class)
+     * @see jakarta.persistence.EntityManager#unwrap(java.lang.Class)
      */
     public <T> T unwrap(final Class<T> cls) {
         return getEntityManager().unwrap(cls);

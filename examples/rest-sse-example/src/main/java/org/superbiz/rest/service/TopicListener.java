@@ -16,15 +16,15 @@
  */
 package org.superbiz.rest.service;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "EVENT"),
 })
 public class TopicListener implements MessageListener {

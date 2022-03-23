@@ -36,7 +36,7 @@ import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 
 /**

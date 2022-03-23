@@ -17,7 +17,7 @@
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
 import java.util.Collection;
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 
 public interface LocalActor extends EJBLocalObject {

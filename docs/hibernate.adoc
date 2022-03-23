@@ -63,7 +63,7 @@ deployed with your app.
 ----
 import org.hibernate.HibernateException;
 import org.hibernate.transaction.TransactionManagerLookup;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.util.Properties;
 
 public class DynamicTransactionManagerLookup implements TransactionManagerLookup {

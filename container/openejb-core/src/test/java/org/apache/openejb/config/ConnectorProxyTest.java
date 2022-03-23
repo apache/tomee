@@ -30,26 +30,26 @@ import org.junit.runner.RunWith;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.ConnectionMetaData;
-import javax.resource.cci.ConnectionSpec;
-import javax.resource.cci.Interaction;
-import javax.resource.cci.RecordFactory;
-import javax.resource.cci.ResourceAdapterMetaData;
-import javax.resource.cci.ResultSetInfo;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionEventListener;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.LocalTransaction;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ManagedConnectionMetaData;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.Connection;
+import jakarta.resource.cci.ConnectionFactory;
+import jakarta.resource.cci.ConnectionMetaData;
+import jakarta.resource.cci.ConnectionSpec;
+import jakarta.resource.cci.Interaction;
+import jakarta.resource.cci.RecordFactory;
+import jakarta.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.cci.ResultSetInfo;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.ConnectionEventListener;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.LocalTransaction;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.spi.ResourceAdapterInternalException;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 import java.io.PrintWriter;
@@ -99,7 +99,7 @@ public class ConnectorProxyTest {
         assertEquals("yes", myCon.specific());
     }
 
-    public static class MyRa implements javax.resource.spi.ResourceAdapter {
+    public static class MyRa implements jakarta.resource.spi.ResourceAdapter {
         @Override
         public void start(final BootstrapContext ctx) throws ResourceAdapterInternalException {
             // no-op
@@ -219,7 +219,7 @@ public class ConnectorProxyTest {
         }
 
         @Override
-        public javax.resource.cci.LocalTransaction getLocalTransaction() throws ResourceException {
+        public jakarta.resource.cci.LocalTransaction getLocalTransaction() throws ResourceException {
             return null;
         }
 

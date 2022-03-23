@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.FinderException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.FinderException;
 import java.util.Collection;
 
 public abstract class QueryBean implements EntityBean {

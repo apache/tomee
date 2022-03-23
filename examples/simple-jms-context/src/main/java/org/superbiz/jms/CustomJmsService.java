@@ -16,13 +16,13 @@
  */
 package org.superbiz.jms;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.jms.*;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.jms.*;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 @Stateless
 @Path("message")

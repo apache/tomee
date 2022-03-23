@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-It can sometimes be desirable to have a Java `enum` type to represent a particular column in a database. JPA supports converting database data to and from Java `enum` types via the `@javax.persistence.Enumerated` annotation.
+It can sometimes be desirable to have a Java `enum` type to represent a particular column in a database. JPA supports converting database data to and from Java `enum` types via the `@jakarta.persistence.Enumerated` annotation.
 
 This example will show basic `@Enumerated` usage in a field of an `@Entity` as well as ``enum``s as the parameter of a `Query`.  We'll also see that the actual database representation can be effectively `String` or `int`.
 
@@ -229,7 +229,7 @@ Apache OpenEJB 4.0.0-beta-2    build: 20120115-08:26
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/openejb/examples/jpa-enumerated
 INFO - openejb.base = /Users/dblevins/openejb/examples/jpa-enumerated
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)

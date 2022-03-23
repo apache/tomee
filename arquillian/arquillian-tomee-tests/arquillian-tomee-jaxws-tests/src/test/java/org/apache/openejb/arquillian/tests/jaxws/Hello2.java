@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.jaxws;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 // a copy to be sure we can deploy 2 WS (was a bug in the beta-1 because of a hardcoded name)
 @WebService(portName = "Hello2WSPort")

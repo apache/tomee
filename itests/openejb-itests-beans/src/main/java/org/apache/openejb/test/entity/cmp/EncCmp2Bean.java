@@ -28,20 +28,20 @@ import org.apache.openejb.test.stateless.BasicStatelessHome;
 import org.apache.openejb.test.stateless.BasicStatelessObject;
 import org.junit.Assert;
 
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnectionFactory;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.StringTokenizer;
 
 public abstract class EncCmp2Bean implements EntityBean {

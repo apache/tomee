@@ -114,7 +114,7 @@ not have all the data you need. This can be because of lazy loading.
 With lazy loading, data isn't pulled from the database and into the
 PersistenceContext/Cache until it is requested in code. In many cases
 the Collections of persistent objects returned from an
-javax.persistence.Query.getResultList() call are completely empty until
+jakarta.persistence.Query.getResultList() call are completely empty until
 you iterate over them. A side effect of this is that if the Collection
 becomes Detached before it's been fully read it will be permanently
 empty and of no use and calling methods on the Detached Collection can
@@ -150,10 +150,10 @@ And referenced as follows
 
 [source,java]
 ----
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceUnit;
 
 public class MyEjbOrServlet ... {
 
@@ -202,11 +202,11 @@ And referenced as follows
 
 [source,java]
 ----
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Stateless
 public class MyEjb implements MyEjbInterface {

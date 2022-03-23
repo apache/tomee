@@ -21,16 +21,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 
 import org.apache.openejb.test.object.Account;
 
-public class ContainerTxStatelessBean implements javax.ejb.SessionBean {
+public class ContainerTxStatelessBean implements jakarta.ejb.SessionBean {
 
 
     private String name;
@@ -142,9 +142,9 @@ public class ContainerTxStatelessBean implements javax.ejb.SessionBean {
     //    
 
     /**
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      */
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void ejbCreate() throws jakarta.ejb.CreateException {
         try {
             jndiContext = new InitialContext();
         } catch (final Exception e) {

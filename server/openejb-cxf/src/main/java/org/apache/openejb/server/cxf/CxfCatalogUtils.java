@@ -19,7 +19,6 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.catalog.OASISCatalogManager;
-import org.apache.xml.resolver.Catalog;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 

@@ -30,15 +30,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InterceptorBinding;
-import javax.interceptor.InvocationContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InterceptorBinding;
+import jakarta.interceptor.InvocationContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Context;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.HashSet;
@@ -74,7 +74,7 @@ public class CdiInterceptorContextTest {
         return new WebApp()
             .contextRoot("app")
             .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "javax.ws.rs.Application", PerfectApplication.class.getName());
+            .addInitParam("REST Application", "jakarta.ws.rs.Application", PerfectApplication.class.getName());
     }
 
     @Test

@@ -17,7 +17,7 @@
 
 package org.apache.openejb.core.singleton;
 
-import javax.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.context.spi.CreationalContext;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 

@@ -24,8 +24,8 @@ import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;

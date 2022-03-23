@@ -18,7 +18,7 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

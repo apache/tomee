@@ -10,7 +10,7 @@ Mantenedores SOAP são parecidos com Filtros Servlet ou Interceptadores EJB/CDI.
 Em alto nível, as etapas envolvidas são: 
 
 [arabic]
-. Crie mantenedores implementando `javax.xml.ws.handler.soap.SOAPHandler`
+. Crie mantenedores implementando `jakarta.xml.ws.handler.soap.SOAPHandler`
 . Declare e ordene-os em um arquivo xml via `<handler-chain>`
 . Associe o arquivo xml com um componente `@WebService` via `@HandlerChain`
 
@@ -93,12 +93,12 @@ antes de tentar navegar os nódulos.
 ----
 import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import jakarta.xml.soap.SOAPBody;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.soap.SOAPHandler;
+import jakarta.xml.ws.handler.soap.SOAPMessageContext;
 import java.util.Collections;
 import java.util.Set;
 
@@ -189,7 +189,7 @@ Simplesmente execute `mvn clean install` e você verá resultado semelhante o se
 Running org.superbiz.calculator.wsh.CalculatorTest
 INFO - openejb.home = /Users/dblevins/work/all/trunk/openejb/examples/webservice-handlers
 INFO - openejb.base = /Users/dblevins/work/all/trunk/openejb/examples/webservice-handlers
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

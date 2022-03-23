@@ -19,9 +19,9 @@ package org.superbiz.model;
 import java.util.Objects;
 
 import javax.mvc.binding.MvcBinding;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotEmpty;
-import javax.ws.rs.FormParam;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.ws.rs.FormParam;
 
 @Embeddable
 public class Address {

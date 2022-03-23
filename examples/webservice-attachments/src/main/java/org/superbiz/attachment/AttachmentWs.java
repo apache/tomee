@@ -16,8 +16,8 @@
  */
 package org.superbiz.attachment;
 
-import javax.activation.DataHandler;
-import javax.jws.WebService;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebService;
 
 /**
  * This is an EJB 3 webservice interface to send attachments throughout SAOP.

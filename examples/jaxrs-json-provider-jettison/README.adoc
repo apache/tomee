@@ -63,7 +63,7 @@ And finally make sure the Jettison JAR 1.3.7 is available in TomEE /lib folder.
 ----
 package org.superbiz;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 @XmlRootElement(name = "book")
 @XmlAccessorType(XmlAccessType.FIELD)

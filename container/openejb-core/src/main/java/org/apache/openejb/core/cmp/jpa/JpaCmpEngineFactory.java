@@ -22,8 +22,8 @@ import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngine;
 import org.apache.openejb.core.cmp.CmpEngineFactory;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 public class JpaCmpEngineFactory implements CmpEngineFactory {
     private TransactionManager transactionManager;

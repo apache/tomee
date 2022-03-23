@@ -29,10 +29,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
-import javax.mail.BodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.inject.Inject;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +65,7 @@ public class EMailServiceTest {
     public Properties config() {
         //Note: We can also configure this via a resource.xml or via tomee.xml
         Properties properties = new Properties();
-        properties.put("tomee/mail/mySMTP", "new://Resource?type=javax.mail.Session");
+        properties.put("tomee/mail/mySMTP", "new://Resource?type=jakarta.mail.Session");
         properties.put("tomee/mail/mySMTP.mail.debug", "false");
         properties.put("tomee/mail/mySMTP.mail.transport.protocol", "smtp");
         properties.put("tomee/mail/mySMTP.mail.smtp.host", "localhost");

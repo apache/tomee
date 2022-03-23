@@ -44,10 +44,10 @@ import org.apache.openejb.util.Pool;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.EJBContext;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.ConcurrentAccessTimeoutException;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;

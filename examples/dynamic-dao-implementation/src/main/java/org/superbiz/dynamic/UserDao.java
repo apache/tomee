@@ -16,8 +16,8 @@
  */
 package org.superbiz.dynamic;
 
-import javax.ejb.Stateless;
-import javax.persistence.PersistenceContext;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Map;
 

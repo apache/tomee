@@ -18,9 +18,9 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.webbeans.spi.ContextsService;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.spi.Context;
-import javax.servlet.ServletRequestListener;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.spi.Context;
+import jakarta.servlet.ServletRequestListener;
 
 /**
  * @deprecated this features is imo highly questionable. We should rather fix the root of the issue

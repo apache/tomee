@@ -8,13 +8,13 @@
 
 The basics are that any properties listed in the element are given
 directly to the javamail provider via
-javax.mail.Session.getDefaultInstance(Properties props).
+jakarta.mail.Session.getDefaultInstance(Properties props).
 
 Here might be some example properties.
 
 [source,xml]
 ----
-<Resource id="SuperbizMail" type="javax.mail.Session">
+<Resource id="SuperbizMail" type="jakarta.mail.Session">
    mail.smtp.host=mail.superbiz.org
    mail.smtp.port=25
    mail.transport.protocol=smtp
@@ -72,7 +72,7 @@ store.connect("imap.gmail.com", "<username>@gmail.com", "<YourAccesToken>");
 
 [source,bash]
 ----
-<Resource id="ImapSession" type="javax.mail.Session">
+<Resource id="ImapSession" type="jakarta.mail.Session">
 mail.imap.ssl.enable=true
 mail.imap.starttls.enable=true
 mail.imap.starttls.required=true

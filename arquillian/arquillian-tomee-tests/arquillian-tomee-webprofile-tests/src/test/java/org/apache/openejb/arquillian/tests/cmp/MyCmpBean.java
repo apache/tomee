@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.arquillian.tests.cmp;
 
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.LocalHome;
-import javax.ejb.RemoteHome;
-import javax.ejb.RemoveException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.RemoveException;
 
 @LocalHome(MyLocalHome.class)
 @RemoteHome(MyRemoteHome.class)

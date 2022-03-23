@@ -29,10 +29,10 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.log.RemoveLogMessage;
 import org.apache.openejb.util.URLs;
 
-import javax.faces.webapp.FacesServlet;
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.faces.webapp.FacesServlet;
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Arrays;
@@ -119,7 +119,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
                     if (servlets != null) {
                         for (final Container s : servlets) {
                             if (s instanceof Wrapper) {
-                                if ("javax.faces.webapp.FacesServlet".equals(((Wrapper) s).getServletClass())
+                                if ("jakarta.faces.webapp.FacesServlet".equals(((Wrapper) s).getServletClass())
                                         || "Faces Servlet".equals(s.getName())) {
                                     return true;
                                 }

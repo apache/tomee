@@ -48,12 +48,12 @@ public class ConvertJMSConnectionFactoryDefinitions extends BaseConvertDefinitio
     private Resource toResource(final JMSConnectionFactory factory) {
         final String name = cleanUpName(factory.getName());
 
-        final Resource factoryResource = new Resource(name, javax.jms.ConnectionFactory.class.getName());
+        final Resource factoryResource = new Resource(name, jakarta.jms.ConnectionFactory.class.getName());
 
         factoryResource.setJndi(factory.getName().replaceFirst("java:", ""));
         factoryResource.setType(
             factory.getInterfaceName() != null && !factory.getInterfaceName().isEmpty() ?
-                factory.getInterfaceName() : "javax.jms.ConnectionFactory");
+                factory.getInterfaceName() : "jakarta.jms.ConnectionFactory");
         if (factory.getClassName() != null && !factory.getClassName().isEmpty()) {
             factoryResource.setClassName(factory.getClassName());
         }

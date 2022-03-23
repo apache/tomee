@@ -16,7 +16,7 @@
  */
 package org.superbiz.ejblookup;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

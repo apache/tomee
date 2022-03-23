@@ -16,8 +16,8 @@
  */
 package org.superbiz.hello;
 
-import javax.ejb.LocalHome;
-import javax.ejb.Stateless;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.Stateless;
 
 /**
  * @version $Revision$ $Date$

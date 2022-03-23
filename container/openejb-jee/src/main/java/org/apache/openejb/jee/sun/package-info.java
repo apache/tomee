@@ -15,4 +15,4 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value = javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class, type = String.class) package org.apache.openejb.jee.sun;
+@jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value = jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter.class, type = String.class) package org.apache.openejb.jee.sun;

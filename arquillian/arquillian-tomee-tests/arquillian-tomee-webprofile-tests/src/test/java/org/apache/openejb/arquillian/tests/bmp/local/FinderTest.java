@@ -18,7 +18,7 @@ package org.apache.openejb.arquillian.tests.bmp.local;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 public interface FinderTest extends EJBLocalObject {
     String runTest() throws Exception, RemoteException;

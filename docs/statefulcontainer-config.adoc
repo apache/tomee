@@ -26,7 +26,7 @@ body are optional.
 Alternatively, a StatefulContainer can be declared via properties in the
 `<tomee-home>/conf/system.properties` file or via Java VirtualMachine
 `-D` properties. The properties can also be used when embedding TomEE
-via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
+via the `jakarta.ejb.embeddable.EJBContainer` API or `InitialContext`
 
 [source,properties]
 ----
@@ -131,13 +131,13 @@ Specifies the maximum time an invocation could wait for the `@Stateful`
 bean instance to become available before giving up.
 
 After the timeout is reached a
-`javax.ejb.ConcurrentAccessTimeoutException` will be thrown.
+`jakarta.ejb.ConcurrentAccessTimeoutException` will be thrown.
 
 Usable time units: nanoseconds, microsecons, milliseconds, seconds,
 minutes, hours, days. Or any combination such as "1 hour and 27 minutes
 and 10 seconds"
 
-Any usage of the `javax.ejb.AccessTimeout` annotation will override this
+Any usage of the `jakarta.ejb.AccessTimeout` annotation will override this
 setting for the bean or method where the annotation is used.
 
 == passivator
@@ -163,5 +163,5 @@ time-out of 5 minutes between invocations. A value of -1 would mean no
 timeout. A value of 0 would mean a bean can be immediately removed by
 the container.
 
-Any usage of the `javax.ejb.StatefulTimeout` annotation will override
+Any usage of the `jakarta.ejb.StatefulTimeout` annotation will override
 this setting for the bean where the annotation is used.

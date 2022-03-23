@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.beans;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface TimerSync {

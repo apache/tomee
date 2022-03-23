@@ -18,7 +18,7 @@
 
 package org.superbiz.model;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import java.util.List;
 
 @Local

@@ -29,8 +29,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerService;
 
 public final class Timers {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.TIMER, TimerServiceWrapper.class);

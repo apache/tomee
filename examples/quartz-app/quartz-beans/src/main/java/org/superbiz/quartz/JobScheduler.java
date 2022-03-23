@@ -16,7 +16,7 @@
  */
 package org.superbiz.quartz;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import java.util.Date;
 
 @Local

@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -55,7 +55,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.beanvalidation.tck</groupId>
+      <groupId>jakarta.validation</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <scope>test</scope>
@@ -95,7 +95,7 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.hibernate.beanvalidation.tck</groupId>
+                  <groupId>jakarta.validation</groupId>
                   <artifactId>beanvalidation-tck-tests</artifactId>
                   <version>${bval-tck.version}</version>
                   <type>jar</type>
@@ -121,9 +121,9 @@
           </execution>
         </executions>
         <configuration>
-          <packages>javax.validation,javax.validation.bootstrap,javax.validation.constraints,
-            javax.validation.constraintvalidation,javax.validation.executable,javax.validation.groups,
-            javax.validation.metadata,javax.validation.spi,javax.validation.valueextraction
+          <packages>jakarta.validation,jakarta.validation.bootstrap,jakarta.validation.constraints,
+            jakarta.validation.constraintvalidation,jakarta.validation.executable,jakarta.validation.groups,
+            jakarta.validation.metadata,jakarta.validation.spi,jakarta.validation.valueextraction
           </packages>
           <sigfile>${project.build.directory}/api-signature/validation-api-java8.sig</sigfile>
         </configuration>

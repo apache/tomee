@@ -19,11 +19,11 @@ package org.apache.openejb.core.transaction;
 
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.XATerminator;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.util.Timer;
 
 public class SimpleBootstrapContext implements BootstrapContext {

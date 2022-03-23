@@ -16,7 +16,7 @@
  */
 package org.superbiz.hello;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 /**
  * @version $Revision$ $Date$

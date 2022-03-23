@@ -23,7 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
 import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;

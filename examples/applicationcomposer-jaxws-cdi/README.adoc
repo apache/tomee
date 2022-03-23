@@ -49,8 +49,8 @@ The JAX-WS service is defined by the following interface:
 
 [source,java]
 ----
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 import java.util.Date;
 
 @WebService
@@ -65,8 +65,8 @@ The class implementing this interface is:
 
 [source,java]
 ----
-import javax.inject.Inject;
-import javax.jws.WebService;
+import jakarta.inject.Inject;
+import jakarta.jws.WebService;
 import java.util.Date;
 
 @WebService
@@ -99,10 +99,10 @@ import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.Date;
 import java.util.Properties;

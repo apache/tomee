@@ -22,7 +22,7 @@ import java.util.Properties;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 public interface BasicCmpObject extends EJBObject {
     /**

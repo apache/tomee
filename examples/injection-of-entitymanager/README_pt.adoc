@@ -13,7 +13,7 @@ A própria entidade é simplesmente um pote anotado com `@Entity`. Criamos um ch
 ----
 package org.superbiz.injection.jpa;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Movie {
@@ -101,11 +101,11 @@ A anotação `@PersistenceContext` pode ser usada em qualquer bean CDI, EJB, Ser
 ----
 package org.superbiz.injection.jpa;
 
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Stateful
@@ -143,7 +143,7 @@ package org.superbiz.injection.jpa;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.List;
 import java.util.Properties;
@@ -191,7 +191,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/injection-of-entitymanager
 INFO - openejb.base = /Users/dblevins/examples/injection-of-entitymanager
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)

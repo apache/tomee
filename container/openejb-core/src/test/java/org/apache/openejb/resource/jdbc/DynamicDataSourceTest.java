@@ -41,17 +41,17 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.junit.After;
 import org.junit.Test;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.Local;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
+import jakarta.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -174,7 +174,7 @@ public class DynamicDataSourceTest {
         @PersistenceContext(unitName = "router")
         private EntityManager em;
 
-        @javax.annotation.Resource(name = "My Router", type = DeterminedRouter.class)
+        @jakarta.annotation.Resource(name = "My Router", type = DeterminedRouter.class)
         private DeterminedRouter router;
 
         public void persist(final int id, final String name, final String ds) {

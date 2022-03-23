@@ -26,10 +26,10 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNotSame;
 
 @RunWith(ApplicationComposer.class)
 public class ReloadableEntityManagerFactoryTest {
-    @javax.persistence.PersistenceUnit
+    @jakarta.persistence.PersistenceUnit
     private EntityManagerFactory emf;
 
     @Module

@@ -20,7 +20,7 @@ body are optional.
 Alternatively, a CmpEntityContainer can be declared via properties in
 the `<tomee-home>/conf/system.properties` file or via Java
 VirtualMachine `-D` properties. The properties can also be used when
-embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+embedding TomEE via the `jakarta.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
 [source,properties]

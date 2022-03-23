@@ -24,14 +24,14 @@ import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
-import javax.ejb.EJBContext;
-import javax.ejb.SessionContext;
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.EJBException;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
 
 import org.junit.Assert;
 import junit.framework.AssertionFailedError;

@@ -21,11 +21,11 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.resource.activemq.jms2.DelegateMessage;
 import org.apache.openejb.resource.activemq.jms2.JMS2;
 
-import javax.ejb.EJBException;
-import javax.jms.Message;
-import javax.resource.spi.ApplicationServerInternalException;
-import javax.resource.spi.UnavailableException;
-import javax.resource.spi.endpoint.MessageEndpoint;
+import jakarta.ejb.EJBException;
+import jakarta.jms.Message;
+import jakarta.resource.spi.ApplicationServerInternalException;
+import jakarta.resource.spi.UnavailableException;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;

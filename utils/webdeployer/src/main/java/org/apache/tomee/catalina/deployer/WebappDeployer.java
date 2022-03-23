@@ -19,11 +19,11 @@ package org.apache.tomee.catalina.deployer;
 import java.io.File;
 import java.util.Collection;
 import java.util.Properties;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Remote;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionManagement;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.TransactionManagement;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.apache.catalina.Container;
@@ -47,7 +47,7 @@ import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
 
-import static javax.ejb.TransactionManagementType.BEAN;
+import static jakarta.ejb.TransactionManagementType.BEAN;
 
 @Lock(LockType.READ)
 @Singleton(name = "openejb/WebappDeployer")

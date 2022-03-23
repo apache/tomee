@@ -68,14 +68,14 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
-   file name: javax.persistence-*.jar
+   file name: jakarta.persistence-*.jar
    ]]></notes>
         <gav regex="true">^org\.eclipse\.persistence:javax\.persistence:.*$</gav>
         <cpe>cpe:/a:git_project:git</cpe>
     </suppress>
     <suppress>
         <notes><![CDATA[
-   file name: javax.persistence-*.jar
+   file name: jakarta.persistence-*.jar
    ]]></notes>
         <gav regex="true">^org\.eclipse\.persistence:javax\.persistence:.*$</gav>
         <cpe>cpe:/a:git:git</cpe>

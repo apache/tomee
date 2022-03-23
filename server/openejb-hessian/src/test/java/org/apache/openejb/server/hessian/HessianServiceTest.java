@@ -28,8 +28,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Remote;
-import javax.ejb.Singleton;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Singleton;
 import java.net.MalformedURLException;
 import java.util.Properties;
 

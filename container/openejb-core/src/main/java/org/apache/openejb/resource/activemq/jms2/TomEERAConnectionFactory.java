@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 import org.apache.activemq.ra.ActiveMQConnectionFactory;
 import org.apache.activemq.ra.ActiveMQConnectionRequestInfo;
 import org.apache.activemq.ra.ActiveMQManagedConnectionFactory;
 
-import javax.jms.JMSContext;
-import javax.resource.spi.ConnectionManager;
+import jakarta.jms.JMSContext;
+import jakarta.resource.spi.ConnectionManager;
 
 public class TomEERAConnectionFactory extends ActiveMQConnectionFactory {
     private static final long serialVersionUID = 1L;

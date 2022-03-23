@@ -30,17 +30,17 @@ timeout.
 ----
 package org.superbiz.corn;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.ejb.Timeout;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
+import jakarta.ejb.TimerService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -112,7 +112,7 @@ package org.superbiz.corn;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -149,13 +149,13 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/schedule-expression
 INFO - openejb.base = /Users/dblevins/examples/schedule-expression
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/schedule-expression/target/classes
 INFO - Beginning load: /Users/dblevins/examples/schedule-expression/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/schedule-expression
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
 INFO - Auto-creating a container for bean FarmerBrown: Container(type=SINGLETON, id=Default Singleton Container)
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)

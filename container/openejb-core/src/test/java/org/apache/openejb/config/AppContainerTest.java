@@ -28,8 +28,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.reflect.Method;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 
 import static org.junit.Assert.assertEquals;
 

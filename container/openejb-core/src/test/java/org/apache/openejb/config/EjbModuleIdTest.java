@@ -24,7 +24,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Archives;
 import org.junit.Test;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;

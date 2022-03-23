@@ -29,7 +29,7 @@ import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.util.JavaSecurityManagers;
 
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.Marshaller;
 import java.io.File;
 
 import static java.util.Arrays.asList;

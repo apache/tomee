@@ -1,16 +1,16 @@
 :index-group: Web Services :jbake-type: page :jbake-status:
-status=published = @WebService OUT params via javax.xml.ws.Holder
+status=published = @WebService OUT params via jakarta.xml.ws.Holder
 
 With SOAP it is possible to return multiple values in a single request.
 This is impossible in Java as a method can only return one object.
 
 JAX-WS solves this problem with the concept of Holders. A
-`javax.xml.ws.Holder` is a simple wrapper object that can be passed into
+`jakarta.xml.ws.Holder` is a simple wrapper object that can be passed into
 the `@WebService` method as a parameter. The application sets the value
 of the holder during the request and the server will send the value back
 as an OUT parameter.
 
-== Using @WebParam and javax.xml.ws.Holder
+== Using @WebParam and jakarta.xml.ws.Holder
 
 The `@WebParam` annotation allows us to declare the `sum` and `multiply`
 Holders as `WebParam.Mode.OUT` parameters. As mentioned, these holders
@@ -127,10 +127,10 @@ are configured as INOUT params via WebParam.Mode.INOUT on `@WebParam`
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.Properties;
 

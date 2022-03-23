@@ -20,8 +20,8 @@ import org.apache.openejb.quartz.Job;
 import org.apache.openejb.quartz.JobExecutionContext;
 import org.apache.openejb.quartz.JobExecutionException;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
 
 @MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")

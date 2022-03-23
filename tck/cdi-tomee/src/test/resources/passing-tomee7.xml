@@ -71,13 +71,6 @@
             <methods><exclude name=".*"/></methods>
         </class>
 
-        <!-- https://issues.jboss.org/projects/CDITCK/issues/CDITCK-600, uses illegal fireEvent to @ApplicationScoped bean in ProcessInjectionTarget -->
-        <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processInjectionTarget.WrappedInjectionTargetTest">
-            <methods>
-                <exclude name=".*"/>
-            </methods>
-        </class>
-
         <!-- https://issues.jboss.org/projects/CDITCK/issues/CDITCK-576 -->
         <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.builtin.BuiltinBeanPassivationDependencyTest">
             <methods>

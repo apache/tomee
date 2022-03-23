@@ -23,11 +23,11 @@ import org.apache.openejb.core.ThreadContext;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import javax.ejb.EJBException;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
+import jakarta.ejb.TimerService;
 
 public class TimerServiceWrapper implements TimerService {
     public Timer createTimer(final Date initialExpiration, final long intervalDuration, final Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {

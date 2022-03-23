@@ -26,8 +26,8 @@ import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.ejb.Schedule;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Schedule;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;

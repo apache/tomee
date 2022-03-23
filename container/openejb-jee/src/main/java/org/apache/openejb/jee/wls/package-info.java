@@ -14,4 +14,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.bea.com/ns/weblogic/90", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.openejb.jee.wls;
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.bea.com/ns/weblogic/90", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.openejb.jee.wls;

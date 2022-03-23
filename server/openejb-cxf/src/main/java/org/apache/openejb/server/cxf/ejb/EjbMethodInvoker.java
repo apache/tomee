@@ -31,9 +31,9 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.interceptor.InvocationContext;
-import javax.xml.ws.WebFault;
-import javax.xml.ws.handler.MessageContext.Scope;
+import jakarta.interceptor.InvocationContext;
+import jakarta.xml.ws.WebFault;
+import jakarta.xml.ws.handler.MessageContext.Scope;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +141,7 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
             if (t != null) {
                 if (RuntimeException.class.isAssignableFrom(t.getClass())
                     && t.getClass().isAnnotationPresent(
-                    javax.ejb.ApplicationException.class)) {
+                    jakarta.ejb.ApplicationException.class)) {
                     // it's not a checked exception so it can not be a WebFault
                     throw (RuntimeException) t;
 

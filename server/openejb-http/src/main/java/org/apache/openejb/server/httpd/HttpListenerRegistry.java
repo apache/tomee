@@ -29,10 +29,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.StringTokenizer;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.cdi.Proxys;
@@ -76,8 +76,8 @@ public class HttpListenerRegistry implements HttpListener {
             systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, request, mock));
         }
         if (systemInstance.getComponent(HttpSession.class) == null) {
-            final javax.servlet.http.HttpSession delegate = mock != null ? mock.getSession() : null;
-            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request, new ServletSessionAdapter(delegate) {
+            final jakarta.servlet.http.HttpSession delegate = mock != null ? mock.getSession() : null;
+            systemInstance.setComponent(jakarta.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(request, new ServletSessionAdapter(delegate) {
                 @Override
                 public void invalidate() {
                     final Object web = AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppOrWebContextTransformer.INSTANCE);

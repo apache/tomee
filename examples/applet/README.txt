@@ -49,7 +49,7 @@ WEB-INF directory, hence we copied those classes to web-apps root directory)
 [Note:- The ant script puts all classes under WEB-INF/classes inside a jar. All classes
 are not required by the applet. Instead, the applet only needs the EJB interface and Applet 
 classes in the jar]
-- uses maven-dependency-plugin to copy javaee-api-embedded and openejb-client jars to src/main/webapp (this is the webapp root directory)
+- uses maven-dependency-plugin to copy jakartaee-api-embedded and openejb-client jars to src/main/webapp (this is the webapp root directory)
 - uses the signjar ant task to sign all the jar files
 
 The APPLET is located inside index.jsp . Notice how the archive attribute of the applet

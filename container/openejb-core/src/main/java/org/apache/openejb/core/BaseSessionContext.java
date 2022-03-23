@@ -31,11 +31,10 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.SessionContext;
-import javax.transaction.UserTransaction;
-import javax.xml.rpc.handler.MessageContext;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.SessionContext;
+import jakarta.transaction.UserTransaction;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -90,16 +89,6 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         }
 
         return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, di.getRemoteInterface());
-    }
-
-    public MessageContext getMessageContext() throws IllegalStateException {
-        doCheck(Call.getMessageContext);
-        final ThreadContext threadContext = ThreadContext.getThreadContext();
-        final MessageContext messageContext = threadContext.get(MessageContext.class);
-        if (messageContext == null) {
-            throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
-        }
-        return messageContext;
     }
 
     public Object getBusinessObject(final Class interfce) {

@@ -17,7 +17,7 @@
 
 package org.apache.openejb.spi;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 public interface TransactionService extends Service {
     TransactionManager getTransactionManager();

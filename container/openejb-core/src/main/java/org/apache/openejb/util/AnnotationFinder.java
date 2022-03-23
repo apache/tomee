@@ -349,7 +349,7 @@ public class AnnotationFinder {
         @Override
         public AnnotationVisitor visitAnnotation(String name, final boolean visible) {
             // annotation names show up as
-            // Ljavax.ejb.Stateless;
+            // Ljakarta.ejb.Stateless;
             // so we hack of the first and last chars and replace the slashes
             final StringBuilder sb = new StringBuilder(name);
             sb.deleteCharAt(0);

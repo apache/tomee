@@ -23,18 +23,18 @@ import org.apache.openejb.testing.RandomPort;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.Link;
+import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Set;
 
-import static javax.ws.rs.core.MediaType.WILDCARD_TYPE;
+import static jakarta.ws.rs.core.MediaType.WILDCARD_TYPE;
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jaxrs")

@@ -37,11 +37,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Application;
 import java.util.Properties;
 
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jax-rs")
@@ -71,7 +71,7 @@ public class SimpleApplicationWithLongMappingWithNoAppPathTest {
         return new WebApp()
             .contextRoot("foo")
             .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "javax.ws.rs.Application", MyRootRESTApp.class.getName())
+            .addInitParam("REST Application", "jakarta.ws.rs.Application", MyRootRESTApp.class.getName())
             .addServletMapping("REST Application", "/mapping/part2/*");
     }
 

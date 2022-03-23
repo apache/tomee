@@ -31,7 +31,7 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;

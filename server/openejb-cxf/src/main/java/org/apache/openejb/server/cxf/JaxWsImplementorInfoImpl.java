@@ -19,8 +19,8 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 /**
  * Override the binding type uri.

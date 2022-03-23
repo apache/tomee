@@ -40,7 +40,7 @@ security as _MyBean_, including the principal (username), roles, etc.
 
 [source,java]
 ----
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import javax.naming.InitialContext;
 
 @EJB(name = "otherBean", beanInterface = IOtherBean.class)

@@ -31,8 +31,8 @@ import org.apache.tomee.catalina.OpenEJBValve;
 import org.apache.tomee.catalina.remote.ServerClassLoaderLoader;
 import org.apache.tomee.loader.TomcatHelper;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class LiveReloadInstaller {
         // add connector
         final Connector connector = new Connector();
         connector.setPort(port);
-        connector.setAttribute("connectionTimeout", "30000");
+        connector.setProperty("connectionTimeout", "30000");
         service.addConnector(connector);
 
         // and the endpoint and start the watcher

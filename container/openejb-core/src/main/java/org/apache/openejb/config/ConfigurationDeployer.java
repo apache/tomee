@@ -28,7 +28,7 @@ import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.util.ArrayList;
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 public class ConfigurationDeployer implements DynamicDeployer {
     @Override
@@ -110,7 +110,7 @@ public class ConfigurationDeployer implements DynamicDeployer {
         }
         if (annotation.ddlAuto()) {
             unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
-            unit.setProperty("javax.persistence.schema-generation.database.action", "create");
+            unit.setProperty("jakarta.persistence.schema-generation.database.action", "create");
         }
         if (annotation.jta()) {
             unit.setTransactionType(TransactionType.JTA);

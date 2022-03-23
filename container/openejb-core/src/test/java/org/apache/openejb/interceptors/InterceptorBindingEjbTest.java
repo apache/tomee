@@ -25,10 +25,10 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InterceptorBinding;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.EJB;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InterceptorBinding;
+import jakarta.interceptor.InvocationContext;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -79,7 +79,7 @@ public class InterceptorBindingEjbTest {
     }
 
     @Interception
-    @javax.interceptor.Interceptor
+    @jakarta.interceptor.Interceptor
     public static class MarkedInterceptor {
         public static final Collection<String> CLASSES = new ArrayList<String>();
 

@@ -24,7 +24,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
 
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;

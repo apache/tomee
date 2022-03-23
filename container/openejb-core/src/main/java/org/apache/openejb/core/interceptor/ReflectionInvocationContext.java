@@ -20,7 +20,7 @@ package org.apache.openejb.core.interceptor;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.Classes;
 
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

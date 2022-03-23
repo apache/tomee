@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 @ContextConfig(properties = {
     @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),

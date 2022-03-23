@@ -12,10 +12,10 @@
 |openejb.embedded.remotable|	bool|	activate or not the remote services when available
 |.bind, <service prefix>.port, <service prefix>.disabled, <service prefix>.threads	| host or IP, port, bool|override the host. Available for ejbd and httpejbd services (used by jaxws and jaxrs), number of thread to manage requests
 |openejb.embedded.initialcontext.close	|LOGOUT or DESTROY|	configure the hook called when closing the initial context. Useful when starting OpenEJB from a new InitialContext([properties]) instantiation. By default it simply logs out the logged user if it exists. DESTROY means clean the container.
-|javax.persistence.provider	|string|	override the JPA provider value
-|javax.persistence.transactionType	|string|	override the transaction type for persistence contexts
-|javax.persistence.jtaDataSource	|string|	override the JTA datasource value for persistence contexts
-|javax.persistence.nonJtaDataSource|	string	|override the non JTA datasource value for persistence contexts
+|jakarta.persistence.provider	|string|	override the JPA provider value
+|jakarta.persistence.transactionType	|string|	override the transaction type for persistence contexts
+|jakarta.persistence.jtaDataSource	|string|	override the JTA datasource value for persistence contexts
+|jakarta.persistence.nonJtaDataSource|	string	|override the non JTA datasource value for persistence contexts
 |openejb.descriptors.output	|bool|	dump memory deployment descriptors. Can be used to set complete metadata to true and avoid scanning when starting the container or to check the used configuration.
 |openejb.deployments.classpath.require.descriptor	|CLIENT or EJB|	can allow to filter what you want to scan (client modules or ejb modules)
 |openejb.descriptors.output.folder|	path|	where to dump deployement descriptors if activated.
@@ -58,7 +58,7 @@
 |tomee.serialization.class.whitelist|	string|	default list of packages/classnames allowed for EJBd deserialization (blacklist wins over whitelist, needs to be set on server and client sides). Please see the description of Ejbd Transport for details.
 |tomee.remote.support	|boolean	|if true /tomee webapp is auto-deployed and EJBd is active (true by default for 1.x, false for 7.x excepted for tomee maven plugin and arquillian)
 |openejb.crosscontext	|bool|	set the cross context property on tomcat context (can be done in the traditionnal way if the deployment is don through the webapp discovery and not the OpenEJB Deployer EJB)
-|openejb.jsessionid-support	|bool|	remove URL from session tracking modes for this context (see javax.servlet.SessionTrackingMode)
+|openejb.jsessionid-support	|bool|	remove URL from session tracking modes for this context (see jakarta.servlet.SessionTrackingMode)
 |openejb.myfaces.disable-default-values	|bool|	by default TomEE will initialize myfaces with some its default values to avoid useless logging
 |openejb.web.xml.major	|int|	major version of web.xml. Can be useful to force tomcat to scan servlet 3 annotatino when deploying with a servlet 2.x web.xml
 |tomee.jaxws.subcontext	|string|	sub context used to bind jaxws web services, default is webservices

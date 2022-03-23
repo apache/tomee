@@ -21,8 +21,8 @@ import org.apache.openejb.testing.ApplicationComposers;
 import org.apache.openejb.testing.ApplicationComposersTest;
 import org.apache.openejb.testing.Classes;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;

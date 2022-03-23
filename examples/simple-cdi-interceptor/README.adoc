@@ -107,7 +107,7 @@ http://tomee.apache.org/ INFO - openejb.home =
 /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
 INFO - openejb.base =
 /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
-INFO - Using `javax.ejb.embeddable.EJBContainer=true' INFO - Configuring
+INFO - Using `jakarta.ejb.embeddable.EJBContainer=true' INFO - Configuring
 Service(id=Default Security Service, type=SecurityService,
 provider-id=Default Security Service) INFO - Configuring
 Service(id=Default Transaction Manager, type=TransactionManager,

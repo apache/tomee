@@ -8,12 +8,12 @@
 _Also see link:testing-transactions-example.html[Testing Transactions]
 for an example of how to use and test EJB transaction attributes_
 
-The _javax.ejb.TransactionAttribute_ annotation (`@TransactionAttribute`)
+The _jakarta.ejb.TransactionAttribute_ annotation (`@TransactionAttribute`)
 can be applied to a bean class or it's methods.
 
 Usage of the `@TransactionAttribute` requires you to specify one of six
 different transaction attribute types defined via the
-javax.ejb.TransactionAttributeType enum.
+jakarta.ejb.TransactionAttributeType enum.
 
 * TransactionAttributeType._MANDATORY_
 * TransactionAttributeType._REQUIRED_

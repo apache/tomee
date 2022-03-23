@@ -72,7 +72,7 @@ Usable time units: nanoseconds, microsecons, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 "1 hour and 27 minutes and 10 seconds"
 
-Any usage of the `javax.ejb.AccessTimeout` annotation will
+Any usage of the `jakarta.ejb.AccessTimeout` annotation will
 override this setting for the bean or method where the
 annotation is used.
 
@@ -172,9 +172,9 @@ how flush is performed.
 
 [source,java]
 ----
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
 import java.io.Flushable;
 import java.io.IOException;
 
@@ -354,14 +354,14 @@ Foo.BulkPassivate = 100
 Specifies the maximum time an invocation could wait for the
 `@Stateful` bean instance to become available before giving up.
 
-After the timeout is reached a `javax.ejb.ConcurrentAccessTimeoutException`
+After the timeout is reached a `jakarta.ejb.ConcurrentAccessTimeoutException`
 will be thrown.
 
 Usable time units: nanoseconds, microsecons, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 "1 hour and 27 minutes and 10 seconds"
 
-Any usage of the `javax.ejb.AccessTimeout` annotation will
+Any usage of the `jakarta.ejb.AccessTimeout` annotation will
 override this setting for the bean or method where the
 annotation is used.
 
@@ -397,7 +397,7 @@ result in a time-out of 5 minutes between invocations.
 A value of -1 would mean no timeout.
 A value of 0 would mean a bean can be immediately removed by the container.
 
-Any usage of the `javax.ejb.StatefulTimeout` annotation will
+Any usage of the `jakarta.ejb.StatefulTimeout` annotation will
 override this setting for the bean where the annotation is used.
 
 ==== Frequency
@@ -444,14 +444,14 @@ Foo.AccessTimeout = 30 seconds
 Specifies the maximum time an invocation could wait for the
 `@Singleton` bean instance to become available before giving up.
 
-After the timeout is reached a `javax.ejb.ConcurrentAccessTimeoutException`
+After the timeout is reached a `jakarta.ejb.ConcurrentAccessTimeoutException`
 will be thrown.
 
 Usable time units: nanoseconds, microsecons, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
-Any usage of the `javax.ejb.AccessTimeout` annotation will
+Any usage of the `jakarta.ejb.AccessTimeout` annotation will
 override this setting for the bean or method where the
 annotation is used.
 
@@ -466,7 +466,7 @@ Declarable in tomee.xml via
 ----
 <Container id="Foo" type="MESSAGE">
     ResourceAdapter = Default JMS Resource Adapter
-    MessageListenerInterface = javax.jms.MessageListener
+    MessageListenerInterface = jakarta.jms.MessageListener
     ActivationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
     InstanceLimit = 10
     FailOnUnknowActivationSpec = true
@@ -479,7 +479,7 @@ Declarable in properties via
 ----
 Foo = new://Container?type=MESSAGE
 Foo.ResourceAdapter = Default JMS Resource Adapter
-Foo.MessageListenerInterface = javax.jms.MessageListener
+Foo.MessageListenerInterface = jakarta.jms.MessageListener
 Foo.ActivationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
 Foo.InstanceLimit = 10
 Foo.FailOnUnknowActivationSpec = true

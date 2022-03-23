@@ -19,8 +19,8 @@ package ${package}.presentation;
 import ${package}.application.BookService;
 import ${package}.entities.Book;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.List;
 
 @Named

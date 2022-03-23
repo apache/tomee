@@ -32,15 +32,15 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Properties;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ext.Provider;
 
 import static org.junit.Assert.assertEquals;
 

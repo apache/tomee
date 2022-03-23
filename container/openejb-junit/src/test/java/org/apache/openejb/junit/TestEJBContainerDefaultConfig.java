@@ -24,8 +24,8 @@ import org.apache.openejb.junit.jee.config.Property;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 import static org.junit.Assert.assertEquals;

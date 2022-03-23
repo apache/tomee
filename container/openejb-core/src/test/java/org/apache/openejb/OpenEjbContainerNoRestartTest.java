@@ -21,7 +21,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.reflection.Reflections;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.Properties;
 
 import static org.junit.Assert.assertFalse;

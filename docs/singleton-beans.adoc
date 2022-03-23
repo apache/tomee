@@ -5,7 +5,7 @@
 :jbake-status: published
 
 = Singleton Overview For the first time in years EJB has a new
-bean type, the _`@Singleton_`. In my opinion, the javax.ejb.Singleton will
+bean type, the _`@Singleton_`. In my opinion, the jakarta.ejb.Singleton will
 replace a lot of what people are using `@Stateless` for today.
 
 The Singleton is essentially what you get if you take a Stateless bean
@@ -143,8 +143,8 @@ public interface Lock {
 ----
 
 In the event it is not possible to acquire the lock a
-_javax.ejb.ConcurrentAccessException_ or
-_javax.ejb.ConcurrentAccessTimeoutException_ will be thrown.
+_jakarta.ejb.ConcurrentAccessException_ or
+_jakarta.ejb.ConcurrentAccessTimeoutException_ will be thrown.
 
 ==== Default Timeout
 

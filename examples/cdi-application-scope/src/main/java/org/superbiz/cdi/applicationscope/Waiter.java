@@ -16,8 +16,8 @@
  */
 package org.superbiz.cdi.applicationscope;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 @Stateless
 public class Waiter {

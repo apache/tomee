@@ -32,8 +32,8 @@ import org.jboss.shrinkwrap.descriptor.api.application6.ApplicationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.Callable;

@@ -21,7 +21,7 @@ import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,11 +34,6 @@ class SaajFactoryFinder {
     private static final Map<String, Map<String, String>> SAAJ_FACTORIES = new HashMap<String, Map<String, String>>();
 
     static {
-        SAAJ_FACTORIES.put(SaajUniverse.Type.AXIS1.toString(), createSAAJInfo(
-            "org.apache.axis.soap.MessageFactoryImpl",
-            "org.apache.axis.soap.SOAPFactoryImpl",
-            "org.apache.axis.soap.SOAPConnectionFactoryImpl",
-            "org.apache.axis.soap.SAAJMetaFactoryImpl"));
         SAAJ_FACTORIES.put(SaajUniverse.Type.AXIS2.toString(), createSAAJInfo(
             "org.apache.axis2.saaj.MessageFactoryImpl",
             "org.apache.axis2.saaj.SOAPFactoryImpl",
@@ -78,10 +73,10 @@ class SaajFactoryFinder {
 
     private static Map<String, String> createSAAJInfo(String messageFactory, String soapFactory, String soapConnectionFactory, String metaFactory) {
         Map<String, String> map = new HashMap<>();
-        map.put("javax.xml.soap.MessageFactory", messageFactory);
-        map.put("javax.xml.soap.SOAPFactory", soapFactory);
-        map.put("javax.xml.soap.SOAPConnectionFactory", soapConnectionFactory);
-        map.put("javax.xml.soap.MetaFactory", metaFactory);
+        map.put("jakarta.xml.soap.MessageFactory", messageFactory);
+        map.put("jakarta.xml.soap.SOAPFactory", soapFactory);
+        map.put("jakarta.xml.soap.SOAPConnectionFactory", soapConnectionFactory);
+        map.put("jakarta.xml.soap.MetaFactory", metaFactory);
         return map;
     }
 

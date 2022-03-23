@@ -30,9 +30,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Singleton;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.Path;
+import jakarta.ejb.Singleton;
+import jakarta.ws.rs.OPTIONS;
+import jakarta.ws.rs.Path;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;

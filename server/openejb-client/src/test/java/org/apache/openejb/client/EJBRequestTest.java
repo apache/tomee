@@ -18,9 +18,9 @@ package org.apache.openejb.client;
 
 import junit.framework.TestCase;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

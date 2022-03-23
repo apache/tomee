@@ -21,7 +21,7 @@ import org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk;
 import org.apache.openejb.test.entity.cmp.ComplexCmpHome;
 import org.apache.openejb.test.entity.cmp.ComplexCmpObject;
 
-import javax.ejb.EJBHome;
+import jakarta.ejb.EJBHome;
 
 /**
  * [8] Should be run as the eigth test suite of the BasicCmpTestClients

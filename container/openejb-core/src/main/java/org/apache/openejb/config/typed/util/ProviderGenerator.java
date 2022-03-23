@@ -88,11 +88,11 @@ public class ProviderGenerator extends Resource {
             out.println();
             out.println("import org.apache.openejb.config.typed.util.*;");
             out.println("import org.apache.openejb.config.sys.*;");
-            out.println("import javax.xml.bind.annotation.*;");
+            out.println("import jakarta.xml.bind.annotation.*;");
             out.println("import " + Duration.class.getName() + ";");
             out.println("import java.util.*;");
             out.println("import java.util.concurrent.*;");
-            out.println("import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;");
+            out.println("import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;");
             out.println();
 
             out.println(template(
@@ -376,10 +376,10 @@ public class ProviderGenerator extends Resource {
             return "CmpEntityContainer";
         }
 
-        if ("javax.jms.ConnectionFactory".equals(s)) {
+        if ("jakarta.jms.ConnectionFactory".equals(s)) {
             return "JmsConnectionFactory";
         }
-        if ("javax.mail.Session".equals(s)) {
+        if ("jakarta.mail.Session".equals(s)) {
             return "JavaMailSession";
         }
 

@@ -36,7 +36,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServicePool;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.IOException;

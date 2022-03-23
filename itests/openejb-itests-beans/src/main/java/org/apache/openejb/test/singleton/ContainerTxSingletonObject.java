@@ -18,11 +18,11 @@ package org.apache.openejb.test.singleton;
 
 import java.rmi.RemoteException;
 
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 
 import org.apache.openejb.test.object.Account;
 
-public interface ContainerTxSingletonObject extends javax.ejb.EJBObject {
+public interface ContainerTxSingletonObject extends jakarta.ejb.EJBObject {
 
     public String txMandatoryMethod(String message) throws RemoteException;
 

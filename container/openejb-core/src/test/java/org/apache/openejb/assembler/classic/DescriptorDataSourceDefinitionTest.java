@@ -25,7 +25,7 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

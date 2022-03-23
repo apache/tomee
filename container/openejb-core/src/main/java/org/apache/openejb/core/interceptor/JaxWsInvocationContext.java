@@ -19,7 +19,7 @@ package org.apache.openejb.core.interceptor;
 
 import org.apache.openejb.core.Operation;
 
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;

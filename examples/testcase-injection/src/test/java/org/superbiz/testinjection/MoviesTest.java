@@ -18,12 +18,12 @@ package org.superbiz.testinjection;
 
 import junit.framework.TestCase;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.UserTransaction;
 import java.util.List;
 import java.util.Properties;
 

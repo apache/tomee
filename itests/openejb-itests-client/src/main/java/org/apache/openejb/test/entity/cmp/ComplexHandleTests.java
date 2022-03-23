@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 /**
  * [7] Should be run as the seventh test suite of the ComplexCmpTestClients

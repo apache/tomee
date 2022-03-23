@@ -17,7 +17,7 @@
 package org.apache.openejb.arquillian.openejb;
 
 import java.net.URLClassLoader;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;

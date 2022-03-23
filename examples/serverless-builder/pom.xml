@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>serverless-builder</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
 
   <name>TomEE :: Examples :: Serverless Apache TomEE WebProfile</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>8.0.11-SNAPSHOT</version.tomee>
+    <version.tomee>9.0.0-M8-SNAPSHOT</version.tomee>
   </properties>
   <dependencies>
     <dependency>

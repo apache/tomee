@@ -23,10 +23,10 @@ import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Singleton;
-import javax.inject.Inject;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
+import jakarta.ejb.Singleton;
+import jakarta.inject.Inject;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

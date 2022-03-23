@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 import java.util.Set;
 
 public interface Author extends EJBLocalObject {

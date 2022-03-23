@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ValidatorFactory;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;

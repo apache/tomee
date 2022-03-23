@@ -19,7 +19,7 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.util.Pool;
 
-import javax.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.context.spi.CreationalContext;
 import java.util.Map;
 
 /**

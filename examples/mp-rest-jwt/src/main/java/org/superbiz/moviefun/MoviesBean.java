@@ -16,9 +16,9 @@
  */
 package org.superbiz.moviefun;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

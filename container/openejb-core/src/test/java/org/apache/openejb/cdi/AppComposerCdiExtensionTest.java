@@ -26,7 +26,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.Extension;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;

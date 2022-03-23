@@ -17,12 +17,12 @@
 
 package org.apache.openejb.arquillian.tests.listenerenventry;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 import org.apache.commons.lang3.StringUtils;
 

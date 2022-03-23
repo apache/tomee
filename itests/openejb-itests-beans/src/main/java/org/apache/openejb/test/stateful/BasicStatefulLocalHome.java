@@ -22,9 +22,9 @@ package org.apache.openejb.test.stateful;
  *
  * @version $Rev$ $Date$
  */
-public interface BasicStatefulLocalHome extends javax.ejb.EJBLocalHome {
+public interface BasicStatefulLocalHome extends jakarta.ejb.EJBLocalHome {
 
-    public BasicStatefulLocalObject create(String name) throws javax.ejb.CreateException;
+    public BasicStatefulLocalObject create(String name) throws jakarta.ejb.CreateException;
 
 }
 

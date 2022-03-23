@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.jee.oejb3;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
         @Override
         public Enumeration<Object> keys() {
             final List<Object> list = new ArrayList<>(Collections.list(super.keys()));
-            list.sort(new Comparator<Object>() {
+            Collections.sort(list, new Comparator<Object>() {
                 @Override
                 public int compare(final Object o1, final Object o2) {
                     return String.valueOf(o1).compareTo(String.valueOf(o2));

@@ -22,26 +22,26 @@ import org.junit.Assert;
 import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.EJBException;
-import javax.ejb.MessageDriven;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.MessageDrivenContext;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Session;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.MessageDriven;
+import jakarta.ejb.MessageDrivenBean;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Session;
 
 @Interceptors({MdbInterceptor.class})
 @MessageDriven(activationConfig = {
-    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Queue"),
     @ActivationConfigProperty(propertyName = "destination", propertyValue = "InterceptorMdbBean")})
 public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
 
@@ -53,7 +53,7 @@ public class InterceptorMdbBean implements MessageListener, MessageDrivenBean {
     private Session session;
     private Connection connection;
     protected MdbInvoker mdbInvoker;
-    @Resource(name = "jms", type = javax.jms.QueueConnectionFactory.class)
+    @Resource(name = "jms", type = jakarta.jms.QueueConnectionFactory.class)
     private ConnectionFactory connectionFactory;
 
     @Override

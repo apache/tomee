@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.ejb.localbean;
 
-import javax.ejb.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ejb.Singleton;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 /**
  * @version $Rev$ $Date$

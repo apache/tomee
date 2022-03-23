@@ -19,7 +19,7 @@ package org.apache.openejb.resource.thread;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import javax.naming.NamingException;
 import java.util.concurrent.ThreadFactory;
 

@@ -18,9 +18,9 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.jee.Beans;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;

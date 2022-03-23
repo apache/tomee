@@ -28,10 +28,10 @@ import org.apache.openejb.quartz.TriggerBuilder;
 import org.apache.openejb.quartz.TriggerKey;
 import org.apache.openejb.quartz.impl.triggers.CronTriggerImpl;
 
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.endpoint.MessageEndpoint;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.InvalidPropertyException;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

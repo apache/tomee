@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 
 public class WrappingTextMessage extends DelegateMessage implements TextMessage {
     private final TextMessage message;

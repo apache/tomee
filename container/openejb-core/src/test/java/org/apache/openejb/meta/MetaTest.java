@@ -41,7 +41,7 @@ import org.apache.openejb.util.Archives;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -213,7 +213,7 @@ public @interface MetaTest {
         }
 
         private boolean isSpecificBeanType(final MetaTest annotation) {
-            final Class<? extends Annotation>[] annotations = new Class[]{javax.ejb.Singleton.class, javax.ejb.Stateless.class, javax.ejb.Stateful.class, javax.ejb.MessageDriven.class};
+            final Class<? extends Annotation>[] annotations = new Class[]{jakarta.ejb.Singleton.class, jakarta.ejb.Stateless.class, jakarta.ejb.Stateful.class, jakarta.ejb.MessageDriven.class};
             for (final Class<? extends Annotation> compDef : annotations) {
                 if (annotation.expected().isAnnotationPresent(compDef)) {
                     return true;

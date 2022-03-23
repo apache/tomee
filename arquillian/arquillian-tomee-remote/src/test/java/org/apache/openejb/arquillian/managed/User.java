@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.arquillian.managed;
 
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 
 @Stateless

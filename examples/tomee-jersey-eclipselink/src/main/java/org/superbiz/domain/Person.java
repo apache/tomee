@@ -16,11 +16,11 @@
  */
 package org.superbiz.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @XmlRootElement

@@ -17,8 +17,8 @@
 
 package org.apache.openejb.core.cmp;
 
-import javax.ejb.EntityBean;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.RemoveException;
 
 public interface CmpCallback {
     void setEntityContext(EntityBean entity);

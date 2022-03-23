@@ -19,7 +19,7 @@ package org.apache.openejb.core;
 
 import org.apache.openejb.BeanContext;
 
-import javax.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.context.spi.CreationalContext;
 import java.util.Map;
 
 /**

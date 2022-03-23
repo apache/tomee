@@ -18,7 +18,7 @@ package org.superbiz.injection.h3jpa;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.List;
 import java.util.Properties;

@@ -33,9 +33,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.security.auth.Subject;

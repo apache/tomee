@@ -66,9 +66,9 @@ import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.web.context.WebConversationFilter;
 import org.apache.xbean.finder.IAnnotationFinder;
 
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.http.HttpServlet;
-import javax.ws.rs.core.Application;
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.ws.rs.core.Application;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -180,7 +180,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                 final StandardWrapper wrapper = (StandardWrapper) c;
 
-                final String appSpec = wrapper.getInitParameter("javax.ws.rs.Application");
+                final String appSpec = wrapper.getInitParameter("jakarta.ws.rs.Application");
                 if (appSpec != null) {
                     mappedChildren.put(appSpec, c);
                 } else {

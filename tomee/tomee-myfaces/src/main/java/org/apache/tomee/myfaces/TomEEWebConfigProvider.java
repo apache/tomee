@@ -21,9 +21,9 @@ import org.apache.myfaces.spi.impl.DefaultWebConfigProvider;
 import org.apache.myfaces.spi.impl.ServletMappingImpl;
 import org.apache.openejb.util.reflection.Reflections;
 
-import javax.faces.context.ExternalContext;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.faces.context.ExternalContext;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class TomEEWebConfigProvider extends DefaultWebConfigProvider {
             if (sc != null && sc.getServletRegistrations() != null) {
                 for (final Map.Entry<String, ? extends ServletRegistration> reg : sc.getServletRegistrations().entrySet()) {
                     final ServletRegistration value = reg.getValue();
-                    if ("javax.faces.webapp.FacesServlet".equals(value.getClassName())) {
+                    if ("jakarta.faces.webapp.FacesServlet".equals(value.getClassName())) {
                         for (final String mapping : value.getMappings()) {
                             final Class<?> clazz = sc.getClassLoader().loadClass(value.getClassName());
                             final org.apache.myfaces.shared_impl.webapp.webxml.ServletMapping mappingImpl =

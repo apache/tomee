@@ -57,11 +57,11 @@ Used in an actual testcase, that might look like so:
     import org.junit.Test;
     import org.junit.runner.RunWith;
 
-    import javax.annotation.Resource;
-    import javax.ejb.EJB;
-    import javax.persistence.EntityManager;
-    import javax.persistence.PersistenceContext;
-    import javax.transaction.UserTransaction;
+    import jakarta.annotation.Resource;
+    import jakarta.ejb.EJB;
+    import jakarta.persistence.EntityManager;
+    import jakarta.persistence.PersistenceContext;
+    import jakarta.transaction.UserTransaction;
     import java.util.List;
     import java.util.Properties;
 
@@ -139,7 +139,7 @@ Used in an actual testcase, that might look like so:
     INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
     INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
     INFO - Configuring enterprise application: /Users/dblevins/examples/application-composer/MoviesTest
-    WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+    WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
     INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
     INFO - Auto-creating a container for bean org.superbiz.composed.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
     INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)

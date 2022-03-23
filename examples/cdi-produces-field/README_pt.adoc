@@ -99,7 +99,7 @@ public class FileHandler implements LogHandler {
 ----
 package org.superbiz.cdi.produces.field;
 
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Produces;
 
 public class LogFactory {
 
@@ -147,8 +147,8 @@ public interface Logger {
 ----
 package org.superbiz.cdi.produces.field;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Named("logger")
 public class LoggerImpl implements Logger {
@@ -202,8 +202,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.inject.Inject;
 import javax.naming.Context;
 
 import static junit.framework.Assert.assertNotNull;
@@ -270,7 +270,7 @@ INFO - openejb.home = /home/daniel/projects/openejb/source/openejb/examples/cdi-
 INFO - openejb.base = /home/daniel/projects/openejb/source/openejb/examples/cdi-produces-field
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@a81b1fb
 INFO - succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

@@ -17,14 +17,14 @@
 
 package org.apache.tomee.catalina.routing;
 
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.management.ManagedAttribute;
-import javax.management.ManagedOperation;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
@@ -35,7 +35,7 @@ import javax.management.openmbean.SimpleType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 import javax.management.openmbean.TabularType;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;

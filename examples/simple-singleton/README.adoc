@@ -3,7 +3,7 @@
 :jbake-status: status=published
 = Simple Singleton
 
-As the name implies a `javax.ejb.Singleton` is a session bean with a
+As the name implies a `jakarta.ejb.Singleton` is a session bean with a
 guarantee that there is at most one instance in the application.
 
 What it gives that is completely missing in EJB 3.0 and prior versions
@@ -16,7 +16,7 @@ static. Additionally, Singleton beans can be invoked by several threads
 at one time similar to a Servlet.
 
 See the link:../../singleton-beans.html[Singleton Beans] page for a full
-description of the javax.ejb.Singleton api.
+description of the jakarta.ejb.Singleton api.
 
 #The Code
 
@@ -34,14 +34,14 @@ in the application.
 ----
 package org.superbiz.registry;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.ConcurrencyManagement;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
 import java.util.Properties;
 
-import static javax.ejb.ConcurrencyManagementType.BEAN;
+import static jakarta.ejb.ConcurrencyManagementType.BEAN;
 
 @Singleton
 @Startup
@@ -92,15 +92,15 @@ controls whether multi-threaded access should be allowed to the bean
 ----
 package org.superbiz.registry;
 
-import javax.ejb.Lock;
-import javax.ejb.Singleton;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
+import static jakarta.ejb.LockType.READ;
+import static jakarta.ejb.LockType.WRITE;
 
 @Singleton
 @Lock(READ)
@@ -178,7 +178,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.net.URI;
 import java.util.Collection;
@@ -240,7 +240,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 public class PropertiesRegistryTest {
@@ -309,7 +309,7 @@ INFO - openejb.home = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - openejb.base = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
@@ -360,7 +360,7 @@ INFO - openejb.home = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - openejb.base = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

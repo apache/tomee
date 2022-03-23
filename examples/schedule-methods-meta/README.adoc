@@ -12,7 +12,7 @@ right to edit this page._
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Schedule;
+import jakarta.ejb.Schedule;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -38,7 +38,7 @@ public @interface BiAnnually {
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Schedule;
+import jakarta.ejb.Schedule;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -64,7 +64,7 @@ public @interface BiMonthly {
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Schedule;
+import jakarta.ejb.Schedule;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -90,8 +90,8 @@ public @interface Daily {
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Schedule;
-import javax.ejb.Schedules;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Schedules;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -120,7 +120,7 @@ public @interface HarvestTime {
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Schedule;
+import jakarta.ejb.Schedule;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -164,9 +164,9 @@ public @interface Metatype {
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -188,8 +188,8 @@ public @interface Organic {
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Schedule;
-import javax.ejb.Schedules;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Schedules;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -218,7 +218,7 @@ public @interface PlantingTime {
 ----
 package org.superbiz.corn.meta.api;
 
-import javax.ejb.Schedule;
+import jakarta.ejb.Schedule;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -290,7 +290,7 @@ package org.superbiz.corn.meta;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -326,7 +326,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/schedule-methods-meta
 INFO - openejb.base = /Users/dblevins/examples/schedule-methods-meta
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/schedule-methods-meta/target/classes

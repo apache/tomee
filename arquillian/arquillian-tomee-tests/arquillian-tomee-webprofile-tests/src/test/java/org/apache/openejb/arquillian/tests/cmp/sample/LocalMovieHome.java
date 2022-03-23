@@ -17,9 +17,9 @@
 
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.FinderException;
 import java.util.Collection;
 
 

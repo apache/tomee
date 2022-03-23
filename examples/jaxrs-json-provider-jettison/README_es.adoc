@@ -62,7 +62,7 @@ Y finalmente asegúrese de que Jettison JAR 1.3.7 esté disponible en la carpeta
 ----
 package org.superbiz;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 @XmlRootElement(name = "book")
 @XmlAccessorType(XmlAccessType.FIELD)

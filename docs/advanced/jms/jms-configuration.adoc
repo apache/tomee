@@ -37,8 +37,8 @@ Here some common configuration to validate (note that when possible the sample v
 [source,java]
 ----
 @MessageDriven(activationConfig = {
-        @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
-        @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "target-queue")
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "target-queue")
 })
 public static class MyMdb implements MessageListener {
     @Override

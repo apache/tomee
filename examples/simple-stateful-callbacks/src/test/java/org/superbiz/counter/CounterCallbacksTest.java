@@ -19,7 +19,7 @@ package org.superbiz.counter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -79,7 +79,7 @@ public class CounterCallbacksTest implements ExecutionObserver {
             try {
                 counterA.increment();
                 Assert.fail("The ejb is not supposed to be there.");
-            } catch (javax.ejb.NoSuchEJBException e) {
+            } catch (jakarta.ejb.NoSuchEJBException e) {
                 //excepted
             }
 

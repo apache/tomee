@@ -20,10 +20,10 @@ package org.apache.openejb.config.typed;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.typed.util.Builders;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -33,7 +33,7 @@ public class MessageDrivenContainerBuilder extends Container {
     @XmlAttribute
     private String resourceAdapter = "Default JMS Resource Adapter";
     @XmlAttribute
-    private String messageListenerInterface = "javax.jms.MessageListener";
+    private String messageListenerInterface = "jakarta.jms.MessageListener";
     @XmlAttribute
     private String activationSpecClass = "org.apache.activemq.ra.ActiveMQActivationSpec";
     @XmlAttribute

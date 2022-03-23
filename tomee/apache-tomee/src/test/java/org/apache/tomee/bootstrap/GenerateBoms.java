@@ -208,7 +208,6 @@ public class GenerateBoms {
             final String template = IO.slurp(url);
 
             final Predicate<Artifact> isApi = artifactId("openejb-api")
-                    .or(artifactId("javaee-api"))
                     .or(artifactId("jakartaee-api"))
                     .or(artifactId("mbean-annotation-api"))
                     .or(artifactId("opentracing-api"))
@@ -219,6 +218,7 @@ public class GenerateBoms {
                     .or(startsWith("geronimo-").and(endsWith("_spec")))
                     .or(startsWith("jakarta.").and(endsWith("-api")))
                     .or(startsWith("microprofile-").and(endsWith("-api")))
+                    .or(startsWith("microprofile-").and(endsWith("-api-shade")))
                     .or(startsWith("tomcat-").and(endsWith("-api")));
 
             final List<Artifact> apiArtifacts = distribution.getArtifacts().stream()
@@ -359,6 +359,7 @@ public class GenerateBoms {
                 .filter(jar -> !jar.getName().equals("bootstrap.jar"))
                 .filter(jar -> !jar.getName().equals("catalina-ant.jar"))
                 .filter(jar -> !jar.getName().startsWith("tomcat-i18n"))
+                .filter(jar -> !jar.getName().startsWith("jakartaee-migration"))
                 .map(from)
                 .filter(Objects::nonNull)
                 .sorted()
@@ -436,89 +437,89 @@ public class GenerateBoms {
          */
         public Artifact from(final File jar) {
             if (jar.getName().equals("commons-daemon.jar")) {
-                return new Artifact("commons-daemon", "commons-daemon", "1.1.0");
+                return new Artifact("commons-daemon", "commons-daemon", "1.1.0", null);
             }
 
             if (jar.getName().equals("tomcat-juli.jar")) {
-                return new Artifact("org.apache.tomee", "tomee-juli", "${project.version}");
+                return new Artifact("org.apache.tomee", "tomee-juli", "${project.version}", null);
             }
 
             if (jar.getName().equals("catalina-ha.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-catalina-ha", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-catalina-ha", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("catalina-storeconfig.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-storeconfig", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-storeconfig", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("catalina-tribes.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-tribes", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-tribes", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("catalina-ssi.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-ssi", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-ssi", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("catalina.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-catalina", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-catalina", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("el-api.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-el-api", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-el-api", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("jasper-el.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-jasper-el", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-jasper-el", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("jasper.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-jasper", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-jasper", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("jaspic-api.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-jaspic-api", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-jaspic-api", "${tomcat.version}", null);
             }
 
             if (jar.getName().equals("servlet-api.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-servlet-api", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-servlet-api", "${tomcat.version}", null);
             }
             if (jar.getName().equals("websocket-api.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-websocket-api", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-websocket-api", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-coyote.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-coyote", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-coyote", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-dbcp.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-dbcp", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-dbcp", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-api.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-api", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-api", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-websocket.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-websocket", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-websocket", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-util.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-util", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-util", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-util-scan.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-util-scan", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-util-scan", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-jni.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-jni", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-jni", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-jdbc.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-jdbc", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-jdbc", "${tomcat.version}", null);
             }
             if (jar.getName().equals("jsp-api.jar")) {
-                return new Artifact("org.apache.tomcat", "tomcat-jsp-api", "${tomcat.version}");
+                return new Artifact("org.apache.tomcat", "tomcat-jsp-api", "${tomcat.version}", null);
             }
 
             if (jar.getName().startsWith("ecj-")) {
-                return new Artifact("org.eclipse.jdt", "ecj", "3.22.0");
+                return new Artifact("org.eclipse.jdt", "ecj", "3.22.0", null);
             }
 
             if (jar.getName().equals("openejb-javaagent.jar")) {
-                return new Artifact("org.apache.tomee", "openejb-javaagent", "${project.version}");
+                return new Artifact("org.apache.tomee", "openejb-javaagent", "${project.version}", null);
             }
 
             if (jar.getName().startsWith("openejb-") ||
@@ -526,8 +527,8 @@ public class GenerateBoms {
                     jar.getName().startsWith("mp-common-") ||
                     jar.getName().startsWith("mp-jwt-") ||
                     jar.getName().startsWith("mbean-annotation-")) {
-                final String artifact = jar.getName().replaceAll("-8.0.*", "");
-                return new Artifact("org.apache.tomee", artifact, "${project.version}");
+                final String artifact = jar.getName().replaceAll("-9.0.*", "");
+                return new Artifact("org.apache.tomee", artifact, "${project.version}", null);
             }
 
             // /Users/dblevins/.m2/repository//org/apache/xbean/xbean-naming/4.14/xbean-naming-4.14.jar
@@ -544,6 +545,7 @@ public class GenerateBoms {
                     .artifactId(artifactDir.getName())
                     .version(versionDir.getName())
                     .groupId(groupId)
+                    .classifier(jar.getName().endsWith("-jakarta.jar") ? "jakarta" : null)
                     .build();
         }
 
@@ -574,11 +576,12 @@ public class GenerateBoms {
         private final String groupId;
         private final String artifactId;
         private final String version;
+        private final String classifier;
 
         @Override
         public int compareTo(final Artifact o) {
-            final String a = this.getGroupId() + ":" + this.artifactId;
-            final String b = o.getGroupId() + ":" + o.artifactId;
+            final String a = this.getGroupId() + ":" + this.artifactId + ":" + (this.classifier == null ? "" : this.classifier);
+            final String b = o.getGroupId() + ":" + o.artifactId + ":" + (o.classifier == null ? "" : o.classifier);
             return a.compareTo(b);
         }
 
@@ -592,6 +595,7 @@ public class GenerateBoms {
                     "      <groupId>" + groupId + "</groupId>\n" +
                     "      <artifactId>" + artifactId + "</artifactId>\n" +
                     "      <version>" + version + "</version>\n" +
+                   (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
                     "      <exclusions>\n" +
                     "        <exclusion>\n" +
                     "          <artifactId>*</artifactId>\n" +
@@ -612,6 +616,7 @@ public class GenerateBoms {
                     "      <groupId>" + groupId + "</groupId>\n" +
                     "      <artifactId>" + artifactId + "</artifactId>\n" +
                     "      <version>" + version + "</version>\n" +
+                   (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
                     "    </dependency>\n";
         }
     }

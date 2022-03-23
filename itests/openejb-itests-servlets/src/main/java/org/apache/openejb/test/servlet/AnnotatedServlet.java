@@ -20,24 +20,24 @@ package org.apache.openejb.test.servlet;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnectionFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.junit.Assert;
@@ -235,7 +235,7 @@ public class AnnotatedServlet extends HttpServlet implements JndiTestServlet {
         }
     }
 
-    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+    private void testJmsConnection(final jakarta.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
         final MessageProducer producer = session.createProducer(topic);

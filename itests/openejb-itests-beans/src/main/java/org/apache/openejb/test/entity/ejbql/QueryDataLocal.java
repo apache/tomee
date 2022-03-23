@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 public interface QueryDataLocal extends EJBLocalObject {
     public Integer getId();

@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>moviefun-ear-parent</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TomEE :: Examples :: Simple EAR</name>
   <modules>
@@ -33,7 +33,7 @@
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -81,8 +81,8 @@
     <dependencies>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>7.0</version>
+        <artifactId>jakartaee-api</artifactId>
+        <version>9.1-M1</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

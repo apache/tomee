@@ -36,25 +36,25 @@ starting OpenEJB from a new InitialContext([properties]) instantiation.
 By default it simply logs out the logged user if it exists. DESTROY
 means clean the container.
 
-javax.persistence.provider
+jakarta.persistence.provider
 
 string
 
 override the JPA provider value
 
-javax.persistence.transactionType
+jakarta.persistence.transactionType
 
 string
 
 override the transaction type for persistence contexts
 
-javax.persistence.jtaDataSource
+jakarta.persistence.jtaDataSource
 
 string
 
 override the JTA datasource value for persistence contexts
 
-javax.persistence.nonJtaDataSource
+jakarta.persistence.nonJtaDataSource
 
 string
 
@@ -651,7 +651,7 @@ openejb.jsessionid-support
 bool
 
 remove URL from session tracking modes for this context (see
-javax.servlet.SessionTrackingMode)
+jakarta.servlet.SessionTrackingMode)
 
 openejb.myfaces.disable-default-values
 

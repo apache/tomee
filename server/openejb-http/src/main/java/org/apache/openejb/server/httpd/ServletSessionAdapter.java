@@ -17,15 +17,15 @@
  */
 package org.apache.openejb.server.httpd;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSessionContext;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSessionContext;
 
 import java.util.Enumeration;
 
 public class ServletSessionAdapter implements HttpSession {
-    protected final javax.servlet.http.HttpSession session;
+    protected final jakarta.servlet.http.HttpSession session;
 
-    public ServletSessionAdapter(javax.servlet.http.HttpSession session) {
+    public ServletSessionAdapter(jakarta.servlet.http.HttpSession session) {
         this.session = session;
     }
 

@@ -20,7 +20,7 @@ package org.apache.openejb.spi;
 import org.apache.openejb.InterfaceType;
 
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.security.ProtectionDomain;

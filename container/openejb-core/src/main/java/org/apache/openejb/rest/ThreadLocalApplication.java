@@ -18,7 +18,7 @@ package org.apache.openejb.rest;
 
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.util.Map;
 import java.util.Set;
 

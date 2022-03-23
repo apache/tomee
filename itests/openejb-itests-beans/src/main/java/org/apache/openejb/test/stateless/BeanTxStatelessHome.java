@@ -17,8 +17,8 @@
 package org.apache.openejb.test.stateless;
 
 
-public interface BeanTxStatelessHome extends javax.ejb.EJBHome {
+public interface BeanTxStatelessHome extends jakarta.ejb.EJBHome {
 
     public BeanTxStatelessObject create()
-        throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 }

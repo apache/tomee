@@ -16,7 +16,7 @@
  */
 package org.superbiz.injection.secure;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Arrays;
 import java.util.List;

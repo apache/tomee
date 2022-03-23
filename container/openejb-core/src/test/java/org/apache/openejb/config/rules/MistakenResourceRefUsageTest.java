@@ -22,9 +22,9 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 @RunWith(ValidationRunner.class)
 public class MistakenResourceRefUsageTest {

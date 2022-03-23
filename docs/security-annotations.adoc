@@ -7,11 +7,11 @@
 This page shows the correct usage of the security
 related annotations:
 
-* javax.annotation.security.RolesAllowed
-* javax.annotation.security.PermitAll
-* javax.annotation.security.DenyAll
-* javax.annotation.security.RunAs
-* javax.annotation.security.DeclareRoles
+* jakarta.annotation.security.RolesAllowed
+* jakarta.annotation.security.PermitAll
+* jakarta.annotation.security.DenyAll
+* jakarta.annotation.security.RunAs
+* jakarta.annotation.security.DeclareRoles
 
 == Basic idea
 

@@ -18,15 +18,15 @@ package org.superbiz.injection.tx;
 
 import junit.framework.TestCase;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 
 /**
  * See the transaction-rollback example as it does the same thing
@@ -79,7 +79,7 @@ public class MoviesTest extends TestCase {
         try {
             doWork();
             fail("The Movies bean should be using TransactionAttributeType.MANDATORY");
-        } catch (javax.ejb.EJBTransactionRequiredException e) {
+        } catch (jakarta.ejb.EJBTransactionRequiredException e) {
             // good, our Movies bean is using TransactionAttributeType.MANDATORY as we want
         }
     }

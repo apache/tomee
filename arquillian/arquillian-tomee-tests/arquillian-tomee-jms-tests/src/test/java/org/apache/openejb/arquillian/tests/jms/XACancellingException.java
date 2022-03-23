@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jms;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 @ApplicationException(rollback = true)
 public class XACancellingException extends RuntimeException {

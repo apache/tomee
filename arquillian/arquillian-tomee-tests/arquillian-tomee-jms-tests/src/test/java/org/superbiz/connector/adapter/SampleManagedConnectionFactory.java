@@ -21,8 +21,8 @@ package org.superbiz.connector.adapter;
 import org.superbiz.connector.api.SampleConnection;
 import org.superbiz.connector.api.SampleConnectionFactory;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.*;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.*;
 import javax.security.auth.Subject;
 import java.io.PrintWriter;
 import java.util.Iterator;

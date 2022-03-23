@@ -21,13 +21,13 @@ import org.apache.tomee.bootstrap.Server;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
 import java.io.File;
 import java.net.URI;
 
-import static javax.ws.rs.client.Entity.entity;
+import static jakarta.ws.rs.client.Entity.entity;
 import static org.junit.Assert.assertEquals;
 
 public class MovieResourceTest {

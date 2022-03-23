@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.bmp.local;
 
-import javax.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalHome;
 import java.rmi.RemoteException;
 import java.util.Collection;
 

@@ -16,9 +16,9 @@
  */
 package org.superbiz.dsdef;
 
-import javax.annotation.Resource;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.inject.Named;
+import jakarta.annotation.Resource;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.inject.Named;
 import javax.sql.DataSource;
 
 @DataSourceDefinition(transactional = true,

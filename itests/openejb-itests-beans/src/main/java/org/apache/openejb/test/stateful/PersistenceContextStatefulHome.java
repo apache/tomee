@@ -18,13 +18,13 @@ package org.apache.openejb.test.stateful;
 
 import org.apache.openejb.test.TestFailureException;
 
-import javax.ejb.EJBObject;
-import javax.ejb.EJBHome;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EJBHome;
 import java.rmi.RemoteException;
 
 /**
  * @version $Rev$ $Date$
  */
 public interface PersistenceContextStatefulHome extends EJBHome {
-    PersistenceContextStatefulObject create() throws javax.ejb.CreateException, RemoteException;
+    PersistenceContextStatefulObject create() throws jakarta.ejb.CreateException, RemoteException;
 }

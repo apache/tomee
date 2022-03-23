@@ -22,10 +22,10 @@ import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.SetAccessible;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;

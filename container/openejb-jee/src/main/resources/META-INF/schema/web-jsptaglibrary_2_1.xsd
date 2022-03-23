@@ -424,10 +424,10 @@
 	name              The unique action name
 
 	tag-class         The tag handler class implementing
-			  javax.servlet.jsp.tagext.JspTag
+			  jakarta.servlet.jsp.tagext.JspTag
 
 	tei-class         An optional subclass of
-			  javax.servlet.jsp.tagext.TagExtraInfo
+			  jakarta.servlet.jsp.tagext.TagExtraInfo
 
 	body-content      The body content type
 
@@ -439,7 +439,7 @@
 	dynamic-attributes Whether this tag supports additional
 			   attributes with dynamic names.  If
 			   true, the tag-class must implement the
-			   javax.servlet.jsp.tagext.DynamicAttributes
+			   jakarta.servlet.jsp.tagext.DynamicAttributes
 			   interface.  Defaults to false.
 
 	example           Optional informal description of an
@@ -475,7 +475,7 @@
 	<xsd:annotation>
 	  <xsd:documentation>
 
-	    Defines the subclass of javax.servlet.jsp.tagext.TagExtraInfo
+	    Defines the subclass of jakarta.servlet.jsp.tagext.TagExtraInfo
 	    for this tag. (optional)
 
 	    If this is not given, the class is not consulted at
@@ -562,10 +562,10 @@
 	fragment        whether this attribute is a fragment
 
         deferred-value  present if this attribute is to be parsed as a
-                        javax.el.ValueExpression
+                        jakarta.el.ValueExpression
 
         deferred-method present if this attribute is to be parsed as a
-                        javax.el.MethodExpression
+                        jakarta.el.MethodExpression
 
       </xsd:documentation>
     </xsd:annotation>
@@ -634,7 +634,7 @@
 
                   Present if the value for this attribute is to be
                   passed to the tag handler as a
-                  javax.el.ValueExpression. This allows for deferred
+                  jakarta.el.ValueExpression. This allows for deferred
                   evaluation of EL expressions. An optional subelement
                   will contain the expected type that the value will
                   be coerced to after evaluation of the expression.
@@ -651,7 +651,7 @@
 
                 Present if the value for this attribute is to be
                 passed to the tag handler as a
-                javax.el.MethodExpression. This allows for deferred
+                jakarta.el.MethodExpression. This allows for deferred
                 evaluation of an EL expression that identifies a
                 method to be invoked on an Object. An optional
                 subelement will contain the expected method
@@ -712,7 +712,7 @@
       <xsd:documentation>
 
         Defines information about how to provide the value for a
-        tag handler attribute that accepts a javax.el.MethodExpression.
+        tag handler attribute that accepts a jakarta.el.MethodExpression.
 
 	The deferred-method element has one optional subelement:
 
@@ -732,7 +732,7 @@
           <xsd:documentation>
 
             Provides the expected signature of the method identified
-            by the javax.el.MethodExpression.
+            by the jakarta.el.MethodExpression.
 
             This disambiguates overloaded methods and ensures that
             the return value is of the expected type.
@@ -763,7 +763,7 @@
       <xsd:documentation>
 
         Defines information about how to provide the value for a
-        tag handler attribute that accepts a javax.el.ValueExpression.
+        tag handler attribute that accepts a jakarta.el.ValueExpression.
 
 	The deferred-value element has one optional subelement:
 

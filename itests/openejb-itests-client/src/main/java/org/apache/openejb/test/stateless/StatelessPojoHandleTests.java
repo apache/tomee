@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 public class StatelessPojoHandleTests extends BasicStatelessTestClient {
 

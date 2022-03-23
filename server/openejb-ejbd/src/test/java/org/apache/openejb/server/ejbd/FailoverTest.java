@@ -32,8 +32,8 @@ import org.apache.openejb.server.ServerServiceFilter;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
 
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

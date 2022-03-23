@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.bmp.local;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 public interface BigFinder extends EJBLocalObject {
 }

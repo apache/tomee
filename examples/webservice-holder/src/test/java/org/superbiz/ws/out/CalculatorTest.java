@@ -19,10 +19,10 @@ package org.superbiz.ws.out;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.Properties;
 

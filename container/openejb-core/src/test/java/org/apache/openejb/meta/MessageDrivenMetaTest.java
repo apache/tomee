@@ -20,9 +20,9 @@ import org.apache.openejb.OpenEJB;
 import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 
-import javax.ejb.MessageDriven;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.ejb.MessageDriven;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.arquillian.tests.persistence.multiple;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 
 @Entity
 public class Person2 {

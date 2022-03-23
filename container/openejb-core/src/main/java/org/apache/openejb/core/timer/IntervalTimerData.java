@@ -21,7 +21,7 @@ import org.apache.openejb.quartz.SimpleTrigger;
 import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 import org.apache.openejb.quartz.impl.triggers.SimpleTriggerImpl;
 
-import javax.ejb.TimerConfig;
+import jakarta.ejb.TimerConfig;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Date;

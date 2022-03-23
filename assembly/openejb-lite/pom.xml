@@ -26,7 +26,7 @@
   <parent>
     <artifactId>assembly</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-lite</artifactId>
@@ -74,26 +74,12 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-broker</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-ra</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>slf4j-jdk14</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 </project>

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 public interface QueryLocal extends EJBLocalObject {
 }

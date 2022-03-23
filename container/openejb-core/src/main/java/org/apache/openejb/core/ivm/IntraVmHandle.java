@@ -22,10 +22,10 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 

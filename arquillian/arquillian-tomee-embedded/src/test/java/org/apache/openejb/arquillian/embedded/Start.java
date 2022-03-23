@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.arquillian.embedded;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.servlet.ServletContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.servlet.ServletContext;
 
 @ApplicationScoped
 public class Start {

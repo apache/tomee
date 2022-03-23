@@ -27,7 +27,7 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 
 public class ApplicationWideTest extends TestCase {

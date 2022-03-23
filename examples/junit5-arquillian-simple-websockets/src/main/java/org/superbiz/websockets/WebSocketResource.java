@@ -17,9 +17,9 @@
 
 package org.superbiz.websockets;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.websocket.*;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.websocket.*;
+import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
 @ApplicationScoped

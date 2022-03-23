@@ -17,8 +17,8 @@
 package org.apache.openejb.test.stateful;
 
 
-public interface EncStatefulHome extends javax.ejb.EJBHome {
+public interface EncStatefulHome extends jakarta.ejb.EJBHome {
 
     public EncStatefulObject create(String name)
-        throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 }

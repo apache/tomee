@@ -23,9 +23,9 @@ import org.apache.tomee.embedded.junit.jupiter.TomEEEmbeddedExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

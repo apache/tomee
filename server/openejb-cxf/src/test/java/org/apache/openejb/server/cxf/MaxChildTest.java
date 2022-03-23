@@ -32,19 +32,19 @@ import org.apache.openejb.testing.RandomPort;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
-import static javax.xml.bind.annotation.XmlAccessType.FIELD;
+import static jakarta.xml.bind.annotation.XmlAccessType.FIELD;
 import static org.junit.Assert.assertEquals;
 
 @EnableServices("jaxws")
@@ -56,7 +56,7 @@ public class MaxChildTest {
     @Test
     public void passing() throws MalformedURLException {
         assertEquals(0,
-                javax.xml.ws.Service.create(new URL(root.toExternalForm() + "app/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "SimpleContractImplService"))
+                jakarta.xml.ws.Service.create(new URL(root.toExternalForm() + "app/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "SimpleContractImplService"))
                         .getPort(SimpleContract.class)
                         .test(new Root())
                         .getChildren().size());
@@ -69,7 +69,7 @@ public class MaxChildTest {
             for (int i = 0; i < 2; i++) {
                 root.getChildren().add(new Child());
             }
-            javax.xml.ws.Service.create(new URL(this.root.toExternalForm() + "app/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "SimpleContractImplService"))
+            jakarta.xml.ws.Service.create(new URL(this.root.toExternalForm() + "app/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "SimpleContractImplService"))
                     .getPort(SimpleContract.class)
                     .test(root);
         } catch (final SOAPFaultException e) {

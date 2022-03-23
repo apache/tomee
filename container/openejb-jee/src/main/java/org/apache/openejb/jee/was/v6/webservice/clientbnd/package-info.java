@@ -14,5 +14,5 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "webservice_clientbnd.xmi") package org.apache.openejb.jee.was.v6.webservice.clientbnd;
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "webservice_clientbnd.xmi") package org.apache.openejb.jee.was.v6.webservice.clientbnd;
 

@@ -18,8 +18,8 @@ package org.apache.tomee.microprofile.tck.jwt;
 
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;

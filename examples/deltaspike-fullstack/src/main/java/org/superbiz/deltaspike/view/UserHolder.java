@@ -21,11 +21,11 @@ package org.superbiz.deltaspike.view;
 import org.apache.deltaspike.core.api.scope.WindowScoped;
 import org.superbiz.deltaspike.domain.User;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.New;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.New;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.Serializable;
 
 //due to the enhanced entities it isn't possible to use them directly (due to final methods)

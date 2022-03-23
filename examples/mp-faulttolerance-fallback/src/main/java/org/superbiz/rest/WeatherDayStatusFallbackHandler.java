@@ -19,7 +19,7 @@ package org.superbiz.rest;
 import org.eclipse.microprofile.faulttolerance.ExecutionContext;
 import org.eclipse.microprofile.faulttolerance.FallbackHandler;
 
-import javax.enterprise.context.Dependent;
+import jakarta.enterprise.context.Dependent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

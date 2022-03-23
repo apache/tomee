@@ -12,17 +12,17 @@ right to edit this page._
 ----
 package org.superbiz.injection.jms;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 @Stateless
 public class Messages {
@@ -98,7 +98,7 @@ package org.superbiz.injection.jms;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 public class MessagingBeanTest extends TestCase {
@@ -132,21 +132,21 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/injection-of-connectionfactory
 INFO - openejb.base = /Users/dblevins/examples/injection-of-connectionfactory
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-connectionfactory/target/classes
 INFO - Beginning load: /Users/dblevins/examples/injection-of-connectionfactory/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-connectionfactory
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
 INFO - Auto-creating a container for bean Messages: Container(type=STATELESS, id=Default Stateless Container)
 INFO - Configuring Service(id=Default JMS Connection Factory, type=Resource, provider-id=Default JMS Connection Factory)
-INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'javax.jms.ConnectionFactory for 'Messages'.
+INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'jakarta.jms.ConnectionFactory for 'Messages'.
 INFO - Configuring Service(id=Default JMS Resource Adapter, type=Resource, provider-id=Default JMS Resource Adapter)
 INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.injection.jms.Messages/connectionFactory' in bean Messages to Resource(id=Default JMS Connection Factory)
 INFO - Configuring Service(id=org.superbiz.injection.jms.Messages/chatQueue, type=Resource, provider-id=Default Queue)
-INFO - Auto-creating a Resource with id 'org.superbiz.injection.jms.Messages/chatQueue' of type 'javax.jms.Queue for 'Messages'.
+INFO - Auto-creating a Resource with id 'org.superbiz.injection.jms.Messages/chatQueue' of type 'jakarta.jms.Queue for 'Messages'.
 INFO - Auto-linking resource-env-ref 'java:comp/env/org.superbiz.injection.jms.Messages/chatQueue' in bean Messages to Resource(id=org.superbiz.injection.jms.Messages/chatQueue)
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 INFO - Auto-creating a container for bean org.superbiz.injection.jms.MessagingBeanTest: Container(type=MANAGED, id=Default Managed Container)

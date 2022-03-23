@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.realm;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Simple

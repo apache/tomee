@@ -41,12 +41,12 @@ import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-import javax.xml.soap.SOAPMessage;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.Binding;
+import jakarta.xml.ws.Binding;
 import java.lang.reflect.Method;
 import java.util.List;
 

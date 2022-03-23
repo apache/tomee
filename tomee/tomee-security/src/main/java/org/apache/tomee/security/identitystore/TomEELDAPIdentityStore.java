@@ -18,9 +18,9 @@ package org.apache.tomee.security.identitystore;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -29,12 +29,12 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.LdapName;
-import javax.security.enterprise.credential.Credential;
-import javax.security.enterprise.credential.UsernamePasswordCredential;
-import javax.security.enterprise.identitystore.CredentialValidationResult;
-import javax.security.enterprise.identitystore.IdentityStore;
-import javax.security.enterprise.identitystore.IdentityStorePermission;
-import javax.security.enterprise.identitystore.LdapIdentityStoreDefinition;
+import jakarta.security.enterprise.credential.Credential;
+import jakarta.security.enterprise.credential.UsernamePasswordCredential;
+import jakarta.security.enterprise.identitystore.CredentialValidationResult;
+import jakarta.security.enterprise.identitystore.IdentityStore;
+import jakarta.security.enterprise.identitystore.IdentityStorePermission;
+import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -52,7 +52,7 @@ import static javax.naming.Context.SECURITY_CREDENTIALS;
 import static javax.naming.Context.SECURITY_PRINCIPAL;
 import static javax.naming.directory.SearchControls.ONELEVEL_SCOPE;
 import static javax.naming.directory.SearchControls.SUBTREE_SCOPE;
-import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 
 // todo create an LDAPtive version of it for pooling and other capabilities
 @ApplicationScoped

@@ -18,7 +18,7 @@ package org.apache.openejb.test.stateful;
 
 import java.util.Map;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * @version $Rev$ $Date$

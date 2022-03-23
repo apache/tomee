@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-remote</artifactId>
   <packaging>jar</packaging>
@@ -57,8 +57,8 @@
 
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
-      <artifactId>arquillian-protocol-servlet</artifactId>
-      <version>${version.arquillian}</version>
+      <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+      <version>${version.arquillian-protocol-servlet-jakarta}</version>
       <exclusions>
         <exclusion>
           <artifactId>shrinkwrap-descriptors-api-base</artifactId>
@@ -95,7 +95,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <classifier>webprofile</classifier>
       <scope>provided</scope>
     </dependency>
@@ -124,7 +124,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -151,12 +151,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>9.0.0-M8-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
       <version>${openwebbeans.version}</version>
       <scope>provided</scope>
     </dependency>

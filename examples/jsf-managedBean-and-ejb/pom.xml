@@ -23,7 +23,7 @@
   <artifactId>jsf-managedBean-and-ejb</artifactId>
   <packaging>war</packaging>
   <name>TomEE :: Web Examples :: JSF - ManangedBean and EJB</name>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,11 +45,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.11-SNAPSHOT</version>
+        <version>9.0.0-M8-SNAPSHOT</version>
       </plugin>
       <plugin>
         <groupId>org.tomitribe.transformer</groupId>
@@ -122,8 +125,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.1-M1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

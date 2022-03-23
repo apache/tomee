@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.server.cxf.ejb;
 
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;

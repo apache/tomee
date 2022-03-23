@@ -29,10 +29,10 @@ import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.jms.*;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.jms.*;
 import javax.management.ObjectName;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
@@ -63,7 +63,7 @@ public class ResourceAdapterDeliveryActiveTest {
                 .p("mdb.resourceAdapter", "ra")
                 .p("mdb.InstanceLimit", "1")
 
-                .p("cf", "new://Resource?type=javax.jms.ConnectionFactory")
+                .p("cf", "new://Resource?type=jakarta.jms.ConnectionFactory")
                 .p("cf.resourceAdapter", "ra")
 
                 .p("openejb.deploymentId.format", "{appId}/{ejbJarId}/{ejbName}")

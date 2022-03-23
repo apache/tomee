@@ -25,15 +25,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.inject.InjectionException;
-import javax.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.InjectionException;
+import jakarta.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.LogicalHandler;
+import jakarta.xml.ws.handler.PortInfo;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;

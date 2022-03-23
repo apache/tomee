@@ -19,11 +19,11 @@ package org.apache.openejb.spi;
 
 import org.apache.openejb.ProxyInfo;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 
 /**
  * <h2><b>LOCAL to REMOTE SERIALIZATION</b></h2> <p>
@@ -33,7 +33,7 @@ import javax.ejb.HomeHandle;
  * is outside the scope of a marked IntraVM local serialization.
  *
  * <i>Circumstances:</i><p>
- * When an IntraVM implementation of a javax.ejb.* interface is
+ * When an IntraVM implementation of a jakarta.ejb.* interface is
  * serialized outside the scope of the IntraVM Server
  *
  * These serializations happen when objects are sent from a
@@ -41,7 +41,7 @@ import javax.ejb.HomeHandle;
  * when a stateful session bean is passified.
  *
  * <i>Action:</i><p>
- * Don't serialize the IntraVM javax.ejb.* interface
+ * Don't serialize the IntraVM jakarta.ejb.* interface
  * implementation, instead ask the ApplicationServer to nominate
  * its own implementation as a replacement.  This is done via
  * the org.apache.openejb.spi.ApplicationServer interface.
@@ -63,7 +63,7 @@ import javax.ejb.HomeHandle;
  * instance.
  *
  * Note:  The ApplicationServer's EJBMetaData instance can
- * be any object that implements the javax.ejb.EJBMetaData
+ * be any object that implements the jakarta.ejb.EJBMetaData
  * interface and can also implement any serialization
  * methods, such as the writeReplace method, to nominate a
  * replacement or implement protocol specific logic or
@@ -72,7 +72,7 @@ import javax.ejb.HomeHandle;
  *
  * DESERIALIZATION<p>
  * The deserialization of the Application Server's
- * javax.ejb.* implementations is implementation specific.
+ * jakarta.ejb.* implementations is implementation specific.
  *
  *
  * @version $Revision$ $Date$

@@ -24,13 +24,13 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PreDestroy;
-import javax.ejb.Singleton;
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionScoped;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.Singleton;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.inject.Inject;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionScoped;
 import java.io.Serializable;
 
 import static org.junit.Assert.assertEquals;

@@ -35,8 +35,8 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.StringTemplate;
 import org.apache.openejb.util.Strings;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.jms.MessageListener;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.jms.MessageListener;
 import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;

@@ -27,12 +27,12 @@ import org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocal;
 import org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome;
 import org.junit.Assert;
 
-import javax.ejb.TransactionRolledbackLocalException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.ejb.TransactionRolledbackLocalException;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

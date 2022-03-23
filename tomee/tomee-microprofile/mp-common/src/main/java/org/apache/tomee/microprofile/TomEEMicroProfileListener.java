@@ -26,11 +26,13 @@ import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.BeforeEvent;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -73,7 +75,9 @@ public class TomEEMicroProfileListener {
                 if (src != null) {
                     containerUrls.add(src.getLocation());
                 }
-            } catch(final ClassNotFoundException e) {
+            } catch(final ClassNotFoundException | NoClassDefFoundError e) {
+                Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), TomEEMicroProfileListener.class)
+                      .error("Can't load MicroProfile extension " + extension, e);
                 // ignored
             }
         }

@@ -17,7 +17,7 @@
 
 package org.apache.openejb.rest;
 
-import javax.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.ContextResolver;
 
 public class ThreadLocalContextResolver extends AbstractRestThreadLocalProxy<ContextResolver>
     implements ContextResolver {

@@ -25,10 +25,10 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Qualifier;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

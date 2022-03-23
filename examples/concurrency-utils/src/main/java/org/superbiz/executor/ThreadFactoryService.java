@@ -1,8 +1,8 @@
 package org.superbiz.executor;
 
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedThreadFactory;
-import javax.enterprise.context.RequestScoped;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.context.RequestScoped;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;

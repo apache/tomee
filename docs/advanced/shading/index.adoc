@@ -121,8 +121,8 @@ def excludedDependenciesGroups = [
         // gradle is buggy with poms, scope provided and optional I think
         'com.google.code.findbugs',
         'com.google.guava',
-        'javax.annotation',
-        'javax.ws.rs',
+        'jakarta.annotation',
+        'jakarta.ws.rs',
         'net.sf.ehcache',
         'org.apache.httpcomponents',
         'org.ow2.asm',

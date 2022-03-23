@@ -18,7 +18,7 @@ package org.superbiz.injection.enventry;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.Date;
 

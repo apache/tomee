@@ -25,10 +25,10 @@ import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -202,7 +202,7 @@ public class CheckMethods extends ValidationBase {
 
     public boolean check_hasCreateMethod(final RemoteBean b, final Class bean, final Class home) {
 
-        if (b instanceof SessionBean && !javax.ejb.SessionBean.class.isAssignableFrom(bean)) {
+        if (b instanceof SessionBean && !jakarta.ejb.SessionBean.class.isAssignableFrom(bean)) {
             // This is a pojo-style bean
             return false;
         }
@@ -240,7 +240,7 @@ public class CheckMethods extends ValidationBase {
             ejbCreateName.replace(0, 1, "ejbC");
 
             try {
-                if (javax.ejb.EnterpriseBean.class.isAssignableFrom(bean)) {
+                if (jakarta.ejb.EnterpriseBean.class.isAssignableFrom(bean)) {
                     bean.getMethod(ejbCreateName.toString(), create.getParameterTypes());
                 }
                 // TODO: else { /* Check for Init method in pojo session bean class */ }

@@ -17,14 +17,14 @@
 package org.apache.openejb.test.entity.cmp;
 
 import java.util.StringTokenizer;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.Handle;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.Handle;
 import javax.naming.InitialContext;
 
 import org.apache.openejb.test.object.ObjectGraph;

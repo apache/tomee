@@ -23,10 +23,10 @@ import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectionTargetFactoryImpl;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.InjectionTarget;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;

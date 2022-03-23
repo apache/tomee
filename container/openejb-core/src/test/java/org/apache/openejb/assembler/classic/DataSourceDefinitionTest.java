@@ -22,12 +22,12 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.annotation.sql.DataSourceDefinitions;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.annotation.sql.DataSourceDefinitions;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.Connection;

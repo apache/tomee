@@ -28,9 +28,9 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.webbeans.logger.JULLoggerFactory;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.jws.WebService;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
+import jakarta.jws.WebService;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;

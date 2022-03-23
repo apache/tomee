@@ -30,9 +30,9 @@ import org.superbiz.deltaspike.repository.UserRepository;
 import org.superbiz.deltaspike.view.RegistrationPage;
 import org.superbiz.deltaspike.view.config.Pages;
 
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 @RunWith(CdiTestRunner.class)
 public class PageBeanTest {

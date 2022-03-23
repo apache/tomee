@@ -20,7 +20,7 @@ import org.apache.openejb.junit.TestSecurity;
 import org.apache.openejb.junit5.OpenEjbExtension;
 import org.junit.jupiter.api.extension.*;
 
-import javax.ejb.EJBAccessException;
+import jakarta.ejb.EJBAccessException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

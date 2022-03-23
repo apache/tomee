@@ -29,7 +29,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.AfterClass;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;

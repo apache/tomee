@@ -20,8 +20,8 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
@@ -29,7 +29,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
 /**
  * A Stateful SessionBean with bean-managed transaction demarcation
  */
-public class BMTStatefulBean implements javax.ejb.SessionBean {
+public class BMTStatefulBean implements jakarta.ejb.SessionBean {
 
     private String name;
     private SessionContext ejbContext;
@@ -44,11 +44,11 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
      * Maps to BasicStatefulHome.create
      *
      * @param name
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see BasicStatefulHome#createObject
      */
     public void ejbCreateObject(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         testAllowedOperations("ejbCreate");
         this.name = name;
     }

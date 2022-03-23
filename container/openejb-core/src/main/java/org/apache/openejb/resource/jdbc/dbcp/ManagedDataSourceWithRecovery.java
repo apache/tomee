@@ -20,7 +20,7 @@ package org.apache.openejb.resource.jdbc.dbcp;
 import org.apache.openejb.resource.TransactionManagerWrapper;
 import org.apache.openejb.resource.XAResourceWrapper;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     private TransactionManager suppliedTransactionManager;

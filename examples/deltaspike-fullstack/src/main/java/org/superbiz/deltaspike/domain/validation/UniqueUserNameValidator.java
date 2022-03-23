@@ -20,10 +20,10 @@ package org.superbiz.deltaspike.domain.validation;
 
 import org.superbiz.deltaspike.repository.UserRepository;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 @ApplicationScoped
 public class UniqueUserNameValidator implements ConstraintValidator<UserName, String> {

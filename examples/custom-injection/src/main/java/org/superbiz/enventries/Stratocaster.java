@@ -16,8 +16,8 @@
  */
 package org.superbiz.enventries;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
 import java.io.File;
 import java.util.Date;
 import java.util.List;

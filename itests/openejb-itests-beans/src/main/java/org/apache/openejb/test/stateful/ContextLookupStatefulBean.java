@@ -26,26 +26,26 @@ import org.apache.openejb.test.stateless.BasicStatelessObject;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.SessionSynchronization;
-import javax.ejb.CreateException;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.SessionSynchronization;
+import jakarta.ejb.CreateException;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
 import javax.sql.DataSource;
-import javax.jms.ConnectionFactory;
-import javax.jms.Connection;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.JMSException;
 import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 
-public class ContextLookupStatefulBean implements javax.ejb.SessionBean, SessionSynchronization {
+public class ContextLookupStatefulBean implements jakarta.ejb.SessionBean, SessionSynchronization {
 
 
     private String name;
@@ -63,7 +63,7 @@ public class ContextLookupStatefulBean implements javax.ejb.SessionBean, Session
      * Maps to EncStatefulHome.create
      *
      * @param name
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see EncStatefulHome#create
      */
     public void ejbCreate(final String name) throws CreateException {

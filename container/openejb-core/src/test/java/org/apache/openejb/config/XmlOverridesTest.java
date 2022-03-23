@@ -42,14 +42,14 @@ import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Local;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -221,7 +221,7 @@ public class XmlOverridesTest extends TestCase {
         @PersistenceUnit(unitName = "orange")
         private EntityManagerFactory emf;
 
-        @PersistenceContext(unitName = "orange", type = javax.persistence.PersistenceContextType.EXTENDED, properties = {@javax.persistence.PersistenceProperty(name = "zzzz", value = "ZZZZ")})
+        @PersistenceContext(unitName = "orange", type = jakarta.persistence.PersistenceContextType.EXTENDED, properties = {@jakarta.persistence.PersistenceProperty(name = "zzzz", value = "ZZZZ")})
         private EntityManager em;
     }
 }

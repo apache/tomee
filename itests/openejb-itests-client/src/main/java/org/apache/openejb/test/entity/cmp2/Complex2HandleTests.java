@@ -19,8 +19,8 @@ package org.apache.openejb.test.entity.cmp2;
 
 import org.apache.openejb.test.entity.cmp.ComplexCmpHome;
 
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;

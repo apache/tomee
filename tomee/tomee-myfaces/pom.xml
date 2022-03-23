@@ -22,7 +22,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee-myfaces</artifactId>
@@ -34,8 +34,8 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>${version.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -55,6 +55,21 @@
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-finder-shaded</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
   </dependencies>
 </project>

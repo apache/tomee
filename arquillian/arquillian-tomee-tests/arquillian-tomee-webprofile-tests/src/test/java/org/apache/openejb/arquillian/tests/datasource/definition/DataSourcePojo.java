@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.datasource.definition;
 
-import javax.annotation.sql.DataSourceDefinition;
+import jakarta.annotation.sql.DataSourceDefinition;
 
 @DataSourceDefinition(name = "jdbc/pojodb",
         className = "org.hsqldb.jdbcDriver",

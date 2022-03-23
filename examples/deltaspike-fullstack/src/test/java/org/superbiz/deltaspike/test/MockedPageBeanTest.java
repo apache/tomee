@@ -30,8 +30,8 @@ import org.superbiz.deltaspike.repository.UserRepository;
 import org.superbiz.deltaspike.view.RegistrationPage;
 import org.superbiz.deltaspike.view.config.Pages;
 
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;

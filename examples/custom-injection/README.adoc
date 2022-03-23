@@ -67,8 +67,8 @@ public class PickupEditor extends java.beans.PropertyEditorSupport {
 ----
 package org.superbiz.enventries;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -153,8 +153,8 @@ package org.superbiz.enventries;
 
 import junit.framework.TestCase;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
@@ -209,13 +209,13 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/custom-injection
 INFO - openejb.base = /Users/dblevins/examples/custom-injection
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/custom-injection/target/classes
 INFO - Beginning load: /Users/dblevins/examples/custom-injection/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/custom-injection
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
 INFO - Auto-creating a container for bean Stratocaster: Container(type=STATELESS, id=Default Stateless Container)
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)

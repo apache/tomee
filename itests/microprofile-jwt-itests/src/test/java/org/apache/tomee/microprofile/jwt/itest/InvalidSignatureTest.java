@@ -26,16 +26,16 @@ import org.apache.tomee.server.composer.TomEE;
 import org.eclipse.microprofile.auth.LoginConfig;
 import org.junit.Test;
 
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.RequestScoped;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -63,10 +63,11 @@ public class InvalidSignatureTest {
 
         final ArrayList<String> output = new ArrayList<>();
         final TomEE tomee = TomEE.microprofile()
+                 //.debug(5005, true)
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
                 .watch("org.apache.tomee.microprofile.jwt.", "\n", output::add)
-//                .update()
+                .update()
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());

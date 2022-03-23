@@ -31,9 +31,9 @@ import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 
 /**

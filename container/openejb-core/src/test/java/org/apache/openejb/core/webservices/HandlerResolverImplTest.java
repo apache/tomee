@@ -27,8 +27,8 @@ import org.apache.openejb.jee.HandlerChains;
 
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.PortInfo;
 import java.net.URL;
 import java.util.List;
 

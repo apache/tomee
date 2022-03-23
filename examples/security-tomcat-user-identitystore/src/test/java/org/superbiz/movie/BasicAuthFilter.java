@@ -16,12 +16,12 @@
  */
 package org.superbiz.movie;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
 import java.io.IOException;
 import java.util.Base64;
 
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 public class BasicAuthFilter implements ClientRequestFilter {
     private final String username;

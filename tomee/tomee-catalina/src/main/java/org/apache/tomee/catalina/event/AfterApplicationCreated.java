@@ -20,7 +20,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.observer.Event;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 @Event
 public class AfterApplicationCreated {

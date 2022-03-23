@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.arquillian.tests.jaxws.wsrs;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Singleton;
+import jakarta.jws.WebService;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 /**
  * @version $Rev$ $Date$

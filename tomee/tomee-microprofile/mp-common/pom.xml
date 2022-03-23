@@ -20,7 +20,7 @@
   <parent>
     <artifactId>tomee-microprofile</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -50,21 +50,40 @@
 
     <!-- MicroProfile -->
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-config-api-shade</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-config-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.apache.geronimo.config</groupId>
       <artifactId>geronimo-config-impl</artifactId>
       <version>${microprofile.config.impl.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-config-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-jwt-auth-api-shade</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-jwt-auth-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -74,31 +93,41 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-      <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>${microprofile.fault-tolerance.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo.safeguard</groupId>
-      <artifactId>safeguard-impl</artifactId>
-      <version>${microprofile.fault-tolerance.impl.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-fault-tolerance-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-interceptor_1.2_spec</artifactId>
+          <groupId>*</groupId>
+          <artifactId>microprofile-fault-tolerance-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.health</groupId>
-      <artifactId>microprofile-health-api</artifactId>
-      <version>${microprofile.health.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>safeguard-impl-shade</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.safeguard</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-health-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-health-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -107,52 +136,88 @@
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-health</artifactId>
       <version>${microprofile.health.impl.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-health-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>geronimo-health-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-health-common</artifactId>
+      <version>${microprofile.health.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.metrics</groupId>
-      <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-metrics-api-shade</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-metrics-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-metrics</artifactId>
       <version>${microprofile.metrics.impl.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo</groupId>
+          <artifactId>geronimo-metrics-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-metrics-common</artifactId>
+      <version>${microprofile.metrics.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.rest.client</groupId>
-      <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-rest-client-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>${microprofile.rest-client.impl.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-xjc</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.json</groupId>
           <artifactId>jakarta.json-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>javax.ws.rs-api</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.annotation</groupId>
@@ -165,39 +230,28 @@
         <!-- exclude in favor of cxf-shade -->
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cxf-shade</artifactId>
-      <version>${tomee.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.microprofile.openapi</groupId>
-      <artifactId>microprofile-openapi-api</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-openapi-api-shade</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-openapi-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-openapi-impl</artifactId>
       <version>${microprofile.openapi.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <!-- Jackson required by OpenAPI Impl -->
@@ -211,13 +265,17 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.opentracing</groupId>
-      <artifactId>microprofile-opentracing-api</artifactId>
-      <version>${microprofile.opentracing.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-opentracing-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-atinject_1.0_spec</artifactId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-opentracing-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -226,6 +284,19 @@
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-opentracing</artifactId>
       <version>${microprofile.opentracing.impl.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo</groupId>
+          <artifactId>geronimo-opentracing-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-opentracing-common</artifactId>
+      <version>${microprofile.opentracing.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>

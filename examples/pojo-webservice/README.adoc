@@ -39,10 +39,10 @@ in the class and used in the operation.
 
 [source,java]
 ----
-import javax.annotation.Resource;
-import javax.jws.WebService;
-import javax.transaction.UserTransaction;
-import javax.xml.ws.WebServiceContext;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebService;
+import jakarta.transaction.UserTransaction;
+import jakarta.xml.ws.WebServiceContext;
 
 @WebService
 public class PojoWS implements WS {
@@ -75,7 +75,7 @@ and using the web service from other Java clients far easier.
 
 [source,java]
 ----
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService
 public interface WS {

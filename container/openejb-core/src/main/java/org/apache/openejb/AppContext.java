@@ -22,7 +22,7 @@ import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.config.WebBeansContext;
 
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.Collection;

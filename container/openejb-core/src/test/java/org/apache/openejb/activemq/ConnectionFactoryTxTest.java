@@ -33,14 +33,14 @@ import org.apache.openejb.jee.TransAttribute;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 import java.util.List;
 import java.util.Properties;
 
@@ -287,7 +287,7 @@ public class ConnectionFactoryTxTest {
         cfProps.setProperty("ResourceAdapter", "MyJmsResourceAdapter");
         cfProps.setProperty("TransactionSupport", transactionSupport);
         assembler.createResource(config.configureService(ResourceInfo.class, "MyJmsConnectionFactory",
-                cfProps, "Default JMS Connection Factory", "javax.jms.ConnectionFactory"));
+                cfProps, "Default JMS Connection Factory", "jakarta.jms.ConnectionFactory"));
 
         final EjbJar ejbJar = new EjbJar("tx-singleton");
         final SingletonBean singletonBean = new SingletonBean(TxSingletonBean.class);
@@ -333,7 +333,7 @@ public class ConnectionFactoryTxTest {
         private ConnectionFactory cf;
 
         public void sendMessage(final boolean fail) throws Exception {
-            try (final Connection connection = cf.createConnection(); final Session sess = connection.createSession(false, javax.jms.Session.AUTO_ACKNOWLEDGE)) {
+            try (final Connection connection = cf.createConnection(); final Session sess = connection.createSession(false, jakarta.jms.Session.AUTO_ACKNOWLEDGE)) {
                 connection.start();
 
                 final Queue queue = sess.createQueue("TEST");

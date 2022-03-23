@@ -31,31 +31,31 @@ import org.apache.openejb.util.Strings;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.xbean.finder.ClassFinder;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.annotation.Resources;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.annotation.security.RunAs;
-import javax.ejb.EJB;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.EJBs;
-import javax.ejb.Init;
-import javax.ejb.Local;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Remote;
-import javax.ejb.Remove;
-import javax.ejb.Timeout;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionManagement;
-import javax.jws.WebService;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.annotation.Resources;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.annotation.security.RunAs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EJBs;
+import jakarta.ejb.Init;
+import jakarta.ejb.Local;
+import jakarta.ejb.PostActivate;
+import jakarta.ejb.PrePassivate;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Timeout;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionManagement;
+import jakarta.jws.WebService;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -298,12 +298,12 @@ public class CheckClasses extends ValidationBase {
 
     private void check_isEjbClass(final RemoteBean b) {
         if (b instanceof SessionBean) { //NOPMD
-            // DMB: Beans in ejb 3 are not required to implement javax.ejb.SessionBean
+            // DMB: Beans in ejb 3 are not required to implement jakarta.ejb.SessionBean
             // but it would still be nice to think of some sort of check to do here.
-            // compareTypes(b, b.getEjbClass(), javax.ejb.SessionBean.class);
+            // compareTypes(b, b.getEjbClass(), jakarta.ejb.SessionBean.class);
 
         } else if (b instanceof EntityBean) {
-            compareTypes(b, b.getEjbClass(), javax.ejb.EntityBean.class);
+            compareTypes(b, b.getEjbClass(), jakarta.ejb.EntityBean.class);
         }
     }
 

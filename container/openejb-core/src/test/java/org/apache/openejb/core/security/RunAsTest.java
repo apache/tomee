@@ -21,11 +21,11 @@ import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.annotation.security.RunAs;
-import javax.ejb.EJB;
-import javax.ejb.SessionContext;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.RunAs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Singleton;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

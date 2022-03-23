@@ -24,13 +24,13 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateful;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateful;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

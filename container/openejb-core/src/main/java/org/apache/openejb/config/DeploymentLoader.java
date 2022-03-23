@@ -1441,11 +1441,11 @@ public class DeploymentLoader implements DeploymentFilterable {
         // look at section 10.4.2 of the JSF v1.2 spec, bullet 1 for details
         final Set<URL> facesConfigLocations = new HashSet<>();
 
-        // web.xml contains faces config locations in the context parameter javax.faces.CONFIG_FILES
+        // web.xml contains faces config locations in the context parameter jakarta.faces.CONFIG_FILES
         final File warFile = new File(webModule.getJarLocation());
         final WebApp webApp = webModule.getWebApp();
         if (webApp != null) {
-            final String foundContextParam = webApp.contextParamsAsMap().get("javax.faces.CONFIG_FILES");
+            final String foundContextParam = webApp.contextParamsAsMap().get("jakarta.faces.CONFIG_FILES");
             if (foundContextParam != null) {
                 // the value is a comma separated list of config files
                 final String commaDelimitedListOfFiles = foundContextParam.trim();
@@ -1458,7 +1458,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 // convert each file to a URL and add it to facesConfigLocations
                 for (final String location : trimmedConfigFiles) {
                     if (!location.startsWith("/")) {
-                        LOGGER.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
+                        LOGGER.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter jakarta.faces.CONFIG_FILES for the file " + location);
                     }
                     try {
                         final File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
@@ -2068,20 +2068,20 @@ public class DeploymentLoader implements DeploymentFilterable {
                             otherTypes.add(ClientModule.class);
                         }
                     } else if (scanPotentialEjbModules) {
-                        if (annotationName.startsWith("javax.ejb.")) {
-                            if ("javax.ejb.Stateful".equals(annotationName)) {
+                        if (annotationName.startsWith("jakarta.ejb.")) {
+                            if ("jakarta.ejb.Stateful".equals(annotationName)) {
                                 return true;
                             }
-                            if ("javax.ejb.Stateless".equals(annotationName)) {
+                            if ("jakarta.ejb.Stateless".equals(annotationName)) {
                                 return true;
                             }
-                            if ("javax.ejb.Singleton".equals(annotationName)) {
+                            if ("jakarta.ejb.Singleton".equals(annotationName)) {
                                 return true;
                             }
-                            if ("javax.ejb.MessageDriven".equals(annotationName)) {
+                            if ("jakarta.ejb.MessageDriven".equals(annotationName)) {
                                 return true;
                             }
-                        } else if (scanManagedBeans && "javax.annotation.ManagedBean".equals(annotationName)) {
+                        } else if (scanManagedBeans && "jakarta.annotation.ManagedBean".equals(annotationName)) {
                             return true;
                         }
                     }

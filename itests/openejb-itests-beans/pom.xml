@@ -22,7 +22,7 @@
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-itests-beans</artifactId>
@@ -65,9 +65,32 @@
 
         <dependencies>
           <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jakartaee-api</artifactId>
+            <version>${version.jakartaee-api}</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.serp</groupId>
+            <artifactId>serp</artifactId>
+            <version>1.15.1</version>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
             <version>${openjpa.version}</version>
+            <classifier>jakarta</classifier>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
           </dependency>
         </dependencies>
       </plugin>
@@ -77,8 +100,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -27,9 +27,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.inject.Inject;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

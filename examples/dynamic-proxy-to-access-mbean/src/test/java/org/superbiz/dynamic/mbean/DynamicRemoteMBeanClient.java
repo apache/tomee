@@ -19,8 +19,8 @@ package org.superbiz.dynamic.mbean;
 
 import org.apache.openejb.api.Proxy;
 
-import javax.annotation.PreDestroy;
-import javax.ejb.Singleton;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.Singleton;
 
 @Singleton
 @Proxy(DynamicMBeanHandler.class)

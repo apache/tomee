@@ -18,7 +18,7 @@ package org.superbiz.async;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;

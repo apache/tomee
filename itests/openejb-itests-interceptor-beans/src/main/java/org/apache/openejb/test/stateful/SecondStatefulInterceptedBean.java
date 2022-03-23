@@ -19,15 +19,15 @@ package org.apache.openejb.test.stateful;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Stateful;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.ExcludeClassInterceptors;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.PostActivate;
+import jakarta.ejb.PrePassivate;
+import jakarta.ejb.Stateful;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.ExcludeClassInterceptors;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 
 import org.apache.openejb.test.SuperInterceptedBean;
 import org.apache.openejb.test.interceptor.ClassInterceptor;

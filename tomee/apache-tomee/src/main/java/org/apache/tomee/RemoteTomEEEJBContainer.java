@@ -28,13 +28,13 @@ import org.apache.openejb.config.RemoteServer;
 import org.apache.openejb.loader.IO;
 import org.apache.tomee.util.QuickServerXmlParser;
 
-import javax.ejb.EJBException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.ejb.spi.EJBContainerProvider;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.ejb.spi.EJBContainerProvider;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;

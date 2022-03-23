@@ -25,10 +25,10 @@ indicates that the unique identifier value generation of the entity will be mana
 ----
 package org.superbiz.injection.h3jpa;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Movie {
@@ -94,13 +94,13 @@ link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceCon
 
 [source,java]
 ----
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.metamodel.EntityType;
 import java.util.List;
 
 @Stateful
@@ -233,7 +233,7 @@ import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

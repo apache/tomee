@@ -23,18 +23,18 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.FinderException;
-import javax.ejb.LocalHome;
-import javax.ejb.RemoteHome;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.FinderException;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 import java.rmi.RemoteException;
 
 @RunWith(ValidationRunner.class)
@@ -68,16 +68,16 @@ public class CheckNoCreateMethodsTest {
         return ejbJar;
     }
 
-    private static interface FooStatelessHome extends javax.ejb.EJBHome {
+    private static interface FooStatelessHome extends jakarta.ejb.EJBHome {
     }
 
-    private static interface FooStatelessRemote extends javax.ejb.EJBObject {
+    private static interface FooStatelessRemote extends jakarta.ejb.EJBObject {
     }
 
-    private static interface FooStatelessLocalHome extends javax.ejb.EJBLocalHome {
+    private static interface FooStatelessLocalHome extends jakarta.ejb.EJBLocalHome {
     }
 
-    private static interface FooStatelessLocal extends javax.ejb.EJBLocalObject {
+    private static interface FooStatelessLocal extends jakarta.ejb.EJBLocalObject {
     }
 
     private static class FooStateless implements SessionBean {
@@ -101,16 +101,16 @@ public class CheckNoCreateMethodsTest {
         }
     }
 
-    private static interface FooStatefulHome extends javax.ejb.EJBHome {
+    private static interface FooStatefulHome extends jakarta.ejb.EJBHome {
     }
 
-    private static interface FooStatefulRemote extends javax.ejb.EJBObject {
+    private static interface FooStatefulRemote extends jakarta.ejb.EJBObject {
     }
 
-    private static interface FooStatefulLocalHome extends javax.ejb.EJBLocalHome {
+    private static interface FooStatefulLocalHome extends jakarta.ejb.EJBLocalHome {
     }
 
-    private static interface FooStatefulLocal extends javax.ejb.EJBLocalObject {
+    private static interface FooStatefulLocal extends jakarta.ejb.EJBLocalObject {
     }
 
     private static class FooStateful implements SessionBean {
@@ -216,11 +216,11 @@ public class CheckNoCreateMethodsTest {
         }
     }
 
-    private static interface BarStatelessHome extends javax.ejb.EJBHome {
+    private static interface BarStatelessHome extends jakarta.ejb.EJBHome {
         public BarStatelessRemote create() throws CreateException, RemoteException;
     }
 
-    private static interface BarStatelessRemote extends javax.ejb.EJBObject {
+    private static interface BarStatelessRemote extends jakarta.ejb.EJBObject {
     }
 
     private static class BarStateless implements SessionBean {
@@ -242,18 +242,18 @@ public class CheckNoCreateMethodsTest {
         }
     }
 
-    private static interface BazStatefulHome extends javax.ejb.EJBHome {
+    private static interface BazStatefulHome extends jakarta.ejb.EJBHome {
         public BazStatefulRemote create() throws CreateException, RemoteException;
     }
 
-    private static interface BazStatefulRemote extends javax.ejb.EJBObject {
+    private static interface BazStatefulRemote extends jakarta.ejb.EJBObject {
     }
 
-    private static interface BazStatefulLocalHome extends javax.ejb.EJBLocalHome {
+    private static interface BazStatefulLocalHome extends jakarta.ejb.EJBLocalHome {
         public BazStatefulLocal create() throws CreateException;
     }
 
-    private static interface BazStatefulLocal extends javax.ejb.EJBLocalObject {
+    private static interface BazStatefulLocal extends jakarta.ejb.EJBLocalObject {
     }
 
     @RemoteHome(BazStatefulHome.class)

@@ -18,8 +18,8 @@ package org.apache.tomee.security;
 
 import java.util.Map;
 
-import javax.enterprise.context.Dependent;
-import javax.security.enterprise.identitystore.PasswordHash;
+import jakarta.enterprise.context.Dependent;
+import jakarta.security.enterprise.identitystore.PasswordHash;
 
 @Dependent
 public class TomEEPlaintextPasswordHash implements PasswordHash {

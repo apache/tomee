@@ -33,8 +33,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
@@ -249,6 +249,7 @@ public class StatelessInvocationStatsTest {
         //Verify invocation attributes and values
         Assert.assertEquals(expectedAttributes, actualAttributes);
         boolean ok = true;
+        Double abs = 0.0;
         for (final Map.Entry<String, Object> entry : actualValues.entrySet()) {
             final Number value = (Number) expectedValues.get(entry.getKey());
             final Number real = (Number) actualValues.get(entry.getKey());
@@ -256,14 +257,14 @@ public class StatelessInvocationStatsTest {
             if (!value.equals(real)) { // tolerating a 1 wide range
                 Logger.getLogger(StatelessInvocationStatsTest.class.getName()).log(Level.WARNING, "Test tolerance: " + entry.getKey() + " => " + entry.getValue() + "/" + expectedValues
                         .get(entry.getKey()));
-                final Double abs = Math.abs(real.doubleValue() - value.doubleValue());
+                abs = Math.abs(real.doubleValue() - value.doubleValue());
                 if (abs.intValue() > 1) {
                     ok = false;
                 }
             }
         }
 
-        Assert.assertTrue("Expected status to be true, but was: " + ok, ok);
+        Assert.assertTrue("Expected value not in the authorized range: shift is " + abs.intValue(), ok);
 
         // Grab invocation mbean operations
         final MBeanParameterInfo[] invocationParameters1 = {

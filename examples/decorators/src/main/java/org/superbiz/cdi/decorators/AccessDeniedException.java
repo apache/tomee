@@ -16,7 +16,7 @@
  */
 package org.superbiz.cdi.decorators;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 /**
  * @version $Revision$ $Date$

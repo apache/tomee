@@ -26,8 +26,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 import static org.junit.Assert.assertEquals;

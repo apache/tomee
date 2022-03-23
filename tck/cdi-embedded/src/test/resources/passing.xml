@@ -71,13 +71,6 @@
                 <methods><exclude name=".*"/></methods>
             </class>
 
-            <!-- https://issues.jboss.org/projects/CDITCK/issues/CDITCK-600, uses illegal fireEvent to @ApplicationScoped bean in ProcessInjectionTarget -->
-            <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processInjectionTarget.WrappedInjectionTargetTest">
-                <methods>
-                    <exclude name=".*"/>
-                </methods>
-            </class>
-
             <!-- https://issues.jboss.org/projects/CDITCK/issues/CDITCK-576 -->
             <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.builtin.BuiltinBeanPassivationDependencyTest">
                 <methods>
@@ -105,6 +98,21 @@
                     <exclude name="testInjectionPointGetMemberIsUsedToDetermineTheClassThatDeclaresAnInjectionPoint"/>
                 </methods>
             </class>
+
+            <!-- https://issues.redhat.com/browse/CDITCK-590 -->
+            <class name="org.jboss.cdi.tck.tests.extensions.beanDiscovery.event.ordering.LifecycleEventOrderingTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+
+            <!-- todo check if this is required or a bug -->
+            <class name="org.jboss.cdi.tck.tests.extensions.beanManager.unmanaged.UnmanagedInstanceTest">
+                <methods>
+                    <exclude name="testNonContextualInstanceIsIntercepted"/>
+                </methods>
+            </class>
+
 
             <!-- this tests Weld specific internals -->
             <class name="org.jboss.cdi.tck.tests.definition.bean.types.illegal.BeanTypesWithIllegalTypeTest">
@@ -195,7 +203,7 @@
             </class>
 
 
-            <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
+            <!-- CDITCK-462 jakarta.enterprise.context.conversation.id is not el compliant -->
             <class name="org.jboss.cdi.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
                 <methods>
                     <exclude name=".*" />

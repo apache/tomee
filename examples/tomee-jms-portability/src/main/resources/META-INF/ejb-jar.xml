@@ -32,7 +32,7 @@
       <ejb-name>AMQReadBean</ejb-name>
       <ejb-class>com.company.tutorial.service.AMQReadBean</ejb-class>
 
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
 
       <activation-config>
         <activation-config-property>
@@ -41,7 +41,7 @@
         </activation-config-property>
         <activation-config-property>
           <activation-config-property-name>destinationType</activation-config-property-name>
-          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+          <activation-config-property-value>jakarta.jms.Queue</activation-config-property-value>
         </activation-config-property>
       </activation-config>
 
@@ -53,7 +53,7 @@
       <ejb-name>AMQReadBean2</ejb-name>
       <ejb-class>com.company.tutorial.service.AMQReadBean</ejb-class>
 
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
 
       <activation-config>
         <activation-config-property>
@@ -62,7 +62,7 @@
         </activation-config-property>
         <activation-config-property>
           <activation-config-property-name>destinationType</activation-config-property-name>
-          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+          <activation-config-property-value>jakarta.jms.Queue</activation-config-property-value>
         </activation-config-property>
       </activation-config>
 
@@ -72,12 +72,12 @@
     <message-driven>
       <ejb-name>WMQReadBean</ejb-name>
       <ejb-class>com.company.tutorial.service.WMQReadBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Container</transaction-type>
       <activation-config>
         <activation-config-property>
           <activation-config-property-name>destinationType</activation-config-property-name>
-          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+          <activation-config-property-value>jakarta.jms.Queue</activation-config-property-value>
         </activation-config-property>
         <!-- Important to note that this is activation config for IBM MQ and thus supports a JNDI destination value
         JNDI based names are currently not supported for AMQ (default tomee activation config) -->

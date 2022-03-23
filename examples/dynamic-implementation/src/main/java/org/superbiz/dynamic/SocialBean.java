@@ -18,8 +18,8 @@ package org.superbiz.dynamic;
 
 import org.apache.openejb.api.Proxy;
 
-import javax.ejb.Singleton;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Singleton;
+import jakarta.interceptor.Interceptors;
 
 @Singleton
 @Proxy(SocialHandler.class)

@@ -22,9 +22,9 @@ import org.apache.bval.jsr.job.ConstraintValidators;
 import org.apache.bval.jsr.metadata.Meta;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.validation.ConstraintDefinitionException;
-import javax.validation.Validation;
-import javax.validation.metadata.Scope;
+import jakarta.validation.ConstraintDefinitionException;
+import jakarta.validation.Validation;
+import jakarta.validation.metadata.Scope;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

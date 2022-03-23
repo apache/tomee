@@ -16,21 +16,21 @@
  */
 package org.apache.tomee.security.cdi;
 
-import javax.annotation.Priority;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.Priority;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 import javax.security.auth.callback.Callback;
-import javax.security.auth.message.callback.CallerPrincipalCallback;
-import javax.security.enterprise.AuthenticationStatus;
-import javax.security.enterprise.authentication.mechanism.http.AutoApplySession;
-import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.security.auth.message.callback.CallerPrincipalCallback;
+import jakarta.security.enterprise.AuthenticationStatus;
+import jakarta.security.enterprise.authentication.mechanism.http.AutoApplySession;
+import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.Arrays;
 
-import static javax.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
+import static jakarta.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
 
 @AutoApplySession
 @Interceptor
@@ -60,7 +60,7 @@ public class AutoApplySessionInterceptor {
             final Object authenticationStatus = invocationContext.proceed();
 
             if (AuthenticationStatus.SUCCESS.equals(authenticationStatus)) {
-                httpMessageContext.getMessageInfo().getMap().put("javax.servlet.http.registerSession", "true");
+                httpMessageContext.getMessageInfo().getMap().put("jakarta.servlet.http.registerSession", "true");
             }
 
             return (AuthenticationStatus) authenticationStatus;

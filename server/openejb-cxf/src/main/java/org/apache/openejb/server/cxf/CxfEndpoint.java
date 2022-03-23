@@ -40,11 +40,11 @@ import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 
 import javax.naming.Context;
 import javax.xml.transform.Source;
-import javax.xml.ws.Binding;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.Binding;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.http.HTTPBinding;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

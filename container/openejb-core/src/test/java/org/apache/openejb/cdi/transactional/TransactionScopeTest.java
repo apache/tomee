@@ -23,9 +23,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.transaction.TransactionScoped;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.transaction.TransactionScoped;
+import jakarta.transaction.Transactional;
 import java.io.Serializable;
 
 import static org.hamcrest.CoreMatchers.is;

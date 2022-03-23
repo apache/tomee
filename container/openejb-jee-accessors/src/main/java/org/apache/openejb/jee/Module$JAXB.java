@@ -24,7 +24,7 @@ import org.metatype.sxc.util.XoXMLStreamReader;
 import org.metatype.sxc.util.XoXMLStreamWriter;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
 import static org.apache.openejb.jee.Web$JAXB.readWeb;

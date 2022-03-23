@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJBMetaData;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.RemoveException;
 
 /**
  * [3] Should be run as the third test suite of the BasicStatelessTestClients
@@ -58,12 +58,12 @@ public class StatelessPojoEjbHomeTests extends BasicStatelessTestClient {
     /**
      * ------------------------------------
      * 5.3.2 Removing a session object
-     * A client may remove a session object using the remove() method on the javax.ejb.EJBObject
-     * interface, or the remove(Handle handle) method of the javax.ejb.EJBHome interface.
+     * A client may remove a session object using the remove() method on the jakarta.ejb.EJBObject
+     * interface, or the remove(Handle handle) method of the jakarta.ejb.EJBHome interface.
      *
      * Because session objects do not have primary keys that are accessible to clients, invoking the
-     * javax.ejb.EJBHome.remove(Object primaryKey) method on a session results in the
-     * javax.ejb.RemoveException.
+     * jakarta.ejb.EJBHome.remove(Object primaryKey) method on a session results in the
+     * jakarta.ejb.RemoveException.
      *
      * ------------------------------------
      * 5.5 Session object identity
@@ -79,7 +79,7 @@ public class StatelessPojoEjbHomeTests extends BasicStatelessTestClient {
      * the java.lang.RuntimeException.
      * ------------------------------------
      *
-     * Sections 5.3.2 and 5.5 conflict.  5.3.2 says to throw javax.ejb.RemoveException, 5.5 says to
+     * Sections 5.3.2 and 5.5 conflict.  5.3.2 says to throw jakarta.ejb.RemoveException, 5.5 says to
      * throw java.rmi.RemoteException.
      *
      * For now, we are going with java.rmi.RemoteException.
@@ -94,9 +94,9 @@ public class StatelessPojoEjbHomeTests extends BasicStatelessTestClient {
             assertTrue(true);
             return;
         } catch (final Exception e) {
-            fail("Received Exception " + e.getClass() + " instead of javax.ejb.RemoveException : " + e.getMessage());
+            fail("Received Exception " + e.getClass() + " instead of jakarta.ejb.RemoveException : " + e.getMessage());
         }
-        assertTrue("javax.ejb.RemoveException should have been thrown", false);
+        assertTrue("jakarta.ejb.RemoveException should have been thrown", false);
     }
     //
     // Test ejb home methods

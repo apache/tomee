@@ -18,7 +18,7 @@ package org.apache.openejb.junit.jee.statement;
 
 import org.junit.runners.model.Statement;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 
 public class ShutingDownStatement extends DecoratingStatement {
     private final StartingStatement startingStatement;

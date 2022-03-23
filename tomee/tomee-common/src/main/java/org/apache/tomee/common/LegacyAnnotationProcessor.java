@@ -33,14 +33,14 @@ package org.apache.tomee.common;
  * limitations under the License.
  */
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
 import javax.naming.NamingException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-import javax.xml.ws.WebServiceRef;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.xml.ws.WebServiceRef;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

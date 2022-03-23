@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package javax.xml.ws;
+package jakarta.xml.ws;
 
 /**
  * This class is only provided so JaxWS code can be compiled under Java6 update 4 which

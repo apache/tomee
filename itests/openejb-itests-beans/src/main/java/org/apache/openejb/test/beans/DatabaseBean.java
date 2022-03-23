@@ -20,15 +20,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 /**
  * @version $Rev$ $Date$
  */
-public class DatabaseBean implements javax.ejb.SessionBean {
+public class DatabaseBean implements jakarta.ejb.SessionBean {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public class DatabaseBean implements javax.ejb.SessionBean {
         this.getClass();
     }
 
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void ejbCreate() throws jakarta.ejb.CreateException {
         try {
             jndiContext = new InitialContext();
         } catch (final Exception e) {
@@ -107,7 +107,7 @@ public class DatabaseBean implements javax.ejb.SessionBean {
     public void ejbRemove() {
     }
 
-    public void setSessionContext(final javax.ejb.SessionContext cntx) {
+    public void setSessionContext(final jakarta.ejb.SessionContext cntx) {
         context = cntx;
     }
 } 

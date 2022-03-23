@@ -34,8 +34,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-import javax.interceptor.Interceptors;
-import javax.transaction.TransactionManager;
+import jakarta.interceptor.Interceptors;
+import jakarta.transaction.TransactionManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
@@ -61,10 +61,10 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
         Statement statement = methodInvoker(method, instance);
 
-        statement = wrap(test, statement, RunAs.class, javax.annotation.security.RunAs.class);
+        statement = wrap(test, statement, RunAs.class, jakarta.annotation.security.RunAs.class);
         statement = wrap(test, statement, RunTestAs.class, org.apache.openejb.junit.RunTestAs.class);
         statement = wrap(test, statement, Transaction.class, org.apache.openejb.junit.Transaction.class);
-        statement = wrap(test, statement, TransactionAttribute.class, javax.ejb.TransactionAttribute.class);
+        statement = wrap(test, statement, TransactionAttribute.class, jakarta.ejb.TransactionAttribute.class);
 
         statement = possiblyExpectingExceptions(method, instance, statement);
         statement = withPotentialTimeout(method, instance, statement);
@@ -159,9 +159,9 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    public static class RunAs extends AnnotationStatement<javax.annotation.security.RunAs> {
+    public static class RunAs extends AnnotationStatement<jakarta.annotation.security.RunAs> {
 
-        public RunAs(final javax.annotation.security.RunAs annotation, final Statement next, final Test test) {
+        public RunAs(final jakarta.annotation.security.RunAs annotation, final Statement next, final Test test) {
             super(annotation, next, test);
         }
 
@@ -195,9 +195,9 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    public static class TransactionAttribute extends AnnotationStatement<javax.ejb.TransactionAttribute> {
+    public static class TransactionAttribute extends AnnotationStatement<jakarta.ejb.TransactionAttribute> {
 
-        public TransactionAttribute(final javax.ejb.TransactionAttribute annotation, final Statement next, final Test test) {
+        public TransactionAttribute(final jakarta.ejb.TransactionAttribute annotation, final Statement next, final Test test) {
             super(annotation, next, test);
         }
 
@@ -219,7 +219,7 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         }
 
         private boolean isApplicationException(final Throwable t) {
-            if (t.getClass().isAnnotationPresent(javax.ejb.ApplicationException.class)) {
+            if (t.getClass().isAnnotationPresent(jakarta.ejb.ApplicationException.class)) {
                 return true;
             }
             if (t instanceof Error) {

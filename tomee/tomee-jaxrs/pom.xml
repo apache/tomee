@@ -21,7 +21,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <classifier>tomcat</classifier>
     </dependency>
     <dependency>

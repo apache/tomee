@@ -45,7 +45,7 @@ public class ExceptionInjectionTest {
     private DeploymentException oejbException;
 
     @Deployment(testable = false)
-    @ShouldThrowException(javax.enterprise.inject.spi.DeploymentException.class)
+    @ShouldThrowException(jakarta.enterprise.inject.spi.DeploymentException.class)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
                 .addAsWebInfResource(new StringAsset(Descriptors.create(BeansDescriptor.class)

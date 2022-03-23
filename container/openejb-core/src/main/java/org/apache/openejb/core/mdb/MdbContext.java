@@ -22,9 +22,9 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.MessageDrivenContext;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.MessageDrivenContext;
 import java.io.Flushable;
 import java.io.IOException;
 

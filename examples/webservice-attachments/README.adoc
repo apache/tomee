@@ -12,12 +12,12 @@ right to edit this page._
 ----
 package org.superbiz.attachment;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -73,8 +73,8 @@ public class AttachmentImpl implements AttachmentWs {
 ----
 package org.superbiz.attachment;
 
-import javax.activation.DataHandler;
-import javax.jws.WebService;
+import jakarta.activation.DataHandler;
+import jakarta.jws.WebService;
 
 /**
  * This is an EJB 3 webservice interface to send attachments throughout SAOP.
@@ -106,15 +106,15 @@ package org.superbiz.attachment;
 
 import junit.framework.TestCase;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.net.URL;
 import java.util.Properties;
 

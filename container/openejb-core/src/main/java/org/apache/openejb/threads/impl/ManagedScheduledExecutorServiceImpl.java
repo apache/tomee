@@ -23,9 +23,9 @@ import org.apache.openejb.threads.task.TriggerCallable;
 import org.apache.openejb.threads.task.TriggerRunnable;
 import org.apache.openejb.threads.task.TriggerTask;
 
-import javax.enterprise.concurrent.ManagedScheduledExecutorService;
-import javax.enterprise.concurrent.ManagedTask;
-import javax.enterprise.concurrent.Trigger;
+import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
+import jakarta.enterprise.concurrent.ManagedTask;
+import jakarta.enterprise.concurrent.Trigger;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

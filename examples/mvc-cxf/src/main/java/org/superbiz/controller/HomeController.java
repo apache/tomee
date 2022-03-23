@@ -18,8 +18,8 @@ package org.superbiz.controller;
 
 import javax.mvc.Controller;
 import javax.mvc.View;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Controller
 @Path("home")

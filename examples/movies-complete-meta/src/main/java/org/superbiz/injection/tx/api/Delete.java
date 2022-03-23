@@ -18,10 +18,10 @@ package org.superbiz.injection.tx.api;
 
 import org.superbiz.injection.tx.DeleteInterceptor;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

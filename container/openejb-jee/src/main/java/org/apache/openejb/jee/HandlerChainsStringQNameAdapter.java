@@ -20,7 +20,7 @@ package org.apache.openejb.jee;
 import org.apache.openejb.jee.JaxbJavaee.HandlerChainsNamespaceFilter;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 

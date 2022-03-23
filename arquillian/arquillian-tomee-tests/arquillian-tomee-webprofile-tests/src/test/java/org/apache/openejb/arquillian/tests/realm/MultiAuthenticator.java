@@ -20,8 +20,8 @@ import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.tomee.catalina.realm.event.UserPasswordAuthenticationEvent;
 
 import java.util.Arrays;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.event.Observes;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.event.Observes;
 
 @RequestScoped
 public class MultiAuthenticator {

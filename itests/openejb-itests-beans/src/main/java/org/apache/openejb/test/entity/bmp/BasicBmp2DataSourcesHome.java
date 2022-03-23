@@ -17,17 +17,17 @@
 package org.apache.openejb.test.entity.bmp;
 
 
-public interface BasicBmp2DataSourcesHome extends javax.ejb.EJBHome {
+public interface BasicBmp2DataSourcesHome extends jakarta.ejb.EJBHome {
 
 
     public BasicBmp2DataSourcesObject create(String name)
-        throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 
     public BasicBmp2DataSourcesObject findByPrimaryKey(Integer primarykey)
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     public java.util.Collection findEmptyCollection()
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     public int sum(int x, int y) throws java.rmi.RemoteException;
 }

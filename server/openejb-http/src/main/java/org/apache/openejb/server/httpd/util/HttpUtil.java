@@ -26,13 +26,13 @@ import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.server.httpd.ServletListener;
 import org.apache.webbeans.container.InjectableBeanManager;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -92,7 +92,7 @@ public final class HttpUtil {
             if (servletContext == null) {
                 servletContext = SystemInstance.get().getComponent(ServletContext.class);
             }
-            if ("javax.faces.webapp.FacesServlet".equals(classname)) {
+            if ("jakarta.faces.webapp.FacesServlet".equals(classname)) {
                 try {
                     // faking it to let the FacesServlet starting
                     // NOTE: needs myfaces-impl + tomcat-jasper (JspFactory)
@@ -100,7 +100,7 @@ public final class HttpUtil {
                     final Class<?> mfListenerClass = wc.getClassLoader().loadClass("org.apache.myfaces.webapp.StartupServletContextListener");
 
                     final ServletContextListener servletContextListener = ServletContextListener.class.cast(mfListenerClass.newInstance());
-                    servletContext.setAttribute("javax.enterprise.inject.spi.BeanManager", new InjectableBeanManager(wc.getWebBeansContext().getBeanManagerImpl()));
+                    servletContext.setAttribute("jakarta.enterprise.inject.spi.BeanManager", new InjectableBeanManager(wc.getWebBeansContext().getBeanManagerImpl()));
                     final Thread thread = Thread.currentThread();
                     final ClassLoader old = setClassLoader(wc, thread);
                     try {
@@ -108,7 +108,7 @@ public final class HttpUtil {
                     } finally {
                         thread.setContextClassLoader(old);
                     }
-                    servletContext.removeAttribute("javax.enterprise.inject.spi.BeanManager");
+                    servletContext.removeAttribute("jakarta.enterprise.inject.spi.BeanManager");
                 } catch (final Exception e) {
                     // no-op
                 }
@@ -157,7 +157,7 @@ public final class HttpUtil {
         try {
             final ClassLoader classLoader = ParentClassLoaderFinder.Helper.get();
             final Class<?> jspFactory = classLoader.loadClass("org.apache.jasper.runtime.JspFactoryImpl");
-            final Class<?> jspFactoryApi = classLoader.loadClass("javax.servlet.jsp.JspFactory");
+            final Class<?> jspFactoryApi = classLoader.loadClass("jakarta.servlet.jsp.JspFactory");
             jspFactoryApi.getMethod("setDefaultFactory", jspFactoryApi).invoke(null, jspFactory.newInstance());
         } catch (final Throwable t) {
             // no-op

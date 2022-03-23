@@ -30,7 +30,7 @@
 
         # used in TCKs
         jdbc = new://Resource?type=DataSource
-        jms = new://Resource?type=javax.jms.ConnectionFactory
+        jms = new://Resource?type=jakarta.jms.ConnectionFactory
         queue = new://Resource?type=Queue
         topic = new://Resource?type=Topic
       </property>

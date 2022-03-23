@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.client;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -25,7 +25,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class EJBObjectHandle implements java.io.Externalizable, javax.ejb.Handle {
+public class EJBObjectHandle implements java.io.Externalizable, jakarta.ejb.Handle {
 
     private static final long serialVersionUID = -4428541526493118024L;
     protected transient EJBObjectProxy ejbObjectProxy;

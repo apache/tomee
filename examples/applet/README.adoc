@@ -12,7 +12,7 @@ right to edit this page._
 ----
 package org.superbiz.applet;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Calculator {
@@ -117,7 +117,7 @@ public class CalculatorApplet extends JApplet {
 ----
 package org.superbiz.applet;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class CalculatorImpl implements Calculator {

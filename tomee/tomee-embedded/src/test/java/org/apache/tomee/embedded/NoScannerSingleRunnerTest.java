@@ -22,9 +22,9 @@ import org.apache.tomee.embedded.junit.TomEEEmbeddedSingleRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

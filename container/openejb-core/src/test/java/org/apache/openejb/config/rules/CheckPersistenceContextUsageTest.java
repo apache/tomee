@@ -25,10 +25,10 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.junit.runner.RunWith;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
 
 @RunWith(ValidationRunner.class)
 public class CheckPersistenceContextUsageTest {

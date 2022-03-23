@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.groovy;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Named
 public class Bar {

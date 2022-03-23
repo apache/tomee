@@ -23,7 +23,7 @@ import org.apache.openejb.threads.task.CURunnable;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Callable;

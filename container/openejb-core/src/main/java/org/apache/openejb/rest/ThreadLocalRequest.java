@@ -17,10 +17,10 @@
 
 package org.apache.openejb.rest;
 
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Variant;
+import jakarta.ws.rs.core.EntityTag;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.Variant;
 import java.util.Date;
 import java.util.List;
 

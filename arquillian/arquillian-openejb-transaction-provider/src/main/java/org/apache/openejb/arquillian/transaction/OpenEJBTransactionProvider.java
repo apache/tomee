@@ -23,7 +23,7 @@ import org.jboss.arquillian.transaction.spi.test.TransactionalTest;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 public class OpenEJBTransactionProvider implements TransactionProvider {
     @Override

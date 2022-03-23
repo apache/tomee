@@ -33,7 +33,7 @@ import org.apache.webbeans.spi.api.ResourceReference;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.Bean;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;

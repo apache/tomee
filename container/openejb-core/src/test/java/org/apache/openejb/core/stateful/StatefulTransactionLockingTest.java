@@ -28,23 +28,23 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBObject;
-import javax.ejb.RemoteHome;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.ejb.TransactionAttribute;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.TransactionAttribute;
 import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static javax.ejb.TransactionAttributeType.NOT_SUPPORTED;
-import static javax.ejb.TransactionAttributeType.REQUIRED;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static jakarta.ejb.TransactionAttributeType.NOT_SUPPORTED;
+import static jakarta.ejb.TransactionAttributeType.REQUIRED;
+import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 
 /**
  * @version $Rev$ $Date$

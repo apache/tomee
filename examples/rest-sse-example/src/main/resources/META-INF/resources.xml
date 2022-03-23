@@ -21,7 +21,7 @@
     ServerUrl       =  tcp://localhost:61616
   </Resource>
 
-  <Resource id="MyJmsConnectionFactory" type="javax.jms.ConnectionFactory">
+  <Resource id="MyJmsConnectionFactory" type="jakarta.jms.ConnectionFactory">
     ResourceAdapter = MyJmsResourceAdapter
   </Resource>
 

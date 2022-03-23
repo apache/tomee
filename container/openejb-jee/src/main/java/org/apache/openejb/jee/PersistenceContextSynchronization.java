@@ -18,7 +18,7 @@
 
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlEnumValue;
+import jakarta.xml.bind.annotation.XmlEnumValue;
 
 public enum PersistenceContextSynchronization {
     @XmlEnumValue("Synchronized")SYNCHRONIZED,

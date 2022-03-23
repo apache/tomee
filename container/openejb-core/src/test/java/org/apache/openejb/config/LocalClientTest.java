@@ -28,23 +28,23 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.webbeans.logger.JULLoggerFactory;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jws.WebService;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jws.WebService;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
@@ -173,7 +173,7 @@ public class LocalClientTest extends TestCase {
         }
     }
 
-    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+    private void testJmsConnection(final jakarta.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
         final MessageProducer producer = session.createProducer(topic);

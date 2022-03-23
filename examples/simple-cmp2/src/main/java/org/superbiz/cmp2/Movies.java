@@ -16,14 +16,14 @@
  */
 package org.superbiz.cmp2;
 
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.FinderException;
 import java.util.Collection;
 
 /**
  * @version $Revision$ $Date$
  */
-interface Movies extends javax.ejb.EJBLocalHome {
+interface Movies extends jakarta.ejb.EJBLocalHome {
 
     Movie create(String director, String title, int year) throws CreateException;
 

@@ -24,7 +24,7 @@
 		ServerUrl = tcp://127.0.0.1:61616
 	</Resource>
 
-	<Resource id="amq_qcf" type="javax.jms.ConnectionFactory">
+	<Resource id="amq_qcf" type="jakarta.jms.ConnectionFactory">
 		ResourceAdapter = amq_ra
 	</Resource>
 
@@ -32,20 +32,20 @@
 		ResourceAdapter = amq_ra
 	</Container>
 
-	<Resource id="AnswerQueue" type="javax.jms.Queue">
+	<Resource id="AnswerQueue" type="jakarta.jms.Queue">
 		destination=AnswerQueue
 	</Resource>
 
-	<Resource id="ChatBean" type="javax.jms.Queue">
+	<Resource id="ChatBean" type="jakarta.jms.Queue">
 		destination=ChatBean
 	</Resource>
 
-	<Resource id="amq.bar.pop" type="javax.jms.Queue">
+	<Resource id="amq.bar.pop" type="jakarta.jms.Queue">
 		destination=amq.bar.pop
 	</Resource>
 
 	<!-- -Damq.variable.destination=overridenValue -->
-	<Resource id="amq.variable" type="javax.jms.Queue">
+	<Resource id="amq.variable" type="jakarta.jms.Queue">
 		destination=defaultValue
 	</Resource>
 
@@ -54,7 +54,7 @@
 
 	<Container id="imq_container" type="MESSAGE">
 		ResourceAdapter=imq_ra
-		MessageListenerInterface=javax.jms.MessageListener
+		MessageListenerInterface=jakarta.jms.MessageListener
 		ActivationSpecClass=com.ibm.mq.connector.inbound.ActivationSpecImpl
 	</Container>
 
@@ -71,7 +71,7 @@
 	</Resource>
 
 
-	<Resource id="imq_qcf" type="javax.jms.ConnectionFactory"
+	<Resource id="imq_qcf" type="jakarta.jms.ConnectionFactory"
 		class-name="com.ibm.mq.connector.outbound.ManagedConnectionFactoryImpl">
 		TransactionSupport=none
 		ResourceAdapter=imq_ra
@@ -82,19 +82,19 @@
 		TransportType=CLIENT
 	</Resource>
 
-	<Resource id="imq_container-javax.jms.QueueConnectionFactory"
-		type="javax.jms.QueueConnectionFactory" class-name="com.ibm.mq.connector.outbound.ManagedQueueConnectionFactoryImpl">
+	<Resource id="imq_container-jakarta.jms.QueueConnectionFactory"
+		type="jakarta.jms.QueueConnectionFactory" class-name="com.ibm.mq.connector.outbound.ManagedQueueConnectionFactoryImpl">
 		TransactionSupport=xa
 		ResourceAdapter=imq_ra
 	</Resource>
 
-	<Resource id="imq_container-javax.jms.TopicConnectionFactory"
-		type="javax.jms.TopicConnectionFactory" class-name="com.ibm.mq.connector.outbound.ManagedTopicConnectionFactoryImpl">
+	<Resource id="imq_container-jakarta.jms.TopicConnectionFactory"
+		type="jakarta.jms.TopicConnectionFactory" class-name="com.ibm.mq.connector.outbound.ManagedTopicConnectionFactoryImpl">
 		TransactionSupport=xa
 		ResourceAdapter=imq_ra
 	</Resource>
 
-	<Resource id="imq.bar" type="javax.jms.Queue"
+	<Resource id="imq.bar" type="jakarta.jms.Queue"
 		class-name="com.ibm.mq.connector.outbound.MQQueueProxy">
 		arbitraryProperties
 		baseQueueManagerName=XXXXXXXX
@@ -109,7 +109,7 @@
 		targetClient=MQ
 	</Resource>
 	
-	<Resource id="imq.foo" type="javax.jms.Topic"
+	<Resource id="imq.foo" type="jakarta.jms.Topic"
 		class-name="com.ibm.mq.connector.outbound.MQTopicProxy">
 		arbitraryProperties
 		baseTopicName=WW.XXXXXXXX.XX.XXXXX

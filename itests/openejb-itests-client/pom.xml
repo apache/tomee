@@ -25,7 +25,7 @@
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-itests-client</artifactId>
@@ -83,8 +83,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>jakartaee-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -98,8 +99,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-ra</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-ra-shade</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

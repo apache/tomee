@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>itests</artifactId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-itests-interceptor-beans</artifactId>
@@ -37,8 +37,8 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>jakartaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

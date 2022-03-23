@@ -19,10 +19,10 @@ package org.apache.openejb.test.entity.cmr.onetoone;
 
 import org.apache.openejb.test.entity.cmr.CompoundPK;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.CreateException;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.RemoveException;
 
 /**
  * @version $Revision$ $Date$

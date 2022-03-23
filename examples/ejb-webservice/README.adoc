@@ -12,8 +12,8 @@ right to edit this page._
 ----
 package org.superbiz.ws;
 
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 @Stateless
 @WebService(portName = "CalculatorPort",

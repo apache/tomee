@@ -17,14 +17,14 @@
 package org.apache.openejb.tck.cdi.embedded;
 
 import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener2;
+import org.testng.IInvokedMethodListener;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 
-public class GCListener implements IInvokedMethodListener2 {
+public class GCListener implements IInvokedMethodListener {
     private final MemoryMXBean memory;
 
     public GCListener() {

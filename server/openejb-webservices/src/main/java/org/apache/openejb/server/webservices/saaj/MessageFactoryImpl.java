@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.server.webservices.saaj;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class MessageFactoryImpl extends MessageFactory {
     private MessageFactory getMessageFactory() throws SOAPException {
-        return (MessageFactory) SaajFactoryFinder.find("javax.xml.soap.MessageFactory");
+        return (MessageFactory) SaajFactoryFinder.find("jakarta.xml.soap.MessageFactory");
     }
 
     @Override

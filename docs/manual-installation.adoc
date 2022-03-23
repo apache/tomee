@@ -85,7 +85,7 @@ className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
 
 == Update the Tomcat annotations-api.jar file
 
-Tomcat contains an old non-compliant version of the javax.annotation
+Tomcat contains an old non-compliant version of the jakarta.annotation
 classes and these invalid classes must be updated so OpenEJB can process
 annotations. Simply, replace the annotations-api.jar in the Tomcat lib
 directory with the updated annotations-api.jar in the OpenEJB war.

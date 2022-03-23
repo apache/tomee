@@ -18,9 +18,9 @@ package org.apache.openejb.arquillian.tests.jaxws;
 
 import org.joda.time.LocalDateTime;
 
-import javax.ejb.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ejb.Singleton;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Path("joda")
 @Singleton

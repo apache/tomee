@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.cxf.fault;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 /**
  * @version $Rev$

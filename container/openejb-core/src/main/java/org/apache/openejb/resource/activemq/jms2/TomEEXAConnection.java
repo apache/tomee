@@ -21,11 +21,11 @@ import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 import org.apache.activemq.util.IdGenerator;
 
-import javax.jms.ConnectionConsumer;
-import javax.jms.JMSException;
-import javax.jms.ServerSessionPool;
-import javax.jms.Session;
-import javax.jms.Topic;
+import jakarta.jms.ConnectionConsumer;
+import jakarta.jms.JMSException;
+import jakarta.jms.ServerSessionPool;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
 
 public class TomEEXAConnection extends ActiveMQXAConnection {
     protected TomEEXAConnection(final Transport transport, final IdGenerator clientIdGenerator,

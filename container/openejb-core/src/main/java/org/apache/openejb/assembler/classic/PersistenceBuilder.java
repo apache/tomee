@@ -28,12 +28,12 @@ import org.apache.openejb.util.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.persistence.spi.PersistenceUnitTransactionType;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ValidatorFactory;
 import java.util.Map;
 
 public class PersistenceBuilder {

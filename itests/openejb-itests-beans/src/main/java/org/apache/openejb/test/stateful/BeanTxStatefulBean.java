@@ -19,19 +19,19 @@ package org.apache.openejb.test.stateful;
 import org.apache.openejb.test.object.Account;
 import org.apache.openejb.test.object.Transaction;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import javax.transaction.RollbackException;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.UserTransaction;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class BeanTxStatefulBean implements javax.ejb.SessionBean {
+public class BeanTxStatefulBean implements jakarta.ejb.SessionBean {
 
 
     private String name;
@@ -48,11 +48,11 @@ public class BeanTxStatefulBean implements javax.ejb.SessionBean {
      * Maps to BasicStatefulHome.create
      *
      * @param name
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see BasicStatefulHome#createObject
      */
     public void ejbCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         this.name = name;
         try {
             jndiContext = new InitialContext();

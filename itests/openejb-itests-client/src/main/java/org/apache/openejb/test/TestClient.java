@@ -18,10 +18,10 @@ package org.apache.openejb.test;
 
 import org.apache.xbean.finder.ClassFinder;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBMetaData;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 import javax.naming.InitialContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

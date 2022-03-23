@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;

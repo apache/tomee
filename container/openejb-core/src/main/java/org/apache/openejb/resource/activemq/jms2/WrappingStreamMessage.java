@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
-import javax.jms.JMSException;
-import javax.jms.MessageFormatException;
-import javax.jms.StreamMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageFormatException;
+import jakarta.jms.StreamMessage;
 
 public class WrappingStreamMessage extends DelegateMessage implements StreamMessage {
     private final StreamMessage message;

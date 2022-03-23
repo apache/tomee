@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.servlet;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(
     portName = "HelloPojoPort",

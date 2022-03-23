@@ -36,8 +36,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;

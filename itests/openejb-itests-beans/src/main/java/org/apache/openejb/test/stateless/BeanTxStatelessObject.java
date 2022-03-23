@@ -21,13 +21,13 @@ import java.rmi.RemoteException;
 import org.apache.openejb.test.object.Account;
 import org.apache.openejb.test.object.Transaction;
 
-public interface BeanTxStatelessObject extends javax.ejb.EJBObject {
+public interface BeanTxStatelessObject extends jakarta.ejb.EJBObject {
 
     public Transaction getUserTransaction() throws RemoteException;
 
     public Transaction jndiUserTransaction() throws RemoteException;
 
-    public void openAccount(Account account, Boolean commit) throws RemoteException, javax.transaction.RollbackException;
+    public void openAccount(Account account, Boolean commit) throws RemoteException, jakarta.transaction.RollbackException;
 
     public Account retreiveAccount(String ssn) throws RemoteException;
 }

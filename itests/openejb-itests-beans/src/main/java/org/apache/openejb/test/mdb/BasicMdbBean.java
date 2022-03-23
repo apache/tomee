@@ -19,13 +19,13 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.EJBException;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.MessageDrivenContext;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.MessageDrivenBean;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 import javax.naming.InitialContext;
 import java.util.HashMap;
 import java.util.Properties;
@@ -144,7 +144,7 @@ public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageL
     // MessageDrivenBean interface methods
     //
 
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void ejbCreate() throws jakarta.ejb.CreateException {
         testAllowedOperations("ejbCreate");
     }
 

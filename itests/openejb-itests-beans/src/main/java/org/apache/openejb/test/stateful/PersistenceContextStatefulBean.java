@@ -20,12 +20,12 @@ import org.junit.Assert;
 import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 
-import javax.ejb.SessionContext;
-import javax.ejb.Remove;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Remove;
 import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.transaction.UserTransaction;
-import javax.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.UserTransaction;
+import jakarta.annotation.Resource;
 
 /**
  * @version $Rev$ $Date$

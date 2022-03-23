@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.test.entity.cmp2.daytrader.ejb;
 
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
 
 /**
  * @version $Rev$ $Date$

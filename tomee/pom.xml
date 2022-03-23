@@ -25,7 +25,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   
   <artifactId>tomee</artifactId>
@@ -82,32 +82,6 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core</artifactId>
           <version>${project.version}</version>
-          <exclusions>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>javaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-broker</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-ra</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
-            </exclusion>
-          </exclusions>
         </dependency>
       </dependencies>
     </profile>
@@ -123,44 +97,6 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core</artifactId>
           <version>${project.version}</version>
-          <exclusions>
-            <exclusion>
-              <groupId>org.apache.openjpa</groupId>
-              <artifactId>openjpa</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.bval</groupId>
-              <artifactId>bval-jsr</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>javaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-broker</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-ra</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.slf4j</groupId>
-              <artifactId>slf4j-jdk14</artifactId>
-            </exclusion>
-          </exclusions>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
@@ -169,28 +105,8 @@
           <version>${project.version}</version>
           <exclusions>
             <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>javaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-broker</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-ra</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -227,7 +143,7 @@
         <version>${commons-beanutils.version}</version>
       </dependency>
       <dependency>
-        <groupId>javax.servlet</groupId>
+        <groupId>jakarta.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>1.2</version>
       </dependency>
@@ -286,6 +202,7 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${openwebbeans.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
@@ -294,11 +211,7 @@
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -313,7 +226,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <artifactId>commons-beanutils</artifactId>
@@ -378,9 +291,9 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>javax.faces</groupId>
-        <artifactId>javax.faces-api</artifactId>
-        <version>2.1</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>openejb-jee</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.glassfish</groupId>
@@ -398,8 +311,8 @@
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>javax.xml.soap-api</artifactId>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

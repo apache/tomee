@@ -25,8 +25,8 @@ import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 @Classes(innerClassesAsBean = true, cdi = true)
 @RunWith(ApplicationComposer.class)
 public class CdiPasswordCipherTest {
-    @javax.annotation.Resource
+    @jakarta.annotation.Resource
     private AResource resource;
 
     @Test

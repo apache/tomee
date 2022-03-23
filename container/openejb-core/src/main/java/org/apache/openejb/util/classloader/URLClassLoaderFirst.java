@@ -65,11 +65,11 @@ public class URLClassLoaderFirst extends URLClassLoader {
         list(FORCED_SKIP, "openejb.classloader.forced-skip", null);
         list(FORCED_LOAD, "openejb.classloader.forced-load", null);
         list(FILTERABLE_RESOURCES, "openejb.classloader.filterable-resources",
-                "META-INF/services/javax.validation.spi.ValidationProvider," +
-                "META-INF/services/javax.ws.rs.client.ClientBuilder," +
-                "META-INF/services/javax.json.spi.JsonProvider," +
+                "META-INF/services/jakarta.validation.spi.ValidationProvider," +
+                "META-INF/services/jakarta.ws.rs.client.ClientBuilder," +
+                "META-INF/services/jakarta.json.spi.JsonProvider," +
                 "META-INF/services/javax.cache.spi.CachingProvider," +
-                "META-INF/services/javax.persistence.spi.PersistenceProvider," +
+                "META-INF/services/jakarta.persistence.spi.PersistenceProvider," +
                 "META-INF/javamail.default.providers," +
                 "META-INF/javamail.default.address.map," +
                 "META-INF/javamail.charset.map,META-INF/mailcap," +
@@ -232,10 +232,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("java.")) {
             return true;
         }
-        if (name.startsWith("javax.faces.")) {
+        if (name.startsWith("jakarta.faces.")) {
             return false;
         }
-        if (name.startsWith("javax.mail.")) {
+        if (name.startsWith("jakarta.mail.")) {
             return false;
         }
         if (name.startsWith("javax.") || name.startsWith("jakarta.")) {
@@ -246,7 +246,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         }
 
         // can be provided in the webapp
-        if (name.startsWith("javax.servlet.jsp.jstl")) {
+        if (name.startsWith("jakarta.servlet.jsp.jstl")) {
             return false;
         }
 
@@ -555,17 +555,17 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldSkipJsf(final ClassLoader loader, final String name) {
-        if (!name.startsWith("javax.faces.")) {
+        if (!name.startsWith("jakarta.faces.")) {
             return false;
         }
 
         // using annotation to test to avoid to load more classes with deps
         final String testClass;
         // these test classes have to be jsf 2.x AND 1.x otherwise we force JSF 2
-        if ("javax.faces.webapp.FacesServlet".equals(name)) {
-            testClass = "javax.faces.FactoryFinder";
+        if ("jakarta.faces.webapp.FacesServlet".equals(name)) {
+            testClass = "jakarta.faces.FactoryFinder";
         } else {
-            testClass = "javax.faces.webapp.FacesServlet";
+            testClass = "jakarta.faces.webapp.FacesServlet";
         }
 
         final String classname = testClass.replace('.', '/') + ".class";

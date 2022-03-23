@@ -42,20 +42,20 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.LocalHome;
-import javax.ejb.RemoteHome;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.SessionContext;
 import javax.naming.Context;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -66,7 +66,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class JPACMDIntegrationTest {
 
-    @javax.persistence.PersistenceUnit
+    @jakarta.persistence.PersistenceUnit
     private EntityManagerFactory emf;
 
 
@@ -156,20 +156,20 @@ public class JPACMDIntegrationTest {
 
     }
 
-    @javax.persistence.Entity
+    @jakarta.persistence.Entity
     public static class User {
 
-        @javax.persistence.Id
+        @jakarta.persistence.Id
         private String id;
 
-        @javax.persistence.Column
+        @jakarta.persistence.Column
         private String name;
     }
 
 
     @LocalHome(MyLocalHome.class)
     @RemoteHome(MyRemoteHome.class)
-    public static abstract class MyCmpBean implements javax.ejb.EntityBean {
+    public static abstract class MyCmpBean implements jakarta.ejb.EntityBean {
 
         // CMP
         public abstract Integer getId();
@@ -214,24 +214,24 @@ public class JPACMDIntegrationTest {
 
     @LocalHome(MyLocalHome.class)
     @RemoteHome(MyRemoteHome.class)
-    public class MyBmpBean implements javax.ejb.EntityBean {
+    public class MyBmpBean implements jakarta.ejb.EntityBean {
 
         public void doit() {
         }
 
-        public java.util.Collection ejbFindEmptyCollection() throws javax.ejb.FinderException, java.rmi.RemoteException {
+        public java.util.Collection ejbFindEmptyCollection() throws jakarta.ejb.FinderException, java.rmi.RemoteException {
             return new java.util.Vector();
         }
 
-        public Integer ejbFindByPrimaryKey(final Integer primaryKey) throws javax.ejb.FinderException {
+        public Integer ejbFindByPrimaryKey(final Integer primaryKey) throws jakarta.ejb.FinderException {
             return -1;
         }
 
-        public Integer ejbCreateObject(final String name) throws javax.ejb.CreateException {
+        public Integer ejbCreateObject(final String name) throws jakarta.ejb.CreateException {
             return -1;
         }
 
-        public void ejbPostCreateObject(final String name) throws javax.ejb.CreateException {
+        public void ejbPostCreateObject(final String name) throws jakarta.ejb.CreateException {
         }
 
 
@@ -257,39 +257,39 @@ public class JPACMDIntegrationTest {
         }
     }
 
-    public interface MyRemoteHome extends javax.ejb.EJBHome {
+    public interface MyRemoteHome extends jakarta.ejb.EJBHome {
 
         MyRemoteObject createObject(String name)
-                throws javax.ejb.CreateException, java.rmi.RemoteException;
+                throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 
         MyRemoteObject findByPrimaryKey(Integer primarykey)
-                throws javax.ejb.FinderException, java.rmi.RemoteException;
+                throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
         java.util.Collection findEmptyCollection()
-                throws javax.ejb.FinderException, java.rmi.RemoteException;
+                throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     }
 
-    public interface MyRemoteObject extends javax.ejb.EJBObject {
+    public interface MyRemoteObject extends jakarta.ejb.EJBObject {
 
         public void doit() throws RemoteException;
 
     }
 
-    public interface MyLocalHome extends javax.ejb.EJBLocalHome {
+    public interface MyLocalHome extends jakarta.ejb.EJBLocalHome {
 
         public MyLocalObject createObject(String name)
-                throws javax.ejb.CreateException;
+                throws jakarta.ejb.CreateException;
 
         public MyLocalObject findByPrimaryKey(Integer primarykey)
-                throws javax.ejb.FinderException;
+                throws jakarta.ejb.FinderException;
 
         public java.util.Collection findEmptyCollection()
-                throws javax.ejb.FinderException;
+                throws jakarta.ejb.FinderException;
 
     }
 
-    public interface MyLocalObject extends javax.ejb.EJBLocalObject {
+    public interface MyLocalObject extends jakarta.ejb.EJBLocalObject {
 
         public void doit();
 
@@ -297,12 +297,12 @@ public class JPACMDIntegrationTest {
 
     @LocalHome(MySessionLocalHome.class)
     @RemoteHome(MySessionRemoteHome.class)
-    public static class MySingletonBean implements javax.ejb.SessionBean {
+    public static class MySingletonBean implements jakarta.ejb.SessionBean {
 
         public void doit() {
         }
 
-        public void ejbCreateObject() throws javax.ejb.CreateException {
+        public void ejbCreateObject() throws jakarta.ejb.CreateException {
         }
 
         public void ejbActivate() throws EJBException, RemoteException {
@@ -318,21 +318,21 @@ public class JPACMDIntegrationTest {
         }
     }
 
-    public interface MySessionRemoteHome extends javax.ejb.EJBHome {
+    public interface MySessionRemoteHome extends jakarta.ejb.EJBHome {
          MySessionRemoteObject createObject()
-                throws javax.ejb.CreateException, java.rmi.RemoteException;
+                throws jakarta.ejb.CreateException, java.rmi.RemoteException;
     }
 
-    public interface MySessionRemoteObject extends javax.ejb.EJBObject {
+    public interface MySessionRemoteObject extends jakarta.ejb.EJBObject {
         void doit();
     }
 
-    public interface MySessionLocalHome extends javax.ejb.EJBLocalHome {
+    public interface MySessionLocalHome extends jakarta.ejb.EJBLocalHome {
          MySessionLocalObject createObject()
-                throws javax.ejb.CreateException;
+                throws jakarta.ejb.CreateException;
     }
 
-    public interface MySessionLocalObject extends javax.ejb.EJBLocalObject {
+    public interface MySessionLocalObject extends jakarta.ejb.EJBLocalObject {
         public void doit();
     }
 

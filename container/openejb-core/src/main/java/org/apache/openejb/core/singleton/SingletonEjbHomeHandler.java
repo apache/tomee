@@ -22,7 +22,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import java.lang.reflect.Method;
 import java.util.List;
 

@@ -20,8 +20,8 @@ import org.apache.openejb.api.Proxy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
-import javax.ejb.Stateless;
-import javax.persistence.PersistenceContext;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.PersistenceContext;
 
 @Stateless
 @Proxy(SpringDataProxy.class)

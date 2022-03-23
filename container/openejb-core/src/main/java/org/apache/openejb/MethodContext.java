@@ -22,7 +22,7 @@ import org.apache.openejb.core.timer.ScheduleData;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.Duration;
 
-import javax.ejb.LockType;
+import jakarta.ejb.LockType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

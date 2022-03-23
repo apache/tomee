@@ -27,7 +27,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-import javax.ejb.EJBAccessException;
+import jakarta.ejb.EJBAccessException;
 import java.util.ArrayList;
 import java.util.List;
 

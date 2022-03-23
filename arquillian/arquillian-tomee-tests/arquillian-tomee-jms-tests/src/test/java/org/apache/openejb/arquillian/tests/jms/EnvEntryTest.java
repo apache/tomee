@@ -28,7 +28,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertEquals;
@@ -47,13 +47,13 @@ public class EnvEntryTest {
             .createMessageDriven()
                 .ejbName("RedBean")
                 .ejbClass(RedBean.class.getName())
-                .messagingType("javax.jms.MessageListener")
+                .messagingType("jakarta.jms.MessageListener")
                 .transactionType("Container")
-                .messageDestinationType("javax.jms.Topic")
+                .messageDestinationType("jakarta.jms.Topic")
                 .getOrCreateActivationConfig()
                     .createActivationConfigProperty()
                         .activationConfigPropertyName("destinationType")
-                        .activationConfigPropertyValue("javax.jms.Topic").up()
+                        .activationConfigPropertyValue("jakarta.jms.Topic").up()
                     .createActivationConfigProperty()
                         .activationConfigPropertyName("destination")
                         .activationConfigPropertyValue("red").up().up()
@@ -61,13 +61,13 @@ public class EnvEntryTest {
             .createMessageDriven()
                 .ejbName("BlueBean")
                 .ejbClass(BlueBean.class.getName())
-                .messagingType("javax.jms.MessageListener")
+                .messagingType("jakarta.jms.MessageListener")
                 .transactionType("Container")
-                .messageDestinationType("javax.jms.Topic")
+                .messageDestinationType("jakarta.jms.Topic")
                 .getOrCreateActivationConfig()
                     .createActivationConfigProperty()
                         .activationConfigPropertyName("destinationType")
-                        .activationConfigPropertyValue("javax.jms.Topic").up()
+                        .activationConfigPropertyValue("jakarta.jms.Topic").up()
                     .createActivationConfigProperty()
                         .activationConfigPropertyName("destination")
                         .activationConfigPropertyValue("blue").up().up()
@@ -75,13 +75,13 @@ public class EnvEntryTest {
             .createMessageDriven()
                 .ejbName("NoColorBean")
                 .ejbClass(NoColorSpecifiedBean.class.getName())
-                .messagingType("javax.jms.MessageListener")
+                .messagingType("jakarta.jms.MessageListener")
                 .transactionType("Container")
-                .messageDestinationType("javax.jms.Topic")
+                .messageDestinationType("jakarta.jms.Topic")
                 .getOrCreateActivationConfig()
                     .createActivationConfigProperty()
                         .activationConfigPropertyName("destinationType")
-                        .activationConfigPropertyValue("javax.jms.Topic").up()
+                        .activationConfigPropertyValue("jakarta.jms.Topic").up()
                     .createActivationConfigProperty()
                         .activationConfigPropertyName("destination")
                         .activationConfigPropertyValue("nocolor").up().up();

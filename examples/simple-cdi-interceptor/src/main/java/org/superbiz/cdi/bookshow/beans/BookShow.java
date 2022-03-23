@@ -18,7 +18,7 @@ package org.superbiz.cdi.bookshow.beans;
 
 import org.superbiz.cdi.bookshow.interceptorbinding.Log;
 
-import javax.ejb.Stateful;
+import jakarta.ejb.Stateful;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

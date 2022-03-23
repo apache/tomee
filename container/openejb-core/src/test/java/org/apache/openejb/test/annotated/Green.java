@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.test.annotated;
 
-import javax.ejb.Stateful;
-import javax.interceptor.AroundInvoke;
-import javax.jws.WebService;
+import jakarta.ejb.Stateful;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.jws.WebService;
 
 
 @Stateful(description = "test")

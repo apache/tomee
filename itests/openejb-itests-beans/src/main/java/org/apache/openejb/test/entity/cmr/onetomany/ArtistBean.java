@@ -18,10 +18,10 @@ package org.apache.openejb.test.entity.cmr.onetomany;
 
 
 import java.util.Set;
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
 
 import org.apache.openejb.test.entity.cmr.CompoundPK;
 

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.deployment.entity.cmp.cmr.onetomany;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 import java.util.Set;
 
 /**

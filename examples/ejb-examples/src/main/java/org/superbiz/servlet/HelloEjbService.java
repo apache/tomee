@@ -16,9 +16,9 @@
  */
 package org.superbiz.servlet;
 
-import javax.ejb.Stateless;
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.ejb.Stateless;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 
 @WebService(
         portName = "HelloEjbPort",

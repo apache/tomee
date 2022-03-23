@@ -19,8 +19,8 @@ A implementação do método getClasses será chamada pela estrutura JAX-RS para
 ----
 package org.superbiz.moviefun.rest;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,9 +47,9 @@ package org.superbiz.moviefun.rest;
 import org.superbiz.moviefun.Movie;
 import org.superbiz.moviefun.MoviesBean;
 
-import javax.ejb.EJB;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.ejb.EJB;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 @Path("load")
 public class LoadRest {
@@ -81,17 +81,17 @@ package org.superbiz.moviefun.rest;
 import org.superbiz.moviefun.Movie;
 import org.superbiz.moviefun.MoviesBean;
 
-import javax.ejb.EJB;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+import jakarta.ejb.EJB;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
 @Path("movies")
@@ -152,11 +152,11 @@ Essa é a entidade Movie que será persistida pela JPA.
 ----
 package org.superbiz.moviefun;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @XmlRootElement(name = "movie")
@@ -245,16 +245,16 @@ Este é o EJB de acordo com a anotação @Stateless. Ele usa a persistência da 
 ----
 package org.superbiz.moviefun;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.EntityType;
 import java.util.List;
 
 @Stateless

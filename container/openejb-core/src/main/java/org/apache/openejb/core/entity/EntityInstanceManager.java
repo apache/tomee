@@ -34,9 +34,9 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Stack;
 
-import javax.ejb.EJBContext;
-import javax.ejb.EntityBean;
-import javax.ejb.NoSuchEntityException;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.NoSuchEntityException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -245,7 +245,7 @@ public class EntityInstanceManager {
                 /*
                 In the event of an exception, OpenEJB is required to log the exception, evict the instance,
                 and mark the transaction for rollback.  If there is a transaction to rollback, then the a
-                javax.transaction.TransactionRolledbackException must be throw to the client.
+                jakarta.transaction.TransactionRolledbackException must be throw to the client.
                 See EJB 1.1 specification, section 12.3.2
                 */
                 bean.ejbActivate();
@@ -338,7 +338,7 @@ public class EntityInstanceManager {
                     /*
                     In the event of an exception, OpenEJB is required to log the exception, evict the instance,
                     and mark the transaction for rollback.  If there is a transaction to rollback, then the a
-                    javax.transaction.TransactionRolledbackException must be throw to the client.
+                    jakarta.transaction.TransactionRolledbackException must be throw to the client.
                     See EJB 1.1 specification, section 12.3.2
                     */
                     bean.ejbPassivate();

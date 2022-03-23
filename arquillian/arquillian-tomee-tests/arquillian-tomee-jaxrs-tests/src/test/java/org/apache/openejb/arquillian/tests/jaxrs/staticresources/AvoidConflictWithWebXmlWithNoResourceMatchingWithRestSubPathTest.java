@@ -30,7 +30,7 @@ import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.io.IOException;
 import java.net.URL;
 

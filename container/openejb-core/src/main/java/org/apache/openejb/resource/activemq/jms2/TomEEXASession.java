@@ -20,9 +20,9 @@ import org.apache.activemq.ActiveMQXAConnection;
 import org.apache.activemq.ActiveMQXASession;
 import org.apache.activemq.command.SessionId;
 
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Topic;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Topic;
 
 // Note: not shared in the code
 public class TomEEXASession extends ActiveMQXASession {

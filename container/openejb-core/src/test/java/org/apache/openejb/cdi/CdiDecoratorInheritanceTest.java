@@ -24,9 +24,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.inject.Inject;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.inject.Inject;
 
 @RunWith(ApplicationComposer.class) // OWB-861
 public class CdiDecoratorInheritanceTest extends TestCase {

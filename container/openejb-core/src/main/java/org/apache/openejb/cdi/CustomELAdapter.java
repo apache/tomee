@@ -23,8 +23,8 @@ import org.apache.webbeans.el22.WebBeansELResolver;
 import org.apache.webbeans.el22.WrappedExpressionFactory;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 
-import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
+import jakarta.el.ELResolver;
+import jakarta.el.ExpressionFactory;
 
 /**
  * @version $Rev$ $Date$

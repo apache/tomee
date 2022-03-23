@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.test.entity.cmp2.model;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;

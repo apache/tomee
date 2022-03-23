@@ -26,7 +26,7 @@ import org.apache.openejb.junit5.jee.transaction.TransactionExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 import static org.junit.jupiter.api.Assertions.*;
 

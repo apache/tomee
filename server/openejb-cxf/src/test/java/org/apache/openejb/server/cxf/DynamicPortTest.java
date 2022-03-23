@@ -26,8 +26,8 @@ import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.jws.WebService;
-import javax.xml.ws.WebServiceRef;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceRef;
 import java.net.MalformedURLException;
 import java.util.Properties;
 

@@ -24,17 +24,17 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.ejb.ApplicationException;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateful;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.ejb.ApplicationException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Local;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateful;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 import java.io.Serializable;
 import java.security.Principal;
 
@@ -89,7 +89,7 @@ public class StatefulDecoratorInjectionTest {
 
         @Produces
         @Resource
-        private javax.ejb.SessionContext sessionContext;
+        private jakarta.ejb.SessionContext sessionContext;
 
         public void someBusinessMethod() {
 

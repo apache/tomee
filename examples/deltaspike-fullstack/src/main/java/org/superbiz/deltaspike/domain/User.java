@@ -24,13 +24,13 @@ import org.superbiz.deltaspike.domain.validation.Partial;
 import org.superbiz.deltaspike.domain.validation.UniqueUserName;
 import org.superbiz.deltaspike.domain.validation.UserName;
 
-import javax.enterprise.inject.Typed;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.enterprise.inject.Typed;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Table(name = "T_User")
 @Entity

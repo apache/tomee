@@ -29,11 +29,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.context.Dependent;
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.enterprise.context.Dependent;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;

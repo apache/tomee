@@ -26,9 +26,9 @@ import org.apache.xbean.asm9.MethodVisitor;
 import org.apache.xbean.asm9.Opcodes;
 import org.apache.xbean.asm9.shade.commons.EmptyVisitor;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceProperty;
-import javax.persistence.SynchronizationType;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceProperty;
+import jakarta.persistence.SynchronizationType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class PersistenceContextAnnFactory {
         boolean isPersistenceContextAnnotationValid = false;
         try {
             // Tomcat persistence context class is missing the properties method
-            final Class<?> persistenceContextClass = Class.forName("javax.persistence.PersistenceContext");
+            final Class<?> persistenceContextClass = Class.forName("jakarta.persistence.PersistenceContext");
             persistenceContextClass.getMethod("properties", (Class[]) null);
             isPersistenceContextAnnotationValid = true;
         } catch (final Exception e) {
@@ -214,9 +214,9 @@ public class PersistenceContextAnnFactory {
 
         @Override
         public AnnotationVisitor visitAnnotation(final String name, final String desc) {
-            if ("Ljavax/persistence/PersistenceContext;".equals(desc)) {
+            if ("Ljakarta/persistence/PersistenceContext;".equals(desc)) {
                 return new PersistenceContextVisitor(className, currentName, contexts);
-            } else if ("Ljavax/persistence/PersistenceContexts;".equals(desc)) {
+            } else if ("Ljakarta/persistence/PersistenceContexts;".equals(desc)) {
                 return super.visitAnnotation(name, desc);
             }
             return new EmptyVisitor().annotationVisitor();

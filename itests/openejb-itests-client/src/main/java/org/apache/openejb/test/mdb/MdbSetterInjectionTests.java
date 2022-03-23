@@ -20,7 +20,7 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.TestManager;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 public class MdbSetterInjectionTests extends MdbTestClient {
     protected EncMdbObject ejbObject;

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util.proxy;
 
-import javax.ejb.LocalBean;
+import jakarta.ejb.LocalBean;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

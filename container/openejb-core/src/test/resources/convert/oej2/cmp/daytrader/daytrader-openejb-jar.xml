@@ -209,7 +209,7 @@
             <ns3:activation-config>
                 <ns3:activation-config-property>
                     <ns3:activation-config-property-name>destinationType</ns3:activation-config-property-name>
-                    <ns3:activation-config-property-value>javax.jms.Queue</ns3:activation-config-property-value>
+                    <ns3:activation-config-property-value>jakarta.jms.Queue</ns3:activation-config-property-value>
                 </ns3:activation-config-property>
                 <ns3:activation-config-property>
                     <ns3:activation-config-property-name>destination</ns3:activation-config-property-name>
@@ -233,7 +233,7 @@
             <ns3:activation-config>
                 <ns3:activation-config-property>
                     <ns3:activation-config-property-name>destinationType</ns3:activation-config-property-name>
-                    <ns3:activation-config-property-value>javax.jms.Queue</ns3:activation-config-property-value>
+                    <ns3:activation-config-property-value>jakarta.jms.Queue</ns3:activation-config-property-value>
                 </ns3:activation-config-property>
                 <ns3:activation-config-property>
                     <ns3:activation-config-property-name>destination</ns3:activation-config-property-name>

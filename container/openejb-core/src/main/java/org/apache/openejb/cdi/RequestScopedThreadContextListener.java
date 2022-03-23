@@ -23,8 +23,8 @@ import org.apache.openejb.core.ThreadContextListener;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.spi.Context;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.spi.Context;
 
 /**
  * @version $Rev$ $Date$

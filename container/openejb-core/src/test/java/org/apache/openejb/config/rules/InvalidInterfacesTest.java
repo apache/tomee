@@ -23,15 +23,15 @@ import org.apache.openejb.loader.SystemInstance;
 import org.junit.After;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.interceptor.AroundInvoke;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
+import jakarta.interceptor.AroundInvoke;
 
 /**
  * @version $Rev$ $Date$

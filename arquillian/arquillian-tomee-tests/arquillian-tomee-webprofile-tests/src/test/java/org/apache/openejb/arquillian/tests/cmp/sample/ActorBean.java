@@ -17,9 +17,9 @@
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
 import java.util.Collection;
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
 
 
 public abstract class ActorBean implements EntityBean {

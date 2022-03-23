@@ -33,14 +33,14 @@ import org.apache.openejb.jee.oejb3.Jndi;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.junit.AfterClass;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.Local;
-import javax.ejb.LocalHome;
-import javax.ejb.Remote;
-import javax.ejb.RemoteHome;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Local;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.Remote;
+import jakarta.ejb.RemoteHome;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-metrics-tck</artifactId>
@@ -91,9 +91,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.metrics</groupId>
-      <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-metrics-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

@@ -20,7 +20,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.util.concurrent.Callable;
 
 /**

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.singleton;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class SingletonLocalIntfcTests extends BasicSingletonLocalTestClient {
 

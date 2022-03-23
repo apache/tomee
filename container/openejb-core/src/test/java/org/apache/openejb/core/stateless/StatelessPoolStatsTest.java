@@ -30,11 +30,11 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.test.util.Asserts;
 import org.junit.AfterClass;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.ConcurrentAccessException;
-import javax.ejb.SessionContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ConcurrentAccessException;
+import jakarta.ejb.SessionContext;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;

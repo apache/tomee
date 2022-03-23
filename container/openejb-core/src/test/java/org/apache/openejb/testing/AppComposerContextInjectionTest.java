@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.security.Principal;
 

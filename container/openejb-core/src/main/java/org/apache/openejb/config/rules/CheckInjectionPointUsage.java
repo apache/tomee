@@ -19,11 +19,11 @@ package org.apache.openejb.config.rules;
 
 import org.apache.openejb.config.EjbModule;
 
-import javax.enterprise.inject.Default;
-import javax.enterprise.inject.spi.DefinitionException;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServlet;
+import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.spi.DefinitionException;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServlet;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 

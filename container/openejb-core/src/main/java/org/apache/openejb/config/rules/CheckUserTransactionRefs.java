@@ -42,7 +42,7 @@ public class CheckUserTransactionRefs extends ValidationBase {
             if (bean.getTransactionType() == CONTAINER) {
                 final Collection<ResourceEnvRef> resRefs = bean.getResourceEnvRef();
                 for (final ResourceEnvRef resRef : resRefs) {
-                    if ("javax.transaction.UserTransaction".equals(resRef.getResourceEnvRefType())) {
+                    if ("jakarta.transaction.UserTransaction".equals(resRef.getResourceEnvRefType())) {
                         fail(bean, "userTransactionRef.forbiddenForCmtdBeans", resRef.getName());
                     }
                 }

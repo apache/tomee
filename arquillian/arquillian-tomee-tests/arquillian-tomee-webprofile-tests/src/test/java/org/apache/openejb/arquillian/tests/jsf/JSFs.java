@@ -22,7 +22,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 
-import javax.faces.webapp.FacesServlet;
+import jakarta.faces.webapp.FacesServlet;
 
 // Note: uses xhtml instead of default (*.jsf, /faces...)
 public abstract class JSFs {

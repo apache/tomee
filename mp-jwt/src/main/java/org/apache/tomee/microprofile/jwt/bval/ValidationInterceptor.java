@@ -20,11 +20,11 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.microprofile.jwt.JWTLogCategories;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.validation.ConstraintViolation;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Response;
+import jakarta.validation.ConstraintViolation;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

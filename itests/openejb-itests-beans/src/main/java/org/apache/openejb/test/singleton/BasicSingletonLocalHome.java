@@ -17,7 +17,7 @@
 package org.apache.openejb.test.singleton;
 
 
-public interface BasicSingletonLocalHome extends javax.ejb.EJBLocalHome {
+public interface BasicSingletonLocalHome extends jakarta.ejb.EJBLocalHome {
 
-    public BasicSingletonLocalObject create() throws javax.ejb.CreateException;
+    public BasicSingletonLocalObject create() throws jakarta.ejb.CreateException;
 }

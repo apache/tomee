@@ -20,7 +20,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Pool;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 import java.util.Properties;
 
 public class MdbContainerFactory {

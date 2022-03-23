@@ -17,7 +17,7 @@
 package org.apache.tomee.microprofile.tck.metrics;
 
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
-import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
+import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocol;
 
 public class MicroProfileMetricsTCKProtocol extends ServletProtocol {
     @Override

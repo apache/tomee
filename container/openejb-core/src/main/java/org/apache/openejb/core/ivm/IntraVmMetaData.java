@@ -22,8 +22,8 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 

@@ -49,7 +49,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.EJBMetaData getEJBMetaData(final ProxyInfo info) {
+    public jakarta.ejb.EJBMetaData getEJBMetaData(final ProxyInfo info) {
         final CallContext call = CallContext.getCallContext();
 
         final BeanContext beanContext = info.getBeanContext();
@@ -59,7 +59,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.Handle getHandle(final ProxyInfo info) {
+    public jakarta.ejb.Handle getHandle(final ProxyInfo info) {
         final CallContext call = CallContext.getCallContext();
         final BeanContext beanContext = info.getBeanContext();
 
@@ -89,7 +89,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.HomeHandle getHomeHandle(final ProxyInfo info) {
+    public jakarta.ejb.HomeHandle getHomeHandle(final ProxyInfo info) {
         final CallContext call = CallContext.getCallContext();
         final BeanContext beanContext = info.getBeanContext();
 
@@ -110,7 +110,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.EJBObject getEJBObject(final ProxyInfo info) {
+    public jakarta.ejb.EJBObject getEJBObject(final ProxyInfo info) {
         final CallContext call = CallContext.getCallContext();
         final BeanContext beanContext = info.getBeanContext();
 
@@ -128,7 +128,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
         final EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(JNDIContext.globalExecutor(), eMetaData, getServerMetaData(), cMetaData, primKey, null);
 
-        return (javax.ejb.EJBObject) hanlder.createEJBObjectProxy();
+        return (jakarta.ejb.EJBObject) hanlder.createEJBObjectProxy();
     }
 
     @Override
@@ -185,7 +185,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     @Override
-    public javax.ejb.EJBHome getEJBHome(final ProxyInfo info) {
+    public jakarta.ejb.EJBHome getEJBHome(final ProxyInfo info) {
         final CallContext call = CallContext.getCallContext();
         final BeanContext beanContext = info.getBeanContext();
 

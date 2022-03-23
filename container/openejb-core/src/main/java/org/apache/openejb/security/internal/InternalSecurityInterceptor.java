@@ -21,8 +21,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.Assembler;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 public class InternalSecurityInterceptor {
     public static final String OPENEJB_INTERNAL_BEANS_SECURITY_ENABLED = "openejb.internal.beans.security.enabled";

@@ -16,10 +16,10 @@
  */
 package org.superbiz;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Singleton;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.ConcurrencyManagement;
+import jakarta.ejb.ConcurrencyManagementType;
+import jakarta.ejb.Singleton;
 
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)

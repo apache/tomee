@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.beans;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;

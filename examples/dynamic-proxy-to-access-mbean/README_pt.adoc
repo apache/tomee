@@ -50,7 +50,7 @@ public @interface ObjectName {
 ----
 package org.superbiz.dynamic.mbean;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import javax.management.Attribute;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -288,7 +288,7 @@ import org.apache.openejb.api.Proxy;
 import org.superbiz.dynamic.mbean.DynamicMBeanHandler;
 import org.superbiz.dynamic.mbean.ObjectName;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 
 /**
  * @author rmannibucau
@@ -313,8 +313,8 @@ package org.superbiz.dynamic.mbean;
 
 import org.apache.openejb.api.Proxy;
 
-import javax.annotation.PreDestroy;
-import javax.ejb.Singleton;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.Singleton;
 
 
 @Singleton
@@ -386,8 +386,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.superbiz.dynamic.mbean.simple.Simple;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.management.Attribute;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;

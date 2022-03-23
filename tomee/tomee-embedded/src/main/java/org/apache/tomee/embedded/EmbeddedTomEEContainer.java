@@ -26,11 +26,11 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.tomee.catalina.TomEERuntimeException;
 
-import javax.ejb.EJBException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.ejb.spi.EJBContainerProvider;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.ejb.spi.EJBContainerProvider;
 import javax.naming.Context;
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;

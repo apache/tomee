@@ -19,7 +19,7 @@ package org.superbiz.injection.jms;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 public class MessagingBeanTest extends TestCase {

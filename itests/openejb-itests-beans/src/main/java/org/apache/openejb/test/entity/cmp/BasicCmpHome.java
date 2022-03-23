@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.FinderException;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
 
-public interface BasicCmpHome extends javax.ejb.EJBHome {
+public interface BasicCmpHome extends jakarta.ejb.EJBHome {
     BasicCmpObject createObject(String name) throws CreateException, RemoteException;
 
     BasicCmpObject findByPrimaryKey(Integer primarykey) throws FinderException, RemoteException;

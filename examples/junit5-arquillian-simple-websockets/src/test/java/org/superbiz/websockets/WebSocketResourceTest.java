@@ -26,7 +26,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.websocket.*;
+import jakarta.websocket.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;

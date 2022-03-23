@@ -19,7 +19,7 @@ So in ejb app A colorsApp.jar you have this bean:
 ----
 package com.foo.colors;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class OrangeBean implements OrangeRemote {
@@ -33,7 +33,7 @@ OrangeRemote:
 ----
 package com.foo.shapes;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import com.foo.colors.OrangeRemote;
 
 @Stateless
@@ -73,7 +73,7 @@ In ejb app A colorsApp.jar you have this bean:
 ----
 package com.foo.colors;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class OrangeBean implements OrangeRemote {
@@ -86,7 +86,7 @@ Then in ejb app B shapesApp.jar -- note there is no `@EJB` annotation:
 ----
 package com.foo.shapes;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 import com.foo.colors.OrangeRemote;
 
 @Stateless

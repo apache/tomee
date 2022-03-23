@@ -121,7 +121,7 @@ public class Runner {
                 // noop
             }
             try {
-                Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
+                Class.forName("jakarta.ejb.EJBHome", true, this.getClass().getClassLoader());
                 wereTheEjbClassesInstalled = true;
             } catch (final Exception e) {
                 // noop

@@ -19,8 +19,8 @@ package org.superbiz.cdi.bookshow.interceptors;
 import junit.framework.TestCase;
 import org.superbiz.cdi.bookshow.beans.BookShow;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 
 public class BookShowTest extends TestCase {
 

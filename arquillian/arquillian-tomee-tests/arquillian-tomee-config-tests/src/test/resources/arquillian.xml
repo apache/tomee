@@ -62,7 +62,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
-        javax.security.jacc.policy.provider=sun.security.provider.PolicyFile
+        jakarta.security.jacc.policy.provider=sun.security.provider.PolicyFile
       </property>
     </configuration>
   </container>

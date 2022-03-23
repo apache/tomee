@@ -42,11 +42,11 @@ import org.apache.openejb.quartz.JobExecutionContext;
 import org.apache.openejb.quartz.JobExecutionException;
 import org.junit.AfterClass;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.ejb.MessageDrivenContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.ejb.MessageDrivenContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;

@@ -23,12 +23,12 @@ import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.annotation.security.RolesAllowed;
-import javax.annotation.security.RunAs;
-import javax.ejb.EJB;
-import javax.ejb.EJBContext;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.annotation.security.RunAs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.Singleton;
 import javax.security.auth.login.LoginException;
 
 import static org.junit.Assert.assertEquals;

@@ -34,7 +34,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.junit.AfterClass;
 import org.junit.Assert;
 
-import javax.jms.Queue;
+import jakarta.jms.Queue;
 import javax.naming.NamingException;
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class MessageDestinationTest extends TestCase {
 
         final MessageDestinationRef webMessageDestRef = new MessageDestinationRef();
         webMessageDestRef.setMessageDestinationRefName("jms/myqueue");
-        webMessageDestRef.setMessageDestinationType("javax.jms.Queue");
+        webMessageDestRef.setMessageDestinationType("jakarta.jms.Queue");
         webMessageDestRef.setMessageDestinationUsage(MessageDestinationUsage.PRODUCES);
         webMessageDestRef.setMessageDestinationLink("ejb.jar#myqueue");
 
@@ -74,7 +74,7 @@ public class MessageDestinationTest extends TestCase {
         final StatelessBean statelessBean = new StatelessBean(GreenBean.class);
         final MessageDestinationRef ejbMessageDestRef = new MessageDestinationRef();
         ejbMessageDestRef.setMessageDestinationRefName("jms/myqueue");
-        ejbMessageDestRef.setMessageDestinationType("javax.jms.Queue");
+        ejbMessageDestRef.setMessageDestinationType("jakarta.jms.Queue");
         ejbMessageDestRef.setMessageDestinationUsage(MessageDestinationUsage.PRODUCES);
         ejbMessageDestRef.setMessageDestinationLink("myqueue");
 
@@ -104,7 +104,7 @@ public class MessageDestinationTest extends TestCase {
 
             found = true;
             Assert.assertEquals("jms/myqueue", resourceEnvRef.resourceID);
-            Assert.assertEquals("javax.jms.Queue", resourceEnvRef.resourceEnvRefType);
+            Assert.assertEquals("jakarta.jms.Queue", resourceEnvRef.resourceEnvRefType);
         }
 
         Assert.assertTrue(found);

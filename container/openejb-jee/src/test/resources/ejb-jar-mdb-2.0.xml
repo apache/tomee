@@ -28,7 +28,7 @@
       <message-selector>mySelector</message-selector>
       <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
       <message-driven-destination>
-        <destination-type>javax.jms.Queue</destination-type>
+        <destination-type>jakarta.jms.Queue</destination-type>
         <subscription-durability>Durable</subscription-durability>
       </message-driven-destination>
     </message-driven>

@@ -21,9 +21,9 @@ import org.apache.activemq.ra.ActiveMQConnectionRequestInfo;
 import org.apache.activemq.ra.ActiveMQManagedConnection;
 import org.apache.activemq.ra.ManagedConnectionProxy;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
 import java.lang.reflect.Field;
 import java.util.Collection;

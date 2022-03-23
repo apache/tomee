@@ -23,7 +23,7 @@ import org.hsqldb.jdbc.pool.JDBCXADataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.sql.DataSourceDefinition;
+import jakarta.annotation.sql.DataSourceDefinition;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import java.sql.Connection;

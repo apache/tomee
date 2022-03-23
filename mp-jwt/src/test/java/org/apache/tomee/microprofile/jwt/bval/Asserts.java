@@ -49,7 +49,7 @@ public class Asserts {
         final String[] lines = asmify.split("\n");
         for (int i = 0; i < lines.length; i++) {
             final String line = lines[i];
-            if (!line.contains("cw.visitMethod(ACC_PUBLIC,")) continue;
+            if (!line.contains(".visitMethod(ACC_PUBLIC,")) continue;
 
             final String[] parts = line.split(",");
             parts[3] = " null";

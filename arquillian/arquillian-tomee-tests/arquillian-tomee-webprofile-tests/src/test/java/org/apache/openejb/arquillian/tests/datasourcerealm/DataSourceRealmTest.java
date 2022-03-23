@@ -30,13 +30,13 @@ import org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static javax.xml.bind.DatatypeConverter.printBase64Binary;
+import static jakarta.xml.bind.DatatypeConverter.printBase64Binary;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)

@@ -19,11 +19,11 @@ package org.apache.tomee.microprofile.jwt.config;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.servlet.ServletContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.DeploymentException;
+import jakarta.servlet.ServletContext;
 import java.security.Key;
 import java.util.Collections;
 import java.util.List;

@@ -18,7 +18,7 @@ package org.apache.openejb.test.entity.cmr.cmrmapping;
 
 import java.util.Set;
 
-import javax.ejb.CreateException;
+import jakarta.ejb.CreateException;
 
 /**
  * @version $Revision$ $Date$

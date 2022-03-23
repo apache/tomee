@@ -24,7 +24,7 @@
 
   <container qualifier="tomee" default="true">
     <configuration>
-      <property name="catalina_opts">-Xmx512m -XX:MaxPermSize=512m</property>
+      <property name="catalina_opts">-Xmx512m</property>
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="ajpPort">-1</property>
@@ -40,8 +40,8 @@
         # note: this config just drop ValidationProvider from this list
         #
         openejb.classloader.filterable-resources = \
-          META-INF/services/javax.ws.rs.client.ClientBuilder,\
-          META-INF/services/javax.json.spi.JsonProvider,\
+          META-INF/services/jakarta.ws.rs.client.ClientBuilder,\
+          META-INF/services/jakarta.json.spi.JsonProvider,\
           META-INF/services/javax.cache.spi.CachingProvider,\
           META-INF/javamail.default.providers,META-INF/javamail.default.address.map,\
           META-INF/javamail.charset.map,META-INF/mailcap,\

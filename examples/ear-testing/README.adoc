@@ -59,7 +59,7 @@ The parent pom, trimmed to the minimum, looks like so:
     <dependencies>
       <dependency>
         <groupId>org.apache.openejb</groupId>
-        <artifactId>javaee-api</artifactId>
+        <artifactId>jakartaee-api</artifactId>
         <version>6.0-2</version>
       </dependency>
       <dependency>
@@ -91,7 +91,7 @@ The `business-model/pom.xml` as follows:
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -130,7 +130,7 @@ embedded testing with OpenEJB:
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

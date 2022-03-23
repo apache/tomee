@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.arquillian.tests.jsf.resource;
 
-import javax.annotation.Resource;
-import javax.faces.bean.ManagedBean;
+import jakarta.annotation.Resource;
+import jakarta.faces.bean.ManagedBean;
 import javax.sql.DataSource;
 
 @ManagedBean

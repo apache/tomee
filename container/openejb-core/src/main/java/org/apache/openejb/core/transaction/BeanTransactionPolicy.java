@@ -19,7 +19,7 @@ package org.apache.openejb.core.transaction;
 
 import org.apache.openejb.SystemException;
 
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 
 /**
  * BeanTransactionPolicy is an extension to the TransactionPolicy which provides

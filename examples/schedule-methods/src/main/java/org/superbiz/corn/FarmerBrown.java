@@ -16,11 +16,11 @@
  */
 package org.superbiz.corn;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Schedule;
-import javax.ejb.Schedules;
-import javax.ejb.Singleton;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Schedules;
+import jakarta.ejb.Singleton;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

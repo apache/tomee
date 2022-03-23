@@ -26,10 +26,10 @@ import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.util.Properties;

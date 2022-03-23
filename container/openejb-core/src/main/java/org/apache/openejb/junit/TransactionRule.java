@@ -25,9 +25,9 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.transaction.Transactional;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.transaction.Transactional;
 import java.lang.reflect.Method;
 
 public class TransactionRule extends BeanContextBaseRule implements TestRule {

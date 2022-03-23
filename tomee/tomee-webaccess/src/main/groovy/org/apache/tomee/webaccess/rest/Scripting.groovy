@@ -21,11 +21,11 @@ package org.apache.tomee.webaccess.rest
 import org.apache.tomee.webaccess.data.dto.ScriptingResultDto
 import org.apache.tomee.webaccess.service.ScriptingServiceImpl
 
-import javax.ejb.EJB
-import javax.ws.rs.FormParam
-import javax.ws.rs.POST
-import javax.ws.rs.Path
-import javax.ws.rs.Produces
+import jakarta.ejb.EJB
+import jakarta.ws.rs.FormParam
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.Produces
 
 @Path('/scripting')
 class Scripting {

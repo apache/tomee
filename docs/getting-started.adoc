@@ -68,7 +68,7 @@ In the EJB project create a new interface named Greeting
 ----
 package com.myejbs;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Greeting {
@@ -83,7 +83,7 @@ interface (shown below)
 ----
 package com.myejbs;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class GreetingBean implements Greeting {

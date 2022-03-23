@@ -19,7 +19,7 @@ package org.apache.openejb.core.cmp;
 
 import org.apache.openejb.OpenEJBException;
 
-import javax.ejb.EntityBean;
+import jakarta.ejb.EntityBean;
 import java.lang.reflect.Field;
 
 public class SimpleKeyGenerator extends AbstractKeyGenerator {

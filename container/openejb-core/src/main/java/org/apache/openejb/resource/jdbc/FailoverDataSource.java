@@ -18,7 +18,7 @@ package org.apache.openejb.resource.jdbc;
 
 import org.apache.openejb.resource.jdbc.router.FailOverRouter;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 // an all in one RoutedDataSource + FailOverRouter
 public class FailoverDataSource extends RoutedDataSource {

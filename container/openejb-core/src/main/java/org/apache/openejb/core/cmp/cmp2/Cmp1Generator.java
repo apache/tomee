@@ -58,7 +58,7 @@ public class Cmp1Generator implements Opcodes {
     public byte[] generate() {
         // We're creating a superclass for the implementation.  We force this to implement
         // EntityBean to allow POJOs to be used as the bean class. 
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[]{"javax/ejb/EntityBean"});
+        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[]{"jakarta/ejb/EntityBean"});
 
         // if we have an unknown pk, we need to add a field for the pk
         if (unknownPk) {

@@ -24,7 +24,7 @@ import org.apache.openejb.server.ServerServiceFilter;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

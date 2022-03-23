@@ -40,10 +40,10 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.servlet.http.HttpSession;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

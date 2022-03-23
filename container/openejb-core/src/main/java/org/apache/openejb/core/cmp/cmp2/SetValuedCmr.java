@@ -20,10 +20,10 @@ package org.apache.openejb.core.cmp.cmp2;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.ejb.EJBException;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EntityBean;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;

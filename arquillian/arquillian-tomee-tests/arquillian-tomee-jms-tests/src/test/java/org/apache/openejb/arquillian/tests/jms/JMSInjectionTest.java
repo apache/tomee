@@ -30,7 +30,7 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.faces.webapp.FacesServlet;
+import jakarta.faces.webapp.FacesServlet;
 import java.io.IOException;
 import java.net.URL;
 

@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 import org.junit.Assert;
 

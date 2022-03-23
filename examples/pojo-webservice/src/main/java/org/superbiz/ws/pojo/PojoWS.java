@@ -16,10 +16,10 @@
  */
 package org.superbiz.ws.pojo;
 
-import javax.annotation.Resource;
-import javax.jws.WebService;
-import javax.transaction.UserTransaction;
-import javax.xml.ws.WebServiceContext;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebService;
+import jakarta.transaction.UserTransaction;
+import jakarta.xml.ws.WebServiceContext;
 
 @WebService
 public class PojoWS implements WS {

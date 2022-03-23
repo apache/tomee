@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -75,7 +75,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.beanvalidation.tck</groupId>
+      <groupId>jakarta.validation</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
     </dependency>
@@ -87,8 +87,8 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
-      <artifactId>arquillian-protocol-servlet</artifactId>
-      <version>${version.arquillian}</version>
+      <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+      <version>${version.arquillian-protocol-servlet-jakarta}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -110,7 +110,7 @@
               <stripVersion>true</stripVersion>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.hibernate.beanvalidation.tck</groupId>
+                  <groupId>jakarta.validation</groupId>
                   <artifactId>beanvalidation-tck-tests</artifactId>
                   <type>xml</type>
                   <classifier>suite</classifier>

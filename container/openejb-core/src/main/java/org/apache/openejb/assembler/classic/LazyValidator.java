@@ -20,9 +20,9 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.bval.ValidatorUtil;
 
 import javax.naming.NamingException;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;

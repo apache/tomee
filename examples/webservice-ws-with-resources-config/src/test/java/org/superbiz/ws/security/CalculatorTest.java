@@ -24,13 +24,13 @@ import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;

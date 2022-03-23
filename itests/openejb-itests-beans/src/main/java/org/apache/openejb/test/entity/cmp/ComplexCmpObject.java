@@ -20,7 +20,7 @@ package org.apache.openejb.test.entity.cmp;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.RemoteException;
 import java.util.Properties;
 

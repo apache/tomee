@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.filterenventry;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class DefaultCompany implements CompanyLocal {

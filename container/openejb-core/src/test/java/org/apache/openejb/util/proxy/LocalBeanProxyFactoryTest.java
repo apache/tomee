@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.junit.Test;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;

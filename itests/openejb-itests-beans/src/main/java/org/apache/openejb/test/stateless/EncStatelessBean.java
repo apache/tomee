@@ -27,23 +27,23 @@ import org.apache.openejb.test.stateful.BasicStatefulObject;
 import org.apache.openejb.test.stateful.BasicStatefulPojoBean;
 import org.junit.Assert;
 
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnectionFactory;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.rmi.RemoteException;
 
-public class EncStatelessBean implements javax.ejb.SessionBean {
+public class EncStatelessBean implements jakarta.ejb.SessionBean {
 
     private String name;
     private SessionContext ejbContext;
@@ -444,7 +444,7 @@ public class EncStatelessBean implements javax.ejb.SessionBean {
         }
     }
 
-    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+    private void testJmsConnection(final jakarta.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
         final MessageProducer producer = session.createProducer(topic);
@@ -532,9 +532,9 @@ public class EncStatelessBean implements javax.ejb.SessionBean {
     }
 
     /**
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      */
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void ejbCreate() throws jakarta.ejb.CreateException {
         this.name = "nameless automaton";
     }
 

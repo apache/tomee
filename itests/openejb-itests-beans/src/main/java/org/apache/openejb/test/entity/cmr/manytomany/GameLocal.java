@@ -17,7 +17,7 @@
 package org.apache.openejb.test.entity.cmr.manytomany;
 
 import java.util.Set;
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 /**
  * @version $Revision$ $Date$

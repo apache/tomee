@@ -16,10 +16,10 @@
  */
 package org.superbiz.interceptors;
 
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import java.util.ArrayList;
 import java.util.List;
 

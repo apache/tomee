@@ -18,8 +18,8 @@
  */
 package org.superbiz.myfaces.domain.validation;
 
-import javax.validation.GroupSequence;
-import javax.validation.groups.Default;
+import jakarta.validation.GroupSequence;
+import jakarta.validation.groups.Default;
 
 @GroupSequence({Default.class, UniqueUserName.class})
 public interface Full {

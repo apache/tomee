@@ -21,9 +21,9 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.ThreadContext;
 
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.FinderException;
 import java.lang.reflect.Method;
 import java.util.List;
 

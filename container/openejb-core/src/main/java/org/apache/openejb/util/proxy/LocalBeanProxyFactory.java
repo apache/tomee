@@ -27,7 +27,7 @@ import org.apache.xbean.asm9.MethodVisitor;
 import org.apache.xbean.asm9.Opcodes;
 import org.apache.xbean.asm9.Type;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

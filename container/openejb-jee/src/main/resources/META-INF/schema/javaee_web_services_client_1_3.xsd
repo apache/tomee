@@ -289,8 +289,8 @@
           <xsd:documentation>
 
             This specifies the WS-Addressing requirements for a JAX-WS
-            web service. It corresponds to javax.xml.ws.soap.Addressing
-            annotation or its feature javax.xml.ws.soap.AddressingFeature.
+            web service. It corresponds to jakarta.xml.ws.soap.Addressing
+            annotation or its feature jakarta.xml.ws.soap.AddressingFeature.
             
             See the addressingType for more information.
             
@@ -306,8 +306,8 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            Corresponds to the javax.xml.ws.RespectBinding annotation
-            or its corresponding javax.xml.ws.RespectBindingFeature web
+            Corresponds to the jakarta.xml.ws.RespectBinding annotation
+            or its corresponding jakarta.xml.ws.RespectBindingFeature web
             service feature. This is used to control whether a JAX-WS
             implementation must respect/honor the contents of the
             wsdl:binding in the WSDL that is associated with the service.
@@ -525,8 +525,8 @@
       <xsd:documentation>
 
         This specifies the WS-Addressing requirements for a JAX-WS web service.
-        It corresponds to javax.xml.ws.soap.Addressing annotation or its
-        feature javax.xml.ws.soap.AddressingFeature.
+        It corresponds to jakarta.xml.ws.soap.Addressing annotation or its
+        feature jakarta.xml.ws.soap.AddressingFeature.
         
         If the "enabled" element is "true", WS-Addressing is enabled.
         It means that the endpoint supports WS-Addressing but does not require
@@ -594,8 +594,8 @@
     <xsd:annotation>
       <xsd:documentation>
 
-        Corresponds to the javax.xml.ws.RespectBinding annotation
-        or its corresponding javax.xml.ws.RespectBindingFeature web
+        Corresponds to the jakarta.xml.ws.RespectBinding annotation
+        or its corresponding jakarta.xml.ws.RespectBindingFeature web
         service feature. This is used to control whether a JAX-WS
         implementation must respect/honor the contents of the
         wsdl:binding in the WSDL that is associated with the service.

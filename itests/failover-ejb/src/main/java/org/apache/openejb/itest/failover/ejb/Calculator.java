@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.itest.failover.ejb;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Calculator {

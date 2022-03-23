@@ -16,7 +16,7 @@
  */
 package org.superbiz.accesstimeout.api;
 
-import javax.ejb.AccessTimeout;
+import jakarta.ejb.AccessTimeout;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

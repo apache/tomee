@@ -26,9 +26,9 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.PojoSerialization;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.Transaction;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.transaction.Transaction;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.HashMap;

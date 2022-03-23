@@ -18,8 +18,8 @@ package org.superbiz.cdi.qualifier;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.inject.Inject;
 
 import org.junit.AfterClass;
 import org.junit.Before;

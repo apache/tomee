@@ -16,7 +16,7 @@
  */
 package org.superbiz.servlet;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace = "http://examples.org/wsdl")
 public interface HelloEjb {

@@ -65,29 +65,29 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 
-import javax.annotation.ManagedBean;
-import javax.ejb.TimerService;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.jms.Queue;
-import javax.jms.Topic;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.ManagedBean;
+import jakarta.ejb.TimerService;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Providers;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.UserTransaction;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Providers;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -122,11 +122,11 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     static {
         // Context objects are automatically handled
-        ignoredReferenceTypes.add("javax.ejb.SessionContext");
-        ignoredReferenceTypes.add("javax.ejb.EntityContext");
-        ignoredReferenceTypes.add("javax.ejb.MessageDrivenContext");
-        ignoredReferenceTypes.add("javax.ejb.EJBContext");
-        ignoredReferenceTypes.add("javax.xml.ws.WebServiceContext");
+        ignoredReferenceTypes.add("jakarta.ejb.SessionContext");
+        ignoredReferenceTypes.add("jakarta.ejb.EntityContext");
+        ignoredReferenceTypes.add("jakarta.ejb.MessageDrivenContext");
+        ignoredReferenceTypes.add("jakarta.ejb.EJBContext");
+        ignoredReferenceTypes.add("jakarta.xml.ws.WebServiceContext");
         // URLs are automatically handled
         ignoredReferenceTypes.add("java.net.URL");
         // User transaction is automatically handled
@@ -457,7 +457,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
 
                 // topics need a clientId and subscriptionName
-                if ("javax.jms.Topic".equals(destinationType)) {
+                if ("jakarta.jms.Topic".equals(destinationType)) {
                     if (Boolean.parseBoolean(
                             SystemInstance.get().getProperty(
                                     "openejb.activemq.deploymentId-as-clientId",
@@ -476,7 +476,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private boolean isJms(final MessageDrivenBean mdb) {
         final String messagingType = mdb.getMessagingType();
-        return messagingType != null && messagingType.startsWith("javax.jms");
+        return messagingType != null && messagingType.startsWith("jakarta.jms");
     }
 
     /**
@@ -689,7 +689,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         mdb.setMessageDestinationType(destinationType);
 
                         // topics need a clientId and subscriptionName
-                        if ("javax.jms.Topic".equals(destinationType)) {
+                        if ("jakarta.jms.Topic".equals(destinationType)) {
                             final Properties properties = mdb.getActivationConfig().toProperties();
                             if (!properties.containsKey("clientId")) {
                                 mdb.getActivationConfig().addProperty("clientId", ejbDeployment.getDeploymentId());
@@ -1837,7 +1837,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private boolean isDataSourcePropertiesConfigured(final Properties properties) {
         return "true".equals(SystemInstance.get().getProperty("openejb.guess.resource-local-datasource-properties-configured", "true")) &&
-                (properties.containsKey("javax.persistence.jdbc.driver") || properties.containsKey("javax.persistence.jdbc.url"));
+                (properties.containsKey("jakarta.persistence.jdbc.driver") || properties.containsKey("jakarta.persistence.jdbc.url"));
     }
 
     private static void suffixAliases(final ResourceInfo ri, final String suffix) {

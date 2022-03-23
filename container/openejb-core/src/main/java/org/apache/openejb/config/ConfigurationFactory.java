@@ -102,7 +102,7 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

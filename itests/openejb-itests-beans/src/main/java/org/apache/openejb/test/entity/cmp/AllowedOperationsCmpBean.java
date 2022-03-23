@@ -22,11 +22,11 @@ import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

@@ -17,9 +17,9 @@
 
 package org.apache.openejb.core;
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
 import java.util.Map;
 import java.util.Properties;
 

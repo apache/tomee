@@ -19,11 +19,11 @@ package org.apache.openejb.core.webservices;
 
 import org.apache.openejb.OpenEJBRuntimeException;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.WebServiceProvider;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;

@@ -20,8 +20,8 @@ package org.apache.openejb.core.mdb;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.SystemException;
 
-import javax.resource.spi.ApplicationServerInternalException;
-import javax.resource.spi.UnavailableException;
+import jakarta.resource.spi.ApplicationServerInternalException;
+import jakarta.resource.spi.UnavailableException;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
 

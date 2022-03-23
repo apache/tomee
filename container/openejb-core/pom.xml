@@ -26,7 +26,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-core</artifactId>
@@ -36,72 +36,71 @@
   <properties>
     <tomee.build.name>${project.groupId}.container.core</tomee.build.name>
     <openejb.osgi.import.pkg>
-      javax.annotation;version="[1.1.0,2.0.0)",
-      javax.annotation.security;version="[1.1.0,2.0.0)",
-      javax.annotation.sql;version="[1.1.0,2.0.0)",
+      jakarta.annotation;version="[1.1.0,2.0.0)",
+      jakarta.annotation.security;version="[1.1.0,2.0.0)",
+      jakarta.annotation.sql;version="[1.1.0,2.0.0)",
       javax.crypto,
       javax.crypto.spec,
-      javax.el,
-      javax.decorator;resolution:=optional,
-      javax.ejb,
-      javax.ejb.embeddable,
-      javax.ejb.spi,
-      javax.enterprise.concurrent,
-      javax.enterprise.context,
-      javax.enterprise.context.spi,
+      jakarta.el,
+      jakarta.decorator;resolution:=optional,
+      jakarta.ejb,
+      jakarta.ejb.embeddable,
+      jakarta.ejb.spi,
+      jakarta.enterprise.concurrent,
+      jakarta.enterprise.context,
+      jakarta.enterprise.context.spi,
       javax.enterprise.deploy.model;resolution:=optional,
       javax.enterprise.deploy.shared;resolution:=optional,
       javax.enterprise.deploy.spi;resolution:=optional,
       javax.enterprise.deploy.spi.exceptions;resolution:=optional,
       javax.enterprise.deploy.spi.factories;resolution:=optional,
       javax.enterprise.deploy.spi.status;resolution:=optional,
-      javax.enterprise.event,
-      javax.enterprise.inject,
-      javax.enterprise.inject.spi,
-      javax.inject,
-      javax.interceptor,
-      javax.jms;resolution:=optional,
-      javax.jws,
-      javax.mail;resolution:=optional;version="[1.4,2)",
+      jakarta.enterprise.event,
+      jakarta.enterprise.inject,
+      jakarta.enterprise.inject.spi,
+      jakarta.inject,
+      jakarta.interceptor,
+      jakarta.jms;resolution:=optional,
+      jakarta.jws,
+      jakarta.mail;resolution:=optional;version="[1.4,2)",
       javax.management,
-      javax.management.j2ee,
       javax.management.loading,
       javax.management.openmbean,
       javax.naming,
       javax.naming.spi,
-      javax.persistence,
-      javax.persistence.criteria,
-      javax.persistence.metamodel,
-      javax.persistence.spi,
-      javax.resource,
-      javax.resource.spi,
-      javax.resource.spi.endpoint,
-      javax.resource.spi.work,
+      jakarta.persistence,
+      jakarta.persistence.criteria,
+      jakarta.persistence.metamodel,
+      jakarta.persistence.spi,
+      jakarta.resource,
+      jakarta.resource.spi,
+      jakarta.resource.spi.endpoint,
+      jakarta.resource.spi.work,
       javax.security.auth,
       javax.security.auth.callback,
       javax.security.auth.login,
-      javax.security.auth.message.callback,
+      jakarta.security.auth.message.callback,
       javax.security.auth.spi,
-      javax.security.jacc,
-      javax.servlet,
-      javax.servlet.http,
-      javax.servlet.jsp,
+      jakarta.security.jacc,
+      jakarta.servlet,
+      jakarta.servlet.http,
+      jakarta.servlet.jsp,
       javax.sql,
-      javax.transaction;version="[1.1.0,2.0.0)",
+      jakarta.transaction;version="[1.1.0,2.0.0)",
       javax.transaction.xa;version="[1.1.0,2.0.0)",
-      javax.validation,
-      javax.validation.bootstrap,
-      javax.ws.rs,
-      javax.ws.rs.core,
-      javax.ws.rs.ext,
+      jakarta.validation,
+      jakarta.validation.bootstrap,
+      jakarta.ws.rs,
+      jakarta.ws.rs.core,
+      jakarta.ws.rs.ext,
       javax.wsdl;resolution:=optional,,
       javax.wsdl.extensions.http;resolution:=optional,,
       javax.wsdl.extensions.soap;resolution:=optional,,
       javax.wsdl.factory;resolution:=optional,,
       javax.wsdl.xml;resolution:=optional,,
-      javax.xml.bind,
-      javax.xml.bind.annotation,
-      javax.xml.bind.annotation.adapters,
+      jakarta.xml.bind,
+      jakarta.xml.bind.annotation,
+      jakarta.xml.bind.annotation.adapters,
       javax.xml.datatype,
       javax.xml.namespace,
       javax.xml.parsers,
@@ -112,11 +111,11 @@
       javax.xml.transform.sax,
       javax.xml.transform.stream,
       javax.xml.validation,
-      javax.xml.ws,
-      javax.xml.ws.handler,
-      javax.xml.ws.soap,
-      javax.xml.ws.spi,
-      javax.xml.ws.wsaddressing,
+      jakarta.xml.ws,
+      jakarta.xml.ws.handler,
+      jakarta.xml.ws.soap,
+      jakarta.xml.ws.spi,
+      jakarta.xml.ws.wsaddressing,
       org.apache.activemq.broker;resolution:=optional;version="[5.8,6.0)",
       org.apache.activemq.ra;resolution:=optional;version="[5.8,6.0)",
       org.apache.activemq.store;resolution:=optional;version="[5.8,6.0)",
@@ -313,7 +312,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -425,7 +423,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <type>pom</type>
     </dependency>
 
     <dependency>
@@ -515,13 +518,13 @@
 
     <!-- ActiveMQ -->
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-ra</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-ra-shade</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-broker-shade</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -530,28 +533,30 @@
       <optional>true</optional>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker</artifactId>
           <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.objectweb.howl</groupId>
       <artifactId>howl</artifactId>
     </dependency>
+    <!-- Jackson required by OpenAPI Impl and ActiveMQ Broker -->
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-activation_1.1_spec</artifactId>
-      <version>${geronimo-activation_1.1_spec.version}</version>
-      <scope>provided</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <optional>true</optional>
     </dependency>
     <!-- JavaMail -->
     <dependency>
@@ -594,8 +599,8 @@
       <artifactId>hsqldb</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
+      <artifactId>commons-dbcp2-shade</artifactId>
+      <groupId>org.apache.tomee</groupId>
       <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>
@@ -655,36 +660,48 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-el22</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-ejb_3.1_spec</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <artifactId>openwebbeans-ee-common</artifactId>
       <groupId>org.apache.openwebbeans</groupId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <!--
     <dependency>
@@ -693,8 +710,8 @@
     </dependency>
     -->
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>bval-jsr-shade</artifactId>
     </dependency>
 
     <dependency> <!-- licence apache, only 110ko -->
@@ -708,6 +725,7 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${batchee.version}</version>
       <scope>provided</scope>
+      <classifier>jakarta</classifier>
     </dependency>
 
   </dependencies>

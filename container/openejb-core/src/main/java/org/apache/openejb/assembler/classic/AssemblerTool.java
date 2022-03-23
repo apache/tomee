@@ -25,10 +25,10 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.transaction.TransactionManager;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

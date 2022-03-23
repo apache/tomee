@@ -18,8 +18,8 @@ package org.superbiz;
 
 //START SNIPPET: code
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBHome;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBHome;
 import java.rmi.RemoteException;
 
 public interface FriendlyPersonEjbHome extends EJBHome {

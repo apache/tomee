@@ -30,8 +30,8 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.ejb.EJB;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import javax.naming.InitialContext;
 
 /**

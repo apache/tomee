@@ -1431,9 +1431,9 @@
             provider.  Vendor-specific properties may be included in
             the set of properties.  Properties that are not recognized
             by a vendor must be ignored.  Entries that make use of the 
-            namespace javax.persistence and its subnamespaces must not
+            namespace jakarta.persistence and its subnamespaces must not
             be used for vendor-specific properties.  The namespace
-            javax.persistence is reserved for use by the specification.
+            jakarta.persistence is reserved for use by the specification.
             
           </xsd:documentation>
         </xsd:annotation>
@@ -1626,7 +1626,7 @@
         <resource-env-ref>
         <resource-env-ref-name>jms/StockQueue
         </resource-env-ref-name>
-        <resource-env-ref-type>javax.jms.Queue
+        <resource-env-ref-type>jakarta.jms.Queue
         </resource-env-ref-type>
         </resource-env-ref>
         
@@ -2286,7 +2286,7 @@
         <message-destination-ref>
         <message-destination-ref-name>jms/StockQueue
         </message-destination-ref-name>
-        <message-destination-type>javax.jms.Queue
+        <message-destination-type>jakarta.jms.Queue
         </message-destination-type>
         <message-destination-usage>Consumes
         </message-destination-usage>
@@ -2374,7 +2374,7 @@
         
         Example: 
         
-        <message-destination-type>javax.jms.Queue
+        <message-destination-type>jakarta.jms.Queue
         </message-destination-type>
         
         ]]>

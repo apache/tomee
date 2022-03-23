@@ -17,7 +17,7 @@
 
 package org.apache.tomee.catalina.facade;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ExceptionManagerFacade {

@@ -12,8 +12,8 @@ right to edit this page._
 ----
 package org.superbiz.hello;
 
-import javax.ejb.LocalHome;
-import javax.ejb.Stateless;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.Stateless;
 
 /**
  * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -34,7 +34,7 @@ public class HelloBean {
 ----
 package org.superbiz.hello;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 /**
  * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -51,8 +51,8 @@ public interface HelloEjbLocal extends EJBLocalObject {
 ----
 package org.superbiz.hello;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBLocalHome;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBLocalHome;
 
 /**
  * @version $Revision: 1090810 $ $Date: 2011-04-10 07:49:26 -0700 (Sun, 10 Apr 2011) $

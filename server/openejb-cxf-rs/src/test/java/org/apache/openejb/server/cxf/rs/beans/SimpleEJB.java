@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.server.cxf.rs.beans;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
 
 @Singleton
 public class SimpleEJB {

@@ -23,7 +23,7 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;

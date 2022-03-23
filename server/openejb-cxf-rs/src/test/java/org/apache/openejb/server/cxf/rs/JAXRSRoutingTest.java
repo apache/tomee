@@ -33,9 +33,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -64,7 +64,7 @@ public class JAXRSRoutingTest {
         return new WebApp()
             .contextRoot("foo")
             .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "javax.ws.rs.Application", NoClassAtPathApplication.class.getName());
+            .addInitParam("REST Application", "jakarta.ws.rs.Application", NoClassAtPathApplication.class.getName());
     }
 
     @Test

@@ -17,8 +17,8 @@
 
 package org.apache.openejb.arquillian.tests.sharedenv;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
 
 
 public class Green implements Environment {

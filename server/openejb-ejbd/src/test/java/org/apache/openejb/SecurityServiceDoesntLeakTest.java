@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Map;
 import java.util.Properties;
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

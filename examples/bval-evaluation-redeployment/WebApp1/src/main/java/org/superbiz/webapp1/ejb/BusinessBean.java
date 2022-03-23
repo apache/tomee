@@ -16,8 +16,8 @@
  */
 package org.superbiz.webapp1.ejb;
 
-import javax.ejb.Stateless;
-import javax.validation.constraints.Pattern;
+import jakarta.ejb.Stateless;
+import jakarta.validation.constraints.Pattern;
 
 @Stateless
 public class BusinessBean {

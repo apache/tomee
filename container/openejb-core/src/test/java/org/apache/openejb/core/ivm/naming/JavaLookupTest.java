@@ -25,9 +25,9 @@ import org.apache.openejb.config.ConfigurationFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.LinkRef;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.UserTransaction;
 
 /**
  * @version $Rev$ $Date$

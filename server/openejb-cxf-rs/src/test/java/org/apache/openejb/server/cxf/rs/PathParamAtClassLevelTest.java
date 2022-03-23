@@ -25,11 +25,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.Stateless;
-import javax.ejb.embeddable.EJBContainer;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;

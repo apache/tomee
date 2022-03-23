@@ -26,9 +26,9 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 
-import javax.annotation.Resource;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
+import jakarta.annotation.Resource;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.IntrospectionException;

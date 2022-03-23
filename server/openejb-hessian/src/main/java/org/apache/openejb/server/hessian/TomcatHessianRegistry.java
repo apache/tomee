@@ -44,7 +44,7 @@ import org.apache.tomee.catalina.OpenEJBValve;
 import org.apache.tomee.catalina.TomcatWebAppBuilder;
 import org.apache.tomee.loader.TomcatHelper;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -66,7 +66,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
 import org.apache.xbean.finder.ResourceFinder;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

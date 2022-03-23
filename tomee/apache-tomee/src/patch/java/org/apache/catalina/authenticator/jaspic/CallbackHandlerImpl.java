@@ -28,9 +28,9 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import javax.security.auth.message.callback.CallerPrincipalCallback;
-import javax.security.auth.message.callback.GroupPrincipalCallback;
-import javax.security.auth.message.callback.PasswordValidationCallback;
+import jakarta.security.auth.message.callback.CallerPrincipalCallback;
+import jakarta.security.auth.message.callback.GroupPrincipalCallback;
+import jakarta.security.auth.message.callback.PasswordValidationCallback;
 
 import java.io.IOException;
 import java.security.Principal;

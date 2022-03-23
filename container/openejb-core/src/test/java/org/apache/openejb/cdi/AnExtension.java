@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.Extension;
 
 // just here for org.apache.openejb.cdi.AppComposerCdiExtensionTest
 public class AnExtension implements Extension {

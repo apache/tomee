@@ -65,7 +65,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.List;

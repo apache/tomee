@@ -16,12 +16,12 @@
  */
 package org.apache.openejb.mockito;
 
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Singleton
 @Lock(LockType.READ)

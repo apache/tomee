@@ -22,7 +22,7 @@ import java.util.Properties;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public interface BasicStatelessObject extends javax.ejb.EJBObject {
+public interface BasicStatelessObject extends jakarta.ejb.EJBObject {
 
     /**
      * Reverses the string passed in then returns it
