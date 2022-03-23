@@ -887,6 +887,9 @@
                 <exclude>**/tomee-deb/src/main/resources/**/*.template</exclude>
                 <exclude>**/tomee-deb/**/precompiled-changelog</exclude>
 
+                <!-- created during shading deps -->
+                <exclude>**/dependency-reduced-pom.xml</exclude>
+
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
 
