@@ -1,4 +1,4 @@
-name: CI Master
+name: CI 8.x
 
 on:
   push:
