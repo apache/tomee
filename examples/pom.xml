@@ -225,13 +225,6 @@
     <module>security-custom-identitystore</module>
 
   </modules>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.openjpa</groupId>
-      <artifactId>openjpa-maven-plugin</artifactId>
-      <version>${openjpa.version}</version>
-    </dependency>
-  </dependencies>
   <profiles>
     <profile>
       <id>apache-release</id>

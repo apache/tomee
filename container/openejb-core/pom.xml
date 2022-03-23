@@ -608,8 +608,8 @@
       <artifactId>hsqldb</artifactId>
     </dependency>
     <dependency>
-      <artifactId>org.apache.tomee</artifactId>
-      <groupId>commons-dbcp2-shade</groupId>
+      <artifactId>commons-dbcp2-shade</artifactId>
+      <groupId>org.apache.tomee</groupId>
       <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>
@@ -708,8 +708,9 @@
       <classifier>jakarta</classifier>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openjpa-shade</artifactId>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <!--
     <dependency>
@@ -734,6 +735,7 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${batchee.version}</version>
       <scope>provided</scope>
+      <classifier>jakarta</classifier>
     </dependency>
 
   </dependencies>

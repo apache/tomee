@@ -80,10 +80,28 @@
             <artifactId>jakartaee-api</artifactId>
             <version>9.1.1-SNAPSHOT</version>
           </dependency>
+          <dependency>
+            <groupId>net.sourceforge.serp</groupId>
+            <artifactId>serp</artifactId>
+            <version>1.15.1</version>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
           <dependency> <!-- because entities was enhanced -->
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>openjpa-shade</artifactId>
-            <version>9.0.0-M8-SNAPSHOT</version>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>3.2.2-SNAPSHOT</version>
+            <classifier>jakarta</classifier>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
           </dependency>
         </dependencies>
       </plugin>

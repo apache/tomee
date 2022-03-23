@@ -111,7 +111,7 @@
     <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
     <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
-    <openjpa.version>3.2.1</openjpa.version>
+    <openjpa.version>3.2.2-SNAPSHOT</openjpa.version>
     <openwebbeans.version>2.0.27-SNAPSHOT</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.16</johnzon.version>
@@ -137,7 +137,7 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>1.0.1</batchee.version>
+    <batchee.version>1.0.2-SNAPSHOT</batchee.version>
 
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
@@ -1462,56 +1462,25 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openjpa-shade</artifactId>
-        <version>${project.version}</version>
+        <groupId>net.sourceforge.serp</groupId>
+        <artifactId>serp</artifactId>
+        <version>1.15.1</version>
         <exclusions>
           <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
           </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa</artifactId>
+        <version>${openjpa.version}</version>
+        <classifier>jakarta</classifier>
+        <exclusions>
           <exclusion>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa-jest</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.2_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.2_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-          </exclusion>
-
-          <!-- regarding maven rules, we don't need to exclude those deps
-     because we already depend on -->
-          <exclusion>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.xml.stream</groupId>
-            <artifactId>stax-api</artifactId>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1579,8 +1548,8 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-        <artifactId>org.apache.tomee</artifactId>
-        <groupId>commons-dbcp2-shade</groupId>
+        <artifactId>commons-dbcp2-shade</artifactId>
+        <groupId>org.apache.tomee</groupId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1686,11 +1655,6 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-math</artifactId>
         <version>2.2</version>
-      </dependency>
-      <dependency>
-        <artifactId>serp</artifactId>
-        <groupId>net.sourceforge.serp</groupId>
-        <version>1.15.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.sshd</groupId>

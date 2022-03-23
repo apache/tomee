@@ -200,16 +200,16 @@
           <groupId>org.apache.bval</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>openjpa-shade</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <artifactId>openjpa</artifactId>
+          <groupId>org.apache.openjpa</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openwebbeans-web</artifactId>
           <groupId>org.apache.openwebbeans</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>org.apache.tomee</artifactId>
-          <groupId>commons-dbcp2-shade</groupId>
+          <artifactId>commons-dbcp2-shade</artifactId>
+          <groupId>org.apache.tomee</groupId>
         </exclusion>
         <exclusion>
           <artifactId>org.apache.commons</artifactId>

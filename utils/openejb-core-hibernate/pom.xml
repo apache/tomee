@@ -40,8 +40,8 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.tomee</groupId>
-          <artifactId>openjpa-shade</artifactId>
+          <groupId>org.apache.openjpa</groupId>
+          <artifactId>openjpa</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.bval</groupId>

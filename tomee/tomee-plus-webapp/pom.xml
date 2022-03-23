@@ -355,6 +355,7 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${batchee.version}</version>
       <scope>runtime</scope>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

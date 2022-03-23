@@ -80,18 +80,26 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openjpa-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
-      <scope>provided</scope>
+      <groupId>net.sourceforge.serp</groupId>
+      <artifactId>serp</artifactId>
+      <version>1.15.1</version>
       <exclusions>
         <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>junit</groupId>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa</artifactId>
+      <version>3.2.2-SNAPSHOT</version>
+      <scope>provided</scope>
+      <classifier>jakarta</classifier>
+      <exclusions>
         <exclusion>
-          <artifactId>commons-pool</artifactId>
-          <groupId>commons-pool</groupId>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -112,8 +120,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>openjpa-shade</artifactId>
-          <groupId>org.apache.tomee</groupId>
+          <artifactId>openjpa</artifactId>
+          <groupId>org.apache.openjpa</groupId>
         </exclusion>
       </exclusions>
     </dependency>
