@@ -17,7 +17,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>arquillian</artifactId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-moviefun-example</artifactId>
   <packaging>war</packaging>
@@ -105,7 +105,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

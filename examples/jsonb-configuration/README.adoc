@@ -4,7 +4,7 @@
 = JSON-B Configuration
 
 This examples shows how to customize jsonb for a JAX-RS Application.
-JSONB is the new javaee-api:8.0 standard for json
+JSONB is the new jakartaee-api:8.0 standard for json
 serialization/deserialization. Few annotations are needed and
 JsonbConfig offers many configurations.
 
@@ -277,7 +277,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 === Inside the jar
 
-javaee-api:8.0 brings in all the dependencies needed to spin up a
+jakartaee-api:8.0 brings in all the dependencies needed to spin up a
 working REST application.
 
 If we look at the jar built by maven, we’ll see the application itself

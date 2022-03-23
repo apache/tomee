@@ -208,7 +208,7 @@ public class GenerateBoms {
             final String template = IO.slurp(url);
 
             final Predicate<Artifact> isApi = artifactId("openejb-api")
-                    .or(artifactId("javaee-api"))
+                    .or(artifactId("jakartaee-api"))
                     .or(artifactId("jakartaee-api"))
                     .or(artifactId("mbean-annotation-api"))
                     .or(artifactId("opentracing-api"))

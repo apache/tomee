@@ -21,8 +21,8 @@ eclipse:eclipse afterwards)
   <dependencies>
     ...
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>jakartaee-api</artifactId>
       <version>5.0-1</version>
       <scope>provided</scope>
     </dependency>

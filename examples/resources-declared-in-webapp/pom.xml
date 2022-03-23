@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-declared-in-webapp</artifactId>
   <packaging>war</packaging>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Resource Declared In A Webapp</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -99,8 +99,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

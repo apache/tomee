@@ -37,8 +37,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.0-M1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -89,7 +89,7 @@
                          storepass="openejb"/>
                 <signjar jar="${project.build.directory}/${project.build.finalName}/openejb-client.jar" alias="mykey"
                          storepass="openejb"/>
-                <signjar jar="${project.build.directory}/${project.build.finalName}/javaee-api.jar" alias="mykey"
+                <signjar jar="${project.build.directory}/${project.build.finalName}/jakartaee-api.jar" alias="mykey"
                          storepass="openejb"/>
               </tasks>
             </configuration>
@@ -118,10 +118,10 @@
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
-                  <artifactId>javaee-api</artifactId>
-                  <version>8.0-5</version>
+                  <artifactId>jakartaee-api</artifactId>
+                  <version>9.0-M1</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
-                  <destFileName>javaee-api.jar</destFileName>
+                  <destFileName>jakartaee-api.jar</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>

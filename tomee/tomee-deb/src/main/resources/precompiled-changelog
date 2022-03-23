@@ -457,7 +457,7 @@ OpenEJB (3.1.2) stable; urgency=critical
     https://issues.apache.org/jira/browse/OPENEJB-1083
   * @WebService and @WebServiceProvider classes not discovered unless annotat...
     https://issues.apache.org/jira/browse/OPENEJB-1082
-  * javaee-api-libs.zip as alternative to javaee-api.jar
+  * jakartaee-api-libs.zip as alternative to jakartaee-api.jar
     https://issues.apache.org/jira/browse/OPENEJB-1080
   * LocalInitialContextFactory can't be extended
     https://issues.apache.org/jira/browse/OPENEJB-1070
@@ -550,7 +550,7 @@ OpenEJB (3.1.1) stable; urgency=emergency
     https://issues.apache.org/jira/browse/OPENEJB-975
   * Semaphore in StatelessInstanceManager not released if EjbTransactionUtil....
     https://issues.apache.org/jira/browse/OPENEJB-976
-  * Enhance the javaee-api with OSGi Bundle Information
+  * Enhance the jakartaee-api with OSGi Bundle Information
     https://issues.apache.org/jira/browse/OPENEJB-963
   * Installation of Java Agent fails when used with Tomcat and CATALINA_HOME ...
     https://issues.apache.org/jira/browse/OPENEJB-956

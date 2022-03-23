@@ -19,19 +19,19 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>concurrency-utils</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>TomEE :: Examples :: Concurrency utilities example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javaee-api.version>8.0</javaee-api.version>
+    <jakartaee-api.version>8.0</jakartaee-api.version>
     <junit.version>4.12</junit.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${javaee-api.version}</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>${jakartaee-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <!--Tests-->

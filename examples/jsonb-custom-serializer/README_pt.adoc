@@ -463,7 +463,7 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 
 === Dentro do jar
 
-javaee-api:8.0 traz todas as dependências necessárias para iniciar uma aplicação REST funcionando.
+jakartaee-api:8.0 traz todas as dependências necessárias para iniciar uma aplicação REST funcionando.
 
 Se olharmos para o jar construído pelo maven, veremos que a aplicação:
 

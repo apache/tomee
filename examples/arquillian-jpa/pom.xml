@@ -14,10 +14,10 @@ language governing permissions and limitations under the License. -->
   <groupId>org.superbiz</groupId>
   <artifactId>arquillian-jpa</artifactId>
   <name>TomEE :: Examples :: Arquillian Persistence Extension Sample</name>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <properties>
     <arquillian_universe.version>1.2.0.1</arquillian_universe.version>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
@@ -60,8 +60,8 @@ language governing permissions and limitations under the License. -->
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.0-M1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -73,7 +73,7 @@ language governing permissions and limitations under the License. -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>

@@ -9,7 +9,7 @@
 - Artifact coordinates changes
 
 GroupId changed from `org.apache.openejb` to `org.apache.tomee`.
-It includes maven plugins which use now `org.apache.tomee.maven` and the `javaee-api`.
+It includes maven plugins which use now `org.apache.tomee.maven` and the `jakartaee-api`.
 
 Versions of openejb and tomee are now aligned on 7.x and you don't need to use
 4.x and 1.x (or any variant) for openejb and tomee.

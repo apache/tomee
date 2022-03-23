@@ -20,7 +20,7 @@
   <parent>
     <artifactId>deps</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -100,8 +100,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>${version.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -229,7 +229,7 @@
           <source>1.8</source>
           <target>1.8</target>
           <dependencies>
-            <dependency>${project.groupId}:javaee-api:jar:${version.javaee-api}</dependency>
+            <dependency>${project.groupId}:jakartaee-api:jar:${version.jakartaee-api}</dependency>
 
             <dependency>org.apache.aries.blueprint:blueprint-parser:jar:1.6.0</dependency>
             <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.api:jar:1.0.1</dependency>

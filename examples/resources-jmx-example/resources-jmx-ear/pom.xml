@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>resources-jmx</artifactId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <artifactId>resources-jmx-ear</artifactId>
   <packaging>ear</packaging>

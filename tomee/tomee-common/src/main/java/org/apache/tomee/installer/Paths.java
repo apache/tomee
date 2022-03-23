@@ -255,7 +255,7 @@ public class Paths implements PathsInterface {
 
     @Override
     public File getJavaEEAPIJar() {
-        return findOpenEJBJar("javaee-api");
+        return findOpenEJBJar("jakartaee-api");
     }
 
     /**

@@ -66,8 +66,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0-1</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>9.1.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

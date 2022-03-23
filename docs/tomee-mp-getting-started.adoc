@@ -16,7 +16,7 @@ You will likely need the full Java EE API added to your pom file:
 ----
 <dependency>
   <groupId>org.apache.tomee</groupId>
-  <artifactId>javaee-api</artifactId>
+  <artifactId>jakartaee-api</artifactId>
   <version>8.0-4</version>
   <scope>provided</scope>
 </dependency>
@@ -29,7 +29,7 @@ template as a reference.
 == Generate a Basic TomEE-Project With Maven
 
 TomEE provides a maven-archetype for generating a template project. This
-template project is preconfigured with `javaee-api` (scope provided) and
+template project is preconfigured with `jakartaee-api` (scope provided) and
 with the link:maven/index.html[`tomee-maven-plugin`] for starting the
 application with TomEE.
 

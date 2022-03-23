@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>websocket-tls-basic-auth</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: WebSocket with tls and basic auth Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javaee-api.version>8.0</javaee-api.version>
+    <jakartaee-api.version>8.0</jakartaee-api.version>
     <javax.websocket-api.version>1.1</javax.websocket-api.version>
     <tomee.classifier>webprofile</tomee.classifier>
     <tomcat.version>9.0.12</tomcat.version>
@@ -34,8 +34,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${javaee-api.version}</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>${jakartaee-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

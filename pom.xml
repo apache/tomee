@@ -31,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -101,13 +101,13 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-5</version.javaee-api>
+    <version.jakartaee-api>9.1.1-SNAPSHOT</version.jakartaee-api>
     <version.tomee-patch-plugin>0.8</version.tomee-patch-plugin>
-    
+
     <!--
-      Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
+      Activation and JavaMail are both API and IMPL so we don't have them in the jakartaee-api uber jar.
       We decided to add them here in the project so we can patch/update the 2 libraries without having
-      to update and release the javaee-api.jar. Different lifecycle.
+      to update and release the jakartaee-api.jar. Different lifecycle.
     -->
     <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
     <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
@@ -718,7 +718,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
-            <version>2.3</version>
+            <version>2.5</version>
           </plugin>
         </plugins>
       </reporting>
@@ -1001,26 +1001,14 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>${version.javaee-api}</version>
+        <artifactId>jakartaee-api</artifactId>
+        <version>${version.jakartaee-api}</version>
         <classifier>tomcat</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.2_spec</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>${version.javaee-api}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.2_spec</artifactId>
-          </exclusion>
-        </exclusions>
+        <artifactId>jakartaee-api</artifactId>
+        <version>${version.jakartaee-api}</version>
       </dependency>
       <dependency>
         <groupId>xml-resolver</groupId>

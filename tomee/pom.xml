@@ -25,7 +25,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   
   <artifactId>tomee</artifactId>
@@ -85,7 +85,7 @@
           <exclusions>
             <exclusion>
               <groupId>${project.groupId}</groupId>
-              <artifactId>javaee-api</artifactId>
+              <artifactId>jakartaee-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
@@ -134,7 +134,7 @@
             </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
-              <artifactId>javaee-api</artifactId>
+              <artifactId>jakartaee-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>
@@ -170,7 +170,7 @@
           <exclusions>
             <exclusion>
               <groupId>${project.groupId}</groupId>
-              <artifactId>javaee-api</artifactId>
+              <artifactId>jakartaee-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.activemq</groupId>

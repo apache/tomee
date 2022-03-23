@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-jwt-bean-validation</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>Apache TomEE + MicroProfile JWT Bean Validation</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.javaee-api>8.0</version.javaee-api>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <version.jakartaee-api>8.0</version.jakartaee-api>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
     <mp-jwt.version>1.1</mp-jwt.version>
   </properties>
@@ -108,8 +108,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>${version.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

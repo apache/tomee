@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee-microprofile</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -46,7 +46,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <classifier>tomcat</classifier>
     </dependency>
     <dependency>
@@ -84,7 +84,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -95,7 +95,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
@@ -126,7 +126,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
@@ -157,7 +157,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.xml.bind</groupId>
@@ -173,7 +173,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -185,7 +185,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -197,7 +197,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -208,7 +208,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -219,7 +219,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -229,7 +229,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
       <scope>runtime</scope>
@@ -242,7 +242,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.tomcat</groupId>
@@ -258,7 +258,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.tomcat</groupId>
@@ -274,7 +274,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -286,7 +286,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
         <exclusion><!-- 'provided' -->
           <groupId>org.apache.tomcat</groupId>
@@ -308,7 +308,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -320,7 +320,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -332,7 +332,7 @@
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency><!-- MicroProfile -->

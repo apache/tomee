@@ -45,7 +45,7 @@ set "OPENEJB_HOME=%CD%"
 REM echo OPENEJB_HOME is: %OPENEJB_HOME%
 
 set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar"
-set OPENEJB_EE_JAR="%OPENEJB_HOME%\lib\javaee-api-*.jar"
+set OPENEJB_EE_JAR="%OPENEJB_HOME%\lib\jakartaee-api-*.jar"
 set OPENEJB_JAVAAGENT_JAR="%OPENEJB_HOME%\lib\openejb-javaagent-*.jar"
 
 for %%a in (%OPENEJB_CORE_JAR%) do (

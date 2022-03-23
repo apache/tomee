@@ -23,7 +23,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-webservices</artifactId>
@@ -34,7 +34,7 @@
   </properties>
   <dependencies>
     <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
-    <!-- Removed as included in javaee-api-8.0.0 -->
+    <!-- Removed as included in jakartaee-api-8.0.0 -->
     <!--<dependency>-->
       <!--<groupId>javax.xml.soap</groupId>-->
       <!--<artifactId>javax.xml.soap-api</artifactId>-->
@@ -79,7 +79,7 @@
     <!-- spec dependencies -->
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>wsdl4j</groupId>

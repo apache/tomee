@@ -19,7 +19,7 @@ limitations under the License.
 <body>
 <applet alt="could not load applet" height="100" width="300"
         codebase="."
-        archive="app.jar,javaee-api-embedded.jar,openejb-client.jar"
+        archive="app.jar,jakartaee-api-embedded.jar,openejb-client.jar"
         code="org.superbiz.applet.CalculatorApplet">
 </applet>
 </body>

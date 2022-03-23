@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.11-SNAPSHOT</version>
+    <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -323,8 +323,8 @@
             <dependencies>
               <dependency>
                 <groupId>org.apache.tomee</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>${version.javaee-api}</version>
+                <artifactId>jakartaee-api</artifactId>
+                <version>${version.jakartaee-api}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.tomee.bom</groupId>
@@ -678,8 +678,8 @@
             <dependencies>
               <dependency>
                 <groupId>org.apache.tomee</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>${version.javaee-api}</version>
+                <artifactId>jakartaee-api</artifactId>
+                <version>${version.jakartaee-api}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.tomee.bom</groupId>

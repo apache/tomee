@@ -54,7 +54,7 @@ O pom principal, aparado ao mínimo, tem a seguinte aparência:
     <dependencies>
       <dependency>
         <groupId>org.apache.openejb</groupId>
-        <artifactId>javaee-api</artifactId>
+        <artifactId>jakartaee-api</artifactId>
         <version>6.0-2</version>
       </dependency>
       <dependency>
@@ -86,7 +86,7 @@ O `business-model/pom.xml` é da seguinte maneira:
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -125,7 +125,7 @@ teste incorporado com o OpenEJB:
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api</artifactId>
+      <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

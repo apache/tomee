@@ -307,7 +307,7 @@ http://tomee.apache.org/
 2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/xbean/xbean-bundleutils/3.8/xbean-bundleutils-3.8.jar!/
 2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/junit/junit/4.8.1/junit-4.8.1.jar!/
 2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/net/sf/scannotation/scannotation/1.0.2/scannotation-1.0.2.jar!/
-2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/openejb/javaee-api/6.0-2/javaee-api-6.0-2.jar!/
+2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/openejb/jakartaee-api/6.0-2/jakartaee-api-6.0-2.jar!/
 2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/commons-beanutils/commons-beanutils-core/1.8.3/commons-beanutils-core-1.8.3.jar!/
 2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/avalon-framework/avalon-framework/4.1.3/avalon-framework-4.1.3.jar!/
 2011-10-29 11:50:20,012 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/openwebbeans/openwebbeans-web/1.1.1/openwebbeans-web-1.1.1.jar!/

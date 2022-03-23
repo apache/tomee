@@ -20,23 +20,23 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-metrics-counted</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Metrics Counted</name>
   <properties>
-    <version.javaee-api>8.0</version.javaee-api>
+    <version.jakartaee-api>8.0</version.jakartaee-api>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <junit.version>4.12</junit.version>
     <docker.image.name>tomee/${project.artifactId}</docker.image.name>
     <docker.file.name>Dockerfile</docker.file.name>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <artifactId>jakartaee-api</artifactId>
+      <version>${version.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

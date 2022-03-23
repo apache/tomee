@@ -290,4 +290,4 @@ Se olharmos para o jar construído pelo maven, veremos que a aplicação em si �
  5696 Wed Dec 26 17:41:54 CET 2018 META-INF/maven/org.superbiz/multi-jpa-provider-testing/pom.xml
  132 Wed Dec 26 17:55:38 CET 2018 META-INF/maven/org.superbiz/multi-jpa-provider-testing/pom.properties
 
-Dentro do pacote de recursos, há apenas uma classe java e o persistence.xml e a única dependência é javaee-api: 8.0.
+Dentro do pacote de recursos, há apenas uma classe java e o persistence.xml e a única dependência é jakartaee-api: 8.0.

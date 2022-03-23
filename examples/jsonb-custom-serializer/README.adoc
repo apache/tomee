@@ -471,7 +471,7 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 
 === Inside the jar
 
-javaee-api:8.0 brings in all the dependencies needed to spin up a
+jakartaee-api:8.0 brings in all the dependencies needed to spin up a
 working REST application.
 
 If we look at the jar built by maven, we’ll see the application itself
