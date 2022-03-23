@@ -29,25 +29,25 @@
 
   <properties>
     <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
-    <surefire.argline />
+    <surefire.argline>-Xmx2g</surefire.argline>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jakartaee-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
       <version>${myfaces.version}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <version>${myfaces.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jakartaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -230,6 +230,8 @@
       <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
+
+
   </dependencies>
 
   <build>

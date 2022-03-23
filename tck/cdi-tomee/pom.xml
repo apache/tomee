@@ -32,7 +32,7 @@
 
   <properties>
     <suite.name>passing</suite.name>
-    <tomee.opts />
+    <tomee.opts>-Xmx2g</tomee.opts>
   </properties>
 
   <dependencies>
