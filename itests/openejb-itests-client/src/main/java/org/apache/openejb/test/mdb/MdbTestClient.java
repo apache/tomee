@@ -19,9 +19,9 @@ package org.apache.openejb.test.mdb;
 
 import org.apache.openejb.test.TestManager;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
 import javax.naming.InitialContext;
 import java.util.Properties;
 

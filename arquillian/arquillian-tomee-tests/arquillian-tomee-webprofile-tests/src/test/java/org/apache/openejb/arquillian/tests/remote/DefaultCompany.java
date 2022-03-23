@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.remote;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class DefaultCompany implements CompanyRemote {

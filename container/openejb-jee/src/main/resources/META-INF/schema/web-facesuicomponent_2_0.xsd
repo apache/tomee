@@ -86,8 +86,8 @@
   <tag>
     <tag-name>testSchema</tag-name>
     <component>
-      <component-type>javax.faces.Input</component-type>
-      <renderer-type>javax.faces.Text</renderer-type>
+      <component-type>jakarta.faces.Input</component-type>
+      <renderer-type>jakarta.faces.Text</renderer-type>
       <handler-class>com.sun.faces.facelets.tag.jsf.ComponentHandler</handler-class>
       <component-extension>
 

@@ -20,7 +20,7 @@ package org.apache.openejb.core.transaction;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 public class JtaTransactionPolicyFactory implements TransactionPolicyFactory {
     private final TransactionManager transactionManager;

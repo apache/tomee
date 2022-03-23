@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.mdb;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 /**
  * [5] Should be run as the fifth test suite of the BasicStatelessTestClients

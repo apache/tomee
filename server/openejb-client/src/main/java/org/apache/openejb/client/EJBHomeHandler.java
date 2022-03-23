@@ -18,9 +18,9 @@ package org.apache.openejb.client;
 
 import org.apache.openejb.client.proxy.ProxyManager;
 
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.Handle;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.Handle;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;

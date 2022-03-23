@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.client;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.naming.AuthenticationException;
 import javax.naming.NamingException;
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 import java.io.IOException;
 import java.io.NotSerializableException;
 

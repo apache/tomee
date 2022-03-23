@@ -25,7 +25,7 @@ import org.apache.openejb.osgi.client.LocalInitialContextFactory;
 import org.apache.openejb.util.Classes;
 import org.junit.runners.model.Statement;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.io.File;
 import java.io.FileInputStream;

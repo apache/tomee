@@ -17,8 +17,8 @@
 package org.apache.openejb.arquillian.tests.bmp.local;
 
 import java.rmi.RemoteException;
-import javax.ejb.CreateException;
-import javax.ejb.EJBLocalHome;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBLocalHome;
 
 public interface FinderTestHome extends EJBLocalHome {
     FinderTest create() throws CreateException, RemoteException;

@@ -18,7 +18,7 @@ package org.apache.openejb.test.beans;
 
 import java.rmi.RemoteException;
 
-public interface Calculator extends javax.ejb.EJBObject {
+public interface Calculator extends jakarta.ejb.EJBObject {
 
     public int add(int a, int b) throws RemoteException;
 

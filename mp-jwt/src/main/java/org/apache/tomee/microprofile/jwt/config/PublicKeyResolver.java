@@ -20,12 +20,12 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.lang.JoseException;
 
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParsingException;
+import jakarta.enterprise.inject.spi.DeploymentException;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParsingException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;

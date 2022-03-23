@@ -28,9 +28,9 @@ import org.hsqldb.jdbc.pool.JDBCXADataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.XADataSource;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 import java.io.File;
 import java.util.Properties;
 

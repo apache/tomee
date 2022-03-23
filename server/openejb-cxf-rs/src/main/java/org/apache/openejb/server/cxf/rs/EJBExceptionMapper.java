@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Providers;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.EJBException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Providers;
 
 public class EJBExceptionMapper implements ExceptionMapper<EJBException> {
     @Context

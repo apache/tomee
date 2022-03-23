@@ -21,7 +21,7 @@ import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 public class ThreadLocalSecurityContext extends AbstractRestThreadLocalProxy<SecurityContext>

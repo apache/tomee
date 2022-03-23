@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
-import javax.interceptor.AroundInvoke;
+import jakarta.interceptor.AroundInvoke;
 import javax.security.auth.login.LoginException;
 
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
@@ -186,18 +186,18 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
             final boolean authorized = type == InterfaceType.TIMEOUT || this.securityService.isCallerAuthorized(callMethod, type);
 
             if (!authorized) {
-                throw new org.apache.openejb.ApplicationException(new javax.ejb.EJBAccessException("Unauthorized Access by Principal Denied"));
+                throw new org.apache.openejb.ApplicationException(new jakarta.ejb.EJBAccessException("Unauthorized Access by Principal Denied"));
             }
 
             final Class declaringClass = callMethod.getDeclaringClass();
-            if (javax.ejb.EJBHome.class.isAssignableFrom(declaringClass) || javax.ejb.EJBLocalHome.class.isAssignableFrom(declaringClass)) {
+            if (jakarta.ejb.EJBHome.class.isAssignableFrom(declaringClass) || jakarta.ejb.EJBLocalHome.class.isAssignableFrom(declaringClass)) {
                 if (callMethod.getName().startsWith("create")) {
                     return new ProxyInfo(beanContext, null);
                 } else {
                     return null; // EJBHome.remove( ) and other EJBHome methods are not process by the container
                 }
 
-            } else if (javax.ejb.EJBObject.class == declaringClass || javax.ejb.EJBLocalObject.class == declaringClass) {
+            } else if (jakarta.ejb.EJBObject.class == declaringClass || jakarta.ejb.EJBLocalObject.class == declaringClass) {
                 return null; // EJBObject.remove( ) and other EJBObject methods are not process by the container
             }
 
@@ -311,7 +311,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
         if (messageContext instanceof javax.xml.rpc.handler.MessageContext) {
             threadContext.set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
             returnValue = interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
-        } else if (messageContext instanceof javax.xml.ws.handler.MessageContext) {
+        } else if (messageContext instanceof jakarta.xml.ws.handler.MessageContext) {
             AddressingSupport wsaSupport = NoAddressingSupport.INSTANCE;
             for (int i = 2; i < args.length; i++) {
                 if (args[i] instanceof AddressingSupport) {
@@ -319,8 +319,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
                 }
             }
             threadContext.set(AddressingSupport.class, wsaSupport);
-            threadContext.set(javax.xml.ws.handler.MessageContext.class, (javax.xml.ws.handler.MessageContext) messageContext);
-            returnValue = interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
+            threadContext.set(jakarta.xml.ws.handler.MessageContext.class, (jakarta.xml.ws.handler.MessageContext) messageContext);
+            returnValue = interceptorStack.invoke((jakarta.xml.ws.handler.MessageContext) messageContext, params);
         }
         return returnValue;
     }

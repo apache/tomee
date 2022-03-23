@@ -25,7 +25,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

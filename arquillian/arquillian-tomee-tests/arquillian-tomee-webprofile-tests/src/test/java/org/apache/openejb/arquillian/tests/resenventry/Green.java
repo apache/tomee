@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.resenventry;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 
 @Singleton
 public class Green {

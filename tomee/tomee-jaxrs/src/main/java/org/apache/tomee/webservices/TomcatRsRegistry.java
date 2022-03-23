@@ -35,7 +35,7 @@ import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.registration.Registrations;
 import org.apache.tomee.loader.TomcatHelper;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;

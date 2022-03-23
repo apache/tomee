@@ -55,22 +55,22 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.security.auth.login.LoginException;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.ServletRequestListener;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletRequestEvent;
+import jakarta.servlet.ServletRequestListener;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -1241,7 +1241,7 @@ public class HttpRequestImpl implements HttpRequest {
     protected class SessionInvalidateListener extends ServletSessionAdapter {
         private final BeginWebBeansListener listener;
 
-        public SessionInvalidateListener(final javax.servlet.http.HttpSession session, final BeginWebBeansListener end) {
+        public SessionInvalidateListener(final jakarta.servlet.http.HttpSession session, final BeginWebBeansListener end) {
             super(session);
             listener = end;
         }

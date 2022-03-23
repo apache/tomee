@@ -18,10 +18,10 @@
 
 package org.apache.tomee.microprofile.jwt.jaxrs;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
@@ -30,12 +30,12 @@ import java.util.concurrent.ConcurrentMap;
 
 public class MPJWTSecurityAnnotationsInterceptor implements ContainerRequestFilter {
 
-    private final javax.ws.rs.container.ResourceInfo resourceInfo;
+    private final jakarta.ws.rs.container.ResourceInfo resourceInfo;
     private final ConcurrentMap<Method, Set<String>> rolesAllowed;
     private final Set<Method> denyAll;
     private final Set<Method> permitAll;
 
-    public MPJWTSecurityAnnotationsInterceptor(final javax.ws.rs.container.ResourceInfo resourceInfo,
+    public MPJWTSecurityAnnotationsInterceptor(final jakarta.ws.rs.container.ResourceInfo resourceInfo,
                                                final ConcurrentMap<Method, Set<String>> rolesAllowed,
                                                final Set<Method> denyAll,
                                                final Set<Method> permitAll) {

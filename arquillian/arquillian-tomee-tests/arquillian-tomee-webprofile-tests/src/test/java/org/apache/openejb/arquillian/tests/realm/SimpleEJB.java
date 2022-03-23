@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.realm;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Singleton;
 
 @Singleton
 public class SimpleEJB implements Simple

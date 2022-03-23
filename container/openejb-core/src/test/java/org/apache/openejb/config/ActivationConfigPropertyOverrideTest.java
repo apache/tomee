@@ -32,9 +32,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.MessageDriven;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.ejb.MessageDriven;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -158,12 +158,12 @@ public class ActivationConfigPropertyOverrideTest{
 
         assertEquals("7", orange.activationProperties.get("maxSessions"));
         assertEquals("4", orange.activationProperties.get("maxMessagesPerSessions"));
-        assertEquals("javax.jms.Queue", orange.activationProperties.get("destinationType"));
+        assertEquals("jakarta.jms.Queue", orange.activationProperties.get("destinationType"));
         assertEquals("ORANGE.QUEUE", orange.activationProperties.get("destination"));
 
         assertEquals("5", yellow.activationProperties.get("maxSessions"));
         assertEquals("10", yellow.activationProperties.get("maxMessagesPerSessions"));
-        assertEquals("javax.jms.Topic", yellow.activationProperties.get("destinationType"));
+        assertEquals("jakarta.jms.Topic", yellow.activationProperties.get("destinationType"));
         assertEquals("YELLOW.TOPIC", yellow.activationProperties.get("destination"));
     }
 
@@ -174,7 +174,7 @@ public class ActivationConfigPropertyOverrideTest{
         final Properties properties = new Properties();
         properties.setProperty("mdb.activation.maxSessions", "20");
         properties.setProperty("mdb.activation.maxMessagesPerSessions", "100");
-        properties.setProperty("mdb.activation.destinationType", "javax.jms.Queue");
+        properties.setProperty("mdb.activation.destinationType", "jakarta.jms.Queue");
         properties.setProperty("mdb.activation.destination", "OVERRIDDEN.QUEUE");
         systProps.putAll(properties);
 
@@ -194,12 +194,12 @@ public class ActivationConfigPropertyOverrideTest{
 
         assertEquals("20", orange.activationProperties.get("maxSessions"));
         assertEquals("100", orange.activationProperties.get("maxMessagesPerSessions"));
-        assertEquals("javax.jms.Queue", orange.activationProperties.get("destinationType"));
+        assertEquals("jakarta.jms.Queue", orange.activationProperties.get("destinationType"));
         assertEquals("OVERRIDDEN.QUEUE", orange.activationProperties.get("destination"));
 
         assertEquals("20", yellow.activationProperties.get("maxSessions"));
         assertEquals("100", yellow.activationProperties.get("maxMessagesPerSessions"));
-        assertEquals("javax.jms.Queue", yellow.activationProperties.get("destinationType"));
+        assertEquals("jakarta.jms.Queue", yellow.activationProperties.get("destinationType"));
         assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
 
         for (final String n : properties.stringPropertyNames()) {
@@ -225,7 +225,7 @@ public class ActivationConfigPropertyOverrideTest{
             final Properties properties = openejbJar.getProperties();
             properties.setProperty("mdb.activation.maxSessions", "20");
             properties.setProperty("mdb.activation.maxMessagesPerSessions", "100");
-            properties.setProperty("mdb.activation.destinationType", "javax.jms.Queue");
+            properties.setProperty("mdb.activation.destinationType", "jakarta.jms.Queue");
             properties.setProperty("mdb.activation.destination", "OVERRIDDEN.QUEUE");
 
             final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
@@ -238,12 +238,12 @@ public class ActivationConfigPropertyOverrideTest{
 
             assertEquals("20", orange.activationProperties.get("maxSessions"));
             assertEquals("100", orange.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Queue", orange.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Queue", orange.activationProperties.get("destinationType"));
             assertEquals("OVERRIDDEN.QUEUE", orange.activationProperties.get("destination"));
 
             assertEquals("20", yellow.activationProperties.get("maxSessions"));
             assertEquals("100", yellow.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Queue", yellow.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Queue", yellow.activationProperties.get("destinationType"));
             assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
         }
 
@@ -260,12 +260,12 @@ public class ActivationConfigPropertyOverrideTest{
 
             assertEquals("7", orange.activationProperties.get("maxSessions"));
             assertEquals("4", orange.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Queue", orange.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Queue", orange.activationProperties.get("destinationType"));
             assertEquals("ORANGE.QUEUE", orange.activationProperties.get("destination"));
 
             assertEquals("5", yellow.activationProperties.get("maxSessions"));
             assertEquals("10", yellow.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Topic", yellow.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Topic", yellow.activationProperties.get("destinationType"));
             assertEquals("YELLOW.TOPIC", yellow.activationProperties.get("destination"));
         }
 
@@ -277,7 +277,7 @@ public class ActivationConfigPropertyOverrideTest{
         final Properties properties = SystemInstance.get().getProperties();
         properties.setProperty("Orange.activation.maxSessions", "20");
         properties.setProperty("Orange.activation.maxMessagesPerSessions", "100");
-        properties.setProperty("Orange.activation.destinationType", "javax.jms.Queue");
+        properties.setProperty("Orange.activation.destinationType", "jakarta.jms.Queue");
         properties.setProperty("Orange.activation.destination", "OVERRIDDEN.QUEUE");
 
         final Assembler assembler = new Assembler();
@@ -296,12 +296,12 @@ public class ActivationConfigPropertyOverrideTest{
 
         assertEquals("7", orange.activationProperties.get("maxSessions"));
         assertEquals("4", orange.activationProperties.get("maxMessagesPerSessions"));
-        assertEquals("javax.jms.Queue", orange.activationProperties.get("destinationType"));
+        assertEquals("jakarta.jms.Queue", orange.activationProperties.get("destinationType"));
         assertEquals("ORANGE.QUEUE", orange.activationProperties.get("destination"));
 
         assertEquals("20", yellow.activationProperties.get("maxSessions"));
         assertEquals("100", yellow.activationProperties.get("maxMessagesPerSessions"));
-        assertEquals("javax.jms.Queue", yellow.activationProperties.get("destinationType"));
+        assertEquals("jakarta.jms.Queue", yellow.activationProperties.get("destinationType"));
         assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
     }
 
@@ -323,7 +323,7 @@ public class ActivationConfigPropertyOverrideTest{
             final Properties properties = openejbJar.getProperties();
             properties.setProperty("mdb.activation.maxSessions", "20");
             properties.setProperty("mdb.activation.maxMessagesPerSessions", "100");
-            properties.setProperty("mdb.activation.destinationType", "javax.jms.Queue");
+            properties.setProperty("mdb.activation.destinationType", "jakarta.jms.Queue");
             properties.setProperty("mdb.activation.destination", "OVERRIDDEN.QUEUE");
 
             final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
@@ -336,12 +336,12 @@ public class ActivationConfigPropertyOverrideTest{
 
             assertEquals("20", orange.activationProperties.get("maxSessions"));
             assertEquals("100", orange.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Queue", orange.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Queue", orange.activationProperties.get("destinationType"));
             assertEquals("OVERRIDDEN.QUEUE", orange.activationProperties.get("destination"));
 
             assertEquals("20", yellow.activationProperties.get("maxSessions"));
             assertEquals("100", yellow.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Queue", yellow.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Queue", yellow.activationProperties.get("destinationType"));
             assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
         }
 
@@ -358,12 +358,12 @@ public class ActivationConfigPropertyOverrideTest{
 
             assertEquals("7", orange.activationProperties.get("maxSessions"));
             assertEquals("4", orange.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Queue", orange.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Queue", orange.activationProperties.get("destinationType"));
             assertEquals("ORANGE.QUEUE", orange.activationProperties.get("destination"));
 
             assertEquals("5", yellow.activationProperties.get("maxSessions"));
             assertEquals("10", yellow.activationProperties.get("maxMessagesPerSessions"));
-            assertEquals("javax.jms.Topic", yellow.activationProperties.get("destinationType"));
+            assertEquals("jakarta.jms.Topic", yellow.activationProperties.get("destinationType"));
             assertEquals("YELLOW.TOPIC", yellow.activationProperties.get("destination"));
         }
 
@@ -406,10 +406,10 @@ public class ActivationConfigPropertyOverrideTest{
 
 
     @MessageDriven(activationConfig = {
-        @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "7"),
-        @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "4"),
-        @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "ORANGE.QUEUE")
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "7"),
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "4"),
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Queue"),
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "ORANGE.QUEUE")
     })
     public static class Orange implements MessageListener {
 
@@ -419,10 +419,10 @@ public class ActivationConfigPropertyOverrideTest{
     }
 
     @MessageDriven(activationConfig = {
-        @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "5"),
-        @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
-        @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-        @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "YELLOW.TOPIC")
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "5"),
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic"),
+        @jakarta.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "YELLOW.TOPIC")
     })
     public static class Yellow implements MessageListener {
 

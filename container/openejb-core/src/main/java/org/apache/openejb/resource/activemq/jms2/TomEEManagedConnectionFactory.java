@@ -24,12 +24,12 @@ import org.apache.activemq.ra.SimpleConnectionManager;
 
 import java.util.Locale;
 
-import javax.jms.JMSException;
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.jms.JMSException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
 
 public class TomEEManagedConnectionFactory extends ActiveMQManagedConnectionFactory {

@@ -18,8 +18,8 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.ejb.Schedule;
-import javax.ejb.Schedules;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Schedules;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

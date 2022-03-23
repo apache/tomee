@@ -19,7 +19,7 @@ package org.apache.openejb.core.webservices;
 
 import org.w3c.dom.Element;
 
-import javax.xml.ws.EndpointReference;
+import jakarta.xml.ws.EndpointReference;
 
 /**
  * An implementation of the {@link AddressingSupport} interface that throws

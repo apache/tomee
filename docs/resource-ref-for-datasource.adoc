@@ -10,8 +10,8 @@
 ----
 package org.superbiz.refs;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 

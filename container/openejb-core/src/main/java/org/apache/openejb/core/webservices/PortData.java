@@ -20,7 +20,7 @@ package org.apache.openejb.core.webservices;
 import org.apache.openejb.Injection;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.PortInfo;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;

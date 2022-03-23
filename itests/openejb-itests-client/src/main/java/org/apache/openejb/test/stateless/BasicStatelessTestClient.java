@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 public abstract class BasicStatelessTestClient extends StatelessTestClient {
 

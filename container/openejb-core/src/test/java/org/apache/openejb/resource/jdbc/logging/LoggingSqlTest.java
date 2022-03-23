@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;

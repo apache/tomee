@@ -16,7 +16,7 @@
         ServerUrl = tcp://someHostName:61616
     </Resource>
 
-    <Resource id="MyJmsConnectionFactory" type="javax.jms.ConnectionFactory">
+    <Resource id="MyJmsConnectionFactory" type="jakarta.jms.ConnectionFactory">
         ResourceAdapter = MyJmsResourceAdapter
     </Resource>
 
@@ -24,8 +24,8 @@
         ResourceAdapter = MyJmsResourceAdapter
     </Container>
 
-    <Resource id="FooQueue" type="javax.jms.Queue"/>
-    <Resource id="BarTopic" type="javax.jms.Topic"/>
+    <Resource id="FooQueue" type="jakarta.jms.Queue"/>
+    <Resource id="BarTopic" type="jakarta.jms.Topic"/>
 </tomee>
 ----
 
@@ -43,7 +43,7 @@ work, such as 'failover:'.
         ServerUrl       =  tcp://someHostName:61616
     </Resource>
 
-    <Resource id="MyJmsConnectionFactory" type="javax.jms.ConnectionFactory">
+    <Resource id="MyJmsConnectionFactory" type="jakarta.jms.ConnectionFactory">
         ResourceAdapter = MyJmsResourceAdapter
     </Resource>
 
@@ -51,8 +51,8 @@ work, such as 'failover:'.
         ResourceAdapter = MyJmsResourceAdapter
     </Container>
 
-    <Resource id="FooQueue" type="javax.jms.Queue"/>
-    <Resource id="BarTopic" type="javax.jms.Topic"/>
+    <Resource id="FooQueue" type="jakarta.jms.Queue"/>
+    <Resource id="BarTopic" type="jakarta.jms.Topic"/>
 </tomee>
 ----
 
@@ -120,7 +120,7 @@ belog.
         ServerUrl       =  tcp://someHostName:61616
     </Resource>
 
-    <Resource id="MyJmsConnectionFactory" type="javax.jms.ConnectionFactory">
+    <Resource id="MyJmsConnectionFactory" type="jakarta.jms.ConnectionFactory">
         ResourceAdapter = MyJmsResourceAdapter
     </Resource>
 
@@ -128,8 +128,8 @@ belog.
         ResourceAdapter = MyJmsResourceAdapter
     </Container>
 
-    <Resource id="FooQueue" type="javax.jms.Queue"/>
-    <Resource id="BarTopic" type="javax.jms.Topic"/>
+    <Resource id="FooQueue" type="jakarta.jms.Queue"/>
+    <Resource id="BarTopic" type="jakarta.jms.Topic"/>
 </tomee>
 ----
 
@@ -149,14 +149,14 @@ p.put("MyJmsResourceAdapter", "new://Resource?type=ActiveMQResourceAdapter");
 p.put("MyJmsResourceAdapter.ServerUrl", "tcp://someHostName:61616");
 p.put("MyJmsResourceAdapter.BrokerXmlConfig", "");
 
-p.put("MyJmsConnectionFactory", "new://Resource?type=javax.jms.ConnectionFactory");
+p.put("MyJmsConnectionFactory", "new://Resource?type=jakarta.jms.ConnectionFactory");
 p.put("MyJmsConnectionFactory.ResourceAdapter", "MyJmsResourceAdapter");
 
 p.put("MyJmsMdbContainer", "new://Container?type=MESSAGE");
 p.put("MyJmsMdbContainer.ResourceAdapter", "MyJmsResourceAdapter");
 
-p.put("FooQueue", "new://Resource?type=javax.jms.Queue");
-p.put("BarTopic", "new://Resource?type=javax.jms.Topic");
+p.put("FooQueue", "new://Resource?type=jakarta.jms.Queue");
+p.put("BarTopic", "new://Resource?type=jakarta.jms.Topic");
 
 InitialContext context = new InitialContext(p);
 ----
@@ -168,19 +168,19 @@ above resources like so:
 
 [source,properties]
 ----
-javax.jms.ConnectionFactory cf = (ConnectionFactory)
+jakarta.jms.ConnectionFactory cf = (ConnectionFactory)
         context.lookup("openejb:Resource/MyJmsConnectionFactory");
 
-javax.jms.Queue queue = (Queue) context.lookup("openejb:Resource/FooQueue");
-javax.jms.Topic topic = (Topic) context.lookup("openejb:Resource/BarTopic");
+jakarta.jms.Queue queue = (Queue) context.lookup("openejb:Resource/FooQueue");
+jakarta.jms.Topic topic = (Topic) context.lookup("openejb:Resource/BarTopic");
 ----
 
 == MDB ActivationConfig
 
 Here, the value for `destination` is the physical name of the desired
 destination. The value for `destinationType` is the class name that
-defines the type of destination. It should be `javax.jms.Queue` or
-`javax.jms.Topic`.
+defines the type of destination. It should be `jakarta.jms.Queue` or
+`jakarta.jms.Topic`.
 
 The Activation Spec properties that can be configured are:
 

@@ -22,9 +22,9 @@ import org.apache.deltaspike.core.api.exclude.Exclude;
 import org.apache.deltaspike.core.api.projectstage.ProjectStage;
 import org.apache.deltaspike.jsf.api.listener.phase.JsfPhaseListener;
 
-import javax.faces.event.PhaseEvent;
-import javax.faces.event.PhaseId;
-import javax.faces.event.PhaseListener;
+import jakarta.faces.event.PhaseEvent;
+import jakarta.faces.event.PhaseId;
+import jakarta.faces.event.PhaseListener;
 import java.util.logging.Logger;
 
 @Exclude(exceptIfProjectStage = {ProjectStage.Development.class, CustomProjectStage.Debugging.class})

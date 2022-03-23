@@ -16,10 +16,10 @@
  */
 package org.superbiz.cdi.events;
 
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Singleton;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 import java.util.Date;
 
 @Singleton

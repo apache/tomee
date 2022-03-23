@@ -21,11 +21,11 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
-import javax.ejb.Singleton;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.Singleton;
 
 @RunWith(ApplicationComposer.class)
 public class PermitAllWithDenyAllOnClassTest {

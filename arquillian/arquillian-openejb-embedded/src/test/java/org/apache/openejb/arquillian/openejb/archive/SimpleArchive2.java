@@ -21,7 +21,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 
 public final class SimpleArchive2 {
     private SimpleArchive2() {

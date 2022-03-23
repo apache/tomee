@@ -17,8 +17,8 @@
 
 package org.apache.openejb.core.timer;
 
-import javax.ejb.ScheduleExpression;
-import javax.ejb.TimerConfig;
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.TimerConfig;
 
 /**
  * Simple object to hold the ScheduleExpression and TimerConfig pair

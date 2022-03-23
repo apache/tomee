@@ -30,23 +30,23 @@ public class CheckIncorrectPropertyNames extends ValidationBase {
 
     {
         //incorrect property key : correct property key
-        incorrectAndCorrectPropNames.put("java.persistence.provider", "javax.persistence.provider");
-        incorrectAndCorrectPropNames.put("java.persistence.transactionType", "javax.persistence.transactionType");
-        incorrectAndCorrectPropNames.put("java.persistence.jtaDataSource", "javax.persistence.jtaDataSource");
-        incorrectAndCorrectPropNames.put("java.persistence.nonJtaDataSource", "javax.persistence.nonJtaDataSource");
+        incorrectAndCorrectPropNames.put("java.persistence.provider", "jakarta.persistence.provider");
+        incorrectAndCorrectPropNames.put("java.persistence.transactionType", "jakarta.persistence.transactionType");
+        incorrectAndCorrectPropNames.put("java.persistence.jtaDataSource", "jakarta.persistence.jtaDataSource");
+        incorrectAndCorrectPropNames.put("java.persistence.nonJtaDataSource", "jakarta.persistence.nonJtaDataSource");
         incorrectAndCorrectPropNames.put("java.net.ssl.keyStore", "javax.net.ssl.keyStore");
         incorrectAndCorrectPropNames.put("java.net.ssl.keyStorePassword", "javax.net.ssl.keyStorePassword");
         incorrectAndCorrectPropNames.put("java.net.ssl.trustStore", "javax.net.ssl.trustStore");
-        incorrectAndCorrectPropNames.put("java.security.jacc.PolicyConfigurationFactory.provider", "javax.security.jacc.PolicyConfigurationFactory.provider");
-        incorrectAndCorrectPropNames.put("java.security.jacc.policy.provider", "javax.security.jacc.policy.provider");
-        incorrectAndCorrectPropNames.put("java.xml.ws.spi.Provider", "javax.xml.ws.spi.Provider");
-        incorrectAndCorrectPropNames.put("java.xml.soap.MessageFactory", "javax.xml.soap.MessageFactory");
-        incorrectAndCorrectPropNames.put("java.xml.soap.SOAPFactory", "javax.xml.soap.SOAPFactory");
-        incorrectAndCorrectPropNames.put("java.xml.soap.SOAPConnectionFactory", "javax.xml.soap.SOAPConnectionFactory");
-        incorrectAndCorrectPropNames.put("java.xml.soap.MetaFactory", "javax.xml.soap.MetaFactory");
-        incorrectAndCorrectPropNames.put("java.persistence.sharedCache.mode", "javax.persistence.sharedCache.mode");
-        incorrectAndCorrectPropNames.put("java.persistence.validation.mode", "javax.persistence.validation.mode");
-        incorrectAndCorrectPropNames.put("java.persistence.transactionType", "javax.persistence.transactionType");
+        incorrectAndCorrectPropNames.put("java.security.jacc.PolicyConfigurationFactory.provider", "jakarta.security.jacc.PolicyConfigurationFactory.provider");
+        incorrectAndCorrectPropNames.put("java.security.jacc.policy.provider", "jakarta.security.jacc.policy.provider");
+        incorrectAndCorrectPropNames.put("java.xml.ws.spi.Provider", "jakarta.xml.ws.spi.Provider");
+        incorrectAndCorrectPropNames.put("java.xml.soap.MessageFactory", "jakarta.xml.soap.MessageFactory");
+        incorrectAndCorrectPropNames.put("java.xml.soap.SOAPFactory", "jakarta.xml.soap.SOAPFactory");
+        incorrectAndCorrectPropNames.put("java.xml.soap.SOAPConnectionFactory", "jakarta.xml.soap.SOAPConnectionFactory");
+        incorrectAndCorrectPropNames.put("java.xml.soap.MetaFactory", "jakarta.xml.soap.MetaFactory");
+        incorrectAndCorrectPropNames.put("java.persistence.sharedCache.mode", "jakarta.persistence.sharedCache.mode");
+        incorrectAndCorrectPropNames.put("java.persistence.validation.mode", "jakarta.persistence.validation.mode");
+        incorrectAndCorrectPropNames.put("java.persistence.transactionType", "jakarta.persistence.transactionType");
 
         incorrectAndCorrectPropNames.put("javax.naming.applet", "java.naming.applet");
         incorrectAndCorrectPropNames.put("javax.naming.authoritative", "java.naming.authoritative");

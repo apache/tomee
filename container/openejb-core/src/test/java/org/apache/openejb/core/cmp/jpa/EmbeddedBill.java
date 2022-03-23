@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
 
 @Entity
 public class EmbeddedBill {

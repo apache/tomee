@@ -18,8 +18,8 @@ package org.apache.openejb.server.cxf.rs.beans;
 
 import org.apache.cxf.jaxrs.model.wadl.Description;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Path("/first")
 @Description("MyFirstRestClass service")

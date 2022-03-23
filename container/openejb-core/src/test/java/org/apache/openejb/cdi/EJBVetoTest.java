@@ -21,11 +21,11 @@ import org.apache.openejb.testing.CdiExtensions;
 import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import java.util.concurrent.Callable;
 
 @CdiExtensions(EJBVetoTest.Vetoer.class)

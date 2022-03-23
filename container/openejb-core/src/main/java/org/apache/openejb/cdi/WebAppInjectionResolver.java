@@ -19,7 +19,7 @@ package org.apache.openejb.cdi;
 
 import org.apache.webbeans.container.InjectionResolver;
 
-import javax.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.Bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Set;

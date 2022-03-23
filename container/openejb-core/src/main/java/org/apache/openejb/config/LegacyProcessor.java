@@ -25,9 +25,9 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.SessionBean;
 
-import javax.ejb.MessageDrivenContext;
-import javax.ejb.SessionContext;
-import javax.ejb.SessionSynchronization;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.SessionSynchronization;
 
 import static org.apache.openejb.jee.SessionType.STATEFUL;
 
@@ -73,8 +73,8 @@ public class LegacyProcessor implements DynamicDeployer {
                 }
             }
 
-            if (javax.ejb.SessionBean.class.isAssignableFrom(clazz)) {
-                final ResourceEnvRef ref = new ResourceEnvRef("javax.ejb.SessionBean/sessionContext", SessionContext.class);
+            if (jakarta.ejb.SessionBean.class.isAssignableFrom(clazz)) {
+                final ResourceEnvRef ref = new ResourceEnvRef("jakarta.ejb.SessionBean/sessionContext", SessionContext.class);
                 final InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(clazz);
                 target.setInjectionTargetName("sessionContext");
@@ -87,8 +87,8 @@ public class LegacyProcessor implements DynamicDeployer {
         if (bean instanceof MessageDrivenBean) {
             final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
 
-            if (javax.ejb.MessageDrivenBean.class.isAssignableFrom(clazz)) {
-                final ResourceEnvRef ref = new ResourceEnvRef("javax.ejb.MessageDrivenBean/messageDrivenContext", MessageDrivenContext.class);
+            if (jakarta.ejb.MessageDrivenBean.class.isAssignableFrom(clazz)) {
+                final ResourceEnvRef ref = new ResourceEnvRef("jakarta.ejb.MessageDrivenBean/messageDrivenContext", MessageDrivenContext.class);
                 final InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(clazz);
                 target.setInjectionTargetName("messageDrivenContext");

@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.threads.impl;
 
-import javax.enterprise.concurrent.ManageableThread;
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.concurrent.ManageableThread;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ManagedThreadFactoryImpl implements ManagedThreadFactory {

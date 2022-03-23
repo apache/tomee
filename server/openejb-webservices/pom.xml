@@ -34,10 +34,10 @@
   </properties>
   <dependencies>
     <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
-    <!-- Removed as included in jakartaee-api-8.0.0 -->
+    <!-- Removed as included in jakartaee-api-9.0.0 -->
     <!--<dependency>-->
-      <!--<groupId>javax.xml.soap</groupId>-->
-      <!--<artifactId>javax.xml.soap-api</artifactId>-->
+      <!--<groupId>jakarta.xml.soap</groupId>-->
+      <!--<artifactId>jakarta.xml.soap-api</artifactId>-->
       <!--<version>1.4.0-b01</version>-->
     <!--</dependency>-->
 

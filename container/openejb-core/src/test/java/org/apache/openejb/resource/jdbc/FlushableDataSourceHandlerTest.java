@@ -25,7 +25,7 @@ import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.io.Flushable;

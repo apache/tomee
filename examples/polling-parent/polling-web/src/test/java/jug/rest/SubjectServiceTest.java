@@ -26,11 +26,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.inject.Inject;
 import javax.naming.NamingException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;

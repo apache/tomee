@@ -82,7 +82,7 @@ Let's say that the following file lives in the jar at
   <ServiceProvider
       id="ConnectionFactory"
       service="Resource"
-      types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
+      types="jakarta.jms.ConnectionFactory, jakarta.jms.QueueConnectionFactory, jakarta.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
       class-name="com.sun.genericra.outbound.ManagedJMSConnectionFactory">
           ConnectionFactoryJndiName
           ClientId
@@ -93,7 +93,7 @@ Let's say that the following file lives in the jar at
   <ServiceProvider
       id="Queue"
       service="Resource"
-      types="javax.jms.Queue, Queue"
+      types="jakarta.jms.Queue, Queue"
       class-name="com.sun.genericra.outbound.QueueProxy">
           DestinationJndiName
           ResourceAdapter
@@ -106,7 +106,7 @@ Let's say that the following file lives in the jar at
   <ServiceProvider
       id="Topic"
       service="Resource"
-      types="javax.jms.Topic, Topic"
+      types="jakarta.jms.Topic, Topic"
       class-name="com.sun.genericra.outbound.TopicProxy">
           DestinationJndiName
           ResourceAdapter

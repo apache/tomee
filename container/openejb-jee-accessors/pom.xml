@@ -67,12 +67,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.metatype.sxc</groupId>
-      <artifactId>sxc-jaxb-core</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sxc-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>stax</groupId>
-          <artifactId>stax-api</artifactId>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

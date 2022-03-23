@@ -25,8 +25,8 @@ import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 

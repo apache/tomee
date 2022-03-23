@@ -19,11 +19,11 @@ package org.apache.openejb.cdi;
 
 import org.apache.webbeans.spi.ContextsService;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
 // helper for embedded case
 public final class ScopeHelper {

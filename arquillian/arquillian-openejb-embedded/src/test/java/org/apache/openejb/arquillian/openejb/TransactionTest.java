@@ -28,8 +28,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

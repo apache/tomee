@@ -18,7 +18,7 @@ package org.apache.openejb.test.entity.cmr.cmrmapping;
 
 import java.util.Set;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 /**
  * @version $Revision$ $Date$

@@ -24,9 +24,9 @@ import org.apache.myfaces.extensions.cdi.jsf.api.Jsf;
 import org.apache.myfaces.extensions.cdi.message.api.MessageContext;
 import org.superbiz.myfaces.view.UserHolder;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.interceptor.InvocationContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.interceptor.InvocationContext;
 import java.util.Set;
 
 @ApplicationScoped

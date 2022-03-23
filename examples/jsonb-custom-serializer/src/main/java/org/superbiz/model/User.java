@@ -20,7 +20,7 @@ package org.superbiz.model;
 
 import java.util.Date;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 
 import org.superbiz.UserDeserializer;
 

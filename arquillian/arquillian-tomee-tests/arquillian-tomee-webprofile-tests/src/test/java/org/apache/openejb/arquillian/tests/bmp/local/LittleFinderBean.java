@@ -19,8 +19,8 @@ package org.apache.openejb.arquillian.tests.bmp.local;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
 
 public class LittleFinderBean implements EntityBean {
     private static final long serialVersionUID = -1719910497840449494L;

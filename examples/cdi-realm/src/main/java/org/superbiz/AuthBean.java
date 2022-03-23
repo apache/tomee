@@ -16,7 +16,7 @@
  */
 package org.superbiz;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 import java.security.Principal;
 
 @RequestScoped // just to show we can be bound to the request but @ApplicationScoped is what makes sense

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.singleton;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 /**
  * @version $Rev: 525022 $ $Date: 2007-04-02 21:19:21 -0700 (Mon, 02 Apr 2007) $

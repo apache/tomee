@@ -18,7 +18,7 @@ package org.apache.openejb.server.webservices.saaj;
 
 import junit.framework.TestCase;
 
-import javax.xml.soap.MessageFactory;
+import jakarta.xml.soap.MessageFactory;
 
 public class SaajUniverseTest extends TestCase {
     private static final String SUN_MESSAGE_CLASS = "com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl";

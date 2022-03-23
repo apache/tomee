@@ -18,7 +18,7 @@ package org.apache.tomee.embedded.junit;
 
 import org.apache.tomee.embedded.TomEEEmbeddedApplicationRunner;
 
-import javax.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.Vetoed;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 

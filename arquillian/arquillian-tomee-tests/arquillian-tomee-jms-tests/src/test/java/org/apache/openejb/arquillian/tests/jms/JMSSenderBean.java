@@ -18,11 +18,11 @@ package org.apache.openejb.arquillian.tests.jms;
 
 import java.util.Enumeration;
 
-import javax.ejb.*;
-import javax.inject.Inject;
-import javax.jms.JMSContext;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
+import jakarta.ejb.*;
+import jakarta.inject.Inject;
+import jakarta.jms.JMSContext;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueBrowser;
 
 @Singleton
 @Lock(LockType.READ)

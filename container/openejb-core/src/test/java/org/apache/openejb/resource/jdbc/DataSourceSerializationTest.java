@@ -23,9 +23,9 @@ import org.apache.openejb.testing.ContainerProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 import javax.sql.DataSource;
 
 import java.io.Serializable;

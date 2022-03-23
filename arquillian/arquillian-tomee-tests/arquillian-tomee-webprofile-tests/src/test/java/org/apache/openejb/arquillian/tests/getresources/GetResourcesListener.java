@@ -17,9 +17,9 @@
 
 package org.apache.openejb.arquillian.tests.getresources;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;

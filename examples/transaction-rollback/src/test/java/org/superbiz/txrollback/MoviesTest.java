@@ -18,13 +18,13 @@ package org.superbiz.txrollback;
 
 import junit.framework.TestCase;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.RollbackException;
-import javax.transaction.UserTransaction;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.UserTransaction;
 import java.util.List;
 import java.util.Properties;
 
@@ -114,7 +114,7 @@ public class MoviesTest extends TestCase {
 
     /**
      * Transaction is marked for rollback inside the bean via
-     * calling the javax.ejb.SessionContext.setRollbackOnly() method
+     * calling the jakarta.ejb.SessionContext.setRollbackOnly() method
      *
      * This is the cleanest way to make a transaction rollback.
      */

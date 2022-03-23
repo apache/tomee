@@ -67,8 +67,8 @@ JAXRS entry point class, as follows jaxrs will load all the annotated
 
 [source,java]
 ----
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("api")
 public class JAXRSApplication extends Application {
@@ -85,13 +85,13 @@ Simple jaxrs class with a GET and a POST endpoint
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ejb.Stateless;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import org.superbiz.model.Address;
 import org.superbiz.model.User;
@@ -129,11 +129,11 @@ type Address, defined in AddressSerializer class
 
 [source,java]
 ----
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class JSONBConfiguration implements ContextResolver<Jsonb> {
@@ -160,9 +160,9 @@ Simple Object serializer class that add `modified' during serialization
 
 [source,java]
 ----
-import javax.json.bind.serializer.JsonbSerializer;
-import javax.json.bind.serializer.SerializationContext;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.bind.serializer.JsonbSerializer;
+import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.stream.JsonGenerator;
 
 import org.superbiz.model.Address;
 
@@ -188,10 +188,10 @@ Create an object from a json
 ----
 import java.lang.reflect.Type;
 
-import javax.json.JsonObject;
-import javax.json.bind.serializer.DeserializationContext;
-import javax.json.bind.serializer.JsonbDeserializer;
-import javax.json.stream.JsonParser;
+import jakarta.json.JsonObject;
+import jakarta.json.bind.serializer.DeserializationContext;
+import jakarta.json.bind.serializer.JsonbDeserializer;
+import jakarta.json.stream.JsonParser;
 
 import org.superbiz.model.User;
 
@@ -221,7 +221,7 @@ can notify jsonb to use the custom deserializer
 ----
 import java.util.Date;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 
 import org.superbiz.UserDeserializer;
 
@@ -257,7 +257,7 @@ The test spin up an openejb webapp and invoke the users endpoint
 ----
 import java.io.IOException;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
@@ -471,7 +471,7 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 
 === Inside the jar
 
-jakartaee-api:8.0 brings in all the dependencies needed to spin up a
+jakartaee-api:9.0 brings in all the dependencies needed to spin up a
 working REST application.
 
 If we look at the jar built by maven, we’ll see the application itself

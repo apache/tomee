@@ -32,10 +32,10 @@ mvn clean test
 ----
 package org.foo;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.inject.Inject;
 import java.util.logging.Logger;
 
 @Singleton
@@ -63,11 +63,11 @@ public class SingletonA {
 ----
 package org.foo;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.DependsOn;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.inject.Inject;
 import java.util.logging.Logger;
 
 @Singleton
@@ -93,9 +93,9 @@ public class SingletonB {
 
 [código,java]
 ----
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.inject.Inject;
 import java.util.logging.Logger;
 
 @Singleton
@@ -123,7 +123,7 @@ public class SingletonC {
 
 [código,java]
 ----
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
 

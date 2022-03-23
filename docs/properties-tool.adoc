@@ -88,7 +88,7 @@ Default\ Stateless\ Container.TimeOut=0
 #
 Default\ MDB\ Container.ResourceAdapter=Default JMS Resource Adapter
 Default\ MDB\ Container.InstanceLimit=10
-Default\ MDB\ Container.MessageListenerInterface=javax.jms.MessageListener
+Default\ MDB\ Container.MessageListenerInterface=jakarta.jms.MessageListener
 Default\ MDB\ Container.ActivationSpecClass=org.apache.activemq.ra.ActiveMQActivationSpec
 
 # ConnectionManager(id=Default Local TX ConnectionManager)
@@ -155,8 +155,8 @@ Default\ Unmanaged\ JDBC\ Database.TestWhileIdle=false
 # Resource(id=Default JMS Connection Factory)
 # className: org.apache.activemq.ra.ActiveMQManagedConnectionFactory
 #
-Default\ JMS\ Connection\ Factory.ConnectionInterface=javax.jms.ConnectionFactory, \
-javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory
+Default\ JMS\ Connection\ Factory.ConnectionInterface=jakarta.jms.ConnectionFactory, \
+jakarta.jms.QueueConnectionFactory, jakarta.jms.TopicConnectionFactory
 Default\ JMS\ Connection\ Factory.ResourceAdapter=Default JMS Resource Adapter
 
 # SecurityService(id=Default Security Service)

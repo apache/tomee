@@ -23,9 +23,9 @@ import org.superbiz.injection.secure.api.DeletePermission;
 import org.superbiz.injection.secure.api.MovieUnit;
 import org.superbiz.injection.secure.api.ReadPermission;
 
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Stateful

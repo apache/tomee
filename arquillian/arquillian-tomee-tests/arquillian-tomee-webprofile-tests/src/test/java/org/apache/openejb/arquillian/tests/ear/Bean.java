@@ -18,9 +18,9 @@ package org.apache.openejb.arquillian.tests.ear;
 
 import org.junit.Test;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
 
 @Singleton
 @Startup

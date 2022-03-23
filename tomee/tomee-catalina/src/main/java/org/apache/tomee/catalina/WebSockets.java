@@ -19,7 +19,7 @@ package org.apache.tomee.catalina;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomee.catalina.websocket.JavaEEDefaultServerEnpointConfigurator;
 
-import javax.websocket.server.ServerEndpointConfig;
+import jakarta.websocket.server.ServerEndpointConfig;
 
 public final class WebSockets {
     private WebSockets() {

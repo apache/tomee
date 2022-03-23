@@ -20,10 +20,10 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.Remove;
-import javax.annotation.Resource;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Remove;
+import jakarta.annotation.Resource;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;

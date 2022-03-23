@@ -19,8 +19,8 @@ package org.superbiz.cdi.bookshow.beans;
 import org.superbiz.cdi.bookshow.interceptorbinding.Log;
 import org.superbiz.cdi.bookshow.interceptors.BookForAShowLoggingInterceptor;
 
-import javax.ejb.Stateful;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateful;
+import jakarta.interceptor.Interceptors;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

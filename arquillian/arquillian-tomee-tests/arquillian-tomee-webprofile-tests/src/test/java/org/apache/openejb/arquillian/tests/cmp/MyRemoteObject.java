@@ -18,7 +18,7 @@ package org.apache.openejb.arquillian.tests.cmp;
 
 import java.rmi.RemoteException;
 
-public interface MyRemoteObject extends javax.ejb.EJBObject {
+public interface MyRemoteObject extends jakarta.ejb.EJBObject {
 
     public void doit() throws RemoteException;
 

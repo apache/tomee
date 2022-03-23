@@ -24,7 +24,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
 import java.util.Properties;

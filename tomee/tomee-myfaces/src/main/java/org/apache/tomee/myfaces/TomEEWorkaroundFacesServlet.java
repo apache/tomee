@@ -16,14 +16,14 @@
  */
 package org.apache.tomee.myfaces;
 
-import javax.faces.context.FacesContext;
-import javax.faces.webapp.FacesServlet;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.MultipartConfig;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.webapp.FacesServlet;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.MultipartConfig;
 import java.io.IOException;
 
 @MultipartConfig // only there to be able to restore a FacesContext if lost cause of a forward in a JSF request

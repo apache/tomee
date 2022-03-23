@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.server.hessian;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 
 public class OpenEJBHessianServlet extends HttpServlet {

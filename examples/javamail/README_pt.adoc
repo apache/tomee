@@ -21,16 +21,16 @@ https://java.net/projects/javamail/pages/Home#Samples[Javamail API aqui]
 ----
 package org.superbiz.rest;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 import java.util.Date;
 import java.util.Properties;
 
@@ -164,11 +164,11 @@ INFO - Auto-creating a container for bean org.superbiz.rest.EmailServiceTest: Co
 INFO - Creating Container(id=Default Managed Container)
 INFO - Using directory D:\windows\tmp for stateful session passivation
 INFO - Configuring Service(id=comp/DefaultManagedExecutorService, type=Resource, provider-id=Default Executor Service)
-INFO - Auto-creating a Resource with id 'comp/DefaultManagedExecutorService' of type 'javax.enterprise.concurrent.ManagedExecutorService for 'test'.
+INFO - Auto-creating a Resource with id 'comp/DefaultManagedExecutorService' of type 'jakarta.enterprise.concurrent.ManagedExecutorService for 'test'.
 INFO - Configuring Service(id=comp/DefaultManagedScheduledExecutorService, type=Resource, provider-id=Default Scheduled Executor Service)
-INFO - Auto-creating a Resource with id 'comp/DefaultManagedScheduledExecutorService' of type 'javax.enterprise.concurrent.ManagedScheduledExecutorService for 'test'.
+INFO - Auto-creating a Resource with id 'comp/DefaultManagedScheduledExecutorService' of type 'jakarta.enterprise.concurrent.ManagedScheduledExecutorService for 'test'.
 INFO - Configuring Service(id=comp/DefaultManagedThreadFactory, type=Resource, provider-id=Default Managed Thread Factory)
-INFO - Auto-creating a Resource with id 'comp/DefaultManagedThreadFactory' of type 'javax.enterprise.concurrent.ManagedThreadFactory for 'test'.
+INFO - Auto-creating a Resource with id 'comp/DefaultManagedThreadFactory' of type 'jakarta.enterprise.concurrent.ManagedThreadFactory for 'test'.
 INFO - Enterprise application "D:\github\tomee\examples\javamail\EmailServiceTest" loaded.
 INFO - Creating dedicated application classloader for EmailServiceTest
 INFO - Assembling app: D:\github\tomee\examples\javamail\EmailServiceTest
@@ -189,14 +189,14 @@ DEBUG: !anyLoaded
 DEBUG: not loading resource: /META-INF/javamail.providers
 DEBUG: successfully loaded resource: /META-INF/javamail.default.providers
 DEBUG: Tables of loaded providers
-DEBUG: Providers Listed By Class Name: {com.sun.mail.smtp.SMTPSSLTransport=javax.mail.Provider[TRANSPORT,smtps,com.sun.mail.smtp.SMTPSSLTransport,Sun Microsystems, Inc], com.sun.mail.smtp.SMTPTransport=javax.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc], com.sun.mail.imap.IMAPSSLStore=javax.mail.Provider[STORE,imaps,com.sun.mail.imap.IMAPSSLStore,Sun Microsystems, Inc], com.sun.mail.pop3.POP3SSLStore=javax.mail.Provider[STORE,pop3s,com.sun.mail.pop3.POP3SSLStore,Sun Microsystems, Inc], com.sun.mail.imap.IMAPStore=javax.mail.Provider[STORE,imap,com.sun.mail.imap.IMAPStore,Sun Microsystems, Inc], com.sun.mail.pop3.POP3Store=javax.mail.Provider[STORE,pop3,com.sun.mail.pop3.POP3Store,Sun Microsystems, Inc]}
-DEBUG: Providers Listed By Protocol: {imaps=javax.mail.Provider[STORE,imaps,com.sun.mail.imap.IMAPSSLStore,Sun Microsystems, Inc], imap=javax.mail.Provider[STORE,imap,com.sun.mail.imap.IMAPStore,Sun Microsystems, Inc], smtps=javax.mail.Provider[TRANSPORT,smtps,com.sun.mail.smtp.SMTPSSLTransport,Sun Microsystems, Inc], pop3=javax.mail.Provider[STORE,pop3,com.sun.mail.pop3.POP3Store,Sun Microsystems, Inc], pop3s=javax.mail.Provider[STORE,pop3s,com.sun.mail.pop3.POP3SSLStore,Sun Microsystems, Inc], smtp=javax.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc]}
+DEBUG: Providers Listed By Class Name: {com.sun.mail.smtp.SMTPSSLTransport=jakarta.mail.Provider[TRANSPORT,smtps,com.sun.mail.smtp.SMTPSSLTransport,Sun Microsystems, Inc], com.sun.mail.smtp.SMTPTransport=jakarta.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc], com.sun.mail.imap.IMAPSSLStore=jakarta.mail.Provider[STORE,imaps,com.sun.mail.imap.IMAPSSLStore,Sun Microsystems, Inc], com.sun.mail.pop3.POP3SSLStore=jakarta.mail.Provider[STORE,pop3s,com.sun.mail.pop3.POP3SSLStore,Sun Microsystems, Inc], com.sun.mail.imap.IMAPStore=jakarta.mail.Provider[STORE,imap,com.sun.mail.imap.IMAPStore,Sun Microsystems, Inc], com.sun.mail.pop3.POP3Store=jakarta.mail.Provider[STORE,pop3,com.sun.mail.pop3.POP3Store,Sun Microsystems, Inc]}
+DEBUG: Providers Listed By Protocol: {imaps=jakarta.mail.Provider[STORE,imaps,com.sun.mail.imap.IMAPSSLStore,Sun Microsystems, Inc], imap=jakarta.mail.Provider[STORE,imap,com.sun.mail.imap.IMAPStore,Sun Microsystems, Inc], smtps=jakarta.mail.Provider[TRANSPORT,smtps,com.sun.mail.smtp.SMTPSSLTransport,Sun Microsystems, Inc], pop3=jakarta.mail.Provider[STORE,pop3,com.sun.mail.pop3.POP3Store,Sun Microsystems, Inc], pop3s=jakarta.mail.Provider[STORE,pop3s,com.sun.mail.pop3.POP3SSLStore,Sun Microsystems, Inc], smtp=jakarta.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc]}
 DEBUG: successfully loaded resource: /META-INF/javamail.default.address.map
 DEBUG: !anyLoaded
 DEBUG: not loading resource: /META-INF/javamail.address.map
 DEBUG: java.io.FileNotFoundException: D:\java\jdk8\jre\lib\javamail.address.map (The system cannot find the file specified)
 DEBUG: setDebug: JavaMail version 1.4ea
-DEBUG: getProvider() returning javax.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc]
+DEBUG: getProvider() returning jakarta.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc]
 DEBUG SMTP: useEhlo true, useAuth false
 DEBUG SMTP: trying to connect to host "your.mailserver.host", port 25, isSSL false
 INFO - Undeploying app: D:\github\tomee\examples\javamail\EmailServiceTest

@@ -31,9 +31,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.AfterClass;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.jws.WebService;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
+import jakarta.jws.WebService;
 import javax.naming.InitialContext;
 import java.io.Serializable;
 

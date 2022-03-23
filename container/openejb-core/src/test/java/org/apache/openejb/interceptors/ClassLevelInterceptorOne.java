@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev$ $Date$

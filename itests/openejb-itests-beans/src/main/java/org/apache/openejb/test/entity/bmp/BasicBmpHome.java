@@ -19,22 +19,22 @@ package org.apache.openejb.test.entity.bmp;
 import java.util.Enumeration;
 
 
-public interface BasicBmpHome extends javax.ejb.EJBHome {
+public interface BasicBmpHome extends jakarta.ejb.EJBHome {
 
     public BasicBmpObject createObject(String name)
-        throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 
     public BasicBmpObject findByPrimaryKey(Integer primarykey)
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     public java.util.Collection findEmptyCollection()
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     public java.util.Collection findByLastName(String lastName)
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     public Enumeration findEmptyEnumeration()
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
     public int sum(int x, int y) throws java.rmi.RemoteException;
 }

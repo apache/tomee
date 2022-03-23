@@ -28,10 +28,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSessionContext;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSessionContext;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 public class HttpSessionImpl implements HttpSession {
     private Collection<HttpSessionListener> listeners;
@@ -199,7 +199,7 @@ public class HttpSessionImpl implements HttpSession {
         final SessionManager component = SystemInstance.get().getComponent(SessionManager.class);
         return new HttpSessionContext() {
             @Override
-            public javax.servlet.http.HttpSession getSession(final String sessionId) {
+            public jakarta.servlet.http.HttpSession getSession(final String sessionId) {
                 final HttpSessionEvent event = component.findSession(sessionId);
                 return event == null ? null : event.getSession();
             }

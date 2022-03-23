@@ -16,8 +16,8 @@
  */
 package org.superbiz.injection;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
 
 /**
  * This is an EJB 3 style pojo stateless session bean

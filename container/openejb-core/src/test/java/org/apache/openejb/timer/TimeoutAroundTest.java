@@ -31,15 +31,15 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.annotation.Resource;
-import javax.ejb.Local;
-import javax.ejb.Schedule;
-import javax.ejb.Stateless;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
-import javax.interceptor.AroundTimeout;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Local;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerService;
+import jakarta.interceptor.AroundTimeout;
+import jakarta.interceptor.InvocationContext;
 import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -171,7 +171,7 @@ public class TimeoutAroundTest extends TestCase {
         }
 
         @Schedule(info = "badValue", year = "1970")
-        public void scheduleBeanA(final javax.ejb.Timer timer) {
+        public void scheduleBeanA(final jakarta.ejb.Timer timer) {
             result.add(Call.BAD_VALUE);
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
@@ -196,7 +196,7 @@ public class TimeoutAroundTest extends TestCase {
         }
 
         @Schedule(info = "badValue", year = "1970")
-        public void scheduleBeanB(final javax.ejb.Timer timer) {
+        public void scheduleBeanB(final jakarta.ejb.Timer timer) {
             result.add(Call.BAD_VALUE);
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
@@ -220,7 +220,7 @@ public class TimeoutAroundTest extends TestCase {
         }
 
         @Schedule(info = "badValue", year = "1970")
-        public void scheduleBeanC(final javax.ejb.Timer timer) {
+        public void scheduleBeanC(final jakarta.ejb.Timer timer) {
             result.add(Call.BAD_VALUE);
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }

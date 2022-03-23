@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util;
 
-import javax.security.jacc.PolicyContext;
+import jakarta.security.jacc.PolicyContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Properties;

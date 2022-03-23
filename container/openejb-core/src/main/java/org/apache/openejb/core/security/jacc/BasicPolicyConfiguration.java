@@ -20,8 +20,8 @@ package org.apache.openejb.core.security.jacc;
 import org.apache.openejb.assembler.classic.DelegatePermissionCollection;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.security.jacc.PolicyConfiguration;
-import javax.security.jacc.PolicyContextException;
+import jakarta.security.jacc.PolicyConfiguration;
+import jakarta.security.jacc.PolicyContextException;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Principal;

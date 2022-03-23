@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class ComplexSubclass extends ComplexSuperclass {

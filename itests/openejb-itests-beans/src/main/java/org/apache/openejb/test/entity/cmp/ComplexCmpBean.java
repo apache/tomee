@@ -20,11 +20,11 @@ package org.apache.openejb.test.entity.cmp;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;

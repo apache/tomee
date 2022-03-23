@@ -24,8 +24,8 @@ import org.apache.openejb.util.Archives;
 import org.apache.openejb.util.WebArchives;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

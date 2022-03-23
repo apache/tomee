@@ -34,10 +34,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.jws.WebService;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
+import jakarta.jws.WebService;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import java.util.Properties;

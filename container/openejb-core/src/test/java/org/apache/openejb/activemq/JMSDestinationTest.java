@@ -24,14 +24,14 @@ import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.jms.JMSConnectionFactoryDefinition;
-import javax.jms.JMSConnectionFactoryDefinitions;
-import javax.jms.JMSDestinationDefinition;
-import javax.jms.JMSDestinationDefinitions;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.Topic;
+import jakarta.annotation.Resource;
+import jakarta.jms.JMSConnectionFactoryDefinition;
+import jakarta.jms.JMSConnectionFactoryDefinitions;
+import jakarta.jms.JMSDestinationDefinition;
+import jakarta.jms.JMSDestinationDefinitions;
+import jakarta.jms.JMSException;
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -58,15 +58,15 @@ public class JMSDestinationTest {
     }
 
     @JMSDestinationDefinitions({
-            @JMSDestinationDefinition(name = "q", interfaceName = "javax.jms.Queue", resourceAdapter = "Default JMS Resource Adapter", properties = {"PhysicalName=queuetest"}),
-            @JMSDestinationDefinition(name = "t", interfaceName = "javax.jms.Topic", resourceAdapter = "Default JMS Resource Adapter", properties = {"PhysicalName=topictest"})
+            @JMSDestinationDefinition(name = "q", interfaceName = "jakarta.jms.Queue", resourceAdapter = "Default JMS Resource Adapter", properties = {"PhysicalName=queuetest"}),
+            @JMSDestinationDefinition(name = "t", interfaceName = "jakarta.jms.Topic", resourceAdapter = "Default JMS Resource Adapter", properties = {"PhysicalName=topictest"})
     })
     @JMSConnectionFactoryDefinitions({
             @JMSConnectionFactoryDefinition(
                     name = "cf",
                     className = "org.apache.openejb.resource.activemq.ActiveMQResourceAdapter",
                     resourceAdapter = "Default JMS Resource Adapter",
-                    interfaceName = "javax.jms.MessageListener"
+                    interfaceName = "jakarta.jms.MessageListener"
             )
     })
     public static class Define {

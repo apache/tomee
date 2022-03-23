@@ -70,15 +70,15 @@ public class EchoBean implements Echo {
 //		return in;
 //	}
 
-    public void ejbActivate() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public void ejbActivate() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
     }
 
-    public void ejbPassivate() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public void ejbPassivate() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
     }
 
-    public void ejbRemove() throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public void ejbRemove() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
     }
 
-    public void setSessionContext(javax.ejb.SessionContext arg0) throws javax.ejb.EJBException, java.rmi.RemoteException {
+    public void setSessionContext(jakarta.ejb.SessionContext arg0) throws jakarta.ejb.EJBException, java.rmi.RemoteException {
     }
 }

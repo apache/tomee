@@ -24,8 +24,8 @@ import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.URLs;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 import java.io.File;
 import java.net.URL;
 

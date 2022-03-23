@@ -27,7 +27,7 @@ import org.apache.openejb.util.NetworkUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

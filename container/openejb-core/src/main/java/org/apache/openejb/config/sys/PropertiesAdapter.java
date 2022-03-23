@@ -21,7 +21,7 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.SuperProperties;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.ByteArrayOutputStream;
 import java.util.Properties;
 

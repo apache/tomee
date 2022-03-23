@@ -18,8 +18,8 @@ package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.activemq.command.ActiveMQBytesMessage;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.JMSException;
 
 public class WrappingByteMessage extends DelegateMessage implements BytesMessage {
     private final BytesMessage message;

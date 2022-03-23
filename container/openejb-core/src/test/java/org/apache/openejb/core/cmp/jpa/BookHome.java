@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import javax.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalHome;
 
 public interface BookHome extends EJBLocalHome {
 }

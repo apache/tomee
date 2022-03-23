@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.remote;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CompanyRemote {

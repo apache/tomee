@@ -145,16 +145,16 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
      * Validation part
      */
     private static final String[][] FORBIDDEN_CLASSES = new String[][]{ // name, spec +1 name, message. Note: [1] != null => [2] != null
-            {"javax.persistence.Entity", null, null}, // JPA
-            {"javax.transaction.Transaction", null, null}, // JTA
-            {"javax.jws.WebService", null, null}, // JAXWS
-            {"javax.validation.Validation", null, null}, // BVal
-            {"javax.jms.Queue", null, null}, // JMS
-            {"javax.enterprise.context.ApplicationScoped", null, null}, // CDI
-            {"javax.inject.Inject", null, null}, // CDI
-            {"javax.ws.rs.Path", null, null},
-            {"javax.ejb.EJB", null, null}, // EJB
-            {"javax.annotation.PostConstruct", null, null} // javax.annotation
+            {"jakarta.persistence.Entity", null, null}, // JPA
+            {"jakarta.transaction.Transaction", null, null}, // JTA
+            {"jakarta.jws.WebService", null, null}, // JAXWS
+            {"jakarta.validation.Validation", null, null}, // BVal
+            {"jakarta.jms.Queue", null, null}, // JMS
+            {"jakarta.enterprise.context.ApplicationScoped", null, null}, // CDI
+            {"jakarta.inject.Inject", null, null}, // CDI
+            {"jakarta.ws.rs.Path", null, null},
+            {"jakarta.ejb.EJB", null, null}, // EJB
+            {"jakarta.annotation.PostConstruct", null, null} // jakarta.annotation
     };
 
     public static boolean validateJarFile(final File file) throws IOException {

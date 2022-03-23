@@ -18,7 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;

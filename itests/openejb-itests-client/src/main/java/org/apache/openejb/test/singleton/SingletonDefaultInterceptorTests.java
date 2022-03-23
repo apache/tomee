@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.singleton;
 
-// import javax.ejb.EJB;
+// import jakarta.ejb.EJB;
 
 // public class SingletonInterceptorTests extends AnnotatedFieldInjectionSingletonLocalTestClient {
 public class SingletonDefaultInterceptorTests extends BasicSingletonLocalTestClient {

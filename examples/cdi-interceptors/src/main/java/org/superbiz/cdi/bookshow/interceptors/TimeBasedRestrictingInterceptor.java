@@ -20,9 +20,9 @@ import org.superbiz.cdi.AccessDeniedException;
 import org.superbiz.cdi.bookshow.interceptorbinding.TimeRestricted;
 import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 import java.io.Serializable;
 
 @Interceptor

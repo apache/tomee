@@ -16,8 +16,8 @@
  */
 package org.superbiz.rest.model;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import java.util.Date;
 
 @MappedSuperclass

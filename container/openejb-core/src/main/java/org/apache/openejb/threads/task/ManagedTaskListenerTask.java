@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.threads.task;
 
-import javax.enterprise.concurrent.ManagedExecutorService;
-import javax.enterprise.concurrent.ManagedTask;
-import javax.enterprise.concurrent.ManagedTaskListener;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedTask;
+import jakarta.enterprise.concurrent.ManagedTaskListener;
 import java.util.concurrent.Future;
 
 public abstract class ManagedTaskListenerTask implements ManagedTaskListener {

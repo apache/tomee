@@ -19,7 +19,7 @@ package org.apache.openejb.arquillian.tests.ear;
 
 import org.apache.commons.codec.binary.Base64;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 
 @Singleton
 public class CodecBean {

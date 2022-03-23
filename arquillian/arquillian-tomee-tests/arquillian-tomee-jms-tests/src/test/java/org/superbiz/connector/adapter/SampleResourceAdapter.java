@@ -18,10 +18,10 @@ package org.superbiz.connector.adapter;
 
 import org.superbiz.connector.api.InboundListener;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.*;
-import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.*;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.util.Collection;
 import java.util.Map;

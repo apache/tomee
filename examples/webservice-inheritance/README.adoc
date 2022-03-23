@@ -10,12 +10,12 @@ right to edit this page._
 ----
 package org.superbiz.inheritance;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import java.io.Serializable;
 
 @Entity
@@ -68,7 +68,7 @@ public class Item implements Serializable {
 ----
 package org.superbiz.inheritance;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Tower extends Item {
@@ -105,7 +105,7 @@ public class Tower extends Item {
 ----
 package org.superbiz.inheritance;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Wakeboard extends Wearable {
@@ -118,7 +118,7 @@ public class Wakeboard extends Wearable {
 ----
 package org.superbiz.inheritance;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class WakeboardBinding extends Wearable {
@@ -131,12 +131,12 @@ public class WakeboardBinding extends Wearable {
 ----
 package org.superbiz.inheritance;
 
-import javax.ejb.Stateless;
-import javax.jws.WebService;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
 import java.util.List;
 
 /**
@@ -177,8 +177,8 @@ public class WakeRiderImpl implements WakeRiderWs {
 ----
 package org.superbiz.inheritance;
 
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 import java.util.List;
 
 /**
@@ -201,7 +201,7 @@ public interface WakeRiderWs {
 ----
 package org.superbiz.inheritance;
 
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class Wearable extends Item {
@@ -261,7 +261,7 @@ import org.superbiz.inheritance.Tower.Fit;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;

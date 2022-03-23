@@ -30,7 +30,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Archives;
 import org.junit.AfterClass;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

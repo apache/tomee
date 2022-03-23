@@ -41,14 +41,14 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.EJBContext;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.SessionBean;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.NoSuchEJBException;
+import jakarta.ejb.SessionBean;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

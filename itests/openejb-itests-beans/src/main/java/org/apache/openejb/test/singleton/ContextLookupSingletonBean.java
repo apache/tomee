@@ -23,24 +23,24 @@ import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 import org.apache.openejb.test.stateful.*;
 
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
 import javax.sql.DataSource;
-import javax.jms.ConnectionFactory;
-import javax.jms.Connection;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.QueueConnectionFactory;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.QueueConnectionFactory;
 import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 
-public class ContextLookupSingletonBean implements javax.ejb.SessionBean {
+public class ContextLookupSingletonBean implements jakarta.ejb.SessionBean {
 
     private String name;
     private SessionContext ejbContext;
@@ -461,9 +461,9 @@ public class ContextLookupSingletonBean implements javax.ejb.SessionBean {
     }
 
     /**
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      */
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void ejbCreate() throws jakarta.ejb.CreateException {
         this.name = "nameless automaton";
     }
 

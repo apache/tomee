@@ -22,9 +22,9 @@ import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EntityBean;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EntityBean;
 
 public class ProxyFactory {
     private final BeanContext beanContext;

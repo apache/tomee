@@ -19,9 +19,9 @@ package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.BeanContext;
 
-import javax.ejb.EJBException;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EntityBean;
 
 //
 // WARNING: Do not refactor this class.  It is used by the Cmp2Generator.

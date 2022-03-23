@@ -28,7 +28,7 @@ import org.apache.catalina.realm.RealmBase;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.ietf.jgss.GSSContext;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.security.Principal;

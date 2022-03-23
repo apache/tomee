@@ -21,10 +21,10 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.webservices.AddressingSupport;
 import org.w3c.dom.Element;
 
-import javax.ejb.SessionContext;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.ejb.SessionContext;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.security.Principal;
 
 public class EjbWsContext implements WebServiceContext {

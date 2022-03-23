@@ -12,7 +12,7 @@ right to edit this page._
 ----
 package org.superbiz.txrollback;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 @ApplicationException
 public class CustomRuntimeException extends RuntimeException {
@@ -40,10 +40,10 @@ public class CustomRuntimeException extends RuntimeException {
 ----
 package org.superbiz.txrollback;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity(name = "Movie")
 public class Movie {
@@ -98,13 +98,13 @@ public class Movie {
 ----
 package org.superbiz.txrollback;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
 import java.util.List;
 
 //START SNIPPET: code
@@ -170,13 +170,13 @@ package org.superbiz.txrollback;
 
 import junit.framework.TestCase;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.RollbackException;
-import javax.transaction.UserTransaction;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.UserTransaction;
 import java.util.List;
 import java.util.Properties;
 
@@ -262,7 +262,7 @@ public class MoviesTest extends TestCase {
 
     /**
      * Transaction is marked for rollback inside the bean via
-     * calling the javax.ejb.SessionContext.setRollbackOnly() method
+     * calling the jakarta.ejb.SessionContext.setRollbackOnly() method
      * <p/>
      * This is the cleanest way to make a transaction rollback.
      */
@@ -377,14 +377,14 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
 INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/transaction-rollback/target/classes
 INFO - Beginning load: /Users/dblevins/examples/transaction-rollback/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/transaction-rollback
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
 INFO - Auto-creating a container for bean Movies: Container(type=STATELESS, id=Default Stateless Container)
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
@@ -415,7 +415,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
 INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
@@ -452,7 +452,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
 INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
@@ -489,7 +489,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
 INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
@@ -526,7 +526,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/transaction-rollback
 INFO - openejb.base = /Users/dblevins/examples/transaction-rollback
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)

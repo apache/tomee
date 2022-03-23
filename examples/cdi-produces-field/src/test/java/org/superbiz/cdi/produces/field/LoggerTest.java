@@ -20,8 +20,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

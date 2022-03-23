@@ -504,7 +504,7 @@ OpenEJB (3.1.1) stable; urgency=emergency
     https://issues.apache.org/jira/browse/OPENEJB-1005
   * @EjbDeployment annotation as alternative to <ejb-deployment> in openejb-j...
     https://issues.apache.org/jira/browse/OPENEJB-1029
-  * javax.ejb.EJBContext.getCallerPrincipal() not predictable
+  * jakarta.ejb.EJBContext.getCallerPrincipal() not predictable
     https://issues.apache.org/jira/browse/OPENEJB-1015
   * OpenEJB embedded does not release stateless EJB instances in case of Runt...
     https://issues.apache.org/jira/browse/OPENEJB-953
@@ -536,7 +536,7 @@ OpenEJB (3.1.1) stable; urgency=emergency
     https://issues.apache.org/jira/browse/OPENEJB-995
   * Multiple JavaMail sessions ignored
     https://issues.apache.org/jira/browse/OPENEJB-994
-  * Don't log "Property not supported" warning  for javax.mail.Session objects
+  * Don't log "Property not supported" warning  for jakarta.mail.Session objects
     https://issues.apache.org/jira/browse/OPENEJB-989
   * Trim whitespace from openejb.xml property values
     https://issues.apache.org/jira/browse/OPENEJB-990
@@ -619,7 +619,7 @@ OpenEJB (3.1) stable; urgency=emergency
     https://issues.apache.org/jira/browse/OPENEJB-857
   * Minor typo in <business-remote> and <business-local> validation message
     https://issues.apache.org/jira/browse/OPENEJB-852
-  * CMP1.1 and CMP2.x beans not required to implement javax.ejb.EntityBean
+  * CMP1.1 and CMP2.x beans not required to implement jakarta.ejb.EntityBean
     https://issues.apache.org/jira/browse/OPENEJB-818
   * ID portion of property overriding no longer case sensitive
     https://issues.apache.org/jira/browse/OPENEJB-817
@@ -673,7 +673,7 @@ OpenEJB (3.1) stable; urgency=emergency
     https://issues.apache.org/jira/browse/OPENEJB-800
   * Stateless Container StrictPooling option ignored
     https://issues.apache.org/jira/browse/OPENEJB-786
-  * Unable to load servlet class: javax.faces.webapp.FacesServlet
+  * Unable to load servlet class: jakarta.faces.webapp.FacesServlet
     https://issues.apache.org/jira/browse/OPENEJB-797
   * Infinite loop in CheckCallbacks
     https://issues.apache.org/jira/browse/OPENEJB-793
@@ -888,7 +888,7 @@ TomEE (1.6.0) stable; urgency=critical
     https://issues.apache.org/jira/browse/TOMEE-895
   * AutoConfigResourceRefsTest is broken
     https://issues.apache.org/jira/browse/TOMEE-878
-  * javax.mail package loading shouldn't be delegated to parent classloader
+  * jakarta.mail package loading shouldn't be delegated to parent classloader
     https://issues.apache.org/jira/browse/TOMEE-834
   * try to use repo1 to find a mvn location if resolver not available
     https://issues.apache.org/jira/browse/TOMEE-796
@@ -988,7 +988,7 @@ TomEE (1.6.0) stable; urgency=critical
     https://issues.apache.org/jira/browse/TOMEE-1047
   * allow to deploy a resource adapter N times
     https://issues.apache.org/jira/browse/TOMEE-1046
-  * @javax.servlet.annotation.HandlesTypes never respected
+  * @jakarta.servlet.annotation.HandlesTypes never respected
     https://issues.apache.org/jira/browse/TOMEE-1053
   * ManagedConnection uses == to compare transactions but should use equals c...
     https://issues.apache.org/jira/browse/TOMEE-1044
@@ -1114,7 +1114,7 @@ TomEE (1.6.0) stable; urgency=critical
     https://issues.apache.org/jira/browse/TOMEE-988
   * TomEEDataSource shouldn't use tomcat jmx stuff but its own one to avoid d...
     https://issues.apache.org/jira/browse/TOMEE-989
-  * servlets with init-param javax.ws.rs.Application fail
+  * servlets with init-param jakarta.ws.rs.Application fail
     https://issues.apache.org/jira/browse/TOMEE-1006
   * @BindingType is not respected for EJBs
     https://issues.apache.org/jira/browse/TOMEE-1001
@@ -1348,7 +1348,7 @@ TomEE (1.5.1) stable; urgency=critical
     https://issues.apache.org/jira/browse/TOMEE-579
   * Have a look if warning due to load webapp classes from tempclassloader co...
     https://issues.apache.org/jira/browse/TOMEE-617
-  * use javax.persistence.validation.mode is validationMode is not set in per...
+  * use jakarta.persistence.validation.mode is validationMode is not set in per...
     https://issues.apache.org/jira/browse/TOMEE-612
   * (cdi) appscope and singleton are not well destroyed
     https://issues.apache.org/jira/browse/TOMEE-598
@@ -1621,7 +1621,7 @@ TomEE (1.5.0) stable; urgency=emergency
     https://issues.apache.org/jira/browse/TOMEE-402
   * NPE in BeanManagerImpl scope is null
     https://issues.apache.org/jira/browse/TOMEE-360
-  * JavaMail javax.mail.Session resources do not work with authentication
+  * JavaMail jakarta.mail.Session resources do not work with authentication
     https://issues.apache.org/jira/browse/TOMEE-407
   * Unified Executor configuration options (@Asynchronous, @Timeout)
     https://issues.apache.org/jira/browse/TOMEE-398

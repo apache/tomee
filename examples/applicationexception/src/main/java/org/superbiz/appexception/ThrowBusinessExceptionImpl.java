@@ -16,7 +16,7 @@
  */
 package org.superbiz.appexception;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 //START SNIPPET: code
 @Stateless

@@ -31,8 +31,8 @@ import org.apache.tomee.catalina.OpenEJBValve;
 import org.apache.tomee.catalina.remote.ServerClassLoaderLoader;
 import org.apache.tomee.loader.TomcatHelper;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;

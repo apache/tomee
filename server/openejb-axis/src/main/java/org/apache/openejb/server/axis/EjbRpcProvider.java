@@ -41,13 +41,13 @@ import org.apache.openejb.server.ServerRuntimeException;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 import javax.xml.rpc.handler.HandlerChain;
 import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.soap.SOAPFaultException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPMessage;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;

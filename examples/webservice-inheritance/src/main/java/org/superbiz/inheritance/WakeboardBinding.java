@@ -16,7 +16,7 @@
  */
 package org.superbiz.inheritance;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class WakeboardBinding extends Wearable {

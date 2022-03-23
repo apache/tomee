@@ -23,10 +23,10 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 
 import javax.management.*;
-import javax.resource.ResourceException;
-import javax.resource.spi.*;
-import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.*;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.util.Properties;
 

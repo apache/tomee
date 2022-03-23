@@ -30,11 +30,11 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.EJBContext;
-import javax.ejb.MessageDrivenBean;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.MessageDrivenBean;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.resource.spi.UnavailableException;
+import jakarta.resource.spi.UnavailableException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

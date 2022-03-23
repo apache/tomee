@@ -19,11 +19,11 @@ package org.apache.openejb.client;
 
 import javax.naming.Context;
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.LogicalHandler;
+import jakarta.xml.ws.handler.PortInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
     }
 
     @Override
-    public List<Handler> getHandlerChain(final javax.xml.ws.handler.PortInfo portInfo) {
+    public List<Handler> getHandlerChain(final jakarta.xml.ws.handler.PortInfo portInfo) {
         List<Handler> chain = new ArrayList<Handler>();
         for (final HandlerChainMetaData handlerChain : handlerChains) {
             List<Handler> handlers = buildHandlers(portInfo, handlerChain);
@@ -63,7 +63,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
         return chain;
     }
 
-    private List<Handler> buildHandlers(final javax.xml.ws.handler.PortInfo portInfo, final HandlerChainMetaData handlerChain) {
+    private List<Handler> buildHandlers(final jakarta.xml.ws.handler.PortInfo portInfo, final HandlerChainMetaData handlerChain) {
         if (!matchServiceName(portInfo, handlerChain.getServiceNamePattern()) || !matchPortName(portInfo, handlerChain.getPortNamePattern()) || !matchBinding(portInfo,
             handlerChain.getProtocolBindings())) {
             return Collections.emptyList();

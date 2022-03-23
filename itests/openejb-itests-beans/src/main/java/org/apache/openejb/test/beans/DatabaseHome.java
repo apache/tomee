@@ -18,8 +18,8 @@ package org.apache.openejb.test.beans;
 
 import java.rmi.RemoteException;
 
-public interface DatabaseHome extends javax.ejb.EJBHome {
+public interface DatabaseHome extends jakarta.ejb.EJBHome {
 
-    public Database create() throws javax.ejb.CreateException, RemoteException;
+    public Database create() throws jakarta.ejb.CreateException, RemoteException;
 
 }

@@ -22,8 +22,8 @@ package org.superbiz.resource.jmx.resources;
 import org.superbiz.resource.jmx.factory.Converter;
 import org.superbiz.resource.jmx.factory.MBeanRegistrationException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import javax.management.Attribute;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;

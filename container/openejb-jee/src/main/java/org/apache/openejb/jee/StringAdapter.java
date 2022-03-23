@@ -19,7 +19,7 @@ package org.apache.openejb.jee;
 /**
  * @version $Rev$ $Date$
  */
-public class StringAdapter extends javax.xml.bind.annotation.adapters.XmlAdapter<java.lang.String, java.lang.String> {
+public class StringAdapter extends jakarta.xml.bind.annotation.adapters.XmlAdapter<java.lang.String, java.lang.String> {
     public String unmarshal(final String s) throws Exception {
         return s;
     }

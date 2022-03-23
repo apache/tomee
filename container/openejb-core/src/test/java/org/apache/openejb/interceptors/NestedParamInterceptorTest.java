@@ -18,11 +18,11 @@ package org.apache.openejb.interceptors;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;

@@ -24,7 +24,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.testing.TestInstance;
 import org.junit.runners.model.Statement;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

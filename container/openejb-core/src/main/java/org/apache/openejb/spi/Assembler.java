@@ -19,7 +19,7 @@ package org.apache.openejb.spi;
 
 import org.apache.openejb.OpenEJBException;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.util.Properties;
 
 /**

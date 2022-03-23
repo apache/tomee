@@ -19,7 +19,7 @@ package org.apache.openejb.bval;
 import org.apache.bval.cdi.BValExtension;
 import org.apache.openejb.util.ContainerClassesFilter;
 
-import javax.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.AnnotatedType;
 
 public class BValCdiFilter implements BValExtension.AnnotatedTypeFilter {
     private final ContainerClassesFilter delegate = new ContainerClassesFilter();

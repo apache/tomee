@@ -18,7 +18,7 @@ package jug.monitoring;
 
 import jug.domain.Subject;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import javax.management.Description;
 import javax.management.MBean;
 import javax.management.ManagedAttribute;

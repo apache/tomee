@@ -127,7 +127,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/alternate-descriptors
 INFO - openejb.base = /Users/dblevins/examples/alternate-descriptors
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
@@ -135,7 +135,7 @@ INFO - Found EjbModule in classpath: /Users/dblevins/examples/alternate-descript
 INFO - Beginning load: /Users/dblevins/examples/alternate-descriptors/target/classes
 INFO - AltDD ejb-jar.xml -> file:/Users/dblevins/examples/alternate-descriptors/target/classes/META-INF/test.ejb-jar.xml
 INFO - Configuring enterprise application: /Users/dblevins/examples/alternate-descriptors
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
 INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)

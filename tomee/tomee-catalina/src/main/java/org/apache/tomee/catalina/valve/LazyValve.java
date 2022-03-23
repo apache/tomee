@@ -34,7 +34,7 @@ import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;

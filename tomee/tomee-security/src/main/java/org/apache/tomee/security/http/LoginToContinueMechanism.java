@@ -18,10 +18,10 @@ package org.apache.tomee.security.http;
 
 import org.apache.tomcat.util.buf.ByteChunk;
 
-import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class TestEjb {

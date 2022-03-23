@@ -854,7 +854,7 @@ public class EjbJarInfoBuilder {
         if (mdb.getMessagingType() != null) {
             bean.mdbInterface = mdb.getMessagingType();
         } else {
-            bean.mdbInterface = "javax.jms.MessageListener";
+            bean.mdbInterface = "jakarta.jms.MessageListener";
         }
 
         final ResourceLink resourceLink = d.getResourceLink("openejb/destination");

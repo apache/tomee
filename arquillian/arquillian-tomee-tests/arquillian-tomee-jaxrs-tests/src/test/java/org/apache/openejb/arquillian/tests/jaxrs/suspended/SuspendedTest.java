@@ -29,10 +29,10 @@ import org.junit.runner.RunWith;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import static java.lang.Thread.sleep;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)

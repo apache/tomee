@@ -24,7 +24,7 @@ import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

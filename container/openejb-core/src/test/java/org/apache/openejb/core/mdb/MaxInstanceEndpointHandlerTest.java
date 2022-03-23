@@ -26,11 +26,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.jms.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.jms.*;
 import javax.management.ObjectName;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
@@ -59,7 +59,7 @@ public class MaxInstanceEndpointHandlerTest {
             .p("mdbs.InstanceLimit", "30")
             .p("mdbs.activation.maxSessions", "50")
 
-            .p("cf", "new://Resource?type=javax.jms.ConnectionFactory")
+            .p("cf", "new://Resource?type=jakarta.jms.ConnectionFactory")
             .p("cf.ResourceAdapter", "sra")
             .p("cf.TransactionSupport", "none")
             .p("cf.ConnectionMaxWaitTime", "30 seconds")
@@ -112,7 +112,7 @@ public class MaxInstanceEndpointHandlerTest {
             @ActivationConfigProperty(propertyName = "DeliveryActive", propertyValue = "false"),
             @ActivationConfigProperty(propertyName = "MdbJMXControl", propertyValue = "default:type=test"),
             @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
-            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
+            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Queue")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;

@@ -32,7 +32,7 @@ import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.util.SafeToolkit;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;

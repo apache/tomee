@@ -3,12 +3,12 @@
 :jbake-status: status=published
 = Simple Singleton
 
-Como su nombre lo indica, un `javax.ejb.Singleton`, es un bean de sesión con la garantía de que existe  como máximo una instancia en la aplicación.
+Como su nombre lo indica, un `jakarta.ejb.Singleton`, es un bean de sesión con la garantía de que existe  como máximo una instancia en la aplicación.
 
 Lo que falta por completo en EJB 3.0 y versiones anteriores, es la capacidad de tener un EJB que se notifique cuando la aplicación se inicia y cuando se detiene. Por lo tanto, puede hacer todo tipo de cosas que anteriormente solo podía hacer con un servlet de carga al inicio. También le brinda un lugar para almacenar datos que pertenecen a toda la aplicación y a todos los usuarios que la utilizan, sin la necesidad de un estático. Además, los beans Singleton pueden ser invocados por múltiples hilos
 al mismo tiempo similar a un servlet.
 
-Vea link:../../singleton-beans.html[Singleton Beans] para obtener una página completa de la descripción de la API javax.ejb.Singleton.
+Vea link:../../singleton-beans.html[Singleton Beans] para obtener una página completa de la descripción de la API jakarta.ejb.Singleton.
 
 #El codigo
 
@@ -20,14 +20,14 @@ Los beans Singleton con @ConcurrencyManagement(BEAN) son responsables de su prop
 ....
 package org.superbiz.registry;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.ConcurrencyManagement;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
 import java.util.Properties;
 
-import static javax.ejb.ConcurrencyManagementType.BEAN;
+import static jakarta.ejb.ConcurrencyManagementType.BEAN;
 
 @Singleton
 @Startup
@@ -77,15 +77,15 @@ Aquí vemos un bean que usa la opción de concurrencia 'Container-Managed', el v
 ....
 package org.superbiz.registry;
 
-import javax.ejb.Lock;
-import javax.ejb.Singleton;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
+import static jakarta.ejb.LockType.READ;
+import static jakarta.ejb.LockType.WRITE;
 
 @Singleton
 @Lock(READ)
@@ -143,7 +143,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.net.URI;
 import java.util.Collection;
@@ -205,7 +205,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 public class PropertiesRegistryTest {
@@ -273,7 +273,7 @@ INFO - openejb.home = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - openejb.base = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
@@ -324,7 +324,7 @@ INFO - openejb.home = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - openejb.base = C:\Users\Oz\Desktop\ee-examples\simple-singleton
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@448ad367
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

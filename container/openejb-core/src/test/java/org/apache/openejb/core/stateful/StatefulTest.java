@@ -26,8 +26,8 @@ import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateful;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateful;
 import javax.naming.InitialContext;
 
 /**

@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

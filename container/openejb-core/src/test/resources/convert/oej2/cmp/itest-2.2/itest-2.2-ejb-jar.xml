@@ -621,7 +621,7 @@
         <session>
             <description>A basic stateful session bean with contianer-managed
                 transaction demarcation that implements the
-                javax.ejb.SessionSynchronization interface.
+                jakarta.ejb.SessionSynchronization interface.
             </description>
             <ejb-name>BasicStatefulBean</ejb-name>
             <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
@@ -1637,7 +1637,7 @@
                 <method-intf>Local</method-intf>
                 <method-name>isIdentical</method-name>
                 <method-params>
-                    <method-param>javax.ejb.EJBLocalObject</method-param>
+                    <method-param>jakarta.ejb.EJBLocalObject</method-param>
                 </method-params>
             </method>
             <method>

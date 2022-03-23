@@ -28,8 +28,8 @@ import org.metatype.sxc.util.XoXMLStreamReaderImpl;
 import org.metatype.sxc.util.XoXMLStreamWriter;
 import org.metatype.sxc.util.XoXMLStreamWriterImpl;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.MarshalException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;

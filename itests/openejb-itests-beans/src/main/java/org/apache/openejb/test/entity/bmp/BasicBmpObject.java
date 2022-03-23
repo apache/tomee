@@ -22,7 +22,7 @@ import java.util.Properties;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public interface BasicBmpObject extends javax.ejb.EJBObject {
+public interface BasicBmpObject extends jakarta.ejb.EJBObject {
 
     /**
      * Reverses the string passed in then returns it

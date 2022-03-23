@@ -18,9 +18,9 @@ package org.apache.tomee.overlay;
 
 import org.apache.tomee.loader.TomcatEmbedder;
 
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import java.io.File;
 import java.util.Properties;
 import java.util.Set;

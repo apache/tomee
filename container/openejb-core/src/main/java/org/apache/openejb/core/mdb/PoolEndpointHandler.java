@@ -24,8 +24,8 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.resource.spi.ApplicationServerInternalException;
-import javax.resource.spi.UnavailableException;
+import jakarta.resource.spi.ApplicationServerInternalException;
+import jakarta.resource.spi.UnavailableException;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
 

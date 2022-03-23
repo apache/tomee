@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 
 public class ServletListener implements HttpListener {
     private final Servlet delegate;

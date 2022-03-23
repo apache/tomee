@@ -16,10 +16,10 @@
  */
 package org.apache.tomee.loader;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -78,7 +78,7 @@ public class LoaderServlet extends HttpServlet {
     /**
      * Retrieves all intialization parameters for this servlet and stores them in a java.util.Properties object.
      *
-     * @param config javax.servlet.ServletConfig
+     * @param config jakarta.servlet.ServletConfig
      * @return java.util.Properties
      */
     protected Properties initParamsToProperties(final ServletConfig config) {

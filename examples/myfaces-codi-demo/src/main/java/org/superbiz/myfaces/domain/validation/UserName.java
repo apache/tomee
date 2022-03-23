@@ -18,11 +18,11 @@
  */
 package org.superbiz.myfaces.domain.validation;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.validation.groups.Default;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

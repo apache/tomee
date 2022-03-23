@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 
 import org.apache.openejb.test.TestFailureException;
 
-public interface EncBmpObject extends javax.ejb.EJBObject {
+public interface EncBmpObject extends jakarta.ejb.EJBObject {
 
     public void lookupEntityBean() throws TestFailureException, RemoteException;
 

@@ -22,41 +22,41 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.activemq.jms2.JMS2;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.Annotated;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.inject.Inject;
-import javax.jms.BytesMessage;
-import javax.jms.ConnectionFactory;
-import javax.jms.ConnectionMetaData;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSConnectionFactory;
-import javax.jms.JMSConsumer;
-import javax.jms.JMSContext;
-import javax.jms.JMSPasswordCredential;
-import javax.jms.JMSProducer;
-import javax.jms.JMSRuntimeException;
-import javax.jms.JMSSessionMode;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
-import javax.jms.StreamMessage;
-import javax.jms.TemporaryQueue;
-import javax.jms.TemporaryTopic;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.Annotated;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Inject;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ConnectionMetaData;
+import jakarta.jms.Destination;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSConnectionFactory;
+import jakarta.jms.JMSConsumer;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSPasswordCredential;
+import jakarta.jms.JMSProducer;
+import jakarta.jms.JMSRuntimeException;
+import jakarta.jms.JMSSessionMode;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueBrowser;
+import jakarta.jms.StreamMessage;
+import jakarta.jms.TemporaryQueue;
+import jakarta.jms.TemporaryTopic;
+import jakarta.jms.TextMessage;
+import jakarta.jms.Topic;
 import javax.naming.NamingException;
-import javax.transaction.TransactionScoped;
+import jakarta.transaction.TransactionScoped;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
@@ -98,7 +98,7 @@ public class JMS2CDIExtension implements Extension {
             final OpenEjbConfiguration component = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
             if (component != null && component.facilities != null) {
                 for (final ResourceInfo ri : component.facilities.resources) {
-                    if (!ri.types.contains("javax.jms.ConnectionFactory")) {
+                    if (!ri.types.contains("jakarta.jms.ConnectionFactory")) {
                         continue;
                     }
                     if (ri.id.equals(value)) {
@@ -107,7 +107,7 @@ public class JMS2CDIExtension implements Extension {
                 }
                 // try application ones
                 for (final ResourceInfo ri : component.facilities.resources) {
-                    if (!ri.types.contains("javax.jms.ConnectionFactory")) {
+                    if (!ri.types.contains("jakarta.jms.ConnectionFactory")) {
                         continue;
                     }
                     if (ri.id.endsWith(value)) {
@@ -124,7 +124,7 @@ public class JMS2CDIExtension implements Extension {
             final OpenEjbConfiguration component = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
             if (component != null && component.facilities != null) {
                 for (final ResourceInfo ri : component.facilities.resources) {
-                    if (ri.types.contains("javax.jms.ConnectionFactory")) {
+                    if (ri.types.contains("jakarta.jms.ConnectionFactory")) {
                         return ri.id;
                     }
                 }

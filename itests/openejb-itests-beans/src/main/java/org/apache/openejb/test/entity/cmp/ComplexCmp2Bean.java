@@ -20,9 +20,9 @@ package org.apache.openejb.test.entity.cmp;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.CreateException;
 import java.util.StringTokenizer;
 import java.util.Properties;
 import java.util.Map;

@@ -16,8 +16,8 @@
  */
 package org.superbiz.remote;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
 
 @Stateless(name = "Calculator", description = "Calculator", mappedName = "Calculator")
 @Remote(Calculator.class)

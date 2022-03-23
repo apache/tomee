@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * web-jsptaglibrary_2_1.xsd

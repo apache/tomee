@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jsp;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 

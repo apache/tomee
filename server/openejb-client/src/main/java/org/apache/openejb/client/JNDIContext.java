@@ -544,7 +544,7 @@ public class JNDIContext implements InitialContextFactory, Context {
             } else if (scheme.equals("connectionfactory")) {
                 return build(uri);
             } else if (scheme.equals("javamail")) {
-                return javax.mail.Session.getDefaultInstance(new Properties());
+                return jakarta.mail.Session.getDefaultInstance(new Properties());
             } else if (scheme.equals("orb")) {
                 return getDefaultOrb();
             } else if (scheme.equals("queue")) {

@@ -20,7 +20,7 @@ import jug.client.command.api.AbstractCommand;
 import jug.client.command.api.Command;
 import jug.client.util.ClientNameHolder;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.util.Map;
 
 @Command(name = "client", usage = "client <name>", description = "change client")

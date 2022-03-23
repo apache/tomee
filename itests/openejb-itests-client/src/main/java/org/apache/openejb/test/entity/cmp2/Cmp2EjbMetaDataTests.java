@@ -19,7 +19,7 @@ package org.apache.openejb.test.entity.cmp2;
 import org.apache.openejb.test.entity.cmp.BasicCmpHome;
 import org.apache.openejb.test.entity.cmp.BasicCmpObject;
 
-import javax.ejb.EJBHome;
+import jakarta.ejb.EJBHome;
 
 /**
  * [8] Should be run as the eigth test suite of the BasicCmpTestClients

@@ -58,11 +58,11 @@
       <artifactId>hibernate-entitymanager</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.hibernate.javax.persistence</groupId>
+          <groupId>org.hibernate.jakarta.persistence</groupId>
           <artifactId>hibernate-jpa-2.0-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.jboss.spec.javax.transaction</groupId>
+          <groupId>org.jboss.spec.jakarta.transaction</groupId>
           <artifactId>jboss-transaction-api_1.1_spec</artifactId>
         </exclusion>
         <exclusion>
@@ -76,7 +76,7 @@
       <artifactId>hibernate-validator</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>javax.validation</groupId>
+          <groupId>jakarta.validation</groupId>
           <artifactId>validation-api</artifactId>
         </exclusion>
         <exclusion>

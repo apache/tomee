@@ -17,7 +17,7 @@ You will likely need the full Java EE API added to your pom file:
 <dependency>
   <groupId>org.apache.tomee</groupId>
   <artifactId>jakartaee-api</artifactId>
-  <version>8.0-4</version>
+  <version>9.xxx</version>
   <scope>provided</scope>
 </dependency>
 ----

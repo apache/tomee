@@ -16,8 +16,8 @@
  */
 package org.apache.tomee.security;
 
-import javax.el.ELProcessor;
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.el.ELProcessor;
+import jakarta.enterprise.inject.spi.BeanManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;

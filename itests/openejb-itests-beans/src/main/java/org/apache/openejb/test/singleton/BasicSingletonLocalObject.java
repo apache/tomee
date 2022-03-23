@@ -22,7 +22,7 @@ import java.util.Properties;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public interface BasicSingletonLocalObject extends javax.ejb.EJBLocalObject {
+public interface BasicSingletonLocalObject extends jakarta.ejb.EJBLocalObject {
 
     /**
      * Reverses the string passed in then returns it

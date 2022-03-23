@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.interceptor;
 
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.InvocationContext;
 
 
 /**

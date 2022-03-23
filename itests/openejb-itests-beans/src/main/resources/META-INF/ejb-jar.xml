@@ -515,17 +515,17 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -669,17 +669,17 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -804,17 +804,17 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -1629,7 +1629,7 @@
     <session>
       <description>A basic stateful session bean with contianer-managed
         transaction demarcation that implements the
-        javax.ejb.SessionSynchronization interface.
+        jakarta.ejb.SessionSynchronization interface.
       </description>
       <ejb-name>BasicStatefulBean</ejb-name>
       <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
@@ -1866,22 +1866,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>
@@ -2109,7 +2109,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
@@ -2118,7 +2118,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
@@ -2127,7 +2127,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
@@ -2136,7 +2136,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
@@ -2365,7 +2365,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
@@ -2374,7 +2374,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
@@ -2383,7 +2383,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
@@ -2392,7 +2392,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
@@ -2545,22 +2545,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-unit-ref>
         <description>
@@ -2687,22 +2687,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-unit-ref>
         <description>
@@ -3123,22 +3123,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-unit-ref>
         <description>
@@ -3354,7 +3354,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
@@ -3363,7 +3363,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
@@ -3372,7 +3372,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
@@ -3381,7 +3381,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
@@ -3629,7 +3629,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
@@ -3639,7 +3639,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
@@ -3649,7 +3649,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
@@ -3659,7 +3659,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean
           </injection-target-class>
@@ -3795,22 +3795,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>
@@ -3935,22 +3935,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>
@@ -4211,17 +4211,17 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -4336,17 +4336,17 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -4421,9 +4421,9 @@
       </description>
       <ejb-name>BasicMdbBean</ejb-name>
       <ejb-class>org.apache.openejb.test.mdb.BasicMdbBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Container</transaction-type>
-      <message-destination-type>javax.jms.Queue</message-destination-type>
+      <message-destination-type>jakarta.jms.Queue</message-destination-type>
       <message-destination-link>BasicMdb</message-destination-link>
       <activation-config>
         <activation-config-property>
@@ -4445,7 +4445,7 @@
       </ejb-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -4464,9 +4464,9 @@
       </description>
       <ejb-name>Basic BMT Mdb Bean</ejb-name>
       <ejb-class>org.apache.openejb.test.mdb.BasicMdbBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Bean</transaction-type>
-      <message-destination-type>javax.jms.Queue</message-destination-type>
+      <message-destination-type>jakarta.jms.Queue</message-destination-type>
       <message-destination-link>BasicBmtMdb</message-destination-link>
       <activation-config>
         <activation-config-property>
@@ -4488,7 +4488,7 @@
       </ejb-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -4507,10 +4507,10 @@
       </description>
       <ejb-name>EncMdbBean</ejb-name>
       <ejb-class>org.apache.openejb.test.mdb.EncMdbBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Bean</transaction-type>
 
-      <message-destination-type>javax.jms.Queue</message-destination-type>
+      <message-destination-type>jakarta.jms.Queue</message-destination-type>
       <message-destination-link>EncMdbBean</message-destination-link>
       <activation-config>
         <activation-config-property>
@@ -4628,22 +4628,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>mdbcontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.MessageDrivenContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.MessageDrivenContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>
@@ -4667,10 +4667,10 @@
       </description>
       <ejb-name>ContextLookupMdbBean</ejb-name>
       <ejb-class>org.apache.openejb.test.mdb.ContextLookupMdbBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Bean</transaction-type>
 
-      <message-destination-type>javax.jms.Queue</message-destination-type>
+      <message-destination-type>jakarta.jms.Queue</message-destination-type>
       <message-destination-link>ContextLookupMdbBean</message-destination-link>
       <activation-config>
         <activation-config-property>
@@ -4788,22 +4788,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>mdbcontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.MessageDrivenContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.MessageDrivenContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>
@@ -4827,10 +4827,10 @@
       </description>
       <ejb-name>ContextLookupMdbPojoBean</ejb-name>
       <ejb-class>org.apache.openejb.test.mdb.ContextLookupMdbPojoBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Bean</transaction-type>
 
-      <message-destination-type>javax.jms.Queue</message-destination-type>
+      <message-destination-type>jakarta.jms.Queue</message-destination-type>
       <message-destination-link>ContextLookupMdbPojoBean</message-destination-link>
       <activation-config>
         <activation-config-property>
@@ -4948,22 +4948,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>mdbcontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.MessageDrivenContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.MessageDrivenContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>
@@ -4984,10 +4984,10 @@
     <message-driven>
       <ejb-name>FieldInjectionMdbBean</ejb-name>
       <ejb-class>org.apache.openejb.test.mdb.FieldInjectionMdbBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Bean</transaction-type>
 
-      <message-destination-type>javax.jms.Queue</message-destination-type>
+      <message-destination-type>jakarta.jms.Queue</message-destination-type>
       <message-destination-link>FieldInjectionMdbBean</message-destination-link>
       <activation-config>
         <activation-config-property>
@@ -5152,7 +5152,7 @@
       </ejb-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -5166,7 +5166,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.FieldInjectionMdbBean</injection-target-class>
@@ -5175,7 +5175,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.FieldInjectionMdbBean</injection-target-class>
@@ -5184,7 +5184,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.FieldInjectionMdbBean</injection-target-class>
@@ -5193,7 +5193,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.FieldInjectionMdbBean</injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
@@ -5226,10 +5226,10 @@
     <message-driven>
       <ejb-name>SetterInjectionMdbBean</ejb-name>
       <ejb-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</ejb-class>
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
       <transaction-type>Bean</transaction-type>
 
-      <message-destination-type>javax.jms.Queue</message-destination-type>
+      <message-destination-type>jakarta.jms.Queue</message-destination-type>
       <message-destination-link>SetterInjectionMdbBean</message-destination-link>
       <activation-config>
         <activation-config-property>
@@ -5393,7 +5393,7 @@
       </ejb-local-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
@@ -5407,7 +5407,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
@@ -5416,7 +5416,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
@@ -5425,7 +5425,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
@@ -5434,7 +5434,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
@@ -5793,22 +5793,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-unit-ref>
         <description>
@@ -6024,7 +6024,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
@@ -6033,7 +6033,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
@@ -6042,7 +6042,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
@@ -6051,7 +6051,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
           <injection-target-name>ejbContext</injection-target-name>
@@ -6299,7 +6299,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
@@ -6309,7 +6309,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>queueConnectionFactory</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
@@ -6319,7 +6319,7 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>topicConnectionFactory</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
@@ -6329,7 +6329,7 @@
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean
           </injection-target-class>
@@ -6465,22 +6465,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>
@@ -6605,22 +6605,22 @@
       </resource-ref>
       <resource-ref>
         <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>QueueCF</res-ref-name>
-        <res-type>javax.jms.QueueConnectionFactory</res-type>
+        <res-type>jakarta.jms.QueueConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-ref>
         <res-ref-name>TopicCF</res-ref-name>
-        <res-type>javax.jms.TopicConnectionFactory</res-type>
+        <res-type>jakarta.jms.TopicConnectionFactory</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
       <resource-env-ref>
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
-        <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
       <persistence-context-ref>
         <description>

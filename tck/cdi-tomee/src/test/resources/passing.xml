@@ -210,7 +210,7 @@
             </class>
 
 
-            <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
+            <!-- CDITCK-462 jakarta.enterprise.context.conversation.id is not el compliant -->
             <class name="org.jboss.cdi.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
                 <methods>
                     <exclude name=".*" />

@@ -29,8 +29,8 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.SingletonBean;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 import java.util.Arrays;
 import java.util.List;

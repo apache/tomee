@@ -39,12 +39,12 @@ import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.Lock;
-import javax.ejb.Remote;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionManagement;
-import javax.enterprise.inject.Alternative;
-import javax.validation.ValidationException;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.TransactionManagement;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,8 +57,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import static javax.ejb.LockType.READ;
-import static javax.ejb.TransactionManagementType.BEAN;
+import static jakarta.ejb.LockType.READ;
+import static jakarta.ejb.TransactionManagementType.BEAN;
 import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
 import static org.apache.openejb.loader.ProvisioningUtil.realLocation;
 

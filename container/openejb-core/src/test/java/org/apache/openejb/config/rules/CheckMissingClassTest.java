@@ -24,11 +24,11 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 import java.rmi.RemoteException;
 
 @RunWith(ValidationRunner.class)
@@ -104,7 +104,7 @@ public class CheckMissingClassTest {
         }
     }
 
-    private static class FooEntityBMP implements javax.ejb.EntityBean {
+    private static class FooEntityBMP implements jakarta.ejb.EntityBean {
         public String ejbCreate(final String id) {
             return null;
         }
@@ -143,7 +143,7 @@ public class CheckMissingClassTest {
         }
     }
 
-    private static class FooEntityCMP implements javax.ejb.EntityBean {
+    private static class FooEntityCMP implements jakarta.ejb.EntityBean {
         public String ejbCreate(final String id) {
             return null;
         }

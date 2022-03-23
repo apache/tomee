@@ -29,9 +29,9 @@ import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import jakarta.ejb.ConcurrentAccessTimeoutException;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.concurrent.CountDownLatch;
@@ -117,7 +117,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
                     while (run) {
                         try {
                             counter.explode();
-                        } catch (final javax.ejb.ConcurrentAccessTimeoutException e) {
+                        } catch (final jakarta.ejb.ConcurrentAccessTimeoutException e) {
                             //Try again in moment...
                             try {
                                 Thread.sleep(10);

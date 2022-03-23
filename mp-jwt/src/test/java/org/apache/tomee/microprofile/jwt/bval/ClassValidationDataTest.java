@@ -20,9 +20,9 @@ import org.apache.openejb.util.Join;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.junit.Test;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -121,7 +121,7 @@ public class ClassValidationDataTest {
 
 
     @Documented
-    @javax.validation.Constraint(validatedBy = {ReturnValidation.UriConstraint.class, ReturnValidation.UrlConstraint.class})
+    @jakarta.validation.Constraint(validatedBy = {ReturnValidation.UriConstraint.class, ReturnValidation.UrlConstraint.class})
     @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
     @Retention(RUNTIME)
     public @interface ReturnValidation {
@@ -151,7 +151,7 @@ public class ClassValidationDataTest {
     }
 
     @Documented
-    @javax.validation.Constraint(validatedBy = {TokenValidation.Constraint.class})
+    @jakarta.validation.Constraint(validatedBy = {TokenValidation.Constraint.class})
     @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
     @Retention(RUNTIME)
     public @interface TokenValidation {

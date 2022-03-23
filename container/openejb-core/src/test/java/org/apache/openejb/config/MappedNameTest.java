@@ -29,7 +29,7 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.junit.AfterClass;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

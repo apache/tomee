@@ -21,11 +21,11 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ivm.IntraVmServer;
 import org.apache.openejb.spi.ApplicationServer;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 
 public class ServerFederation implements ApplicationServer {
     private static final IntraVmServer localServer = new IntraVmServer();

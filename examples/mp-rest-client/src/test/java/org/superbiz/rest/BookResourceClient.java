@@ -19,9 +19,9 @@ package org.superbiz.rest;
 
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import javax.enterprise.context.Dependent;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.enterprise.context.Dependent;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
 @Dependent

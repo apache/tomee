@@ -20,8 +20,8 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.bval.ValidatorUtil;
 import org.apache.webbeans.spi.ValidatorService;
 
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 /**
  * @version $Rev:$ $Date:$

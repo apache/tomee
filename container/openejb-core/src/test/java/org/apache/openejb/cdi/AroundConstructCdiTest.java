@@ -21,14 +21,14 @@ import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Singleton;
-import javax.inject.Inject;
-import javax.interceptor.AroundConstruct;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InterceptorBinding;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.Singleton;
+import jakarta.inject.Inject;
+import jakarta.interceptor.AroundConstruct;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InterceptorBinding;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

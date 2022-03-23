@@ -23,9 +23,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 /**
- * Subclass of javax.transaction.TransactionRolledbackException which adds init cause to the exception.
+ * Subclass of jakarta.transaction.TransactionRolledbackException which adds init cause to the exception.
  */
-public class TransactionRolledbackException extends javax.transaction.TransactionRolledbackException {
+public class TransactionRolledbackException extends jakarta.transaction.TransactionRolledbackException {
 
     private Throwable cause = this;
 
@@ -213,6 +213,6 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
     protected Object writeReplace() throws ObjectStreamException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         printStackTrace(new PrintStream(baos));
-        return new javax.transaction.TransactionRolledbackException(getMessage() + "\n\t" + new String(baos.toByteArray()));
+        return new jakarta.transaction.TransactionRolledbackException(getMessage() + "\n\t" + new String(baos.toByteArray()));
     }
 }

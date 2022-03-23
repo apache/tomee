@@ -13,7 +13,7 @@ A entidade por si é simples um pojo com a anotação `@Entity`. Nós criamos um
 
     package org.superbiz.injection.jpa;
 
-    import javax.persistence.Entity;
+    import jakarta.persistence.Entity;
     
     @Entity
     public class Movie {
@@ -100,11 +100,11 @@ Uma transação é requerida, para alguém que utilizou de métodos de criação
 
     package org.superbiz.injection.jpa;
 
-    import javax.ejb.Stateful;
-    import javax.persistence.EntityManager;
-    import javax.persistence.PersistenceContext;
-    import javax.persistence.PersistenceContextType;
-    import javax.persistence.Query;
+    import jakarta.ejb.Stateful;
+    import jakarta.persistence.EntityManager;
+    import jakarta.persistence.PersistenceContext;
+    import jakarta.persistence.PersistenceContextType;
+    import jakarta.persistence.Query;
     import java.util.List;
     
     @Stateful
@@ -142,7 +142,7 @@ Testar JPA é muito fácil, nós podemos simplesmente usar a API `EJBContainer` 
     
     import junit.framework.TestCase;
     
-    import javax.ejb.embeddable.EJBContainer;
+    import jakarta.ejb.embeddable.EJBContainer;
     import javax.naming.Context;
     import java.util.List;
     import java.util.Properties;
@@ -188,7 +188,7 @@ Quando nós executarmos nosso caso de teste, veremos uma saída semelhante com a
     http://tomee.apache.org/
     INFO - openejb.home = /Users/dblevins/examples/injection-of-entitymanager
     INFO - openejb.base = /Users/dblevins/examples/injection-of-entitymanager
-    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
     INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
     INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
     INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)

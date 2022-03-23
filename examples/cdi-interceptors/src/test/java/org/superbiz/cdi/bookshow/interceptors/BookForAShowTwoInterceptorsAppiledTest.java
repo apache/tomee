@@ -20,8 +20,8 @@ import junit.framework.TestCase;
 import org.superbiz.cdi.bookshow.beans.BookForAShowTwoInterceptorsApplied;
 import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.List;
 
 public class BookForAShowTwoInterceptorsAppiledTest extends TestCase {

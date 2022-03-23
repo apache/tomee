@@ -18,10 +18,10 @@ package org.apache.openejb.test.entity.bmp;
 
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.FinderException;
+import jakarta.ejb.RemoveException;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import java.rmi.RemoteException;
@@ -32,7 +32,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
+public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
 
     public static int primaryKey = 1;
     public String firstName;
@@ -64,10 +64,10 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
      * Maps to BasicBmp2DataSourcesHome.findEmptyCollection
      *
      * @return Collection
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      */
     public java.util.Collection ejbFindEmptyCollection()
-        throws javax.ejb.FinderException, java.rmi.RemoteException {
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException {
         return new java.util.Vector();
     }
 
@@ -76,10 +76,10 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
      *
      * @param primaryKey
      * @return Integer
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      */
     public Integer ejbFindByPrimaryKey(final Integer primaryKey)
-        throws javax.ejb.FinderException {
+        throws jakarta.ejb.FinderException {
         boolean found = false;
         try {
             final InitialContext jndiContext = new InitialContext();
@@ -102,7 +102,7 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
         }
 
         if (found) return primaryKey;
-        else throw new javax.ejb.ObjectNotFoundException();
+        else throw new jakarta.ejb.ObjectNotFoundException();
     }
 
     /**
@@ -110,10 +110,10 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
      *
      * @param name
      * @return Integer
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      */
     public Integer ejbCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         try {
             final StringTokenizer st = new StringTokenizer(name, " ");
             firstName = st.nextToken();
@@ -176,12 +176,12 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.CreateException("can't create");
+            throw new jakarta.ejb.CreateException("can't create");
         }
     }
 
     public void ejbPostCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
     }
 
     //    
@@ -345,7 +345,7 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
     }
 

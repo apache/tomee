@@ -16,7 +16,7 @@
  */
 package org.superbiz.injection;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * This is an EJB 3 remote business interface

@@ -30,9 +30,9 @@ import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import javax.naming.InitialContext;
 
 /**

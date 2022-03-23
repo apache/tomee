@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.cdi.producer;
 
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Produces;
 
 /**
  * @version $Rev$ $Date$

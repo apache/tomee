@@ -36,40 +36,40 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.ejb.ApplicationException;
-import javax.ejb.Local;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ApplicationException;
+import jakarta.ejb.Local;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
-import javax.resource.cci.MessageListener;
-import javax.resource.cci.Record;
-import javax.resource.spi.Activation;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.AuthenticationMechanism;
-import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionDefinition;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.SecurityPermission;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
-import javax.resource.spi.work.WorkContext;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.MessageListener;
+import jakarta.resource.cci.Record;
+import jakarta.resource.spi.Activation;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.AdministeredObject;
+import jakarta.resource.spi.AuthenticationMechanism;
+import jakarta.resource.spi.AuthenticationMechanism.CredentialInterface;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.ConnectionDefinition;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.InvalidPropertyException;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterInternalException;
+import jakarta.resource.spi.SecurityPermission;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -356,7 +356,7 @@ public class AnnotationDeployerTest {
         }
     }
 
-    @javax.resource.spi.Connector(description = "description",
+    @jakarta.resource.spi.Connector(description = "description",
         displayName = "displayName", smallIcon = "smallIcon",
         largeIcon = "largeIcon", vendorName = "vendorName",
         eisType = "eisType",
@@ -476,7 +476,7 @@ public class AnnotationDeployerTest {
     public static class TestAdminObject implements TestAdminObjectInterface, SomeOtherInterface {
         private String myProperty = "This is a test";
 
-        @javax.resource.spi.ConfigProperty(ignore = true)
+        @jakarta.resource.spi.ConfigProperty(ignore = true)
         private int myNumber;
 
         public String getMyProperty() {

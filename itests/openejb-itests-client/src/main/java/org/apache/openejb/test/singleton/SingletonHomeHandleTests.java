@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.singleton;
 
-import javax.ejb.EJBHome;
+import jakarta.ejb.EJBHome;
 
 /**
  * [6] Should be run as the sixth test suite of the BasicSingletonTestClients

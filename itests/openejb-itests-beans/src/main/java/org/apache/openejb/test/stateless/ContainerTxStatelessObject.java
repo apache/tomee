@@ -18,11 +18,11 @@ package org.apache.openejb.test.stateless;
 
 import java.rmi.RemoteException;
 
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 
 import org.apache.openejb.test.object.Account;
 
-public interface ContainerTxStatelessObject extends javax.ejb.EJBObject {
+public interface ContainerTxStatelessObject extends jakarta.ejb.EJBObject {
 
     public String txMandatoryMethod(String message) throws RemoteException;
 

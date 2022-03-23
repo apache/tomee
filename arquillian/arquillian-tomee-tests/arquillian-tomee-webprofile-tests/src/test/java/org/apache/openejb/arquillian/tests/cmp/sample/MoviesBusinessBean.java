@@ -19,10 +19,10 @@ package org.apache.openejb.arquillian.tests.cmp.sample;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 

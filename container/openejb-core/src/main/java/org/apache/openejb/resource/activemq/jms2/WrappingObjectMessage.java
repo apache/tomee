@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
 import java.io.Serializable;
 
 public class WrappingObjectMessage extends DelegateMessage implements ObjectMessage {

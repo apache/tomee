@@ -24,7 +24,7 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;

@@ -22,14 +22,14 @@ import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.HashMap;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public class BasicCmpBean implements javax.ejb.EntityBean {
+public class BasicCmpBean implements jakarta.ejb.EntityBean {
     private static int nextId;
     public Integer primaryKey;
     public String firstName;
@@ -65,11 +65,11 @@ public class BasicCmpBean implements javax.ejb.EntityBean {
      *
      * @param name
      * @return
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see BasicCmpHome#createObject
      */
     public Integer ejbCreateObject(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         primaryKey = nextId++;
         final StringTokenizer st = new StringTokenizer(name, " ");
         firstName = st.nextToken();
@@ -78,7 +78,7 @@ public class BasicCmpBean implements javax.ejb.EntityBean {
     }
 
     public void ejbPostCreateObject(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
     }
 
     public int getPrimaryKey() {

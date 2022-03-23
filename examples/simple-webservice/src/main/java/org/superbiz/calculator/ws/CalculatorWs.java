@@ -16,7 +16,7 @@
  */
 package org.superbiz.calculator.ws;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace = "http://superbiz.org/wsdl")
 public interface CalculatorWs {

@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.securityejb;
 
-import javax.annotation.Resource;
-import javax.ejb.EJBContext;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.Singleton;
 import java.security.Principal;
 
 @Singleton

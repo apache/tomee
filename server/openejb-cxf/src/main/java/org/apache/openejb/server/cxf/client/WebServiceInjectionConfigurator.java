@@ -32,7 +32,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.WebServiceFeature;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

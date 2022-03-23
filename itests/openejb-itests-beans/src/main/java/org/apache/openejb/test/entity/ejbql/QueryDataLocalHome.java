@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EJBLocalHome;
-import javax.ejb.FinderException;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.FinderException;
 
 public interface QueryDataLocalHome extends EJBLocalHome {
     public QueryDataLocal create(int value) throws FinderException;

@@ -16,7 +16,7 @@
  */
 package org.superbiz;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class SomeEJB {

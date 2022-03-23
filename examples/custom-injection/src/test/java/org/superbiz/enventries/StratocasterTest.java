@@ -18,8 +18,8 @@ package org.superbiz.enventries;
 
 import junit.framework.TestCase;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;

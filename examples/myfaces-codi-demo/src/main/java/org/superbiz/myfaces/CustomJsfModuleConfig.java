@@ -20,7 +20,7 @@ package org.superbiz.myfaces;
 
 import org.apache.myfaces.extensions.cdi.jsf.api.config.JsfModuleConfig;
 
-import javax.enterprise.inject.Specializes;
+import jakarta.enterprise.inject.Specializes;
 
 @Specializes
 public class CustomJsfModuleConfig extends JsfModuleConfig {

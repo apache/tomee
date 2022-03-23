@@ -22,7 +22,7 @@ import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-import javax.interceptor.AroundInvoke;
+import jakarta.interceptor.AroundInvoke;
 
 /**
  * @version $Rev$ $Date$

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.interceptors;
 
-import javax.interceptor.Interceptors;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @version $Rev$ $Date$

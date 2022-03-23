@@ -30,7 +30,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;

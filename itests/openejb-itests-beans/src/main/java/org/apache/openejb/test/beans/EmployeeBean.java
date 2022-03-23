@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.test.beans;
 
-import javax.ejb.EntityContext;
-import javax.ejb.FinderException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.FinderException;
 import javax.naming.InitialContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class EmployeeBean implements javax.ejb.EntityBean {
+public class EmployeeBean implements jakarta.ejb.EntityBean {
     int id;
     String lastName;
     String firstName;
@@ -36,7 +36,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
     }
 
     public Integer ejbFindByPrimaryKey(final Integer primaryKey)
-        throws javax.ejb.FinderException {
+        throws jakarta.ejb.FinderException {
         boolean found = false;
         try {
             final InitialContext jndiContext = new InitialContext();
@@ -65,7 +65,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
         if (found)
             return primaryKey;
         else
-            throw new javax.ejb.ObjectNotFoundException();
+            throw new jakarta.ejb.ObjectNotFoundException();
 
 
     }
@@ -101,7 +101,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
     }
 
     public Integer ejbCreate(final String fname, final String lname)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         try {
             lastName = lname;
             firstName = fname;
@@ -136,7 +136,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.CreateException("can't create");
+            throw new jakarta.ejb.CreateException("can't create");
         }
     }
 
@@ -246,7 +246,7 @@ public class EmployeeBean implements javax.ejb.EntityBean {
         }
     }
 
-    public void setEntityContext(final javax.ejb.EntityContext cntx) {
+    public void setEntityContext(final jakarta.ejb.EntityContext cntx) {
         ejbContext = cntx;
     }
 

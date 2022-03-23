@@ -18,8 +18,8 @@ package org.superbiz.moviefun.setup;
 
 import org.superbiz.moviefun.Movie;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 import java.util.ArrayList;
 import java.util.List;
 

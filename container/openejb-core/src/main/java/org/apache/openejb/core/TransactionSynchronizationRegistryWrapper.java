@@ -19,8 +19,8 @@ package org.apache.openejb.core;
 
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.transaction.Synchronization;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 /**
  * @version $Rev$ $Date$

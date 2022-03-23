@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test;
 
-@javax.ejb.ApplicationException(rollback = true)
+@jakarta.ejb.ApplicationException(rollback = true)
 public class AnnotatedApplicationException extends RuntimeException {
 
     public AnnotatedApplicationException(final String message) {

@@ -229,7 +229,7 @@
           <source>1.8</source>
           <target>1.8</target>
           <dependencies>
-            <dependency>${project.groupId}:jakartaee-api:jar:${version.jakartaee-api}</dependency>
+            <dependency>${project.groupId}:javaee-api:jar:8.0-5</dependency>
 
             <dependency>org.apache.aries.blueprint:blueprint-parser:jar:1.6.0</dependency>
             <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.api:jar:1.0.1</dependency>

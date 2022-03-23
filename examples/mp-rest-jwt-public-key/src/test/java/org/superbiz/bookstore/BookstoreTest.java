@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.bookstore.model.Book;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.util.ArrayList;

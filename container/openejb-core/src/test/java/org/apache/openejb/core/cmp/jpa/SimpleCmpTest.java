@@ -29,13 +29,13 @@ import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityBean;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.lang.reflect.Proxy;
@@ -106,21 +106,21 @@ public class SimpleCmpTest {
                         "</ejb-jar>").getBytes()));
     }
 
-    public interface HotelEJBLocalHome extends javax.ejb.EJBLocalHome {
+    public interface HotelEJBLocalHome extends jakarta.ejb.EJBLocalHome {
         HotelEJBLocalObject create(String id, String name) throws CreateException;
         HotelEJBLocalObject findByPrimaryKey(String id);
     }
 
-    public interface TestBeanEJBHome extends javax.ejb.EJBHome {
+    public interface TestBeanEJBHome extends jakarta.ejb.EJBHome {
         TestBeanEJBObject create() throws RemoteException;
     }
 
-    public interface TestBeanEJBLocalHome extends javax.ejb.EJBLocalHome {
+    public interface TestBeanEJBLocalHome extends jakarta.ejb.EJBLocalHome {
 
         TestBeanEJBLocalObject create();
     }
 
-    public interface TestBeanEJBLocalObject extends javax.ejb.EJBLocalObject {
+    public interface TestBeanEJBLocalObject extends jakarta.ejb.EJBLocalObject {
         void createHotelBean(int num) throws CreateException;
     }
 
@@ -184,7 +184,7 @@ public class SimpleCmpTest {
         void setHotelname(String hotelname);
     }
 
-    public interface TestBeanEJBObject extends javax.ejb.EJBObject {
+    public interface TestBeanEJBObject extends jakarta.ejb.EJBObject {
         String createHotelBean(int num) throws RemoteException;
         void check(String pk) throws RemoteException;
     }

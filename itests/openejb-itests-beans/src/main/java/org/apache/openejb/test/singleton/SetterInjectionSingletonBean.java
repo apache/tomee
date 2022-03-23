@@ -23,20 +23,20 @@ import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.stateful.BasicStatefulPojoBean;
 import org.apache.openejb.test.TestFailureException;
 
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
 import javax.sql.DataSource;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.jms.ConnectionFactory;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.JMSException;
 
 import org.junit.Assert;
 import junit.framework.AssertionFailedError;
@@ -488,7 +488,7 @@ public class SetterInjectionSingletonBean implements SessionBean {
         }
     }
 
-    private void testJmsConnection(final javax.jms.Connection connection) throws JMSException {
+    private void testJmsConnection(final jakarta.jms.Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         final Topic topic = session.createTopic("test");
         final MessageProducer producer = session.createProducer(topic);

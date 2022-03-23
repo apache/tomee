@@ -24,21 +24,21 @@ import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PersistenceContext;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.inject.Inject;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.transaction.Transactional;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
@@ -74,7 +74,7 @@ public class JPAHasBeanManagerTest {
 
         public void doAsserts() {
             assertNotNull(TheTestProvider.MAP);
-            final Object bm = TheTestProvider.MAP.get("javax.persistence.bean.manager");
+            final Object bm = TheTestProvider.MAP.get("jakarta.persistence.bean.manager");
             assertNotNull(bm);
             assertTrue(BeanManager.class.isInstance(bm));
             assertNotNull(em.find(TheTestEntity.class, persisted.getId()));
@@ -101,7 +101,7 @@ public class JPAHasBeanManagerTest {
         public OpenJPAEntityManagerFactory createContainerEntityManagerFactory(final PersistenceUnitInfo pui, final Map m) {
             MAP = m;
             // only works cause of lazy property
-            final BeanManager beanManager = BeanManager.class.cast(m.get("javax.persistence.bean.manager"));
+            final BeanManager beanManager = BeanManager.class.cast(m.get("jakarta.persistence.bean.manager"));
             assertNotNull(beanManager.getReference(beanManager.resolve(beanManager.getBeans(Dao.class)), Dao.class, null));
             // just delegate to openjpa since we don't aim at reimplementing JPA in a test ;)
             return super.createContainerEntityManagerFactory(pui, m);

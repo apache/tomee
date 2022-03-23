@@ -25,20 +25,20 @@ import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.MessageDriven;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InterceptorBinding;
-import javax.interceptor.InvocationContext;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.ejb.MessageDriven;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InterceptorBinding;
+import jakarta.interceptor.InvocationContext;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -96,9 +96,9 @@ public class MDBCdiInterceptorTest {
 
     @In
     @MessageDriven(activationConfig = {
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+            @jakarta.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
+            @jakarta.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"),
+            @jakarta.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
     })
     public static class MyInterceptedMdb implements MessageListener {
         private static volatile boolean called = false;

@@ -25,7 +25,7 @@ import org.apache.openejb.util.Join;
 import org.apache.tomee.server.composer.TomEE;
 import org.junit.Test;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;

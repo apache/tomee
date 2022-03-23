@@ -21,7 +21,7 @@ import org.apache.tomcat.JarScanType;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.JarScannerCallback;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class EmptyScanner implements JarScanner {
     private JarScanFilter scanner;

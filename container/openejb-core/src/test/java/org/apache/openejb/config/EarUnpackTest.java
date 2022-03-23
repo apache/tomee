@@ -22,7 +22,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.util.Archives;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

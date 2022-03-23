@@ -19,7 +19,7 @@ package org.apache.openejb.cdi;
 import org.apache.webbeans.event.EventMetadataImpl;
 import org.apache.webbeans.event.NotificationManager;
 
-import javax.enterprise.inject.spi.ObserverMethod;
+import jakarta.enterprise.inject.spi.ObserverMethod;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

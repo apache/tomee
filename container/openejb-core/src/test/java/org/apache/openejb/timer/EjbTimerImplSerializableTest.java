@@ -36,8 +36,8 @@ import org.junit.runner.RunWith;
 import org.apache.openejb.quartz.JobDataMap;
 import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 
-import javax.ejb.Schedule;
-import javax.ejb.Stateless;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Stateless;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;

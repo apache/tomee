@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.test.singleton;
 
-import javax.ejb.EJBHome;
+import jakarta.ejb.EJBHome;
 
 
 /**
- * This class tests that all javax.ejb.EJBObject methods work as expected on the EJB 2.1 compatible remote interface
+ * This class tests that all jakarta.ejb.EJBObject methods work as expected on the EJB 2.1 compatible remote interface
  * of an ejb3 singleton bean.
  * <br>
  * [4] Should be run as the fourth test suite of the BasicSingletonTestClients

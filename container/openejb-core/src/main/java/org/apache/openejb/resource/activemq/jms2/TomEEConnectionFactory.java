@@ -21,8 +21,8 @@ import org.apache.activemq.ActiveMQXASslConnectionFactory;
 import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 
-import javax.jms.JMSContext;
-import javax.resource.spi.TransactionSupport;
+import jakarta.jms.JMSContext;
+import jakarta.resource.spi.TransactionSupport;
 
 public class TomEEConnectionFactory extends ActiveMQXASslConnectionFactory {
     private final TransactionSupport.TransactionSupportLevel transactionSupportLevel;

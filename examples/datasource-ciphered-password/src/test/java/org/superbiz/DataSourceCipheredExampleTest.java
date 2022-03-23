@@ -21,8 +21,8 @@ import org.apache.openejb.resource.jdbc.cipher.PasswordCipher;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.annotation.Resource;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.sql.DataSource;
 import java.sql.Connection;

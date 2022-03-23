@@ -103,8 +103,8 @@ public class FileHandler implements LogHandler {
 ----
 package org.superbiz.cdi.produces.disposes;
 
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
 
 public class LogFactory {
 
@@ -159,8 +159,8 @@ public interface Logger {
 ----
 package org.superbiz.cdi.produces.disposes;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Named("logger")
 public class LoggerImpl implements Logger {
@@ -214,8 +214,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.inject.Inject;
 import javax.naming.Context;
 
 import static junit.framework.Assert.assertNotNull;
@@ -274,7 +274,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/cdi-produces-disposes
 INFO - openejb.base = /Users/dblevins/examples/cdi-produces-disposes
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/cdi-produces-disposes/target/classes

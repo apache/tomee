@@ -18,9 +18,9 @@ package org.apache.openejb.deployment.entity.cmp.cmr.manytomany;
 
 import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.FinderException;
 
 /**
  * @version $Revision$ $Date$

@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.jms;
 
-import javax.inject.Inject;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.inject.Inject;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 public class NoColorSpecifiedBean extends BaseMdbBean implements MessageListener {
     @Inject

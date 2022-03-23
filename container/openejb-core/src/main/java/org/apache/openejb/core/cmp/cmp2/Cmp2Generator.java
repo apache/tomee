@@ -25,7 +25,7 @@ import org.apache.xbean.asm9.MethodVisitor;
 import org.apache.xbean.asm9.Opcodes;
 import org.apache.xbean.asm9.Type;
 
-import javax.ejb.EntityContext;
+import jakarta.ejb.EntityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

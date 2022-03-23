@@ -19,18 +19,18 @@ package org.apache.openejb.test.entity.cmp;
 import java.rmi.RemoteException;
 import java.util.StringTokenizer;
 
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.EntityContext;
-import javax.ejb.Handle;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.Handle;
+import jakarta.ejb.RemoveException;
 import javax.naming.InitialContext;
 
 import org.apache.openejb.test.object.ObjectGraph;
 
-public class RmiIiopCmpBean implements javax.ejb.EntityBean {
+public class RmiIiopCmpBean implements jakarta.ejb.EntityBean {
     private static int nextId;
     public int primaryKey;
     public String firstName;
@@ -46,11 +46,11 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
      *
      * @param name
      * @return
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see RmiIiopCmpHome#create
      */
     public Integer ejbCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         primaryKey = nextId++;
         final StringTokenizer st = new StringTokenizer(name, " ");
         firstName = st.nextToken();
@@ -59,7 +59,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
     }
 
     public void ejbPostCreate(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
     }
 
 
@@ -252,7 +252,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public EJBHome returnEJBHome() throws javax.ejb.EJBException {
+    public EJBHome returnEJBHome() throws jakarta.ejb.EJBException {
         EJBHome data = null;
 
         try {
@@ -262,12 +262,12 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBHome() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBHome() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -277,7 +277,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -294,7 +294,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public EJBObject returnEJBObject() throws javax.ejb.EJBException {
+    public EJBObject returnEJBObject() throws jakarta.ejb.EJBException {
         EncCmpObject data = null;
 
         try {
@@ -304,12 +304,12 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
             data = home.create("Test01 CmpBean");
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBObject() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBObject() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -320,7 +320,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -337,7 +337,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public EJBMetaData returnEJBMetaData() throws javax.ejb.EJBException {
+    public EJBMetaData returnEJBMetaData() throws jakarta.ejb.EJBException {
         EJBMetaData data = null;
 
         try {
@@ -347,12 +347,12 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
             data = home.getEJBMetaData();
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedEJBMetaData() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedEJBMetaData() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -363,7 +363,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object);
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
@@ -380,7 +380,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
         return data;
     }
 
-    public Handle returnHandle() throws javax.ejb.EJBException {
+    public Handle returnHandle() throws jakarta.ejb.EJBException {
         Handle data = null;
 
         try {
@@ -391,12 +391,12 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
             data = object.getHandle();
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }
 
-    public ObjectGraph returnNestedHandle() throws javax.ejb.EJBException {
+    public ObjectGraph returnNestedHandle() throws jakarta.ejb.EJBException {
         ObjectGraph data = null;
 
         try {
@@ -407,7 +407,7 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean {
             data = new ObjectGraph(object.getHandle());
 
         } catch (final Exception e) {
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
         return data;
     }

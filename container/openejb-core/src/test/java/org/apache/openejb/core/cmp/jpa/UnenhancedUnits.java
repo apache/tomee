@@ -19,11 +19,11 @@ package org.apache.openejb.core.cmp.jpa;
 
 import org.junit.Assert;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.transaction.Status;
+import jakarta.transaction.TransactionManager;
 import java.util.Collection;
 
 public class UnenhancedUnits extends Assert {

@@ -17,8 +17,8 @@
 
 package org.apache.openejb.arquillian.session;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 

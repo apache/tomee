@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.servlet;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import java.security.Principal;
 
 @Local

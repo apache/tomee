@@ -18,14 +18,14 @@ package org.apache.openejb.test.entity.cmp;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
 
 import org.apache.openejb.test.object.ObjectGraph;
 
-public interface RmiIiopCmpObject extends javax.ejb.EJBObject {
+public interface RmiIiopCmpObject extends jakarta.ejb.EJBObject {
 
     public String returnStringObject(String data) throws RemoteException;
 

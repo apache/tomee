@@ -16,10 +16,10 @@
  */
 package org.superbiz.jaxws;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.jws.WebService;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
+import jakarta.jws.WebService;
 
 @Lock(LockType.READ)
 @Singleton

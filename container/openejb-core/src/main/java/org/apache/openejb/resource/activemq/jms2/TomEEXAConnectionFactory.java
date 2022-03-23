@@ -18,9 +18,9 @@ package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 
-import javax.jms.JMSContext;
-import javax.jms.Session;
-import javax.jms.XAJMSContext;
+import jakarta.jms.JMSContext;
+import jakarta.jms.Session;
+import jakarta.jms.XAJMSContext;
 import java.net.URI;
 
 public class TomEEXAConnectionFactory extends ActiveMQXAConnectionFactory {

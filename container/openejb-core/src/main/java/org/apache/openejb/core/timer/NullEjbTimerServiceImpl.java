@@ -21,9 +21,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;

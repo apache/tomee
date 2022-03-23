@@ -23,7 +23,7 @@ import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @RunWith(ValidationRunner.class)
 public class CheckCdiEnabledTest {

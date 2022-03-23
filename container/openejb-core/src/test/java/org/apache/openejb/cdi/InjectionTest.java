@@ -25,9 +25,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
+import jakarta.inject.Inject;
 
 /**
  * @version $Rev$ $Date$

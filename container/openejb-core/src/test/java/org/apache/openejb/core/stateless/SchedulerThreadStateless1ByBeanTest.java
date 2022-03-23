@@ -23,7 +23,7 @@ import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 import static org.junit.Assert.assertEquals;
 

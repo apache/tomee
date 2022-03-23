@@ -21,7 +21,7 @@ import org.apache.openejb.config.Service;
 import org.apache.openejb.config.SystemProperty;
 import org.xml.sax.InputSource;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 

@@ -32,8 +32,8 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServicePool;
 import org.apache.openejb.util.CountingLatch;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.IOException;

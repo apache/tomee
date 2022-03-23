@@ -30,11 +30,11 @@ import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.TransactionType;
 
-import javax.ejb.EJBContext;
-import javax.ejb.EntityContext;
-import javax.ejb.MessageDrivenContext;
-import javax.ejb.SessionContext;
-import javax.transaction.UserTransaction;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.ejb.SessionContext;
+import jakarta.transaction.UserTransaction;
 import java.util.Map;
 
 /**

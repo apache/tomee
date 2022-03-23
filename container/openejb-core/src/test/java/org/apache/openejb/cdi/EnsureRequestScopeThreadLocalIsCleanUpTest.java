@@ -22,9 +22,9 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 import org.junit.Test;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.context.spi.Context;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.spi.Context;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;

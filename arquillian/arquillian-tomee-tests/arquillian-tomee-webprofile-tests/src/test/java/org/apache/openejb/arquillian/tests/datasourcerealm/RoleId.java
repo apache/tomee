@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.arquillian.tests.datasourcerealm;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class RoleId {

@@ -32,7 +32,7 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 /**
  * @version $Rev$ $Date$

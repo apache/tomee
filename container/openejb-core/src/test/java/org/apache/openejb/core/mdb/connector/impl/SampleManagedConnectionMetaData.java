@@ -18,8 +18,8 @@
  */
 package org.apache.openejb.core.mdb.connector.impl;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnectionMetaData;
 import java.util.logging.Logger;
 
 public class SampleManagedConnectionMetaData implements ManagedConnectionMetaData {

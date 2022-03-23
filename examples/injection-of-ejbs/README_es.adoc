@@ -26,8 +26,8 @@ de la API JNDI.
 ----
 package org.superbiz.injection;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 
 /**
  * Este es un bean pojo sesión sin estado estilo EJB 3.1
@@ -74,8 +74,8 @@ public class DataReader {
 ----
 package org.superbiz.injection;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
 
 /**
  * Este es un bean pojo de sesión sin estado estilo EJB 3
@@ -101,7 +101,7 @@ public class DataStore implements DataStoreLocal, DataStoreRemote {
 ----
 package org.superbiz.injection;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  * Esta es una interfaz de negociolocal EJB 3
@@ -123,7 +123,7 @@ public interface DataStoreLocal {
 ----
 package org.superbiz.injection;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * Esta es una interfaz de negocio remota EJB 3
@@ -145,7 +145,7 @@ package org.superbiz.injection;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 /**
@@ -181,7 +181,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/injection-of-ejbs
 INFO - openejb.base = /Users/dblevins/examples/injection-of-ejbs
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-ejbs/target/classes

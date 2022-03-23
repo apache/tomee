@@ -19,8 +19,8 @@ package org.superbiz.moviefun.setup;
 import org.superbiz.moviefun.Movie;
 import org.superbiz.moviefun.Movies;
 
-import javax.ejb.EJB;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import java.util.List;
 
 public class Setup {

@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.server.webservices.saaj;
 
-import javax.xml.soap.SOAPConnection;
-import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPConnection;
+import jakarta.xml.soap.SOAPConnectionFactory;
+import jakarta.xml.soap.SOAPException;
 
 public class SoapConnectionFactoryImpl extends SOAPConnectionFactory {
 
     private SOAPConnectionFactory getSOAPConnectionFactory() throws SOAPException {
         SOAPConnectionFactory factory =
-            (SOAPConnectionFactory) SaajFactoryFinder.find("javax.xml.soap.SOAPConnectionFactory");
+            (SOAPConnectionFactory) SaajFactoryFinder.find("jakarta.xml.soap.SOAPConnectionFactory");
         return factory;
 
     }

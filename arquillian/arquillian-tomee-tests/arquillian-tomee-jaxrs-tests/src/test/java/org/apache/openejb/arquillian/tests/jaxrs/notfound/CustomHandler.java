@@ -26,7 +26,7 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 public class CustomHandler extends AbstractPhaseInterceptor<Message> {

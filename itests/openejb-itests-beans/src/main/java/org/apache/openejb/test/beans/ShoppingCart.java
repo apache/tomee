@@ -18,7 +18,7 @@ package org.apache.openejb.test.beans;
 
 import java.rmi.RemoteException;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 public interface ShoppingCart extends EJBObject {
 

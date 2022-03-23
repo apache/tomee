@@ -19,7 +19,7 @@
 
 package org.apache.openejb.arquillian.tests.jaxrs.httpheaders;
 
-import javax.ws.rs.ApplicationPath;
+import jakarta.ws.rs.ApplicationPath;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +27,7 @@ import java.util.Set;
  * Application to test the HTTP headers
  */
 @ApplicationPath("/")
-public class Application extends javax.ws.rs.core.Application {
+public class Application extends jakarta.ws.rs.core.Application {
 
     @Override
     public Set<Class<?>> getClasses() {

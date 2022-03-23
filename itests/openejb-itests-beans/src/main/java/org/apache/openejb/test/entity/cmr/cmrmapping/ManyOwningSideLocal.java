@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.entity.cmr.cmrmapping;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.FinderException;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.FinderException;
 
 /**
  * @version $Revision$ $Date$

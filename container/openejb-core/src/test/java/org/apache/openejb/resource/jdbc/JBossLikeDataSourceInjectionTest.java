@@ -26,10 +26,10 @@ import org.junit.runner.RunWith;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-import javax.annotation.Resource;
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import javax.inject.Inject;
+import jakarta.annotation.Resource;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Singleton;
+import jakarta.inject.Inject;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;

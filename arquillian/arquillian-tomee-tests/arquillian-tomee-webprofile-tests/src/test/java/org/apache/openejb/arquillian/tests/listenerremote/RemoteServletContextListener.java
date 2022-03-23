@@ -17,10 +17,10 @@
 
 package org.apache.openejb.arquillian.tests.listenerremote;
 
-import javax.ejb.EJB;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.ejb.EJB;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 
 public class RemoteServletContextListener implements ServletContextListener {

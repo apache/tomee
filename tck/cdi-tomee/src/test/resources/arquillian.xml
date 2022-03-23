@@ -45,7 +45,7 @@
 
         jmsRa = new://Resource?type=ActiveMQResourceAdapter
         jmsRa.BrokerXmlConfig = broker:(tcp://localhost:0)?useJmx=false
-        jms = new://Resource?type=javax.jms.ConnectionFactory
+        jms = new://Resource?type=jakarta.jms.ConnectionFactory
         jms.ResourceAdapter = jmsRa
         queue = new://Resource?type=Queue
         topic = new://Resource?type=Topic

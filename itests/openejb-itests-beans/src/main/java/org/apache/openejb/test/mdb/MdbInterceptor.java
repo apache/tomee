@@ -18,15 +18,15 @@
 
 package org.apache.openejb.test.mdb;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.MessageDrivenContext;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-import javax.jms.Message;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
+import jakarta.jms.Message;
 
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateful.BasicStatefulHome;

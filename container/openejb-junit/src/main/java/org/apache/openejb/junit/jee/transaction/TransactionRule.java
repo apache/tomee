@@ -24,7 +24,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.lang.reflect.Method;
 
 public class TransactionRule implements TestRule {

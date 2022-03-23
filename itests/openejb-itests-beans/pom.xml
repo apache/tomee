@@ -77,7 +77,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
       <scope>provided</scope>
     </dependency>

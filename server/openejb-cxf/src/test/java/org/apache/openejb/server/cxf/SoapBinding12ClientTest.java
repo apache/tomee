@@ -24,15 +24,15 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.jws.WebService;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.WebServiceRef;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.jws.WebService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.WebServiceRef;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.io.IOException;
 import java.net.URL;
 

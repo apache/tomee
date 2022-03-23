@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.client;
 
-import javax.ejb.EJBHome;
+import jakarta.ejb.EJBHome;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 

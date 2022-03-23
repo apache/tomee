@@ -19,10 +19,10 @@ package org.apache.openejb.server.webservices.saaj;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SAAJMetaFactory;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SAAJMetaFactory;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
 
 public class SaajMetaFactoryImpl extends SAAJMetaFactory {
 
@@ -38,7 +38,7 @@ public class SaajMetaFactoryImpl extends SAAJMetaFactory {
 
     private Object callFactoryMethod(String methodName, String arg) throws SOAPException {
         SAAJMetaFactory factory =
-            (SAAJMetaFactory) SaajFactoryFinder.find("javax.xml.soap.MetaFactory");
+            (SAAJMetaFactory) SaajFactoryFinder.find("jakarta.xml.soap.MetaFactory");
 
         try {
             Method method =

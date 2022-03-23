@@ -19,7 +19,7 @@ package org.apache.openejb.transaction;
 import org.apache.openejb.core.ObjectInputStreamFiltered;
 import org.junit.Test;
 
-import javax.transaction.TransactionRolledbackException;
+import jakarta.transaction.TransactionRolledbackException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;

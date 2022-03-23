@@ -31,10 +31,10 @@ import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.annotation.Resource;
-import javax.ejb.EJBContext;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.concurrent.TimeUnit;

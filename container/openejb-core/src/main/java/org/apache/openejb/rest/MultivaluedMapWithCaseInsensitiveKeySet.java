@@ -17,7 +17,7 @@
 
 package org.apache.openejb.rest;
 
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

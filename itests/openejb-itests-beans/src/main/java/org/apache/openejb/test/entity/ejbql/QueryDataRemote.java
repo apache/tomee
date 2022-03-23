@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 public interface QueryDataRemote extends EJBObject {

@@ -16,8 +16,8 @@
  */
 package org.superbiz.servlet;
 
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 
 @WebService(
         portName = "HelloPojoPort",

@@ -27,8 +27,8 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
 
 @ContextConfig(properties = {
     @Property("openejb.deployments.classpath.include=.*openejb-junit.*"),

@@ -154,7 +154,7 @@
         # try to save some permgen mem
         openejb.cdi.activated-on-ejb = false
         openejb.descriptors.output = true
-        javax.security.jacc.policy.provider=sun.security.provider.PolicyFile
+        jakarta.security.jacc.policy.provider=sun.security.provider.PolicyFile
       </property>
     </configuration>
   </container>

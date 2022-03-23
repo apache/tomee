@@ -24,9 +24,9 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.EntityBean;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EntityBean;
 import java.lang.reflect.Field;
 
 public class Cmp2Util {

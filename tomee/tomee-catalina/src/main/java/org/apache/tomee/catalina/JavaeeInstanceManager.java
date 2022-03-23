@@ -29,10 +29,10 @@ import org.apache.tomcat.util.descriptor.web.InjectionTarget;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.exception.WebBeansCreationException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import javax.naming.NamingException;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -54,7 +54,7 @@ public class JavaeeInstanceManager implements InstanceManager {
         this.webContext = webContext;
         this.webapp = webapp;
         this.skipContainerTags = SystemInstance.get().getProperty(
-                "tomee.tomcat.instance-manager.skip-container-tags", "org.apache.taglibs.standard.,javax.servlet.jsp.jstl.").split(" *, *");
+                "tomee.tomcat.instance-manager.skip-container-tags", "org.apache.taglibs.standard.,jakarta.servlet.jsp.jstl.").split(" *, *");
         final String[] skipCdi = SystemInstance.get().getProperty("tomee.tomcat.instance-manager.skip-cdi", "").split(" *, *");
         this.skipPrefixes = skipCdi.length == 1 && skipCdi[0].isEmpty() ? new String[0] : skipCdi;
     }

@@ -31,10 +31,10 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.SessionContext;
-import javax.transaction.UserTransaction;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.SessionContext;
+import jakarta.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 import java.io.Serializable;
 import java.lang.reflect.Method;

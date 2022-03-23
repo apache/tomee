@@ -18,7 +18,7 @@ package org.superbiz.counter;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 public class CounterTest extends TestCase {

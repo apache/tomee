@@ -5,7 +5,7 @@
 
 # Declarando um @ApplicationException
 ```
-    import javax.ejb.ApplicationException;
+    import jakarta.ejb.ApplicationException;
 
     /**
      * @version $Rev: 784112 $ $Date: 2009-06-12 06:23:57 -0700 (Fri, 12 Jun 2009) $

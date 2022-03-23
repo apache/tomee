@@ -26,7 +26,7 @@ or renting a new bean instance on each method call.
 ----
 package org.superbiz.stateless.basic;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class CalculatorBean {
@@ -67,7 +67,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
 import static org.junit.Assert.assertEquals;
@@ -175,7 +175,7 @@ Infos - openejb.home = /home/a185558/Development/Apache/openejb-trunk/examples/s
 Infos - openejb.base = /home/a185558/Development/Apache/openejb-trunk/examples/simple-stateless
 Infos - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@33bb11
 Infos - Succeeded in installing singleton service
-Infos - Using 'javax.ejb.embeddable.EJBContainer=true'
+Infos - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 Infos - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 Infos - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 Infos - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

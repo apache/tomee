@@ -12,7 +12,7 @@ right to edit this page._
 ----
 package org.superbiz.injection.tx;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Movie {
@@ -63,15 +63,15 @@ public class Movie {
 ----
 package org.superbiz.injection.tx;
 
-import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
 import java.util.List;
 
-import static javax.ejb.TransactionAttributeType.MANDATORY;
+import static jakarta.ejb.TransactionAttributeType.MANDATORY;
 
 //START SNIPPET: code
 @Stateful(name = "Movies")
@@ -122,15 +122,15 @@ package org.superbiz.injection.tx;
 
 import junit.framework.TestCase;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 
 /**
  * See the transaction-rollback example as it does the same thing
@@ -183,7 +183,7 @@ public class MoviesTest extends TestCase {
         try {
             doWork();
             fail("The Movies bean should be using TransactionAttributeType.MANDATORY");
-        } catch (javax.ejb.EJBTransactionRequiredException e) {
+        } catch (jakarta.ejb.EJBTransactionRequiredException e) {
             // good, our Movies bean is using TransactionAttributeType.MANDATORY as we want
         }
     }
@@ -220,7 +220,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/testing-transactions
 INFO - openejb.base = /Users/dblevins/examples/testing-transactions
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)

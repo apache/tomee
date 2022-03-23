@@ -12,9 +12,9 @@ UserTransaction via a Stateful Bean.
 ----
 package org.superbiz.injection.tx;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 @Entity
 public class Movie {
@@ -76,15 +76,15 @@ public class Movie {
 ----
 package org.superbiz.injection.tx;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateful;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
-import javax.transaction.UserTransaction;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
+import jakarta.transaction.UserTransaction;
 
 @Stateful(name = "Movies")
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -149,8 +149,8 @@ package org.superbiz.injection.tx;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.Properties;
 
 public class MoviesTest {
@@ -200,7 +200,7 @@ INFO - openejb.home = /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-t
 INFO - openejb.base = /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-transactions-bmt
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@3f3f210f
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
@@ -210,7 +210,7 @@ INFO - Creating SecurityService(id=Default Security Service)
 INFO - Creating Resource(id=movieDatabase)
 INFO - Beginning load: /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-transactions-bmt/target/classes
 INFO - Configuring enterprise application: /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-transactions-bmt
-WARNING - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARNING - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Auto-deploying ejb Movies: EjbDeployment(deployment-id=Movies)
 INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
 INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)

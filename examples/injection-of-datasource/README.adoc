@@ -62,9 +62,9 @@ public class Movie {
 ----
 package org.superbiz.injection;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Stateful;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateful;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -156,7 +156,7 @@ package org.superbiz.injection;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.List;
 import java.util.Properties;
@@ -203,14 +203,14 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/injection-of-datasource
 INFO - openejb.base = /Users/dblevins/examples/injection-of-datasource
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-datasource/target/classes
 INFO - Beginning load: /Users/dblevins/examples/injection-of-datasource/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-datasource
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
 INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
 INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.injection.Movies/movieDatabase' in bean Movies to Resource(id=movieDatabase)

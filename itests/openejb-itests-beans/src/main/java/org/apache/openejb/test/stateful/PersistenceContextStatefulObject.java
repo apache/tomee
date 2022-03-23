@@ -18,7 +18,7 @@ package org.apache.openejb.test.stateful;
 
 import org.apache.openejb.test.TestFailureException;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 /**
  * @version $Rev$ $Date$

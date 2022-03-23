@@ -39,10 +39,10 @@ public class PoleVaultingManagerBean
 ----
 package org.superbiz.designbycontract;
 
-import javax.ejb.Stateless;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.ejb.Stateless;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Stateless
 public class OlympicGamesManager {
@@ -61,8 +61,8 @@ public class OlympicGamesManager {
 ----
 package org.superbiz.designbycontract;
 
-import javax.ejb.Stateless;
-import javax.validation.constraints.Min;
+import jakarta.ejb.Stateless;
+import jakarta.validation.constraints.Min;
 
 @Stateless
 public class PoleVaultingManagerBean
@@ -80,7 +80,7 @@ public class PoleVaultingManagerBean
 ----
 package org.superbiz.designbycontract;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class PoleVaultingManagerBean implements PoleVaultingManager {
@@ -183,7 +183,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/bean-validation-design-by-contract
 INFO - openejb.base = /Users/dblevins/examples/bean-validation-design-by-contract
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/bean-validation-design-by-contract/target/classes

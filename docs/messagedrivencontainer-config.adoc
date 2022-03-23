@@ -15,7 +15,7 @@ body are optional.
 <Container id="myMessageDrivenContainer" type="MESSAGE">
     activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
     instanceLimit = 10
-    messageListenerInterface = javax.jms.MessageListener
+    messageListenerInterface = jakarta.jms.MessageListener
     resourceAdapter = Default JMS Resource Adapter
 </Container>
 ----
@@ -23,7 +23,7 @@ body are optional.
 Alternatively, a MessageDrivenContainer can be declared via properties
 in the `<tomee-home>/conf/system.properties` file or via Java
 VirtualMachine `-D` properties. The properties can also be used when
-embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+embedding TomEE via the `jakarta.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
 [source,properties]
@@ -31,7 +31,7 @@ embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 myMessageDrivenContainer = new://Container?type=MESSAGE
 myMessageDrivenContainer.activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
 myMessageDrivenContainer.instanceLimit = 10
-myMessageDrivenContainer.messageListenerInterface = javax.jms.MessageListener
+myMessageDrivenContainer.messageListenerInterface = jakarta.jms.MessageListener
 myMessageDrivenContainer.resourceAdapter = Default JMS Resource Adapter
 ----
 
@@ -74,7 +74,7 @@ messageListenerInterface
 
 String
 
-javax.jms.MessageListener
+jakarta.jms.MessageListener
 
 Specifies the message listener interface handled by this container
 

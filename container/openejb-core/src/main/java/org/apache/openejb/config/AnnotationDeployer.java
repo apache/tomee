@@ -138,106 +138,106 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.annotation.Resources;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.annotation.security.RunAs;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.annotation.sql.DataSourceDefinitions;
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.ejb.AccessTimeout;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.AfterBegin;
-import javax.ejb.AfterCompletion;
-import javax.ejb.ApplicationException;
-import javax.ejb.Asynchronous;
-import javax.ejb.BeforeCompletion;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.EJBs;
-import javax.ejb.Init;
-import javax.ejb.Local;
-import javax.ejb.LocalBean;
-import javax.ejb.LocalHome;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.MessageDriven;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Remote;
-import javax.ejb.RemoteHome;
-import javax.ejb.Remove;
-import javax.ejb.Schedule;
-import javax.ejb.Schedules;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Stateful;
-import javax.ejb.StatefulTimeout;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.NormalScope;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Model;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Stereotype;
-import javax.enterprise.inject.spi.DefinitionException;
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.interceptor.ExcludeClassInterceptors;
-import javax.interceptor.ExcludeDefaultInterceptors;
-import javax.interceptor.Interceptors;
-import javax.jms.JMSConnectionFactoryDefinition;
-import javax.jms.JMSConnectionFactoryDefinitions;
-import javax.jms.JMSDestinationDefinition;
-import javax.jms.JMSDestinationDefinitions;
-import javax.jms.Queue;
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
-import javax.persistence.Converter;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContexts;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.PersistenceUnits;
-import javax.resource.spi.Activation;
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.ConnectionDefinition;
-import javax.resource.spi.ConnectionDefinitions;
-import javax.resource.spi.Connector;
-import javax.resource.spi.SecurityPermission;
-import javax.resource.spi.work.WorkContext;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.WebServiceRef;
-import javax.xml.ws.WebServiceRefs;
+import jakarta.annotation.ManagedBean;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.annotation.Resources;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.annotation.security.RunAs;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.annotation.sql.DataSourceDefinitions;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.ejb.AccessTimeout;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.AfterBegin;
+import jakarta.ejb.AfterCompletion;
+import jakarta.ejb.ApplicationException;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.BeforeCompletion;
+import jakarta.ejb.ConcurrencyManagement;
+import jakarta.ejb.DependsOn;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EJBs;
+import jakarta.ejb.Init;
+import jakarta.ejb.Local;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.MessageDriven;
+import jakarta.ejb.PostActivate;
+import jakarta.ejb.PrePassivate;
+import jakarta.ejb.Remote;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Schedules;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.StatefulTimeout;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.context.NormalScope;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Model;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.enterprise.inject.spi.DefinitionException;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.inject.Inject;
+import jakarta.interceptor.ExcludeClassInterceptors;
+import jakarta.interceptor.ExcludeDefaultInterceptors;
+import jakarta.interceptor.Interceptors;
+import jakarta.jms.JMSConnectionFactoryDefinition;
+import jakarta.jms.JMSConnectionFactoryDefinitions;
+import jakarta.jms.JMSDestinationDefinition;
+import jakarta.jms.JMSDestinationDefinitions;
+import jakarta.jms.Queue;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
+import jakarta.persistence.Converter;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContexts;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.PersistenceUnits;
+import jakarta.resource.spi.Activation;
+import jakarta.resource.spi.AdministeredObject;
+import jakarta.resource.spi.ConnectionDefinition;
+import jakarta.resource.spi.ConnectionDefinitions;
+import jakarta.resource.spi.Connector;
+import jakarta.resource.spi.SecurityPermission;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.ext.Provider;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.WebServiceRef;
+import jakarta.xml.ws.WebServiceRefs;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -284,41 +284,41 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
     private static final Set<String> lookupMissing = new HashSet<String>(2);
     private static final String[] JSF_CLASSES = new String[]{
-        "javax.faces.application.ResourceDependencies",
-        "javax.faces.application.ResourceDependency",
-        "javax.faces.bean.ApplicationScoped",
-        "javax.faces.bean.CustomScoped",
-        "javax.faces.bean.ManagedBean",
-        "javax.faces.bean.ManagedProperty",
-        "javax.faces.bean.NoneScoped",
-        "javax.faces.bean.ReferencedBean",
-        "javax.faces.bean.RequestScoped",
-        "javax.faces.bean.SessionScoped",
-        "javax.faces.bean.ViewScoped",
-        "javax.faces.component.FacesComponent",
-        "javax.faces.component.UIComponent",
-        "javax.faces.convert.Converter",
-        "javax.faces.convert.FacesConverter",
-        "javax.faces.event.ListenerFor",
-        "javax.faces.event.ListenersFor",
-        "javax.faces.event.NamedEvent",
-        "javax.faces.render.FacesBehaviorRenderer",
-        "javax.faces.render.FacesRenderer",
-        "javax.faces.render.Renderer",
-        "javax.faces.validator.FacesValidator",
-        "javax.faces.validator.Validator"
+        "jakarta.faces.application.ResourceDependencies",
+        "jakarta.faces.application.ResourceDependency",
+        "jakarta.faces.bean.ApplicationScoped",
+        "jakarta.faces.bean.CustomScoped",
+        "jakarta.faces.bean.ManagedBean",
+        "jakarta.faces.bean.ManagedProperty",
+        "jakarta.faces.bean.NoneScoped",
+        "jakarta.faces.bean.ReferencedBean",
+        "jakarta.faces.bean.RequestScoped",
+        "jakarta.faces.bean.SessionScoped",
+        "jakarta.faces.bean.ViewScoped",
+        "jakarta.faces.component.FacesComponent",
+        "jakarta.faces.component.UIComponent",
+        "jakarta.faces.convert.Converter",
+        "jakarta.faces.convert.FacesConverter",
+        "jakarta.faces.event.ListenerFor",
+        "jakarta.faces.event.ListenersFor",
+        "jakarta.faces.event.NamedEvent",
+        "jakarta.faces.render.FacesBehaviorRenderer",
+        "jakarta.faces.render.FacesRenderer",
+        "jakarta.faces.render.Renderer",
+        "jakarta.faces.validator.FacesValidator",
+        "jakarta.faces.validator.Validator"
     };
 
     private static final String[] WEB_CLASSES = new String[]{
         // Servlet 3.0
-        "javax.servlet.annotation.WebServlet",
-        "javax.servlet.annotation.WebFilter",
-        "javax.servlet.annotation.WebListener",
+        "jakarta.servlet.annotation.WebServlet",
+        "jakarta.servlet.annotation.WebFilter",
+        "jakarta.servlet.annotation.WebListener",
 
         // WebSocket 1.0 (since Tomcat 7.0.47)
-        "javax.websocket.server.ServerEndpoint",
-        "javax.websocket.server.ServerApplicationConfig",
-        "javax.websocket.Endpoint"
+        "jakarta.websocket.server.ServerEndpoint",
+        "jakarta.websocket.server.ServerApplicationConfig",
+        "jakarta.websocket.Endpoint"
     };
 
     private static final Collection<String> API_CLASSES = new ArrayList<String>(WEB_CLASSES.length + JSF_CLASSES.length);
@@ -329,18 +329,18 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
-        "javax.ejb.EJBContext",
-        "javax.ejb.SessionContext",
-        "javax.ejb.EntityContext",
-        "javax.ejb.MessageDrivenContext",
-        "javax.transaction.UserTransaction",
-        "javax.jms.Queue",
-        "javax.jms.Topic",
-        "javax.xml.ws.WebServiceContext",
-        "javax.ejb.TimerService",
-        "javax.enterprise.inject.spi.BeanManager",
-        "javax.validation.Validator",
-        "javax.validation.ValidatorFactory"
+        "jakarta.ejb.EJBContext",
+        "jakarta.ejb.SessionContext",
+        "jakarta.ejb.EntityContext",
+        "jakarta.ejb.MessageDrivenContext",
+        "jakarta.transaction.UserTransaction",
+        "jakarta.jms.Queue",
+        "jakarta.jms.Topic",
+        "jakarta.xml.ws.WebServiceContext",
+        "jakarta.ejb.TimerService",
+        "jakarta.enterprise.inject.spi.BeanManager",
+        "jakarta.validation.Validator",
+        "jakarta.validation.ValidatorFactory"
     ));
 
     public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
@@ -688,9 +688,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 final List<AuthenticationMechanism> authenticationMechanisms = outboundResourceAdapter.getAuthenticationMechanism();
-                final javax.resource.spi.AuthenticationMechanism[] authMechanisms = connectorAnnotation.authMechanisms();
+                final jakarta.resource.spi.AuthenticationMechanism[] authMechanisms = connectorAnnotation.authMechanisms();
                 if (authenticationMechanisms.size() == 0) {
-                    for (final javax.resource.spi.AuthenticationMechanism am : authMechanisms) {
+                    for (final jakarta.resource.spi.AuthenticationMechanism am : authMechanisms) {
                         final AuthenticationMechanism authMechanism = new AuthenticationMechanism();
                         authMechanism.setAuthenticationMechanismType(am.authMechanism());
                         authMechanism.setCredentialInterface(am.credentialInterface().toString());
@@ -875,13 +875,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
 
                         final Method write = propertyDescriptor.getWriteMethod();
-                        javax.resource.spi.ConfigProperty annotation = null;
+                        jakarta.resource.spi.ConfigProperty annotation = null;
                         if (write != null) {
-                            annotation = write.getAnnotation(javax.resource.spi.ConfigProperty.class);
+                            annotation = write.getAnnotation(jakarta.resource.spi.ConfigProperty.class);
                             if (annotation == null) {
                                 try {
                                     // if there's no annotation on the setter, we'll try and scrape one off the field itself (assuming the same name)
-                                    annotation = clazz.getDeclaredField(name).getAnnotation(javax.resource.spi.ConfigProperty.class);
+                                    annotation = clazz.getDeclaredField(name).getAnnotation(jakarta.resource.spi.ConfigProperty.class);
                                 } catch (final Exception ignored) {
                                     // no-op : getDeclaredField() throws exceptions and does not return null
                                 }
@@ -909,7 +909,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // add any annotated fields we haven't already picked up
                 final Field[] declaredFields = clazz.getDeclaredFields();
                 for (final Field field : declaredFields) {
-                    final javax.resource.spi.ConfigProperty annotation = field.getAnnotation(javax.resource.spi.ConfigProperty.class);
+                    final jakarta.resource.spi.ConfigProperty annotation = field.getAnnotation(jakarta.resource.spi.ConfigProperty.class);
 
                     final String name = field.getName();
                     Object value = null;
@@ -948,7 +948,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        private String getConfigPropertyType(final javax.resource.spi.ConfigProperty annotation, final Class<?> type) {
+        private String getConfigPropertyType(final jakarta.resource.spi.ConfigProperty annotation, final Class<?> type) {
             Class<?> t = annotation == null ? null : annotation.type();
             if (t == null && type != null) {
                 return type.getName();
@@ -1157,7 +1157,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
                 addJaxRsProviders(finder, webModule.getJaxrsProviders(), Provider.class);
 
-                // CXF actually does this in its own CDI setup - org.apache.cxf.cdi.JAXRSCdiResourceExtension#collect(javax.enterprise.inject.spi.ProcessBean<T>)
+                // CXF actually does this in its own CDI setup - org.apache.cxf.cdi.JAXRSCdiResourceExtension#collect(jakarta.enterprise.inject.spi.ProcessBean<T>)
                 //addJaxRsProviders(finder, webModule.getJaxrsProviders(), Path.class);
 
                 // Applications with a default constructor
@@ -1712,11 +1712,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                         containerAnnot.add(Stateless.class);
                         containerAnnot.add(Stateful.class);
                         containerAnnot.add(MessageDriven.class);
-                        containerAnnot.add(javax.interceptor.Interceptor.class);
+                        containerAnnot.add(jakarta.interceptor.Interceptor.class);
                         containerAnnot.add(Decorator.class);
                         final ClassLoader classLoader = ParentClassLoaderFinder.Helper.get();
                         try {
-                            for (final String name : asList("javax.faces.flow.FlowScoped", "javax.faces.view.ViewScoped")) {
+                            for (final String name : asList("jakarta.faces.flow.FlowScoped", "jakarta.faces.view.ViewScoped")) {
                                 containerAnnot.add((Class<? extends Annotation>) classLoader.loadClass(name));
                             }
                         } catch (final Throwable e) {
@@ -2155,8 +2155,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             /* TODO: still useful?
             List<String> unusableTypes = new ArrayList<String>(knownResourceEnvTypes);
-            unusableTypes.remove("javax.jms.Topic");
-            unusableTypes.remove("javax.jms.Queue");
+            unusableTypes.remove("jakarta.jms.Topic");
+            unusableTypes.remove("jakarta.jms.Queue");
 
             for (ResourceEnvRef ref : client.getResourceEnvRef()) {
 
@@ -2205,7 +2205,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             final ClassLoader classLoader = webModule.getClassLoader();
 
-            final String webXmlApplication = webApp.contextParamsAsMap().get("javax.ws.rs.Application");
+            final String webXmlApplication = webApp.contextParamsAsMap().get("jakarta.ws.rs.Application");
             if (webXmlApplication != null) {
                 webModule.getRestApplications().clear();
                 webModule.getRestApplications().add(webXmlApplication);
@@ -2259,11 +2259,11 @@ public class AnnotationDeployer implements DynamicDeployer {
              */
             for (final Servlet servlet : webApp.getServlet()) {
                 final String servletName = servlet.getServletName();
-                if ("javax.ws.rs.core.Application".equals(servletName) || "javax.ws.rs.Application".equals(servletName)) {
+                if ("jakarta.ws.rs.core.Application".equals(servletName) || "jakarta.ws.rs.Application".equals(servletName)) {
                     // check first if there is a real application as init param
                     boolean done = false;
                     for (final ParamValue pv : servlet.getInitParam()) {
-                        if ("javax.ws.rs.core.Application".equals(pv.getParamName()) || "javax.ws.rs.Application".equals(pv.getParamName())) {
+                        if ("jakarta.ws.rs.core.Application".equals(pv.getParamName()) || "jakarta.ws.rs.Application".equals(pv.getParamName())) {
                             webModule.getRestApplications().add(pv.getParamValue());
                             done = true;
                             break;
@@ -2305,7 +2305,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     // if the servlet is a rest init servlet don't deploy rest classes automatically
                     for (final ParamValue param : servlet.getInitParam()) {
-                        if (param.getParamName().equals(Application.class.getName()) || param.getParamName().equals("javax.ws.rs.Application")) {
+                        if (param.getParamName().equals(Application.class.getName()) || param.getParamName().equals("jakarta.ws.rs.Application")) {
                             webModule.getRestApplications().clear();
                             webModule.getRestApplications().add(param.getParamValue());
                             break;
@@ -2802,7 +2802,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                              */
                             if (sessionBean.getConcurrencyManagementType() == null) {
                                 final ConcurrencyManagement tx = getInheritableAnnotation(clazz, ConcurrencyManagement.class);
-                                javax.ejb.ConcurrencyManagementType concurrencyType = javax.ejb.ConcurrencyManagementType.CONTAINER;
+                                jakarta.ejb.ConcurrencyManagementType concurrencyType = jakarta.ejb.ConcurrencyManagementType.CONTAINER;
                                 if (tx != null) {
                                     concurrencyType = tx.value();
                                 }
@@ -2926,7 +2926,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             final String name = intf.getName();
                             if (!name.equals("java.io.Serializable") &&
                                 !name.equals("java.io.Externalizable") &&
-                                !name.startsWith("javax.ejb.") &&
+                                !name.startsWith("jakarta.ejb.") &&
                                 !intf.isSynthetic()) {
                                 interfaces.add(intf);
                             }
@@ -3161,7 +3161,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * These interface types are not eligable to be business interfaces.
                  * java.io.Serializable
                  * java.io.Externalizable
-                 * javax.ejb.*
+                 * jakarta.ejb.*
                  */
                 final List<Class<?>> interfaces = new ArrayList<>();
                 if (!clazz.isInterface()) { // dynamic proxy implementation
@@ -3172,7 +3172,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             !name.equals("java.io.Serializable") &&
                             !name.equals("java.io.Externalizable") &&
                             !(name.equals(InvocationHandler.class.getName()) && DynamicSubclass.isDynamic(beanClass)) &&
-                            !name.startsWith("javax.ejb.") &&
+                            !name.startsWith("jakarta.ejb.") &&
                             !descriptor.contains(interfce.getName()) &&
                             !interfce.isSynthetic() &&
                             !"net.sourceforge.cobertura.coveragedata.HasBeenInstrumented".equals(name) &&
@@ -3722,7 +3722,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @AroundInvoke
                  */
                 if (apply(override, invokable.getAroundInvoke())) {
-                    for (final Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundInvoke.class))) {
+                    for (final Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(jakarta.interceptor.AroundInvoke.class))) {
                         invokable.getAroundInvoke().add(new AroundInvoke(method.get()));
                     }
                 }
@@ -3731,7 +3731,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  *  @AroundTimeout
                  */
                 if (apply(override, invokable.getAroundTimeout())) {
-                    for (final Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundTimeout.class))) {
+                    for (final Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(jakarta.interceptor.AroundTimeout.class))) {
                         invokable.getAroundTimeout().add(new AroundTimeout(method.get()));
                     }
                 }
@@ -3743,7 +3743,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (bean instanceof TimerConsumer) {
                 final TimerConsumer timerConsumer = (TimerConsumer) bean;
                 if (timerConsumer.getTimeoutMethod() == null) {
-                    final List<Annotated<Method>> timeoutMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(javax.ejb.Timeout.class));
+                    final List<Annotated<Method>> timeoutMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(jakarta.ejb.Timeout.class));
                     //Validation Logic is moved to CheckCallback class.
                     if (timeoutMethods.size() >= 1) {
                         // Use the timeout method most near the child class because
@@ -5484,10 +5484,10 @@ public class AnnotationDeployer implements DynamicDeployer {
          * Checks that the values specified via @Local and @Remote are *not*:
          *
          * - classes
-         * - derived from javax.ejb.EJBObject
-         * - derived from javax.ejb.EJBHome
-         * - derived from javax.ejb.EJBLocalObject
-         * - derived from javax.ejb.EJBLocalHome
+         * - derived from jakarta.ejb.EJBObject
+         * - derived from jakarta.ejb.EJBHome
+         * - derived from jakarta.ejb.EJBLocalObject
+         * - derived from jakarta.ejb.EJBLocalHome
          *
          * @param interfce
          * @param validation

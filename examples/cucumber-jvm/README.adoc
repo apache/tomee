@@ -86,7 +86,7 @@ package org.superbiz.cucumber;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 
@@ -142,7 +142,7 @@ INFO - openejb.home = /Users/norm/git/tomee/examples/cucumber-jvm
 INFO - openejb.base = /Users/norm/git/tomee/examples/cucumber-jvm
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@769f71a9
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

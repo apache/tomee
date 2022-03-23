@@ -11,16 +11,16 @@ _Help us document this example! Click the blue pencil icon in the upper right to
 ----
 package org.superbiz.mdbdesc;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 public class ChatBean implements MessageListener {
 
@@ -91,7 +91,7 @@ public class ChatBean implements MessageListener {
       <ejb-name>ChatBean</ejb-name>
       <ejb-class>org.superbiz.mdbdesc.ChatBean</ejb-class>
 
-      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <messaging-type>jakarta.jms.MessageListener</messaging-type>
 
       <activation-config>
         <activation-config-property>
@@ -100,13 +100,13 @@ public class ChatBean implements MessageListener {
         </activation-config-property>
         <activation-config-property>
           <activation-config-property-name>destinationType</activation-config-property-name>
-          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+          <activation-config-property-value>jakarta.jms.Queue</activation-config-property-value>
         </activation-config-property>
       </activation-config>
 
       <resource-ref>
         <res-ref-name>java:comp/env/org.superbiz.mdbdesc.ChatBean/connectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-type>jakarta.jms.ConnectionFactory</res-type>
         <injection-target>
           <injection-target-class>org.superbiz.mdbdesc.ChatBean</injection-target-class>
           <injection-target-name>connectionFactory</injection-target-name>
@@ -115,7 +115,7 @@ public class ChatBean implements MessageListener {
 
       <resource-env-ref>
         <resource-env-ref-name>java:comp/env/AnswerQueue</resource-env-ref-name>
-        <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+        <resource-env-ref-type>jakarta.jms.Queue</resource-env-ref-type>
         <mapped-name>AnswerQueue</mapped-name>
         <injection-target>
           <injection-target-class>org.superbiz.mdbdesc.ChatBean</injection-target-class>
@@ -137,16 +137,16 @@ package org.superbiz.mdb;
 
 import junit.framework.TestCase;
 
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 public class ChatBeanTest extends TestCase {
 
@@ -213,24 +213,24 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/simple-mdb-with-descriptor
 INFO - openejb.base = /Users/dblevins/examples/simple-mdb-with-descriptor
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/simple-mdb-with-descriptor/target/classes
 INFO - Beginning load: /Users/dblevins/examples/simple-mdb-with-descriptor/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/simple-mdb-with-descriptor
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default MDB Container, type=Container, provider-id=Default MDB Container)
 INFO - Auto-creating a container for bean ChatBean: Container(type=MESSAGE, id=Default MDB Container)
 INFO - Configuring Service(id=Default JMS Resource Adapter, type=Resource, provider-id=Default JMS Resource Adapter)
 INFO - Configuring Service(id=Default JMS Connection Factory, type=Resource, provider-id=Default JMS Connection Factory)
-INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'javax.jms.ConnectionFactory for 'ChatBean'.
+INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'jakarta.jms.ConnectionFactory for 'ChatBean'.
 INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdbdesc.ChatBean/connectionFactory' in bean ChatBean to Resource(id=Default JMS Connection Factory)
 INFO - Configuring Service(id=AnswerQueue, type=Resource, provider-id=Default Queue)
-INFO - Auto-creating a Resource with id 'AnswerQueue' of type 'javax.jms.Queue for 'ChatBean'.
+INFO - Auto-creating a Resource with id 'AnswerQueue' of type 'jakarta.jms.Queue for 'ChatBean'.
 INFO - Auto-linking resource-env-ref 'java:comp/env/AnswerQueue' in bean ChatBean to Resource(id=AnswerQueue)
 INFO - Configuring Service(id=ChatBean, type=Resource, provider-id=Default Queue)
-INFO - Auto-creating a Resource with id 'ChatBean' of type 'javax.jms.Queue for 'ChatBean'.
+INFO - Auto-creating a Resource with id 'ChatBean' of type 'jakarta.jms.Queue for 'ChatBean'.
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 INFO - Auto-creating a container for bean org.superbiz.mdb.ChatBeanTest: Container(type=MANAGED, id=Default Managed Container)
 INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdb.ChatBeanTest/connectionFactory' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=Default JMS Connection Factory)

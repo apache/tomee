@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 import java.util.Enumeration;
 
 // used to wrap a JMS 1.0 message and provide a JMS 2.0 impl

@@ -27,10 +27,10 @@ public class SaajUniverse {
 
     static {
         if (SystemInstance.get().getOptions().get("openejb.soap.override-factory", false)) { // default are far faster than our chain
-            setProperty("javax.xml.soap.MessageFactory", "org.apache.openejb.server.webservices.saaj.MessageFactoryImpl");
-            setProperty("javax.xml.soap.SOAPFactory", "org.apache.openejb.server.webservices.saaj.SoapFactoryImpl");
-            setProperty("javax.xml.soap.SOAPConnectionFactory", "org.apache.openejb.server.webservices.saaj.SoapConnectionFactoryImpl");
-            setProperty("javax.xml.soap.MetaFactory", "org.apache.openejb.server.webservices.saaj.SaajMetaFactoryImpl");
+            setProperty("jakarta.xml.soap.MessageFactory", "org.apache.openejb.server.webservices.saaj.MessageFactoryImpl");
+            setProperty("jakarta.xml.soap.SOAPFactory", "org.apache.openejb.server.webservices.saaj.SoapFactoryImpl");
+            setProperty("jakarta.xml.soap.SOAPConnectionFactory", "org.apache.openejb.server.webservices.saaj.SoapConnectionFactoryImpl");
+            setProperty("jakarta.xml.soap.MetaFactory", "org.apache.openejb.server.webservices.saaj.SaajMetaFactoryImpl");
         }
     }
 

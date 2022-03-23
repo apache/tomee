@@ -36,11 +36,11 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.AfterClass;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import javax.xml.rpc.handler.MessageContext;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -165,7 +165,7 @@ public class JaxRpcInvocationTest extends TestCase {
 
             /**
              * For JAX-RPC invocations the JAX-RPC MessageContex must be
-             * available in the javax.ejb.SessionContext via the getMessageContext
+             * available in the jakarta.ejb.SessionContext via the getMessageContext
              * method.  As per the agreement between OpenEJB and the Web Service Provider
              * the MessageContex should have been passed into the container.invoke method
              * and the container should then ensure it's available via the SessionContext

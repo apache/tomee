@@ -19,9 +19,9 @@ package org.superbiz.moviefun.rest;
 import org.superbiz.moviefun.Movie;
 import org.superbiz.moviefun.MoviesBean;
 
-import javax.ejb.EJB;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.ejb.EJB;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 @Path("load")
 public class LoadRest {

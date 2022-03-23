@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.jee.bval;
 
-import javax.validation.executable.ExecutableType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.validation.executable.ExecutableType;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class Adapter1
     extends XmlAdapter<String, ExecutableType>
@@ -25,7 +25,7 @@ public class Adapter1
 
 
     public ExecutableType unmarshal(String value) {
-        return (javax.validation.executable.ExecutableType.valueOf(value));
+        return (jakarta.validation.executable.ExecutableType.valueOf(value));
     }
 
     public String marshal(ExecutableType value) {

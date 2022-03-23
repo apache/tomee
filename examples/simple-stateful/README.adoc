@@ -29,7 +29,7 @@ methods are exposed as a local view.
 ----
 package org.superbiz.counter;
 
-import javax.ejb.Stateful;
+import jakarta.ejb.Stateful;
 
 /**
  * This is an EJB 3 style pojo stateful session bean
@@ -78,7 +78,7 @@ package org.superbiz.counter;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 public class CounterTest extends TestCase {
@@ -125,7 +125,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/simple-stateful
 INFO - openejb.base = /Users/dblevins/examples/simple-stateful
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/simple-stateful/target/classes

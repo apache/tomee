@@ -25,9 +25,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.jms.ConnectionFactory;
+import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
+import jakarta.jms.ConnectionFactory;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;

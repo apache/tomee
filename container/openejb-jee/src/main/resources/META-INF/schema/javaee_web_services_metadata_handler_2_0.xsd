@@ -31,7 +31,7 @@
 	handlerchains.
 
 	The Web Services Metadata for the Java Platform (JSR-181), Version 2.0
-	specification defines the @javax.jws.HandlerChain annotation
+	specification defines the @jakarta.jws.HandlerChain annotation
 	that refers to an XML descriptor conforming to this schema.
 
       </xsd:documentation>

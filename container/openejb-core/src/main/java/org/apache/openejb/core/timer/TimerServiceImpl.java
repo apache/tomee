@@ -17,11 +17,11 @@
 
 package org.apache.openejb.core.timer;
 
-import javax.ejb.EJBException;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
+import jakarta.ejb.TimerService;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;

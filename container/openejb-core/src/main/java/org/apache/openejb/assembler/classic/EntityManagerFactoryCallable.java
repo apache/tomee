@@ -25,12 +25,12 @@ import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectableBeanManager;
 
-import javax.enterprise.inject.spi.BeanManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.ValidationMode;
-import javax.persistence.spi.PersistenceProvider;
-import javax.transaction.Transaction;
-import javax.validation.ValidatorFactory;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.transaction.Transaction;
+import jakarta.validation.ValidatorFactory;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -87,14 +87,14 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             // Create entity manager factories with the validator factory
             final Map<String, Object> properties = new HashMap<>();
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
-                properties.put("javax.persistence.validation.factory",
+                properties.put("jakarta.persistence.validation.factory",
                         potentialValidators != null && potentialValidators.size() == 1 ? // optim to avoid lookups
                                 ensureSerializable(potentialValidators.values().iterator().next()) :
                                 new ValidatorFactoryWrapper(potentialValidators));
             }
             if (cdi && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty("tomee.jpa.cdi", "true"))
                     && "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jpa.cdi", "true"))) {
-                properties.put("javax.persistence.bean.manager",
+                properties.put("jakarta.persistence.bean.manager",
                         Proxy.newProxyInstance(appClassLoader, new Class<?>[]{BeanManager.class}, new BmHandler()));
             }
 

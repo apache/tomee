@@ -18,9 +18,9 @@ package org.apache.openejb.threads.task;
 
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 
-import javax.enterprise.concurrent.LastExecution;
-import javax.enterprise.concurrent.SkippedException;
-import javax.enterprise.concurrent.Trigger;
+import jakarta.enterprise.concurrent.LastExecution;
+import jakarta.enterprise.concurrent.SkippedException;
+import jakarta.enterprise.concurrent.Trigger;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;

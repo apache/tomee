@@ -27,8 +27,8 @@ import org.junit.runner.RunWith;
 import org.superbiz.entity.Product;
 import org.superbiz.service.ProductService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.List;
 

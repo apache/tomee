@@ -31,7 +31,7 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 import java.util.Properties;
 
 import static org.junit.Assert.assertNotNull;

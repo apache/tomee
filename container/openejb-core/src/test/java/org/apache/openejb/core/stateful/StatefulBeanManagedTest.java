@@ -28,19 +28,19 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.ejb.LocalBean;
-import javax.ejb.Remove;
-import javax.ejb.Stateful;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import jakarta.annotation.Resource;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
 import javax.naming.InitialContext;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.UserTransaction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -93,7 +93,7 @@ public class StatefulBeanManagedTest {
         assertNull(beanTwo.two());
     }
 
-    @Test(expected = javax.transaction.NotSupportedException.class)
+    @Test(expected = jakarta.transaction.NotSupportedException.class)
     public void testUnexpected() throws Exception {
 
         final MyBean beanOne = (MyBean) new InitialContext().lookup("MyBeanLocalBean");

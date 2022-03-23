@@ -53,22 +53,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import javax.decorator.Decorator;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.Remove;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Typed;
-import javax.enterprise.inject.spi.AnnotatedMethod;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanAttributes;
-import javax.enterprise.inject.spi.DefinitionException;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.SessionBeanType;
-import javax.interceptor.Interceptor;
-import javax.transaction.UserTransaction;
+import jakarta.decorator.Decorator;
+import jakarta.ejb.NoSuchEJBException;
+import jakarta.ejb.Remove;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.Typed;
+import jakarta.enterprise.inject.spi.AnnotatedMethod;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.BeanAttributes;
+import jakarta.enterprise.inject.spi.DefinitionException;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.inject.spi.SessionBeanType;
+import jakarta.interceptor.Interceptor;
+import jakarta.transaction.UserTransaction;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, DeploymentValidationService.BeanInterceptorInfoProvider {
     private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<>();
@@ -523,17 +523,17 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
             final CreationalContextImpl<T> ccImpl = CreationalContextImpl.class.cast(creationalContext);
             // super.produce(cc) will not work since we need the unproxied instance - decorator case
-            final Map<javax.enterprise.inject.spi.Interceptor<?>, Object> interceptorInstances
+            final Map<jakarta.enterprise.inject.spi.Interceptor<?>, Object> interceptorInstances
                     = webBeansContext.getInterceptorResolutionService().createInterceptorInstances(getInterceptorInfo(), ccImpl);
             final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = super.getInterceptorInfo();
             if (interceptorInfo != null) {
                 final Map<Constructor<?>, InterceptorResolutionService.BusinessMethodInterceptorInfo> constructorInterceptorInfos =
                         interceptorInfo.getConstructorInterceptorInfos();
                 if (!constructorInterceptorInfos.isEmpty()) { // were missed by OWB
-                    final javax.enterprise.inject.spi.Interceptor<?>[] ejbInterceptors = constructorInterceptorInfos.values().iterator().next().getEjbInterceptors();
+                    final jakarta.enterprise.inject.spi.Interceptor<?>[] ejbInterceptors = constructorInterceptorInfos.values().iterator().next().getEjbInterceptors();
 
                     if (null != ejbInterceptors) {
-                        for (final javax.enterprise.inject.spi.Interceptor interceptorBean : ejbInterceptors) {
+                        for (final jakarta.enterprise.inject.spi.Interceptor interceptorBean : ejbInterceptors) {
                             if (!interceptorInstances.containsKey(interceptorBean)) {
                                 ccImpl.putContextual(interceptorBean);
                                 interceptorInstances.put(interceptorBean, interceptorBean.create(ccImpl));

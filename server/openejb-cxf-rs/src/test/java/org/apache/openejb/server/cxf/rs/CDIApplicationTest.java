@@ -30,8 +30,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Application;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Application;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,7 +63,7 @@ public class CDIApplicationTest {
         return new WebApp()
             .contextRoot("foo")
             .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "javax.ws.rs.Application", MyCdiRESTApplication.class.getName());
+            .addInitParam("REST Application", "jakarta.ws.rs.Application", MyCdiRESTApplication.class.getName());
     }
 
     @Test

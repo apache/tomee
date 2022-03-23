@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.arquillian.embedded;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 public class SimpleApp extends Application {
 }

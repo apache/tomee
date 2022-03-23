@@ -21,9 +21,9 @@ import org.apache.openejb.test.entity.cmr.manytomany.GameLocalHome;
 import org.apache.openejb.test.entity.cmr.manytomany.PlatformLocal;
 import org.apache.openejb.test.entity.cmr.manytomany.PlatformLocalHome;
 
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
-import javax.ejb.TransactionRolledbackLocalException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.FinderException;
+import jakarta.ejb.TransactionRolledbackLocalException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

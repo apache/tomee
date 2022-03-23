@@ -26,11 +26,11 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.FinderException;
-import javax.ejb.RemoveException;
-import javax.ejb.NoSuchEntityException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.FinderException;
+import jakarta.ejb.RemoveException;
+import jakarta.ejb.NoSuchEntityException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -38,7 +38,7 @@ import javax.sql.DataSource;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public class BasicBmpBean implements javax.ejb.EntityBean {
+public class BasicBmpBean implements jakarta.ejb.EntityBean {
 
     //public static int keys = 100;
     public int primaryKey;
@@ -72,11 +72,11 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * Maps to BasicBmpHome.findEmptyCollection
      *
      * @return
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      * @see BasicBmpHome#sum
      */
     public java.util.Collection ejbFindEmptyCollection()
-        throws javax.ejb.FinderException, java.rmi.RemoteException {
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException {
         return new java.util.Vector();
     }
 
@@ -84,10 +84,10 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      * Maps to BasicBmpHome.findEmptyEnumeration()
      *
      * @return empty enumeration
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      */
     public java.util.Enumeration ejbFindEmptyEnumeration()
-        throws javax.ejb.FinderException {
+        throws jakarta.ejb.FinderException {
         return (new java.util.Vector()).elements();
     }
 
@@ -96,11 +96,11 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      *
      * @param primaryKey
      * @return
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      * @see BasicBmpHome#sum
      */
     public Integer ejbFindByPrimaryKey(final Integer primaryKey)
-        throws javax.ejb.FinderException {
+        throws jakarta.ejb.FinderException {
         boolean found = false;
         try {
             final InitialContext jndiContext = new InitialContext();
@@ -123,7 +123,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
         }
 
         if (found) return primaryKey;
-        else throw new javax.ejb.ObjectNotFoundException();
+        else throw new jakarta.ejb.ObjectNotFoundException();
     }
 
     /**
@@ -131,11 +131,11 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      *
      * @param lastName
      * @return
-     * @throws javax.ejb.FinderException
+     * @throws jakarta.ejb.FinderException
      * @see BasicBmpHome#sum
      */
     public java.util.Collection ejbFindByLastName(final String lastName)
-        throws javax.ejb.FinderException {
+        throws jakarta.ejb.FinderException {
         final java.util.Vector keys = new java.util.Vector();
         try {
             final InitialContext jndiContext = new InitialContext();
@@ -159,7 +159,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
         }
 
         if (keys.size() > 0) return keys;
-        else throw new javax.ejb.ObjectNotFoundException();
+        else throw new jakarta.ejb.ObjectNotFoundException();
     }
 
     /**
@@ -167,11 +167,11 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
      *
      * @param name
      * @return
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see BasicBmpHome#createObject
      */
     public Integer ejbCreateObject(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         try {
             final StringTokenizer st = new StringTokenizer(name, " ");
             firstName = st.nextToken();
@@ -216,12 +216,12 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.CreateException("can't create: " + e.getClass().getName() + " " + e.getMessage());
+            throw new jakarta.ejb.CreateException("can't create: " + e.getClass().getName() + " " + e.getMessage());
         }
     }
 
     public void ejbPostCreateObject(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
     }
 
     //    
@@ -411,7 +411,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            throw new javax.ejb.EJBException(e);
+            throw new jakarta.ejb.EJBException(e);
         }
     }
 

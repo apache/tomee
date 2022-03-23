@@ -32,9 +32,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServicePool;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Remote;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Remote;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

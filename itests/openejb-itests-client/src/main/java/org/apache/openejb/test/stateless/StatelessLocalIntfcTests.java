@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class StatelessLocalIntfcTests extends BasicStatelessLocalTestClient {
 

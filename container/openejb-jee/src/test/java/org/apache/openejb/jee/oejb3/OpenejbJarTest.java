@@ -20,11 +20,11 @@ package org.apache.openejb.jee.oejb3;
 import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.ValidationEvent;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;

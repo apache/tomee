@@ -49,7 +49,7 @@ public class TempClassLoaderTest {
         assertSame(tempCL, clazz.getClassLoader());
 
         // classes in java.* should not be loaded by the temp class loader
-        clazz = tempCL.loadClass(javax.persistence.EntityManager.class.getName());
+        clazz = tempCL.loadClass(jakarta.persistence.EntityManager.class.getName());
         assertNotSame(tempCL, clazz.getClassLoader());
 
         // classes in javax.* should not be loaded by the temp class loader
@@ -73,7 +73,7 @@ public class TempClassLoaderTest {
         assertSame(tempCL, clazz.getClassLoader());
 
         // classes in java.* should not be loaded by the temp class loader
-        clazz = tempCL.loadClass(javax.persistence.EntityManager.class.getName());
+        clazz = tempCL.loadClass(jakarta.persistence.EntityManager.class.getName());
         assertNotSame(tempCL, clazz.getClassLoader());
 
         // classes in javax.* should not be loaded by the temp class loader

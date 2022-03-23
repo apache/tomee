@@ -16,7 +16,7 @@
  */
 package org.superbiz.ejblookup;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  * This is an EJB 3 local business interface

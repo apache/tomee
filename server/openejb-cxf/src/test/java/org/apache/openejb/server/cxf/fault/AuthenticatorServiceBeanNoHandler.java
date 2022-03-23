@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.server.cxf.fault;
 
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 /**
  * @version $Rev$

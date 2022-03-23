@@ -16,8 +16,8 @@
  */
 package org.superbiz.designbycontract;
 
-import javax.ejb.Stateless;
-import javax.validation.constraints.Min;
+import jakarta.ejb.Stateless;
+import jakarta.validation.constraints.Min;
 
 @Stateless
 public class PoleVaultingManagerBean {

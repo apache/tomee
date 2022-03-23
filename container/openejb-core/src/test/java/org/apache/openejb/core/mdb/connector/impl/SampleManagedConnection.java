@@ -20,9 +20,9 @@ package org.apache.openejb.core.mdb.connector.impl;
 
 import org.apache.openejb.core.mdb.connector.api.SampleConnection;
 
-import javax.resource.NotSupportedException;
-import javax.resource.ResourceException;
-import javax.resource.spi.*;
+import jakarta.resource.NotSupportedException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.*;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 import java.io.PrintWriter;

@@ -43,8 +43,8 @@ Un ejemplo más completo podría verse así:
 ----
 package org.superbiz.injection.enventry;
 
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Singleton;
 import java.util.Date;
 
 @Singleton
@@ -217,7 +217,7 @@ package org.superbiz.injection.enventry;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.Date;
 
@@ -252,13 +252,13 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/injection-of-env-entry
 INFO - openejb.base = /Users/dblevins/examples/injection-of-env-entry
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-env-entry/target/classes
 INFO - Beginning load: /Users/dblevins/examples/injection-of-env-entry/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-env-entry
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
 INFO - Auto-creating a container for bean Configuration: Container(type=SINGLETON, id=Default Singleton Container)
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)

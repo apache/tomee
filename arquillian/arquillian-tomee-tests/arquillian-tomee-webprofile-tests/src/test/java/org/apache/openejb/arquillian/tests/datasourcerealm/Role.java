@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.datasourcerealm;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_roles")

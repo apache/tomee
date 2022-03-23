@@ -20,7 +20,7 @@ package org.apache.openejb.test.mdb;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.TestManager;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 /**
  * [4] Should be run as the fourth test suite of the StatefulTestClients

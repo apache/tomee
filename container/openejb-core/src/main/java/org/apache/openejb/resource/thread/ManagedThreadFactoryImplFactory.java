@@ -19,7 +19,7 @@ package org.apache.openejb.resource.thread;
 
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 
-import javax.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 
 public class ManagedThreadFactoryImplFactory {
     private String prefix = "openejb-managed-thread-";

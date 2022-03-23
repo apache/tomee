@@ -19,10 +19,10 @@ package org.apache.openejb.test.stateless;
 import org.apache.openejb.test.object.Color;
 import org.apache.openejb.test.object.ObjectGraph;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
 import java.rmi.RemoteException;
 
 public class StatelessRmiIiopTests extends StatelessTestClient {

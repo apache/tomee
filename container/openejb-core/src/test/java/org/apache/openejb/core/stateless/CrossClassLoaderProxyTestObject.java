@@ -19,9 +19,9 @@ package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
 
-import javax.ejb.EJBMetaData;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;

@@ -19,7 +19,7 @@ package org.superbiz.cmp2;
 /**
  * @version $Revision$ $Date$
  */
-public interface Movie extends javax.ejb.EJBLocalObject {
+public interface Movie extends jakarta.ejb.EJBLocalObject {
 
     java.lang.Integer getId();
 

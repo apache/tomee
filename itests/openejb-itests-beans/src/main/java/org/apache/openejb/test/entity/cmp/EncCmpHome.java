@@ -17,13 +17,13 @@
 package org.apache.openejb.test.entity.cmp;
 
 
-public interface EncCmpHome extends javax.ejb.EJBHome {
+public interface EncCmpHome extends jakarta.ejb.EJBHome {
 
 
     public EncCmpObject create(String name)
-        throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 
     public EncCmpObject findByPrimaryKey(Integer primarykey)
-        throws javax.ejb.FinderException, java.rmi.RemoteException;
+        throws jakarta.ejb.FinderException, java.rmi.RemoteException;
 
 }

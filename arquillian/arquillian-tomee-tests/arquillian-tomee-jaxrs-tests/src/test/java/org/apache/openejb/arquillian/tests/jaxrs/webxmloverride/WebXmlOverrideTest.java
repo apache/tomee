@@ -29,8 +29,8 @@ import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.Application;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;

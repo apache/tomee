@@ -19,18 +19,18 @@ In this case, it is to respond to the user. The `respond` method shows how a Mes
 ----
 package org.superbiz.mdb;
 
-import javax.annotation.Resource;
-import javax.ejb.MessageDriven;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.ejb.MessageDriven;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 @MessageDriven
 public class ChatBean implements MessageListener {
@@ -100,16 +100,16 @@ package org.superbiz.mdb;
 
 import junit.framework.TestCase;
 
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 public class ChatBeanTest extends TestCase {
 
@@ -176,25 +176,25 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/simple-mdb
 INFO - openejb.base = /Users/dblevins/examples/simple-mdb
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/simple-mdb/target/classes
 INFO - Beginning load: /Users/dblevins/examples/simple-mdb/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/simple-mdb
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
-INFO - Auto-configuring a message driven bean ChatBean destination ChatBean to be destinationType javax.jms.Queue
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
+INFO - Auto-configuring a message driven bean ChatBean destination ChatBean to be destinationType jakarta.jms.Queue
 INFO - Configuring Service(id=Default MDB Container, type=Container, provider-id=Default MDB Container)
 INFO - Auto-creating a container for bean ChatBean: Container(type=MESSAGE, id=Default MDB Container)
 INFO - Configuring Service(id=Default JMS Resource Adapter, type=Resource, provider-id=Default JMS Resource Adapter)
 INFO - Configuring Service(id=Default JMS Connection Factory, type=Resource, provider-id=Default JMS Connection Factory)
-INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'javax.jms.ConnectionFactory for 'ChatBean'.
+INFO - Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'jakarta.jms.ConnectionFactory for 'ChatBean'.
 INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdb.ChatBean/connectionFactory' in bean ChatBean to Resource(id=Default JMS Connection Factory)
 INFO - Configuring Service(id=AnswerQueue, type=Resource, provider-id=Default Queue)
-INFO - Auto-creating a Resource with id 'AnswerQueue' of type 'javax.jms.Queue for 'ChatBean'.
+INFO - Auto-creating a Resource with id 'AnswerQueue' of type 'jakarta.jms.Queue for 'ChatBean'.
 INFO - Auto-linking resource-env-ref 'java:comp/env/AnswerQueue' in bean ChatBean to Resource(id=AnswerQueue)
 INFO - Configuring Service(id=ChatBean, type=Resource, provider-id=Default Queue)
-INFO - Auto-creating a Resource with id 'ChatBean' of type 'javax.jms.Queue for 'ChatBean'.
+INFO - Auto-creating a Resource with id 'ChatBean' of type 'jakarta.jms.Queue for 'ChatBean'.
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 INFO - Auto-creating a container for bean org.superbiz.mdb.ChatBeanTest: Container(type=MANAGED, id=Default Managed Container)
 INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.mdb.ChatBeanTest/connectionFactory' in bean org.superbiz.mdb.ChatBeanTest to Resource(id=Default JMS Connection Factory)

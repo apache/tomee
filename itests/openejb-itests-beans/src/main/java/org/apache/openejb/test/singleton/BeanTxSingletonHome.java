@@ -17,8 +17,8 @@
 package org.apache.openejb.test.singleton;
 
 
-public interface BeanTxSingletonHome extends javax.ejb.EJBHome {
+public interface BeanTxSingletonHome extends jakarta.ejb.EJBHome {
 
     public BeanTxSingletonObject create()
-        throws javax.ejb.CreateException, java.rmi.RemoteException;
+        throws jakarta.ejb.CreateException, java.rmi.RemoteException;
 }

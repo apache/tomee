@@ -31,7 +31,7 @@ import org.superbiz.Manager;
 import org.superbiz.ManagerFactory;
 import org.superbiz.projectstage.util.ProjectStageProducer;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 

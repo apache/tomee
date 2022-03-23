@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.singleton;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 public class SingletonPojoHandleTests extends BasicSingletonTestClient {
 

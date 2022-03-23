@@ -50,19 +50,19 @@
       <exclusions>
         <exclusion>
           <groupId>org.eclipse.persistence</groupId>
-          <artifactId>javax.persistence</artifactId>
+          <artifactId>jakarta.persistence</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.eclipse.persistence</groupId>
           <artifactId>jakarta.persistence</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.validation</groupId>
+          <groupId>jakarta.validation</groupId>
           <artifactId>validation-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.glassfish</groupId>
-          <artifactId>javax.json</artifactId>
+          <artifactId>jakarta.json</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

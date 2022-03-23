@@ -19,7 +19,7 @@ package jug.client.command.impl;
 import jug.client.command.api.AbstractCommand;
 import jug.client.command.api.Command;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.util.Map;
 
 @Command(name = "help", usage = "help", description = "print this help")

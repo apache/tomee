@@ -26,18 +26,18 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.AfterClass;
 
-import javax.ejb.AccessTimeout;
-import javax.ejb.Local;
-import javax.ejb.Lock;
-import javax.ejb.Remote;
+import jakarta.ejb.AccessTimeout;
+import jakarta.ejb.Local;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Remote;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
+import static jakarta.ejb.LockType.READ;
+import static jakarta.ejb.LockType.WRITE;
 
 /**
  * @version $Rev$ $Date$

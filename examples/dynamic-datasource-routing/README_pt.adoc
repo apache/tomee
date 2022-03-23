@@ -176,10 +176,10 @@ Aqui temos um bean sem estado `RoutedPersister` que usa nosso
 ----
 package org.superbiz.dynamicdatasourcerouting;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Stateless
 public class RoutedPersister {
@@ -376,7 +376,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/dynamic-datasource-routing
 INFO - openejb.base = /Users/dblevins/examples/dynamic-datasource-routing
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=My Router, type=Resource, provider-id=DeterminedRouter)
@@ -387,7 +387,7 @@ INFO - Configuring Service(id=database1, type=Resource, provider-id=Default JDBC
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/dynamic-datasource-routing/target/classes
 INFO - Beginning load: /Users/dblevins/examples/dynamic-datasource-routing/target/classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/dynamic-datasource-routing
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
 INFO - Auto-creating a container for bean BoostrapUtility: Container(type=SINGLETON, id=Default Singleton Container)
 INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)

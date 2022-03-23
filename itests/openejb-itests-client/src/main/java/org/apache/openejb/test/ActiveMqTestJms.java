@@ -19,7 +19,7 @@ package org.apache.openejb.test;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import java.util.Properties;
 
 /**

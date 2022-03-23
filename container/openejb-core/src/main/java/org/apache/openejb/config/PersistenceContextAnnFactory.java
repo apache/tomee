@@ -26,9 +26,9 @@ import org.apache.xbean.asm9.MethodVisitor;
 import org.apache.xbean.asm9.Opcodes;
 import org.apache.xbean.asm9.shade.commons.EmptyVisitor;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceProperty;
-import javax.persistence.SynchronizationType;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceProperty;
+import jakarta.persistence.SynchronizationType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class PersistenceContextAnnFactory {
         boolean isPersistenceContextAnnotationValid = false;
         try {
             // Tomcat persistence context class is missing the properties method
-            final Class<?> persistenceContextClass = Class.forName("javax.persistence.PersistenceContext");
+            final Class<?> persistenceContextClass = Class.forName("jakarta.persistence.PersistenceContext");
             persistenceContextClass.getMethod("properties", (Class[]) null);
             isPersistenceContextAnnotationValid = true;
         } catch (final Exception e) {

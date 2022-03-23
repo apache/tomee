@@ -21,8 +21,8 @@ import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
 
 import java.sql.SQLException;
 import javax.sql.CommonDataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
 
 public class ManagedXAConnection extends ManagedConnection {

@@ -20,7 +20,7 @@ import org.apache.myfaces.spi.AnnotationProvider;
 import org.apache.myfaces.spi.AnnotationProviderFactory;
 import org.apache.myfaces.spi.impl.DefaultAnnotationProviderFactory;
 
-import javax.faces.context.ExternalContext;
+import jakarta.faces.context.ExternalContext;
 
 public class TomEEAnnotationProviderFactory extends AnnotationProviderFactory {
     @Override

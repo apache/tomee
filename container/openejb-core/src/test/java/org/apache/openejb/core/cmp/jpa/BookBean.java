@@ -27,8 +27,8 @@ import org.apache.openejb.core.cmp.cmp2.SetValuedCmr;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
 import java.util.HashSet;
 import java.util.Set;
 

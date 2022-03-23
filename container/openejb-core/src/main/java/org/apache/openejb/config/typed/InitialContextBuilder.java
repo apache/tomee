@@ -20,9 +20,9 @@ package org.apache.openejb.config.typed;
 import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.typed.util.Builders;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)

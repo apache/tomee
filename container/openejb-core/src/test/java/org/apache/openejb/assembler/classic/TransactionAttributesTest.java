@@ -30,22 +30,22 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.AfterClass;
 
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.Local;
-import javax.ejb.LocalBean;
-import javax.ejb.Remote;
-import javax.ejb.TransactionAttribute;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.EJBTransactionRequiredException;
+import jakarta.ejb.Local;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Remote;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import static javax.ejb.TransactionAttributeType.MANDATORY;
-import static javax.ejb.TransactionAttributeType.NEVER;
-import static javax.ejb.TransactionAttributeType.NOT_SUPPORTED;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static jakarta.ejb.TransactionAttributeType.MANDATORY;
+import static jakarta.ejb.TransactionAttributeType.NEVER;
+import static jakarta.ejb.TransactionAttributeType.NOT_SUPPORTED;
+import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
 import static org.apache.openejb.assembler.classic.MethodTransactionBuilder.normalize;
 

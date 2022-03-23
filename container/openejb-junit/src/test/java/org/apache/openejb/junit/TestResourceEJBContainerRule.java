@@ -22,7 +22,7 @@ import org.apache.openejb.junit.jee.config.Properties;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;

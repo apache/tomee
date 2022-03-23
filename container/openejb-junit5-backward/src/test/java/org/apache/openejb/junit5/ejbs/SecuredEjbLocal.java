@@ -17,7 +17,7 @@
 
 package org.apache.openejb.junit5.ejbs;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 @Local
 public interface SecuredEjbLocal {

@@ -16,7 +16,7 @@
  */
 package org.superbiz.remote;
 
-public interface Greetings extends javax.ejb.SessionBean {
+public interface Greetings extends jakarta.ejb.SessionBean {
 
     String morning(String name);
 

@@ -18,7 +18,7 @@ package org.apache.tomee.security.http;
 
 import org.apache.tomcat.util.buf.ByteChunk;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -119,7 +119,7 @@ public final class SavedRequest {
 
 
     /**
-     * The request URI associated with this Request. See javax.servlet.http.HttpServletRequest#getRequestURI().
+     * The request URI associated with this Request. See jakarta.servlet.http.HttpServletRequest#getRequestURI().
      */
     private String requestURI = null;
 
@@ -133,7 +133,7 @@ public final class SavedRequest {
 
 
     /**
-     * The decode request URL associated with this Request. See javax.servlet.http.HttpServletRequest#getRequestURL().
+     * The decode request URL associated with this Request. See jakarta.servlet.http.HttpServletRequest#getRequestURL().
      */
     private String requestURL = null;
 

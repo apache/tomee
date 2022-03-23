@@ -23,10 +23,10 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertTrue;
 

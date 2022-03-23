@@ -19,8 +19,8 @@ package org.apache.openejb.core.cmp;
 
 import org.apache.openejb.OpenEJBException;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityBean;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityBean;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;

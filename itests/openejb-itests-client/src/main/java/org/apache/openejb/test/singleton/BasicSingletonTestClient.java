@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.singleton;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 public abstract class BasicSingletonTestClient extends SingletonTestClient {
 

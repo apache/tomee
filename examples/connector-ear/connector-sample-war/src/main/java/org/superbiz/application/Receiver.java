@@ -19,10 +19,10 @@ package org.superbiz.application;
 
 import org.superbiz.connector.api.InboundListener;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.MessageDriven;
-import javax.ejb.MessageDrivenContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.MessageDriven;
+import jakarta.ejb.MessageDrivenContext;
 
 @MessageDriven(name = "Receiver")
 public class Receiver implements InboundListener {

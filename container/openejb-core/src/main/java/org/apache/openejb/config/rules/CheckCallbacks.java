@@ -34,15 +34,15 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.Timer;
 import org.apache.xbean.finder.ClassFinder;
 
-import javax.ejb.AfterBegin;
-import javax.ejb.AfterCompletion;
-import javax.ejb.BeforeCompletion;
-import javax.ejb.Init;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Remove;
-import javax.ejb.SessionSynchronization;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.AfterBegin;
+import jakarta.ejb.AfterCompletion;
+import jakarta.ejb.BeforeCompletion;
+import jakarta.ejb.Init;
+import jakarta.ejb.PostActivate;
+import jakarta.ejb.PrePassivate;
+import jakarta.ejb.Remove;
+import jakarta.ejb.SessionSynchronization;
+import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -327,7 +327,7 @@ public class CheckCallbacks extends ValidationBase {
                     }
 
                 }
-                // @AfterCompletion, @BeforeCompletion and @AfterBegin are assumed to be allowed to be used on Stateful bean implementing javax.ejb.SessionBean
+                // @AfterCompletion, @BeforeCompletion and @AfterBegin are assumed to be allowed to be used on Stateful bean implementing jakarta.ejb.SessionBean
             }
             final Class<?> returnType = method.getReturnType();
 
@@ -361,7 +361,7 @@ public class CheckCallbacks extends ValidationBase {
     private boolean implementsSessionBean(final Class<?> ejbClass) {
         final Class<?>[] interfaces = ejbClass.getInterfaces();
         for (final Class<?> interfce : interfaces) {
-            if (interfce.equals(javax.ejb.SessionBean.class)) {
+            if (interfce.equals(jakarta.ejb.SessionBean.class)) {
                 return true;
             }
         }

@@ -31,8 +31,8 @@ import org.superbiz.store.rest.OrderRest;
 import org.superbiz.store.rest.RestApplication;
 import org.superbiz.store.service.OrderService;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

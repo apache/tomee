@@ -22,7 +22,7 @@ import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
 import org.apache.openejb.core.timer.TimerExpiredException;
 import org.junit.Test;
 
-import javax.ejb.ScheduleExpression;
+import jakarta.ejb.ScheduleExpression;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

@@ -89,7 +89,7 @@
             <authentication-mechanism id="ID109">
                 <description xml:lang="en-US" id="ID111">description6</description>
                 <authentication-mechanism-type>authentication-mechanism-type0</authentication-mechanism-type>
-                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+                <credential-interface>jakarta.resource.spi.security.PasswordCredential</credential-interface>
             </authentication-mechanism>
             <reauthentication-support>true</reauthentication-support>
         </outbound-resourceadapter>

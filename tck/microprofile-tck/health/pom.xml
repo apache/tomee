@@ -88,8 +88,8 @@
       <version>${microprofile.health.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>jakarta.inject</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

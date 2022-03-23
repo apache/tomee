@@ -12,8 +12,8 @@ right to edit this page._
 ----
 package org.superbiz.injection.tx;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Revision$ $Date$
@@ -36,10 +36,10 @@ package org.superbiz.injection.tx.api;
 
 import org.superbiz.injection.tx.AddInterceptor;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -69,10 +69,10 @@ package org.superbiz.injection.tx.api;
 
 import org.superbiz.injection.tx.DeleteInterceptor;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -118,8 +118,8 @@ public @interface Metatype {
 ----
 package org.superbiz.injection.tx.api;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -141,9 +141,9 @@ public @interface MovieUnit {
 ----
 package org.superbiz.injection.tx.api;
 
-import javax.annotation.security.PermitAll;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.security.PermitAll;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -170,8 +170,8 @@ public @interface Read {
 ----
 package org.superbiz.injection.tx;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Revision$ $Date$
@@ -192,7 +192,7 @@ public class DeleteInterceptor {
 ----
 package org.superbiz.injection.tx;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Movie {
@@ -248,9 +248,9 @@ import org.superbiz.injection.tx.api.Delete;
 import org.superbiz.injection.tx.api.MovieUnit;
 import org.superbiz.injection.tx.api.Read;
 
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.List;
 
 //END SNIPPET: code
@@ -306,17 +306,17 @@ package org.superbiz.injection.tx;
 
 import junit.framework.TestCase;
 
-import javax.annotation.security.RunAs;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.annotation.security.RunAs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 
 /**
  * See the transaction-rollback example as it does the same thing
@@ -377,7 +377,7 @@ public class MoviesTest extends TestCase {
                 }
             });
             fail("The Movies bean should be using TransactionAttributeType.MANDATORY");
-        } catch (javax.ejb.EJBException e) {
+        } catch (jakarta.ejb.EJBException e) {
             // good, our Movies bean is using TransactionAttributeType.MANDATORY as we want
         }
     }
@@ -425,7 +425,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/movies-complete-meta
 INFO - openejb.base = /Users/dblevins/examples/movies-complete-meta
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)

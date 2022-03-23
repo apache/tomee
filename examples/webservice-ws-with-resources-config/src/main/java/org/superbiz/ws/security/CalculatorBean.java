@@ -16,8 +16,8 @@
  */
 package org.superbiz.ws.security;
 
-import javax.ejb.Singleton;
-import javax.jws.WebService;
+import jakarta.ejb.Singleton;
+import jakarta.jws.WebService;
 
 @Singleton
 @WebService

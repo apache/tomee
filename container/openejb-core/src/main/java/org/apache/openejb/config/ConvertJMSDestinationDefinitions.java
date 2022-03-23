@@ -48,12 +48,12 @@ public class ConvertJMSDestinationDefinitions extends BaseConvertDefinitions {
     private Resource toResource(final JMSDestination factory) {
         final String name = cleanUpName(factory.getName());
 
-        final Resource factoryResource = new Resource(name, javax.jms.ConnectionFactory.class.getName());
+        final Resource factoryResource = new Resource(name, jakarta.jms.ConnectionFactory.class.getName());
 
         factoryResource.setJndi(factory.getName().replaceFirst("java:", ""));
         factoryResource.setType(
             factory.getInterfaceName() != null && !factory.getInterfaceName().isEmpty() ?
-                factory.getInterfaceName() : "javax.jms.Queue");
+                factory.getInterfaceName() : "jakarta.jms.Queue");
         if (factory.getClassName() != null && !factory.getClassName().isEmpty()) {
             factoryResource.setClassName(factory.getClassName());
         }

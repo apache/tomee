@@ -16,8 +16,8 @@
  */
 package org.superbiz.injection.jpa;
 
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Singleton;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -17,9 +17,9 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @IdClass(ComplexId.class)

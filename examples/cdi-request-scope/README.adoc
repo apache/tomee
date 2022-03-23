@@ -135,7 +135,7 @@ Apache OpenEJB 7.0.0-SNAPSHOT    build: 20111224-11:09
 http://tomee.apache.org/
 INFO - openejb.home = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
 INFO - openejb.base = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope\target\classes

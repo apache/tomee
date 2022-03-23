@@ -87,8 +87,8 @@ import org.apache.openejb.resource.jdbc.PasswordCipher;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.annotation.Resource;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -194,14 +194,14 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/datasource-ciphered-password
 INFO - openejb.base = /Users/dblevins/examples/datasource-ciphered-password
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=ProtectedDatasource, type=Resource, provider-id=Default JDBC Database)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/datasource-ciphered-password/target/test-classes
 INFO - Beginning load: /Users/dblevins/examples/datasource-ciphered-password/target/test-classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/datasource-ciphered-password
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 INFO - Auto-creating a container for bean datasource-ciphered-password.Comp: Container(type=MANAGED, id=Default Managed Container)
 INFO - Auto-linking resource-ref 'java:comp/env/org.superbiz.DataSourceCipheredExampleTest/dataSource' in bean datasource-ciphered-password.Comp to Resource(id=ProtectedDatasource)

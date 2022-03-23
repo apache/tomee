@@ -22,10 +22,10 @@ import org.apache.activemq.AsyncCallback;
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.ProducerId;
 
-import javax.jms.CompletionListener;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.CompletionListener;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 public class TomEEProducer extends ActiveMQMessageProducer {
     private final ActiveMQDestination destination;

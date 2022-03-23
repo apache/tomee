@@ -95,13 +95,13 @@
             </ejb-local-ref>
             <resource-ref>
                 <res-ref-name>jms/QueueConnectionFactory</res-ref-name>
-                <res-type>javax.jms.QueueConnectionFactory</res-type>
+                <res-type>jakarta.jms.QueueConnectionFactory</res-type>
                 <res-auth>Application</res-auth>
                 <res-sharing-scope>Shareable</res-sharing-scope>
             </resource-ref>
             <resource-ref>
                 <res-ref-name>jms/TopicConnectionFactory</res-ref-name>
-                <res-type>javax.jms.TopicConnectionFactory</res-type>
+                <res-type>jakarta.jms.TopicConnectionFactory</res-type>
                 <res-auth>Application</res-auth>
                 <res-sharing-scope>Shareable</res-sharing-scope>
             </resource-ref>
@@ -113,13 +113,13 @@
             </resource-ref>
             <message-destination-ref>
                 <message-destination-ref-name>jms/TradeBrokerQueue</message-destination-ref-name>
-                <message-destination-type>javax.jms.Queue</message-destination-type>
+                <message-destination-type>jakarta.jms.Queue</message-destination-type>
                 <message-destination-usage>Produces</message-destination-usage>
                 <message-destination-link>TradeBrokerQueue</message-destination-link>
             </message-destination-ref>
             <message-destination-ref>
                 <message-destination-ref-name>jms/TradeStreamerTopic</message-destination-ref-name>
-                <message-destination-type>javax.jms.Topic</message-destination-type>
+                <message-destination-type>jakarta.jms.Topic</message-destination-type>
                 <message-destination-usage>Produces</message-destination-usage>
                 <message-destination-link>TradeStreamerTopic</message-destination-link>
             </message-destination-ref>
@@ -154,25 +154,25 @@
             </env-entry>
             <resource-ref>
                 <res-ref-name>jms/QueueConnectionFactory</res-ref-name>
-                <res-type>javax.jms.QueueConnectionFactory</res-type>
+                <res-type>jakarta.jms.QueueConnectionFactory</res-type>
                 <res-auth>Application</res-auth>
                 <res-sharing-scope>Shareable</res-sharing-scope>
             </resource-ref>
             <resource-ref>
                 <res-ref-name>jms/TopicConnectionFactory</res-ref-name>
-                <res-type>javax.jms.TopicConnectionFactory</res-type>
+                <res-type>jakarta.jms.TopicConnectionFactory</res-type>
                 <res-auth>Application</res-auth>
                 <res-sharing-scope>Shareable</res-sharing-scope>
             </resource-ref>
             <message-destination-ref>
                 <message-destination-ref-name>jms/TradeBrokerQueue</message-destination-ref-name>
-                <message-destination-type>javax.jms.Queue</message-destination-type>
+                <message-destination-type>jakarta.jms.Queue</message-destination-type>
                 <message-destination-usage>Produces</message-destination-usage>
                 <message-destination-link>TradeBrokerQueue</message-destination-link>
             </message-destination-ref>
             <message-destination-ref>
                 <message-destination-ref-name>jms/TradeStreamerTopic</message-destination-ref-name>
-                <message-destination-type>javax.jms.Topic</message-destination-type>
+                <message-destination-type>jakarta.jms.Topic</message-destination-type>
                 <message-destination-usage>Produces</message-destination-usage>
                 <message-destination-link>TradeStreamerTopic</message-destination-link>
             </message-destination-ref>
@@ -284,7 +284,7 @@
             <ejb-name>TradeBrokerMDB</ejb-name>
             <ejb-class>org.apache.geronimo.samples.daytrader.ejb.TradeBrokerMDB</ejb-class>
             <transaction-type>Container</transaction-type>
-            <message-destination-type>javax.jms.Queue</message-destination-type>
+            <message-destination-type>jakarta.jms.Queue</message-destination-type>
             <message-destination-link>TradeBrokerQueue</message-destination-link>
             <env-entry>
                 <env-entry-name>statInterval</env-entry-name>
@@ -714,7 +714,7 @@
             <ejb-name>TradeStreamerMDB</ejb-name>
             <ejb-class>org.apache.geronimo.samples.daytrader.ejb.TradeStreamerMDB</ejb-class>
             <transaction-type>Container</transaction-type>
-            <message-destination-type>javax.jms.Topic</message-destination-type>
+            <message-destination-type>jakarta.jms.Topic</message-destination-type>
             <message-destination-link>TradeStreamerTopic</message-destination-link>
             <env-entry>
                 <env-entry-name>statInterval</env-entry-name>

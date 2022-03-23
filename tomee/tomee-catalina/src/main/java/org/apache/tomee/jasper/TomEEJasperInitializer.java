@@ -19,7 +19,7 @@ package org.apache.tomee.jasper;
 import org.apache.jasper.servlet.JasperInitializer;
 import org.apache.jasper.servlet.TldScanner;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 // drop it and TomEETldScanner if tomcat is able to share tld scanning
 public class TomEEJasperInitializer extends JasperInitializer {

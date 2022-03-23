@@ -21,7 +21,7 @@ import org.apache.openejb.server.ServerRuntimeException;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 
-import javax.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,10 +78,10 @@ class SaajFactoryFinder {
 
     private static Map<String, String> createSAAJInfo(String messageFactory, String soapFactory, String soapConnectionFactory, String metaFactory) {
         Map<String, String> map = new HashMap<>();
-        map.put("javax.xml.soap.MessageFactory", messageFactory);
-        map.put("javax.xml.soap.SOAPFactory", soapFactory);
-        map.put("javax.xml.soap.SOAPConnectionFactory", soapConnectionFactory);
-        map.put("javax.xml.soap.MetaFactory", metaFactory);
+        map.put("jakarta.xml.soap.MessageFactory", messageFactory);
+        map.put("jakarta.xml.soap.SOAPFactory", soapFactory);
+        map.put("jakarta.xml.soap.SOAPConnectionFactory", soapConnectionFactory);
+        map.put("jakarta.xml.soap.MetaFactory", metaFactory);
         return map;
     }
 

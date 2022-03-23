@@ -23,7 +23,7 @@
   <artifactId>injection-of-connectionfactory</artifactId>
   <packaging>jar</packaging>
   <version>9.0.0-M8-SNAPSHOT</version>
-  <name>TomEE :: Examples :: @Resource javax.jms.ConnectionFactory</name>
+  <name>TomEE :: Examples :: @Resource jakarta.jms.ConnectionFactory</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

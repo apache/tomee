@@ -19,8 +19,8 @@ package org.apache.bval.jsr.job;
 import org.apache.bval.jsr.ConstraintCached;
 import org.apache.bval.jsr.descriptor.ConstraintD;
 
-import javax.validation.ConstraintDeclarationException;
-import javax.validation.constraintvalidation.ValidationTarget;
+import jakarta.validation.ConstraintDeclarationException;
+import jakarta.validation.constraintvalidation.ValidationTarget;
 import java.lang.annotation.Annotation;
 
 /**

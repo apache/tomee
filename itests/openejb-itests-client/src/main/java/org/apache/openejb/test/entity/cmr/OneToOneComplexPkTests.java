@@ -24,8 +24,8 @@ import org.apache.openejb.test.entity.cmr.onetoone.PersonLocal;
 import org.apache.openejb.test.entity.cmr.onetoone.PersonLocalHome;
 import org.apache.openejb.test.entity.cmr.onetoone.PersonPk;
 
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.FinderException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

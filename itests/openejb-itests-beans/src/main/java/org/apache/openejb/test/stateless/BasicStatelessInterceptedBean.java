@@ -19,13 +19,13 @@ package org.apache.openejb.test.stateless;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.ExcludeClassInterceptors;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.ExcludeClassInterceptors;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 
 import org.apache.openejb.test.SuperInterceptedBean;
 import org.apache.openejb.test.interceptor.ClassInterceptor;

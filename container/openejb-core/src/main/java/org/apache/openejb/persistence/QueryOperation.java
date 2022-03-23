@@ -17,7 +17,7 @@
 
 package org.apache.openejb.persistence;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 public interface QueryOperation {
     Query apply(final Query query);

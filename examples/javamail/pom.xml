@@ -66,11 +66,11 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[8.0,)</version>
+      <version>[9.0,)</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.mail</groupId>
+      <groupId>jakarta.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4</version>
       <scope>provided</scope>

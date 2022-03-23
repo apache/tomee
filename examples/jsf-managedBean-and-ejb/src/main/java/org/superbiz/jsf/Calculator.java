@@ -16,7 +16,7 @@
  */
 package org.superbiz.jsf;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 @Local
 public interface Calculator {

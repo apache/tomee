@@ -36,7 +36,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.event.Observes;
+import jakarta.enterprise.event.Observes;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;

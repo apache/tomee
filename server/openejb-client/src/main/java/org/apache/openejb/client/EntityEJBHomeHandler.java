@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.client;
 
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.concurrent.ThreadPoolExecutor;

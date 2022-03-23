@@ -23,9 +23,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.ApplicationException;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.ejb.ApplicationException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 
 @RunWith(ApplicationComposer.class)
 public class AppExceptionTest {

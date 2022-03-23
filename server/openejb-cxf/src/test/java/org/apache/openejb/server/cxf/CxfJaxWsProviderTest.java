@@ -25,7 +25,7 @@ import org.apache.openejb.server.cxf.fault.WrongPasswordRuntimeException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;

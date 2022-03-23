@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 import java.sql.Connection;
 
 /**

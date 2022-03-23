@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateful;
 
-import javax.ejb.EJBHome;
+import jakarta.ejb.EJBHome;
 
 /**
  * [8] Should be run as the eigth test suite of the BasicStatefulTestClients

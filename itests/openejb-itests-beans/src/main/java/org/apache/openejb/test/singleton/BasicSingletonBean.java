@@ -19,11 +19,11 @@ package org.apache.openejb.test.singleton;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
-import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -132,9 +132,9 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
     }
 
     /**
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      */
-    public void ejbCreateObject() throws javax.ejb.CreateException {
+    public void ejbCreateObject() throws jakarta.ejb.CreateException {
         testAllowedOperations("ejbCreate");
         this.name = "nameless automaton";
     }

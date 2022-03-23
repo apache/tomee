@@ -19,7 +19,7 @@ package org.apache.openejb.junit5.app;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

@@ -39,11 +39,11 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.AccessLocalException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.Handle;
+import jakarta.ejb.AccessLocalException;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.Handle;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;

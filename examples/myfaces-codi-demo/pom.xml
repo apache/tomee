@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[8.0,)</version>
+      <version>[9.0,)</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -98,7 +98,7 @@
       <version>${extval.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.persistence</groupId>
+          <groupId>jakarta.persistence</groupId>
           <artifactId>persistence-api</artifactId>
         </exclusion>
       </exclusions>
@@ -109,7 +109,7 @@
       <version>${extval.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.validation</groupId>
+          <groupId>jakarta.validation</groupId>
           <artifactId>validation-api</artifactId>
         </exclusion>
       </exclusions>

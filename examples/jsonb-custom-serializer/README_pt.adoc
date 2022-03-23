@@ -63,8 +63,8 @@ Classe JAXRS de ponto de entrada, da seguinte maneira, o jaxrs carregará todas 
 
 [source,java]
 ----
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("api")
 public class JAXRSApplication extends Application {
@@ -81,13 +81,13 @@ Classe jaxrs simples com um endpoint GET e um POST
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ejb.Stateless;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import org.superbiz.model.Address;
 import org.superbiz.model.User;
@@ -123,11 +123,11 @@ Implementando ContextResolver<> você pode personalizar os padrões jaxrs; neste
 
 [source,java]
 ----
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class JSONBConfiguration implements ContextResolver<Jsonb> {
@@ -154,9 +154,9 @@ Classe serializadora de objetos simples que adiciona `modified` durante a serial
 
 [source,java]
 ----
-import javax.json.bind.serializer.JsonbSerializer;
-import javax.json.bind.serializer.SerializationContext;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.bind.serializer.JsonbSerializer;
+import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.stream.JsonGenerator;
 
 import org.superbiz.model.Address;
 
@@ -182,10 +182,10 @@ Cria um objeto a partir de um json
 ----
 import java.lang.reflect.Type;
 
-import javax.json.JsonObject;
-import javax.json.bind.serializer.DeserializationContext;
-import javax.json.bind.serializer.JsonbDeserializer;
-import javax.json.stream.JsonParser;
+import jakarta.json.JsonObject;
+import jakarta.json.bind.serializer.DeserializationContext;
+import jakarta.json.bind.serializer.JsonbDeserializer;
+import jakarta.json.stream.JsonParser;
 
 import org.superbiz.model.User;
 
@@ -214,7 +214,7 @@ Com a anotação @JsonbTypeDeserializer ou @JsonbTypeSerializer, você pode noti
 ----
 import java.util.Date;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 
 import org.superbiz.UserDeserializer;
 
@@ -250,7 +250,7 @@ O teste gera um aplicativo da web openejb e chama o endpoint do usuário
 ----
 import java.io.IOException;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;

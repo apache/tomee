@@ -16,8 +16,8 @@
  */
 package org.superbiz
 
-import javax.ejb.embeddable.EJBContainer
-import javax.inject.Inject
+import jakarta.ejb.embeddable.EJBContainer
+import jakarta.inject.Inject
 
 import org.scalatest._
 

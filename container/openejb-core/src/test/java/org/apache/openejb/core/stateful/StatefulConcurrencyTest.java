@@ -31,9 +31,9 @@ import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
 
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.Local;
-import javax.ejb.Stateful;
+import jakarta.ejb.ConcurrentAccessTimeoutException;
+import jakarta.ejb.Local;
+import jakarta.ejb.Stateful;
 import javax.naming.InitialContext;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -101,7 +101,7 @@ public class StatefulConcurrencyTest extends TestCase {
         assertTrue(MyLocalBeanImpl.semaphore.tryAcquire(1, 30, TimeUnit.SECONDS));
 
         try {
-            java.util.logging.Logger.getLogger(this.getClass().getName()).info("Expecting a SEVERE javax.ejb.ConcurrentAccessTimeoutException");
+            java.util.logging.Logger.getLogger(this.getClass().getName()).info("Expecting a SEVERE jakarta.ejb.ConcurrentAccessTimeoutException");
             bean2.callRentrant(bean, 0);
             fail("Expected exception");
         } catch (final Exception e) {

@@ -20,9 +20,9 @@ package org.apache.openejb.core;
 import org.apache.openejb.core.ivm.naming.Reference;
 
 import javax.naming.NamingException;
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ManagedConnectionFactory;
 /*
   This reference object is used for wrappering ManagedConnectionFactory objects that
   manufacture resource specific connection factories. When the getObject( ) method is 

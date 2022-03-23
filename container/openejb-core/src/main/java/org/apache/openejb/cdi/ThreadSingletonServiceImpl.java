@@ -57,8 +57,8 @@ import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.adaptor.ELAdaptor;
 
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.transaction.Transactional;
+import jakarta.enterprise.inject.spi.DeploymentException;
+import jakarta.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -132,13 +132,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         final boolean tomee = SystemInstance.get().getProperty("openejb.loader", "foo").startsWith("tomcat");
 
         final String defaultNormalScopeHandlerClass = NormalScopedBeanInterceptorHandler.class.getName();
-        properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.ApplicationScoped",
+        properties.setProperty("org.apache.webbeans.proxy.mapping.jakarta.enterprise.context.ApplicationScoped",
                 cachedApplicationScoped ? ApplicationScopedBeanInterceptorHandler.class.getName() : defaultNormalScopeHandlerClass);
 
-        properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.RequestScoped",
+        properties.setProperty("org.apache.webbeans.proxy.mapping.jakarta.enterprise.context.RequestScoped",
             tomee && cachedRequestScoped ? RequestScopedBeanInterceptorHandler.class.getName() : defaultNormalScopeHandlerClass);
 
-        properties.setProperty("org.apache.webbeans.proxy.mapping.javax.enterprise.context.SessionScoped",
+        properties.setProperty("org.apache.webbeans.proxy.mapping.jakarta.enterprise.context.SessionScoped",
             tomee && cachedSessionScoped ? SessionScopedBeanInterceptorHandler.class.getName() : defaultNormalScopeHandlerClass);
 
         properties.put(OpenWebBeansConfiguration.PRODUCER_INTERCEPTION_SUPPORT, SystemInstance.get().getProperty("openejb.cdi.producer.interception", "true"));
@@ -211,7 +211,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             try {
                 services.put(ELAdaptor.class, new CustomELAdapter(appContext));
             } catch (final NoClassDefFoundError noClassDefFoundError) {
-                // no-op: no javax.el
+                // no-op: no jakarta.el
             }
         }
         if (!properties.containsKey(LoaderService.class.getName())) {

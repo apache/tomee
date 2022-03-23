@@ -25,7 +25,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.container.InjectableBeanManager;
 import org.apache.webbeans.event.NotificationManager;
 
-import javax.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.Bean;
 
 public class WebappWebBeansContext extends WebBeansContext {
     private final WebBeansContext parent;

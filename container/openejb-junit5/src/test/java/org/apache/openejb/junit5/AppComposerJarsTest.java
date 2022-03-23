@@ -23,7 +23,7 @@ import org.apache.openejb.testing.Jars;
 import org.apache.openejb.testing.Module;
 import org.junit.jupiter.api.Test;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

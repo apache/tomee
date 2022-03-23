@@ -21,10 +21,10 @@ import org.apache.openejb.util.LogCategory;
 
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.io.ObjectStreamException;
 import java.io.PrintWriter;
 import java.io.Serializable;

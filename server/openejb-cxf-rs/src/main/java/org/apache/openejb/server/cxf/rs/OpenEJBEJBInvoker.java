@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
     private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<Class<?>, Collection<Class<?>>>();

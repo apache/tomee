@@ -23,8 +23,8 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
-import javax.ejb.Local;
-import javax.ejb.Remote;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidAnnotatedInterfacesTest {

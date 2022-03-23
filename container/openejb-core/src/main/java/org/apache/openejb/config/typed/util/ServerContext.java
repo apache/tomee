@@ -33,10 +33,10 @@ import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.config.sys.TransactionManager;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * @version $Rev$ $Date$

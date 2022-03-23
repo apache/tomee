@@ -19,7 +19,7 @@ package org.apache.tomee.microprofile.jwt.bval.data;
 import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
 import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
 
-import javax.ws.rs.PathParam;
+import jakarta.ws.rs.PathParam;
 
 public class Shapes {
 

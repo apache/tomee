@@ -9,7 +9,7 @@
 ----
 package org.superbiz.cdi.decorators;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 /**
  * @version $Revision$ $Date$
@@ -51,10 +51,10 @@ public interface Calculator {
 ----
 package org.superbiz.cdi.decorators;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Produces;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.inject.Produces;
 
 @Stateless
 public class CalculatorBean implements Calculator {
@@ -91,9 +91,9 @@ public class CalculatorBean implements Calculator {
 ----
 package org.superbiz.cdi.decorators;
 
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.inject.Inject;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.inject.Inject;
 import java.util.logging.Logger;
 
 @Decorator
@@ -141,10 +141,10 @@ public class CalculatorLogging implements Calculator {
 ----
 package org.superbiz.cdi.decorators;
 
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.ejb.SessionContext;
-import javax.inject.Inject;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.ejb.SessionContext;
+import jakarta.inject.Inject;
 
 @Decorator
 public class CalculatorSecurity implements Calculator {
@@ -210,10 +210,10 @@ package org.superbiz.cdi.decorators;
 
 import junit.framework.TestCase;
 
-import javax.annotation.security.RunAs;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.annotation.security.RunAs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.concurrent.Callable;
 
 public class CalculatorTest extends TestCase {
@@ -313,7 +313,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/decorators
 INFO - openejb.base = /Users/dblevins/examples/decorators
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/decorators/target/classes
@@ -321,7 +321,7 @@ INFO - Found EjbModule in classpath: /Users/dblevins/examples/decorators/target/
 INFO - Beginning load: /Users/dblevins/examples/decorators/target/classes
 INFO - Beginning load: /Users/dblevins/examples/decorators/target/test-classes
 INFO - Configuring enterprise application: /Users/dblevins/examples/decorators
-WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+WARN - Method 'lookup' is not available for 'jakarta.annotation.Resource'. Probably using an older Runtime.
 INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 INFO - Auto-creating a container for bean decorators.Comp: Container(type=MANAGED, id=Default Managed Container)
 INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)

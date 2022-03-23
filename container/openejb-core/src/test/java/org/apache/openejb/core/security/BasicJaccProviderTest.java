@@ -23,8 +23,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 import java.security.Policy;
 
 
@@ -32,7 +32,7 @@ import java.security.Policy;
 @RunWith(ApplicationComposer.class)
 @ContainerProperties(
         @ContainerProperties.Property(
-                name = "javax.security.jacc.policy.provider",
+                name = "jakarta.security.jacc.policy.provider",
                 value = "org.apache.openejb.core.security.BasicJaccProviderTest$MyPolicy"))
 public class BasicJaccProviderTest {
 

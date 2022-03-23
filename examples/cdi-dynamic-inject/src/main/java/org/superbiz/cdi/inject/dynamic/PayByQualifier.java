@@ -16,8 +16,8 @@
  */
 package org.superbiz.cdi.inject.dynamic;
 
-import javax.enterprise.inject.Instance;
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.util.AnnotationLiteral;
 
 import org.superbiz.cdi.qualifier.PaymentQualifier;
 import org.superbiz.cdi.qualifier.PaymentType;

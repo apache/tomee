@@ -18,7 +18,7 @@ package org.apache.tomee.microprofile.tck.opentracing;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import javax.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.ContextResolver;
 
 import static org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES;
 

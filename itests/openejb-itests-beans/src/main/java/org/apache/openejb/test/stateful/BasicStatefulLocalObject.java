@@ -26,7 +26,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
  *
  * @version $Rev$ $Date$
  */
-public interface BasicStatefulLocalObject extends javax.ejb.EJBLocalObject {
+public interface BasicStatefulLocalObject extends jakarta.ejb.EJBLocalObject {
 
     /**
      * Reverses the string passed in then returns it

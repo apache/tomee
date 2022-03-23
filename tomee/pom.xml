@@ -227,7 +227,7 @@
         <version>${commons-beanutils.version}</version>
       </dependency>
       <dependency>
-        <groupId>javax.servlet</groupId>
+        <groupId>jakarta.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>1.2</version>
       </dependency>
@@ -378,8 +378,8 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>javax.faces</groupId>
-        <artifactId>javax.faces-api</artifactId>
+        <groupId>jakarta.faces</groupId>
+        <artifactId>jakarta.faces-api</artifactId>
         <version>2.1</version>
       </dependency>
       <dependency>
@@ -398,8 +398,8 @@
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>javax.xml.soap-api</artifactId>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

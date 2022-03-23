@@ -25,9 +25,9 @@ import org.hsqldb.jdbcDriver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 import javax.sql.DataSource;
 import java.io.Flushable;
 import java.io.IOException;

@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.embedded;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

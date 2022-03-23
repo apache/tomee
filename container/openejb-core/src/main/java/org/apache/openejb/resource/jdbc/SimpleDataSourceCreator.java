@@ -28,8 +28,8 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.util.Properties;
 
 public class SimpleDataSourceCreator implements DataSourceCreator {

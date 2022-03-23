@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.itest.failover.ejb;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class CalculatorBean implements Calculator {

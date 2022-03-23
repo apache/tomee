@@ -23,10 +23,10 @@ import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 import javax.management.ObjectName;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.UnavailableException;
-import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.UnavailableException;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

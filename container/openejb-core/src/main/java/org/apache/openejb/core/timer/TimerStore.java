@@ -17,8 +17,8 @@
 
 package org.apache.openejb.core.timer;
 
-import javax.ejb.ScheduleExpression;
-import javax.ejb.TimerConfig;
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.TimerConfig;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;

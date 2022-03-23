@@ -20,14 +20,14 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.SessionSynchronization;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.SessionSynchronization;
 
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-public class BasicStatefulBean implements javax.ejb.SessionBean, SessionSynchronization {
+public class BasicStatefulBean implements jakarta.ejb.SessionBean, SessionSynchronization {
 
 
     private String name;
@@ -43,11 +43,11 @@ public class BasicStatefulBean implements javax.ejb.SessionBean, SessionSynchron
      * Maps to BasicStatefulHome.create
      *
      * @param name
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see BasicStatefulHome#createObject
      */
     public void ejbCreateObject(final String name)
-        throws javax.ejb.CreateException {
+        throws jakarta.ejb.CreateException {
         testAllowedOperations("ejbCreate");
         this.name = name;
     }

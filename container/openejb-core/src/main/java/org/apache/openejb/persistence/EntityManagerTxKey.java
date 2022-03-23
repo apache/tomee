@@ -17,7 +17,7 @@
 
 package org.apache.openejb.persistence;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 public class EntityManagerTxKey {
     private final EntityManagerFactory entityManagerFactory;

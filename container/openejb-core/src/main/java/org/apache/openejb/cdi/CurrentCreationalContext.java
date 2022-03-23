@@ -17,7 +17,7 @@
 
 package org.apache.openejb.cdi;
 
-import javax.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.context.spi.CreationalContext;
 
 /**
  * @version $Rev$ $Date$

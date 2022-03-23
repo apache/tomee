@@ -43,7 +43,7 @@ public class HttpRequestImplTest {
     @Test
     public void run() throws URISyntaxException {
         final HttpRequest req = new HttpRequestImpl(new URI("http://localhost:1234/foo"));
-        final javax.servlet.http.HttpSession session = req.getSession();
+        final jakarta.servlet.http.HttpSession session = req.getSession();
         assertNotNull(session);
         session.invalidate();
         assertNull(req.getSession(false));

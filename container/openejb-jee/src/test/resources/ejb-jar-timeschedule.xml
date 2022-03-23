@@ -37,7 +37,7 @@
                 <timeout-method>
                     <method-name>testScheduleMethod</method-name>
                     <method-params>
-                        <method-param>javax.ejb.Timer</method-param>
+                        <method-param>jakarta.ejb.Timer</method-param>
                     </method-params>
                 </timeout-method>
                 <persistent>false</persistent>

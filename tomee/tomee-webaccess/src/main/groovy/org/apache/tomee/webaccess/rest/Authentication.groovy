@@ -20,13 +20,13 @@ package org.apache.tomee.webaccess.rest
 
 import org.apache.tomee.webaccess.data.dto.AuthenticationResultDto
 
-import javax.servlet.ServletException
-import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.FormParam
-import javax.ws.rs.POST
-import javax.ws.rs.Path
-import javax.ws.rs.Produces
-import javax.ws.rs.core.Context
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.FormParam
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.core.Context
 
 @Path('/authentication')
 class Authentication {

@@ -18,9 +18,9 @@ package org.apache.openejb.server.cxf.rs.johnzon;
 
 import org.apache.johnzon.mapper.JohnzonProperty;
 
-import javax.json.bind.annotation.JsonbProperty;
-import javax.json.bind.annotation.JsonbVisibility;
-import javax.json.bind.config.PropertyVisibilityStrategy;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbVisibility;
+import jakarta.json.bind.config.PropertyVisibilityStrategy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

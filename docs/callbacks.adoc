@@ -30,11 +30,11 @@ throws Exception
 
 [source,java]
 ----
-import javax.ejb.Stateless;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.Stateless;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 @Stateless
 public class MyStatelessBean implements  MyBusinessInterface  {
@@ -60,13 +60,13 @@ public class MyStatelessBean implements  MyBusinessInterface  {
 
 [source,java]
 ----
-import javax.ejb.Stateful;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.PostActivate;
+import jakarta.ejb.PrePassivate;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 @Stateful
 public class MyStatefulBean implements  MyBusinessInterface  {
@@ -102,11 +102,11 @@ public class MyStatefulBean implements  MyBusinessInterface  {
 
 [source,java]
 ----
-import javax.ejb.MessageDriven;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.MessageDriven;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 @MessageDriven
 public class MyMessageDrivenBean implements  MyListenerInterface  {
@@ -132,12 +132,12 @@ public class MyMessageDrivenBean implements  MyListenerInterface  {
 
 [source,java]
 ----
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.interceptor.InvocationContext;
-import javax.interceptor.AroundInvoke;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.ejb.PostActivate;
+import jakarta.ejb.PrePassivate;
 
 public class MyInterceptor {
 

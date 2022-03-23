@@ -23,7 +23,7 @@ eclipse:eclipse afterwards)
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>5.0-1</version>
+      <version>9.xxxx</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -53,8 +53,8 @@ Options:
 ----
 
 implement your remote / local interfaces as opposed to
-javax.ejb.SessionBean, and stops your remote / local interfaces
-extending javax.ejb.EJBObject. * Add `@Remote` and `@RemoteHome` annotations
+jakarta.ejb.SessionBean, and stops your remote / local interfaces
+extending jakarta.ejb.EJBObject. * Add `@Remote` and `@RemoteHome` annotations
 - This adds `@Remote` and `@RemoteHome` annotations appropriately * Convert
 entity beans to POJOs - This options converts abstract CMP classes to
 POJOs generating simple getters and setters.

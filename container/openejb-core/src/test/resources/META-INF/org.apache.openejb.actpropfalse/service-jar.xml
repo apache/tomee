@@ -58,7 +58,7 @@
             class-name="org.apache.openejb.core.mdb.MdbContainerFactory">
 
         ResourceAdapter Default JMS Resource Adapter
-        MessageListenerInterface javax.jms.MessageListener
+        MessageListenerInterface jakarta.jms.MessageListener
         ActivationSpecClass org.apache.openejb.resource.activemq.TomEEMessageActivationSpec
         InstanceLimit 10
         FailOnUnknownActivationSpec false

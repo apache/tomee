@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.localinject;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 @Local
 public interface CompanyLocal extends Company {

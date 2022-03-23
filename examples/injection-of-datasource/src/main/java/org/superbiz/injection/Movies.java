@@ -17,9 +17,9 @@
 //START SNIPPET: code
 package org.superbiz.injection;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Stateful;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateful;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.deployment.entity.cmp.ejbql;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 /**
  * @version $Revision$ $Date$

@@ -17,7 +17,7 @@
 
 package org.apache.openejb.core.transaction;
 
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionAttributeType;
 
 public enum TransactionType {
     Mandatory,

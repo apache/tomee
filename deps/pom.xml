@@ -30,5 +30,6 @@
   <modules>
     <module>taglibs-shade</module>
     <module>cxf-shade</module>
+    <module>sxc-shade</module>
   </modules>
 </project>

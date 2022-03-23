@@ -29,12 +29,12 @@ import org.apache.openejb.quartz.Trigger;
 import org.apache.openejb.quartz.TriggerKey;
 import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 
-import javax.ejb.EJBException;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.Transaction;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.Transaction;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

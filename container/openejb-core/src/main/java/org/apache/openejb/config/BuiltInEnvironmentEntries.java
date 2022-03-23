@@ -26,15 +26,15 @@ import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceEnvRef;
 
-import javax.enterprise.concurrent.ContextService;
-import javax.enterprise.concurrent.ManagedExecutorService;
-import javax.enterprise.concurrent.ManagedScheduledExecutorService;
-import javax.enterprise.concurrent.ManagedThreadFactory;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.enterprise.concurrent.ContextService;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import java.util.Map;
 
 public class BuiltInEnvironmentEntries implements DynamicDeployer {
@@ -100,7 +100,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
                 final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                 contextClassLoader.loadClass("org.apache.activemq.ActiveMQSslConnectionFactory");
                 final ResourceEnvRef ref = new ResourceEnvRef().name("java:comp/DefaultJMSConnectionFactory")
-                    .type(contextClassLoader.loadClass("javax.jms.ConnectionFactory"));
+                    .type(contextClassLoader.loadClass("jakarta.jms.ConnectionFactory"));
                 add(jndi.getResourceEnvRefMap(), ref);
             } catch (final ClassNotFoundException | NoClassDefFoundError notThere) {
                 // no-op

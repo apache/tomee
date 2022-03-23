@@ -26,9 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.Stateful;
-import javax.ejb.StatefulTimeout;
+import jakarta.ejb.NoSuchEJBException;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.StatefulTimeout;
 import javax.naming.Context;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;

@@ -18,7 +18,7 @@
 
 package org.apache.openejb.rest;
 
-import javax.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.container.ResourceInfo;
 import java.lang.reflect.Method;
 
 public class ThreadLocalResourceInfo extends AbstractRestThreadLocalProxy<ResourceInfo>

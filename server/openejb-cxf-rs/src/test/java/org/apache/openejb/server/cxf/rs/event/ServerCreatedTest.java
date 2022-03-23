@@ -29,8 +29,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.HEAD;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.HEAD;
+import jakarta.ws.rs.Path;
 import java.util.Properties;
 
 import static org.junit.Assert.assertNotNull;

@@ -20,11 +20,11 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.server.ServiceException;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBMetaData;
-import javax.ejb.EJBObject;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -19,10 +19,10 @@ package org.apache.openejb.config;
 
 import junit.framework.TestCase;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.PersistenceContexts;
-import javax.persistence.PersistenceProperty;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.PersistenceContexts;
+import jakarta.persistence.PersistenceProperty;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;

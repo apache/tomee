@@ -24,8 +24,8 @@ import org.apache.deltaspike.security.api.authorization.SecurityViolation;
 import org.superbiz.deltaspike.WebappMessageBundle;
 import org.superbiz.deltaspike.view.UserHolder;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.Set;
 
 @ApplicationScoped

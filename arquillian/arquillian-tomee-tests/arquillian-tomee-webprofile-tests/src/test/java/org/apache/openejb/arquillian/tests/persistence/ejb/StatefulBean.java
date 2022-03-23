@@ -17,11 +17,11 @@
 
 package org.apache.openejb.arquillian.tests.persistence.ejb;
 
-import javax.ejb.AfterBegin;
-import javax.ejb.BeforeCompletion;
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.ejb.AfterBegin;
+import jakarta.ejb.BeforeCompletion;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.Serializable;
 
 @Stateful

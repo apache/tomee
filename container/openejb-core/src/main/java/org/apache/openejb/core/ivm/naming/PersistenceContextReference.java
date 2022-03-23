@@ -18,7 +18,7 @@
 package org.apache.openejb.core.ivm.naming;
 
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * @version $Rev$ $Date$

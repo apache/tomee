@@ -20,11 +20,11 @@ import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.object.Account;
 import org.apache.openejb.test.object.Transaction;
 
-import javax.ejb.EJBMetaData;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBMetaData;
+import jakarta.ejb.Handle;
+import jakarta.ejb.HomeHandle;
 import javax.naming.InitialContext;
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 import java.util.Properties;
 
 /**
@@ -82,8 +82,8 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      *
-     * The Container must make the javax.transaction.UserTransaction interface available to
-     * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
+     * The Container must make the jakarta.transaction.UserTransaction interface available to
+     * the enterprise bean's business method via the jakarta.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
      * resource managers used by the instance between the begin() and commit(),or rollback(),
@@ -92,8 +92,8 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      *
      * <P>--------------------------------------------------------</P>
      *
-     * Check that a javax.transaction.UserTransaction can be obtained from
-     * the javax.ejb.EJBContext
+     * Check that a jakarta.transaction.UserTransaction can be obtained from
+     * the jakarta.ejb.EJBContext
      *
      */
     public void test01_EJBContext_getUserTransaction() {
@@ -108,8 +108,8 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      *
-     * The Container must make the javax.transaction.UserTransaction interface available to
-     * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
+     * The Container must make the jakarta.transaction.UserTransaction interface available to
+     * the enterprise bean's business method via the jakarta.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
      * resource managers used by the instance between the begin() and commit(),or rollback(),
@@ -118,7 +118,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      *
      * <P>--------------------------------------------------------</P>
      *
-     * Check that a javax.transaction.UserTransaction can be obtained from
+     * Check that a jakarta.transaction.UserTransaction can be obtained from
      * the environment entry java:comp/UserTransaction
      *
      */
@@ -136,7 +136,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      *
      * The Container must throw the java.lang.IllegalStateException if an instance of a bean
      * with bean-managed transaction demarcation attempts to invoke the setRollbackOnly() or
-     * getRollbackOnly() method of the javax.ejb.EJBContext interface.
+     * getRollbackOnly() method of the jakarta.ejb.EJBContext interface.
      *
      * <P>--------------------------------------------------------</P>
      *
@@ -156,7 +156,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      *
      * The Container must throw the java.lang.IllegalStateException if an instance of a bean
      * with bean-managed transaction demarcation attempts to invoke the setRollbackOnly() or
-     * getRollbackOnly() method of the javax.ejb.EJBContext interface.
+     * getRollbackOnly() method of the jakarta.ejb.EJBContext interface.
      *
      * <P>--------------------------------------------------------</P>
      *
@@ -204,7 +204,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
         // throw a RollbackException
         try {
             ejbObject.openAccount(expected, Boolean.TRUE);
-            fail("A javax.transaction.RollbackException should have been thrown.");
+            fail("A jakarta.transaction.RollbackException should have been thrown.");
         } catch (final RollbackException re) {
             // Good.
         } catch (final Exception e) {
@@ -240,10 +240,10 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      *
      * When an instance attempts to start a transaction using the
-     * begin() method of the javax.transaction.UserTransaction
+     * begin() method of the jakarta.transaction.UserTransaction
      * interface while the instance has not committed the previous
      * transaction, the Container must throw the
-     * javax.transaction.NotSupportedException in the begin() method.
+     * jakarta.transaction.NotSupportedException in the begin() method.
      *
      */
     public void TODO_test08_nestedTransactions() {

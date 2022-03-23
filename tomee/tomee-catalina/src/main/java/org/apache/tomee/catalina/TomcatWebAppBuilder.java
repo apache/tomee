@@ -141,19 +141,19 @@ import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 
-import javax.ejb.spi.HandleDelegate;
+import jakarta.ejb.spi.HandleDelegate;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
-import javax.servlet.ServletContext;
-import javax.servlet.SessionTrackingMode;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.SessionTrackingMode;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -359,7 +359,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             systemInstance.setComponent(HttpServletRequest.class, Proxys.threadLocalProxy(HttpServletRequest.class, OpenEJBSecurityListener.requests, null));
         }
         if (systemInstance.getComponent(HttpSession.class) == null) {
-            systemInstance.setComponent(javax.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(OpenEJBSecurityListener.requests, null));
+            systemInstance.setComponent(jakarta.servlet.http.HttpSession.class, Proxys.threadLocalRequestSessionProxy(OpenEJBSecurityListener.requests, null));
         }
         if (systemInstance.getComponent(ServletContext.class) == null) {
             systemInstance.setComponent(ServletContext.class, Proxys.handlerProxy(servletContextHandler, ServletContext.class, CdiAppContextsService.FiredManually.class));
@@ -1783,7 +1783,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
                 try {
                     // Bean Validation
-                    standardContext.getServletContext().setAttribute("javax.faces.validator.beanValidator.ValidatorFactory", openejbContext.lookup(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT.replaceFirst("openejb", "") + currentWebAppInfo.uniqueId));
+                    standardContext.getServletContext().setAttribute("jakarta.faces.validator.beanValidator.ValidatorFactory", openejbContext.lookup(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT.replaceFirst("openejb", "") + currentWebAppInfo.uniqueId));
                 } catch (final NamingException ne) {
                     LOGGER.warning("no validator factory found for webapp " + currentWebAppInfo.moduleId);
                 }
@@ -1953,7 +1953,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 continue;
             }
             final Wrapper wrapper = Wrapper.class.cast(w);
-            if ("FacesServlet".equals(wrapper.getName()) && "javax.faces.webapp.FacesServlet".equals(wrapper.getServletClass())) {
+            if ("FacesServlet".equals(wrapper.getName()) && "jakarta.faces.webapp.FacesServlet".equals(wrapper.getServletClass())) {
                 final ClassLoader loader = standardContext.getLoader().getClassLoader();
                 try {
                     if (Files.toFile(loader.getResource("javax/faces/webapp/FacesServlet.class")).getName().startsWith("myfaces")) {
@@ -2245,7 +2245,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             final File[] files = appBase.listFiles();
             if (null != files) {
                 for (File file : files) {
-                    if (file.getName().endsWith(".tmp")) { // tomcat is uploading, see org.apache.catalina.manager.ManagerServlet.deploy(java.io.PrintWriter, org.apache.catalina.util.ContextName, java.lang.String, boolean, javax.servlet.http.HttpServletRequest, org.apache.tomcat.util.res.StringManager)
+                    if (file.getName().endsWith(".tmp")) { // tomcat is uploading, see org.apache.catalina.manager.ManagerServlet.deploy(java.io.PrintWriter, org.apache.catalina.util.ContextName, java.lang.String, boolean, jakarta.servlet.http.HttpServletRequest, org.apache.tomcat.util.res.StringManager)
                         continue;
                     }
 

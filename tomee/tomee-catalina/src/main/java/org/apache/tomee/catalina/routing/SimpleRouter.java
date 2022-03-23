@@ -35,7 +35,7 @@ import javax.management.openmbean.SimpleType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 import javax.management.openmbean.TabularType;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -16,8 +16,8 @@
  */
 package org.superbiz.inheritance;
 
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 import java.util.List;
 
 /**

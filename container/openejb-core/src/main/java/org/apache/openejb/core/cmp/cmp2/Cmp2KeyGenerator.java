@@ -19,7 +19,7 @@ package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.core.cmp.KeyGenerator;
 
-import javax.ejb.EntityBean;
+import jakarta.ejb.EntityBean;
 
 public class Cmp2KeyGenerator implements KeyGenerator {
     public Object getPrimaryKey(final EntityBean entity) {

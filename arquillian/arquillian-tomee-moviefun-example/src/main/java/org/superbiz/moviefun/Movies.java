@@ -16,7 +16,7 @@
  */
 package org.superbiz.moviefun;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import java.util.List;
 
 @Local

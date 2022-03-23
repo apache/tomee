@@ -17,9 +17,9 @@
 package org.apache.openejb.arquillian.tests.jsp;
 
 
-import javax.ejb.CreateException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 
 public class DataBusinessBean implements SessionBean {
     public Data doLogic(Data data) {

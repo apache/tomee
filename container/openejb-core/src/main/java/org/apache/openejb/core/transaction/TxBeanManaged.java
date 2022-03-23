@@ -21,9 +21,9 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 import java.rmi.RemoteException;
 
 public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransactionPolicy {

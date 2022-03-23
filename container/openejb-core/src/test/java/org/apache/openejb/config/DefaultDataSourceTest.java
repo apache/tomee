@@ -28,7 +28,7 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.AfterClass;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 /**

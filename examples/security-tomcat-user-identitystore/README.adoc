@@ -72,7 +72,7 @@ public class MovieAdminResource {
 
     // JAXRS security context also wired with Jakarta Security
     @Context
-    private javax.ws.rs.core.SecurityContext securityContext;
+    private jakarta.ws.rs.core.SecurityContext securityContext;
 
     @POST
     public Movie addMovie(final Movie newMovie) {
@@ -99,10 +99,10 @@ IMPORTANT:
 ====
 In TomEE, Jakarta Security is wired in all layers, you can use
 
-* `javax.ws.rs.core.SecurityContext#getUserPrincipal` and `isUserInRole` to get the User Principal and check if the user has a given role
-* `javax.security.enterprise.SecurityContext#getCallerPrincipal` and `isCallerInRole` to get the Caller Principal (notice the difference in terms of naming) and check if a caller has a given role
-* `javax.servlet.http.HttpServletRequest#getUserPrincipal` and `isUserInRole`
-* `javax.ejb.SessionContext#getCallerPrincipal` and `isCallerInRole`
+* `jakarta.ws.rs.core.SecurityContext#getUserPrincipal` and `isUserInRole` to get the User Principal and check if the user has a given role
+* `jakarta.security.enterprise.SecurityContext#getCallerPrincipal` and `isCallerInRole` to get the Caller Principal (notice the difference in terms of naming) and check if a caller has a given role
+* `jakarta.servlet.http.HttpServletRequest#getUserPrincipal` and `isUserInRole`
+* `jakarta.ejb.SessionContext#getCallerPrincipal` and `isCallerInRole`
 * the `Subject` from the `PolicyContext` but this is less used
 ====
 

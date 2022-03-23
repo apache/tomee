@@ -19,7 +19,7 @@ package org.apache.openejb.jee.wls;
 import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;

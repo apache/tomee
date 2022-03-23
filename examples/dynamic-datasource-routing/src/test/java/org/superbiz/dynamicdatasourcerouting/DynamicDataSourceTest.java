@@ -19,7 +19,7 @@ package org.superbiz.dynamicdatasourcerouting;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.sql.DataSource;
 import java.sql.Connection;

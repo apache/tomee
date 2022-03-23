@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.arquillian.tests.jsf.ejb;
 
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
+import jakarta.ejb.EJB;
+import jakarta.faces.bean.ManagedBean;
 
 @ManagedBean
 public class DummyManagedBean {

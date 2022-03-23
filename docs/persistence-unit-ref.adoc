@@ -17,9 +17,9 @@ lookup and injection.
 ----
 package org.superbiz;
 
-import javax.persistence.PersistenceUnit;
-import javax.persistence.EntityManagerFactory;
-import javax.ejb.Stateless;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialUnit;
 
 @Stateless
@@ -64,9 +64,9 @@ following xml.
 ----
 package org.superbiz;
 
-import javax.persistence.PersistenceUnit;
-import javax.persistence.EntityManagerFactory;
-import javax.ejb.Stateless;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialUnit;
 
 @Stateless

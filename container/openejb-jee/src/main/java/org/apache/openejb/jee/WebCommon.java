@@ -20,7 +20,7 @@
 
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

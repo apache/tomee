@@ -21,8 +21,8 @@ package org.apache.tomee.webaccess.rest
 import org.apache.tomee.webaccess.data.dto.ContextResultDto
 import org.apache.tomee.webaccess.service.ContextsServiceImpl
 
-import javax.ejb.EJB
-import javax.ws.rs.*
+import jakarta.ejb.EJB
+import jakarta.ws.rs.*
 
 @Path('/context')
 class Context {

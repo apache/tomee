@@ -21,11 +21,11 @@ package org.superbiz.cdi.stereotype;
  * without @Mock annotation which specifies this class as an alternative
  * you'll have this exception:
  *
- * Caused by: javax.enterprise.inject.AmbiguousResolutionException: There is more than one api type with : org.superbiz.cdi.stereotype.Society with qualifiers : Qualifiers: [@javax.enterprise.inject.Default()]
- * for injection into Field Injection Point, field name :  society, Bean Owner : [Journey, Name:null, WebBeans Type:ENTERPRISE, API Types:[org.superbiz.cdi.stereotype.Journey,java.lang.Object], Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]]
+ * Caused by: jakarta.enterprise.inject.AmbiguousResolutionException: There is more than one api type with : org.superbiz.cdi.stereotype.Society with qualifiers : Qualifiers: [@jakarta.enterprise.inject.Default()]
+ * for injection into Field Injection Point, field name :  society, Bean Owner : [Journey, Name:null, WebBeans Type:ENTERPRISE, API Types:[org.superbiz.cdi.stereotype.Journey,java.lang.Object], Qualifiers:[jakarta.enterprise.inject.Any,jakarta.enterprise.inject.Default]]
  * found beans:
- * AirOpenEJB, Name:null, WebBeans Type:MANAGED, API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.AirOpenEJB,java.lang.Object], Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]
- * LowCostCompanie, Name:null, WebBeans Type:MANAGED, API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.LowCostCompanie,java.lang.Object], Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]
+ * AirOpenEJB, Name:null, WebBeans Type:MANAGED, API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.AirOpenEJB,java.lang.Object], Qualifiers:[jakarta.enterprise.inject.Any,jakarta.enterprise.inject.Default]
+ * LowCostCompanie, Name:null, WebBeans Type:MANAGED, API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.LowCostCompanie,java.lang.Object], Qualifiers:[jakarta.enterprise.inject.Any,jakarta.enterprise.inject.Default]
  *
  * because 2 implementations match the same injection point (Journey.society).
  */

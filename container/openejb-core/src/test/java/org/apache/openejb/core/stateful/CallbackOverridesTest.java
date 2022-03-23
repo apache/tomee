@@ -26,12 +26,12 @@ import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.Remove;
-import javax.ejb.Stateful;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateful;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.Collections;

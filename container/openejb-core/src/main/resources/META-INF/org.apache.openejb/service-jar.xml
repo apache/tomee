@@ -94,7 +94,7 @@
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
     #
-    # Any usage of the `javax.ejb.AccessTimeout` annotation will
+    # Any usage of the `jakarta.ejb.AccessTimeout` annotation will
     # override this setting for the bean or method where the
     # annotation is used.
 
@@ -193,9 +193,9 @@
     # `Flushable` and calling `flush()`.  See `SweepInterval` for details on
     # how flush is performed.
     #
-    #     import javax.annotation.Resource;
-    #     import javax.ejb.SessionContext;
-    #     import javax.ejb.Stateless;
+    #     import jakarta.annotation.Resource;
+    #     import jakarta.ejb.SessionContext;
+    #     import jakarta.ejb.Stateless;
     #     import java.io.Flushable;
     #     import java.io.IOException;
     #
@@ -350,14 +350,14 @@
     # Specifies the maximum time an invocation could wait for the
     # `@Singleton` bean instance to become available before giving up.
     #
-    # After the timeout is reached a `javax.ejb.ConcurrentAccessTimeoutException`
+    # After the timeout is reached a `jakarta.ejb.ConcurrentAccessTimeoutException`
     # will be thrown.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
     # `1 hour and 27 minutes and 10 seconds`
     #
-    # Any usage of the `javax.ejb.AccessTimeout` annotation will
+    # Any usage of the `jakarta.ejb.AccessTimeout` annotation will
     # override this setting for the bean or method where the
     # annotation is used.
 
@@ -381,14 +381,14 @@
     # Specifies the maximum time an invocation could wait for the
     # `@Stateful` bean instance to become available before giving up.
     #
-    # After the timeout is reached a `javax.ejb.ConcurrentAccessTimeoutException`
+    # After the timeout is reached a `jakarta.ejb.ConcurrentAccessTimeoutException`
     # will be thrown.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
     #
-    # Any usage of the `javax.ejb.AccessTimeout` annotation will
+    # Any usage of the `jakarta.ejb.AccessTimeout` annotation will
     # override this setting for the bean or method where the
     # annotation is used.
 
@@ -424,7 +424,7 @@
     # A value of -1 would mean no timeout.
     # A value of 0 would mean a bean can be immediately removed by the container.
     #
-    # Any usage of the `javax.ejb.StatefulTimeout` annotation will
+    # Any usage of the `jakarta.ejb.StatefulTimeout` annotation will
     # override this setting for the bean where the annotation is used.
 
     TimeOut 20
@@ -474,7 +474,7 @@
           class-name="org.apache.openejb.core.mdb.MdbContainerFactory">
 
     ResourceAdapter Default JMS Resource Adapter
-    MessageListenerInterface javax.jms.MessageListener
+    MessageListenerInterface jakarta.jms.MessageListener
     ActivationSpecClass org.apache.openejb.resource.activemq.TomEEMessageActivationSpec
     InstanceLimit 10
     FailOnUnknownActivationSpec true
@@ -679,7 +679,7 @@
   <ServiceProvider
           id="Default JMS Connection Factory"
           service="Resource"
-          types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
+          types="jakarta.jms.ConnectionFactory, jakarta.jms.QueueConnectionFactory, jakarta.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
           class-name="org.apache.openejb.resource.activemq.jms2.TomEEManagedConnectionFactory">
 
     ResourceAdapter Default JMS Resource Adapter
@@ -704,7 +704,7 @@
   <ServiceProvider
           id="Default Queue"
           service="Resource"
-          types="javax.jms.Queue, Queue, javax.jms.Destination"
+          types="jakarta.jms.Queue, Queue, jakarta.jms.Destination"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
@@ -716,7 +716,7 @@
   <ServiceProvider
           id="Default Topic"
           service="Resource"
-          types="javax.jms.Topic, Topic, javax.jms.Destination"
+          types="jakarta.jms.Topic, Topic, jakarta.jms.Destination"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQTopic">
 
@@ -747,7 +747,7 @@
   <ServiceProvider
           id="Default Mail Session"
           service="Resource"
-          types="javax.mail.Session"
+          types="jakarta.mail.Session"
           factory-name="create"
           class-name="org.apache.openejb.core.MailSessionFactory">
 
@@ -793,7 +793,7 @@
   -->
   <ServiceProvider id="Default Executor Service"
                    service="Resource"
-                   types="ManagedExecutorService, javax.enterprise.concurrent.ManagedExecutorService"
+                   types="ManagedExecutorService, jakarta.enterprise.concurrent.ManagedExecutorService"
                    factory-name="create"
                    class-name="org.apache.openejb.resource.thread.ManagedExecutorServiceImplFactory">
     Core = 5
@@ -805,7 +805,7 @@
   </ServiceProvider>
   <ServiceProvider id="Default Scheduled Executor Service"
                    service="Resource"
-                   types="ManagedScheduledExecutorService, javax.enterprise.concurrent.ManagedScheduledExecutorService"
+                   types="ManagedScheduledExecutorService, jakarta.enterprise.concurrent.ManagedScheduledExecutorService"
                    factory-name="create"
                    class-name="org.apache.openejb.resource.thread.ManagedScheduledExecutorServiceImplFactory">
     Core = 5
@@ -815,7 +815,7 @@
   </ServiceProvider>
   <ServiceProvider id="Default Managed Thread Factory"
                    service="Resource"
-                   types="ManagedThreadFactory, javax.enterprise.concurrent.ManagedThreadFactory"
+                   types="ManagedThreadFactory, jakarta.enterprise.concurrent.ManagedThreadFactory"
                    factory-name="create"
                    class-name="org.apache.openejb.resource.thread.ManagedThreadFactoryImplFactory">
     Prefix = openejb-managed-thread-
@@ -824,7 +824,7 @@
   </ServiceProvider>
   <ServiceProvider id="Default Context Service"
                    service="Resource"
-                   types="ContextService, javax.enterprise.concurrent.ContextService"
+                   types="ContextService, jakarta.enterprise.concurrent.ContextService"
                    class-name="org.apache.openejb.threads.impl.ContextServiceImpl">
     SkipImplicitAttributes = true
   </ServiceProvider>

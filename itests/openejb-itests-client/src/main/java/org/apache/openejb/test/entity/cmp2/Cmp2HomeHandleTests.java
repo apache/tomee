@@ -18,8 +18,8 @@ package org.apache.openejb.test.entity.cmp2;
 
 import org.apache.openejb.test.entity.cmp.BasicCmpHome;
 
-import javax.ejb.EJBHome;
-import javax.ejb.HomeHandle;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.HomeHandle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;

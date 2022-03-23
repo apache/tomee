@@ -24,9 +24,9 @@ import org.apache.johnzon.mapper.converter.DateConverter;
 import org.apache.johnzon.mapper.internal.ConverterAdapter;
 import org.apache.openejb.util.reflection.Reflections;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.ext.Provider;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;

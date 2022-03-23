@@ -18,10 +18,10 @@ package org.superbiz.cdi.decorators;
 
 import junit.framework.TestCase;
 
-import javax.annotation.security.RunAs;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.annotation.security.RunAs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.concurrent.Callable;
 
 public class CalculatorTest extends TestCase {

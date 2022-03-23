@@ -19,19 +19,19 @@ package org.apache.openejb.test.stateless;
 import org.apache.openejb.test.object.Account;
 import org.apache.openejb.test.object.Transaction;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import javax.transaction.RollbackException;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.UserTransaction;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class BeanTxStatelessBean implements javax.ejb.SessionBean {
+public class BeanTxStatelessBean implements jakarta.ejb.SessionBean {
 
 
     private String name;
@@ -156,9 +156,9 @@ public class BeanTxStatelessBean implements javax.ejb.SessionBean {
     //    
 
     /**
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      */
-    public void ejbCreate() throws javax.ejb.CreateException {
+    public void ejbCreate() throws jakarta.ejb.CreateException {
         try {
             jndiContext = new InitialContext();
         } catch (final Exception e) {

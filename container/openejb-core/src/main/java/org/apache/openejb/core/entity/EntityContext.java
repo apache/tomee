@@ -28,14 +28,14 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
 import java.util.ArrayList;
 
 /**
  * @version $Rev$ $Date$
  */
-public class EntityContext extends BaseContext implements javax.ejb.EntityContext {
+public class EntityContext extends BaseContext implements jakarta.ejb.EntityContext {
 
     public EntityContext(final SecurityService securityService) {
         super(securityService);

@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.catalina.cdi;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 import org.apache.catalina.ThreadBindingListener;
 import org.apache.webbeans.config.WebBeansContext;

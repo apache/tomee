@@ -26,11 +26,11 @@ import org.apache.webbeans.logger.JULLoggerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.Properties;
 
 import static org.junit.Assert.assertNotNull;
@@ -90,7 +90,7 @@ public class ResourceLocalCdiEmTest {
 
     public static class EMFProducer {
         @Produces
-        @javax.persistence.PersistenceUnit
+        @jakarta.persistence.PersistenceUnit
         private EntityManagerFactory emf;
 
         @Produces

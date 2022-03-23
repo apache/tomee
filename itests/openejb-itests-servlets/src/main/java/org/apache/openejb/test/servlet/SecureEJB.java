@@ -17,12 +17,12 @@
  */
 package org.apache.openejb.test.servlet;
 
-import javax.annotation.Resource;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
-import javax.annotation.security.DenyAll;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.annotation.security.DenyAll;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
 import java.security.Principal;
 
 @Stateless

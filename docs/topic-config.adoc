@@ -11,7 +11,7 @@ following. All properties in the element body are optional.
 
 [source,xml]
 ----
-<Resource id="myTopic" type="javax.jms.Topic">
+<Resource id="myTopic" type="jakarta.jms.Topic">
     destination = 
 </Resource>
 ----
@@ -19,11 +19,11 @@ following. All properties in the element body are optional.
 Alternatively, a Topic can be declared via properties in the
 `<tomee-home>/conf/system.properties` file or via Java VirtualMachine
 `-D` properties. The properties can also be used when embedding TomEE
-via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
+via the `jakarta.ejb.embeddable.EJBContainer` API or `InitialContext`
 
 [source,properties]
 ----
-myTopic = new://Resource?type=javax.jms.Topic
+myTopic = new://Resource?type=jakarta.jms.Topic
 myTopic.destination = 
 ----
 

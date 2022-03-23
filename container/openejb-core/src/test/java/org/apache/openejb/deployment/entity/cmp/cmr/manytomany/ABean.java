@@ -18,10 +18,10 @@ package org.apache.openejb.deployment.entity.cmp.cmr.manytomany;
 
 import org.apache.openejb.deployment.entity.cmp.cmr.CompoundPK;
 
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
 import java.util.Set;
 
 /**

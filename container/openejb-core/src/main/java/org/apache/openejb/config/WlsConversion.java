@@ -26,7 +26,7 @@ import org.apache.openejb.jee.wls.WeblogicEjbJar;
 import org.apache.openejb.jee.wls.WeblogicEnterpriseBean;
 import org.apache.openejb.loader.IO;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 

@@ -125,7 +125,7 @@ class DebuggableVmHackery implements DynamicDeployer {
 
     private void pruneRefs(final JndiConsumer bean, final EjbDeployment ejbDeployment) {
         for (final ResourceRef ref : copy(bean.getResourceRef())) {
-            if (ref.getResType().startsWith("javax.jms.")) {
+            if (ref.getResType().startsWith("jakarta.jms.")) {
                 final ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
                 ejbDeployment.getResourceLink().remove(resourceLink);
                 bean.getResourceRef().remove(ref);

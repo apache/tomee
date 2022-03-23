@@ -41,11 +41,11 @@ public class Warmup {
         if (!Boolean.getBoolean("tomee.warmup.skip")) {
             final String[] classes = {
                     "org.apache.tomee.jasper.TomEETldScanner",
-                    "javax.el.ExpressionFactory",
-                    "javax.faces.component.UIViewRoot",
+                    "jakarta.el.ExpressionFactory",
+                    "jakarta.faces.component.UIViewRoot",
                     // "javax.imageio.ImageIO", // bug in jvm < 1.7.0_60 -> deadlocks
                     "javax.naming.spi.NamingManager",
-                    "javax.servlet.ServletOutputStream",
+                    "jakarta.servlet.ServletOutputStream",
                     "org.apache.bval.jsr.ApacheValidatorFactory",
                     "org.apache.bval.jsr.ConstraintAnnotationAttributes",
                     "org.apache.bval.jsr.ConstraintDefaults",

@@ -18,8 +18,8 @@ package org.apache.openejb.test.entity.cmp2;
 
 import org.apache.openejb.test.entity.cmp.BasicCmpHome;
 
-import javax.ejb.EJBHome;
-import javax.ejb.ObjectNotFoundException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.ObjectNotFoundException;
 
 /**
  * [4] Should be run as the fourth test suite of the BasicCmpTestClients

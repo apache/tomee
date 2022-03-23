@@ -17,8 +17,8 @@
 
 package org.apache.openejb.rest;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import java.util.Enumeration;
 
 public class ThreadLocalServletConfig extends AbstractRestThreadLocalProxy<ServletConfig> implements ServletConfig {

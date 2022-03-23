@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.test.annotated;
 
-import javax.annotation.ManagedBean;
-import javax.interceptor.AroundInvoke;
-import javax.jws.WebService;
+import jakarta.annotation.ManagedBean;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.jws.WebService;
 
 @ManagedBean
 @WebService

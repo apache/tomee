@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.XAJMSContext;
-import javax.jms.XASession;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.XAJMSContext;
+import jakarta.jms.XASession;
 import javax.transaction.xa.XAResource;
 
 public class XAJMSContextImpl extends JMSContextImpl implements XAJMSContext {

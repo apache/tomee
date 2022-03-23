@@ -18,7 +18,7 @@
 
 package org.superbiz.cdi.qualifier;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * 

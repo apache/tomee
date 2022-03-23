@@ -21,11 +21,11 @@ import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
-import javax.ejb.Lock;
-import javax.ejb.Remote;
-import javax.ejb.Singleton;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Singleton;
 
-import static javax.ejb.LockType.READ;
+import static jakarta.ejb.LockType.READ;
 
 /**
  * @version $Rev$ $Date$

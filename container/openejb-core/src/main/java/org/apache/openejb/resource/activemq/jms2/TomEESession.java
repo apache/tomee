@@ -22,11 +22,11 @@ import org.apache.activemq.ActiveMQSession;
 import org.apache.activemq.CustomDestination;
 import org.apache.activemq.command.SessionId;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Topic;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Topic;
 
 // Note: not shared in the code
 public class TomEESession extends ActiveMQSession {

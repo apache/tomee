@@ -18,8 +18,8 @@
  */
 package org.superbiz.connector.api;
 
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
 import java.io.Serializable;
 
 public interface SampleConnectionFactory extends Serializable, Referenceable {

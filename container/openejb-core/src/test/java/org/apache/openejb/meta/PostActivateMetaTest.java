@@ -20,7 +20,7 @@ import org.apache.openejb.OpenEJB;
 import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 
-import javax.ejb.PostActivate;
+import jakarta.ejb.PostActivate;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

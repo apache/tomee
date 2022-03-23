@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.client;
 
-import javax.ejb.RemoveException;
+import jakarta.ejb.RemoveException;
 import java.lang.reflect.Method;
 import java.util.concurrent.ThreadPoolExecutor;
 

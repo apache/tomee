@@ -25,10 +25,10 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import javax.naming.NamingException;
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

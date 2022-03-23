@@ -102,7 +102,7 @@ Execute o teste, e veremos um `Entering method: getMovieList` impresso no termin
 http://tomee.apache.org/ 
 INFO - openejb.home = /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
 INFO - openejb.base = /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
-INFO - Using `javax.ejb.embeddable.EJBContainer=true' 
+INFO - Using `jakarta.ejb.embeddable.EJBContainer=true' 
 INFO - ConfiguringService(id=Default Security Service, type=SecurityService, provider-id=Default Security Service) 
 INFO - ConfiguringService(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager) 
 INFO - Found EjbModule in classpath:/media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors/target/classes

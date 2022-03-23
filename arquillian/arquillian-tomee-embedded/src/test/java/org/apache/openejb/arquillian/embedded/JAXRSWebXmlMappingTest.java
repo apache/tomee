@@ -30,7 +30,7 @@ import org.jboss.shrinkwrap.descriptor.api.webcommon31.WebAppVersionType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.ClientBuilder;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -46,10 +46,10 @@ public class JAXRSWebXmlMappingTest {
             .setWebXML(new StringAsset(
                 Descriptors.create(WebAppDescriptor.class)
                     .version(WebAppVersionType._3_1)
-                    .getOrCreateServlet().servletName("javax.ws.rs.core.Application")
-                    .getOrCreateInitParam().paramName("javax.ws.rs.Application").paramValue(SimpleApp.class.getName()).up()
+                    .getOrCreateServlet().servletName("jakarta.ws.rs.core.Application")
+                    .getOrCreateInitParam().paramName("jakarta.ws.rs.Application").paramValue(SimpleApp.class.getName()).up()
                     .up()
-                    .getOrCreateServletMapping().servletName("javax.ws.rs.core.Application").urlPattern("/rs/*").up()
+                    .getOrCreateServletMapping().servletName("jakarta.ws.rs.core.Application").urlPattern("/rs/*").up()
                     .exportAsString()
             ));
     }

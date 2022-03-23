@@ -24,8 +24,8 @@ import org.apache.openejb.testing.Module;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import javax.ejb.EJB;
-import javax.transaction.SystemException;
+import jakarta.ejb.EJB;
+import jakarta.transaction.SystemException;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;

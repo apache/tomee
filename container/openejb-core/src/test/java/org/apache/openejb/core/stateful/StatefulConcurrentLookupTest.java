@@ -32,8 +32,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.Local;
-import javax.ejb.Stateful;
+import jakarta.ejb.Local;
+import jakarta.ejb.Stateful;
 import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;

@@ -28,24 +28,24 @@ import org.apache.openejb.test.stateless.BasicStatelessObject;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
 import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
 
-import javax.ejb.EJBException;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
 import javax.sql.DataSource;
-import javax.jms.ConnectionFactory;
-import javax.jms.Connection;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.MessageProducer;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.JMSException;
 import java.rmi.RemoteException;
 import java.util.StringTokenizer;
 
-public class ContextLookupCmpBean implements javax.ejb.EntityBean {
+public class ContextLookupCmpBean implements jakarta.ejb.EntityBean {
     private static int nextId;
     public int primaryKey;
     public String firstName;
@@ -61,10 +61,10 @@ public class ContextLookupCmpBean implements javax.ejb.EntityBean {
      *
      * @param name
      * @return
-     * @throws javax.ejb.CreateException
+     * @throws jakarta.ejb.CreateException
      * @see EncCmpHome#create
      */
-    public Integer ejbCreate(final String name) throws javax.ejb.CreateException {
+    public Integer ejbCreate(final String name) throws jakarta.ejb.CreateException {
         primaryKey = nextId++;
         final StringTokenizer st = new StringTokenizer(name, " ");
         firstName = st.nextToken();
@@ -72,7 +72,7 @@ public class ContextLookupCmpBean implements javax.ejb.EntityBean {
         return null;
     }
 
-    public void ejbPostCreate(final String name) throws javax.ejb.CreateException {
+    public void ejbPostCreate(final String name) throws jakarta.ejb.CreateException {
     }
 
     //

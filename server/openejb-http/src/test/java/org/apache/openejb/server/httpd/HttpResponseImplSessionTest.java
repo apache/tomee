@@ -35,7 +35,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

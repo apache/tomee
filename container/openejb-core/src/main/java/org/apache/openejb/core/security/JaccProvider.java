@@ -17,9 +17,9 @@
 
 package org.apache.openejb.core.security;
 
-import javax.security.jacc.PolicyConfiguration;
-import javax.security.jacc.PolicyConfigurationFactory;
-import javax.security.jacc.PolicyContextException;
+import jakarta.security.jacc.PolicyConfiguration;
+import jakarta.security.jacc.PolicyConfigurationFactory;
+import jakarta.security.jacc.PolicyContextException;
 import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.Permission;

@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateless;
 
-import javax.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalHome;
 
 public class StatelessPojoEjbLocalObjectTests extends BasicStatelessLocalTestClient {
 
@@ -65,15 +65,15 @@ public class StatelessPojoEjbLocalObjectTests extends BasicStatelessLocalTestCli
      * client's perspective, appear anonymous. In contrast to entity objects,
      * which expose their identity as a primary key, session objects hide their
      * identity. As a result, the EJBLocalObject.getPrimaryKey() method results in a
-     * javax.ejb.EJBException, and EJBLocalHome.remove(Object primaryKey) method results
-     * in a javax.ejb.RemoveException. If the EJBMetaData.getPrimaryKeyClass()
+     * jakarta.ejb.EJBException, and EJBLocalHome.remove(Object primaryKey) method results
+     * in a jakarta.ejb.RemoveException. If the EJBMetaData.getPrimaryKeyClass()
      * method is invoked on a EJBMetaData object for a Session bean, the method throws
      * the java.lang.RuntimeException.
      */
     public void test03_getPrimaryKey() {
         try {
             final Object key = ejbLocalObject.getPrimaryKey();
-        } catch (final javax.ejb.EJBException e) {
+        } catch (final jakarta.ejb.EJBException e) {
             assertTrue(true);
             return;
         } catch (final Exception e) {

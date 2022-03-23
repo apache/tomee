@@ -200,7 +200,7 @@ class EjbRequestHandler extends RequestHandler {
                         updateServer(req, res);
                         break;
 
-                    // javax.ejb.EJBObject methods
+                    // jakarta.ejb.EJBObject methods
                     case EJB_OBJECT_GET_EJB_HOME:
                         doEjbObject_GET_EJB_HOME(req, res);
                         updateServer(req, res);
@@ -225,7 +225,7 @@ class EjbRequestHandler extends RequestHandler {
                         doEjbObject_REMOVE(req, res);
                         break;
 
-                    // javax.ejb.EJBHome methods
+                    // jakarta.ejb.EJBHome methods
                     case EJB_HOME_GET_EJB_META_DATA:
                         doEjbHome_GET_EJB_META_DATA(req, res);
                         updateServer(req, res);

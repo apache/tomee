@@ -17,10 +17,10 @@
 
 package org.apache.openejb.arquillian.tests.datasource.definition;
 
-import javax.annotation.Resource;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
 import javax.sql.DataSource;
 
 @Stateless

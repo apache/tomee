@@ -20,8 +20,8 @@ package org.apache.openejb.core.webservices;
 import org.apache.openejb.core.stateless.EjbWsContext;
 import org.w3c.dom.Element;
 
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceContext;
 
 /**
  * This interface defines the WS-Addressing functions of {@link WebServiceContext WebServiceContext}

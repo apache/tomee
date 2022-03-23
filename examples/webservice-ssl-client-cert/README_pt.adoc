@@ -18,10 +18,10 @@ O caso de teste demonstra como interagir com a API CXF  a fim de configurar o la
 ----
 package org.superbiz.calculator;
 
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 /**
  * Este é um bean de sessão sem estado(stateless) do Pojo estilo EJB 3
@@ -57,7 +57,7 @@ public class CalculatorImpl implements CalculatorWs {
 ----
 package org.superbiz.calculator;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 //START SNIPPET: code
 /**
@@ -129,8 +129,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
 import junit.framework.TestCase;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.frontend.ClientProxy;

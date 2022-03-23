@@ -27,7 +27,7 @@ import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.xbean.finder.ClassFinder;
 
-import javax.ejb.Asynchronous;
+import jakarta.ejb.Asynchronous;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;

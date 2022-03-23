@@ -21,10 +21,10 @@ package org.apache.tomee.webaccess.service
 import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
 import org.apache.tomee.webaccess.data.dto.LogFileResultDto
 
-import javax.annotation.security.RolesAllowed
-import javax.ejb.Stateless
-import javax.ejb.TransactionAttribute
-import javax.ejb.TransactionAttributeType
+import jakarta.annotation.security.RolesAllowed
+import jakarta.ejb.Stateless
+import jakarta.ejb.TransactionAttribute
+import jakarta.ejb.TransactionAttributeType
 
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Stateless(name = 'TomEEWebAccessLogService')

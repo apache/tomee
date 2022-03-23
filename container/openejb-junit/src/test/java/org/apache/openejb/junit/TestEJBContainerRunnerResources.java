@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.junit;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 import org.apache.openejb.config.DeploymentFilterable;

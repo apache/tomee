@@ -16,8 +16,8 @@
  */
 package org.superbiz.calculator.ws;
 
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 @Stateless
 @WebService(

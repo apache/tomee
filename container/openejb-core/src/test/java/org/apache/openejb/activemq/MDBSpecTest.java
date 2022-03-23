@@ -30,18 +30,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.inject.Inject;
-import javax.jms.JMSConnectionFactory;
-import javax.jms.JMSConnectionFactoryDefinition;
-import javax.jms.JMSContext;
-import javax.jms.JMSDestinationDefinition;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Queue;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.inject.Inject;
+import jakarta.jms.JMSConnectionFactory;
+import jakarta.jms.JMSConnectionFactoryDefinition;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSDestinationDefinition;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Queue;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -104,10 +104,10 @@ public class MDBSpecTest {
                 }}});
     }
 
-    @JMSDestinationDefinition(name = "jms/input", destinationName = "jms/input", interfaceName = "javax.jms.Queue")
+    @JMSDestinationDefinition(name = "jms/input", destinationName = "jms/input", interfaceName = "jakarta.jms.Queue")
     @JMSConnectionFactoryDefinition(name = "jms/ConnectionFactory", transactional = false)
     @MessageDriven(activationConfig = {
-            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Queue"),
             @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "jms/input"),
             @ActivationConfigProperty(propertyName = "connectionFactoryLookup", propertyValue = "jms/ConnectionFactory")
     })

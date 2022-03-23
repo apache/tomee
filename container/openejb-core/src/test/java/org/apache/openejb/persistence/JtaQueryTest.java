@@ -25,9 +25,9 @@ import org.apache.openjpa.persistence.QueryImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

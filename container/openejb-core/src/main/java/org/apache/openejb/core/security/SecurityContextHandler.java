@@ -21,9 +21,9 @@ import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.resource.spi.work.SecurityContext;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.SecurityContext;
+import jakarta.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 

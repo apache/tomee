@@ -25,7 +25,7 @@ import org.apache.openejb.quartz.impl.jdbcjobstore.Util;
 import org.apache.openejb.quartz.spi.MutableTrigger;
 import org.apache.openejb.quartz.spi.OperableTrigger;
 
-import javax.ejb.ScheduleExpression;
+import jakarta.ejb.ScheduleExpression;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

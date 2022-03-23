@@ -16,11 +16,11 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
-import javax.json.bind.Jsonb;
-import javax.json.bind.spi.JsonbProvider;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.spi.JsonbProvider;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

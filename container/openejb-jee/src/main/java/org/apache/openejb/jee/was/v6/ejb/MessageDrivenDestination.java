@@ -18,15 +18,15 @@ package org.apache.openejb.jee.was.v6.ejb;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlIDREF;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 
 import org.apache.openejb.jee.was.v6.xmi.Extension;
@@ -36,7 +36,7 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * whether a message-driven bean is intended for a Queue or a Topic. The
  * declaration consists of: the type of the message-driven bean's intended
  * destination and an optional declaration of whether a durable or non-durable
- * subscription should be used if the destination-type is javax.jms.Topic.
+ * subscription should be used if the destination-type is jakarta.jms.Topic.
  *
  *
  *

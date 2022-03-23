@@ -160,7 +160,7 @@ Default JMS Resource Adapter.
 MessageListenerInterface
 
 Specifies the message listener interface handled by this container
-Default value is javax.jms.MessageListener.
+Default value is jakarta.jms.MessageListener.
 
 ActivationSpecClass
 
@@ -375,13 +375,13 @@ DataSource
 DataSource for persistence messages Default value is Default Unmanaged
 JDBC Database.
 
-javax.jms.ConnectionFactory
+jakarta.jms.ConnectionFactory
 
 Declarable in tomee.xml via
 
 Declarable in properties via
 
-Foo = new://Resource?type=javax.jms.ConnectionFactory
+Foo = new://Resource?type=jakarta.jms.ConnectionFactory
 
 Supports the following properties
 
@@ -417,13 +417,13 @@ ConnectionMaxIdleMinutes
 Maximum amount of time a connection can be idle before being reclaimed
 Default value is 15.
 
-javax.jms.Queue
+jakarta.jms.Queue
 
 Declarable in tomee.xml via
 
 Declarable in properties via
 
-Foo = new://Resource?type=javax.jms.Queue
+Foo = new://Resource?type=jakarta.jms.Queue
 
 Supports the following properties
 
@@ -435,13 +435,13 @@ destination
 
 Specifies the name of the queue
 
-javax.jms.Topic
+jakarta.jms.Topic
 
 Declarable in tomee.xml via
 
 Declarable in properties via
 
-Foo = new://Resource?type=javax.jms.Topic
+Foo = new://Resource?type=jakarta.jms.Topic
 
 Supports the following properties
 
@@ -463,12 +463,12 @@ Foo = new://Resource?type=org.omg.CORBA.ORB
 
 No properties.
 
-javax.mail.Session
+jakarta.mail.Session
 
 Declarable in tomee.xml via
 
 Declarable in properties via
 
-Foo = new://Resource?type=javax.mail.Session
+Foo = new://Resource?type=jakarta.mail.Session
 
 No properties.

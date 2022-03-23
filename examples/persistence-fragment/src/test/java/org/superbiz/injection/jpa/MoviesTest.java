@@ -19,10 +19,10 @@ package org.superbiz.injection.jpa;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnit;
 import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;

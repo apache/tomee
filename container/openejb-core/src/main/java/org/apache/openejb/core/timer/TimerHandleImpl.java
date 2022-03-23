@@ -21,9 +21,9 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.ejb.NoSuchObjectLocalException;
-import javax.ejb.Timer;
-import javax.ejb.TimerHandle;
+import jakarta.ejb.NoSuchObjectLocalException;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerHandle;
 import java.io.Serializable;
 
 public class TimerHandleImpl implements TimerHandle, Serializable {

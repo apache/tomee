@@ -25,22 +25,22 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.w3c.dom.Element;
 
-import javax.jws.WebService;
-import javax.xml.bind.JAXBContext;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.spi.Provider;
-import javax.xml.ws.spi.ServiceDelegate;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Dispatch;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceFeature;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.spi.Provider;
+import jakarta.xml.ws.spi.ServiceDelegate;
+import jakarta.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -363,7 +363,7 @@ public class ProviderWrapper extends Provider {
             classLoader = ClassLoader.getSystemClassLoader();
         }
 
-        // 0. System.getProperty("openejb.javax.xml.ws.spi.Provider")
+        // 0. System.getProperty("openejb.jakarta.xml.ws.spi.Provider")
         // This is so those using old axis rules still work as expected
         String providerClass = JavaSecurityManagers.getSystemProperty("openejb." + JAXWSPROVIDER_PROPERTY);
         Provider provider = createProviderInstance(providerClass, classLoader);
@@ -371,7 +371,7 @@ public class ProviderWrapper extends Provider {
             return provider;
         }
 
-        // 1. META-INF/services/javax.xml.ws.spi.Provider
+        // 1. META-INF/services/jakarta.xml.ws.spi.Provider
         try {
             for (final URL url : Collections.list(classLoader.getResources("META-INF/services/" + JAXWSPROVIDER_PROPERTY))) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
@@ -407,7 +407,7 @@ public class ProviderWrapper extends Provider {
             }
         }
 
-        // 3. System.getProperty("javax.xml.ws.spi.Provider")
+        // 3. System.getProperty("jakarta.xml.ws.spi.Provider")
         providerClass = JavaSecurityManagers.getSystemProperty(JAXWSPROVIDER_PROPERTY);
         provider = createProviderInstance(providerClass, classLoader);
         if (provider != null) {
@@ -415,7 +415,7 @@ public class ProviderWrapper extends Provider {
         }
 
 
-        // 4. Use javax.xml.ws.spi.Provider default
+        // 4. Use jakarta.xml.ws.spi.Provider default
         try {
             JavaSecurityManagers.removeSystemProperty(JAXWSPROVIDER_PROPERTY);
             provider = Provider.provider();

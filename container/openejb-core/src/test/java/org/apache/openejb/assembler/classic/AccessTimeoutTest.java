@@ -26,9 +26,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.AfterClass;
 
-import javax.ejb.AccessTimeout;
-import javax.ejb.Local;
-import javax.ejb.Remote;
+import jakarta.ejb.AccessTimeout;
+import jakarta.ejb.Local;
+import jakarta.ejb.Remote;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

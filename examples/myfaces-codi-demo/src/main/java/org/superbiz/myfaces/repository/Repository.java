@@ -20,8 +20,8 @@ package org.superbiz.myfaces.repository;
 
 import org.apache.myfaces.extensions.cdi.jpa.api.Transactional;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Stereotype;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Stereotype;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

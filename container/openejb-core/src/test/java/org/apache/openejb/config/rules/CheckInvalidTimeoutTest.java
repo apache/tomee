@@ -21,7 +21,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
 
-import javax.ejb.Timeout;
+import jakarta.ejb.Timeout;
 
 //@RunWith(ValidationRunner.class)
 public class CheckInvalidTimeoutTest extends TestCase {
@@ -55,11 +55,11 @@ public class CheckInvalidTimeoutTest extends TestCase {
     // timeout.tooManyMethods
     public static class FooBean {
         @Timeout
-        public void foo(final javax.ejb.Timer timer) {
+        public void foo(final jakarta.ejb.Timer timer) {
         }
 
         @Timeout
-        public void bar(final javax.ejb.Timer timer) {
+        public void bar(final jakarta.ejb.Timer timer) {
         }
     }
 
@@ -67,7 +67,7 @@ public class CheckInvalidTimeoutTest extends TestCase {
     // timeout.missing.possibleTypo
     public static class BarBean {
 
-        public void foo(final javax.ejb.Timer timer) {
+        public void foo(final jakarta.ejb.Timer timer) {
         }
     }
 

@@ -25,7 +25,7 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.FacesManagedBean;
 import org.apache.openejb.jee.JaxbJavaee;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;

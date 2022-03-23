@@ -17,18 +17,18 @@
 package org.apache.openejb.server.webservices.saaj;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Detail;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
+import jakarta.xml.soap.Detail;
+import jakarta.xml.soap.Name;
+import jakarta.xml.soap.SOAPElement;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.soap.SOAPFault;
 
 public class SoapFactoryImpl extends SOAPFactory {
 
     private SOAPFactory getSOAPFactory() throws SOAPException {
         SOAPFactory factory =
-            (SOAPFactory) SaajFactoryFinder.find("javax.xml.soap.SOAPFactory");
+            (SOAPFactory) SaajFactoryFinder.find("jakarta.xml.soap.SOAPFactory");
         return factory;
 
     }

@@ -19,8 +19,8 @@ package org.apache.openejb.cipher;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.Bean;
 
 // use: cipher:cdi:<your bean class>:<encrypted pwd>
 public final class CdiPasswordCipher implements PasswordCipher {

@@ -20,9 +20,9 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.ejb.CreateException;
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

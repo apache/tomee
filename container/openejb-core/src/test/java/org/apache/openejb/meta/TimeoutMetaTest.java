@@ -18,8 +18,8 @@ package org.apache.openejb.meta;
 
 import org.junit.runner.RunWith;
 
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
+import jakarta.ejb.Timeout;
+import jakarta.ejb.Timer;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

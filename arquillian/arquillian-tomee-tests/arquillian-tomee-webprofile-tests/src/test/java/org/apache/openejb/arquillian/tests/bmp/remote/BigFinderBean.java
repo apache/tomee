@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.bmp.remote;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
-import javax.ejb.RemoveException;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
+import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;

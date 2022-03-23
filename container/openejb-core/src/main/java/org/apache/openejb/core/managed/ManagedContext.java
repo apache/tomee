@@ -22,7 +22,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 
 

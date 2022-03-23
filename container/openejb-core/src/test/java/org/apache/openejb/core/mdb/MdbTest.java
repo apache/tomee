@@ -20,20 +20,20 @@ package org.apache.openejb.core.mdb;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.ra.ActiveMQActivationSpec;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
-import javax.resource.ResourceException;
-import javax.resource.spi.UnavailableException;
-import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.Session;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.UnavailableException;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -100,7 +100,7 @@ public class MdbTest extends JmsTest {
     private void createListener() throws Exception {
         // create the activation spec
         final ActiveMQActivationSpec activationSpec = new ActiveMQActivationSpec();
-        activationSpec.setDestinationType("javax.jms.Queue");
+        activationSpec.setDestinationType("jakarta.jms.Queue");
         activationSpec.setDestination(REQUEST_QUEUE_NAME);
 
         // validate the activation spec

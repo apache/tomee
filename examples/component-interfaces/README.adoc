@@ -12,13 +12,13 @@ right to edit this page._
 ----
 package org.superbiz;
 
-import javax.ejb.Init;
-import javax.ejb.Local;
-import javax.ejb.LocalHome;
-import javax.ejb.Remote;
-import javax.ejb.RemoteHome;
-import javax.ejb.Remove;
-import javax.ejb.Stateful;
+import jakarta.ejb.Init;
+import jakarta.ejb.Local;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.Remote;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateful;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -26,7 +26,7 @@ import java.util.Properties;
 
 /**
  * This is an EJB 3 style pojo stateful session bean
- * it does not need to implement javax.ejb.SessionBean
+ * it does not need to implement jakarta.ejb.SessionBean
  *
  */
 //START SNIPPET: code
@@ -130,8 +130,8 @@ package org.superbiz;
 
 //START SNIPPET: code
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBHome;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBHome;
 import java.rmi.RemoteException;
 
 public interface FriendlyPersonEjbHome extends EJBHome {
@@ -147,8 +147,8 @@ package org.superbiz;
 
 //START SNIPPET: code
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBLocalHome;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.EJBLocalHome;
 import java.rmi.RemoteException;
 
 public interface FriendlyPersonEjbLocalHome extends EJBLocalHome {
@@ -162,7 +162,7 @@ public interface FriendlyPersonEjbLocalHome extends EJBLocalHome {
 ----
 package org.superbiz;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 public interface FriendlyPersonEjbLocalObject extends EJBLocalObject {
     String greet(String friend);
@@ -187,7 +187,7 @@ package org.superbiz;
 
 //START SNIPPET: code
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 public interface FriendlyPersonEjbObject extends EJBObject {
@@ -213,7 +213,7 @@ package org.superbiz;
 
 //START SNIPPET: code
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 @Local
 public interface FriendlyPersonLocal {
@@ -237,7 +237,7 @@ public interface FriendlyPersonLocal {
 ----
 package org.superbiz;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 //START SNIPPET: code
 @Remote
@@ -264,7 +264,7 @@ package org.superbiz;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.Locale;
 
@@ -439,7 +439,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/component-interfaces
 INFO - openejb.base = /Users/dblevins/examples/component-interfaces
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/component-interfaces/target/classes

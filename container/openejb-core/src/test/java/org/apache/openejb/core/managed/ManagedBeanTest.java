@@ -27,15 +27,15 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.TransactionAttribute;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.TransactionAttribute;
 import javax.naming.InitialContext;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static javax.ejb.TransactionAttributeType.REQUIRED;
+import static jakarta.ejb.TransactionAttributeType.REQUIRED;
 
 /**
  * This test case serves as a nice tiny template for other test cases

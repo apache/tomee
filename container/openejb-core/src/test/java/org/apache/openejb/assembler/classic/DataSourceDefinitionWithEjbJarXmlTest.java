@@ -24,10 +24,10 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 import java.sql.Connection;
 import java.sql.SQLException;
 

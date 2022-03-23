@@ -17,7 +17,7 @@
 
 package org.apache.openejb.core.cmp;
 
-import javax.ejb.EntityBean;
+import jakarta.ejb.EntityBean;
 
 public interface KeyGenerator {
     Object getPrimaryKey(EntityBean bean);

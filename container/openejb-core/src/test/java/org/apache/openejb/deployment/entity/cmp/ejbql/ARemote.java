@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.deployment.entity.cmp.ejbql;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 /**

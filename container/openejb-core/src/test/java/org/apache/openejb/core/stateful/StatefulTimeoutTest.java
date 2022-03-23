@@ -29,9 +29,9 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
 
-import javax.ejb.Local;
-import javax.ejb.NoSuchEJBException;
-import javax.ejb.Stateful;
+import jakarta.ejb.Local;
+import jakarta.ejb.NoSuchEJBException;
+import jakarta.ejb.Stateful;
 import javax.naming.InitialContext;
 import java.util.concurrent.TimeUnit;
 

@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.test.beans;
 
-import javax.ejb.SessionContext;
+import jakarta.ejb.SessionContext;
 import javax.naming.InitialContext;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CalculatorBean implements javax.ejb.SessionBean {
+public class CalculatorBean implements jakarta.ejb.SessionBean {
 
     public SessionContext context;
     public InitialContext jndiContext;
@@ -87,7 +87,7 @@ public class CalculatorBean implements javax.ejb.SessionBean {
         if (testRemove) testAllowedOperations("ejbRemove");
     }
 
-    public void setSessionContext(final javax.ejb.SessionContext cntx) {
+    public void setSessionContext(final jakarta.ejb.SessionContext cntx) {
         context = cntx;
         if (testSetSessionContext) testAllowedOperations("setSessionContext");
 

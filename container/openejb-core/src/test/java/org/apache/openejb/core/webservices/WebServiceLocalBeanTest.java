@@ -22,9 +22,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -26,7 +26,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.*;
+import jakarta.xml.bind.*;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -167,7 +167,7 @@ public class JeeTest extends TestCase {
 
         final NamedMethod timeoutMethod = timer.getTimeoutMethod();
         assertEquals("testScheduleMethod", timeoutMethod.getMethodName());
-        assertEquals("javax.ejb.Timer", timeoutMethod.getMethodParams().getMethodParam().get(0));
+        assertEquals("jakarta.ejb.Timer", timeoutMethod.getMethodParams().getMethodParam().get(0));
 
         assertEquals(Boolean.FALSE, timer.getPersistent());
         assertEquals("America/New_York", timer.getTimezone());
@@ -191,13 +191,13 @@ public class JeeTest extends TestCase {
         <message-selector>mySelector</message-selector>
         <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
         <message-driven-destination>
-        <destination-type>javax.jms.Queue</destination-type>
+        <destination-type>jakarta.jms.Queue</destination-type>
         <subscription-durability>Durable</subscription-durability>
 
          */
         assertEquals("mySelector", properties.get("messageSelector"));
         assertEquals("Auto-acknowledge", properties.get("acknowledgeMode"));
-        assertEquals("javax.jms.Queue", properties.get("destinationType"));
+        assertEquals("jakarta.jms.Queue", properties.get("destinationType"));
         assertEquals("Durable", properties.get("subscriptionDurability"));
     }
 

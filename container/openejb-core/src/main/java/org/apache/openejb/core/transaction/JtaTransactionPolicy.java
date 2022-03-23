@@ -23,15 +23,15 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -74,7 +74,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         try {
             final int status = trasaction.getStatus();
             return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
-        } catch (final javax.transaction.SystemException e) {
+        } catch (final jakarta.transaction.SystemException e) {
             return false;
         }
     }
@@ -85,7 +85,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             try {
                 final int status = trasaction.getStatus();
                 return status == Status.STATUS_MARKED_ROLLBACK;
-            } catch (final javax.transaction.SystemException e) {
+            } catch (final jakarta.transaction.SystemException e) {
                 return false;
             }
         } else {
@@ -206,7 +206,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     protected Transaction getTransaction() throws SystemException {
         try {
             return transactionManager.getTransaction();
-        } catch (final javax.transaction.SystemException e) {
+        } catch (final jakarta.transaction.SystemException e) {
             txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to obtain current transaction: {0}", e.getMessage());
             throw new SystemException(e);
         }
@@ -281,7 +281,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
                 txLogger.debug("TX {0}: Suspended transaction {1}", transactionType, tx);
             }
             return tx;
-        } catch (final javax.transaction.SystemException se) {
+        } catch (final jakarta.transaction.SystemException se) {
             txLogger.error("Exception during suspend()", se);
             throw new SystemException(se);
         }
@@ -303,7 +303,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
             txLogger.error("Could not resume the client's transaction: {0}", e.getMessage());
             throw new SystemException(e);
-        } catch (final javax.transaction.SystemException e) {
+        } catch (final jakarta.transaction.SystemException e) {
 
             txLogger.error("Could not resume the client's transaction: The transaction reported a system exception: {0}", e.getMessage());
             throw new SystemException(e);
@@ -314,7 +314,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         final boolean shouldRollback;
         try {
             shouldRollback = tx.getStatus() != Status.STATUS_ACTIVE;
-        } catch (final javax.transaction.SystemException e) {
+        } catch (final jakarta.transaction.SystemException e) {
             txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to obtain transaction status: {0}", e.getMessage());
             throw new SystemException(e);
         }
@@ -358,7 +358,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             txLogger.error("The current thread is not associated with a transaction: {0}", e.getMessage());
             throw new SystemException(e);
 
-        } catch (final javax.transaction.SystemException e) {
+        } catch (final jakarta.transaction.SystemException e) {
             txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to commit the transaction: {0}", e.getMessage());
 
             throw new SystemException(e);
@@ -374,7 +374,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             } else {
                 tx.rollback();
             }
-        } catch (final IllegalStateException | javax.transaction.SystemException e) {
+        } catch (final IllegalStateException | jakarta.transaction.SystemException e) {
 
             logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: " + e.getMessage());
             throw new SystemException(e);

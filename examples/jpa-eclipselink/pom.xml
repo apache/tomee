@@ -79,11 +79,11 @@
     </repository>
   </repositories>
   <dependencies>
-    <!-- spec apis such as javax.persistence -->
+    <!-- spec apis such as jakarta.persistence -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[8.0,)</version>
+      <version>[9.0,)</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

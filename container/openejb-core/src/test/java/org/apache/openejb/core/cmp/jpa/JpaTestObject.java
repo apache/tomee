@@ -21,12 +21,12 @@ import org.apache.openejb.test.entity.cmp.BasicCmpBean;
 import org.apache.openejb.test.entity.cmp.ComplexCmpBean;
 import org.apache.openejb.test.entity.cmp.UnknownCmpBean;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import javax.sql.DataSource;
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Status;
+import jakarta.transaction.TransactionManager;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

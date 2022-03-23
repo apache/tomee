@@ -89,7 +89,7 @@ editor, create a file named Hello.java (shown below)
 [source,java]
 ----
 package org.acme;
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 @Remote
 public interface Hello{
     public String sayHello();
@@ -102,7 +102,7 @@ below)
 [source,java]
 ----
 package org.acme;
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 @Stateless
 public class HelloBean implements Hello{
     public String sayHello(){
@@ -112,7 +112,7 @@ public class HelloBean implements Hello{
 ----
 
 === Compile the source code Since we have imported the
-javax.ejb.Stateless and javax.ejb.Remote annotations, we need these in
+jakarta.ejb.Stateless and jakarta.ejb.Remote annotations, we need these in
 our classpath to compile our source code. These annotations can be found
 in the $OPENEJB_HOME/lib/javaee-5.0-1.jar. Lets compile our source (make
 sure you are in the projects directory)

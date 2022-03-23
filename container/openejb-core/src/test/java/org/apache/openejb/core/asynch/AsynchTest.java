@@ -34,12 +34,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.SessionContext;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.AsyncResult;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
 import java.util.concurrent.Future;
 

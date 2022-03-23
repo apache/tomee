@@ -27,9 +27,9 @@ import org.junit.runner.RunWith;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
 import javax.sql.DataSource;
 
 import static org.apache.openejb.resource.jdbc.FailOverRouters.datasource;

@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.catalina.realm.event;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

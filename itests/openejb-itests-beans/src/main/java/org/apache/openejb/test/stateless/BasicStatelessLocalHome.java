@@ -17,7 +17,7 @@
 package org.apache.openejb.test.stateless;
 
 
-public interface BasicStatelessLocalHome extends javax.ejb.EJBLocalHome {
+public interface BasicStatelessLocalHome extends jakarta.ejb.EJBLocalHome {
 
-    public BasicStatelessLocalObject create() throws javax.ejb.CreateException;
+    public BasicStatelessLocalObject create() throws jakarta.ejb.CreateException;
 }

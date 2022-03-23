@@ -30,9 +30,9 @@ import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.junit.Test;
 
-import javax.ejb.EJBException;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.Serializable;

@@ -138,7 +138,7 @@ public class NoServiceJarTest extends TestCase {
 
     public static class MyBean {
 
-        @javax.annotation.Resource
+        @jakarta.annotation.Resource
         private Color color;
 
         public Color getColor() {

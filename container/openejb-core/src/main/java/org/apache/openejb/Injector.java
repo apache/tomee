@@ -132,7 +132,7 @@ public class Injector {
         }
 
         public NoInjectionMetaDataException(final String s, final Exception e) {
-            super(String.format("%s : Annotate the class with @%s so it can be discovered in the application scanning process", s, javax.annotation.ManagedBean.class.getName()), e);
+            super(String.format("%s : Annotate the class with @%s so it can be discovered in the application scanning process", s, jakarta.annotation.ManagedBean.class.getName()), e);
         }
     }
 

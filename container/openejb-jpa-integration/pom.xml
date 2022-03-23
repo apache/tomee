@@ -55,9 +55,15 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+      <version>2.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
-      <scope>provided</scope>
+      <classifier>jakarta</classifier>
     </dependency>
   </dependencies>
 

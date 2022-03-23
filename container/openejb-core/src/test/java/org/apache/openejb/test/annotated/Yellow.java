@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.test.annotated;
 
-import javax.ejb.MessageDriven;
-import javax.interceptor.AroundInvoke;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jws.WebService;
+import jakarta.ejb.MessageDriven;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jws.WebService;
 
 
 @MessageDriven

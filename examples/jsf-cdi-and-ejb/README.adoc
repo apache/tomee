@@ -43,7 +43,7 @@ We’ll first declare the FacesServlet in the web.xml
 ----
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 ----
@@ -92,9 +92,9 @@ the result from the request-scoped `calculatorBean`.
 
 [source,java]
 ----
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
-import javax.inject.Inject;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
+import jakarta.inject.Inject;
 
 @RequestScoped
 @Named
@@ -142,7 +142,7 @@ public class CalculatorBean {
 ----
 package org.superbiz.jsf;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class Calculator{
@@ -157,7 +157,7 @@ public class Calculator{
 
 MyProject web.xml
 
-Faces Servlet javax.faces.webapp.FacesServlet 1
+Faces Servlet jakarta.faces.webapp.FacesServlet 1
 
 Faces Servlet *.jsf
 

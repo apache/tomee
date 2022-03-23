@@ -20,23 +20,23 @@ import org.apache.activemq.ra.ActiveMQManagedConnection;
 import org.apache.activemq.ra.ManagedConnectionProxy;
 import org.apache.openejb.OpenEJB;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionConsumer;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
-import javax.jms.QueueConnection;
-import javax.jms.ServerSessionPool;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.XAConnection;
-import javax.jms.XASession;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionConsumer;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
+import jakarta.jms.QueueConnection;
+import jakarta.jms.ServerSessionPool;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnection;
+import jakarta.jms.XAConnection;
+import jakarta.jms.XASession;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 
 public class TomEEManagedConnectionProxy extends ManagedConnectionProxy
     // cause org.apache.openejb.resource.AutoConnectionTracker.proxyConnection() just uses getInterfaces()

@@ -10,10 +10,10 @@ right to edit this page._
 ----
 package org.superbiz.calculator;
 
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
@@ -48,7 +48,7 @@ public class CalculatorImpl implements CalculatorWs, CalculatorRemote {
 ----
 package org.superbiz.calculator;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CalculatorRemote {
@@ -65,7 +65,7 @@ public interface CalculatorRemote {
 ----
 package org.superbiz.calculator;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 //END SNIPPET: code
 
@@ -321,8 +321,8 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;

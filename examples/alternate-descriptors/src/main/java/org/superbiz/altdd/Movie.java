@@ -16,7 +16,7 @@
  */
 package org.superbiz.altdd;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Movie {

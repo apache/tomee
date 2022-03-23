@@ -18,9 +18,9 @@ package org.apache.tomee.microprofile.jwt.bval;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.executable.ExecutableValidator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.executable.ExecutableValidator;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;

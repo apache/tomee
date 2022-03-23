@@ -20,10 +20,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.validation.ConstraintViolationException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.validation.ConstraintViolationException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

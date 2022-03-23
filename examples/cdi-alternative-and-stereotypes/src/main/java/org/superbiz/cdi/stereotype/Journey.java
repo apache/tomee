@@ -17,8 +17,8 @@
 
 package org.superbiz.cdi.stereotype;
 
-import javax.ejb.Singleton;
-import javax.inject.Inject;
+import jakarta.ejb.Singleton;
+import jakarta.inject.Inject;
 
 @Singleton
 public class Journey {

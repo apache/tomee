@@ -31,7 +31,7 @@ import org.apache.openejb.testing.TestInstance;
 import org.apache.openejb.util.Classes;
 import org.junit.jupiter.api.extension.*;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.io.File;
 import java.io.FileInputStream;

@@ -27,9 +27,9 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.persistence.EntityManagerFactory;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -94,10 +94,10 @@ public class AliasesTest {
         @Resource(name = "short")
         private DataSource shortNameDs;
 
-        @javax.persistence.PersistenceUnit(unitName = "AliasesTest-unit-0")
+        @jakarta.persistence.PersistenceUnit(unitName = "AliasesTest-unit-0")
         private EntityManagerFactory emf0;
 
-        @javax.persistence.PersistenceUnit(unitName = "AliasesTest-unit-1")
+        @jakarta.persistence.PersistenceUnit(unitName = "AliasesTest-unit-1")
         private EntityManagerFactory emf1;
 
         public boolean isDs0Ds2() {

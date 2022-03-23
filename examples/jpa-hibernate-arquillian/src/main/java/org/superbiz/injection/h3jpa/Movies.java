@@ -16,13 +16,13 @@
  */
 package org.superbiz.injection.h3jpa;
 
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.metamodel.EntityType;
 import java.util.List;
 
 @Stateful

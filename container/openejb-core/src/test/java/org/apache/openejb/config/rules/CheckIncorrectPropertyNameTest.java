@@ -23,7 +23,7 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.runner.RunWith;
 
-import javax.interceptor.AroundInvoke;
+import jakarta.interceptor.AroundInvoke;
 
 @RunWith(ValidationRunner.class)
 public class CheckIncorrectPropertyNameTest {

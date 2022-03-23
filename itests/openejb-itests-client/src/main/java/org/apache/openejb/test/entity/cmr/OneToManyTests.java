@@ -21,8 +21,8 @@ import org.apache.openejb.test.entity.cmr.onetomany.ArtistLocalHome;
 import org.apache.openejb.test.entity.cmr.onetomany.SongLocal;
 import org.apache.openejb.test.entity.cmr.onetomany.SongLocalHome;
 
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.FinderException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

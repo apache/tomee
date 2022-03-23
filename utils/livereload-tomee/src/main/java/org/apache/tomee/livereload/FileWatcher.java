@@ -20,8 +20,8 @@ import org.apache.johnzon.mapper.Mapper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.Session;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;

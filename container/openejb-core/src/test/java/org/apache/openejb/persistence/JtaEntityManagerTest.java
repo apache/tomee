@@ -21,11 +21,11 @@ import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.junit.Test;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.ProviderUtil;
-import javax.validation.ValidatorFactory;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.ProviderUtil;
+import jakarta.validation.ValidatorFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

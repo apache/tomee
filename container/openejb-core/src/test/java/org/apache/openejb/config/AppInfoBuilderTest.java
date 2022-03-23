@@ -32,7 +32,7 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.resource.activemq.TomEEMessageActivationSpec;
 
-import javax.jms.MessageListener;
+import jakarta.jms.MessageListener;
 import java.util.List;
 import java.util.Properties;
 

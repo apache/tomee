@@ -52,21 +52,21 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 
 import javax.naming.Context;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.MessageBodyWriter;
-import javax.ws.rs.ext.ParamConverter;
-import javax.ws.rs.ext.ParamConverterProvider;
-import javax.ws.rs.ext.Provider;
-import javax.ws.rs.ext.ReaderInterceptor;
-import javax.ws.rs.ext.WriterInterceptor;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.MessageBodyReader;
+import jakarta.ws.rs.ext.MessageBodyWriter;
+import jakarta.ws.rs.ext.ParamConverter;
+import jakarta.ws.rs.ext.ParamConverterProvider;
+import jakarta.ws.rs.ext.Provider;
+import jakarta.ws.rs.ext.ReaderInterceptor;
+import jakarta.ws.rs.ext.WriterInterceptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -343,7 +343,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private static boolean hasBindings(final Class<?> clazz) {
         for (final Annotation annotation : clazz.getAnnotations()) {
             for (final Annotation metaAnnotation : annotation.annotationType().getAnnotations()) {
-                if (javax.ws.rs.NameBinding.class == metaAnnotation.annotationType()) {
+                if (jakarta.ws.rs.NameBinding.class == metaAnnotation.annotationType()) {
                     return true;
                 }
             }
@@ -569,11 +569,11 @@ public abstract class RESTService implements ServerService, SelfManaging {
             String mapping = null;
 
             final String name = appClazz.getName();
-            if (name.equals(s.servletClass) || name.equals(s.servletName) || "javax.ws.rs.core.Application ".equals(s.servletName)) {
+            if (name.equals(s.servletClass) || name.equals(s.servletName) || "jakarta.ws.rs.core.Application ".equals(s.servletName)) {
                 mapping = s.mappings.iterator().next();
             } else {
                 for (final ParamValueInfo pvi : s.initParams) {
-                    if ("javax.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
+                    if ("jakarta.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
                         mapping = s.mappings.iterator().next();
                         break;
                     }

@@ -19,14 +19,14 @@ package org.apache.openejb.arquillian.tests.resenventry;
 
 import java.lang.reflect.Field;
 
-import javax.annotation.ManagedBean;
-import javax.annotation.Resource;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.annotation.ManagedBean;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.UserTransaction;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.junit.Assert;
 

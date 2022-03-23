@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 <resources>
-    <Resource id="tomee/mail/exampleSMTP" type="javax.mail.Session">
+    <Resource id="tomee/mail/exampleSMTP" type="jakarta.mail.Session">
         mail.debug=true
         mail.transport.protocol=smtp
         mail.smtp.starttls.enable=true

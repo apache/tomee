@@ -16,7 +16,7 @@
  */
 package org.superbiz.moviefun.util;
 
-import javax.faces.model.DataModel;
+import jakarta.faces.model.DataModel;
 
 public abstract class PaginationHelper {
 

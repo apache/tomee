@@ -19,7 +19,7 @@ package org.apache.openejb.test.singleton;
 import org.apache.openejb.test.beans.TimerSync;
 import org.apache.openejb.test.object.OperationsPolicy;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 
 /**
  * [9] Should be run as the nineth test suite of the BasicSingletonTestClients

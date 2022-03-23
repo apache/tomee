@@ -20,8 +20,8 @@ import org.apache.openejb.client.proxy.ProxyManager;
 import org.apache.openejb.client.serializer.SerializationWrapper;
 import org.apache.openejb.client.util.ClassLoaderUtil;
 
-import javax.ejb.EJBException;
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.EJBObject;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -181,7 +181,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
                     throw new UnsupportedOperationException("Unkown method: " + m);
                 }
 
-            } else if (m.getDeclaringClass() == javax.ejb.EJBObject.class) {
+            } else if (m.getDeclaringClass() == jakarta.ejb.EJBObject.class) {
 
                 if (m.equals(GETHANDLE)) {
                     return getHandle(m, a, p);

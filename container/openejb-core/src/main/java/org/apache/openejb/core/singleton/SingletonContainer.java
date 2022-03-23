@@ -38,13 +38,13 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.xbean.finder.ClassFinder;
 
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.interceptor.AroundInvoke;
+import jakarta.ejb.ConcurrentAccessTimeoutException;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.interceptor.AroundInvoke;
 import javax.security.auth.login.LoginException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -248,7 +248,7 @@ public class SingletonContainer implements RpcContainer {
         final BeanContext beanContext = callContext.getBeanContext();
 
         final Duration accessTimeout = getAccessTimeout(beanContext, runMethod);
-        final boolean read = javax.ejb.LockType.READ.equals(beanContext.getConcurrencyAttribute(runMethod));
+        final boolean read = jakarta.ejb.LockType.READ.equals(beanContext.getConcurrencyAttribute(runMethod));
 
         final Lock lock = aquireLock(read, accessTimeout, instance, runMethod);
 
@@ -409,7 +409,7 @@ public class SingletonContainer implements RpcContainer {
         if (messageContext instanceof javax.xml.rpc.handler.MessageContext) {
             ThreadContext.getThreadContext().set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
             return interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
-        } else if (messageContext instanceof javax.xml.ws.handler.MessageContext) {
+        } else if (messageContext instanceof jakarta.xml.ws.handler.MessageContext) {
             AddressingSupport wsaSupport = NoAddressingSupport.INSTANCE;
             for (int i = 2; i < args.length; i++) {
                 if (args[i] instanceof AddressingSupport) {
@@ -417,8 +417,8 @@ public class SingletonContainer implements RpcContainer {
                 }
             }
             ThreadContext.getThreadContext().set(AddressingSupport.class, wsaSupport);
-            ThreadContext.getThreadContext().set(javax.xml.ws.handler.MessageContext.class, (javax.xml.ws.handler.MessageContext) messageContext);
-            return interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
+            ThreadContext.getThreadContext().set(jakarta.xml.ws.handler.MessageContext.class, (jakarta.xml.ws.handler.MessageContext) messageContext);
+            return interceptorStack.invoke((jakarta.xml.ws.handler.MessageContext) messageContext, params);
         }
         throw new IllegalArgumentException("Uknown MessageContext type: " + messageContext.getClass().getName());
     }

@@ -35,11 +35,11 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.reflection.Reflections;
 
-import javax.ejb.Singleton;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
+import jakarta.ejb.Singleton;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;

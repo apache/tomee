@@ -904,10 +904,10 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# openejb.web.xml.major = \n");
                 systemPropertiesWriter.write("# openjpa.Log = \n");
                 systemPropertiesWriter.write("# openejb.jdbc.log = false\n");
-                systemPropertiesWriter.write("# javax.persistence.provider = org.apache.openjpa.persistence.PersistenceProviderImpl\n");
-                systemPropertiesWriter.write("# javax.persistence.transactionType = \n");
-                systemPropertiesWriter.write("# javax.persistence.jtaDataSource = \n");
-                systemPropertiesWriter.write("# javax.persistence.nonJtaDataSource = \n");
+                systemPropertiesWriter.write("# jakarta.persistence.provider = org.apache.openjpa.persistence.PersistenceProviderImpl\n");
+                systemPropertiesWriter.write("# jakarta.persistence.transactionType = \n");
+                systemPropertiesWriter.write("# jakarta.persistence.jtaDataSource = \n");
+                systemPropertiesWriter.write("# jakarta.persistence.nonJtaDataSource = \n");
 
                 systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# Properties for JAS RS\n");
@@ -920,10 +920,10 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# These properties are only for cxf service (SOAP webservices) and TomEE+\n");
                 systemPropertiesWriter.write("# If you don't use special tricks and sun default implementation, uncommenting these 4 lines forces TomEE to use it without overhead at all = \n");
-                systemPropertiesWriter.write("# javax.xml.soap.MessageFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl\n");
-                systemPropertiesWriter.write("# javax.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
-                systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
-                systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
+                systemPropertiesWriter.write("# jakarta.xml.soap.MessageFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl\n");
+                systemPropertiesWriter.write("# jakarta.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
+                systemPropertiesWriter.write("# jakarta.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
+                systemPropertiesWriter.write("# jakarta.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
 
                 final String flavour = properties.getOrDefault("tomee.webapp", "");
                 if (flavour.contains("microprofile")) {

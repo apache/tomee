@@ -20,11 +20,11 @@ import org.apache.johnzon.mapper.Mapper;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
 
-import javax.websocket.CloseReason;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.OnClose;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.Session;
+import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
 import static java.util.Arrays.asList;

@@ -36,10 +36,10 @@ import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatefulBean;
 import org.junit.AfterClass;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.Arrays;

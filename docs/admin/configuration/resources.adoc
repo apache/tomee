@@ -202,7 +202,7 @@ DataSource for persistence messages
 How long to wait for broker startup
 
 
-== javax.jms.ConnectionFactory
+== jakarta.jms.ConnectionFactory
 
 An ActiveMQ (JMS) connection factory.
 
@@ -210,7 +210,7 @@ Declarable in tomee.xml via
 
 [source,xml]
 ----
-<Resource id="Foo" type="javax.jms.ConnectionFactory">
+<Resource id="Foo" type="jakarta.jms.ConnectionFactory">
     ResourceAdapter = Default JMS Resource Adapter
     TransactionSupport = xa
     PoolMaxSize = 10
@@ -224,7 +224,7 @@ Declarable in properties via
 
 [source,properties]
 ----
-Foo = new://Resource?type=javax.jms.ConnectionFactory
+Foo = new://Resource?type=jakarta.jms.ConnectionFactory
 Foo.ResourceAdapter = Default JMS Resource Adapter
 Foo.TransactionSupport = xa
 Foo.PoolMaxSize = 10
@@ -261,7 +261,7 @@ Maximum amount of time to wait for a connection.
 Maximum amount of time a connection can be idle before being reclaimed.
 
 
-== javax.jms.Queue
+== jakarta.jms.Queue
 
 An ActiveMQ (JMS) queue.
 
@@ -269,7 +269,7 @@ Declarable in tomee.xml via
 
 [source,xml]
 ----
-<Resource id="Foo" type="javax.jms.Queue">
+<Resource id="Foo" type="jakarta.jms.Queue">
     # not set means id
     destination =
 </Resource>
@@ -279,7 +279,7 @@ Declarable in properties via
 
 [source,properties]
 ----
-Foo = new://Resource?type=javax.jms.Queue
+Foo = new://Resource?type=jakarta.jms.Queue
 # not set means id
 Foo.destination =
 ----
@@ -291,7 +291,7 @@ Foo.destination =
 Specifies the name of the queue
 
 
-== javax.jms.Topic
+== jakarta.jms.Topic
 
 An ActiveMQ (JMS) topic.
 
@@ -299,7 +299,7 @@ Declarable in tomee.xml via
 
 [source,xml]
 ----
-<Resource id="Foo" type="javax.jms.Topic">
+<Resource id="Foo" type="jakarta.jms.Topic">
     # not set means id
     destination =
 </Resource>
@@ -309,7 +309,7 @@ Declarable in properties via
 
 [source,properties]
 ----
-Foo = new://Resource?type=javax.jms.Topic
+Foo = new://Resource?type=jakarta.jms.Topic
 # not set means id
 Foo.destination =
 ----
@@ -340,7 +340,7 @@ Foo = new://Resource?type=org.omg.CORBA.ORB
 ----
 
 
-== javax.mail.Session
+== jakarta.mail.Session
 
 A mail session.
 
@@ -348,7 +348,7 @@ Declarable in tomee.xml via
 
 [source,xml]
 ----
-<Resource id="mail/mysession" type="javax.mail.Session">
+<Resource id="mail/mysession" type="jakarta.mail.Session">
   mail.transport.protocol = smtp
   mail.smtp.host = smtp.provider.com
   mail.smtp.auth = true
@@ -363,7 +363,7 @@ Declarable in properties via
 
 [source,properties]
 ----
-mail/mysession = new://Resource?type=javax.mail.Session
+mail/mysession = new://Resource?type=jakarta.mail.Session
 mail/mysession.mail.transport.protocol = smtp
 mail/mysession.mail.smtp.host = smtp.provider.com
 mail/mysession.mail.smtp.auth = true
@@ -373,7 +373,7 @@ mail/mysession.mail.smtp.user = user@provider.com
 mail/mysession.password = abcdefghij
 ----
 
-The properties are `javax.mail.Session` ones with the addition of `useDefault` which specifies if `getDefaultInstance()`
+The properties are `jakarta.mail.Session` ones with the addition of `useDefault` which specifies if `getDefaultInstance()`
 or `getInstance` is used to create the session. `getDefaultInstance()` will ensure that several calls are done with the
 same configuration and return the same instance. For tomee it is likely better to rely on `getInstance()`(ie keep `useDefault` to false)
 and use `aliases` option of the resource to define an alias if you need to share the same instance accross multiple names.

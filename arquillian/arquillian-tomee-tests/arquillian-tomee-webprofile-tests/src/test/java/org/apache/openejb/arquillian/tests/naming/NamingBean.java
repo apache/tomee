@@ -19,8 +19,8 @@ package org.apache.openejb.arquillian.tests.naming;
 
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
 import javax.naming.*;
 import java.io.PrintWriter;
 import java.util.HashMap;

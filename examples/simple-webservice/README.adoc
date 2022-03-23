@@ -18,8 +18,8 @@ deployed and the webservice online.
 
 [source,java]
 ----
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 @Stateless
 @WebService(
@@ -46,7 +46,7 @@ and using the web service from other Java clients far easier.
 
 [source,java]
 ----
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace = "http://superbiz.org/wsdl")
 public interface CalculatorWs {
@@ -153,10 +153,10 @@ be at `http://127.0.0.1:8080/simple-webservice/Calculator?wsdl`
 </wsdl:definitions>
 ----
 
-== Accessing the @WebService with javax.xml.ws.Service
+== Accessing the @WebService with jakarta.xml.ws.Service
 
 In our testcase we see how to create a client for our `Calculator`
-service via the `javax.xml.ws.Service` class and leveraging our
+service via the `jakarta.xml.ws.Service` class and leveraging our
 `CalculatorWs` endpoint interface.
 
 With this we can get an implementation of the interfacce generated
@@ -168,9 +168,9 @@ our service.
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.Properties;
 
@@ -232,7 +232,7 @@ INFO - openejb.home = /Users/dblevins/work/all/trunk/openejb/examples/simple-web
 INFO - openejb.base = /Users/dblevins/work/all/trunk/openejb/examples/simple-webservice
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@16bdb503
 INFO - succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

@@ -17,7 +17,7 @@
 
 package org.apache.openejb.junit.ejbs;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class BasicEjb implements BasicEjbLocal {

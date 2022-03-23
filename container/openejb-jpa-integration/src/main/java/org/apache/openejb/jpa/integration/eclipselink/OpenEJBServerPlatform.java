@@ -24,8 +24,8 @@ import org.eclipse.persistence.transaction.AbstractSynchronizationListener;
 import org.eclipse.persistence.transaction.JTATransactionController;
 
 import javax.management.MBeanServer;
-import javax.transaction.Synchronization;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.TransactionManager;
 
 public class OpenEJBServerPlatform extends JMXServerPlatformBase implements JMXEnabledPlatform {
     public OpenEJBServerPlatform(final DatabaseSession newDatabaseSession) {

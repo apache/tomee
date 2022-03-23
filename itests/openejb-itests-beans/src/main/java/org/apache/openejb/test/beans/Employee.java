@@ -18,7 +18,7 @@ package org.apache.openejb.test.beans;
 
 import java.rmi.RemoteException;
 
-public interface Employee extends javax.ejb.EJBObject {
+public interface Employee extends jakarta.ejb.EJBObject {
 
     public void setFirstName(String firstName)
         throws RemoteException;

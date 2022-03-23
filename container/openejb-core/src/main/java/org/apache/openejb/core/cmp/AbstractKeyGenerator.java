@@ -19,7 +19,7 @@ package org.apache.openejb.core.cmp;
 
 import org.apache.openejb.OpenEJBException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 

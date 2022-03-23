@@ -17,7 +17,7 @@
 
 package org.apache.openejb.arquillian.tests.core.ejb.ejbjar;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class FirstBean implements Bean {

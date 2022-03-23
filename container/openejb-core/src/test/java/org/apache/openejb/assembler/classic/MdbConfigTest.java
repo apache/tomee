@@ -26,16 +26,16 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.test.mdb.BasicMdbBean;
 
-import javax.jms.MessageListener;
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.UnavailableException;
-import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.jms.MessageListener;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.InvalidPropertyException;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterInternalException;
+import jakarta.resource.spi.UnavailableException;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.util.Properties;
 
@@ -168,7 +168,7 @@ public class MdbConfigTest extends TestCase {
 
         final ActivationConfig activationConfig = new ActivationConfig();
         activationConfig.getActivationConfigProperty().add(new ActivationConfigProperty("destination", ejbName));
-        activationConfig.getActivationConfigProperty().add(new ActivationConfigProperty("destinationType", "javax.jms.Queue"));
+        activationConfig.getActivationConfigProperty().add(new ActivationConfigProperty("destinationType", "jakarta.jms.Queue"));
         bean.setActivationConfig(activationConfig);
 
         return bean;

@@ -24,7 +24,7 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.ejb.LockType;
+import jakarta.ejb.LockType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;

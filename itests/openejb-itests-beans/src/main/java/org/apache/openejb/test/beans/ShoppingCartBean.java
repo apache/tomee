@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.beans;
 
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.sql.Connection;
@@ -25,7 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ShoppingCartBean implements SessionBean, javax.ejb.SessionSynchronization {
+public class ShoppingCartBean implements SessionBean, jakarta.ejb.SessionSynchronization {
 
     String name;
     SessionContext context;
@@ -33,7 +33,7 @@ public class ShoppingCartBean implements SessionBean, javax.ejb.SessionSynchroni
     Context envContext;
     Boolean useJdbc = Boolean.FALSE;
 
-    public void ejbCreate(final String name) throws javax.ejb.CreateException {
+    public void ejbCreate(final String name) throws jakarta.ejb.CreateException {
         //testAllowedOperations("ejbCreate");
         try {
 

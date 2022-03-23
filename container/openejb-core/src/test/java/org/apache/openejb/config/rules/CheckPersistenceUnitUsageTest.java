@@ -25,8 +25,8 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.junit.runner.RunWith;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 @RunWith(ValidationRunner.class)
 public class CheckPersistenceUnitUsageTest {
@@ -72,25 +72,25 @@ public class CheckPersistenceUnitUsageTest {
         return appModule;
     }
 
-    @javax.persistence.PersistenceUnit
+    @jakarta.persistence.PersistenceUnit
     private static class FooStateless {
-        @javax.persistence.PersistenceUnit
+        @jakarta.persistence.PersistenceUnit
         EntityManagerFactory emf;
-        @javax.persistence.PersistenceUnit
+        @jakarta.persistence.PersistenceUnit
         EntityManager em;
-        @javax.persistence.PersistenceUnit
+        @jakarta.persistence.PersistenceUnit
         String nonEntityManagerFactory;
     }
 
     private static class FooStatelessOne {
-        @javax.persistence.PersistenceUnit(unitName = "wrongName")
+        @jakarta.persistence.PersistenceUnit(unitName = "wrongName")
         EntityManagerFactory emf;
-        @javax.persistence.PersistenceUnit
+        @jakarta.persistence.PersistenceUnit
         EntityManagerFactory emf1;
     }
 
     private static class FooStatelessTwo {
-        @javax.persistence.PersistenceUnit(unitName = "fooUnit")
+        @jakarta.persistence.PersistenceUnit(unitName = "fooUnit")
         EntityManagerFactory emf;
     }
 }

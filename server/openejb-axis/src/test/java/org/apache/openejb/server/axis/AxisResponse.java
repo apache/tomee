@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.axis;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 
 import org.apache.openejb.server.httpd.HttpResponseImpl;
 

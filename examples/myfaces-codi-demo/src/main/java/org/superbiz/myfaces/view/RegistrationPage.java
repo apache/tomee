@@ -29,8 +29,8 @@ import org.superbiz.myfaces.domain.validation.Full;
 import org.superbiz.myfaces.repository.UserRepository;
 import org.superbiz.myfaces.view.config.Pages;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.Serializable;
 
 import static org.apache.myfaces.extensions.cdi.message.api.payload.MessageSeverity.ERROR;

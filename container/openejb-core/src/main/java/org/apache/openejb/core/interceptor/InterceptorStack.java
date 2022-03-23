@@ -21,7 +21,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,7 @@ public class InterceptorStack {
         }
     }
 
-    public Object invoke(final javax.xml.ws.handler.MessageContext messageContext, final Object... parameters) throws Exception {
+    public Object invoke(final jakarta.xml.ws.handler.MessageContext messageContext, final Object... parameters) throws Exception {
         try {
             final InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
             ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);

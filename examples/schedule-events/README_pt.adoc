@@ -101,11 +101,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ejb.AccessTimeout;
-import javax.ejb.EJB;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.embeddable.EJBContainer;
-import javax.enterprise.event.Observes;
+import jakarta.ejb.AccessTimeout;
+import jakarta.ejb.EJB;
+import jakarta.ejb.ScheduleExpression;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.enterprise.event.Observes;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 

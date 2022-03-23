@@ -24,10 +24,10 @@ import org.apache.myfaces.extensions.cdi.core.api.logging.Logger;
 import org.apache.myfaces.extensions.cdi.core.api.projectstage.ProjectStage;
 import org.apache.myfaces.extensions.cdi.jsf.api.listener.phase.JsfPhaseListener;
 
-import javax.faces.event.PhaseEvent;
-import javax.faces.event.PhaseId;
-import javax.faces.event.PhaseListener;
-import javax.inject.Inject;
+import jakarta.faces.event.PhaseEvent;
+import jakarta.faces.event.PhaseId;
+import jakarta.faces.event.PhaseListener;
+import jakarta.inject.Inject;
 
 @ProjectStageActivated({ProjectStage.Development.class, CustomProjectStage.Debugging.class})
 

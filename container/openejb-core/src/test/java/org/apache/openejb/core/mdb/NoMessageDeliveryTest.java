@@ -37,19 +37,19 @@ import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.util.Join;
 import org.junit.Assert;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.ejb.MessageDrivenContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.ejb.MessageDrivenContext;
 import javax.naming.InitialContext;
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.InvalidPropertyException;
+import jakarta.resource.spi.ResourceAdapterInternalException;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -157,7 +157,7 @@ public class NoMessageDeliveryTest extends TestCase {
         public void receiveEmail(Properties headers, String body);
     }
 
-    public static class EmailResourceAdapter implements javax.resource.spi.ResourceAdapter {
+    public static class EmailResourceAdapter implements jakarta.resource.spi.ResourceAdapter {
         public boolean started;
 
         private final Map<String, EmailConsumer> consumers = new HashMap<>();
@@ -221,7 +221,7 @@ public class NoMessageDeliveryTest extends TestCase {
             return emailResourceAdapter;
         }
 
-        public void setResourceAdapter(final javax.resource.spi.ResourceAdapter resourceAdapter) {
+        public void setResourceAdapter(final jakarta.resource.spi.ResourceAdapter resourceAdapter) {
             this.emailResourceAdapter = (EmailResourceAdapter) resourceAdapter;
         }
     }

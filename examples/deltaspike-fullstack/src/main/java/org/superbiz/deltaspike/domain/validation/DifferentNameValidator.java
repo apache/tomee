@@ -20,8 +20,8 @@ package org.superbiz.deltaspike.domain.validation;
 
 import org.superbiz.deltaspike.domain.User;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class DifferentNameValidator implements ConstraintValidator<DifferentName, User> {
     public void initialize(DifferentName differentName) {

@@ -116,36 +116,36 @@
       <version>${cdi.tck.20.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.xml.soap</groupId>
-          <artifactId>javax.xml.soap-api</artifactId>
+          <groupId>jakarta.xml.soap</groupId>
+          <artifactId>jakarta.xml.soap-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>jakarta.inject</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.enterprise</groupId>
+          <groupId>jakarta.enterprise</groupId>
           <artifactId>cdi-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.faces</groupId>
+          <groupId>jakarta.faces</groupId>
           <artifactId>jsf-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
+          <groupId>jakarta.servlet</groupId>
+          <artifactId>jakarta.servlet-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.servlet.jsp</groupId>
+          <groupId>jakarta.servlet.jsp</groupId>
           <artifactId>jsp-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.transaction</groupId>
+          <groupId>jakarta.transaction</groupId>
           <artifactId>jta</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
         </exclusion>        
       </exclusions>
     </dependency>
@@ -241,7 +241,7 @@
             <queue>new://Resource?type=Queue</queue>
             <topic>new://Resource?type=Topic</topic>
             <jdbc>new://Resource?type=DataSource</jdbc>
-            <jms>new://Resource?type=javax.jms.ConnectionFactory</jms>
+            <jms>new://Resource?type=jakarta.jms.ConnectionFactory</jms>
 
             <admin.disabled>true</admin.disabled>
             <ejbd.disabled>true</ejbd.disabled>

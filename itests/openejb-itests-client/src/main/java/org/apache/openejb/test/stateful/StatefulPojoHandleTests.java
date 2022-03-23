@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.test.stateful;
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.NoSuchObjectException;
 
 public class StatefulPojoHandleTests extends BasicStatefulTestClient {

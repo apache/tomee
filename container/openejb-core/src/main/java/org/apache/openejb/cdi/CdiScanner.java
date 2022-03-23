@@ -42,7 +42,7 @@ import org.apache.webbeans.spi.BdaScannerService;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.xml.DefaultBeanArchiveInformation;
 
-import javax.decorator.Decorator;
+import jakarta.decorator.Decorator;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;

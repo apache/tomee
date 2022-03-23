@@ -19,7 +19,7 @@ package org.superbiz.dynamic.mbean;
 
 import org.apache.openejb.api.Proxy;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 
 @Singleton
 @Proxy(DynamicMBeanHandler.class)

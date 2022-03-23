@@ -20,7 +20,7 @@ package org.apache.openejb.config.rules;
 import org.apache.openejb.config.EjbModule;
 import org.apache.xbean.finder.IAnnotationFinder;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class CheckCdiEnabled extends ValidationBase {
     public void validate(final EjbModule ejbModule) {

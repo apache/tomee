@@ -27,7 +27,7 @@ import org.apache.openejb.jee.StatelessBean;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.util.Properties;
 
 /**

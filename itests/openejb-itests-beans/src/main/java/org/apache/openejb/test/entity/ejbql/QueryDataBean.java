@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.test.entity.ejbql;
 
-import javax.ejb.EntityBean;
-import javax.ejb.EntityContext;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.EntityContext;
 
 public abstract class QueryDataBean implements EntityBean {
     public abstract Integer getId();

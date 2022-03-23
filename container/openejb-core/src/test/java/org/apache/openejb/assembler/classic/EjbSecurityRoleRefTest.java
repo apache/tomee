@@ -18,8 +18,8 @@ package org.apache.openejb.assembler.classic;
 
 import java.util.Properties;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 

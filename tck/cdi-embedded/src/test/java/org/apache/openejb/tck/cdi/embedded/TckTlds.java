@@ -25,7 +25,7 @@ import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
 import org.apache.tomee.jasper.TomEETldScanner;
 import org.xml.sax.SAXException;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.util.Map;
 

@@ -16,7 +16,7 @@
  */
 package org.superbiz.cdi.decorators;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class CalculatorBean implements Calculator {

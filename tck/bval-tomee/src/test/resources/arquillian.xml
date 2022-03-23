@@ -40,8 +40,8 @@
         # note: this config just drop ValidationProvider from this list
         #
         openejb.classloader.filterable-resources = \
-          META-INF/services/javax.ws.rs.client.ClientBuilder,\
-          META-INF/services/javax.json.spi.JsonProvider,\
+          META-INF/services/jakarta.ws.rs.client.ClientBuilder,\
+          META-INF/services/jakarta.json.spi.JsonProvider,\
           META-INF/services/javax.cache.spi.CachingProvider,\
           META-INF/javamail.default.providers,META-INF/javamail.default.address.map,\
           META-INF/javamail.charset.map,META-INF/mailcap,\

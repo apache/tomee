@@ -21,7 +21,7 @@ the following configuration.
 [source,xml]
 ----
 <tomee>
-    <Resource id="MyQueue" type="javax.jms.Queue"/>
+    <Resource id="MyQueue" type="jakarta.jms.Queue"/>
 </tomee>
 ----
 
@@ -50,7 +50,7 @@ defined using system properties:
 
 [source,properties]
 ----
-MyQueue = new://Resource?type=javax.jms.Queue
+MyQueue = new://Resource?type=jakarta.jms.Queue
 ----
 
 Resources, or attributes for resources specified using system properties

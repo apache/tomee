@@ -21,21 +21,21 @@ import org.apache.bval.jsr.ApacheValidatorConfiguration;
 import org.apache.bval.jsr.ConfigurationImpl;
 import org.apache.bval.jsr.parameter.DefaultParameterNameProvider;
 
-import javax.validation.ClockProvider;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.ConstraintViolation;
-import javax.validation.MessageInterpolator;
-import javax.validation.ParameterNameProvider;
-import javax.validation.TraversableResolver;
-import javax.validation.Validator;
-import javax.validation.ValidatorContext;
-import javax.validation.ValidatorFactory;
-import javax.validation.executable.ExecutableValidator;
-import javax.validation.metadata.BeanDescriptor;
-import javax.validation.spi.BootstrapState;
-import javax.validation.spi.ConfigurationState;
-import javax.validation.spi.ValidationProvider;
-import javax.validation.valueextraction.ValueExtractor;
+import jakarta.validation.ClockProvider;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.ParameterNameProvider;
+import jakarta.validation.TraversableResolver;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorContext;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.executable.ExecutableValidator;
+import jakarta.validation.metadata.BeanDescriptor;
+import jakarta.validation.spi.BootstrapState;
+import jakarta.validation.spi.ConfigurationState;
+import jakarta.validation.spi.ValidationProvider;
+import jakarta.validation.valueextraction.ValueExtractor;
 import java.io.InputStream;
 import java.time.Clock;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
     }
 
     @Override
-    public javax.validation.Configuration<?> createGenericConfiguration(final BootstrapState state) {
+    public jakarta.validation.Configuration<?> createGenericConfiguration(final BootstrapState state) {
         return provider.createGenericConfiguration(state);
     }
 
@@ -67,7 +67,7 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
         }
 
         @Override
-        public javax.validation.Configuration<?> createGenericConfiguration(final BootstrapState state) {
+        public jakarta.validation.Configuration<?> createGenericConfiguration(final BootstrapState state) {
             return new NullConfig(state, provider);
         }
 
