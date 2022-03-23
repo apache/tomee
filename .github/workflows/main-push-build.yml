@@ -3,7 +3,7 @@ name: CI Master
 on:
   push:
     branches:
-      - master
+      - tomee-8.x
   workflow_dispatch:
 
 jobs:

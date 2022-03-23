@@ -3,7 +3,7 @@ name: CI Pull Request Master
 on:
   pull_request:
     branches:
-      - master
+      - tomee-8.x
   workflow_dispatch:
 
 jobs:
