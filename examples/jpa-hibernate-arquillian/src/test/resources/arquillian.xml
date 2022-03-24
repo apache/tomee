@@ -37,7 +37,7 @@
                 mvn:net.bytebuddy:byte-buddy:1.12.8
                 mvn:com.fasterxml:classmate:1.5.1
             </property>
-            <property name="debug">true</property>
+<!--            <property name="debug">true</property>-->
         </configuration>
     </container>
 </arquillian>
