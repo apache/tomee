@@ -29,7 +29,6 @@
       <property name="classifier">plus</property>
       <property name="conf">src/test/conf</property>
       <property name="dir">target/tomee</property>
-      <property name="arquillianProtocol">Servlet 5.0</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="catalina_opts">${tomee.opts}</property>

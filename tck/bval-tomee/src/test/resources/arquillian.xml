@@ -29,7 +29,6 @@
       <property name="stopPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="dir">target/tomee-tck</property>
-      <property name="arquillianProtocol">Servlet 5.0</property>
       <property name="appWorkingDir">target/tck-workdir</property>
       <property name="simpleLog">true</property>
       <property name="properties">
