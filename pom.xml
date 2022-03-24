@@ -99,7 +99,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>9.1-M1</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
     <version.tomee-patch-plugin>0.8</version.tomee-patch-plugin>
 
     <!--
@@ -189,7 +189,7 @@
     <commons-io.version>2.11.0</commons-io.version>
     <commons-net.version>3.8.0</commons-net.version>
 
-    <bval.version>2.0.5</bval.version>
+    <bval.version>2.0.6-SNAPSHOT</bval.version>
     <org.apache.activemq.version>5.16.4</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.13.2</junit.version>
@@ -1007,8 +1007,8 @@
     </repository>
 
     <repository>
-      <id>jakartaee-api-9.1-M1</id>
-      <name>Jakarta EE API 9.1-M1 Staging</name>
+      <id>jakartaee-api-9.1-M2-SNAPSHOT</id>
+      <name>Jakarta EE API 9.1-M2-SNAPSHOT Staging</name>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1195/</url>
     </repository>
     <repository>
@@ -1030,8 +1030,8 @@
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>plugin-jakartaee-api-9.1-M1</id>
-      <name>Jakarta EE API 9.1-M1 Staging</name>
+      <id>plugin-jakartaee-api-9.1-M2-SNAPSHOT</id>
+      <name>Jakarta EE API 9.1-M2-SNAPSHOT Staging</name>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1195/</url>
     </pluginRepository>
   </pluginRepositories>

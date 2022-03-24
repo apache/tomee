@@ -53,7 +53,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected boolean keepServerXmlAsThis;
     protected boolean singleDumpByArchiveName;
     protected Collection<String> singleDeploymentByArchiveName = Collections.emptyList();
-    private String arquillianProtocol = "Servlet 2.5";
+    private String arquillianProtocol = "Servlet 5.0";
 
     public String getArquillianProtocol() {
         return arquillianProtocol;
