@@ -14,32 +14,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.injection.h3jpa;
+package org.superbiz.injection.h5jpa;
 
-import junit.framework.TestCase;
+import jakarta.inject.Inject;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import jakarta.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
- */
-public class MoviesTest extends TestCase {
+import static org.junit.Assert.assertEquals;
 
-    public void test() throws Exception {
-        System.setProperty("hsqldb.reconfig_logging", "false");
-        System.setProperty("tomee.jpa.factory.lazy", "true");
+@RunWith(ApplicationComposer.class)
+public class MoviesTest {
 
-        final Properties p = new Properties();
+    @Inject
+    private Movies movies;
+
+    @Module
+    public PersistenceUnit persistence() {
+        PersistenceUnit unit = new PersistenceUnit("movie-unit");
+        unit.setJtaDataSource("movieDatabase");
+        unit.setNonJtaDataSource("movieDatabaseUnmanaged");
+        unit.getClazz().add(Movie.class.getName());
+        unit.setProvider("org.hibernate.jpa.HibernatePersistenceProvider");
+        unit.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        unit.setProperty("tomee.jpa.cdi", "false");
+        return unit;
+    }
+
+    @Module
+    @Classes(cdi = true, value = Movies.class)
+    public EjbJar beans() {
+        EjbJar ejbJar = new EjbJar("movie-beans");
+        return ejbJar;
+    }
+
+    @Configuration
+    public Properties config() throws Exception {
+        Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+        return p;
+    }
 
-        final Context context = EJBContainer.createEJBContainer(p).getContext();
-        Movies movies = (Movies) context.lookup("java:global/jpa-hibernate/Movies");
-
+    @Test
+    public void test() throws Exception {
         movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
         movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
         movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));

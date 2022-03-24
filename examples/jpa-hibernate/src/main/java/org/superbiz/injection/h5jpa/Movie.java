@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.injection.h3jpa;
+package org.superbiz.injection.h5jpa;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

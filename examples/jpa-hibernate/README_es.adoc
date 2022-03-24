@@ -23,7 +23,7 @@ indica que la generación de los identificadores únicos será administrada por 
 
 [source,java]
 ----
-package org.superbiz.injection.h3jpa;
+package org.superbiz.injection.h5jpa;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -80,17 +80,18 @@ public class Movie {
 == Movies
 
 Ahora tenemos dos cosas importantes: la anotacion
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/PersistenceContext.html[@PersistenceContext]
 y  la declaracion 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager].
+link:https://tomee.apache.org/tomee-8.0/javadoc/jakarta/persistence/EntityManager.html[EntityManager].
 es la interfaz con los métodos principales de JPA como persistir, eliminar, fusionar, buscar y otros ...
 Anotamos el
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/EntityManager.html[EntityManager]
 com 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext], um contexto de persistência é um gerenciamento de entidades onde, todo contexto de persistência é associado com uma unidade de persistência (persistence-unit), un contexto de persistencia es una gestión de entidad donde cada contexto de persistencia asociado con una unidad de persistencia, crearemos un persistence.xml para esto.
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/PersistenceContext.html[@PersistenceContext], um contexto de persistência é um gerenciamento de entidades onde, todo contexto de persistência é associado com uma unidade de persistência (persistence-unit), un contexto de persistencia es una gestión de entidad donde cada contexto de persistencia asociado con una unidad de persistencia, crearemos un persistence.xml para esto.
+
 [source,java]
 ----
-package org.superbiz.injection.h3jpa;
+package org.superbiz.injection.h5jpa;
 
 import jakarta.ejb.Stateful;
 import jakarta.persistence.EntityManager;
@@ -122,51 +123,88 @@ public class Movies {
 
 == persistence.xml
 
-Aquí definimos qué base de datos persistirá nuestras películas, y realizamos otras configuraciones como: definir una unidad de persistencia con el nombre de unidad de la película, seguido de la definición del proveedor/implementación de JPA (en este caso Hibernate) y establecemos algunos propiedades para hibernar:
+Aquí definimos qué base de datos persistirá nuestras películas, y realizamos otras configuraciones como: definir una unidad de persistencia con el nombre de unidad de la película, seguido de la definición del proveedor/implementación de JPA (en este caso Hibernate) y establecemos algunos propiedades para hibernar.
+Tenga en cuenta que estamos utilizando compositores de aplicaciones en nuestra prueba, por lo que no necesitamos en su representación xml.
 
- <persistence version="1.0"
-              xmlns="http://java.sun.com/xml/ns/persistence"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
-   <persistence-unit name="movie-unit">
-     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-     <jta-data-source>movieDatabase</jta-data-source>
-     <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
-     <properties>
-       <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
-       <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-     </properties>
-   </persistence-unit>
- </persistence>
+[source,xml]
+----
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+  <persistence-unit name="movie-unit">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+    <properties>
+      <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+      <property name="tomee.jpa.cdi" value="false"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+
+----
 
 == MoviesTest
 
 Ahora hacemos una prueba, persistiendo tres películas, luego realizamos una búsqueda y finalmente las eliminamos.
+
 [source,java]
 ----
-package org.superbiz.injection.h3jpa;
+package org.superbiz.injection.h5jpa;
 
-import junit.framework.TestCase;
+import jakarta.inject.Inject;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import jakarta.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
- */
-public class MoviesTest extends TestCase {
+import static org.junit.Assert.assertEquals;
 
-    public void test() throws Exception {
-        final Properties p = new Properties();
+@RunWith(ApplicationComposer.class)
+public class MoviesTest {
+
+    @Inject
+    private Movies movies;
+
+    @Module
+    public PersistenceUnit persistence() {
+        PersistenceUnit unit = new PersistenceUnit("movie-unit");
+        unit.setJtaDataSource("movieDatabase");
+        unit.setNonJtaDataSource("movieDatabaseUnmanaged");
+        unit.getClazz().add(Movie.class.getName());
+        unit.setProvider("org.hibernate.jpa.HibernatePersistenceProvider");
+        unit.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        unit.setProperty("tomee.jpa.cdi", "false");
+        return unit;
+    }
+
+    @Module
+    @Classes(cdi = true, value = Movies.class)
+    public EjbJar beans() {
+        EjbJar ejbJar = new EjbJar("movie-beans");
+        return ejbJar;
+    }
+
+    @Configuration
+    public Properties config() throws Exception {
+        Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+        return p;
+    }
 
-        final Context context = EJBContainer.createEJBContainer(p).getContext();
-        Movies movies = (Movies) context.lookup("java:global/jpa-hibernate/Movies");
-
+    @Test
+    public void test() throws Exception {
         movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
         movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
         movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
@@ -183,20 +221,20 @@ public class MoviesTest extends TestCase {
 }
 ----
 
-= Ejecutando
+== Ejecutando
 
 Para ejecutar el ejemplo a través de maven:
 
 Acceda a la carpeta del proyecto:
 
-[source,java]
+[source,bash]
 ----
 cd jpa-hibernate
 ----
 
 y ejecute:
 
-[source,java]
+[source,bash]
 ----
 mvn clean install
 ----
@@ -208,39 +246,118 @@ Lo que generará una salida similar a la siguiente:
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
-Running org.superbiz.injection.h3jpa.MoviesTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://tomee.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/jpa-hibernate
-INFO - openejb.base = /Users/dblevins/examples/jpa-hibernate
-INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/jpa-hibernate/target/classes
-INFO - Beginning load: /Users/dblevins/examples/jpa-hibernate/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/jpa-hibernate
-INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
-INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.injection.h3jpa.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
-INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
-INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
-INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
-INFO - Enterprise application "/Users/dblevins/examples/jpa-hibernate" loaded.
-INFO - Assembling app: /Users/dblevins/examples/jpa-hibernate
-INFO - PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence) - provider time 631ms
-INFO - Jndi(name="java:global/jpa-hibernate/Movies!org.superbiz.injection.h3jpa.Movies")
-INFO - Jndi(name="java:global/jpa-hibernate/Movies")
-INFO - Jndi(name="java:global/EjbModule1235930463/org.superbiz.injection.h3jpa.MoviesTest!org.superbiz.injection.h3jpa.MoviesTest")
-INFO - Jndi(name="java:global/EjbModule1235930463/org.superbiz.injection.h3jpa.MoviesTest")
-INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Created Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
-INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
-INFO - Started Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/jpa-hibernate)
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.22 sec
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.injection.h5jpa.MoviesTest
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@176d53b2
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Succeeded in installing singleton service
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating TransactionManager(id=Default Transaction Manager)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating SecurityService(id=Default Security Service)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Resource(id=movieDatabase)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring enterprise application: /home/zowallar/Dokumente/work/coding/tomee/examples/jpa-hibernate/MoviesTest
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-deploying ejb Movies: EjbDeployment(deployment-id=Movies)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-creating a container for bean org.superbiz.injection.h5jpa.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Container(id=Default Managed Container)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Using directory /tmp for stateful session passivation
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Container(id=Default Stateful Container)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Using directory /tmp for stateful session passivation
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.jpa.HibernatePersistenceProvider)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource' for 'movie-unit'.
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Resource(id=movieDatabaseNonJta)
+März 24, 2022 9:34:39 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+März 24, 2022 9:34:40 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Enterprise application "/home/zowallar/Dokumente/work/coding/tomee/examples/jpa-hibernate/MoviesTest" loaded.
+März 24, 2022 9:34:40 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Not creating another application classloader for MoviesTest
+März 24, 2022 9:34:40 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Assembling app: /home/zowallar/Dokumente/work/coding/tomee/examples/jpa-hibernate/MoviesTest
+März 24, 2022 9:34:40 VORM. org.hibernate.jpa.internal.util.LogHelper logPersistenceUnitInformation
+INFO: HHH000204: Processing PersistenceUnitInfo [name: movie-unit]
+März 24, 2022 9:34:40 VORM. org.hibernate.Version logVersion
+INFO: HHH000412: Hibernate ORM core version 5.6.7.Final
+März 24, 2022 9:34:40 VORM. org.hibernate.annotations.common.reflection.java.JavaReflectionManager <clinit>
+INFO: HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+März 24, 2022 9:34:40 VORM. org.hibernate.dialect.Dialect <init>
+INFO: HHH000400: Using dialect: org.hibernate.dialect.HSQLDialect
+März 24, 2022 9:34:40 VORM. org.hibernate.resource.beans.spi.ManagedBeanRegistryInitiator resolveBeanContainer
+INFO: HHH10005002: No explicit CDI BeanManager reference was passed to Hibernate, but CDI is available on the Hibernate ClassLoader.
+März 24, 2022 9:34:40 VORM. org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator initiateService
+INFO: HHH000490: Using JtaPlatform implementation: [org.apache.openejb.hibernate.OpenEJBJtaPlatform2]
+März 24, 2022 9:34:40 VORM. org.hibernate.validator.internal.util.Version <clinit>
+INFO: HV000001: Hibernate Validator 7.0.4.Final
+März 24, 2022 9:34:41 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: PersistenceUnit(name=movie-unit, provider=org.hibernate.jpa.HibernatePersistenceProvider) - provider time 1292ms
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.openejb.util.proxy.ClassDefiner (file:/home/zowallar/.m2/repository/org/apache/tomee/openejb-core/9.0.0-M8-SNAPSHOT/openejb-core-9.0.0-M8-SNAPSHOT.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
+WARNING: Please consider reporting this to the maintainers of org.apache.openejb.util.proxy.ClassDefiner
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+März 24, 2022 9:34:41 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Jndi(name=MoviesLocalBean) --> Ejb(deployment-id=Movies)
+März 24, 2022 9:34:41 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Jndi(name=global/MoviesTest/movie-beans/Movies!org.superbiz.injection.h5jpa.Movies) --> Ejb(deployment-id=Movies)
+März 24, 2022 9:34:41 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Jndi(name=global/MoviesTest/movie-beans/Movies) --> Ejb(deployment-id=Movies)
+März 24, 2022 9:34:41 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@176d53b2
+März 24, 2022 9:34:41 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: OpenWebBeans Container is starting...
+März 24, 2022 9:34:41 VORM. org.apache.webbeans.plugins.PluginLoader startUp
+INFORMATION: Adding OpenWebBeansPlugin : [CdiPlugin]
+März 24, 2022 9:34:42 VORM. org.apache.webbeans.config.BeansDeployer validateInjectionPoints
+INFORMATION: All injection points were validated successfully.
+März 24, 2022 9:34:42 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: OpenWebBeans Container has started, it took 665 ms.
+März 24, 2022 9:34:42 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+März 24, 2022 9:34:42 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+März 24, 2022 9:34:42 VORM. org.apache.batchee.container.services.ServicesManager init
+WARNUNG: You didn't specify org.apache.batchee.jmx.application and JMX is already registered, skipping
+März 24, 2022 9:34:42 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Deployed Application(path=/home/zowallar/Dokumente/work/coding/tomee/examples/jpa-hibernate/MoviesTest)
+März 24, 2022 9:34:42 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Undeploying app: /home/zowallar/Dokumente/work/coding/tomee/examples/jpa-hibernate/MoviesTest
+März 24, 2022 9:34:42 VORM. org.hibernate.tool.schema.internal.SchemaDropperImpl$DelayedDropActionImpl perform
+INFO: HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+März 24, 2022 9:34:42 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Closing DataSource: movieDatabase
+März 24, 2022 9:34:42 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Closing DataSource: movieDatabaseNonJta
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.567 sec
 
 Results :
 
