@@ -213,7 +213,7 @@
     <version.hsqldb>2.3.4</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate>5.4.10.Final</version.hibernate>
+    <version.hibernate>5.6.7.Final</version.hibernate>
     <version.eclipselink>3.0.2</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
@@ -1884,9 +1884,21 @@
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
+        <artifactId>hibernate-core-jakarta</artifactId>
         <version>${version.hibernate}</version>
         <exclusions>
+          <exclusion>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+          </exclusion>
           <exclusion>
             <artifactId>jboss-logging</artifactId>
             <groupId>org.jboss.logging</groupId>
@@ -1894,13 +1906,13 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.hibernate</groupId>
+        <groupId>org.hibernate.validator</groupId>
         <artifactId>hibernate-validator</artifactId>
-        <version>5.1.3.Final</version>
+        <version>7.0.4.Final</version>
         <exclusions>
           <exclusion>
             <groupId>jakarta.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <artifactId>jakarta.validation-api</artifactId>
           </exclusion>
           <exclusion>
             <artifactId>jboss-logging</artifactId>
