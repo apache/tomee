@@ -539,7 +539,7 @@ public class GenerateBoms {
             final String groupId = artifactDir.getParentFile()
                     .getAbsolutePath()
                     .substring(path.getAbsolutePath().length() + 1)
-                    .replace("/", ".");
+                    .replace(File.separatorChar, '.');
 
             return Artifact.builder()
                     .artifactId(artifactDir.getName())
