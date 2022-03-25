@@ -63,16 +63,13 @@ public class CustomOrmXmlHibernateEarTest {
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/web.xml"), "web.xml");
 
         final File[] hibernateDependencies = Maven.resolver().resolve(
-    "org.hibernate:hibernate-entitymanager:5.4.10.Final",
-            "org.hibernate:hibernate-core:5.4.10.Final",
-            "org.hibernate.common:hibernate-commons-annotations:5.1.0.Final",
+            "org.hibernate:hibernate-core:5.6.7.Final",
+            "org.hibernate.common:hibernate-commons-annotations:5.1.2.Final",
             "antlr:antlr:2.7.7",
-            "org.jboss:jandex:1.1.0.Final",
-            "org.jboss.logging:jboss-logging:3.3.2.Final",
-            "dom4j:dom4j:1.6.1",
-            "org.javassist:javassist:3.18.1-GA",
-            "net.bytebuddy:byte-buddy:1.10.2",
-            "com.fasterxml:classmate:1.0.0",
+            "com.fasterxml:classmate:1.5.1",
+            "org.jboss:jandex:2.4.2.Final",
+            "org.jboss.logging:jboss-logging:3.4.3.Final",
+            "net.bytebuddy:byte-buddy:1.12.8",
             "mysql:mysql-connector-java:5.1.13"
         ).withoutTransitivity().asFile();
         
