@@ -79,10 +79,20 @@ OPENEJB_JAVAEE_JAR=$(echo "$OPENEJB_HOME"/lib/jakartaee-api*)
 OPENEJB_CP="$OPENEJB_CORE_JAR:$OPENEJB_JAVAEE_JAR"
 OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 
+# Add the JAVA 9 specific start-up parameters required by OpenEJB
+JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.lang=ALL-UNNAMED"
+JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.io=ALL-UNNAMED"
+JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.util=ALL-UNNAMED"
+JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.util.concurrent=ALL-UNNAMED"
+JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED"
+JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED"
+
+export JDK_JAVA_OPTIONS
+
 args="$@"
 if [ "$1" = "debug" ]; then
     OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 $OPENEJB_OPTS"
 	args="start"
 fi
 
-java $OPENEJB_OPTS  "-Djava.util.logging.config.file=$OPENEJB_HOME/conf/logging.properties" "-javaagent:$OPENEJB_JAVAAGENT_JAR" -cp "$OPENEJB_CP"  org.apache.openejb.cli.Bootstrap $args
+java $JDK_JAVA_OPTIONS $OPENEJB_OPTS  "-Djava.util.logging.config.file=$OPENEJB_HOME/conf/logging.properties" "-javaagent:$OPENEJB_JAVAAGENT_JAR" -cp "$OPENEJB_CP"  org.apache.openejb.cli.Bootstrap $args

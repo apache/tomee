@@ -295,7 +295,7 @@ public class Agent {
                 final Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
                 bootstrap.invoke(null, loader);
             } catch (final Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to invoke bootstrap: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Failed to invoke bootstrap: " + e.getMessage(), e);
             } finally {
                 removeThis();
             }
