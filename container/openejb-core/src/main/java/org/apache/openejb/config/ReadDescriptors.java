@@ -311,7 +311,9 @@ public class ReadDescriptors implements DynamicDeployer {
                 final ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(
                         ValidationConfigType.class, value.get(), false,
                         "http://xmlns.jcp.org/xml/ns/validation/configuration",
-                        "http://jboss.org/xml/ns/javax/validation/configuration");
+                        "http://jboss.org/xml/ns/javax/validation/configuration",
+                        "https://jakarta.ee/xml/ns/validation/configuration");
+
                 module.setValidationConfig(validationConfigType);
             } catch (final Exception e) {
                 logger.warning("can't read validation.xml to construct a validation factory, it will be ignored");
