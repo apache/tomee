@@ -756,17 +756,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>microprofile-rest-client-api-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-api</artifactId>
       <version>${project.version}</version>
       <exclusions>
