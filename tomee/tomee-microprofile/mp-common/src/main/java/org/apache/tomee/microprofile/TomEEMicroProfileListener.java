@@ -53,11 +53,12 @@ public class TomEEMicroProfileListener {
             "org.apache.geronimo.microprofile.metrics.cdi.MetricsExtension",
             "org.apache.geronimo.microprofile.opentracing.microprofile.cdi.OpenTracingExtension",
             "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension",
-            // "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
+            "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
             };
 
     @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
+
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
 
         if (mpScan.equals("none")) {

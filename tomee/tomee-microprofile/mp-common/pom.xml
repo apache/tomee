@@ -204,29 +204,9 @@
 
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>cxf-shade</artifactId>
+      <artifactId>cxf-rt-rs-mp-client-shade</artifactId>
       <version>${project.version}</version>
       <exclusions>
-        <exclusion>
-          <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.json</groupId>
-          <artifactId>jakarta.json-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.ws.rs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.annotation</groupId>
-          <artifactId>jakarta.annotation-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
         <!-- exclude in favor of cxf-shade -->
         <exclusion>
           <groupId>org.apache.cxf</groupId>

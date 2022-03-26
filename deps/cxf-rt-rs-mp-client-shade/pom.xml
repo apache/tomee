@@ -24,8 +24,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>cxf-shade</artifactId>
-  <name>TomEE :: Deps :: CXF Shade</name>
+  <artifactId>cxf-rt-rs-mp-client-shade</artifactId>
+  <name>TomEE :: Deps :: CXF Rest Client Shade</name>
 
   <!--
   This is to make sure ApplicationComposer, EJBContainer, Arquillian can work.
@@ -38,163 +38,46 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-core</artifactId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
       <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>${cxf.version}</version>
-      <!--
       <exclusions>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-ws-addr</artifactId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.rest.client</groupId>
+          <artifactId>microprofile-rest-client-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.json</groupId>
+          <artifactId>jakarta.json-api</artifactId>
         </exclusion>
       </exclusions>
-      -->
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-management</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <!--
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-search</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    -->
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-cors</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-security</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-wsdl</artifactId>
-      <version>${cxf.version}</version>
     </dependency>
 
-    <!-- add transitive dependencies so including this is equivalent to including regular deps -->
     <dependency>
-      <groupId>org.apache.ws.xmlschema</groupId>
-      <artifactId>xmlschema-core</artifactId>
-      <version>2.2.5</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.woodstox</groupId>
-      <artifactId>woodstox-core</artifactId>
-      <version>6.2.8</version>
-    </dependency>
-    <dependency>
-      <groupId>wsdl4j</groupId>
-      <artifactId>wsdl4j</artifactId>
-      <version>1.6.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.reactivestreams</groupId>
-      <artifactId>reactive-streams</artifactId>
-      <version>1.0.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.neethi</groupId>
-      <artifactId>neethi</artifactId>
-      <version>3.0.3</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
-    <!-- is this required -->
     <dependency>
-      <groupId>com.sun.xml.messaging.saaj</groupId>
-      <artifactId>saaj-impl</artifactId>
-      <version>1.5.3</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.rest.client</groupId>
+          <artifactId>microprofile-rest-client-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
-        <executions>
-          <execution>
-            <id>copy-dependencies-for-classpath</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/patch-classpath</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-dependencies-for-patching</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <excludeTransitive>true</excludeTransitive> <!-- we just want to patch and shade CXF -->
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -212,7 +95,7 @@
               <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <artifactSet>
                 <includes>
-                  <include>org.apache.cxf:*</include> <!-- only CXF to make sure we don't add other things -->
+                  <include>org.apache.cxf:cxf-rt-rs-mp-client</include> <!-- only CXF to make sure we don't add other things -->
                 </includes>
               </artifactSet>
               <transformers>
@@ -328,41 +211,6 @@
                 </relocation>
               </relocations>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.tomee.patch</groupId>
-        <artifactId>tomee-patch-plugin</artifactId>
-        <configuration>
-          <select>cxf-shade-.*\.jar</select>
-          <transformSources>false</transformSources>
-          <source>1.8</source>
-          <target>1.8</target>
-          <dependencies>
-            <dependency>${project.groupId}:jakartaee-api:jar:9.1-M2-SNAPSHOT</dependency>
-
-            <dependency>org.apache.aries.blueprint:blueprint-parser:jar:1.6.0</dependency>
-            <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.api:jar:1.0.1</dependency>
-            <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.core:jar:1.10.2</dependency>
-            <dependency>org.apache.tomcat:tomcat-servlet-api:jar:10.0.4</dependency>
-            <dependency>org.osgi:org.osgi.core:jar:6.0.0</dependency>
-            <dependency>org.osgi:osgi.cmpn:jar:6.0.0</dependency>
-            <dependency>org.ow2.asm:asm:jar:9.1</dependency>
-            <dependency>org.springframework:spring-aop:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-beans:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-context:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-core:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-webmvc:jar:5.3.6</dependency>
-          </dependencies>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
           </execution>
         </executions>
       </plugin>
