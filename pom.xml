@@ -1655,12 +1655,6 @@
         <version>${osgi.framework.version}</version>
       </dependency>
       <dependency>
-        <groupId>xml-apis</groupId>
-        <artifactId>xml-apis</artifactId>
-        <version>1.4.01</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
         <groupId>org.apache.neethi</groupId>
         <artifactId>neethi</artifactId>
         <version>3.0.3</version>

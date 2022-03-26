@@ -342,6 +342,18 @@
       <artifactId>activemq-ra</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.batchee</groupId>
+      <artifactId>batchee-jbatch</artifactId>
+      <version>${batchee.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-jcs-jcache</artifactId>
+      <version>${jcs.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
       <exclusions>
@@ -427,11 +439,6 @@
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.faces</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
