@@ -443,11 +443,6 @@
       <version>3.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <scope>runtime</scope><!-- transitive from xerces but in test scope in parent so needed here -->
-    </dependency>
   </dependencies>
   <build>
     <plugins>
