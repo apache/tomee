@@ -49,7 +49,7 @@ public class MVCTest {
     @Deployment
     public static WebArchive createDeployment() {
         File[] files = Maven.resolver()
-                            .loadPomFromFile("pom.xml")
+                            .loadPomFromFile("src/test/resources/a-pom.xml")
                             .importRuntimeDependencies()
                             .resolve()
                             .withTransitivity()
