@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.10-TT.1
+= TomEE EAP 8.0.10-TT.2
+
+=== Changes in TomEE EAP 8.0.10.TT.2
+* Updated jackson-databind to 2.13.2.2 to mitigate CVE-2020-36518
 
 === Changes in TomEE EAP 8.0.10.TT.1
 * Updated to Tomcat 9.0.59
