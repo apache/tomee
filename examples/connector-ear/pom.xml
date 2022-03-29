@@ -22,7 +22,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
     <surefire.version>2.21.0</surefire.version>
-    <tomee.version>${project.version}</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -83,7 +82,7 @@
           <systemProperties>
             <property>
               <name>tomee.version</name>
-              <value>${tomee.version}</value>
+              <value>8.0.10-TT.2-SNAPSHOT</value>
             </property>
           </systemProperties>
         </configuration>

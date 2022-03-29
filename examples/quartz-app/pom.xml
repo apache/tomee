@@ -25,7 +25,6 @@
   <name>TomEE :: Examples :: Quartz</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>${project.version}</tomee.version>
   </properties>
   <modules>
     <module>quartz-ra</module>
@@ -82,13 +81,13 @@
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-plus</artifactId>
-        <version>${tomee.version}</version>
+        <version>8.0.10-TT.2-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-plus-api</artifactId>
-        <version>${tomee.version}</version>
+        <version>8.0.10-TT.2-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

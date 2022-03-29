@@ -32,7 +32,6 @@
 
   <properties>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
-    <tomee.version>${project.version}</tomee.version>
   </properties>
 
   <dependencyManagement>

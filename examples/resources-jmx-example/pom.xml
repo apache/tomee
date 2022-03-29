@@ -26,7 +26,6 @@
   <name>TomEE :: Examples :: Resources/JMX Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>${project.version}</tomee.version>
   </properties>
   <modules>
     <module>resources-jmx-ejb</module>
@@ -76,7 +75,7 @@
       <dependency>
         <groupId>org.superbiz</groupId>
         <artifactId>resources-jmx-ejb</artifactId>
-        <version>${project.version}</version>
+        <version>8.0.10-TT.2-SNAPSHOT</version>
         <type>ejb</type>
         <scope>compile</scope>
       </dependency>

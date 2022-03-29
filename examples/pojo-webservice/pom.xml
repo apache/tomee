@@ -25,7 +25,6 @@
   <name>TomEE :: Web Examples :: Pojo WS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>${project.version}</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -68,9 +67,8 @@
         <!-- http://localhost:8080/pojo-webservice?wsdl -->
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>8.0.10-TT.2-SNAPSHOT</version>
         <configuration>
-          <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
