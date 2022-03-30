@@ -17,4 +17,5 @@
 package org.apache.tomee.itests.ejb;
 
 public interface CalculatorRemote {
+    int sum (int a1, int a2);
 }
