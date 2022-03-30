@@ -92,6 +92,14 @@ public class RandomConnectionStrategyTest {
             root.setProperty("name", name);
             root.setProperty("openejb.extract.configuration", "false");
 
+            // Add the JAVA 9 specific start-up parameters required by OpenEJB
+            root.getJvmOpts().add("--add-opens=java.base/java.lang=ALL-UNNAMED");
+            root.getJvmOpts().add("--add-opens=java.base/java.io=ALL-UNNAMED");
+            root.getJvmOpts().add("--add-opens=java.base/java.util=ALL-UNNAMED");
+            root.getJvmOpts().add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
+            root.getJvmOpts().add("--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED");
+            root.getJvmOpts().add("--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED");
+
             final StandaloneServer.ServerService multipoint = root.getServerService("multipoint");
             multipoint.setBind("localhost");
             multipoint.setPort(getNextAvailablePort());
@@ -120,6 +128,14 @@ public class RandomConnectionStrategyTest {
             server.setProperty("name", name);
             server.setProperty("openejb.extract.configuration", "false");
             server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
+
+            // Add the JAVA 9 specific start-up parameters required by OpenEJB
+            server.getJvmOpts().add("--add-opens=java.base/java.lang=ALL-UNNAMED");
+            server.getJvmOpts().add("--add-opens=java.base/java.io=ALL-UNNAMED");
+            server.getJvmOpts().add("--add-opens=java.base/java.util=ALL-UNNAMED");
+            server.getJvmOpts().add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
+            server.getJvmOpts().add("--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED");
+            server.getJvmOpts().add("--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED");
 
             IO.copy(app, Files.path(home, "apps", "itest.jar"));
             IO.copy(IO.read("<openejb><Deployments dir=\"apps/\"/></openejb>"), Files.path(home, "conf", "openejb.xml"));
