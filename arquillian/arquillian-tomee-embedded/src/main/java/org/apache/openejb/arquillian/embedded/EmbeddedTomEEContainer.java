@@ -136,7 +136,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             this.container.start();
             SystemInstance.get().setComponent(AdditionalBeanDiscoverer.class, new TestClassDiscoverer());
             // this property is not mandatory by default but depending the protocol it can be relevant so adding it by default
-            SystemInstance.get().setProperty("org.apache.openejb.servlet.filters", ArquillianFilterRunner.class.getName() + "=/ArquillianServletRunner");
+            SystemInstance.get().setProperty("org.apache.openejb.servlet.filters", ArquillianFilterRunner.class.getName() + "=/ArquillianServletRunnerEE9");
         } catch (final Exception e) {
             throw new LifecycleException("Something went wrong", e);
         }
@@ -180,7 +180,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             final String context = this.getArchiveNameWithoutExtension(archive);
 
             final HTTPContext httpContext = new HTTPContext(this.configuration.getHost(), this.configuration.getHttpPort());
-            httpContext.add(new Servlet("ArquillianServletRunner", "/" + context));
+            httpContext.add(new Servlet("ArquillianServletRunnerEE9", "/" + context));
             this.addServlets(httpContext, info);
 
             startCdiContexts(name); // ensure tests can use request/session scopes even if we don't have a request

@@ -47,7 +47,7 @@ public final class ServiceManagers {
 
     private static ProtocolMetaData newHttpProtocolMetaData(final ServerService ss, final String contextRoot) {
         final HTTPContext httpContext = new HTTPContext(ss.getIP(), ss.getPort());
-        httpContext.add(new Servlet("ArquillianServletRunner", contextRoot));
+        httpContext.add(new Servlet("ArquillianServletRunnerEE9", contextRoot));
         return new ProtocolMetaData().addContext(httpContext);
     }
 }
