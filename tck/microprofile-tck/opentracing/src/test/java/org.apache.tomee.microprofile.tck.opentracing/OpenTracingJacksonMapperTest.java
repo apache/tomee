@@ -16,11 +16,11 @@
  */
 package org.apache.tomee.microprofile.tck.opentracing;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.microprofile.opentracing.tck.tracer.TestTracer;
 import org.testng.annotations.Test;
 
-import static org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 public class OpenTracingJacksonMapperTest {
     @Test
