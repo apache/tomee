@@ -96,7 +96,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.tck.version</version>
+      <version>${microprofile.jwt.tck.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.tck.version</version>
+      <version>${microprofile.jwt.tck.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
