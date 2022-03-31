@@ -153,6 +153,12 @@
       <artifactId>geronimo-health-common</artifactId>
       <version>${microprofile.health.impl.version}</version>
       <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>microprofile-health-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
