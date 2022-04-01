@@ -1687,17 +1687,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.microprofile.health</groupId>
-      <artifactId>microprofile-health-api</artifactId>
-      <version>3.0-RC3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <version>3.8.1</version>
@@ -1976,17 +1965,6 @@
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
       <version>1.6.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.4.01</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

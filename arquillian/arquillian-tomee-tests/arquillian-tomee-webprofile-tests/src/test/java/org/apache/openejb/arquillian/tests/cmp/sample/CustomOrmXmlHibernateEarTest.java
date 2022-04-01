@@ -65,6 +65,7 @@ public class CustomOrmXmlHibernateEarTest {
         final File[] hibernateDependencies = Maven.resolver().resolve(
             "org.hibernate:hibernate-core-jakarta:5.6.7.Final",
             "org.hibernate.common:hibernate-commons-annotations:5.1.2.Final",
+            "com.fasterxml:classmate:1.5.1",
             "antlr:antlr:2.7.7",
             "org.jboss:jandex:2.4.2.Final",
             "org.jboss.logging:jboss-logging:3.4.3.Final",

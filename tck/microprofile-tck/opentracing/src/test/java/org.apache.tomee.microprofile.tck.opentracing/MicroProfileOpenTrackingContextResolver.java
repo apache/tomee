@@ -16,11 +16,10 @@
  */
 package org.apache.tomee.microprofile.tck.opentracing;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.ext.ContextResolver;
 
-import static org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 public class MicroProfileOpenTrackingContextResolver implements ContextResolver<ObjectMapper>{
     @Override

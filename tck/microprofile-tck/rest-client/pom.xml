@@ -122,13 +122,17 @@
           <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.rest.client</groupId>
+          <artifactId>microprofile-rest-client-api</artifactId>
+        </exclusion>
       </exclusions>      
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-tck</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <version>${microprofile.rest-client.tck.version}</version>
       <scope>test</scope>
     </dependency>
 

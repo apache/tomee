@@ -53,6 +53,10 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
           <artifactId>*</artifactId>
         </exclusion>
@@ -92,7 +96,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.version}</version>
+      <version>${microprofile.jwt.tck.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -106,7 +110,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.version}</version>
+      <version>${microprofile.jwt.tck.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

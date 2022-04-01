@@ -335,6 +335,17 @@
       <groupId>org.apache.batchee</groupId>
       <artifactId>batchee-jbatch</artifactId>
       <version>1.0.2-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.batchee</groupId>
+      <artifactId>batchee-jbatch</artifactId>
+      <version>1.0.2-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -1776,17 +1787,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.microprofile.health</groupId>
-      <artifactId>microprofile-health-api</artifactId>
-      <version>3.0-RC3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
       <version>3.0.2</version>
@@ -2098,17 +2098,6 @@
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
       <version>1.6.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.4.01</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

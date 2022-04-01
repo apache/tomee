@@ -19,6 +19,7 @@ package org.apache.openejb.maven.plugin.test;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.maven.plugin.Config;
 import org.apache.openejb.maven.plugin.TomEEMavenPluginRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -30,6 +31,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore("The ASM shaded in Sirona Agent does not support Java 11 compiled classes")
 public class PersistJavaagentTest {
     @Rule
     public TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule();
