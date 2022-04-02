@@ -20,7 +20,6 @@ can also find us on IRC freenode.org #openejb and #tomee
 == General Information
 * link:tomee-directory-structure.html[TomEE Directory structure]
 * link:deploying-in-tomee.html[Deploying in TomEE]
-* link:tomee-webapp.html[The 'tomee' webapp]
 * link:refcard/refcard.html[TomEE Reference Card]
 * link:application-composer/index.html[ApplicationComposer]
 
