@@ -3404,8 +3404,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             if (DynamicMBean.class.isInstance(resource)) {
                 server.registerMBean(resource, objectName);
+                logger.debug("Registered JMX name: " + objectName.toString());
             } else {
                 server.registerMBean(new MBeanPojoWrapper(name, resource), objectName);
+                logger.debug("Registered JMX name: " + objectName.toString());
             }
         } catch (final Exception e) {
             logger.error("Unable to register MBean ", e);
