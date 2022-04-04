@@ -136,9 +136,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.geronimo.config</groupId>
-      <artifactId>geronimo-config-impl</artifactId>
-      <version>1.2.3</version>
+      <groupId>io.smallrye.config</groupId>
+      <artifactId>smallrye-config-core</artifactId>
+      <version>${microprofile.config.impl.version}</version>
       <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>

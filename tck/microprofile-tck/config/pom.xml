@@ -97,16 +97,10 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-config-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-api</artifactId>
+      <version>${microprofile.config.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.config</groupId>
-          <artifactId>microprofile-config-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
