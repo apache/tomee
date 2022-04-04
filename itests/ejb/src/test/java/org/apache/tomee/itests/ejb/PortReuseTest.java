@@ -41,7 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class PortReuse  Test {
+public class PortReuseTest {
 
     @Test
     public void test() throws Exception {
