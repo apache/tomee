@@ -16,11 +16,7 @@
  */
 package org.apache.tomee.microprofile;
 
-import org.apache.geronimo.microprofile.common.jaxrs.HealthChecksEndpoint;
-import org.apache.geronimo.microprofile.impl.health.cdi.CdiHealthChecksEndpoint;
-import org.apache.geronimo.microprofile.metrics.common.jaxrs.MetricsEndpoints;
-import org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints;
-import org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint;
+import jakarta.servlet.ServletContext;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.SystemInstance;
@@ -31,13 +27,10 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletRegistration;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -46,14 +39,18 @@ public class TomEEMicroProfileListener {
             "mp-common" };
 
     private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
+            // kept until we move everything to Smallrye in case jars are still there by user choice.
             "org.apache.geronimo.config.cdi.ConfigExtension",
             "org.apache.safeguard.impl.cdi.SafeguardExtension",
-            "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
             "org.apache.geronimo.microprofile.impl.health.cdi.GeronimoHealthExtension",
             "org.apache.geronimo.microprofile.metrics.cdi.MetricsExtension",
             "org.apache.geronimo.microprofile.opentracing.microprofile.cdi.OpenTracingExtension",
             "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension",
+
+            "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
             "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
+            "io.smallrye.config.inject.ConfigExtension",
+            "io.smallrye.metrics.setup.MetricCdiInjectionExtension"
             };
 
     @SuppressWarnings("Duplicates")
@@ -103,12 +100,13 @@ public class TomEEMicroProfileListener {
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
 
         // These remove duplicated REST API endpoints.
-        webApp.restClass.removeIf(className -> className.equals(HealthChecksEndpoint.class.getName()));
-        webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
+        // webApp.restClass.removeIf(className -> className.equals(HealthChecksEndpoint.class.getName()));
+        // webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
 
         // There remove all of MP REST API endpoint if there is a servlet already registered in /*. The issue here is
         // that REST path has priority over servlet and there may override old applications that have servlets
         // with /* mapping.
+        /*
         context.getServletRegistrations()
                .values()
                .stream()
@@ -121,5 +119,6 @@ public class TomEEMicroProfileListener {
                    webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
                    webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
                });
+         */
     }
 }

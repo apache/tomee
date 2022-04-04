@@ -91,16 +91,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-metrics-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>${microprofile.metrics.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.metrics</groupId>
-          <artifactId>microprofile-metrics-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>

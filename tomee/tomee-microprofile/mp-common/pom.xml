@@ -50,34 +50,37 @@
 
     <!-- MicroProfile -->
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-config-api-shade</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>microprofile-config-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-api</artifactId>
+      <version>${microprofile.config.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.geronimo.config</groupId>
-      <artifactId>geronimo-config-impl</artifactId>
+      <groupId>io.smallrye.config</groupId>
+      <artifactId>smallrye-config</artifactId>
       <version>${microprofile.config.impl.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
           <artifactId>microprofile-config-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
+      <groupId>org.eclipse.microprofile.jwt</groupId>
+      <artifactId>microprofile-jwt-auth-api</artifactId>
+      <version>${microprofile.jwt.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-jwt-auth-api-shade</artifactId>
-      <version>${project.version}</version>
+      <artifactId>mp-jwt</artifactId>
+      <version>${microprofile.jwt.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -87,15 +90,15 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mp-jwt</artifactId>
-      <version>${microprofile.jwt.impl.version}</version>
+      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+      <artifactId>microprofile-fault-tolerance-api</artifactId>
+      <version>${microprofile.fault-tolerance.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-fault-tolerance-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-fault-tolerance-core</artifactId>
+      <version>${microprofile.fault-tolerance.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -105,54 +108,21 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>safeguard-impl-shade</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.safeguard</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-health-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.health</groupId>
+      <artifactId>microprofile-health-api</artifactId>
+      <version>${microprofile.health.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>microprofile-health-api</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-health</artifactId>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-health</artifactId>
       <version>${microprofile.health.impl.version}</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>microprofile-health-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>geronimo-health-common</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-health-common</artifactId>
-      <version>${microprofile.health.impl.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -162,9 +132,15 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-metrics-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>${microprofile.health.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-metrics</artifactId>
+      <version>${microprofile.metrics.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -174,36 +150,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-metrics</artifactId>
-      <version>${microprofile.metrics.impl.version}</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo</groupId>
-          <artifactId>geronimo-metrics-common</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-metrics-common</artifactId>
-      <version>${microprofile.metrics.impl.version}</version>
-      <classifier>jakarta</classifier>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-rest-client-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.rest.client</groupId>
+      <artifactId>microprofile-rest-client-api</artifactId>
+      <version>${microprofile.rest-client.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>microprofile-rest-client-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -222,22 +175,22 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-openapi-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.openapi</groupId>
+      <artifactId>microprofile-openapi-api</artifactId>
+      <version>${microprofile.openapi.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-open-api</artifactId>
+      <version>${microprofile.openapi.impl.version}</version>
+      <type>pom</type>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
           <artifactId>microprofile-openapi-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-openapi-impl</artifactId>
-      <version>${microprofile.openapi.impl.version}</version>
-      <classifier>jakarta</classifier>
     </dependency>
 
     <!-- Jackson required by OpenAPI Impl -->
@@ -251,38 +204,21 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-opentracing-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.opentracing</groupId>
+      <artifactId>microprofile-opentracing-api</artifactId>
+      <version>${microprofile.opentracing.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-opentracing</artifactId>
+      <version>${microprofile.opentracing.impl.version}</version>
       <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>*</groupId>
           <artifactId>microprofile-opentracing-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-opentracing</artifactId>
-      <version>${microprofile.opentracing.impl.version}</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo</groupId>
-          <artifactId>geronimo-opentracing-common</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-opentracing-common</artifactId>
-      <version>${microprofile.opentracing.impl.version}</version>
-      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>

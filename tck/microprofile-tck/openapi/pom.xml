@@ -95,16 +95,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-openapi-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.openapi</groupId>
+      <artifactId>microprofile-openapi-api</artifactId>
+      <version>${microprofile.openapi.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.openapi</groupId>
-          <artifactId>microprofile-openapi-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
