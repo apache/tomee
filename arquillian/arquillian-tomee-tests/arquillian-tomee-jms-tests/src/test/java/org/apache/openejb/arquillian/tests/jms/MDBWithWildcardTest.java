@@ -30,16 +30,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -86,7 +86,7 @@ public class MDBWithWildcardTest {
     @MessageDriven(
             activationConfig = {
                     @ActivationConfigProperty(propertyName = "destination", propertyValue = "dest.*.event"),
-                    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
+                    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic"),
             }
     )
     public static class WildcardMdb implements MessageListener {
