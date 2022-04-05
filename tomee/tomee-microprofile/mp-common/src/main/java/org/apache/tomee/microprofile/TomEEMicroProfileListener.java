@@ -40,12 +40,12 @@ public class TomEEMicroProfileListener {
 
     private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
             // kept until we move everything to Smallrye in case jars are still there by user choice.
-            "org.apache.geronimo.config.cdi.ConfigExtension",
-            "org.apache.safeguard.impl.cdi.SafeguardExtension",
-            "org.apache.geronimo.microprofile.impl.health.cdi.GeronimoHealthExtension",
-            "org.apache.geronimo.microprofile.metrics.cdi.MetricsExtension",
-            "org.apache.geronimo.microprofile.opentracing.microprofile.cdi.OpenTracingExtension",
-            "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension",
+            // "org.apache.geronimo.config.cdi.ConfigExtension",
+            // "org.apache.safeguard.impl.cdi.SafeguardExtension",
+            // "org.apache.geronimo.microprofile.impl.health.cdi.GeronimoHealthExtension",
+            // "org.apache.geronimo.microprofile.metrics.cdi.MetricsExtension",
+            // "org.apache.geronimo.microprofile.opentracing.microprofile.cdi.OpenTracingExtension",
+            // "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension",
 
             "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
             "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
