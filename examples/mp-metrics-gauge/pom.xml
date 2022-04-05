@@ -22,7 +22,7 @@
   <artifactId>mp-metrics-gauge</artifactId>
   <packaging>war</packaging>
   <properties>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
