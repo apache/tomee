@@ -59,7 +59,7 @@
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>3.0.0-M6</version>
         <configuration>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.rest.client:microprofile-rest-client-tck</dependency>

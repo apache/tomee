@@ -29,7 +29,7 @@
 
   <properties>
     <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
-    <surefire.argline>-Xmx2g</surefire.argline>
+    <surefire.argline>-Xmx3g</surefire.argline>
   </properties>
 
   <dependencies>
@@ -241,7 +241,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <reuseForks>true</reuseForks>
+          <reuseForks>false</reuseForks>
           <forkCount>1</forkCount>
           <argLine>${surefire.argline}</argLine>
           <useFile>false</useFile>
