@@ -29,7 +29,7 @@
 
   <properties>
     <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
-    <surefire.argline>-Xmx3g</surefire.argline>
+    <surefire.argline>-Xmx4g</surefire.argline>
   </properties>
 
   <dependencies>
@@ -288,17 +288,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>java8</id>
-      <activation>
-        <jdk>1.8</jdk>
-      </activation>
-      <properties>
-        <surefire.argline>-Xmx3096m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</surefire.argline>
-      </properties>
-    </profile>
-  </profiles>
 
 </project>
