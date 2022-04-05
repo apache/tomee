@@ -84,7 +84,11 @@
         </exclusion>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
-          <artifactId>ehcache</artifactId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ehcache</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <artifactId>guava</artifactId>
@@ -122,7 +126,11 @@
       <exclusions>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
-          <artifactId>ehcache</artifactId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ehcache</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

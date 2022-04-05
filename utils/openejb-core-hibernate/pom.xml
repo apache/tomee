@@ -92,12 +92,16 @@
         </exclusion>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
-          <artifactId>ehcache</artifactId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ehcache</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>net.sf.ehcache</groupId>
+      <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <version>${ehcache.version}</version>
     </dependency>

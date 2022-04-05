@@ -147,7 +147,7 @@
     <tomcat.version>10.0.20</tomcat.version>
 
     <cxf.version>3.5.0</cxf.version>
-    <ehcache.version>2.10.3</ehcache.version>
+    <ehcache.version>3.10.0</ehcache.version>
     <wss4j.version>2.4.0</wss4j.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>11.0.8</jetty.version>
@@ -1868,8 +1868,8 @@
         <version>1.4.7</version>
       </dependency>
       <dependency>
-        <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache-core</artifactId>
+        <groupId>org.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
       </dependency>
       <dependency>
