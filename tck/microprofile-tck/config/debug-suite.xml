@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="microprofile-config-TCK" verbose="2" configfailurepolicy="continue" >
+  <test name="microprofile-config 2.0 TCK">
+    <classes>
+      <class name="org.eclipse.microprofile.config.tck.ConfigPropertiesTest"></class>
+      <class name="org.eclipse.microprofile.config.tck.ConfigProviderTest"></class>
+      <class name="org.eclipse.microprofile.config.tck.CDIPlainInjectionTest"></class>
+      <class name="org.eclipse.microprofile.config.tck.configsources.DefaultConfigSourceOrdinalTest"></class>
+    </classes>
+  </test>
+</suite>
