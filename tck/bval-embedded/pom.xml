@@ -140,16 +140,13 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <reuseForks>true</reuseForks>
+          <reuseForks>false</reuseForks>
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <systemProperties>
-            <property>
-              <name>validation.provider</name>
-              <value>${validation.provider}</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <validation.provider>${validation.provider}</validation.provider>
+          </systemPropertyVariables>
           <parallel>methods</parallel>
           <threadCount>4</threadCount>
         </configuration>
