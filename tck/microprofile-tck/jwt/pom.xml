@@ -139,7 +139,6 @@
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-core</artifactId>
       <version>${microprofile.config.impl.version}</version>
-      <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -181,8 +180,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <!-- TCK does not deliver the xml file for the moment -->
-            <suiteXmlFile>${project.build.directory}/test-classes/dev.xml</suiteXmlFile>
+            <suiteXmlFile>${project.build.directory}/dependency/suites/tck-base-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
           <parallel>methods</parallel>
           <threadCount>4</threadCount>
@@ -223,7 +221,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemPropertyVariables>
+                  <systemPropertyVariables combine.children="append">
                     <arquillian.launch>tomee-plus</arquillian.launch>
                   </systemPropertyVariables>
                 </configuration>
@@ -234,7 +232,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemPropertyVariables>
+                  <systemPropertyVariables combine.children="append">
                     <arquillian.launch>tomee-plume</arquillian.launch>
                   </systemPropertyVariables>
                 </configuration>
