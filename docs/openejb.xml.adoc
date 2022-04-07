@@ -1,21 +1,57 @@
-= Property Overriding
-:index-group: OpenEJB Standalone Server
+= openejb.xml
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-OpenEJB consists of several components (containers,
-resource adapters, security services, etc.) all of which are pluggable
-and have their own unique set of configurable properties. These
-components are required to specify their default property values in
-their service-jar.xml file. This means that at a minimum you as a user
-only need to specify what you'd like to be different. You specify the
-property name and the new value and the default value will be
-overwritten before the component is created.
 
-We call this overriding and there are several ways to do it.
+== Overview
 
-= The openejb.xml
+The openejb.xml is the main configuration file for the container system
+and its services such as transaction, security, and data sources.
+
+The format is a mix of xml and properties inspired by the format of the
+httpd configuration file. Basically:
+
+[source,xml]
+----
+<tag id="">
+  ...properties...
+</tag>
+----
+
+Such as:
+
+[source,xml]
+----
+<Resource id="MyDataSource" type="DataSource">
+  username foo
+  password bar
+</Resource>
+----
+
+_Note the space_. White space is a valid name/value pair separator in
+any java properties file (along with semi-colon). So the above is
+equivalent to:
+
+[source,xml]
+----
+<Resource id="MyDataSource" type="DataSource">
+  username = foo
+  password = bar
+</Resource>
+----
+
+You are free to use white space, ":", or "=" for your name/value pair
+separator with no effect on OpenEJB.
+
+== Property Defaults and Overriding
+
+The openejb.xml file itself functions as an override, default values are
+specified via other means (service-jar.xml files in the classpath),
+therefore you only need to specify property values here for 2 reasons:
+1. you wish to for documentation purposes 2. you need to change the
+default value
 
 The default openejb.xml file has most of the useful properties for each
 component explicitly listed with default values for documentation
@@ -31,7 +67,7 @@ details.
 To know what properties can be overriden the './bin/openejb properties'
 command is very useful: see link:properties-tool.html[Properties Tool]
 
-It's function is to connect to a running server and print a canonical
+Its function is to connect to a running server and print a canonical
 list of all properties OpenEJB can see via the various means of
 configuration. When sending requests for help to the users list or jira,
 it is highly encouraged to send the output of this tool with your
@@ -46,7 +82,7 @@ change someday, but untill then ServerServices are configurable via
 conf/.properties files such as conf/ejbd.properties to configure the
 main protocol that services EJB client requests.
 
-The format those properties files is greatly adapted from the xinet.d
+The format of those properties files is greatly adapted from the xinet.d
 style of configuration and even shares similar functionality and
 properties such as host-based authorization (HBA) via the 'only_from'
 property.

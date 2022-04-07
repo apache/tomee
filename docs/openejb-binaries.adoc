@@ -1,0 +1,34 @@
+= OpenEJB Binaries
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+Add this to your _$HOME/.m2/settings.xml_ to enable publishing to
+the Apache Nexus repo. This works for snapshots or staging final
+binaries.
+
+[source,xml]
+----
+<settings>
+  <servers>
+    <server>
+      <id>apache.snapshots.https</id>
+      <username>yourapacheid</username>
+      <password>yourapachepass</password>
+    </server>
+    <server>
+      <id>apache.releases.https</id>
+      <username>yourapacheid</username>
+      <password>yourapachepass</password>
+    </server>
+  </servers>
+</settings>
+----
+
+Then publish via:
+
+[source,java]
+----
+$ mvn clean deploy
+----

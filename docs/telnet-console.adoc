@@ -1,0 +1,165 @@
+= Telnet Console
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+\{note} Availability: Since OpenEJB 0.9\{note}
+
+= Basic Usage
+
+To use OpenEJB's Telnet Console, simply boot your server normally.
+
+_____________________
+$ ./bin/openejb start
+_____________________
+
+[source,properties]
+----
+OPENEJB_HOME=/Users/dblevins/Desktop/openejb-1.0
+OpenEJB 1.0    build: 20060226-1701
+http://www.openejb.org
+resources 1
+OpenEJB ready.
+[init]
+----
+
+OpenEJB Remote Server ** Starting Services ** NAME IP PORT +
+webadmin 0.0.0.0 4203 +
+httpejbd 0.0.0.0 4204 +
+telnet 0.0.0.0 4202 +
+ejbd 0.0.0.0 4201 +
+admin 0.0.0.0 4200 +
+------- Ready!
+
+Then in another shell telnet in
+
+_______________________
+$ telnet localhost 4202
+_______________________
+
+[source,properties]
+----
+Trying ::1...
+Connected to localhost.
+Escape character is '^]
+----
+
+'. OpenEJB Remote Server Console type 'help' for a list of commands
+[openejb] $ help stop exit system version lookup help [openejb] $ system
+Containers: Default BMP Container Default CMP Container Default Stateful
+Container Default Stateless Container
+
+[source,java]
+----
+Deployments:
+ client/tests/stateful/EncBean
+ client/tests/entity/cmp/RMI-over-IIOP/EJBHome
+ client/tests/stateful/BasicStatefulHome
+ ClientTools/ViewClass
+ Webadmin/Configuration
+ EJBGenerator/CreateEJB
+ ClientTools/InvokeObject
+ Webadmin/Properties
+ client/tests/stateful/RMI-over-IIOP/EJBHome
+ Webadmin/Home
+ client/tests/entity/bmp/allowed_operations/EntityHome
+ client/tests/entity/cmp/EncBean
+ httpd/DefaultBean
+ client/tests/stateful/BeanManagedBasicStatefulHome
+ client/tools/DatabaseHome
+ client/tests/entity/bmp/EncBean
+ config/webadmin/ConfigurationData
+ deploy/webadmin/Deployer
+ ClientTools/ViewJndi
+ Webadmin/DeploymentList
+ client/tests/stateless/BeanManagedBasicStatelessHome
+ Webadmin/CMPMapping
+ client/tests/stateless/EncBean
+ client/tests/stateful/BeanManagedTransactionTests/EJBHome
+ client/tests/entity/bmp/RMI-over-IIOP/EJBHome
+ Webadmin/ListLogs
+ client/tests/stateless/BeanManagedTransactionTests/EJBHome
+ ClientTools/ViewEjb
+ client/tests/entity/bmp/BasicBmpHome
+ mapping/webadmin/CMPMappingData
+ client/tests/stateless/BasicStatelessHome
+ client/tests/entity/cmp/BasicCmpHome
+ Webadmin/Deployment
+ httpd/session
+ client/tests/entity/cmp/allowed_operations/EntityHome
+ client/tests/stateless/RMI-over-IIOP/EJBHome
+[openejb]
+----
+
+$ exit Connection closed by foreign host.
+
+= Configuring the Telnet Service
+
+The configuration of all server services (network facing services) is
+done in xinet.d style config files. The telnet shell is controlled via
+the $OPENEJB_HOME/conf/telnet.properties file. This file is created for
+you automatically after the first time OpenEJB boots.
+
+____________________________
+$ cat conf/telnet.properties
+____________________________
+
+[source,properties]
+----
+    server  = org.openejb.server.telnet.TelnetServer
+    bind    = 127.0.0.1
+    port    = 4202
+    disabled    = false
+    threads = 5
+#   only_from   = 192.168.1.123
+----
+
+You can change the IP, port, and even the number of threads allowed to
+concurrently access the Telnet service via this file.
+
+= Disabling the Telnet Service
+
+Simply edit the config file and set 'disabled' to true
+
+[source,properties]
+----
+    disabled    = true
+----
+
+Then restart OpenEJB.
+
+= Restricting Access
+
+It is unlikely you want just anyone to be able to login and execute
+commands. While you can't restrict access on a user basis, yet, you can
+restrict access to specific hosts. Host based access control (HBA) is a
+built-in part of any Server Service in OpenEJB and the Telnet Service is
+no different. This is done with the 'only_from' property, which like the
+rest of the file is a direct copy of the xinet.d syntax for HBA.
+
+For an example to restrict access to the localhost, you could configure
+the Telnet Service like this:
+
+[source,properties]
+----
+    server  = org.openejb.server.telnet.TelnetServer
+    bind    = 127.0.0.1
+    port    = 4202
+    disabled    = false
+    threads = 5
+    only_from   = localhost
+----
+
+If you wanted to restrict access to localhost _and_ say the hosts
+192.168.1.207 and 192.168.1.16, you can simply add them to the list.
+
+[source,properties]
+----
+    server  = org.openejb.server.telnet.TelnetServer
+    bind    = 127.0.0.1
+    port    = 4202
+    disabled    = false
+    threads = 5
+    only_from   = localhost, 192.168.1.207, 192.168.1.16
+----

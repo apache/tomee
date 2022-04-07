@@ -1,0 +1,22 @@
+= OpenEJB Eclipse Plugin
+:index-group: IDE
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= OpenEJB Eclipse Plugin
+
+== Overview
+
+The OpenEJB plugin for Eclipse provides the ability to run an OpenEJB
+standalone server and deploy projects directly from within the IDE,
+using functionality provided by the Eclipse Web Tools Project (WTP).
+Additionally, the plugin also provides the capability to read a
+ejb-jar.xml (and optionally a openejb-jar.xml) file and automatically
+add the corresponding EJB 3 annotations to your code automatically.
+
+link:installation.html[Installation]
+link:building-from-source.html[Building from source]
+link:generating-ejb-3-annotations.html[Generating EJB 3 annotations]
+link:running-a-standalone-openejb-server.html[Running a standalone
+OpenEJB server]

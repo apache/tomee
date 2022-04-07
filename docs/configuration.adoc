@@ -1,0 +1,151 @@
+= Configuration
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Short Overview
+
+== Configuration Properties
+
+* _openejb.home_ - OpenEJB home (installation) directory path. All
+relative paths are resolved against the property unless openejb.base is
+set. Unless set, the value is assigned to the _user.dir_ Java property.
+* _openejb.base_ - OpenEJB base directory path. If set, the directory
+pointed by the property is searched for resources before openejb.home.
+* _openejb.configuration_ - OpenEJB configuration file path.
+* _openejb.loader_ - OpenEJB loader that's responsible for loading EJBs.
+There are 3 different loader types: +
+** _tomcat-webapp_ - set it when inside of Tomcat scoped at just the
+webapp, aka. link:collapsed-ear.html[Collapsed EAR] ** _tomcat_ - set it
+when inside of Tomcat scoped for all webapps to share ** _system_ (also:
+bootstrap) ** _embedded_ (also: noload)
+* _openejb.configurator_ (default:
+_org.openejb.alt.config.ConfigurationFactory_ ) - a class that builds
+org.openejb.alt.assembler.classic.OpenEjbConfiguration object;
+implements the
+org.openejb.alt.assembler.classic.OpenEjbConfigurationFactory interface
+* _openejb.descriptors.output_ - possible values: true|false - When set
+OpenEJB saves deployment descriptors - ejb-jar.xml and openejb-jar.xml
+
+== Configuration File
+
+Show a config file with the elements hyperlinked.
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<openejb>
+  <Container id="Default CMP Container" ctype="CMP_ENTITY">
+    Global_TX_Database  c:/my/app/conf/postgresql.cmp_global_database.xml
+    Local_TX_Database   c:/my/app/conf/postgresql.cmp_local_database.xml
+  </Container>
+  <Connector id="Default JDBC Database">
+    JdbcDriver org.postgresql.Driver
+    JdbcUrl jdbc:postgresql://localhost/mydb
+    UserName username
+    Password password
+  </Connector>
+  <SecurityService id="Default Security Service"/>
+  <TransactionService id="Default Transaction Manager"/>
+  <Deployments jar="c:/my/app/employee.jar"/>
+  <Deployments dir="beans/" />
+</openejb>
+----
+
+== Basic Layout
+
+Basically, openejb.base is the source for 100% of all configuration
+information and third party config files (log4j, castor, instantdb,
+whatever). This includes finding where the, possibly many, entries in
+the openejb.conf point. The openejb.home is where the code loading
+OpenEJB will look for all the OpenEJB libraries. Usually openejb.base is
+not explicitly set and defaults to the value of openejb.home, so many
+people are used to only dealing with openejb.home.
+
+The point of having and openejb.base and openejb.home was basically to
+allow several independently configured instances of OpenEJB running on a
+system (perhaps embedded in Swing apps, in Tomcat, running as a
+standalone Server, or even in Groovy as Mr. Strachan did!) but without
+the need to copy all the OpenEJB system libraries everywhere.
+
+_openejb.home_ * can be set explicitly via a system property. * if not
+set it default's to user.dir, which is the current working directory.
+
+_openejb.base_ * can be set explicitly via a system property. * If not
+set it default's to openejb.home.
+
+_openejb.configuration_ * can be set to explicitly point to the file
+containing your configuration. * If set to a relative path, we first
+look in user.dir/your-conf-file, then in openejb.base/your-conf-file *
+If not set we check in openejb.base/conf/openejb.conf * If no conf file
+is found, we create one in openejb.base/conf/openejb.conf
+
+_relative paths in openejb.conf_ * Deployment entries are resolved
+relative to openejb.base. * Containers use openejb.base to resolve their
+own config files. For example, Castor JDO to loads the database.xml and
+all other files from the openejb.base directory. * Resource adapters
+that are embedded usually have config files of their own and are also
+loaded from the openeb.base.
+
+_log files_ * The log4.configuration file is resolved relative to
+openejb.base. * The properties in the config file that point to files
+are also resolved relative to openejb.base.
+
+_OpenEJB libraries_ * The jars in the lib and dist directories under
+openejb.home are added to the classpath.
+
+=== Summary
+
+A summary of the above in a different notation:
+
+[source,properties]
+----
+openejb.home = user.dir (can be set explicitly)
+openejb.base = openejb.home (can be set explicitly)
+openejb.conf = openejb.base/conf/openejb.conf (can be set explicitly)
+logging.conf = openejb.base/conf/logging.conf (can be set explicitly)
+deployments  = paths listed in openejb.conf (relative paths resolved from openejb.base)
+Classpath includes openejb.home/lib and openejb.home/dist
+----
+
+=== Example layout
+
+In this one the openejb.home and openejb.base are set, everything else
+is defaulted. The openejb.conf file as been updated to point to the ejb
+jars by name (abc-ejbs.jar and xyz-ejbs.jar).
+
+An example layout:
+
+[source,java]
+----
+/usr/local/openejb  (openejb.home)
+/usr/local/openejb/lib  (in classpath)
+/usr/local/openejb/dist (in classpath)
+/home/jsmith/foo_app  (openejb.base)
+/home/jsmith/foo_app/conf/openejb.conf
+/home/jsmith/foo_app/conf/logging.conf
+/home/jsmith/foo_app/abc-ejbs.jar (Deployment entry in openejb.conf)
+/home/jsmith/foo_app/xyz-ejbs.jar (Deployment entry in openejb.conf)
+/home/jsmith/foo_app/logs/  
+----
+
+=== Another Example layout
+
+In this example openejb.home and openejb.base are setup as well as the
+explicit paths for the openejb and log4j configuration files.
+
+An example layout:
+
+[source,java]
+----
+/usr/local/openejb  (openejb.home)
+/usr/local/openejb/lib  (in classpath)
+/usr/local/openejb/dist (in classpath)
+/home/jsmith/foo_app  (openejb.base)
+/home/jsmith/foo_app/openejb.xml  (openejb.configuration)
+/home/jsmith/foo_app/abc-ejbs.jar (Deployment entry in openejb.xml)
+/home/jsmith/foo_app/xyz-ejbs.jar (Deployment entry in openejb.xml)
+/home/jsmith/foo_app/log4j.conf  (log4j.configuration)
+/home/jsmith/foo_app/mylogs/  (logging dir as defined in log4j.conf)
+----
