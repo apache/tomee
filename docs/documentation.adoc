@@ -18,6 +18,7 @@ can also find us on IRC freenode.org #openejb and #tomee
 * link:tomee-and-netbeans.html[Get started with Netbeans]
 
 == General Information
+* link:comparison.html[Comparison: OpenEJB, TomEE, TomEE+]
 * link:tomee-directory-structure.html[TomEE Directory structure]
 * link:deploying-in-tomee.html[Deploying in TomEE]
 * link:tomee-webapp.html[The 'tomee' webapp]
