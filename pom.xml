@@ -16,8 +16,7 @@
   limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -32,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.10-SNAPSHOT</version>
+  <version>8.0.11-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -103,7 +102,8 @@
 
     <!-- To easily change the javaee api version -->
     <version.javaee-api>8.0-5</version.javaee-api>
-
+    <version.tomee-patch-plugin>0.8</version.tomee-patch-plugin>
+    
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
       We decided to add them here in the project so we can patch/update the 2 libraries without having
@@ -113,7 +113,7 @@
     <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
     <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
-    <openjpa.version>3.2.1</openjpa.version>
+    <openjpa.version>3.2.2</openjpa.version>
     <openwebbeans.version>2.0.26</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.16</johnzon.version>
@@ -145,7 +145,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.58</tomcat.version>
+    <tomcat.version>9.0.62</tomcat.version>
 
     <cxf.version>3.4.5</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
@@ -190,7 +190,7 @@
     <commons-net.version>3.8.0</commons-net.version>
 
     <bval.version>2.0.5</bval.version>
-    <org.apache.activemq.version>5.16.3</org.apache.activemq.version>
+    <org.apache.activemq.version>5.16.4</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
@@ -200,7 +200,7 @@
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <myfaces.version>2.3.9</myfaces.version>
     <mojarra.version>2.3.15</mojarra.version>
-    <slf4j.version>1.7.21</slf4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.17.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
@@ -213,7 +213,7 @@
     <version.hsqldb>2.3.4</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate>5.4.10.Final</version.hibernate>
+    <version.hibernate>5.6.7.Final</version.hibernate>
     <version.eclipselink>2.7.9</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
@@ -244,8 +244,8 @@
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.13.0-rc2</jackson.version>
-    <jackson.dataformat.version>2.13.0-rc2</jackson.dataformat.version>
+    <jackson.version>2.13.2</jackson.version>
+    <jackson.dataformat.version>2.13.2</jackson.dataformat.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
@@ -432,7 +432,20 @@
         <plugin>
           <groupId>org.apache.tomee.patch</groupId>
           <artifactId>tomee-patch-plugin</artifactId>
-          <version>0.8</version>
+          <version>${version.tomee-patch-plugin}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.tomee.patch</groupId>
+              <artifactId>tomee-patch-core</artifactId>
+              <version>${version.tomee-patch-plugin}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>org.apache.tomee</groupId>
+                  <artifactId>openejb-cxf-rs</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -1614,6 +1627,10 @@
             <artifactId>quartz</artifactId>
           </exclusion>
           <exclusion>
+            <groupId>org.tomitribe.quartz</groupId>
+            <artifactId>quartz</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
           </exclusion>
@@ -1636,12 +1653,6 @@
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
         <version>${osgi.framework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>xml-apis</groupId>
-        <artifactId>xml-apis</artifactId>
-        <version>1.4.01</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.neethi</groupId>
@@ -1953,7 +1964,7 @@
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
+        <artifactId>hibernate-core</artifactId>
         <version>${version.hibernate}</version>
         <exclusions>
           <exclusion>
@@ -2031,3 +2042,4 @@
     </site>
   </distributionManagement>
 </project>
+

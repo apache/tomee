@@ -527,4 +527,13 @@ public class Paths implements PathsInterface {
         }
         return new File(binDir, "setclasspath.bat");
     }
+
+    @Override
+    public File getCatalinaPolicy() {
+        final File confDir = getCatalinaConfDir();
+        if (confDir == null) {
+            return null;
+        }
+        return new File(confDir, "catalina.policy");
+    }
 }

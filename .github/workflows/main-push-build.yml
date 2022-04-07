@@ -1,0 +1,55 @@
+name: CI Master
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: '8'
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-pr-main-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-pr-main-m2
+
+    - name: maven-settings-xml-action
+      run: echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\"> <activeProfiles> <activeProfile>github</activeProfile> </activeProfiles> <profiles> <profile> <id>github</id> <repositories> <repository> <id>central-repo</id> <url>https://repo.maven.apache.org/maven2</url> <releases> <enabled>true</enabled> </releases> <snapshots> <enabled>false</enabled> </snapshots> </repository> </repositories> <pluginRepositories> <pluginRepository> <id>central-plugin-repository</id> <url>https://repo.maven.apache.org/maven2</url> <releases> <enabled>true</enabled> </releases> <snapshots> <enabled>false</enabled> </snapshots> </pluginRepository> </pluginRepositories> </profile> </profiles> <servers/> <mirrors/> <pluginGroups/> </settings>" > ~/.m2/settings.xml
+
+    - name: Compile with Sanity checks
+      run: mvn help:system -U --show-version --fail-at-end clean install -DfailIfNoTests=false -DskipTests -Pstyle,rat
+      env:
+        MAVEN_OPTS: -Xmx2048m
+
+      # We have some LF vs CRLF files from the Tomcat ZIPs, so we need to convert them to avoid diffs in git
+    - name: Convert Config Files in BOM Module from CRLF to LF
+      run: find ./boms -type f -exec sed -i -e 's/\r$//' {} \;
+
+    - name: Create Pull Request after BOM Regeneration
+      uses: peter-evans/create-pull-request@v3
+      with:
+        base: master
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Minor: Regenerated BOMs for ${{ github.sha }}"
+        committer: GitHub <noreply@github.com>
+        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        signoff: true
+        branch: regenerate_boms_after_dep_upgrade
+        delete-branch: true
+        title: "Regenerated BOMs after dependency upgrades"
+        body: |
+          Found some uncommited changes (from BOM regeneration) after running build on TomEE master
+        labels: |
+          dependencies
+        assignees: cesarhernandezgt,dblevins,jeanouii,jgallimore,rzo1

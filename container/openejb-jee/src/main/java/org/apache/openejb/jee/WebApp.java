@@ -656,27 +656,29 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     public List<String> getServletMappings(final String servletName) {
-        if (servletMapping == null || servletName == null) {
+        if (servletName == null || servletMapping == null || servletMapping.isEmpty()) {
             return Collections.emptyList();
         }
+        final List<String> mappings = new ArrayList<>();
         for (final ServletMapping mapping : servletMapping) {
             if (servletName.equals(mapping.getServletName())) {
-                return mapping.getUrlPattern();
+                mappings.addAll(mapping.getUrlPattern());
             }
         }
-        return Collections.emptyList();
+        return mappings;
     }
 
     public List<String> getFilterMappings(final String filterName) {
-        if (filterMapping == null || filterName == null) {
+        if (filterName == null || filterMapping == null || filterMapping.isEmpty()) {
             return Collections.emptyList();
         }
+        final List<String> mappings = new ArrayList<>();
         for (final FilterMapping mapping : filterMapping) {
             if (filterName.equals(mapping.getFilterName())) {
-                return mapping.getUrlPattern();
+                mappings.addAll(mapping.getUrlPattern());
             }
         }
-        return Collections.emptyList();
+        return mappings;
     }
 
     private Servlet findServlet(final String name) {

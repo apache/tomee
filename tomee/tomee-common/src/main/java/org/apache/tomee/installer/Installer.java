@@ -253,7 +253,7 @@ public class Installer implements InstallerInterface {
                             "    limitations under the License.\n" +
                             "-->\n" +
                             "<tomee>\n" +
-                            "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n\n" +
+                            "  <!-- see https://tomee.apache.org/latest/docs/admin/configuration/containers.html -->\n\n" +
                             "  <!-- activate next line to be able to deploy applications in apps -->\n" +
                             "  <!-- <Deployments dir=\"apps\" /> -->\n" +
                             "</tomee>\n", alerts);
@@ -560,8 +560,8 @@ public class Installer implements InstallerInterface {
             newServerXml = Installers.replace(newServerXml,
                     "<Connector port=\"8443\"",
                     "<Connector port=\"8443\"",
-                    "/>",
-                    "xpoweredBy=\"false\" server=\"Apache TomEE\" />");
+                    ">",
+                    " xpoweredBy=\"false\" server=\"Apache TomEE\" >");
         } catch (final IOException e) {
             alerts.addError("Error adding server attribute to server.xml file", e);
         }
@@ -957,6 +957,44 @@ public class Installer implements InstallerInterface {
         } catch (final IOException e) {
             // no-op
         }
+
+        //
+        // conf/catalina.policy
+        //
+
+        // if we can't backup the file, do not modify it
+        if (!Installers.backup(paths.getCatalinaPolicy() , alerts)) {
+            return;
+        }
+
+        String catalinaPolicy = Installers.readAll(paths.getCatalinaPolicy(), alerts);
+
+        // catalina.policy will be null if we couldn't read the file
+        if (catalinaPolicy == null) {
+            return;
+        }
+
+        //Add TomEE-specific policies (see TOMEE-3840)
+        try {
+            catalinaPolicy = Installers.replace(catalinaPolicy,
+                    "        permission java.util.PropertyPermission \"org.apache.juli.ClassLoaderLogManager.debug\", \"read\";",
+                    "        permission java.util.PropertyPermission \"org.apache.juli.ClassLoaderLogManager.debug\", \"read\";",
+                    "        permission java.util.PropertyPermission \"catalina.base\", \"read\";",
+                    "        permission java.util.PropertyPermission \"catalina.base\", \"read\";\n\n" +
+                            "        // TOMEE-3840\n" +
+                            "        permission java.util.PropertyPermission \"tomee.skip-tomcat-log\", \"read\";\n" +
+                            "        permission java.lang.RuntimePermission \"accessDeclaredMembers\";\n");
+
+        } catch (final IOException e) {
+            alerts.addError("Error adding TomEE specific policies to catalina.policy file", e);
+        }
+
+        // overwrite catalina.policy
+        if (Installers.writeAll(paths.getCatalinaPolicy(), catalinaPolicy, alerts)) {
+            alerts.addInfo("Add TomEE specific policies to catalina.policy");
+        }
+
+
     }
 
     private void installTomEEJuli(final Alerts alerts, final File loggingPropsFile, final String newLoggingProps) {

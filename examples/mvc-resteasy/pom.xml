@@ -23,11 +23,11 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MVC (RestEasy-based)</name>
   <description>OpenEJB :: Web Examples :: MVC 1.0 - RestEasy</description>
-  <version>8.0.10-SNAPSHOT</version>
+  <version>8.0.11-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.10-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
     <version.krazo>1.1.0-M1</version.krazo>
     <resteasy.version>3.6.2.Final</resteasy.version>
     <version.arquillian>1.1.13.Final</version.arquillian>
@@ -53,7 +53,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.10-SNAPSHOT</version>
+        <version>${tomee.version}</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
         </configuration>
@@ -76,11 +76,36 @@
       </plugin>
     </plugins>
   </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${version.arquillian}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
+
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>[8.0,)</version>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- MVC 1.0(JSR 371) -->
@@ -121,7 +146,11 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
       <version>4.4.7</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>23.6-jre</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.graphene</groupId>
