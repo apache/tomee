@@ -178,11 +178,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M6</version>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>${project.build.directory}/dependency/suites/tck-base-suite.xml</suiteXmlFile>
+            <suiteXmlFile>${project.build.directory}/dependency/suites/tck-full-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <parallel>methods</parallel>
+          <reuseForks>false</reuseForks>
+          <parallel>none</parallel>
           <threadCount>4</threadCount>
         </configuration>
       </plugin>
