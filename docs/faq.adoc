@@ -4,7 +4,15 @@
 :jbake-type: page
 :jbake-status: published
 
-== General
+== 
+ General
+
+ 
+
+=== What spec version does OpenEJB support?
+
+OpenEJB supports the Enterprise JavaBeans 3.0 specification and previous
+versions 2.1, 2.0 and 1.1.
 
 === I don't plan to use EJBs, so why would I embed OpenEJB into Tomcat.
 
@@ -21,6 +29,10 @@ injection at all, even more is gained.
 
 The Sun, Mac, and IBM vms are regularly tested, however any vm should
 work.
+
+=== Which version of Java is required to run OpenEJB?
+
+Java versions 5 or 6, aka Java 1.5 or 1.6.
 
 === Do I need Apache Maven to work with OpenEJB?
 
