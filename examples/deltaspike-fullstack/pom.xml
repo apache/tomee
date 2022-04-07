@@ -39,11 +39,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.2.1</version>
         <configuration>
           <includes>org/superbiz/deltaspike/domain/*.class</includes>
         </configuration>
@@ -56,6 +59,36 @@
             </goals>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>jakartaee-api</artifactId>
+            <version>9.1-M2-SNAPSHOT</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.serp</groupId>
+            <artifactId>serp</artifactId>
+            <version>1.15.1</version>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>3.2.2</version>
+            <classifier>jakarta</classifier>
+            <exclusions>
+              <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
@@ -86,22 +119,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
+      
     </plugins>
   </build>
   <repositories>
@@ -124,7 +142,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[9.0,)</version>
+      <version>9.1-M2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

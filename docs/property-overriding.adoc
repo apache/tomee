@@ -26,17 +26,6 @@ Overriding can also be done via the command line or plain Java system
 properties. See link:system-properties.html[System Properties] for
 details.
 
-== What properties are available?
-
-To know what properties can be overriden the './bin/openejb properties'
-command is very useful: see link:properties-tool.html[Properties Tool]
-
-It's function is to connect to a running server and print a canonical
-list of all properties OpenEJB can see via the various means of
-configuration. When sending requests for help to the users list or jira,
-it is highly encouraged to send the output of this tool with your
-message.
-
 == Not configurable via openejb.xml
 
 The only thing not yet configurable via this file are ServerServices due

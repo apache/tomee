@@ -80,10 +80,24 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.beanvalidation.tck</groupId>
+      <groupId>jakarta.validation</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.validation</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.interceptor</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testng</groupId>
@@ -93,8 +107,8 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
-      <artifactId>arquillian-protocol-servlet</artifactId>
-      <version>${version.arquillian}</version>
+      <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+      <version>${version.arquillian-protocol-servlet-jakarta}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -132,7 +146,7 @@
               <stripVersion>true</stripVersion>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.hibernate.beanvalidation.tck</groupId>
+                  <groupId>jakarta.validation</groupId>
                   <artifactId>beanvalidation-tck-tests</artifactId>
                   <type>xml</type>
                   <classifier>suite</classifier>
@@ -174,10 +188,11 @@
           <threadCount>1</threadCount>
         </configuration>
         <dependencies>
+          <!-- failsafe has dependencies on javax -->
           <dependency>
             <groupId>org.apache.tomee.bom</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>${project.version}</version>
+            <version>8.0.10</version>
             <type>pom</type>
           </dependency>
         </dependencies>

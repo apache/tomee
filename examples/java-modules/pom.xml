@@ -48,31 +48,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
-      </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
+        <version>3.8.1</version>
         <configuration>
-          <classifier>jakartaee9</classifier>
+          <source>11</source>
+          <target>11</target>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
       </plugin>
+      
     </plugins>
   </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[9.0,)</version>
+      <version>9.1-M2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

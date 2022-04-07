@@ -53,9 +53,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>3.0.0</version>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>3.0.2</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion> <!-- Is already included in java-ee-api -->

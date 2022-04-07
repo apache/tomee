@@ -78,22 +78,7 @@
           <skip>true</skip>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
+      
     </plugins>
   </build>
   <repositories>
@@ -107,7 +92,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[9.0,)</version>
+      <version>9.1-M2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -139,10 +124,28 @@
       otherwise arquillian has some difficulties in embedded mode to find your classes
     -->
     <dependency>
+      <groupId>net.sourceforge.serp</groupId>
+      <artifactId>serp</artifactId>
+      <version>1.15.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>3.0.0</version>
+      <version>3.2.2</version>
       <scope>test</scope>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <!-- just a facade pom which will bring hibernate for us -->

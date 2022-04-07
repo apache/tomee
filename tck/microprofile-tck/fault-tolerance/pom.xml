@@ -84,16 +84,22 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-      <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>${microprofile.fault-tolerance.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-fault-tolerance-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+          <artifactId>microprofile-fault-tolerance-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
       <artifactId>microprofile-fault-tolerance-tck</artifactId>
-      <version>${microprofile.fault-tolerance.version}</version>
+      <version>${microprofile.fault-tolerance.tck.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -109,8 +115,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.14.3</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

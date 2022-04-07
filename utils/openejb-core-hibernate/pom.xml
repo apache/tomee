@@ -40,30 +40,26 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openjpa</groupId>
-          <artifactId>openjpa</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.bval</groupId>
-          <artifactId>bval-jsr</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-jdk14</artifactId>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
+      <artifactId>hibernate-core-jakarta</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.hibernate.jakarta.persistence</groupId>
-          <artifactId>hibernate-jpa-2.0-api</artifactId>
+          <groupId>jakarta.persistence</groupId>
+          <artifactId>jakarta.persistence-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.jboss.spec.jakarta.transaction</groupId>
-          <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+          <groupId>jakarta.transaction</groupId>
+          <artifactId>jakarta.transaction-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
         </exclusion>
         <exclusion>
           <artifactId>jboss-logging</artifactId>
@@ -72,12 +68,12 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
       <exclusions>
         <exclusion>
           <groupId>jakarta.validation</groupId>
-          <artifactId>validation-api</artifactId>
+          <artifactId>jakarta.validation-api</artifactId>
         </exclusion>
         <exclusion>
           <artifactId>jboss-logging</artifactId>
@@ -91,8 +87,12 @@
       <version>${version.hibernate}</version>
       <exclusions>
         <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-core</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>net.sf.ehcache</groupId>
-          <artifactId>ehcache-core</artifactId>
+          <artifactId>ehcache</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

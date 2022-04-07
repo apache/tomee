@@ -83,13 +83,17 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.health</groupId>
-      <artifactId>microprofile-health-api</artifactId>
-      <version>${microprofile.health.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-health-api-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>jakarta.inject</groupId>
-          <artifactId>jakarta.inject</artifactId>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.health</groupId>
+          <artifactId>microprofile-health-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -97,7 +101,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-tck</artifactId>
-      <version>${microprofile.health.version}</version>
+      <version>${microprofile.health.tck.version}</version>
       <scope>test</scope>
     </dependency>
 

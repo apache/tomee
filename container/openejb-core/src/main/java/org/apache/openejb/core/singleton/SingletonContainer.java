@@ -406,10 +406,7 @@ public class SingletonContainer implements RpcContainer {
 
         final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS_WS, interceptorDatas, interceptors);
         final Object[] params = new Object[runMethod.getParameterTypes().length];
-        if (messageContext instanceof javax.xml.rpc.handler.MessageContext) {
-            ThreadContext.getThreadContext().set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
-            return interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
-        } else if (messageContext instanceof jakarta.xml.ws.handler.MessageContext) {
+        if (messageContext instanceof jakarta.xml.ws.handler.MessageContext) {
             AddressingSupport wsaSupport = NoAddressingSupport.INSTANCE;
             for (int i = 2; i < args.length; i++) {
                 if (args[i] instanceof AddressingSupport) {

@@ -29,25 +29,25 @@
 
   <properties>
     <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
-    <surefire.argline />
+    <surefire.argline>-Xmx2g</surefire.argline>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jakartaee-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
       <version>${myfaces.version}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <version>${myfaces.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jakartaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -109,12 +109,28 @@
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-core</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.cdi.tck</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.jboss.cdi.tck</groupId>
+      <groupId>jakarta.enterprise</groupId>
       <artifactId>cdi-tck-impl</artifactId>
-      <version>${cdi.tck.20.version}</version>
+      <version>${cdi-tck.version}</version>
       <exclusions>
         <exclusion>
           <groupId>jakarta.xml.soap</groupId>
@@ -199,13 +215,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-jdbc-store-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jdbc-store</artifactId>
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker-shade</artifactId>
-          <groupId>${project.groupId}</groupId>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -214,6 +230,8 @@
       <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
+
+
   </dependencies>
 
   <build>

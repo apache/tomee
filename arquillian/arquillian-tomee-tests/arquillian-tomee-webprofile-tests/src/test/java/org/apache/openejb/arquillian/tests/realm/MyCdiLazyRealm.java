@@ -29,6 +29,9 @@ import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.ietf.jgss.GSSContext;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSName;
+
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.security.Principal;
@@ -87,6 +90,10 @@ public class MyCdiLazyRealm implements Realm {
         throw new UnsupportedOperationException();
     }
 
+    @Override public Principal authenticate(final GSSName gssName, final GSSCredential gssCredential) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public Principal authenticate(final X509Certificate[] certs) {
         throw new UnsupportedOperationException();
@@ -122,11 +129,6 @@ public class MyCdiLazyRealm implements Realm {
     @Override
     public void removePropertyChangeListener(final PropertyChangeListener listener) {
         // no-op
-    }
-
-    @Override
-    public String[] getRoles(final Principal principal) {
-        return new String[0];
     }
 
     @Override

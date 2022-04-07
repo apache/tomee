@@ -74,12 +74,18 @@
     <dependencySet>
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>
 
         <!-- should be in a pom exclusion but it does perfectly the trick -->
         <exclude>org.springframework:*</exclude>
+
+        <exclude>*:jakarta.jws-api:*</exclude>
+        <exclude>*:jakarta.xml.bind-api:*</exclude>
+        <exclude>*:jakarta.xml.ws-api:*</exclude>
 
         <!-- wars and pom -->
         <exclude>*:war</exclude>
@@ -93,6 +99,8 @@
     <dependencySet>
       <outputDirectory>WEB-INF/lib</outputDirectory>
       <scope>runtime</scope>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
       <includes>
         <include>org.apache.tomee:tomee-loader</include>
         <include>org.codehaus.swizzle:swizzle-stream</include>

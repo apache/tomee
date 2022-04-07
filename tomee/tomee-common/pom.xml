@@ -40,6 +40,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-jpa-integration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>

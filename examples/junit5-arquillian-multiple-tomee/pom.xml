@@ -26,10 +26,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
-        <junit.jupiter.version>5.8.0-M1</junit.jupiter.version>
+        <junit.jupiter.version>5.8.2</junit.jupiter.version>
 
         <!-- version >= 1.7.0.Alpha5 is required for JUnit5 -->
-        <arquillian.version>1.7.0.Alpha9</arquillian.version>
+        <arquillian.version>1.7.0.Alpha10</arquillian.version>
     </properties>
     <build>
         <defaultGoal>install</defaultGoal>
@@ -45,8 +45,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -58,22 +58,6 @@
                         <arquillian.launch>tomee-cluster</arquillian.launch>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.tomitribe.transformer</groupId>
-                <artifactId>org.eclipse.transformer.maven</artifactId>
-                <version>0.1.1a</version>
-                <configuration>
-                    <classifier>jakartaee9</classifier>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -88,7 +72,7 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>jakartaee-api</artifactId>
-            <version>[9.0,)</version>
+            <version>9.1-M2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

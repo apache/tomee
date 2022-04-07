@@ -64,7 +64,6 @@ public class CdiEventRealmTest {
     public void userPassword() {
         final GenericPrincipal gp = getGenericPrincipal(new CdiEventRealm().authenticate("john", "secret"));
         assertEquals("john", gp.getName());
-        assertEquals("", gp.getPassword());
         assertEquals(1, gp.getRoles().length);
         assertEquals("admin", gp.getRoles()[0]);
     }
@@ -85,7 +84,6 @@ public class CdiEventRealmTest {
     public void gss() {
         final GenericPrincipal gp = getGenericPrincipal(new CdiEventRealm().authenticate(mock(GSSContext.class), false));
         assertEquals("gss", gp.getName());
-        assertEquals("", gp.getPassword());
         assertEquals(1, gp.getRoles().length);
         assertEquals("dummy", gp.getRoles()[0]);
     }
@@ -98,7 +96,6 @@ public class CdiEventRealmTest {
         final GenericPrincipal gp = getGenericPrincipal(new CdiEventRealm().authenticate(new X509Certificate[] { cert }));
         assertEquals(expected, gp);
         assertEquals("john", gp.getName());
-        assertEquals("doe", gp.getPassword());
         assertEquals(1, gp.getRoles().length);
         assertEquals("test", gp.getRoles()[0]);
     }

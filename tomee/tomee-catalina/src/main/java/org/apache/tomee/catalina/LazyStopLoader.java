@@ -131,16 +131,6 @@ public class LazyStopLoader implements Loader, Lifecycle {
     }
 
     @Override
-    public boolean getReloadable() {
-        return delegate.getReloadable();
-    }
-
-    @Override
-    public void setReloadable(final boolean reloadable) {
-        delegate.setReloadable(reloadable);
-    }
-
-    @Override
     public void addPropertyChangeListener(final PropertyChangeListener listener) {
         delegate.addPropertyChangeListener(listener);
     }

@@ -19,7 +19,6 @@
  */
 package org.apache.tomee.microprofile.tck.jwt.validation;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.eclipse.microprofile.jwt.config.Names;
 import org.eclipse.microprofile.jwt.tck.TCKConstants;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyEndpoint;
@@ -36,6 +35,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.testng.Assert;
 import org.testng.Reporter;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import jakarta.json.Json;

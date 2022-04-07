@@ -29,6 +29,10 @@
   <name>TomEE :: Deps :: Apache BVal JSR shade</name>
 
   <dependencies>
+    <!--
+    We need to use the latest 2.0.6-SNAPSHOT to perform the relocate even though the work has been done already.
+    But the defaultConstraints.properties isn't done and therefor we still need our shade dependency
+    -->
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
@@ -41,7 +45,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -62,12 +66,38 @@
               </transformers>
               <relocations>
                 <relocation>
+                  <pattern>javax.annotation</pattern>
+                  <shadedPattern>jakarta.annotation</shadedPattern>
+                  <excludes>
+                    <exclude>javax.annotation.processing.**</exclude>
+                  </excludes>
+                </relocation>
+                <relocation>
+                  <pattern>javax.el</pattern>
+                  <shadedPattern>jakarta.el</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.enterprise</pattern>
+                  <shadedPattern>jakarta.enterprise</shadedPattern>
+                  <excludes>
+                    <exclude>javax.enterprise.deploy.**</exclude>
+                  </excludes>
+                </relocation>
+                <relocation>
                   <pattern>javax.inject</pattern>
                   <shadedPattern>jakarta.inject</shadedPattern>
                 </relocation>
                 <relocation>
+                  <pattern>javax.interceptor</pattern>
+                  <shadedPattern>jakarta.interceptor</shadedPattern>
+                </relocation>
+                <relocation>
                   <pattern>javax.validation</pattern>
                   <shadedPattern>jakarta.validation</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.xml.bind</pattern>
+                  <shadedPattern>jakarta.xml.bind</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>

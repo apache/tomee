@@ -91,7 +91,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -126,6 +126,14 @@
                 <relocation>
                   <pattern>trac</pattern>
                   <shadedPattern>openejb.shade.trax</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.servlet</pattern>
+                  <shadedPattern>jakarta.servlet</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.el</pattern>
+                  <shadedPattern>jakarta.el</shadedPattern>
                 </relocation>
               </relocations>
               <filters>

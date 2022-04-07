@@ -82,7 +82,7 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>jakarta.servlet</groupId>
+                  <groupId>javax.servlet</groupId>
                   <artifactId>jstl</artifactId>
                   <version>1.2</version>
                 </artifactItem>
@@ -115,6 +115,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -135,22 +138,7 @@
           <config>${project.basedir}/src/main/tomee/</config>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
+      
     </plugins>
   </build>
   <dependencyManagement>
@@ -178,7 +166,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[9.0,)</version>
+      <version>9.1-M2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -188,7 +176,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.servlet</groupId>
+      <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <version>1.2</version>
       <scope>provided</scope>

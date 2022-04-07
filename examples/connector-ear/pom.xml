@@ -20,7 +20,7 @@
   <name>TomEE :: Connector Examples :: Connector in EAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
     <surefire.version>2.21.0</surefire.version>
   </properties>
@@ -42,7 +42,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>jakartaee-api</artifactId>
-        <version>8.0-2</version>
+        <version>9.1-M2-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>
@@ -83,22 +83,7 @@
           </systemProperties>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
+      
     </plugins>
   </build>
   <!-- This section allows you to configure where to publish libraries for

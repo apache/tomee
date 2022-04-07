@@ -104,6 +104,10 @@ public class AppPropertiesPropagationTest {
             this.value = value;
         }
 
+        public Writer() {
+            this.value = null;
+        }
+
         @Override
         public boolean isWriteable(final Class<?> type, final Type genericType,
                                    final Annotation[] annotations, final MediaType mediaType) {

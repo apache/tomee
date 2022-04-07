@@ -27,6 +27,13 @@
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true" />
+            <!--
+                 JPA and CDI are linked, enabling JPA to use CDI for its
+                 components but CDI can use JPA too. To solve issues with
+                 hibernate you need this property either as system property
+                 or persistence unit
+             -->
+            <property name="tomee.jpa.factory.lazy" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

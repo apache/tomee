@@ -609,8 +609,8 @@ public class Container implements AutoCloseable {
         if (tomcat.getRawConnector() == null && !configuration.isSkipHttp()) {
             final Connector connector = createConnector();
             connector.setPort(configuration.getHttpPort());
-            if (connector.getAttribute("connectionTimeout") == null) {
-                connector.setAttribute("connectionTimeout", "3000");
+            if (connector.getProperty("connectionTimeout") == null) {
+                connector.setProperty("connectionTimeout", "3000");
             }
             if (configuration.isHttp2()) { // would likely need SSLHostConfig programmatically
                 connector.addUpgradeProtocol(new Http2Protocol());
@@ -629,17 +629,17 @@ public class Container implements AutoCloseable {
             httpsConnector.setProperty("sslProtocol", configuration.getSslProtocol());
 
             if (configuration.getKeystoreFile() != null) {
-                httpsConnector.setAttribute("keystoreFile", configuration.getKeystoreFile());
+                httpsConnector.setProperty("keystoreFile", configuration.getKeystoreFile());
             }
             if (configuration.getKeystorePass() != null) {
-                httpsConnector.setAttribute("keystorePass", configuration.getKeystorePass());
+                httpsConnector.setProperty("keystorePass", configuration.getKeystorePass());
             }
-            httpsConnector.setAttribute("keystoreType", configuration.getKeystoreType());
+            httpsConnector.setProperty("keystoreType", configuration.getKeystoreType());
             if (configuration.getClientAuth() != null) {
-                httpsConnector.setAttribute("clientAuth", configuration.getClientAuth());
+                httpsConnector.setProperty("clientAuth", configuration.getClientAuth());
             }
             if (configuration.getKeyAlias() != null) {
-                httpsConnector.setAttribute("keyAlias", configuration.getKeyAlias());
+                httpsConnector.setProperty("keyAlias", configuration.getKeyAlias());
             }
 
             if (configuration.isHttp2()) { // would likely need SSLHostConfig programmatically
@@ -767,7 +767,7 @@ public class Container implements AutoCloseable {
             }
             connector = recipe.getProperties().isEmpty() ? new Connector() : Connector.class.cast(recipe.create());
             for (final Map.Entry<String, String> attr : attributes.entrySet()) {
-                connector.setAttribute(attr.getKey(), attr.getValue());
+                connector.setProperty(attr.getKey(), attr.getValue());
             }
         } else {
             connector = new Connector();
@@ -777,12 +777,6 @@ public class Container implements AutoCloseable {
 
     private static Server createServer(final String serverXml) {
         final Catalina catalina = new Catalina() {
-            // skip few init we don't need *here*
-            @Override
-            protected void initDirs() {
-                // no-op
-            }
-
             @Override
             protected void initStreams() {
                 // no-op

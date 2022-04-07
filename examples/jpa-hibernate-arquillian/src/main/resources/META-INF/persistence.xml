@@ -24,7 +24,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>movieDatabase</jta-data-source>
         <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
-        <class>org.superbiz.injection.h3jpa.Movie</class>
+        <class>org.superbiz.injection.h5jpa.Movie</class>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>

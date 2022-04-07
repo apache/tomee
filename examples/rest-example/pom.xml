@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
-    <version.openjpa>3.0.0</version.openjpa>
+    <version.openjpa>3.2.2</version.openjpa>
   </properties>
   <repositories>
     <repository>
@@ -113,29 +113,14 @@
               </dependencies>
             </plugin>
       -->
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
+      
     </plugins>
   </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[9.0,)</version>
+      <version>9.1-M2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

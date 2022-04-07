@@ -56,23 +56,7 @@
       <exclusions>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -99,23 +83,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -130,23 +98,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -344,6 +296,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
@@ -352,11 +305,7 @@
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-atinject_1.0_spec</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -375,11 +324,55 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-spi</artifactId>
+      <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
         <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-atinject_1.0_spec</artifactId>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-impl</artifactId>
+      <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-web</artifactId>
+      <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-el22</artifactId>
+      <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -388,6 +381,12 @@
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${openwebbeans.version}</version>
       <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -443,11 +442,6 @@
       <artifactId>easymock</artifactId>
       <version>3.2</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <scope>runtime</scope><!-- transitive from xerces but in test scope in parent so needed here -->
     </dependency>
   </dependencies>
   <build>

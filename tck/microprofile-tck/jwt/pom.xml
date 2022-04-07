@@ -47,22 +47,22 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-xjc</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.annotation</groupId>
@@ -78,6 +78,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
+      <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>
 
@@ -95,7 +96,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.version}</version>
+      <version>${microprofile.jwt.tck.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -109,7 +110,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.version}</version>
+      <version>${microprofile.jwt.tck.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -137,7 +138,14 @@
     <dependency>
       <groupId>org.apache.geronimo.config</groupId>
       <artifactId>geronimo-config-impl</artifactId>
-      <version>1.2</version>
+      <version>1.2.3</version>
+      <classifier>jakarta</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>4.23</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

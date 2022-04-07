@@ -48,6 +48,14 @@ set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar"
 set OPENEJB_EE_JAR="%OPENEJB_HOME%\lib\jakartaee-api-*.jar"
 set OPENEJB_JAVAAGENT_JAR="%OPENEJB_HOME%\lib\openejb-javaagent-*.jar"
 
+rem Configure JAVA 9 specific start-up parameters
+set "JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% --add-opens=java.base/java.lang=ALL-UNNAMED"
+set "JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% --add-opens=java.base/java.io=ALL-UNNAMED"
+set "JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% --add-opens=java.base/java.util=ALL-UNNAMED"
+set "JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% --add-opens=java.base/java.util.concurrent=ALL-UNNAMED"
+set "JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED"
+set "JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED"
+
 for %%a in (%OPENEJB_CORE_JAR%) do (
   set OPENEJB_CORE_JAR="%%a"
 )
@@ -75,7 +83,7 @@ set OPTIONS=-Dopenejb.home=%OPENEJB_HOME%
 
 REM echo %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
-java %OPENEJB_OPTS% -Djava.util.logging.config.file=%OPENEJB_HOME%/conf/logging.properties -javaagent:%OPENEJB_JAVAAGENT_JAR% -cp %OPENEJB_CORE_JAR%;%OPENEJB_EE_JAR%  org.apache.openejb.cli.Bootstrap %*
+java %JDK_JAVA_OPTIONS% OPENEJB_OPTS% -Djava.util.logging.config.file=%OPENEJB_HOME%/conf/logging.properties -javaagent:%OPENEJB_JAVAAGENT_JAR% -cp %OPENEJB_CORE_JAR%;%OPENEJB_EE_JAR%  org.apache.openejb.cli.Bootstrap %*
 
 :EOF
 ENDLOCAL

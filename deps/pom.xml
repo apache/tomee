@@ -30,14 +30,23 @@
   <modules>
     <module>taglibs-shade</module>
     <module>cxf-shade</module>
+    <module>cxf-rt-rs-mp-client-shade</module>
     <module>sxc-shade</module>
     <module>activemq-broker-shade</module>
     <module>activemq-client-shade</module>
-    <module>activemq-jaas-shade</module>
-    <module>activemq-jdbc-store-shade</module>
     <module>activemq-kahadb-store-shade</module>
-    <module>activemq-openwire-legacy-shade</module>
     <module>activemq-ra-shade</module>
     <module>bval-jsr-shade</module>
+    <module>commons-dbcp2-shade</module>
+    <module>commons-fileupload-shade</module>
+    <module>microprofile-config-api-shade</module>
+    <module>microprofile-opentracing-api-shade</module>
+    <module>microprofile-fault-tolerance-api-shade</module>
+    <module>microprofile-health-api-shade</module>
+    <module>microprofile-jwt-auth-api-shade</module>
+    <module>microprofile-metrics-api-shade</module>
+    <module>microprofile-openapi-api-shade</module>
+    <module>microprofile-rest-client-api-shade</module>
+    <module>safeguard-impl</module>
   </modules>
 </project>

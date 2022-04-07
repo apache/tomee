@@ -20,7 +20,7 @@ import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
-import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocolDeploymentPackager;
+import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocolDeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;

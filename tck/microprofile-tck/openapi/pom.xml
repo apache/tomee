@@ -95,21 +95,27 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.openapi</groupId>
-      <artifactId>microprofile-openapi-api</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-openapi-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.openapi</groupId>
+          <artifactId>microprofile-openapi-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-tck</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <version>${microprofile.openapi.tck.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -126,6 +132,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
+      <version>6.14.3</version>
       <scope>test</scope>
     </dependency>
 
@@ -143,20 +150,20 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-xjc</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.annotation</groupId>
           <artifactId>jakarta.annotation-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

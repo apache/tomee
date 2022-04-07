@@ -308,10 +308,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
         final Object[] params = new Object[runMethod.getParameterTypes().length];
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         Object returnValue = null;
-        if (messageContext instanceof javax.xml.rpc.handler.MessageContext) {
-            threadContext.set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
-            returnValue = interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
-        } else if (messageContext instanceof jakarta.xml.ws.handler.MessageContext) {
+        if (messageContext instanceof jakarta.xml.ws.handler.MessageContext) {
             AddressingSupport wsaSupport = NoAddressingSupport.INSTANCE;
             for (int i = 2; i < args.length; i++) {
                 if (args[i] instanceof AddressingSupport) {

@@ -60,15 +60,15 @@ public class MakeTxLookup implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PROTECTED, "locateTransactionManager", "()Ljavax/transaction/TransactionManager;", null, null);
+            mv = cw.visitMethod(ACC_PROTECTED, "locateTransactionManager", "()Ljakarta/transaction/TransactionManager;", null, null);
             mv.visitCode();
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;", false);
+            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljakarta/transaction/TransactionManager;", false);
             mv.visitInsn(ARETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PROTECTED, "locateUserTransaction", "()Ljavax/transaction/UserTransaction;", null, null);
+            mv = cw.visitMethod(ACC_PROTECTED, "locateUserTransaction", "()Ljakarta/transaction/UserTransaction;", null, null);
             mv.visitCode();
             final Label l0 = new Label();
             final Label l1 = new Label();
@@ -82,7 +82,7 @@ public class MakeTxLookup implements Opcodes {
             mv.visitMethodInsn(INVOKEINTERFACE, "org/apache/openejb/spi/ContainerSystem", "getJNDIContext", "()Ljavax/naming/Context;", true);
             mv.visitLdcInsn("comp/UserTransaction");
             mv.visitMethodInsn(INVOKEINTERFACE, "javax/naming/Context", "lookup", "(Ljava/lang/String;)Ljava/lang/Object;", true);
-            mv.visitTypeInsn(CHECKCAST, "javax/transaction/UserTransaction");
+            mv.visitTypeInsn(CHECKCAST, "jakarta/transaction/UserTransaction");
             mv.visitLabel(l1);
             mv.visitInsn(ARETURN);
             mv.visitLabel(l2);
@@ -123,9 +123,9 @@ public class MakeTxLookup implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, "getTransactionManager", "(Ljava/util/Properties;)Ljavax/transaction/TransactionManager;", null, new String[]{"org/hibernate/HibernateException"});
+            mv = cw.visitMethod(ACC_PUBLIC, "getTransactionManager", "(Ljava/util/Properties;)Ljakarta/transaction/TransactionManager;", null, new String[]{"org/hibernate/HibernateException"});
             mv.visitCode();
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;", false);
+            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljakarta/transaction/TransactionManager;", false);
             mv.visitInsn(ARETURN);
             mv.visitMaxs(1, 2);
             mv.visitEnd();
@@ -139,7 +139,7 @@ public class MakeTxLookup implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, "getTransactionIdentifier", "(Ljavax/transaction/Transaction;)Ljava/lang/Object;", null, null);
+            mv = cw.visitMethod(ACC_PUBLIC, "getTransactionIdentifier", "(Ljakarta/transaction/Transaction;)Ljava/lang/Object;", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitInsn(ARETURN);
@@ -178,9 +178,9 @@ public class MakeTxLookup implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PROTECTED, "acquireTransactionManager", "()Ljavax/transaction/TransactionManager;", null, new String[]{"java/lang/Exception"});
+            mv = cw.visitMethod(ACC_PROTECTED, "acquireTransactionManager", "()Ljakarta/transaction/TransactionManager;", null, new String[]{"java/lang/Exception"});
             mv.visitCode();
-            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljavax/transaction/TransactionManager;", false);
+            mv.visitMethodInsn(INVOKESTATIC, "org/apache/openejb/OpenEJB", "getTransactionManager", "()Ljakarta/transaction/TransactionManager;", false);
             mv.visitInsn(ARETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();

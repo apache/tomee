@@ -35,14 +35,32 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.plume.webapp</tomee.build.name>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
-
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>commons-dbcp2-shade</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-dbcp2</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency><!-- needed by myfaces -->
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
       <version>${commons-beanutils.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -51,34 +69,54 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>mp-common</artifactId>
+      <artifactId>openejb-client</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>jakartaee-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-client</artifactId>
+      <artifactId>mp-common</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-api</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>jakartaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-javaagent</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>jakartaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-jee-accessors</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
       <exclusions>
@@ -104,23 +142,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -135,23 +157,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -317,6 +323,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webservices</artifactId>
@@ -334,12 +341,43 @@
       <artifactId>activemq-broker-shade</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-jdbc-store-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jdbc-store</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>activemq-ra-shade</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.batchee</groupId>
+      <artifactId>batchee-jbatch</artifactId>
+      <version>${batchee.version}</version>
+      <scope>runtime</scope>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-jcs-jcache</artifactId>
+      <version>${jcs.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.batchee</groupId>
+      <artifactId>batchee-jbatch</artifactId>
+      <version>${batchee.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-jcs-jcache</artifactId>
+      <version>${jcs.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
@@ -348,7 +386,7 @@
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -360,12 +398,95 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-ee</artifactId>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-ee-common</artifactId>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-ejb</artifactId>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-el22</artifactId>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>${openwebbeans.version}</version>
       <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-spi</artifactId>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-web</artifactId>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -417,6 +538,45 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa</artifactId>
+      <version>${openjpa.version}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb.shade</groupId>
+      <artifactId>quartz-openejb-shade</artifactId>
+      <version>${quartz-openejb-shade.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.quartz-scheduler</groupId>
+          <artifactId>quartz</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.tomitribe.quartz</groupId>
+          <artifactId>quartz</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>c3p0</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
     </dependency>
@@ -429,11 +589,6 @@
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.faces</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

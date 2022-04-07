@@ -180,7 +180,7 @@ public class Cmp2Generator implements Opcodes {
     public byte[] generate() {
         // generate the class as super class of the base bean class.  This class will also implment 
         // EntityBean and Cmp2Entity. 
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[]{"org/apache/openejb/core/cmp/cmp2/Cmp2Entity", "javax/ejb/EntityBean"});
+        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[]{"org/apache/openejb/core/cmp/cmp2/Cmp2Entity", "jakarta/ejb/EntityBean"});
 
         // public static Object deploymentInfo;
         {
@@ -716,7 +716,7 @@ public class Cmp2Generator implements Opcodes {
         mv.visitMethodInsn(INVOKESPECIAL,
             cmrField.getAccessorInternalName(),
             "<init>",
-            "(Ljavax/ejb/EntityBean;Ljava/lang/String;Ljava/lang/Class;Ljava/lang/String;)V", false);
+            "(Ljakarta/ejb/EntityBean;Ljava/lang/String;Ljava/lang/Class;Ljava/lang/String;)V", false);
 
         // bCmr = result
         mv.visitFieldInsn(PUTFIELD,
@@ -1244,7 +1244,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void createSetEntityContext() {
-        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "setEntityContext", "(Ljavax/ejb/EntityContext;)V", null, null);
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "setEntityContext", "(Ljakarta/ejb/EntityContext;)V", null, null);
         mv.visitCode();
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 2);

@@ -33,6 +33,30 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
       <version>${org.apache.activemq.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fusesource.hawtbuf</groupId>
+      <artifactId>hawtbuf</artifactId>
+      <version>1.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-openwire-legacy</artifactId>
     </dependency>
   </dependencies>
 
@@ -41,7 +65,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -54,7 +78,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <artifactSet>
                 <includes>
-                  <include>org.apache.activemq:*</include> <!-- only this dep to make sure we don't add other things -->
+                  <include>org.apache.activemq:activemq-client</include> <!-- only this dep to make sure we don't add other things -->
                 </includes>
               </artifactSet>
               <transformers>
@@ -62,28 +86,8 @@
               </transformers>
               <relocations>
                 <relocation>
-                  <pattern>javax.xml.bind</pattern>
-                  <shadedPattern>jakarta.xml.bind</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.transaction</pattern>
-                  <shadedPattern>jakarta.transaction</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.servlet</pattern>
-                  <shadedPattern>jakarta.servlet</shadedPattern>
-                </relocation>
-                <relocation>
                   <pattern>javax.jms</pattern>
                   <shadedPattern>jakarta.jms</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.annotation</pattern>
-                  <shadedPattern>jakarta.annotation</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.inject</pattern>
-                  <shadedPattern>jakarta.inject</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>

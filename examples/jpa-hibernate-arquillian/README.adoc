@@ -14,16 +14,16 @@ Links to the documentation have been added in key parts of the example for the c
 == Movie
 
 Here we have a class with some details. See the annotation 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/Entity.html[@Entity] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/Entity.html[@Entity]
 above the declaration, with it we are saying that this class is an entity (a table in the database). We still have two more annotations above the attribute id, one of them is 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/Id.html[@Id] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/Id.html[@Id]
 annotation, it indicates that this attribute is the identifier of the entity and the other annotation 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/GeneratedValue.html[@GeneratedValue] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/GeneratedValue.html[@GeneratedValue]
 indicates that the unique identifier value generation of the entity will be managed by the persistence provider.
 
 [source,java]
 ----
-package org.superbiz.injection.h3jpa;
+package org.superbiz.injection.h5jpa;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -80,17 +80,17 @@ public class Movie {
 == Movies
 
 Now we have two important things: 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/PersistenceContext.html[@PersistenceContext]
 annotation and the 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/EntityManager.html[EntityManager]
 declaration.
 The 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/javax/persistence/EntityManager.html[EntityManager]
 is the interface with the core methods of JPA like persist, remove, merge, find and others...
 We annotate the 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/EntityManager.html[EntityManager]
 with 
-link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext], a persistence context is an entity management where  every persistence context associated with a persistence unit, we will create a persistence.xml soon for this.
+link:https://tomee.apache.org/tomee-9.0/javadoc/jakarta/persistence/PersistenceContext.html[@PersistenceContext], a persistence context is an entity management where  every persistence context associated with a persistence unit, we will create a persistence.xml soon for this.
 
 [source,java]
 ----
@@ -224,7 +224,7 @@ Now we do a test with the following workflow:
 
 [source,java]
 ----
-package org.superbiz.injection.h3jpa;
+package org.superbiz.injection.h5jpa;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

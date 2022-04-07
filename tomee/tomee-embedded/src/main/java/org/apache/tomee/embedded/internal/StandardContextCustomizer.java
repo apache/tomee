@@ -180,16 +180,6 @@ public class StandardContextCustomizer {
         }
 
         @Override
-        public boolean getReloadable() {
-            return false;
-        }
-
-        @Override
-        public void setReloadable(final boolean reloadable) {
-            // no-op
-        }
-
-        @Override
         public void addPropertyChangeListener(final PropertyChangeListener listener) {
             // no-op
         }

@@ -39,7 +39,7 @@
     TODO these are tests we finally need to pass!
     -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.implementation.producer.method.broken.enterprise.remoteMethod.RemoteBusinessProducerMethodTest" />
+      <class name="org.jboss.cdi.tck.tests.extensions.beanManager.unmanaged.UnmanagedInstanceTest" />
     </classes>
   </test>
 </suite>

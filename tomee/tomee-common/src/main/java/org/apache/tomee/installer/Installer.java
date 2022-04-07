@@ -599,6 +599,9 @@ public class Installer implements InstallerInterface {
                 alerts.addInfo("Copy " + paths.getOpenEJBJavaagentJar().getName() + " to lib");
             } catch (final IOException e) {
                 alerts.addError("Unable to copy OpenEJB javaagent jar to Tomcat lib directory.  This will need to be performed manually.", e);
+            } catch (final NullPointerException npe) {
+                alerts.addError("Unable to find OpenEJB javaagent jar to Tomcat lib directory.", npe);
+
             }
         }
 

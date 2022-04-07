@@ -45,6 +45,7 @@ import java.util.zip.ZipOutputStream;
 public class Agent {
 
     private static final Permission ACCESS_PERMISSION = new ReflectPermission("suppressAccessChecks");
+    public static final Logger LOGGER = Logger.getLogger(Agent.class.getName());
     private static String agentArgs;
     private static Instrumentation instrumentation;
     private static boolean initialized;
@@ -101,7 +102,8 @@ public class Agent {
                 checkSystemClassPath();
                 dynamicLoadAgent();
             } catch (final Exception e) {
-                new IllegalStateException("Unable to initialize agent", e).printStackTrace();
+                // new IllegalStateException("Unable to initialize agent", e).printStackTrace();
+                LOGGER.severe("Unable to initialize agent: " + e.getMessage());
             } finally {
                 initialized = true;
             }
@@ -293,7 +295,7 @@ public class Agent {
                 final Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
                 bootstrap.invoke(null, loader);
             } catch (final Throwable e) {
-                Logger.getLogger(Agent.class.getName()).log(Level.WARNING, "Failed to invoke bootstrap: " + e.getMessage());
+                LOGGER.log(Level.WARNING, "Failed to invoke bootstrap: " + e.getMessage(), e);
             } finally {
                 removeThis();
             }

@@ -77,9 +77,9 @@ import static org.apache.openejb.monitoring.LocalMBeanServer.tabularData;
 public class ReloadableEntityManagerFactory implements EntityManagerFactory, Serializable {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ReloadableEntityManagerFactory.class);
 
-    public static final String JAVAX_PERSISTENCE_SHARED_CACHE_MODE = "jakarta.persistence.sharedCache.mode";
-    public static final String JAVAX_PERSISTENCE_VALIDATION_MODE = "jakarta.persistence.validation.mode";
-    public static final String JAVAX_PERSISTENCE_TRANSACTION_TYPE = "jakarta.persistence.transactionType";
+    public static final String JAKARTA_PERSISTENCE_SHARED_CACHE_MODE = "jakarta.persistence.sharedCache.mode";
+    public static final String JAKARTA_PERSISTENCE_VALIDATION_MODE = "jakarta.persistence.validation.mode";
+    public static final String JAKARTA_PERSISTENCE_TRANSACTION_TYPE = "jakarta.persistence.transactionType";
 
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL = "openejb.jpa.criteria.log.jpql";
     public static final String OPENEJB_JPA_CRITERIA_LOG_JPQL_LEVEL = "openejb.jpa.criteria.log.jpql.level";
@@ -350,8 +350,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         info.setSharedCacheMode(mode);
 
         final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
-        if (properties.containsKey(JAVAX_PERSISTENCE_SHARED_CACHE_MODE)) {
-            properties.setProperty(JAVAX_PERSISTENCE_SHARED_CACHE_MODE, mode.name());
+        if (properties.containsKey(JAKARTA_PERSISTENCE_SHARED_CACHE_MODE)) {
+            properties.setProperty(JAKARTA_PERSISTENCE_SHARED_CACHE_MODE, mode.name());
         }
     }
 
@@ -360,8 +360,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         info.setValidationMode(mode);
 
         final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
-        if (properties.containsKey(JAVAX_PERSISTENCE_VALIDATION_MODE)) {
-            properties.setProperty(JAVAX_PERSISTENCE_VALIDATION_MODE, mode.name());
+        if (properties.containsKey(JAKARTA_PERSISTENCE_VALIDATION_MODE)) {
+            properties.setProperty(JAKARTA_PERSISTENCE_VALIDATION_MODE, mode.name());
         }
     }
 
@@ -399,8 +399,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         info.setTransactionType(type);
 
         final Properties properties = entityManagerFactoryCallable.getUnitInfo().getProperties();
-        if (properties.containsKey(JAVAX_PERSISTENCE_TRANSACTION_TYPE)) {
-            properties.setProperty(JAVAX_PERSISTENCE_TRANSACTION_TYPE, type.name());
+        if (properties.containsKey(JAKARTA_PERSISTENCE_TRANSACTION_TYPE)) {
+            properties.setProperty(JAKARTA_PERSISTENCE_TRANSACTION_TYPE, type.name());
         }
     }
 
@@ -602,7 +602,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
                 reloadableEntityManagerFactory.setValidationMode(mode);
             } catch (final Exception iae) {
                 LOGGER.warning("Can't set validation mode " + value, iae);
-                reloadableEntityManagerFactory.setProperty(JAVAX_PERSISTENCE_VALIDATION_MODE, value);
+                reloadableEntityManagerFactory.setProperty(JAKARTA_PERSISTENCE_VALIDATION_MODE, value);
             }
         }
 

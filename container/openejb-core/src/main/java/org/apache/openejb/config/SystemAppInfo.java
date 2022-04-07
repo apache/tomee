@@ -74,18 +74,6 @@ public final class SystemAppInfo {
         configuration.containerId = singletonContainerId;
         ejbJarInfo.enterpriseBeans.add(configuration);
 
-        final SingletonBeanInfo mejb = new SingletonBeanInfo();
-        mejb.ejbDeploymentId = "MEJB";
-        mejb.ejbName = deployer.ejbDeploymentId;
-        mejb.ejbClass = "org.apache.openejb.mgmt.MEJBBean";
-        mejb.home = "javax.management.j2ee.ManagementHome";
-        mejb.remote = "javax.management.j2ee.Management";
-        mejb.parents.add(deployer.ejbClass);
-        mejb.transactionType = "CONTAINER";
-        mejb.concurrencyType = "CONTAINER";
-        mejb.containerId = singletonContainerId;
-        ejbJarInfo.enterpriseBeans.add(mejb);
-
         for (final EnterpriseBeanInfo ebi : ejbJarInfo.enterpriseBeans) {
             final MethodInfo methodInfo = new MethodInfo();
             methodInfo.ejbDeploymentId = ebi.ejbDeploymentId;

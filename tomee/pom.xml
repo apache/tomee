@@ -18,7 +18,8 @@
 -->
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -27,7 +28,7 @@
     <groupId>org.apache.tomee</groupId>
     <version>9.0.0-M8-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>tomee</artifactId>
   <packaging>pom</packaging>
   <name>TomEE :: TomEE</name>
@@ -41,29 +42,29 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-         <module>tomee-config</module>
-         <module>tomee-bootstrap</module>
-         <module>tomee-loader</module>
-         <module>tomee-catalina</module>
-         <module>tomee-common</module>
-         <module>tomee-myfaces</module>
-         <module>tomee-mojarra</module>
-         <module>tomee-jdbc</module>
-         <module>tomee-jaxrs</module>
-         <module>tomee-webapp</module>
-         <module>tomee-webaccess</module>
-         <module>tomee-plus-webapp</module>
-         <module>tomee-plume-webapp</module>
-         <module>tomee-webservices</module>
-         <module>tomee-embedded</module>
-         <module>tomee-microprofile</module>
-         <module>apache-tomee</module>
-         <module>tomee-util</module>
-         <module>tomee-juli</module>
-         <module>tomee-overlay-runner</module>
-         <!--<module>tomee-deb</module>-->
-         <module>tomee-security</module>
-       </modules>
+        <module>tomee-config</module>
+        <module>tomee-bootstrap</module>
+        <module>tomee-loader</module>
+        <module>tomee-catalina</module>
+        <module>tomee-common</module>
+        <module>tomee-myfaces</module>
+        <module>tomee-mojarra</module>
+        <module>tomee-jdbc</module>
+        <module>tomee-jaxrs</module>
+        <module>tomee-webapp</module>
+        <module>tomee-webaccess</module>
+        <module>tomee-plus-webapp</module>
+        <module>tomee-plume-webapp</module>
+        <module>tomee-webservices</module>
+        <module>tomee-embedded</module>
+        <module>tomee-microprofile</module>
+        <module>apache-tomee</module>
+        <module>tomee-util</module>
+        <module>tomee-juli</module>
+        <module>tomee-overlay-runner</module>
+        <!--<module>tomee-deb</module>-->
+        <module>tomee-security</module>
+      </modules>
     </profile>
     <profile>
       <id>plume</id>
@@ -81,31 +82,10 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core</artifactId>
-          <version>${project.version}</version>
           <exclusions>
             <exclusion>
               <groupId>${project.groupId}</groupId>
               <artifactId>jakartaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-broker-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-jdbc-store-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-ra-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -122,75 +102,22 @@
         <dependency> <!-- to avoid to force exclusions everywhere -->
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core</artifactId>
-          <version>${project.version}</version>
           <exclusions>
-            <exclusion>
-              <groupId>org.apache.openjpa</groupId>
-              <artifactId>openjpa</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.bval</groupId>
-              <artifactId>bval-jsr</artifactId>
-            </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
               <artifactId>jakartaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-broker-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-jdbc-store-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-ra-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.slf4j</groupId>
-              <artifactId>slf4j-jdk14</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>openejb-core-hibernate</artifactId>
-          <type>pom</type>
           <version>${project.version}</version>
+          <type>pom</type>
           <exclusions>
             <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>jakartaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-broker-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-jdbc-store-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-ra-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -286,6 +213,7 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${openwebbeans.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
@@ -294,11 +222,7 @@
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -313,7 +237,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <artifactId>commons-beanutils</artifactId>
@@ -378,9 +302,9 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>jakarta.faces</groupId>
-        <artifactId>jakarta.faces-api</artifactId>
-        <version>2.1</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>openejb-jee</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.glassfish</groupId>
@@ -411,11 +335,11 @@
     </dependencies>
   </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
 </project>
 

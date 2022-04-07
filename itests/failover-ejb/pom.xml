@@ -40,6 +40,13 @@
       <artifactId>jakartaee-api</artifactId>
       <version>${version.jakartaee-api}</version>
       <scope>provided</scope>
+      <!-- does not inherit from exclusion and version of parent -->
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

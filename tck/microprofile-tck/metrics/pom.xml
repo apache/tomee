@@ -91,10 +91,16 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.metrics</groupId>
-      <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>microprofile-metrics-api-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.microprofile.metrics</groupId>
+          <artifactId>microprofile-metrics-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -113,7 +119,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-rest-tck</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <version>${microprofile.metrics.tck.version}</version>
       <scope>test</scope>
     </dependency>
 

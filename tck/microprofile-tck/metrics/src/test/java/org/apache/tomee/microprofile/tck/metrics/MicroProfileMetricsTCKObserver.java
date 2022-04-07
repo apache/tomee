@@ -16,8 +16,7 @@
  */
 package org.apache.tomee.microprofile.tck.metrics;
 
-import com.jayway.restassured.RestAssured;
-import org.apache.openejb.arquillian.common.TomEEContainer;
+import io.restassured.RestAssured;
 import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.core.api.annotation.Observes;
 

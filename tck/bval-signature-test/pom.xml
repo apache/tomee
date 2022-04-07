@@ -55,7 +55,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.beanvalidation.tck</groupId>
+      <groupId>jakarta.validation</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <scope>test</scope>
@@ -95,7 +95,7 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.hibernate.beanvalidation.tck</groupId>
+                  <groupId>jakarta.validation</groupId>
                   <artifactId>beanvalidation-tck-tests</artifactId>
                   <version>${bval-tck.version}</version>
                   <type>jar</type>

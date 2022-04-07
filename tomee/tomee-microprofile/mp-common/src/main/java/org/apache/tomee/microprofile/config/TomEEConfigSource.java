@@ -22,8 +22,10 @@ import org.apache.openejb.util.AppFinder;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -57,6 +59,16 @@ public class TomEEConfigSource implements ConfigSource {
     @Override
     public Map<String, String> getProperties() {
         return configuration;
+    }
+
+    @Override
+    public Set<String> getPropertyNames() {
+        return new HashSet<>(getProperties().keySet());
+    }
+
+    @Override
+    public int getOrdinal() {
+        return 150;
     }
 
     @Override

@@ -36,7 +36,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
+        <configuration combine.self="append">
           <compilerArgs>
             <arg>--patch-module=java.management=${basedir}/src/main/java</arg>
           </compilerArgs>

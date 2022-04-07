@@ -64,7 +64,6 @@
       jakarta.jws,
       jakarta.mail;resolution:=optional;version="[1.4,2)",
       javax.management,
-      javax.management.j2ee,
       javax.management.loading,
       javax.management.openmbean,
       javax.naming,
@@ -311,19 +310,6 @@
               </artifactItems>
             </configuration>
           </execution>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -439,6 +425,11 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <type>pom</type>
+    </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
@@ -537,13 +528,13 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-jdbc-store-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jdbc-store</artifactId>
       <optional>true</optional>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker-shade</artifactId>
-          <groupId>${project.groupId}</groupId>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -561,13 +552,21 @@
       <groupId>org.objectweb.howl</groupId>
       <artifactId>howl</artifactId>
     </dependency>
+    <!-- Jackson required by OpenAPI Impl and ActiveMQ Broker -->
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-activation_1.1_spec</artifactId>
-      <version>${geronimo-activation_1.1_spec.version}</version>
-      <scope>provided</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <optional>true</optional>
     </dependency>
     <!-- JavaMail -->
+
+    <!-- todo hack: until we move geronimo mail to the jakarta namespace -->
+    <dependency>
+      <groupId>jakarta.mail</groupId>
+      <artifactId>jakarta.mail-api</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
       <artifactId>geronimo-javamail_1.6_mail</artifactId>
@@ -608,8 +607,8 @@
       <artifactId>hsqldb</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
+      <artifactId>commons-dbcp2-shade</artifactId>
+      <groupId>org.apache.tomee</groupId>
       <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>
@@ -655,11 +654,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-confluence</artifactId>
       <version>1.1</version>
@@ -678,12 +672,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-el22</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-ejb_3.1_spec</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -705,6 +704,7 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <!--
     <dependency>
@@ -713,9 +713,8 @@
     </dependency>
     -->
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr</artifactId>
-      <classifier>jakarta</classifier>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>bval-jsr-shade</artifactId>
     </dependency>
 
     <dependency> <!-- licence apache, only 110ko -->
@@ -729,6 +728,7 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${batchee.version}</version>
       <scope>provided</scope>
+      <classifier>jakarta</classifier>
     </dependency>
 
   </dependencies>

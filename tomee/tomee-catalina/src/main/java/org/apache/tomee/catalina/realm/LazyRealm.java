@@ -40,6 +40,9 @@ import org.ietf.jgss.GSSContext;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSName;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
@@ -284,6 +287,10 @@ public class LazyRealm extends LifecycleBase implements Realm {
         return instance().authenticate(gssContext, storeCreds);
     }
 
+    @Override public Principal authenticate(final GSSName gssName, final GSSCredential gssCredential) {
+        return instance().authenticate(gssName, gssCredential);
+    }
+
     @Override
     public Principal authenticate(final X509Certificate[] certs) {
         return instance().authenticate(certs);
@@ -324,11 +331,6 @@ public class LazyRealm extends LifecycleBase implements Realm {
             delegate.removePropertyChangeListener(listener);
         }
         support.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public String[] getRoles(final Principal principal) {
-        return instance().getRoles(principal);
     }
 
     @Override

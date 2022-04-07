@@ -18,17 +18,16 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.server.ServiceException;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.SessionManager;
-import org.mortbay.jetty.handler.AbstractHandler;
-import org.mortbay.jetty.handler.ContextHandler;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.servlet.HashSessionIdManager;
-import org.mortbay.jetty.servlet.HashSessionManager;
-import org.mortbay.jetty.servlet.SessionHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SessionIdManager;
+import org.eclipse.jetty.server.session.DefaultSessionIdManager;
+import org.eclipse.jetty.server.session.SessionHandler;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -38,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.security.SecureRandom;
 import java.util.Properties;
 
 /**
@@ -95,7 +95,7 @@ public class JettyHttpServer implements HttpServer {
 
         // Create all the Jetty objects but dont' start them
         server = new Server();
-        final Connector connector = new SelectChannelConnector();
+        final ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
         server.setConnectors(new Connector[]{connector});
 
@@ -106,9 +106,9 @@ public class JettyHttpServer implements HttpServer {
 
         final Handler handler = new AbstractHandler() {
             @Override
-            public void handle(final String target, final HttpServletRequest req, final HttpServletResponse res, final int dispatch) throws IOException, ServletException {
+            public void handle(final String target, final Request request, final HttpServletRequest req, final HttpServletResponse res) throws IOException, ServletException {
                 try {
-                    ((Request) req).setHandled(true);
+                    request.setHandled(true);
                     final HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletContext);
                     final HttpResponse httpResponse = new ServletResponseAdapter(res);
                     JettyHttpServer.this.listener.onMessage(httpRequest, httpResponse);
@@ -121,9 +121,8 @@ public class JettyHttpServer implements HttpServer {
         };
 
         final SessionHandler sessionHandler = new SessionHandler();
-        final SessionManager sessionManager = new HashSessionManager();
-        sessionManager.setIdManager(new HashSessionIdManager());
-        sessionHandler.setSessionManager(sessionManager);
+        final SessionIdManager sessionManager = new DefaultSessionIdManager(server, new SecureRandom());
+        sessionHandler.setSessionIdManager(sessionManager);
         sessionHandler.setHandler(handler);
 
         context.setHandler(sessionHandler);
@@ -132,7 +131,7 @@ public class JettyHttpServer implements HttpServer {
     @Override
     public void start() throws ServiceException {
         try {
-            server.start();
+            server.join();
         } catch (Exception e) {
             throw new ServiceException(e);
         }
@@ -141,7 +140,7 @@ public class JettyHttpServer implements HttpServer {
     @Override
     public void stop() throws ServiceException {
         try {
-            server.stop();
+            server.destroy();
         } catch (Exception e) {
             throw new ServiceException(e);
         }

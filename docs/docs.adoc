@@ -13,7 +13,6 @@
 - link:developer/ide/index.html[IDEs - Eclipse, Intellij Idea and Netbeans]
 - link:developer/testing/index.html[Unit Testing - Arquillian, OpenEJB JUnit, TomEE Embedded and ApplicationComposer]
 - link:developer/tools/index.html[Build Tools and Plugins]
-- link:developer/migration/tomee-1-to-7.html[Migrating From TomEE 1.x to 7.x]
 - link:developer/json/index.html[TomEE and Apache Johnzon - JAX-RS JSON Provider]
 - link:developer/configuration/cxf.html[Apache CXF Configuration - JAX-RS (RESTful Services) and JAX-WS (Web Services)]
 - link:developer/classloading/index.html[Understanding the TomEE ClassLoader]

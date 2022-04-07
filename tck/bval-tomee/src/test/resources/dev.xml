@@ -18,8 +18,11 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="BVal-TCK" verbose="1">
     <test name="BVal-TCK">
+      <packages>
+        <package name="org.hibernate.beanvalidation.tck.tests.xmlconfiguration"/>
+      </packages>
       <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.bootstrap.customprovider.BootstrapCustomProviderDefinedInServiceFileTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.bootstrap.customprovider.BootstrapNonAvailableValidationProviderTest" />
       </classes>
     </test>
 </suite>

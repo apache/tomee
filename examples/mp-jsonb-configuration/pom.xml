@@ -19,13 +19,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-jsonb-configuration</artifactId>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile JSONB Configuration</name>
   <properties>
-    <version.jakartaee-api>8.0</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
@@ -67,22 +67,7 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
+      
     </plugins>
   </build>
   <!-- This section allows you to configure where to publish libraries for

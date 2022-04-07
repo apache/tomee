@@ -81,6 +81,15 @@ public class StandaloneServer {
 
         jvmOpts.add("-XX:+HeapDumpOnOutOfMemoryError");
         jvmOpts.add("-javaagent:" + javaagentJar.getAbsolutePath());
+        
+        // Add the JAVA 9 specific start-up parameters required by OpenEJB
+        jvmOpts.add("--add-opens=java.base/java.lang=ALL-UNNAMED");
+        jvmOpts.add("--add-opens=java.base/java.io=ALL-UNNAMED");
+        jvmOpts.add("--add-opens=java.base/java.util=ALL-UNNAMED");
+        jvmOpts.add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
+        jvmOpts.add("--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED");
+        jvmOpts.add("--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED");
+
     }
 
     /**

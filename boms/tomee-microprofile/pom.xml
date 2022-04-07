@@ -48,7 +48,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.13.2</version>
+      <version>2.13.0-rc2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.13.2</version>
+      <version>2.13.0-rc2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.13.2</version>
+      <version>2.13.0-rc2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.13.2</version>
+      <version>2.13.0-rc2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
       <artifactId>woodstox-core</artifactId>
-      <version>6.2.4</version>
+      <version>5.2.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -114,7 +114,7 @@
     <dependency>
       <groupId>com.sun.istack</groupId>
       <artifactId>istack-commons-runtime</artifactId>
-      <version>3.0.11</version>
+      <version>4.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
-      <version>1.5.1</version>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -222,8 +222,52 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>jakarta.jws</groupId>
+      <artifactId>jakarta.jws-api</artifactId>
+      <version>2.1.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.mail</groupId>
+      <artifactId>jakarta.mail-api</artifactId>
+      <version>2.0.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>3.0.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.soap</groupId>
+      <artifactId>jakarta.xml.soap-api</artifactId>
+      <version>1.4.2</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
       <version>2.3.3</version>
       <exclusions>
         <exclusion>
@@ -266,28 +310,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr</artifactId>
-      <version>2.0.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
-      <version>2.3.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.12.0</version>
@@ -310,229 +332,10 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-management</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-search</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-json-basic</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-cors</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-jose</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security-saml</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-security</artifactId>
-      <version>3.4.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-wsdl</artifactId>
-      <version>3.4.5</version>
+      <groupId>org.apache.geronimo.components</groupId>
+      <artifactId>geronimo-connector</artifactId>
+      <version>3.1.5</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -543,7 +346,7 @@
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
-      <version>3.1.5-SNAPSHOT</version>
+      <version>3.1.5</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -555,7 +358,8 @@
     <dependency>
       <groupId>org.apache.geronimo.config</groupId>
       <artifactId>geronimo-config-impl</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.3</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -575,9 +379,10 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.safeguard</groupId>
-      <artifactId>safeguard-impl</artifactId>
-      <version>1.2.1</version>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-health-common</artifactId>
+      <version>2.0.1</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -588,29 +393,8 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-health</artifactId>
-      <version>1.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-health-common</artifactId>
-      <version>1.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-metrics</artifactId>
-      <version>1.0.2</version>
+      <version>2.0.1</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -621,7 +405,20 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-metrics-common</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.6</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-metrics</artifactId>
+      <version>1.0.6</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -632,7 +429,20 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-openapi-impl</artifactId>
-      <version>1.0.12</version>
+      <version>1.0.15</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-opentracing-common</artifactId>
+      <version>1.0.3</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -643,7 +453,8 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-opentracing</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.3</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -654,7 +465,8 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.16</version>
+      <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -665,7 +477,8 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.16</version>
+      <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -676,7 +489,8 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.16</version>
+      <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -687,7 +501,8 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.16</version>
+      <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -698,7 +513,8 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.16</version>
+      <version>1.2.17</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -709,7 +525,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>2.3.9</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -720,7 +536,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>2.3.9</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -754,17 +570,7 @@
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
       <version>3.2.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-ee</artifactId>
-      <version>2.0.26</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -775,7 +581,20 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <version>2.0.26</version>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-ee</artifactId>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -786,7 +605,8 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <version>2.0.26</version>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -797,7 +617,8 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>2.0.26</version>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -808,7 +629,8 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.26</version>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -819,7 +641,8 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>2.0.26</version>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -830,7 +653,8 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.26</version>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -841,7 +665,8 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>2.0.26</version>
+      <version>2.0.27-SNAPSHOT</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -884,7 +709,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
+      <artifactId>tomcat-catalina-ha</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -895,7 +720,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina-ha</artifactId>
+      <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -939,7 +764,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper</artifactId>
+      <artifactId>tomcat-jasper-el</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -950,7 +775,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper-el</artifactId>
+      <artifactId>tomcat-jasper</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -1049,6 +874,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-util-scan</artifactId>
+      <version>${tomcat.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-util</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
@@ -1060,7 +896,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-util-scan</artifactId>
+      <artifactId>tomcat-websocket-api</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -1081,9 +917,31 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-websocket-api</artifactId>
-      <version>${tomcat.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>bval-jsr-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>commons-dbcp2-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-rt-rs-mp-client-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1105,7 +963,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>8.0-5</version>
+      <version>9.1-M2-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1117,6 +975,94 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>mbean-annotation-api</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-config-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-fault-tolerance-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-health-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-jwt-auth-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-metrics-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-openapi-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-opentracing-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>microprofile-rest-client-api-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1181,17 +1127,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
       <version>${project.version}</version>
       <exclusions>
@@ -1204,6 +1139,17 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-cxf</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1258,7 +1204,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee</artifactId>
+      <artifactId>openejb-jee-accessors</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1269,7 +1215,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee-accessors</artifactId>
+      <artifactId>openejb-jee</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1326,6 +1272,28 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-webservices</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>safeguard-impl-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>sxc-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1719,94 +1687,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>1.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-      <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>1.1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.health</groupId>
-      <artifactId>microprofile-health-api</artifactId>
-      <version>1.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>1.1.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.metrics</groupId>
-      <artifactId>microprofile-metrics-api</artifactId>
-      <version>1.1.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.openapi</groupId>
-      <artifactId>microprofile-openapi-api</artifactId>
-      <version>1.1.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.opentracing</groupId>
-      <artifactId>microprofile-opentracing-api</artifactId>
-      <version>1.1.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.rest.client</groupId>
-      <artifactId>microprofile-rest-client-api</artifactId>
-      <version>1.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <version>3.8.1</version>
@@ -1819,8 +1699,19 @@
     </dependency>
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>3.0.2</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1831,7 +1722,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>txw2</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1862,42 +1753,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.jvnet.mimepull</groupId>
-      <artifactId>mimepull</artifactId>
-      <version>1.9.11</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.jvnet.staxex</groupId>
       <artifactId>stax-ex</artifactId>
-      <version>1.8.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>sxc-shade</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.metatype.sxc</groupId>
-      <artifactId>sxc-runtime</artifactId>
-      <version>0.8</version>
+      <version>1.8.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2060,17 +1918,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.annotation.versioning</artifactId>
-      <version>1.0.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.reactivestreams</groupId>
       <artifactId>reactive-streams</artifactId>
       <version>1.0.3</version>
@@ -2084,7 +1931,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.36</version>
+      <version>1.7.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2095,7 +1942,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.36</version>
+      <version>1.7.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2106,7 +1953,7 @@
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.30</version>
+      <version>1.28</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2118,28 +1965,6 @@
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
       <version>1.6.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.4.01</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xml-resolver</groupId>
-      <artifactId>xml-resolver</artifactId>
-      <version>1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

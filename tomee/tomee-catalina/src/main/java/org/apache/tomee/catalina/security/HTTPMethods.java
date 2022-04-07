@@ -142,6 +142,9 @@ public class HTTPMethods {
 
     private StringBuilder getHttpMethodsBuffer(boolean excluded) {
         StringBuilder buffer = new StringBuilder();
+        if (methods.size() == 0) {
+            return buffer;
+        }
         if (excluded) {
             buffer.append("!");
         }

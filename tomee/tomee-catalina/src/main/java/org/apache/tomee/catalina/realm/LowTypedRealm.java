@@ -30,6 +30,9 @@ import org.ietf.jgss.GSSContext;
 import jakarta.servlet.ServletSecurityElement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSName;
+
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +51,7 @@ public class LowTypedRealm implements Realm {
     private static final Class<?>[] SIMPLE_AUTHENTICATE_ARGS = new Class<?>[]{String.class, String.class};
     private static final Class<?>[] AUTHENTICATE_ARGS = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class};
     private static final Class<?>[] GSCONTEXT_AUTHENTICATE = new Class<?>[]{GSSContext.class, Boolean.class};
+    private static final Class<?>[] GSNAME_CREDENTIALS_AUTHENTICATE = new Class<?>[]{GSSName.class, GSSCredential.class};
     private static final Class<?>[] X509CERT_AUTHENTICATE = new Class<?>[]{X509Certificate[].class};
     private static final Class<?>[] FIND_SECURITY_CONSTRAINTS_CONSTRAINT = new Class<?>[]{HttpServletRequest.class, String.class};
     private static final Class<?>[] HAS_RESOURCE_PERMISSION_CONSTRAINT = new Class<?>[]{HttpServletRequest.class, HttpServletResponse.class, Object[].class, String.class};
@@ -60,6 +64,7 @@ public class LowTypedRealm implements Realm {
     private final Method authenticateStringMethod;
     private final Method authenticateMethod;
     private final Method gsMethod;
+    private final Method gsNameCredentials;
     private final Method findSecurityConstraintsMethod;
     private final Method x509Method;
     private final Method hasResourcePermissionMethod;
@@ -78,6 +83,7 @@ public class LowTypedRealm implements Realm {
         simpleAuthenticateMethod = findMethod(clazz, SIMPLE_AUTHENTICATE_ARGS);
         authenticateMethod = findMethod(clazz, AUTHENTICATE_ARGS);
         gsMethod = findMethod(clazz, GSCONTEXT_AUTHENTICATE);
+        gsNameCredentials = findMethod(clazz, GSNAME_CREDENTIALS_AUTHENTICATE);
         findSecurityConstraintsMethod = findMethod(clazz, FIND_SECURITY_CONSTRAINTS_CONSTRAINT);
         x509Method = findMethod(clazz, X509CERT_AUTHENTICATE);
         hasResourcePermissionMethod = findMethod(clazz, HAS_RESOURCE_PERMISSION_CONSTRAINT);
@@ -135,11 +141,6 @@ public class LowTypedRealm implements Realm {
     }
 
     @Override
-    public String[] getRoles(final Principal principal) {
-        return (String[]) invoke(getRoles, principal);
-    }
-
-    @Override
     public boolean isAvailable() {
         return true;
     }
@@ -164,6 +165,10 @@ public class LowTypedRealm implements Realm {
     @Override
     public Principal authenticate(final GSSContext gssContext, final boolean storeCreds) {
         return (Principal) invoke(gsMethod, gssContext, storeCreds);
+    }
+
+    @Override public Principal authenticate(final GSSName gssName, final GSSCredential gssCredential) {
+        return (Principal) invoke(gsNameCredentials, gssName, gssCredential);
     }
 
     @Override
