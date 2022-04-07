@@ -19,7 +19,7 @@
 <suite name="BVAL-TCK" verbose="1">
     <test name="BVAL-TCK">
       <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.xmlconfiguration.versioning.Version30InMappingXmlTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.bootstrap.customprovider.BootstrapNonAvailableValidationProviderTest" />
       </classes>
     </test>
 </suite>
