@@ -186,7 +186,12 @@ public final class ValidatorBuilder {
             info.valueExtractorClassNames == null ? null : new LinkedHashSet<>(info.valueExtractorClassNames));
         final OpenEjbConfig config = new OpenEjbConfig(bootstrapConfig, target);
 
-        target.ignoreXmlConfiguration();
+        try {
+            target.ignoreXmlConfiguration();
+            logger.info("Ignoring XML Configuration for validator " + target.getClass().getName());
+        } catch (final Exception e) {
+            logger.warning("Unable to ignore XML Configuration for validator " + target.getClass().getName(), e);
+        }
 
         final String messageInterpolatorClass = info.messageInterpolatorClass;
         if (messageInterpolatorClass != null) {

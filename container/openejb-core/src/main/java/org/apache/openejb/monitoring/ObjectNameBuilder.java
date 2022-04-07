@@ -58,6 +58,10 @@ public class ObjectNameBuilder {
 
                 if (null != sv) {
                     sv = sv.replace(':', '_');
+
+                    if (sv.contains("\"") || sv.contains("*") || sv.contains("\\") || sv.contains(",") || sv.contains("\n") || sv.contains("?")) {
+                        sv = ObjectName.quote(sv);
+                    }
                 }
 
                 sb.append(entry.getKey()).append("=").append(sv).append(",");

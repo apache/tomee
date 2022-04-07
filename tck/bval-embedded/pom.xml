@@ -105,6 +105,12 @@
       <version>${version.arquillian-protocol-servlet-jakarta}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>11</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -140,17 +146,14 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <reuseForks>true</reuseForks>
+          <reuseForks>false</reuseForks>
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <systemProperties>
-            <property>
-              <name>validation.provider</name>
-              <value>${validation.provider}</value>
-            </property>
-          </systemProperties>
-          <parallel>methods</parallel>
+          <systemPropertyVariables>
+            <validation.provider>${validation.provider}</validation.provider>
+          </systemPropertyVariables>
+          <parallel>none</parallel>
           <threadCount>4</threadCount>
         </configuration>
       </plugin>

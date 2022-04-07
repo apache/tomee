@@ -33,7 +33,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <!-- Updated version to fix hanging text -->
-        <version>2.22.0</version>
+        <version>3.0.0-M6</version>
         <configuration>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.opentracing:microprofile-opentracing-tck</dependency>
@@ -83,16 +83,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-opentracing-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.opentracing</groupId>
+      <artifactId>microprofile-opentracing-api</artifactId>
+      <version>${microprofile.opentracing.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.opentracing</groupId>
-          <artifactId>microprofile-opentracing-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
