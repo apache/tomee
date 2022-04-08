@@ -339,7 +339,10 @@ public class RemoteServer {
                         addIfSet(argsList, "java.protocol.handler.pkgs");
                     }
 
-                    argsList.add("-ea");
+                    if(!addedArgs.containsKey("-da")) {
+                        argsList.add("-ea");
+                    }
+
                     argsList.add("-classpath");
 
                     final StringBuilder cp = new StringBuilder(bootstrapJar.getAbsolutePath()).append(ps).append(juliJar.getAbsolutePath());
