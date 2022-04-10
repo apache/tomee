@@ -58,7 +58,9 @@ public class MDBWithWildcardTest {
     public static WebArchive getArchive() {
 
         return ShrinkWrap.create(WebArchive.class, "jsf-jms-test.war")
-                .addClasses(WildcardMdb.class)
+                .addClasses(WildcardMdb.class,
+                        /* For some reason, we need to include the test here otherwise deployment fails with NoClassDefFoundError */
+                        MDBWithWildcardTest.class)
                 .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
                         .version("3.0")
                         .createServlet()
