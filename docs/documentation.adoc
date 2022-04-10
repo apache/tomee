@@ -13,12 +13,10 @@ can also find us on IRC freenode.org #openejb and #tomee
 * link:tomee-and-intellij.html[Get started with Intellij]
 * link:contrib/debug/debug-intellij.html[Debugging in Intellij]
 * link:tomee-and-eclipse.html[Get started with Eclipse (WTP)]
-* link:getting-started-with-eclipse-and-webby.html[Get started with Eclipse
-(m2e-Webby)]
+* link:getting-started-with-eclipse-and-webby.html[Get started with Eclipse (m2e-Webby)]
 * link:tomee-and-netbeans.html[Get started with Netbeans]
 
 == General Information
-* link:comparison.html[Comparison: OpenEJB, TomEE, TomEE+]
 * link:tomee-directory-structure.html[TomEE Directory structure]
 * link:deploying-in-tomee.html[Deploying in TomEE]
 * link:tomee-webapp.html[The 'tomee' webapp]
