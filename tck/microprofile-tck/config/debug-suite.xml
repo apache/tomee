@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +15,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="BVAL-TCK" verbose="1">
-    <test name="BVAL-TCK">
-      <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.bootstrap.customprovider.BootstrapNonAvailableValidationProviderTest" />
-      </classes>
-    </test>
+<suite name="microprofile-config-TCK" verbose="2" configfailurepolicy="continue" >
+  <test name="microprofile-config 2.0 TCK">
+    <classes>
+      <class name="org.eclipse.microprofile.config.tck.ConfigPropertiesTest"></class>
+      <class name="org.eclipse.microprofile.config.tck.ConfigProviderTest"></class>
+      <class name="org.eclipse.microprofile.config.tck.CDIPlainInjectionTest"></class>
+      <class name="org.eclipse.microprofile.config.tck.configsources.DefaultConfigSourceOrdinalTest"></class>
+    </classes>
+  </test>
 </suite>

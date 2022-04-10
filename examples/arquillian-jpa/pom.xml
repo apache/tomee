@@ -109,6 +109,13 @@ language governing permissions and limitations under the License. -->
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>1.7.0.Alpha10</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
         <groupId>org.arquillian</groupId>
         <artifactId>arquillian-universe</artifactId>
         <version>${arquillian_universe.version}</version>

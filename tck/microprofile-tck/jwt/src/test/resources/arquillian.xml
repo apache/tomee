@@ -21,12 +21,14 @@
             xsi:schemaLocation="
               http://jboss.org/schema/arquillian
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
   <container qualifier="tomee-microprofile" default="true">
     <configuration>
       <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">microprofile</property>
+      <property name="debug">false</property>
       <property name="conf">src/test/conf</property>
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>

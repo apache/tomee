@@ -95,8 +95,9 @@
       <classifier>jakarta</classifier>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>bval-jsr-shade</artifactId>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-jsr</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <!-- Test -->
