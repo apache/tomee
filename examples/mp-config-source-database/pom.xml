@@ -21,7 +21,7 @@
   <artifactId>mp-config-source-database</artifactId>
   <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>MicroProfile :: Examples :: Config Source Database</name>
+  <name>TomEE :: Examples :: MicroProfile Config Source Database</name>
   <properties>
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
     <version.microprofile>2.0.1</version.microprofile>

@@ -21,6 +21,7 @@
   <version>9.0.0-M8-SNAPSHOT</version>
   <artifactId>mp-metrics-gauge</artifactId>
   <packaging>war</packaging>
+  <name>TomEE :: Examples :: MicroProfile Metrics Gauge</name>
   <properties>
     <junit.version>4.12</junit.version>
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
