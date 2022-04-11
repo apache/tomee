@@ -16,13 +16,11 @@
  */
 package org.apache.tomee.microprofile.tck.opentracing;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.johnzon.mapper.Mapper;
 import org.eclipse.microprofile.opentracing.tck.tracer.TestTracer;
 import org.testng.annotations.Test;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-
-public class OpenTracingJacksonMapperTest {
+public class OpenTracingJohnzonMapperTest {
     @Test
     public void testMapper() throws Exception {
         final String json = "{\"spans\":[{\"traceId\":1,\"spanId\":2,\"logEntries\":[]," +
@@ -33,8 +31,7 @@ public class OpenTracingJacksonMapperTest {
                             "\"http.status_code\":200,\"component\":\"jaxrs\",\"span.kind\":\"server\",\"http" +
                             ".method\":\"GET\"}}]}";
 
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.readValue(json, TestTracer.class);
+        final Mapper objectMapper = new MicroProfileOpenTrackingContextResolver().getContext(null);
+        objectMapper.readObject(json, TestTracer.class);
     }
 }

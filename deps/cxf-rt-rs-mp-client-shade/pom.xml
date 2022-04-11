@@ -63,15 +63,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>microprofile-rest-client-api-shade</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.rest.client</groupId>
-          <artifactId>microprofile-rest-client-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.eclipse.microprofile.rest.client</groupId>
+      <artifactId>microprofile-rest-client-api</artifactId>
+      <version>${microprofile.rest-client.version}</version>
     </dependency>
 
   </dependencies>

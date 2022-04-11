@@ -16,18 +16,17 @@
  */
 package org.apache.tomee.microprofile.tck.opentracing;
 
-import jakarta.ws.rs.ext.ContextResolver;
 import jakarta.ws.rs.ext.Provider;
-import org.apache.johnzon.mapper.Mapper;
-import org.apache.johnzon.mapper.MapperBuilder;
+import jakarta.ws.rs.core.Response;
 
 @Provider
-public class MicroProfileOpenTrackingContextResolver implements ContextResolver<Mapper>{
+public class MicroProfileOpenTracingExceptionMapper implements jakarta.ws.rs.ext.ExceptionMapper<RuntimeException> {
 
     @Override
-    public Mapper getContext(final Class<?> type) {
-        return new MapperBuilder()
-            .setFailOnUnknownProperties(false)
-            .build();
+    public Response toResponse(final RuntimeException exception) {
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                       .entity(exception.getMessage())
+                       .build();
     }
+
 }

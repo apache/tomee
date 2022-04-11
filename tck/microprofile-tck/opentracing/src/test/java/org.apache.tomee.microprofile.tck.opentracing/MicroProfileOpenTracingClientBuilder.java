@@ -16,18 +16,25 @@
  */
 package org.apache.tomee.microprofile.tck.opentracing;
 
-import jakarta.ws.rs.ext.ContextResolver;
-import jakarta.ws.rs.ext.Provider;
+import org.apache.cxf.jaxrs.client.spec.ClientBuilderImpl;
+import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.johnzon.mapper.Mapper;
 import org.apache.johnzon.mapper.MapperBuilder;
+import org.eclipse.microprofile.opentracing.tck.tracer.TestSpanTree;
 
-@Provider
-public class MicroProfileOpenTrackingContextResolver implements ContextResolver<Mapper>{
+import java.util.Collections;
 
-    @Override
-    public Mapper getContext(final Class<?> type) {
-        return new MapperBuilder()
+/**
+ * CXF does not scan for @Provider in ClientBuilder, so when we receive the server payload, we can't deserialize it
+ * with Johnzon
+ */
+public class MicroProfileOpenTracingClientBuilder extends ClientBuilderImpl {
+
+    public MicroProfileOpenTracingClientBuilder() {
+        super();
+        final Mapper mapper = new MapperBuilder()
             .setFailOnUnknownProperties(false)
             .build();
+        register(new JohnzonProvider<TestSpanTree>(mapper, Collections.emptyList()));
     }
 }
