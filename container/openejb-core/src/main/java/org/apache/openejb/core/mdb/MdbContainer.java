@@ -38,6 +38,7 @@ import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.StringTemplate;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -67,12 +68,9 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -274,17 +272,46 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
-    private ActivationSpec createActivationSpec(final BeanContext beanContext) throws OpenEJBException {
+    // visibility to allow unit testing
+    public ActivationSpec createActivationSpec(final BeanContext beanContext) throws OpenEJBException {
         try {
             // initialize the object recipe
             final ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
-
             final Map<String, String> activationProperties = beanContext.getActivationProperties();
+
+            final Map<String, String> context = new HashMap<>();
+            context.put("ejbJarId", beanContext.getModuleContext().getId());
+            context.put("ejbName", beanContext.getEjbName());
+            context.put("appId", beanContext.getModuleContext().getAppContext().getId());
+
+            String hostname;
+            try {
+                hostname = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                hostname = "hostname-unknown";
+            }
+
+            context.put("hostName", hostname);
+
+            String uniqueId = Long.toString(System.currentTimeMillis());
+            try {
+                Class idGen = Class.forName("org.apache.activemq.util.IdGenerator");
+                final Object generator = idGen.getConstructor().newInstance();
+                final Method generateId = idGen.getDeclaredMethod("generateId");
+                final Object ID = generateId.invoke(generator);
+
+                uniqueId = ID.toString();
+            } catch (Exception e) {
+                // ignore and use the timestamp
+            }
+
+            context.put("uniqueId", uniqueId);
+
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
-                objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
+                objectRecipe.setMethodProperty(entry.getKey(), new StringTemplate(entry.getValue()).apply(context));
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
 

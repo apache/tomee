@@ -47,6 +47,7 @@
     <module>openejb-itests-servlets</module>
     <module>openejb-itests-web</module>
     <module>jaxrs</module>
+    <module>ejb</module>
   </modules>
 
 </project>
