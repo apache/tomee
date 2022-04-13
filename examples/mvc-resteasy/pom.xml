@@ -30,7 +30,7 @@
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
     <version.krazo>1.1.0-M1</version.krazo>
     <resteasy.version>3.6.2.Final</resteasy.version>
-    <version.arquillian>1.1.13.Final</version.arquillian>
+    <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
   </properties>
   <build>

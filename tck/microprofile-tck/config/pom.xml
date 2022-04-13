@@ -33,16 +33,33 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M6</version>
         <configuration>
+          <!--
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
           </dependenciesToScan>
+          -->
+          <suiteXmlFiles>
+            <suiteXmlFile>tck-suite.xml</suiteXmlFile>
+          </suiteXmlFiles>
           <environmentVariables>
+            <MP_TCK_ENV_DUMMY>dummy</MP_TCK_ENV_DUMMY>
             <my_int_property>45</my_int_property>
             <MY_BOOLEAN_PROPERTY>true</MY_BOOLEAN_PROPERTY>
             <my_string_property>haha</my_string_property>
             <MY_STRING_PROPERTY>woohoo</MY_STRING_PROPERTY>
+            <config_ordinal>45</config_ordinal>
+            <customer_name>Bob</customer_name>
           </environmentVariables>
+          <systemPropertyVariables>
+            <mp.tck.prop.dummy>dummy</mp.tck.prop.dummy>
+            <customer.hobby>Tennis</customer.hobby>
+            <config_ordinal>120</config_ordinal>
+          </systemPropertyVariables>
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
+          <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
     </plugins>
@@ -63,7 +80,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemPropertyVariables>
+                  <systemPropertyVariables combine.children="append">
                     <arquillian.launch>tomee-plus</arquillian.launch>
                   </systemPropertyVariables>
                 </configuration>
@@ -74,7 +91,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemPropertyVariables>
+                  <systemPropertyVariables combine.children="append">
                     <arquillian.launch>tomee-plume</arquillian.launch>
                   </systemPropertyVariables>
                 </configuration>
@@ -97,16 +114,10 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-config-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-api</artifactId>
+      <version>${microprofile.config.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.config</groupId>
-          <artifactId>microprofile-config-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>

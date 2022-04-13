@@ -21,12 +21,13 @@
   <version>9.0.0-M8-SNAPSHOT</version>
   <artifactId>mp-metrics-gauge</artifactId>
   <packaging>war</packaging>
+  <name>TomEE :: Examples :: MicroProfile Metrics Gauge</name>
   <properties>
     <junit.version>4.12</junit.version>
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
-    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
+    <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
   </properties>
   <dependencies>
     <dependency>

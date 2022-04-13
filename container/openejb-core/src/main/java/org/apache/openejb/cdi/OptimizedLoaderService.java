@@ -54,7 +54,7 @@ public class OptimizedLoaderService implements LoaderService {
 
     public OptimizedLoaderService(final Properties appConfig) {
         this(
-                is("openejb.cdi.ignore-not-loadable-extensions", appConfig, SystemInstance.get().getProperties(), "false") ?
+                is("openejb.cdi.ignore-not-loadable-extensions", appConfig, SystemInstance.get().getProperties(), "true") ?
                         new FilterableServiceLoader() : new DefaultLoaderService(),
                 appConfig);
     }

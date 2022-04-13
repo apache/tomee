@@ -59,11 +59,16 @@
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>3.0.0-M6</version>
         <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>tck-suite.xml</suiteXmlFile>
+          </suiteXmlFiles>
+          <!--
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.rest.client:microprofile-rest-client-tck</dependency>
           </dependenciesToScan>
+          -->
           <excludes>
             <!-- TODO - Remove once issue https://github.com/eclipse/microprofile-rest-client/issues/166 is solved  -->
             <exclude>org.eclipse.microprofile.rest.client.tck.InvokeWithJsonBProviderTest</exclude>
@@ -113,20 +118,16 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-rest-client-api-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.eclipse.microprofile.rest.client</groupId>
+      <artifactId>microprofile-rest-client-api</artifactId>
+      <version>${microprofile.rest-client.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.rest.client</groupId>
-          <artifactId>microprofile-rest-client-api</artifactId>
-        </exclusion>
-      </exclusions>      
+      </exclusions>
     </dependency>
 
     <dependency>

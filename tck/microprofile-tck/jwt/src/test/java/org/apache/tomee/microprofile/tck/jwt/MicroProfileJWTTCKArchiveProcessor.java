@@ -102,7 +102,7 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 try {
                     final Properties properties = new Properties();
                     properties.load(node.getAsset().openStream());
-                    properties.replaceAll((key, value) -> ((String) value).replaceAll("8080", httpPort + "/" + "KeyEndpoint.war".replaceAll("\\.war", "")));
+                    properties.replaceAll((key, value) -> ((String) value).replaceAll("8080", httpPort + "/" + testClass.getJavaClass().getSimpleName()));
                     final StringWriter stringWriter = new StringWriter();
                     properties.store(stringWriter, null);
                     war.delete(archivePath);

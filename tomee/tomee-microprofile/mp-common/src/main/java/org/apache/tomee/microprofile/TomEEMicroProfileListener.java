@@ -16,11 +16,8 @@
  */
 package org.apache.tomee.microprofile;
 
-import org.apache.geronimo.microprofile.common.jaxrs.HealthChecksEndpoint;
-import org.apache.geronimo.microprofile.impl.health.cdi.CdiHealthChecksEndpoint;
-import org.apache.geronimo.microprofile.metrics.common.jaxrs.MetricsEndpoints;
-import org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints;
-import org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.SystemInstance;
@@ -30,9 +27,8 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
+import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletRegistration;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,14 +42,20 @@ public class TomEEMicroProfileListener {
             "mp-common" };
 
     private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
-            "org.apache.geronimo.config.cdi.ConfigExtension",
-            "org.apache.safeguard.impl.cdi.SafeguardExtension",
+            // kept until we move everything to Smallrye in case jars are still there by user choice.
+            // "org.apache.geronimo.config.cdi.ConfigExtension",
+            // "org.apache.safeguard.impl.cdi.SafeguardExtension",
+            // "org.apache.geronimo.microprofile.impl.health.cdi.GeronimoHealthExtension",
+            // "org.apache.geronimo.microprofile.metrics.cdi.MetricsExtension",
+            // "org.apache.geronimo.microprofile.opentracing.microprofile.cdi.OpenTracingExtension",
+            // "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension",
+
             "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
-            "org.apache.geronimo.microprofile.impl.health.cdi.GeronimoHealthExtension",
-            "org.apache.geronimo.microprofile.metrics.cdi.MetricsExtension",
-            "org.apache.geronimo.microprofile.opentracing.microprofile.cdi.OpenTracingExtension",
-            "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension",
             "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
+            "io.smallrye.config.inject.ConfigExtension",
+            "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
+            "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
+            "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
             };
 
     @SuppressWarnings("Duplicates")
@@ -103,8 +105,8 @@ public class TomEEMicroProfileListener {
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
 
         // These remove duplicated REST API endpoints.
-        webApp.restClass.removeIf(className -> className.equals(HealthChecksEndpoint.class.getName()));
-        webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
+        webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
+        // webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
 
         // There remove all of MP REST API endpoint if there is a servlet already registered in /*. The issue here is
         // that REST path has priority over servlet and there may override old applications that have servlets
@@ -117,9 +119,10 @@ public class TomEEMicroProfileListener {
                .filter(mapping -> mapping.equals("/*"))
                .findFirst()
                .ifPresent(mapping -> {
-                   webApp.restClass.removeIf(className -> className.equals(CdiHealthChecksEndpoint.class.getName()));
-                   webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
-                   webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
+                   webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
+                   // webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
+                   // webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
                });
+
     }
 }

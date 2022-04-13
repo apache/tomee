@@ -42,7 +42,6 @@ import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.RequestScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.SessionScopedBeanInterceptorHandler;
-import org.apache.webbeans.service.ClassLoaderProxyService;
 import org.apache.webbeans.spi.ApplicationBoundaryService;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;

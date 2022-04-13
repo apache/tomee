@@ -16,16 +16,18 @@
  */
 package org.apache.tomee.microprofile.tck.opentracing;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
+import org.apache.johnzon.mapper.Mapper;
+import org.apache.johnzon.mapper.MapperBuilder;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+@Provider
+public class MicroProfileOpenTrackingContextResolver implements ContextResolver<Mapper>{
 
-public class MicroProfileOpenTrackingContextResolver implements ContextResolver<ObjectMapper>{
     @Override
-    public ObjectMapper getContext(final Class<?> type) {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
+    public Mapper getContext(final Class<?> type) {
+        return new MapperBuilder()
+            .setFailOnUnknownProperties(false)
+            .build();
     }
 }

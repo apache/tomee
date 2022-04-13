@@ -174,6 +174,7 @@ mimepull-
 mina-
 mp-jwt-
 mqtt-client-
+mutiny-
 myfaces-api
 myfaces-impl
 mysql-connector-java-
@@ -210,6 +211,7 @@ opentracing-
 openwebbeans-
 openws-
 ops4j-
+org.apache.servicemix.bundles.bcel-
 org.eclipse.
 org.junit.
 org.osgi.annotation.versioning-
@@ -222,6 +224,7 @@ plugin.jar
 poi-
 quartz-2
 quartz-openejb-
+reactive-streams-
 relaxng-datatype-
 resources.jar
 rhino-
@@ -243,6 +246,7 @@ sisu-inject
 slf4j-
 smack-
 smackx-
+smallrye-
 snakeyaml-
 snappy-java-
 spring-

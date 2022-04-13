@@ -684,6 +684,10 @@
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>*</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -713,8 +717,9 @@
     </dependency>
     -->
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>bval-jsr-shade</artifactId>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-jsr</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency> <!-- licence apache, only 110ko -->
@@ -729,6 +734,12 @@
       <version>${batchee.version}</version>
       <scope>provided</scope>
       <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.batchee</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>

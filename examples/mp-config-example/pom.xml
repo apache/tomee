@@ -21,12 +21,12 @@
   <artifactId>mp-config-example</artifactId>
   <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>MicroProfile :: Examples :: Config</name>
+  <name>TomEE :: Examples :: MicroProfile Config</name>
   <properties>
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
     <microprofile.config.version>3.0.1</microprofile.config.version>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
-    <version.arquillian>1.1.13.Final</version.arquillian>
+    <version.arquillian>1.7.0.Alpha10</version.arquillian>
   </properties>
   <dependencies>
     <dependency>

@@ -28,6 +28,7 @@
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="ajpPort">-1</property>
+      <property name="debug">false</property>
       <property name="dir">target/tomee-tck</property>
       <property name="appWorkingDir">target/tck-workdir</property>
       <property name="simpleLog">true</property>
@@ -46,6 +47,9 @@
           META-INF/javamail.default.providers,META-INF/javamail.default.address.map,\
           META-INF/javamail.charset.map,META-INF/mailcap,\
           org/slf4j/impl/StaticLoggerBinder.class
+      </property>
+      <property name="additionalLibs">
+        mvn:org.openjfx:javafx-base:11
       </property>
     </configuration>
   </container>
