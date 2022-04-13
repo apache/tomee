@@ -555,17 +555,6 @@
       <groupId>org.apache.batchee</groupId>
       <artifactId>batchee-jbatch</artifactId>
       <version>1.0.2-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.batchee</groupId>
-      <artifactId>batchee-jbatch</artifactId>
-      <version>1.0.2-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>

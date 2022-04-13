@@ -360,18 +360,12 @@
       <version>${batchee.version}</version>
       <scope>runtime</scope>
       <classifier>jakarta</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jcs-jcache</artifactId>
-      <version>${jcs.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.batchee</groupId>
-      <artifactId>batchee-jbatch</artifactId>
-      <version>${batchee.version}</version>
-      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.batchee</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
