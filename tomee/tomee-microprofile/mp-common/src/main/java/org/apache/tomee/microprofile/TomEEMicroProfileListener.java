@@ -17,6 +17,7 @@
 package org.apache.tomee.microprofile;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.SystemInstance;
@@ -26,11 +27,13 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
+import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -51,7 +54,8 @@ public class TomEEMicroProfileListener {
             "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
             "io.smallrye.config.inject.ConfigExtension",
             "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
-            "io.smallrye.opentracing.SmallRyeTracingDynamicFeature"
+            "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
+            "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
             };
 
     @SuppressWarnings("Duplicates")
@@ -101,13 +105,12 @@ public class TomEEMicroProfileListener {
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
 
         // These remove duplicated REST API endpoints.
-        // webApp.restClass.removeIf(className -> className.equals(HealthChecksEndpoint.class.getName()));
+        webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
         // webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
 
         // There remove all of MP REST API endpoint if there is a servlet already registered in /*. The issue here is
         // that REST path has priority over servlet and there may override old applications that have servlets
         // with /* mapping.
-        /*
         context.getServletRegistrations()
                .values()
                .stream()
@@ -116,10 +119,10 @@ public class TomEEMicroProfileListener {
                .filter(mapping -> mapping.equals("/*"))
                .findFirst()
                .ifPresent(mapping -> {
-                   webApp.restClass.removeIf(className -> className.equals(CdiHealthChecksEndpoint.class.getName()));
-                   webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
-                   webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
+                   webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
+                   // webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
+                   // webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
                });
-         */
+
     }
 }

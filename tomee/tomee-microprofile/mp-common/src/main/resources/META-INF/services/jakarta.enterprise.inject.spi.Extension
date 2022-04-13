@@ -1,1 +1,2 @@
 org.apache.tomee.microprofile.health.MPHealthCDIExtension
+org.apache.tomee.microprofile.metrics.MPMetricsCDIExtension

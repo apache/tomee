@@ -36,8 +36,10 @@ public class MicroProfileHealthReporterProducer {
 
         // MicroProfile Health supports the mp.health.disable-default-procedures to let users disable any vendor procedures
         final boolean defaultServerProceduresDisabled = ConfigProvider.getConfig().getOptionalValue("mp.health.disable-default-procedures", Boolean.class).orElse(false);
+
         // MicroProfile Health supports the mp.health.default.readiness.empty.response to let users specify default empty readiness responses
         final String defaultReadinessEmptyResponse = ConfigProvider.getConfig().getOptionalValue("mp.health.default.readiness.empty.response", String.class).orElse("DOWN");
+
         // MicroProfile Health supports the mp.health.default.startup.empty.response to let users specify default empty startup responses
         final String defaultStartupEmptyResponse = ConfigProvider.getConfig().getOptionalValue("mp.health.default.startup.empty.response", String.class).orElse("DOWN");
 
@@ -47,6 +49,7 @@ public class MicroProfileHealthReporterProducer {
 
         if (!defaultServerProceduresDisabled) {
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
             // todo add our own server checks
         }
 
