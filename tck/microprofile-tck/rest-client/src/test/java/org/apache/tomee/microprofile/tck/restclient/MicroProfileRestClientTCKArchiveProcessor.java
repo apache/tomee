@@ -18,11 +18,13 @@
 
 package org.apache.tomee.microprofile.tck.restclient;
 
+import org.apache.openejb.loader.JarLocation;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.path.BasicPath;
 
@@ -34,6 +36,8 @@ public class MicroProfileRestClientTCKArchiveProcessor implements ApplicationArc
         if (archive instanceof WebArchive) {
 
             WebArchive webArchive = (WebArchive) archive;
+            webArchive.addAsLibrary(JarLocation.jarLocation(org.eclipse.jetty.server.Handler.class));
+            webArchive.addAsWebInfResource(new StringAsset(""), "beans.xml");
             final Map<ArchivePath, Node> content = webArchive.getContent();
 
             final Node node = content.get(new BasicPath("META-INF/certificates-dir.txt"));
