@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.tck.opentracing;
+package org.apache.tomee.microprofile.opentracing;
 
 import io.opentracing.Span;
 import io.opentracing.Tracer;

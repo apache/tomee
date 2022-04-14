@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.tck.opentracing;
+package org.apache.tomee.microprofile.opentracing;
 
 import io.smallrye.opentracing.contrib.jaxrs2.server.SpanFinishingFilter;
 import jakarta.servlet.DispatcherType;

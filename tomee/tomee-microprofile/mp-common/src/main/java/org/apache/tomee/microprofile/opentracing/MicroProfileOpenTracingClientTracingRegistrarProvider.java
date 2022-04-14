@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.tck.opentracing;
+package org.apache.tomee.microprofile.opentracing;
 
 import io.opentracing.Tracer;
 import io.opentracing.contrib.concurrent.TracedExecutorService;
-import io.smallrye.opentracing.SmallRyeClientTracingFeature;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.ws.rs.client.ClientBuilder;
 import org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider;
