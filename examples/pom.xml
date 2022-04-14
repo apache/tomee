@@ -44,6 +44,7 @@
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-application-scope</module>
     <module>cdi-basic</module>
+    <module>cdi-dynamic-inject</module>
     <module>cdi-ejbcontext-jaas</module>
     <module>cdi-events</module>
     <module>cdi-interceptors</module>
@@ -112,6 +113,7 @@
     <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
+    <module>mp-jsonb-configuration</module>
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
     <module>mp-metrics-counted</module>
@@ -144,6 +146,7 @@
     <module>rest-on-ejb</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
+    <module>rest-sse-example</module>
     <module>rest-xml-json</module>
     <module>scala-basic</module>
     <module>schedule-expression</module>
