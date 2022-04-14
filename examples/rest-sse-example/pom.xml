@@ -21,11 +21,10 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-sse-example</artifactId>
   <packaging>war</packaging>
-  <version>8.0.11-SNAPSHOT</version>
+  <version>8.0.12-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: REST SSE Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
     <version.openjpa>3.0.0</version.openjpa>
   </properties>
   <repositories>
@@ -73,10 +72,10 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>8.0.12-SNAPSHOT</version>
         <configuration>
           <simpleLog>true</simpleLog>
-          <tomeeVersion>${tomee.version}</tomeeVersion>
+          <tomeeVersion>8.0.12-SNAPSHOT</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>

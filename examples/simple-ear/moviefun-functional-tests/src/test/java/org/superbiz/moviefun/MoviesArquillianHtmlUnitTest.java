@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.net.URL;
-import java.util.ResourceBundle;
 
 import static org.junit.Assert.assertTrue;
 
@@ -38,9 +37,8 @@ public class MoviesArquillianHtmlUnitTest {
 
     @Deployment
     public static EnterpriseArchive createDeployment() {
-        ResourceBundle mavenVersion = ResourceBundle.getBundle("version");
-
-        final EnterpriseArchive enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:" + mavenVersion.getString("version"))
+        final String earCoordinates = "org.superbiz:moviefun-ear:ear:"+System.getProperty("tomee.version");
+        final EnterpriseArchive enterpriseArchive = Maven.resolver().resolve(earCoordinates)
                 .withoutTransitivity().asSingle(EnterpriseArchive.class);
 
         System.out.println(enterpriseArchive.toString(true));
