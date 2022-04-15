@@ -55,7 +55,6 @@ public class TomEEMicroProfileListener {
             "io.smallrye.config.inject.ConfigExtension",
             "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
             "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
-            "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
             };
 
     @SuppressWarnings("Duplicates")
@@ -105,7 +104,7 @@ public class TomEEMicroProfileListener {
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
 
         // These remove duplicated REST API endpoints.
-        webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
+        // webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
         // webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
 
         // There remove all of MP REST API endpoint if there is a servlet already registered in /*. The issue here is
@@ -119,7 +118,7 @@ public class TomEEMicroProfileListener {
                .filter(mapping -> mapping.equals("/*"))
                .findFirst()
                .ifPresent(mapping -> {
-                   webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
+                   // webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
                    // webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
                    // webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
                });

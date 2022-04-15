@@ -32,6 +32,9 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
+      <property name="properties">
+        mp.health.disable-default-procedures = true
+      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plus">
@@ -46,6 +49,7 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all
+        mp.health.disable-default-procedures = true
       </property>
     </configuration>
   </container>
@@ -61,6 +65,7 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all
+        mp.health.disable-default-procedures = true
       </property>
     </configuration>
   </container>
