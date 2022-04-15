@@ -14,10 +14,6 @@
     under the License.
 -->
 <suite name="microprofile-jwt-auth-BaseTCK" verbose="1" preserve-order="true" configfailurepolicy="continue" >
-
-  <!-- The required base JAX-RS and CDI based tests that all MP-JWT implementations
-  must pass.
-  -->
   <test name="base-tests" verbose="10">
     <groups>
       <define name="base-groups">
@@ -39,8 +35,7 @@
       </run>
     </groups>
     <classes>
-      <class name="org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationURLTest" />
+      <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.AudValidationTest" />
     </classes>
   </test>
-
 </suite>

@@ -16,10 +16,10 @@
  */
 package org.apache.tomee.microprofile.tck.jwt;
 
+import org.eclipse.microprofile.jwt.tck.arquillian.BaseExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
-import org.jboss.arquillian.core.spi.LoadableExtension;
 
-public class MicroProfileJWTTCKExtension implements LoadableExtension {
+public class MicroProfileJWTTCKExtension extends BaseExtension {
     @Override
     public void register(final ExtensionBuilder extensionBuilder) {
         extensionBuilder
