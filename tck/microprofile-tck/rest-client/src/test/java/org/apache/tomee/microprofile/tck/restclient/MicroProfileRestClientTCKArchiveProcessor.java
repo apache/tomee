@@ -37,6 +37,9 @@ public class MicroProfileRestClientTCKArchiveProcessor implements ApplicationArc
 
             WebArchive webArchive = (WebArchive) archive;
             webArchive.addAsLibrary(JarLocation.jarLocation(org.eclipse.jetty.server.Handler.class));
+            webArchive.addAsLibrary(JarLocation.jarLocation(org.eclipse.jetty.util.component.LifeCycle.class));
+            webArchive.addAsLibrary(JarLocation.jarLocation(org.eclipse.jetty.http.HttpField.class));
+            webArchive.addAsLibrary(JarLocation.jarLocation(org.eclipse.jetty.io.ByteBufferPool.class));
             webArchive.addAsWebInfResource(new StringAsset(""), "beans.xml");
             final Map<ArchivePath, Node> content = webArchive.getContent();
 
