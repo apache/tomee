@@ -102,7 +102,7 @@
 
     <!-- To easily change the javaee api version -->
     <version.javaee-api>8.0-5</version.javaee-api>
-    <version.tomee-patch-plugin>0.8</version.tomee-patch-plugin>
+    <version.tomee-patch-plugin>0.9-SNAPSHOT</version.tomee-patch-plugin>
     
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
