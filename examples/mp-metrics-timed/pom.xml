@@ -25,7 +25,7 @@
   <properties>
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.2</junit.version>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
@@ -94,7 +94,7 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-      
+
     </plugins>
   </build>
   <!-- This section allows you to configure where to publish libraries for
