@@ -25,7 +25,7 @@
   <properties>
     <version.javaee-api>8.0</version.javaee-api>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.2</junit.version>
     <tomee.version>8.0.12-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>

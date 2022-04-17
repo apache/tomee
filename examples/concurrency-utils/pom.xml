@@ -25,7 +25,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaee-api.version>8.0</javaee-api.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.2</junit.version>
   </properties>
   <dependencies>
     <dependency>

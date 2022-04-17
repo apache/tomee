@@ -27,7 +27,7 @@
     <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
     <version.javaee-api>8.0</version.javaee-api>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.2</junit.version>
     <tomee.version>8.0.12-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
