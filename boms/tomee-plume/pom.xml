@@ -167,17 +167,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.2.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>commons-daemon</groupId>
       <artifactId>commons-daemon</artifactId>
       <version>1.1.0</version>
@@ -355,17 +344,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
-      <version>2.3.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-core</artifactId>
       <version>2.1</version>
       <exclusions>
@@ -379,28 +357,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
       <version>2.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-pool2</artifactId>
-      <version>2.11.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -761,204 +717,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-core</artifactId>
-      <version>1.2.16</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.16</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.16</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.16</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.16</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.neethi</groupId>
-      <artifactId>neethi</artifactId>
-      <version>3.0.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb.shade</groupId>
-      <artifactId>quartz-openejb-shade</artifactId>
-      <version>2.2.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openjpa</groupId>
-      <artifactId>openjpa</artifactId>
-      <version>3.2.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-ee</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-ee-common</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-ejb</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-el22</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-jsf</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-web</artifactId>
-      <version>2.0.26</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.santuario</groupId>
-      <artifactId>xmlsec</artifactId>
-      <version>2.2.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.bcel</artifactId>
-      <version>5.2_2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-api</artifactId>
       <version>${tomcat.version}</version>
@@ -1179,9 +937,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cxf-shade</artifactId>
-      <version>8.0.12-SNAPSHOT</version>
+      <groupId>org.apache.tomee.apache-tomee.8.0.12-SNAPSHOT.apache-tomee-8.0.12-SNAPSHOT-microprofile</groupId>
+      <artifactId>apache-tomee-microprofile-8.0.12-SNAPSHOT</artifactId>
+      <version>lib</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1433,17 +1191,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>taglibs-shade</artifactId>
-      <version>8.0.12-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-catalina</artifactId>
       <version>${project.version}</version>
       <exclusions>
@@ -1564,86 +1311,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.ws.xmlschema</groupId>
-      <artifactId>xmlschema-core</artifactId>
-      <version>2.2.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-bindings</artifactId>
-      <version>2.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-policy</artifactId>
-      <version>2.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-common</artifactId>
-      <version>2.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>2.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>2.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>2.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-asm9-shaded</artifactId>
-      <version>4.20</version>
+      <version>4.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1654,7 +1324,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-bundleutils</artifactId>
-      <version>4.20</version>
+      <version>4.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1665,7 +1335,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
-      <version>4.20</version>
+      <version>4.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1676,7 +1346,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
-      <version>4.20</version>
+      <version>4.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1687,51 +1357,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
-      <version>4.20</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-osgi</artifactId>
-      <version>1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-rmi-impl</artifactId>
-      <version>1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-rmi-spec</artifactId>
-      <version>1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-spec-corba</artifactId>
-      <version>1.4</version>
+      <version>4.21</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1754,28 +1380,6 @@
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
       <version>1.69</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.swizzle</groupId>
-      <artifactId>swizzle-stream</artifactId>
-      <version>1.6.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>stax2-api</artifactId>
-      <version>4.2.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1971,17 +1575,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>2.3.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.jasypt</groupId>
       <artifactId>jasypt</artifactId>
       <version>1.9.3</version>
@@ -2015,174 +1608,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.metatype.sxc</groupId>
-      <artifactId>sxc-jaxb-core</artifactId>
-      <version>0.8</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.metatype.sxc</groupId>
-      <artifactId>sxc-runtime</artifactId>
-      <version>0.8</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.objectweb.howl</groupId>
       <artifactId>howl</artifactId>
       <version>1.0.1-1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-core</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-profile-api</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-saml-api</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-saml-impl</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-security-api</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-security-impl</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-soap-api</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-xacml-api</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-xacml-impl</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-xacml-saml-api</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-xacml-saml-impl</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-xmlsec-api</artifactId>
-      <version>3.4.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-xmlsec-impl</artifactId>
-      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2205,28 +1633,6 @@
       <groupId>org.reactivestreams</groupId>
       <artifactId>reactive-streams</artifactId>
       <version>1.0.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.36</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.36</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
