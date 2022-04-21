@@ -13,7 +13,7 @@ xref:../../comparison.adoc[See main comparison page.]
 
 == [[specifications]] Detailed list of Java EE 7.0 and MicroProfile 1.4 specifications
 
-[options="header",cols="1,5*^0"]
+[options="header",cols="5,5*^1"]
 |===
 |Specifications|Tomcat|TomEE WebProfile|TomEE MicroProfile|TomEE Plus|TomEE Plume
 // TOMCAT
