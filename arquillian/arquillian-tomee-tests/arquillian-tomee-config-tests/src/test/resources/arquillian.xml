@@ -42,6 +42,7 @@
       <property name="appWorkingDir">target/arquillian-remote-working-dir</property>
       <property name="portRange">20001-30000</property>
       <property name="cleanOnStartUp">true</property>
+      <property name="simpleLog">true</property>
       <property name="properties">
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
@@ -58,6 +59,7 @@
       <property name="appWorkingDir">target/arquillian-remote-working-dir</property>
       <property name="portRange">20001-30000</property>
       <property name="cleanOnStartUp">true</property>
+      <property name="simpleLog">true</property>
       <property name="properties">
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
