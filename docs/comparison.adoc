@@ -1,1 +1,100 @@
+= Comparison
+:index-group: General Information
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+:icons: font
+:y: icon:check[role="green"]
 
+== Differences between TomEE versions and/or flavors
+
+xref:../../comparison.adoc[See main comparison page.]
+
+== [[specifications]] Detailed list of Jakarta EE 8.0 and MicroProfile 2.0 specifications
+
+[options="header",cols="5,5*^1"]
+|===
+|Specifications|Tomcat|TomEE WebProfile|TomEE MicroProfile|TomEE Plus|TomEE Plume
+// TOMCAT
+|https://jakarta.ee/specifications/annotations/1.3/[Jakarta Annotations^] 1.3|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/authentication/1.1/[Jakarta Authentication^] (JASPIC) 1.1|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/debugging/1.0/[Jakarta Debugging Support for Other Languages^] 1.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/security/1.0/[Jakarta Security^] (Java EE Enterprise Security) 1.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/servlet/4.0/[Jakarta Servlet^] 4.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/pages/2.3/[Jakarta Server Pages^] (JSP) 2.3|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/tags/1.2/[Jakarta Standard Tag Library^] (JSTL) 1.2|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/expression-language/3.0/[Jakarta Expression Language^] (EL) 3.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/websocket/1.1/[Jakarta WebSocket^] 1.1|{y}|{y}|{y}|{y}|{y}
+// WEB PROFILE
+|https://jakarta.ee/specifications/webprofile/8/[Jakarta Web Profile specifications^] 8.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/activation/1.2/[Jakarta Activation^] 1.2||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/bean-validation/2.0/[Jakarta Bean Validation^] 2.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/cdi/2.0/[Jakarta Contexts and Dependency Injection^] (CDI) 2.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/dependency-injection/1.0/[Jakarta Dependency Injection^] (@Inject) 1.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/enterprise-beans/3.2/[Jakarta Enterprise Beans^] (EJB) 3.2||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/faces/2.3/[Jakarta Faces^] (JSF) 2.3||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/interceptors/1.2/[Jakarta Interceptors^] 1.2||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/jsonb/1.0/[Jakarta JSON Binding^] (JSON-B) 1.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/jsonp/1.1/[Jakarta JSON Processing^] (JSON-P) 1.1||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/mail/1.6/[Jakarta Mail^] (JavaMail) 1.6||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/managedbeans/1.0/[Jakarta Managed Beans^] 1.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/persistence/2.2/[Jakarta Persistence^] (JPA) 2.2||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/restful-ws/2.1/[Jakarta RESTful Web Services^] (JAX-RS) 2.1||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/transactions/1.3/[Jakarta Transactions^] (JTA) 1.3||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/xml-binding/2.3/[Jakarta XML Binding^] (JAXB) 2.3||{y}|{y}|{y}|{y}
+// MICRO PROFILE
+|https://download.eclipse.org/microprofile/microprofile-2.0.1/microprofile-spec-2.0.1.html[MicroProfile specifications^] 2.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-config-1.3/microprofile-config-spec.html[MicroProfile Config^] 1.3|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-fault-tolerance-1.1/microprofile-fault-tolerance-spec.html[MicroProfile Fault Tolerance^] 1.1|||{y}|{y}|{y}
+|https://github.com/eclipse/microprofile-health/releases/tag/1.0/[MicroProfile Health Check^] 1.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-jwt-auth-1.1/microprofile-jwt-auth-spec.html[MicroProfile JWT Authentication^] 1.1|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-metrics-1.1/metrics_spec.html[MicroProfile Metrics^] 1.1|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-open-api-1.0/microprofile-openapi-spec.html[MicroProfile OpenAPI^] 1.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-opentracing-1.1/microprofile-opentracing.html[MicroProfile OpenTracing^] 1.1|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-rest-client-1.1/microprofile-rest-client.html[MicroProfile Rest Client^] 1.1|||{y}|{y}|{y}
+// FULL EE
+|https://jakarta.ee/specifications/platform/8/[Jakarta EE specifications^] 8.0||||{y}|{y}
+|https://jakarta.ee/specifications/authorization/1.5/[Jakarta Authorization^] (JACC) 1.5||||{y}|{y}
+|https://jakarta.ee/specifications/batch/1.0/[Jakarta Batch^] (JBatch) 1.0||||{y}|{y}
+|https://jakarta.ee/specifications/concurrency/1.1/[Jakarta Concurrency^] 1.1||||{y}|{y}
+|https://jakarta.ee/specifications/connectors/1.7/[Jakarta Connectors^] 1.7||||{y}|{y}
+|https://jakarta.ee/specifications/enterprise-ws/1.4/[Jakarta Enterprise Web Services^] 1.4||||{y}|{y}
+|https://jakarta.ee/specifications/messaging/2.0/[Jakarta Messaging^] (JMS) 2.0||||{y}|{y}
+|https://jakarta.ee/specifications/soap-attachments/1.4/[Jakarta SOAP with Attachments^] 1.4||||{y}|{y}
+|https://jakarta.ee/specifications/web-services-metadata/2.1/[Jakarta Web Services Metadata^] 2.1||||{y}|{y}
+|https://jakarta.ee/specifications/xml-web-services/2.3/[Jakarta XML Web Services^] (JAX-WS) 2.3||||{y}|{y}
+// IMPLEMENTATIONS
+|Jakarta Faces (JSF) implementation||MyFaces|MyFaces|MyFaces|*Mojarra*
+|Jakarta Persistence (JPA) implementation(s)||OpenJPA|OpenJPA|OpenJPA|OpenJPA, *EclipseLink*
+|===
+
+== [[implementations]] Implementations of Jakarta EE and MicroProfile features in TomEE
+
+[options="header",cols="1,1"]
+|===
+|Specifications|Implementations included by TomEE
+|Jakarta Annotations, Servlet, Server Pages (JSP), +
+Jakarta Expression Language (EL), WebSocket, +
+Jakarta Authentication (JASPIC), Security, ...|https://tomcat.apache.org/[Apache Tomcat^]
+|Jakarta{nbsp}Standard{nbsp}Tag{nbsp}Library{nbsp}(JSTL)|https://tomcat.apache.org/taglibs.html[Apache Standard Taglib Implementation^]
+|Jakarta Faces (JSF)|https://myfaces.apache.org/[Apache MyFaces^] *(in all TomEE flavors except Plume)* +
+https://projects.eclipse.org/projects/ee4j.mojarra[Eclipse Mojarra^] *(in TomEE Plume only)*
+|Jakarta Bean Validation|https://bval.apache.org/[Apache BVal^] *(in TomEE 8.x and earlier)* +
+https://hibernate.org/validator/[Hibernate Validator^] *(in TomEE 9.x and later)*
+|Jakarta Contexts and Dependency Injection (CDI)|https://openwebbeans.apache.org/[Apache OpenWebBeans^]
+|Jakarta Enterprise Beans (EJB)|https://openejb.apache.org/[Apache OpenEJB^]
+|Jakarta Persistence (JPA)|https://openjpa.apache.org/[Apache OpenJPA^] (in all TomEE flavors) +
+https://www.eclipse.org/eclipselink/[EclipseLink^] *(in TomEE Plume only)*
+|Jakarta Transactions (JTA)|Apache{nbsp}Geronimo{nbsp}Transaction{nbsp}Manager
+|Jakarta Mail (JavaMail)|Apache Geronimo JavaMail
+|MicroProfile|Apache Geronimo MicroProfile *(in TomEE 7.1.x and 8.x)* +
+https://smallrye.io/[SmallRye MicroProfile^] *(in TomEE 9.x and later)*
+|Jakarta JSON Binding (JSON-B), +
+Jakarta JSON Processing (JSON-P)|https://johnzon.apache.org/[Apache Johnzon^]
+|Jakarta XML Binding (JAXB)|https://projects.eclipse.org/projects/ee4j.jaxb-impl[Eclipse Implementation of JAXB^]
+|Web Services|https://cxf.apache.org/[Apache CXF^]
+|Jakarta Batch (JBatch)|https://geronimo.apache.org/batchee/[Apache BatchEE^]
+|Jakarta Messaging (JMS)|https://activemq.apache.org/[Apache ActiveMQ^]
+|===
+
+In bold : Implementations that differ between flavors or between versions
