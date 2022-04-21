@@ -983,11 +983,6 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    <repository>
-      <id>johnzon-1.2.17</id>
-      <name>Apache Johnzon 1.2.17</name>
-      <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1054</url>
-    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
