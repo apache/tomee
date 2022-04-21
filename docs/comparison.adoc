@@ -3,229 +3,91 @@
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-
-
-Apache OpenEJB and Apache TomEE are born from the same project and
-community. They differ in two major ways, only one of them technical:
-
-* TomEE incorporates two additional projects; Tomcat and MyFaces
-* TomEE, as a name, more easily implies the breadth of technologies
-included
-
-Effectively, TomEE is a superset of OpenEJB. They share the same code
-and TomEE grew out of OpenEJB.
-
-Note: this table is for TomEE 1.x, TomEE 7 comments are under it.
-
-Tomcat
-
-TomEE
-
-TomEE JAX-RS (~ Microprofile)
-
-TomEE+
-
-TomEE PluME
-
-OpenEJB
-
-Java Servlets
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java ServerPages (JSP)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java ServerFaces (JSF)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java Transaction API (JTA)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java Persistence API (JPA)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java Contexts and Dependency Injection (CDI)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java Authentication and Authorization Service (JAAS)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java Authorization Contract for Containers (JACC)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-JavaMail API
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Bean Validation
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Enterprise JavaBeans
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java API for RESTful Web Services (JAX-RS)
-
-(/)
-
-(/)
-
-(/)
-
-(/)
-
-Java API for XML Web Services (JAX-WS)
-
-(/)
-
-(/)
-
-(/)
-
-Java EE Connector Architecture
-
-(/)
-
-(/)
-
-(/)
-
-Java Messaging Service (JMS)
-
-(/)
-
-(/)
-
-(/)
-
-EclipseLink
-
-(/)
-
-Mojarra
-
-(/)
-
-TomEE 7 targets JavaEE 7 and implements these specifications (in
-parenthesis the distibution(s) containing it if not part of the basic
-packages):
-
-* WebSocket JSR 356
-* JSON-P JSR 353
-* Servlet 3.1 JSR 340
-* JSF 2.2 JSR 344
-* EL 3.0 JSR 341
-* JSP 2.3 JSR 245
-* JSTL 1.2 JSR 52
-* JBatch (plus) JSR 352
-* Concurrency utilities for EE JSR 236
-* CDI 1.2, DI, Interceptors 1.2, Common Annotations JSR 346 + JSR 330 +
-JSR 318 + JSR 250
-* Bean Validation 1.1 JSR 349
-* EJB 3.2 JSR 345
-* JavaEE Connector JSR 322
-* JPA 2.1 JSR 338 (WARNING: openjpa based distributions provide a JPA
-2.0 runtime)
-* JMS 2.0 JSR 343 (layer based on ActiveMQ 5 / JMS 1.1 for default
-distributions)
-* JTA 1.2 JSR 907
-* Javamail 1.4 (NOTE: EE 7 requires 1.5)
-* JAX-RS 2.0 JSR 339
-* JAX-WS 2.2 JSR 224
-* JAXB 2.2 JSR 222
-* and more inherited from TomEE 1/JavaEE 6
+:icons: font
+:y: icon:check[role="green"]
+:n: icon:times[role="red"]
+
+== Differences between TomEE versions and/or flavors
+
+xref:../../comparison.adoc[See main comparison page.]
+
+== [[specifications]] Detailed list of Java EE 7.0 specifications
+
+[options="header",cols="4,4*^1"]
+|===
+|Specifications|Tomcat|TomEE WebProfile|TomEE Plus|TomEE Plume
+// TOMCAT
+|https://jcp.org/en/jsr/detail?id=250[Java Annotations^] 1.2|{y}|{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=196[Java Authentication^] (JASPIC) 1.1|{y}|{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=45[Java Debugging Support for Other Languages^] 1.0|{y}|{y}|{y}|{y}
+|Java Security (Java EE Enterprise Security)|{n}|{n}|{n}|{n}
+|https://jcp.org/en/jsr/detail?id=340[Java Servlet^] 3.1|{y}|{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=245[Java Server Pages^] (JSP) 2.3|{y}|{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=52[Java Standard Tag Library^] (JSTL) 1.2|{y}|{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=341[Java Expression Language^] (EL) 3.0|{y}|{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=356[Java WebSocket^] 1.1|{y}|{y}|{y}|{y}
+// WEB PROFILE
+|https://download.oracle.com/otn-pub/jcp/java_ee-7-mrel-eval-spec/WebProfile.pdf[Java EE Web Profile specifications^] 7.0||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=925[Java Activation^] 1.2||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=349[Java Bean Validation^] 1.1||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=346[Java Contexts and Dependency Injection^] (CDI) 1.1||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=330[Java Dependency Injection^] (@Inject) 1.0||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=345[Java Enterprise Beans^] (EJB) 3.2||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=344[Java Server Faces^] (JSF) 2.2||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=318[Java Interceptors^] 1.2||{y}|{y}|{y}
+|Java JSON Binding (JSON-B)||{n}|{n}|{n}
+|https://jcp.org/en/jsr/detail?id=353[Java JSON Processing^] (JSON-P) 1.0||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=919[Java Mail^] (JavaMail) 1.5||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=316[Java Managed Beans^] 1.0||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=338[Java Persistence^] (JPA) 2.1||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=339[Java RESTful Web Services^] (JAX-RS) 2.0||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=907[Java Transactions^] (JTA) 1.2||{y}|{y}|{y}
+|https://jcp.org/en/jsr/detail?id=222[Java XML Binding^] (JAXB) 2.2||{y}|{y}|{y}
+// MICRO PROFILE
+|https://download.eclipse.org/microprofile/microprofile-1.4/microprofile-spec-1.4.html[MicroProfile specifications^]|||{n}|{n}
+// FULL EE
+|https://jcp.org/en/jsr/detail?id=342[Java EE specifications^] 7.0|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=115[Java Authorization^] (JACC) 1.5|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=352[Java Batch^] (JBatch) 1.0|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=236[Java Concurrency^] 1.0|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=322[Java Connectors^] 1.7|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=109[Java Enterprise Web Services^] 1.4|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=343[Java Messaging^] (JMS) 2.0|||{y}|{y}
+|https://jcp.org/en/jsr/platform?listBy=3&listByType=platform[Java SOAP with Attachments^] 1.3|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=181[Java Web Services Metadata^] 2.0|||{y}|{y}
+|https://jcp.org/en/jsr/detail?id=224[Java XML Web Services^] (JAX-WS) 2.2|||{y}|{y}
+// IMPLEMENTATIONS
+|Java Server Faces (JSF) implementation||MyFaces|MyFaces|*Mojarra*
+|Java Persistence (JPA) implementation(s)||OpenJPA|OpenJPA|OpenJPA, *EclipseLink*
+|===
+
+== [[implementations]] Implementations of Java EE features in TomEE
+
+[options="header",cols="1,1"]
+|===
+|Specifications|Implementations included by TomEE
+|Java Annotations, Servlet, Server Pages (JSP), +
+Java Expression Language (EL), WebSocket, +
+Java Authentication (JASPIC), Security, ...|https://tomcat.apache.org/[Apache Tomcat^]
+|Java{nbsp}Standard{nbsp}Tag{nbsp}Library{nbsp}(JSTL)|https://tomcat.apache.org/taglibs.html[Apache Standard Taglib Implementation^]
+|Java Server Faces (JSF)|https://myfaces.apache.org/[Apache MyFaces^] *(in all TomEE flavors except Plume)* +
+https://projects.eclipse.org/projects/ee4j.mojarra[Eclipse Mojarra^] *(in TomEE Plume only)*
+|Java Bean Validation|https://bval.apache.org/[Apache BVal^] *(in TomEE 8.x and earlier)* +
+https://hibernate.org/validator/[Hibernate Validator^] *(in TomEE 9.x and later)*
+|Java Contexts and Dependency Injection (CDI)|https://openwebbeans.apache.org/[Apache OpenWebBeans^]
+|Java Enterprise Beans (EJB)|https://openejb.apache.org/[Apache OpenEJB^]
+|Java Persistence (JPA)|https://openjpa.apache.org/[Apache OpenJPA^] (in all TomEE flavors) +
+https://www.eclipse.org/eclipselink/[EclipseLink^] *(in TomEE Plume only)*
+|Java Transactions (JTA)|Apache{nbsp}Geronimo{nbsp}Transaction{nbsp}Manager
+|Java Mail (JavaMail)|Apache Geronimo JavaMail
+|MicroProfile|Apache Geronimo MicroProfile *(in TomEE 7.1.x and 8.x)* +
+https://smallrye.io/[SmallRye MicroProfile^] *(in TomEE 9.x and later)*
+|Java JSON Binding (JSON-B), +
+Java JSON Processing (JSON-P)|https://johnzon.apache.org/[Apache Johnzon^]
+|Java XML Binding (JAXB)|https://projects.eclipse.org/projects/ee4j.jaxb-impl[Eclipse Implementation of JAXB^]
+|Web Services|https://cxf.apache.org/[Apache CXF^]
+|Java Batch (JBatch)|https://geronimo.apache.org/batchee/[Apache BatchEE^]
+|Java Messaging (JMS)|https://activemq.apache.org/[Apache ActiveMQ^]
+|===
+
+In bold : Implementations that differ between flavors or between versions
