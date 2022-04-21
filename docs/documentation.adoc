@@ -19,8 +19,8 @@ link:getting-started-with-eclipse-and-webby.html[Get started with
 Eclipse (m2e-Webby)] +
 link:tomee-and-netbeans.html[Get started with Netbeans]
 
-== General Informations link:comparison.html[Comparison: OpenEJB, TomEE,
-TomEE+] +
+== General Informations
+link:comparison.html[Comparison] +
 link:tomee-directory-structure.html[TomEE Directory structure] +
 link:deploying-in-tomee.html[Deploying in TomEE] +
 link:tomee-webapp.html[The 'tomee' webapp] +
