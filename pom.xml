@@ -213,7 +213,7 @@
     <version.hsqldb>2.3.4</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate>5.6.7.Final</version.hibernate>
+    <version.hibernate>6.0.0.Final</version.hibernate>
     <version.eclipselink>3.0.2</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
@@ -1885,25 +1885,29 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core-jakarta</artifactId>
+        <groupId>org.hibernate.orm</groupId>
+        <artifactId>hibernate-core</artifactId>
         <version>${version.hibernate}</version>
         <exclusions>
           <exclusion>
             <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>jakarta.transaction</groupId>
-            <artifactId>jakarta.transaction-api</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>jakarta.activation</groupId>
-            <artifactId>jakarta.activation-api</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
-            <artifactId>jboss-logging</artifactId>
-            <groupId>org.jboss.logging</groupId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

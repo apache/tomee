@@ -39,8 +39,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core-jakarta</artifactId>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
       <exclusions>
         <exclusion>
           <groupId>jakarta.persistence</groupId>
