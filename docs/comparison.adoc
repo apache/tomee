@@ -12,7 +12,7 @@ xref:../../comparison.adoc[See main comparison page.]
 
 == [[specifications]] Detailed list of Jakarta EE 8.0 and MicroProfile 2.0 specifications
 
-[options="header",cols="1,5*^0"]
+[options="header",cols="5,5*^1"]
 |===
 |Specifications|Tomcat|TomEE WebProfile|TomEE MicroProfile|TomEE Plus|TomEE Plume
 // TOMCAT
