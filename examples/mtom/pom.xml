@@ -33,7 +33,7 @@
   <repositories>
     <repository>
       <id>snapshots-apache</id>
-      <url>http://repository.apache.org/content/groups/snapshots/</url>
+      <url>https://repository.apache.org/content/groups/snapshots/</url>
     </repository>
   </repositories>
 

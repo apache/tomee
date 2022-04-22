@@ -40,7 +40,7 @@
     <repository>
       <id>tomcat-m2-repo</id>
       <name>Tomcat Dev Repository</name>
-      <url>http://tomcat.apache.org/dev/dist/m2-repository/</url>
+      <url>https://tomcat.apache.org/dev/dist/m2-repository/</url>
     </repository>
   </repositories>
 

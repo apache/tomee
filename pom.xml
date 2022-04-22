@@ -583,13 +583,18 @@
     <profile>
       <id>style</id>
       <modules>
-        <module>container/openejb-core</module>
-        <module>container/openejb-loader</module>
-        <module>container/openejb-junit</module>
-        <module>container/openejb-jpa-integration</module>
-        <module>container/openejb-javaagent</module>
-        <module>container/openejb-api</module>
+        <module>boms</module>
+        <module>itests</module>
+        <module>maven</module>
+        <module>gradle</module>
+        <module>container</module>
+        <module>server</module>
+        <module>mp-jwt</module>
+        <module>examples</module>
+        <module>assembly</module>
+        <module>tck</module>
         <module>arquillian</module>
+        <module>utils</module>
         <module>tomee</module>
       </modules>
       <properties>
@@ -600,7 +605,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
-            <version>2.3</version>
+            <version>2.5</version>
           </plugin>
         </plugins>
       </reporting>
