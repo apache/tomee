@@ -701,18 +701,6 @@
     </profile>
     <profile>
       <id>rat</id>
-      <modules>
-        <module>itests</module>
-        <module>maven</module>
-        <module>gradle</module>
-        <module>container</module>
-        <module>server</module>
-        <module>examples</module>
-        <module>arquillian</module>
-        <module>assembly</module>
-        <module>utils</module>
-        <module>tomee</module>
-      </modules>
       <build>
         <plugins>
           <plugin>
