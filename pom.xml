@@ -729,8 +729,42 @@
             <configuration>
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
+                <exclude>doap_tomee.rdf</exclude>
+                <exclude>.git/**</exclude>
+                <exclude>.github/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/js/livereload.js</exclude>
+                <exclude>**/*.ser</exclude>
+                <exclude>**/*.pem</exclude>
+                <exclude>**/*.adoc</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>**/*.json</exclude>
+                <exclude>**/*.jwk</exclude>
+                <exclude>**/src/main/resources/META-INF/**/*.xsd</exclude>
+                <exclude>**/src/main/xsdlist/xsdlist.txt</exclude>
+                <exclude>**/META-INF/services/**</exclude>
+                <exclude>**/META-INF/org.apache.openejb**</exclude>
+                <exclude>**/META-INF/org.apache.openejb**/**</exclude>
+                <exclude>**/META-INF/schema/**</exclude>
+
+                <exclude>**/src/**/*login.config</exclude>
+                <exclude>**/src/main/resources/DATA-README.txt</exclude>
+                <exclude>**/src/test/resources/test.getresources</exclude>
+                <exclude>**/src/test/resources/test/log/localhost_access_log.2014-02-07.txt</exclude>
+                <exclude>**/src/main/resources/service.readme.txt</exclude>
+                <exclude>**/src/main/resources/default.exclusions</exclude>
+                <exclude>**/src/main/resources/default.openejb.conf</exclude>
+                <exclude>**/src/test/resources/altddapp2/META-INF/test.env-entries.properties</exclude>
+                <exclude>**/src/test/resources/META-INF/multiple</exclude>
+                <exclude>**/src/test/resources/openejb.json</exclude>
+                <exclude>**/src/test/resources/appresource.resources.json</exclude>
+
+                <exclude>**/tomee-deb/src/main/resources/**/*.template</exclude>
+                <exclude>**/tomee-deb/**/precompiled-changelog</exclude>
+
+                <!-- created during shading deps -->
+                <exclude>**/dependency-reduced-pom.xml</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
@@ -740,6 +774,7 @@
                 <exclude>**/hsqldb.log</exclude>
 
                 <!-- IDEA files -->
+                <exclude>.idea/**</exclude>
                 <exclude>**/*.iml</exclude>
                 <exclude>**/*.ipr</exclude>
                 <exclude>**/*.iws</exclude>
@@ -748,6 +783,19 @@
                 <exclude>**/.*</exclude>
                 <exclude>**/.*/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
+
+                <!-- ASCIIDOC files -->
+                <exclude>docs/**</exclude>
+
+                <!-- examples -->
+                <exclude>examples/**/*.jsp</exclude>
+                <exclude>examples/**/*.css</exclude>
+                <exclude>examples/**/*.properties</exclude>
+                <exclude>examples/**/*.feature</exclude>
+                <exclude>examples/**/placeholder</exclude>
+                <exclude>examples/**/Dockerfile</exclude>
+                <exclude>examples/**/bootstrap/**</exclude>
+                <exclude>examples/**/.idea/**</exclude>
               </excludes>
             </configuration>
           </plugin>
