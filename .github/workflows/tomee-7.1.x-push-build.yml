@@ -34,5 +34,3 @@ jobs:
       run: mvn help:system -U --show-version --fail-at-end clean install -DfailIfNoTests=false -DskipTests -Pstyle,rat
       env:
         MAVEN_OPTS: -Xmx2048m
-        
-g
