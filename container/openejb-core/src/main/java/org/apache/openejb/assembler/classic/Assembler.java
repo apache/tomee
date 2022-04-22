@@ -824,11 +824,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
-                appContext.getProperties().putAll(appInfo.properties);
-
-                for (final Entry<Object, Object> entry : appContext.getProperties().entrySet()) {
-                    if (Module.class.isInstance(entry.getValue())) {
-                        appContext.getProperties().remove(entry.getKey());
+                for (final Entry<Object, Object> entry : appInfo.properties.entrySet()) {
+                    if (! Module.class.isInstance(entry.getValue())) {
+                        appContext.getProperties().put(entry.getKey(), entry.getValue());
                     }
                 }
 
