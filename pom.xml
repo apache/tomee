@@ -876,6 +876,8 @@
                 <exclude>**/js/livereload.js</exclude>
                 <exclude>**/*.ser</exclude>
                 <exclude>**/*.pem</exclude>
+                <exclude>**/*.crt</exclude>
+                <exclude>**/*.key</exclude>
                 <exclude>**/*.adoc</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>**/*.log</exclude>
