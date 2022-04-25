@@ -303,6 +303,7 @@ public class JMS2AMQTest {
         }
 
         assertTrue(Listener.sync());
+        sleep(150); // just to ensure we called send already
 
         final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> objs = mBeanServer.queryNames(new ObjectName("org.apache.activemq:type=Broker,brokerName=localhost,endpoint=dynamicProducer,*"), null);
