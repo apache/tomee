@@ -33,6 +33,9 @@ import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -158,10 +161,27 @@ public final class HttpUtil {
             final ClassLoader classLoader = ParentClassLoaderFinder.Helper.get();
             final Class<?> jspFactory = classLoader.loadClass("org.apache.jasper.runtime.JspFactoryImpl");
             final Class<?> jspFactoryApi = classLoader.loadClass("jakarta.servlet.jsp.JspFactory");
-            jspFactoryApi.getMethod("setDefaultFactory", jspFactoryApi).invoke(null, jspFactory.newInstance());
+
+            final Object newInstance = jspFactory.newInstance();
+            jspFactoryApi.getMethod("setDefaultFactory", jspFactoryApi).invoke(null, newInstance);
+
+            // bug introduced in Tomcat with https://github.com/apache/tomcat/commit/5e8eb5533f551c3dbc3003e4c2f4f0d2958a8eb3
+            // should be eventually removed when fixed
+            final Class<?> jspInitializer = classLoader.loadClass("org.apache.jasper.servlet.JasperInitializer");
+            setFinalStatic(jspInitializer.getDeclaredField("defaultFactory"), newInstance);
         } catch (final Throwable t) {
             // no-op
         }
+    }
+
+    static void setFinalStatic(final Field field, final Object newValue) throws Exception {
+        field.setAccessible(true);
+
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        field.set(null, newValue);
     }
 
     private static ClassLoader setClassLoader(final WebContext wc, final Thread thread) {
