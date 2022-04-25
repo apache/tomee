@@ -321,6 +321,10 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>jakartaee-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.myfaces.core</groupId>
+          <artifactId>myfaces-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
