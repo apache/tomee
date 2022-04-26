@@ -222,6 +222,7 @@
     <module>mp-faulttolerance-timeout</module>
     <module>xa-datasource</module>
     <module>websocket-jms</module>
+    <module>properties-provider</module>
 
     <!-- Jakarta Security Examples -->
     <module>security-tomcat-user-identitystore</module>
