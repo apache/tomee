@@ -69,7 +69,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 "META-INF/services/javax.ws.rs.client.ClientBuilder," +
                 "META-INF/services/javax.json.spi.JsonProvider," +
                 "META-INF/services/javax.cache.spi.CachingProvider," +
-                "META-INF/services/javax.persistence.spi.PersistenceProvider," +
                 "META-INF/javamail.default.providers," +
                 "META-INF/javamail.default.address.map," +
                 "META-INF/javamail.charset.map,META-INF/mailcap," +
