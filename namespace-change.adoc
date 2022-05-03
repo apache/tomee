@@ -2,13 +2,15 @@
 
 == Introduction
 
-As described in the Apache TomEE Dev https://lists.apache.org/thread/qfxykymqbm916fhrpvhm8934vwo6pvt1[mailing list], the work for the migration to the Jakarta namespace is been track by https://issues.apache.org/jira/browse/TOMEE-3862[TOMEE-3862].
-The following is a list of common dependencies upgrades, configuration, tips and tricks that can help you to jump or speed up your contribution to this migration by fixing test, examples, etc. within the project.
+As described in the Apache TomEE Dev https://lists.apache.org/thread/qfxykymqbm916fhrpvhm8934vwo6pvt1[mailing list], the work for the migration to the Jakarta namespace is tracked by https://issues.apache.org/jira/browse/TOMEE-3862[TOMEE-3862].
+The following is a list of common dependency upgrades, configuration, tips and tricks that can help you to jump or speed up your contribution to this migration by fixing test, examples, etc. within the project.
 
-If you are new to the project, don't forget to check your https://tomee.apache.org/community/index.html[Community] page containing all the details on how to contribute.
+If you are new to the project, don't forget to check our https://tomee.apache.org/community/index.html[Community] page containing all the details on how to start contributing.
 
 
 == General Notes
+
+- Use a JDK >= 11 + Maven 3.8.x
 
 - Master branch is being used for this migration.
 
@@ -171,7 +173,7 @@ a|
 </dependency>
 ----
 b|
-Or latest Tomcat 10.0.x.
+or latest Tomcat 10.0.x (depending on the Tomcat version used in the root pom.xml)
 
 
 a|
@@ -222,7 +224,7 @@ Shaded artifacts are described in the next section.
 
 
 === Shaded artifacts
-Artifacts whose projects haven't release yet a jakarta namespace compatible version are being mmodified(shaded) in the module https://github.com/apache/tomee/tree/master/deps[tomee/deps], feel free to open a pull request if you find a version that needs to be shaded.
+Artifacts whose projects have not yet released a Jakarta namespace compatible version are being modified(shaded) in the module https://github.com/apache/tomee/tree/master/deps[tomee/deps], feel free to open a pull request if you find a version that needs to be shaded.
 
 
 == Packages
