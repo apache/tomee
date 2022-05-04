@@ -32,10 +32,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.10.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>11</source>
+          <target>11</target>
         </configuration>
       </plugin>
       
@@ -58,7 +58,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     <!-- The <scope>test</scope> guarantees that none of your runtime code 
@@ -69,14 +69,15 @@
       <version>9.0.0-M8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    <!-- io.cucumber:cucumber-openejb:7.3.2 still uses javax.ejb.embeddable.EJBContainer in OpenEJBObjectFactory.java -->
     <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-openejb</artifactId>
-      <version>4.2.3</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cucumber-openejb-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.openejb</groupId>
+          <groupId>org.apache.tomee</groupId>
           <artifactId>openejb-core</artifactId>
         </exclusion>
       </exclusions>
@@ -84,14 +85,13 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>4.2.3</version>
+      <version>7.3.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <!-- needed by last released versino of cucumber-openejb -->
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>7.3.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

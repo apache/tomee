@@ -35,15 +35,14 @@ public class OverridedClientTest {
     @Deployment
     public static Archive<?> war() {
         final MavenResolverSystem resolver = Maven.resolver();
-        final String jerseyVersion = "2.17";
-        final String hkApi = "2.4.0-b16";
+        final String jerseyVersion = "3.0.4";
+        final String hkApi = "3.0.3";
         return ShrinkWrap.create(WebArchive.class, "OverridedClientTest.war")
                 .addAsServiceProvider(ClientBuilder.class.getName(), "org.glassfish.jersey.client.JerseyClientBuilder") // missing in jersey
                 .addAsLibraries(resolver.resolve("org.glassfish.jersey.core:jersey-common:" + jerseyVersion).withoutTransitivity().asFile())
                 .addAsLibraries(resolver.resolve("org.glassfish.jersey.core:jersey-client:" + jerseyVersion).withoutTransitivity().asFile())
                 .addAsLibraries(resolver.resolve("org.glassfish.hk2:hk2-api:" + hkApi).withoutTransitivity().asFile())
-                .addAsLibraries(resolver.resolve("org.glassfish.hk2:hk2-core:" + hkApi).withoutTransitivity().asFile())
-                .addAsLibraries(resolver.resolve("org.glassfish.jersey.bundles.repackaged:jersey-guava:" + jerseyVersion).withoutTransitivity().asFile());
+                .addAsLibraries(resolver.resolve("org.glassfish.hk2:hk2-core:" + hkApi).withoutTransitivity().asFile());
     }
 
     @Test

@@ -24,7 +24,7 @@
   <name>TomEE :: Examples :: MicroProfile Config Source Database</name>
   <properties>
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
-    <version.microprofile>2.0.1</version.microprofile>
+    <version.microprofile>5.0</version.microprofile>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
   </properties>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

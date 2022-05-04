@@ -22,12 +22,12 @@ import org.apache.tomee.arquillian.remote.RemoteTomEEConfiguration;
 import org.apache.tomee.arquillian.remote.RemoteTomEEContainer;
 import org.apache.tomee.microprofile.tck.jwt.validation.ExpClaimAllowMissingExpValidationTest;
 import org.apache.tomee.microprofile.tck.jwt.validation.ExpClaimValidationTest;
+import org.eclipse.microprofile.jwt.tck.arquillian.BaseWarArchiveProcessor;
 import org.eclipse.microprofile.jwt.tck.config.*;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
-import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchiveProcessor {
+public class MicroProfileJWTTCKArchiveProcessor extends BaseWarArchiveProcessor {
     @Inject
     private Instance<ContainerRegistry> containerRegistry;
 

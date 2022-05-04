@@ -54,6 +54,13 @@ public class MicroProfileHealthChecksEndpoint {
         return toResponse(reporter::getReadiness);
     }
 
+    @GET
+    @Path("started")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStartedChecks() {
+        return toResponse(reporter::getStartup);
+    }
+
 
     private Response toResponse(final Supplier<SmallRyeHealth> health) {
         return Response

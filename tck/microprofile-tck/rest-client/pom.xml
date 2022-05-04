@@ -28,6 +28,11 @@
   <artifactId>microprofile-rest-client-tck</artifactId>
   <name>TomEE :: TCK :: MicroProfile Rest Client TCK</name>
 
+  <properties>
+    <!--<jetty-tck.version>${jetty.version}</jetty-tck.version>-->
+    <jetty-tck.version>9.2.28.v20190418</jetty-tck.version>
+  </properties>
+
   <build>
     <plugins>
 
@@ -157,60 +162,60 @@
       <artifactId>wiremock</artifactId>
       <version>2.10.1</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-http</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-io</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-security</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlets</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-webapp</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-util</artifactId>
-      <version>11.0.6</version>
+      <version>${jetty-tck.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-continuation</artifactId>
+      <version>${jetty-tck.version}</version>
       <scope>test</scope>
     </dependency>
 

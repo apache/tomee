@@ -21,8 +21,11 @@ import io.opentracing.mock.MockTracer;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Singleton;
 
-@ApplicationScoped
+@Singleton
+@Default
 @Alternative
 public class MicroProfileOpenTracingTCKTracer extends MockTracer {
 }

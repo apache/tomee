@@ -147,6 +147,11 @@
       <version>4.23</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -181,7 +186,7 @@
         <version>3.0.0-M6</version>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>${project.build.directory}/dependency/suites/tck-full-suite.xml</suiteXmlFile>
+            <suiteXmlFile>${project.build.directory}/dependency/suites/tck-base-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
           <reuseForks>false</reuseForks>
           <parallel>none</parallel>

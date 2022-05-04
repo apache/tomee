@@ -24,7 +24,7 @@ import jakarta.enterprise.inject.Produces;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 
-@Dependent
+@ApplicationScoped
 public class MicroProfileHealthReporterProducer {
 
     @Produces

@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class DatabaseConfigSource implements ConfigSource {
     private DataSource dataSource;
@@ -61,6 +62,13 @@ public class DatabaseConfigSource implements ConfigSource {
         }
 
         return properties;
+    }
+
+    @Override
+    public Set<String> getPropertyNames() {
+        // lazy - we should just do a select on the name instead of evaluating the value
+        // this is example
+        return getProperties().keySet();
     }
 
     @Override
