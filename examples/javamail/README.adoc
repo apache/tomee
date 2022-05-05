@@ -1,7 +1,7 @@
 :index-group: Unrevised
 :jbake-type: page
 :jbake-status: status=published
-= Javamail API
+= Jakarta Mail API
 
 This is just a simple example to demonstrate a very basic usage of the
 API. It should be enough to get you started using the java mail
@@ -9,7 +9,7 @@ packages.
 
 #The Code
 
-== A simple REST service using the Javamail API
+== A simple REST service using the Jakarta Mail API
 
 Here we see a very simple RESTful endpoint that can be called with a
 message to send by Email. It would not be hard to modify the application

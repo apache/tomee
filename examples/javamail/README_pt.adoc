@@ -1,13 +1,13 @@
 :index-group: Unrevised
 :jbake-type: page
 :jbake-status: published
-= Javamail API
+= Jakarta Mail API
 
 Este é apenas um exemplo simples para demonstrar um uso muito básico da
 API. Deve ser o suficiente para você começar a usar o java mail
 pacotes.
 
-== Um serviço REST simples usando a API Javamail
+== Um serviço REST simples usando a API Jakarta Mail
 
 Aqui vemos um terminal RESTful muito simples que pode ser chamado com uma
 mensagem a ser enviada por e-mail. Não seria difícil modificar o aplicativo
