@@ -103,13 +103,12 @@
     <version.tomee-patch-plugin>0.9-SNAPSHOT</version.tomee-patch-plugin>
 
     <!--
-      Activation and JavaMail are both API and IMPL so we don't have them in the jakartaee-api uber jar.
+      JavaMail is both API and IMPL so we don't have them in the jakartaee-api uber jar.
       We decided to add them here in the project so we can patch/update the 2 libraries without having
       to update and release the jakartaee-api.jar. Different lifecycle.
     -->
-    <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
-    <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
-    <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
+    <geronimo-mail_2.1_spec.version>1.0.0-SNAPSHOT</geronimo-mail_2.1_spec.version>
+    <geronimo-mail_2.1_provider.version>1.0.0-SNAPSHOT</geronimo-mail_2.1_provider.version>
 
     <openjpa.version>3.2.2</openjpa.version>
     <openwebbeans.version>2.0.27-SNAPSHOT</openwebbeans.version>
@@ -1342,31 +1341,15 @@
         <artifactId>howl</artifactId>
         <version>1.0.1-1</version>
       </dependency>
-      <!-- todo hack: until we move geronimo mail to the jakarta namespace -->
-      <dependency>
-        <groupId>jakarta.mail</groupId>
-        <artifactId>jakarta.mail-api</artifactId>
-        <version>2.0.1</version>
-      </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-javamail_1.6_spec</artifactId>
-        <version>${geronimo-javamail_1.6_spec.version}</version>
+        <artifactId>geronimo-mail_2.1_spec</artifactId>
+        <version>${geronimo-mail_2.1_spec.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.geronimo.javamail</groupId>
-        <artifactId>geronimo-javamail_1.6_mail</artifactId>
-        <version>${geronimo-javamail_1.6_mail.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.javamail</groupId>
-            <artifactId>geronimo-javamail_1.6_provider</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.geronimo.mail</groupId>
+        <artifactId>geronimo-mail_2.1_provider</artifactId>
+        <version>${geronimo-mail_2.1_provider.version}</version>
       </dependency>
       <dependency>
         <groupId>stax</groupId>
