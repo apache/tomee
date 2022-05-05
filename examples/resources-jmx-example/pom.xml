@@ -17,20 +17,25 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz</groupId>
   <artifactId>resources-jmx</artifactId>
   <packaging>pom</packaging>
   <version>8.0.12-SNAPSHOT</version>
   <name>TomEE :: Examples :: Resources/JMX Example</name>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
   <modules>
     <module>resources-jmx-ejb</module>
     <module>resources-jmx-ear</module>
   </modules>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -38,6 +43,7 @@
       <url>https://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
+
   <pluginRepositories>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
@@ -45,6 +51,7 @@
       <url>https://repository.apache.org/snapshots</url>
     </pluginRepository>
   </pluginRepositories>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -65,6 +72,7 @@
       </plugins>
     </pluginManagement>
   </build>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -90,6 +98,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

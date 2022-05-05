@@ -18,14 +18,17 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz</groupId>
   <artifactId>projectstage-demo</artifactId>
   <version>8.0.12-SNAPSHOT</version>
   <name>TomEE :: Examples :: DeltaSpike ProjectStage</name>
+
   <properties>
     <tomee.version>8.0.12-SNAPSHOT</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -33,6 +36,7 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -45,6 +49,7 @@
       <artifactId>deltaspike-core-api</artifactId>
       <version>1.0.0</version>
     </dependency>
+
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
@@ -70,6 +75,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <distributionManagement>
     <repository>
       <id>localhost</id>
@@ -80,6 +86,7 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
+
   <build>
     <plugins>
       <plugin>
@@ -104,22 +111,6 @@ Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 3.194 sec <<< FA
 checkManagerValue(org.superbiz.projectstage.TestingProjectStageTest) Time elapsed: 0.131 sec <<< ERROR!
 java.lang.ClassCastException: $Proxy52 cannot be cast to org.junit.runner.RunWith -->
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

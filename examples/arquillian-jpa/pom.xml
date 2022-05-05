@@ -15,11 +15,14 @@ language governing permissions and limitations under the License. -->
   <artifactId>arquillian-jpa</artifactId>
   <name>TomEE :: Examples :: Arquillian Persistence Extension Sample</name>
   <version>8.0.12-SNAPSHOT</version>
+
   <properties>
     <arquillian_universe.version>1.2.0.1</arquillian_universe.version>
     <tomee.version>8.0.12-SNAPSHOT</tomee.version>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -32,24 +35,9 @@ language governing permissions and limitations under the License. -->
           <target>1.8</target>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -57,6 +45,7 @@ language governing permissions and limitations under the License. -->
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -121,6 +110,7 @@ language governing permissions and limitations under the License. -->
       </exclusions>
     </dependency>
   </dependencies>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -132,6 +122,7 @@ language governing permissions and limitations under the License. -->
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

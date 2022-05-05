@@ -18,19 +18,23 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz.quartz</groupId>
   <artifactId>quartz-app</artifactId>
   <version>8.0.12-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TomEE :: Examples :: Quartz</name>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.11</tomee.version>
   </properties>
+
   <modules>
     <module>quartz-ra</module>
     <module>quartz-beans</module>
   </modules>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -38,6 +42,7 @@
       <url>https://repository.apache.org/content/groups/snapshots/</url>
     </repository>
   </repositories>
+
   <build>
     <defaultGoal>install</defaultGoal>
     <pluginManagement>
@@ -59,6 +64,7 @@
       </plugins>
     </pluginManagement>
   </build>
+
   <dependencyManagement>
     <dependencies>
       <!--
@@ -94,6 +100,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
@@ -109,4 +116,5 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
+
 </project>

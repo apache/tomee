@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements. See the NOTICE file distributed with
@@ -16,15 +16,18 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz.struts</groupId>
   <artifactId>struts</artifactId>
   <packaging>war</packaging>
   <version>8.0.12-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Struts</name>
   <url>http://tomee.apache.org</url>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -34,6 +37,7 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+
     <repository>
       <releases>
         <enabled>false</enabled>
@@ -42,6 +46,7 @@
       <url>https://snapshots.repository.codehaus.org/</url>
     </repository>
   </repositories>
+
   <build>
     <finalName>struts</finalName>
     <plugins>
@@ -71,22 +76,6 @@
         <configuration>
           <url>http://localhost:8080/manager/html</url>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

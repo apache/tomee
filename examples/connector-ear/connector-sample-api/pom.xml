@@ -15,18 +15,24 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <!-- $Rev: 1387962 $ $Date: 2012-09-20 05:53:17 -0500 (Thu, 20 Sep 2012)
   $ -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>connector-ear</artifactId>
     <version>8.0.12-SNAPSHOT</version>
   </parent>
+
   <artifactId>connector-sample-api</artifactId>
   <packaging>jar</packaging>
   <name>TomEE :: Connector Examples :: Connector in EAR :: API</name>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>

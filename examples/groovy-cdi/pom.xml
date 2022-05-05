@@ -16,17 +16,21 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz</groupId>
   <artifactId>groovy-cdi</artifactId>
   <packaging>jar</packaging>
   <version>8.0.12-SNAPSHOT</version>
   <name>TomEE :: Examples :: Groovy CDI</name>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.arquillian.container>1.0.3.Final</version.arquillian.container>
   </properties>
+
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -52,24 +56,9 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -77,6 +66,7 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -114,6 +104,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <!-- This section allows you to configure where to publish libraries for
     sharing. It is not required and may be deleted. For more information see:
     http://maven.apache.org/plugins/maven-deploy-plugin/ -->
@@ -127,4 +118,6 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
+
 </project>
+

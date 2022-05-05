@@ -40,6 +40,7 @@
       <artifactId>tomee-plus</artifactId>
     </dependency>
   </dependencies>
+
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

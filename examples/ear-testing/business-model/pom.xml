@@ -16,7 +16,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
 <!-- $Rev: 638272 $ $Date: 2008-03-18 01:59:59 -0700 (Tue, 18 Mar 2008) $ -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.superbiz</groupId>
@@ -27,6 +29,7 @@
   <artifactId>business-model</artifactId>
   <packaging>jar</packaging>
   <name>TomEE :: Examples :: Ear Testing :: Business Model</name>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -38,5 +41,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
+
 </project>

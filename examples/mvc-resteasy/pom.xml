@@ -18,6 +18,7 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.superbiz</groupId>
   <artifactId>mvc-resteasy</artifactId>
   <packaging>war</packaging>
@@ -25,6 +26,7 @@
   <description>OpenEJB :: Web Examples :: MVC 1.0 - RestEasy</description>
   <version>8.0.12-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.12-SNAPSHOT</tomee.version>
@@ -33,6 +35,7 @@
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
   </properties>
+
   <build>
     <finalName>mvc-resteasy</finalName>
     <plugins>
@@ -58,25 +61,8 @@
           <args>-Xmx512m -XX:PermSize=256m</args>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1a</version>
-        <configuration>
-          <classifier>jakartaee9</classifier>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -108,12 +94,14 @@
       <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
+
     <!-- MVC 1.0(JSR 371) -->
     <dependency>
       <groupId>org.eclipse.krazo</groupId>
       <artifactId>krazo-resteasy</artifactId>
       <version>${version.krazo}</version>
     </dependency>
+
     <!-- RestEasy -->
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
@@ -130,6 +118,7 @@
       <artifactId>resteasy-servlet-initializer</artifactId>
       <version>${resteasy.version}</version>
     </dependency>
+
     <!--  tests  -->
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
@@ -166,6 +155,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
