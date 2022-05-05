@@ -1,12 +1,13 @@
-:index-group: Unrevised :jbake-type: page :jbake-status:
-status=published = Websocket TLS Basic Auth
+:index-group: Websocket TLS Basic Auth
+:jbake-type: page
+:jbake-status: status=published
 
-== websocket-tls-basic-auth
+= Websocket TLS Basic Auth
 
 Projeto de exemplo de Websocket usando SSL e autenticação básica.
 
-Isto foi originalmente criado para o TomEE 8.0.0. usando o Java EE 8 e o Websocket
-API 1.1.
+Isto foi originalmente criado para o TomEE 9. usando o Jakarta EE 9 e o Websocket
+API 2.0.
 
 O exemplo foi criado com um servidor para o tipo de conexão do servidor em mente. 
 Para conexões do navegador ao servidor, você precisará consultar um

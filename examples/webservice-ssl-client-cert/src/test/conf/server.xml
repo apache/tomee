@@ -32,11 +32,15 @@
         protocol="org.apache.coyote.http11.Http11NioProtocol"
         port="8443" maxThreads="200"
         scheme="https" secure="true" SSLEnabled="true"
-        keystoreFile="../../../serverStore.jks" keystorePass="keystorePass"
-        keyAlias="serveralias" keyPass="serverPassword"
-        clientAuth="true" sslProtocol="TLS"
-        truststoreType="jks" truststorePass="keystorePass"
-        truststoreFile="../../../serverStore.jks"/>
+        clientAuth="true" sslProtocol="TLS">
+      <SSLHostConfig>
+        <Certificate
+                certificateKeystoreFile="../../../serverStore.jks"
+                certificateKeystorePassword="keystorePass"
+                type="RSA"
+        />
+      </SSLHostConfig>
+    </Connector>
 
     <Engine name="Catalina" defaultHost="localhost">
       <Host name="localhost" appBase="webapps"
