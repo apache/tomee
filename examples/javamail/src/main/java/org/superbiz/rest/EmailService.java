@@ -16,51 +16,57 @@
  */
 package org.superbiz.rest;
 
-import jakarta.mail.Authenticator;
+import jakarta.annotation.Resource;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
+import jakarta.mail.URLName;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import java.util.Date;
-import java.util.Properties;
 
 @Path("/email")
 public class EmailService {
+
+    @Resource(mappedName = "java:comp/env/tomee/mail/exampleSMTP")
+    private Session mailSession;
 
     @POST
     public String lowerCase(final String message) {
 
         try {
 
-            //Create some properties and get the default Session
-            final Properties props = new Properties();
-            props.put("mail.smtp.host", "your.mailserver.host");
-            props.put("mail.debug", "true");
+            /* Ensures that smtp authentication mechanism works as configured */
+            boolean authenticate = "true".equals(mailSession.getProperty("mail.smtp.auth"));
+            if (authenticate) {
+                final String username = mailSession.getProperty("mail.smtp.user");
+                final String password = mailSession.getProperty("mail.smtp.password");
 
-            final Session session = Session.getInstance(props, new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("MyUsername", "MyPassword");
-                }
-            });
+                final URLName url = new URLName(
+                        mailSession.getProperty("mail.transport.protocol"),
+                        mailSession.getProperty("mail.smtp.host"), -1, null,
+                        username, null);
+
+                mailSession.setPasswordAuthentication(url, new PasswordAuthentication(username, password));
+            } else {
+                return "Using EMailService without SMTP auth configured. This might be valid, but could also be dangerous!";
+            }
 
             //Set this just to see some internal logging
-            session.setDebug(true);
+            mailSession.setDebug(true);
 
             //Create a message
-            final MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("your@email.address"));
+            final MimeMessage msg = new MimeMessage(mailSession);
+            msg.setFrom(new InternetAddress("admin@localhost")); //your e-mail address
             final InternetAddress[] address = {new InternetAddress("user@provider.com")};
             msg.setRecipients(Message.RecipientType.TO, address);
             msg.setSubject("JavaMail API test");
             msg.setSentDate(new Date());
             msg.setText(message, "UTF-8");
-
 
             Transport.send(msg);
         } catch (final MessagingException e) {
