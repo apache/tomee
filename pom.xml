@@ -190,7 +190,7 @@
     <commons-net.version>3.8.0</commons-net.version>
 
     <bval.version>2.0.5</bval.version>
-    <org.apache.activemq.version>5.16.4</org.apache.activemq.version>
+    <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
