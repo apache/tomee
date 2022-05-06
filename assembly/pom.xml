@@ -31,7 +31,5 @@
   <modules>
     <module>openejb-standalone</module>
     <module>openejb-lite</module>
-    <!-- don't run this just yet, its in progress -->
-    <!-- <module>itest-runner</module> -->
   </modules>
 </project>
