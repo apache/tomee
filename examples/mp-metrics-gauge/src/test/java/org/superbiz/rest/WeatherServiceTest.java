@@ -88,7 +88,9 @@ public class WeatherServiceTest {
                 .request()
                 .accept(MediaType.TEXT_PLAIN)
                 .get(String.class);
-        assertEquals("# TYPE application:weather_day_temperature_celsius gauge\napplication:weather_day_temperature_celsius{weather=\"temperature\"} 30.0\n", metric);
+        assertEquals("# HELP application_weather_day_temperature_celsius This metric shows the day temperature.\n" +
+                     "# TYPE application_weather_day_temperature_celsius gauge\n" +
+                     "application_weather_day_temperature_celsius{weather=\"temperature\"} 30.0\n", metric);
     }
 
     private void assertJsonFormat(final String metricPath) {
@@ -102,13 +104,20 @@ public class WeatherServiceTest {
         assertNotNull(metric);
 
         JsonObject metricJson = Json.createReader(new StringReader(metric)).readObject();
-        final int temperature = metricJson.getInt("weather_day_temperature");
+        final int temperature = metricJson.getInt("weather_day_temperature;weather=temperature");
         assertEquals(temperature, 30);
     }
 
     @Test
     public void testGaugeMetricMetadata() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
+
+        final Integer temperature = webTarget
+            .path("/weather/day/temperature")
+            .request()
+            .get(Integer.class);
+        assertEquals(Integer.valueOf(30), temperature);
+
         final Response response = webTarget
                 .path("/metrics/application/weather_day_temperature")
                 .request()
@@ -121,11 +130,8 @@ public class WeatherServiceTest {
         String[] expectedKeys = {
                 "description",
                 "displayName",
-                "name",
-                "reusable",
                 "tags",
                 "type",
-                "typeRaw",
                 "unit"
         };
 
