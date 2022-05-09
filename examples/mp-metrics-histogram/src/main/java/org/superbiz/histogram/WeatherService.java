@@ -18,6 +18,7 @@ package org.superbiz.histogram;
 
 import org.eclipse.microprofile.metrics.Histogram;
 import org.eclipse.microprofile.metrics.Metadata;
+import org.eclipse.microprofile.metrics.MetadataBuilder;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.annotation.Metric;
@@ -48,8 +49,12 @@ public class WeatherService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Histogram getTemperatures() {
-        Metadata metadata = new Metadata("temperatures", MetricType.HISTOGRAM, "degrees F");
-        metadata.setDescription("A histogram of recent New York temperatures.");
+        final Metadata metadata = new MetadataBuilder()
+            .withName("temperatures")
+            .withDescription("A histogram of recent New York temperatures.")
+            .withType(MetricType.HISTOGRAM)
+            .withUnit("degrees F")
+            .build();
         histogram = registry.histogram(metadata);
         for(int temp : RECENT_NEW_YORK_TEMPS) {
             histogram.update(temp);
