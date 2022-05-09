@@ -100,7 +100,7 @@
 
     <!-- To easily change the javaee api version -->
     <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
-    <version.tomee-patch-plugin>0.9-SNAPSHOT</version.tomee-patch-plugin>
+    <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
 
     <!--
       JavaMail is both API and IMPL so we don't have them in the jakartaee-api uber jar.
