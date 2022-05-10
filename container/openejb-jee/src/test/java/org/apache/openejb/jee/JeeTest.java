@@ -18,22 +18,21 @@
 
 package org.apache.openejb.jee;
 
+import jakarta.xml.bind.*;
+import java.io.*;
+import java.util.List;
+import java.util.Properties;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
 import junit.framework.TestCase;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
-
-import javax.xml.XMLConstants;
-import jakarta.xml.bind.*;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
-import java.io.*;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
@@ -224,7 +223,7 @@ public class JeeTest extends TestCase {
     public void testTld() throws Exception {
         marshalAndUnmarshal(TldTaglib.class, "tld-example.xml", null);
     }
-
+    
     public void testRar10() throws Exception {
         final Connector10 c10 = marshalAndUnmarshal(Connector10.class, "connector-1.0-example.xml", null);
         final Connector c = Connector.newConnector(c10);
@@ -277,6 +276,10 @@ public class JeeTest extends TestCase {
             System.out.println(JaxbJavaee.marshal(HandlerChains.class, handlerChains));
         }
     }
+    
+    public void testWebFragment() throws Exception {
+        marshalAndUnmarshal(WebFragment.class, "web-fragment-example.xml", null);
+    }
 
     public static <T> T marshalAndUnmarshal(final Class<T> type, final String sourceXmlFile, final String expectedXmlFile) throws Exception {
         final InputStream in = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
@@ -306,7 +309,7 @@ public class JeeTest extends TestCase {
         try {
             StaxCompare.compare(expected, actual);
         } catch (final Exception e) {
-//            System.out.append(actual);
+            System.out.append(actual);
             writeToTmpFile(bytes, sourceXmlFile);
             throw e;
         }
