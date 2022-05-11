@@ -28,8 +28,7 @@
             <property name="appWorkingDir">target/arquillian-remote-working-dir</property>
             <property name="cleanOnStartUp">true</property>
             <property name="additionalLibs">
-                <!-- add hibernate 5 need it jars to the server-->
-                mvn:org.hibernate:hibernate-core-jakarta:5.6.7.Final
+                mvn:org.hibernate:hibernate-core-jakarta:5.6.8.Final
                 mvn:org.hibernate.common:hibernate-commons-annotations:5.1.2.Final
                 mvn:antlr:antlr:2.7.7
                 mvn:org.jboss:jandex:2.4.2.Final
@@ -37,7 +36,6 @@
                 mvn:net.bytebuddy:byte-buddy:1.12.8
                 mvn:com.fasterxml:classmate:1.5.1
             </property>
-<!--            <property name="debug">true</property>-->
         </configuration>
     </container>
 </arquillian>
