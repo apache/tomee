@@ -1021,18 +1021,11 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-
-    <repository>
-      <id>jakartaee-api-9.1-M2-SNAPSHOT</id>
-      <name>Jakarta EE API 9.1-M2-SNAPSHOT Staging</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1195/</url>
-    </repository>
-
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>apache-m2-snapshot</id>
-      <name>Apache Software Foundation M2 Snapshot Repository</name>
+      <id>apache-plugin-snapshot</id>
+      <name>Apache Software Foundation Plugin Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
       <releases>
         <enabled>false</enabled>
@@ -1042,10 +1035,17 @@
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>plugin-jakartaee-api-9.1-M2-SNAPSHOT</id>
-      <name>Jakarta EE API 9.1-M2-SNAPSHOT Staging</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1195/</url>
+      <id>apache-plugin-release</id>
+      <name>Apache Software Foundation Plugin Release Repository</name>
+      <url>https://repository.apache.org/content/repositories/releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </pluginRepository>
+
   </pluginRepositories>
   <dependencyManagement>
     <dependencies>
