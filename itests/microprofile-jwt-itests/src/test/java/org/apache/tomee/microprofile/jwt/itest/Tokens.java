@@ -29,6 +29,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 
 /**
  * Utilities for generating a JWT for testing
@@ -62,6 +63,10 @@ public class Tokens {
 
     public PublicKey getPublicKey() {
         return publicKey;
+    }
+
+    public String getEncodedPublicKey() {
+        return Base64.getEncoder().encodeToString(publicKey.getEncoded());
     }
 
     public String asToken(final String claims) throws Exception {
