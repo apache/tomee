@@ -351,8 +351,11 @@ public class JaxbJavaee {
         }
 
         protected String eeUri(final String uri) {
-            // if ee 7 then switch back on ee 6 to not break compatibility - to rework surely when we'll be fully ee 7
-            return "http://xmlns.jcp.org/xml/ns/javaee".equals(uri) ? "http://java.sun.com/xml/ns/javaee" : uri;
+            // if ee 7 or jakarta ee then switch back on ee 6 to not break compatibility - to rework surely when we'll be fully ee 7 or jakarta ee
+            if ("http://xmlns.jcp.org/xml/ns/javaee".equals(uri) || "https://jakarta.ee/xml/ns/jakartaee".equals(uri)){
+                return "http://java.sun.com/xml/ns/javaee";
+            }
+            return uri;
         }
 
         @Override
