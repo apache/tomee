@@ -18,21 +18,22 @@
 
 package org.apache.openejb.jee;
 
-import jakarta.xml.bind.*;
-import java.io.*;
-import java.util.List;
-import java.util.Properties;
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
 import junit.framework.TestCase;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
+
+import javax.xml.XMLConstants;
+import jakarta.xml.bind.*;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+import java.io.*;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
