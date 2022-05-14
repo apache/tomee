@@ -17,8 +17,6 @@
 package org.apache.tomee.bootstrap;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.ToString;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
@@ -139,7 +137,10 @@ public class GenerateBoms {
         for (File file : srcConf.listFiles()) {
             if (file.getName().endsWith(".original")) continue;
             try {
-                IO.copy(file, new File(destConf, file.getName()));
+                // Read the content and update the line endings to reduce
+                // git status pollution as these files are checked in
+                final String content = IO.slurp(file).replaceAll("\r\n|\n", System.lineSeparator());
+                IO.copy(IO.read(content), new File(destConf, file.getName()));
             } catch (IOException e) {
                 throw new UncheckedIOException("Cannot copy configuration file: " + file.getName(), e);
             }
@@ -595,7 +596,7 @@ public class GenerateBoms {
                     "      <groupId>" + groupId + "</groupId>\n" +
                     "      <artifactId>" + artifactId + "</artifactId>\n" +
                     "      <version>" + version + "</version>\n" +
-                   (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
+                    (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
                     "      <exclusions>\n" +
                     "        <exclusion>\n" +
                     "          <artifactId>*</artifactId>\n" +
@@ -616,7 +617,7 @@ public class GenerateBoms {
                     "      <groupId>" + groupId + "</groupId>\n" +
                     "      <artifactId>" + artifactId + "</artifactId>\n" +
                     "      <version>" + version + "</version>\n" +
-                   (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
+                    (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
                     "    </dependency>\n";
         }
     }

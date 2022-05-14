@@ -25,7 +25,7 @@
   <name>TomEE :: Examples :: DeltaSpike @ConfigProperty</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.deltaspike>1.9.6</version.deltaspike>
+    <version.deltaspike>1.9.7-SNAPSHOT</version.deltaspike>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
