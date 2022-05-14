@@ -67,7 +67,7 @@ public class InvalidSignatureTest {
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
                 .watch("org.apache.tomee.microprofile.jwt.", "\n", output::add)
-                .update()
+//                .update()
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
