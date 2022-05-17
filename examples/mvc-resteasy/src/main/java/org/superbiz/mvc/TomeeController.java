@@ -17,8 +17,8 @@
 package org.superbiz.mvc;
 
 import jakarta.inject.Inject;
-import javax.mvc.Controller;
-import javax.mvc.Models;
+import jakarta.mvc.Controller;
+import jakarta.mvc.Models;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;

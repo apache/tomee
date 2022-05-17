@@ -50,7 +50,7 @@ public class MVCTest {
     public static WebArchive createDeployment() {
         File[] files = Maven.resolver()
                             .loadPomFromFile("pom.xml")
-                            .importRuntimeDependencies()
+                            .importCompileAndRuntimeDependencies()
                             .resolve()
                             .withTransitivity()
                             .asFile();
