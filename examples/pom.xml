@@ -83,6 +83,7 @@
     <module>ejb-remote-call</module>
     <module>ejb-remote-call-2</module>
     <module>ejb-webservice</module>
+    <module>filter-cdi</module>
     <module>groovy-cdi</module>
     <module>groovy-jpa</module>
     <module>groovy-spock</module>

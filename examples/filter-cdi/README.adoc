@@ -1,0 +1,91 @@
+= Filter CDI
+:index-group: Misc
+:jbake-type: page
+:jbake-status: published
+
+*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
+
+== Using CDI beans in a Servlet Filter
+
+This is a simple example to demonstrate using CDI beans in a Servlet Filter. This example comprises four Java Classes:
+
+* Counter - this is an Application Scoped CDI bean to provide a global counter
+* RequestRole - this is a Request Scoped CDI bean which holds a role name. This bean is injected into a filter to set the role name, and into a JAX-RS endpoint to read it
+* ExampleFilter - Example Servlet Filter to set the rolename on the Request Role
+* ExampleEndpoint - JAX-RS endpoint that reads the rolename on the Request Role
+
+
+[source,java,numbered]
+----
+@ApplicationScoped
+public class Counter {
+
+    private final AtomicInteger count = new AtomicInteger(0);
+
+    public int get() {
+        return count.incrementAndGet();
+    }
+
+}
+----
+
+[source,java,numbered]
+----
+@RequestScoped
+public class RequestRole {
+
+    private String role;
+
+    public RequestRole() {
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(final String role) {
+        this.role = role;
+    }
+}
+----
+
+[source,java,numbered]
+----
+@WebFilter(urlPatterns = "/*")
+public class ExampleFilter implements Filter {
+
+    @Inject
+    private RequestRole requestRole;
+
+    @Inject Counter counter;
+
+    @Override
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        requestRole.setRole("sample-role-" + counter.get());
+        chain.doFilter(request, response);
+    }
+}
+----
+
+[source,java,numbered]
+----
+@Path("example")
+public class ExampleEndpoint {
+
+	@Inject
+	private RequestRole requestRole;
+
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String get(@Context HttpServletRequest request) {
+		return requestRole.getRole();
+	}
+
+}
+----
+
+Steps to replicate:
+
+   1. Run mvn clean install tomee:run
+   2. Startup server and go to http://localhost:8080/filter-cdi/example
+   3. You should see the sample role set in the filter, with a unique number appended on the end.
