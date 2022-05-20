@@ -50,7 +50,7 @@ language governing permissions and limitations under the License. -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>8.0-5</version>
+      <version>8.0-6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
