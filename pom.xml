@@ -107,7 +107,7 @@
       We decided to add them here in the project so we can patch/update the 2 libraries without having
       to update and release the jakartaee-api.jar. Different lifecycle.
     -->
-    <geronimo-mail_2.1_spec.version>1.0.0-SNAPSHOT</geronimo-mail_2.1_spec.version>
+    <geronimo-mail_2.1_spec.version>1.0.0-M1</geronimo-mail_2.1_spec.version>
     <geronimo-mail_2.1_provider.version>1.0.0-SNAPSHOT</geronimo-mail_2.1_provider.version>
 
     <!-- Not yet included in EE APIs -->
