@@ -145,6 +145,12 @@
 
     <!-- debugging: said otherwise you can remove them, kept to ease future debugging if needed -->
     <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jcache_1.0_spec</artifactId>
+      <version>${geronimo-jcache_1.0_spec.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
       <version>${jcs.version}</version>
