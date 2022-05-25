@@ -213,7 +213,7 @@
       'examples' have issues with hsqldb > 2.3.5
       'QuartzPersistenceForEJBTimersTest' cannot obtain a connection -> never timeouts
     -->
-    <version.hsqldb>2.3.4</version.hsqldb>
+    <version.hsqldb>2.5.2</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>5.6.7.Final</version.hibernate>
