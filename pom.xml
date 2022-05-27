@@ -101,7 +101,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-6-SNAPSHOT</version.javaee-api>
+    <version.javaee-api>8.0-6</version.javaee-api>
     <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
     
     <!--
