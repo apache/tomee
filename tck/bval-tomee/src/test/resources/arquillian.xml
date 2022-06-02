@@ -34,22 +34,6 @@
       <property name="simpleLog">true</property>
       <property name="properties">
         validation.provider = org.apache.bval.jsr.ApacheValidationProvider
-
-        # disable our filtering feature for TCK - but it is important to keep it at runtime since
-        # that's what users rely on
-        #
-        # note: this config just drop ValidationProvider from this list
-        #
-        openejb.classloader.filterable-resources = \
-          META-INF/services/jakarta.ws.rs.client.ClientBuilder,\
-          META-INF/services/jakarta.json.spi.JsonProvider,\
-          META-INF/services/javax.cache.spi.CachingProvider,\
-          META-INF/javamail.default.providers,META-INF/javamail.default.address.map,\
-          META-INF/javamail.charset.map,META-INF/mailcap,\
-          org/slf4j/impl/StaticLoggerBinder.class
-      </property>
-      <property name="additionalLibs">
-        mvn:org.openjfx:javafx-base:11
       </property>
     </configuration>
   </container>
