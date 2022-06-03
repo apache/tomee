@@ -117,7 +117,7 @@
     <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
 
     <openjpa.version>3.2.2</openjpa.version>
-    <openwebbeans.version>2.0.26</openwebbeans.version>
+    <openwebbeans.version>2.0.27</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.18</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
