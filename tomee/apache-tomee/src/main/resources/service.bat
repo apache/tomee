@@ -88,6 +88,7 @@ goto okJavaHome
 :gotJreHome
 if not exist "%JRE_HOME%\bin\java.exe" goto noJavaHome
 if not exist "%JRE_HOME%\bin\javaw.exe" goto noJavaHome
+for /f tokens^=2^ delims^=.-_^" %%j in ('"%JRE_HOME%\bin\java.exe" -fullversion 2^>^&1') do set "JAVA_MAJOR_VERSION=%%j"
 goto okJavaHome
 :gotJdkHome
 for /f tokens^=2^ delims^=.-_^" %%j in ('"%JAVA_HOME%\bin\java.exe" -fullversion 2^>^&1') do set "JAVA_MAJOR_VERSION=%%j"
