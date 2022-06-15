@@ -22,6 +22,7 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +53,7 @@ public class MaxInstanceEndpointHandlerTest {
 
             .p("sra", "new://Resource?type=ActiveMQResourceAdapter")
             .p("sra.threadPoolSize", "100")
+            .p("sra.brokerXmlConfig", "broker:(tcp://localhost:" + NetworkUtil.getNextAvailablePort() + ")?useJmx=false")
 
             .p("mdbs", "new://Container?type=MESSAGE")
             .p("mdbs.ResourceAdapter", "sra")

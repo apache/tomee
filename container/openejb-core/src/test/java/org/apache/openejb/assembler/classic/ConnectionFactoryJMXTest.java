@@ -29,6 +29,8 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import jakarta.annotation.Resource;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
+import org.apache.openejb.util.NetworkUtil;
+
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.IntrospectionException;
@@ -53,8 +55,16 @@ public class ConnectionFactoryJMXTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
+        // define props for RA in order to change the default activeMQ port
+        final Properties props = new Properties();
+        final String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "");
+        final String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false";
+        props.put("BrokerXmlConfig", brokerXmlConfig);
+        props.put("StartupTimeout", 10000);
+
         // Fake connection factory
-        assembler.createResource(config.configureService("Default JMS Resource Adapter", ResourceInfo.class));
+        assembler.createResource(config.configureService(ResourceInfo.class, "Default JMS Resource Adapter",
+                 props, "Default JMS Resource Adapter", "ActiveMQResourceAdapter"));
         final ResourceInfo resourceInfo = config.configureService("Default JMS Connection Factory", ResourceInfo.class);
         resourceInfo.id = "CF";
         resourceInfo.properties.setProperty("TransactionSupport", "xa");

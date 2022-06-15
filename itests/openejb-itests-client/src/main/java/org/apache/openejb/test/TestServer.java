@@ -23,12 +23,12 @@ import java.util.Properties;
  */
 public interface TestServer {
 
-    public void init(Properties props);
+    void init(Properties props);
 
-    public void start();
+    void start();
 
-    public void stop();
+    void stop();
 
-    public Properties getContextEnvironment();
+    Properties getContextEnvironment();
 
 }
