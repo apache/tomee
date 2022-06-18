@@ -22,7 +22,6 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -31,26 +30,30 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.superbiz.arquillian.persistence.User;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 public class PersistenceTest {
+   
     @Deployment
     public static Archive<?> createDeploymentPackage() {
         return ShrinkWrap.create(WebArchive.class, "UserPersistenceTest.war")
                 .addPackage(User.class.getPackage())
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsManifestResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml");
     }
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "demoApplicationPU")
     private EntityManager em;
     
     @EJB
@@ -70,14 +73,21 @@ public class PersistenceTest {
     @UsingDataSet("datasets/users.yml")
     @ShouldMatchDataSet("datasets/expected-users.yml")
     public void testWithTransaction() throws Exception {
+        em.persist(new User(1L, "TomEE"));
+        em.persist(new User(2L, "Old"));
         assertEquals(2, em.createQuery("select count(e) from User e", Number.class).getSingleResult().intValue());
+        
+        final User user = em.find(User.class, 2L);
+        assertNotNull(user);
+        
+        user.setName("OpenEJB"); // @Transactional(TransactionMode.COMMIT) will commit it and datasets/expected-users.yml will check it
 
-        transactionalCaller.call(new Callable() {
-            public Object call() throws Exception {
-                seriouslyYouAlreadyForgotOpenEJB_questionMark();
-                return null;
-            }
-        });
+//        transactionalCaller.call(new Callable() {
+//            public Object call() throws Exception {
+//                seriouslyYouAlreadyForgotOpenEJB_questionMark();
+//                return null;
+//            }
+//        });
     }
     
     public static interface Caller {

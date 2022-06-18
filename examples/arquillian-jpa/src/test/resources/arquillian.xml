@@ -25,7 +25,7 @@
     <property name="defaultDataSource">openejb:Resource/demoDataSource</property>
   </extension>
 
-  <container qualifier="tomee" default="true">
+  <container qualifier="tomee-embedded" default="true">
     <configuration>
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
