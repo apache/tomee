@@ -206,8 +206,11 @@
     <module>resources-jmx-example</module>
     <module>websocket-tls-basic-auth</module>
     <module>concurrency-utils</module>
+    <!-- Deltaspike and others not jakarta compliant
+    Too many to relocate for an example
     <module>mvc-cxf</module>
     <module>mvc-cxf-hibernate</module>
+    -->
     <module>mp-rest-client</module>
     <module>mvc-resteasy</module>
     <module>mp-custom-healthcheck</module>
