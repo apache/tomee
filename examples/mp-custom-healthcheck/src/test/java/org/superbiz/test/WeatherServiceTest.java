@@ -20,6 +20,7 @@ import java.io.StringReader;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
@@ -38,9 +39,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.net.URL;
+import java.util.Optional;
+
 import org.superbiz.WeatherEndpoint;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class WeatherServiceTest {
@@ -65,19 +69,26 @@ public class WeatherServiceTest {
     @Test
     @InSequence(1)
     public void testHealthCheckUpService() {
-        WebTarget webTarget = this.client.target(this.base.toExternalForm());
-        String json = webTarget.path("/health").request(MediaType.APPLICATION_JSON).get().readEntity(String.class);
+        final WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final String json = webTarget.path("/health").request(MediaType.APPLICATION_JSON).get().readEntity(String.class);
 
-        JsonArray checks = this.readJson(json).getJsonArray("checks");
-        JsonObject data = checks.getJsonObject(0).getJsonObject("data");
+        final JsonArray checks = this.readJson(json).getJsonArray("checks");
+
+        final Optional<JsonValue> weatherCheck = checks.stream()
+                                               .filter(c -> "OpenWeatherMap".equals(c.asJsonObject().getString("name")))
+                                               .findFirst();
+
+        assertTrue(weatherCheck.isPresent());
+        final JsonObject weatherJson = weatherCheck.get().asJsonObject();
+        final JsonObject data = weatherJson.getJsonObject("data");
 
         assertEquals("http://api.openweathermap.org/data/2.5/", data.getString("weatherServiceApiUrl"));
         assertEquals("2.5",  data.getString("weatherServiceApiVersion"));
         assertEquals("Your account will become unavailable soon due to limitation of " +
                 "your subscription type. Remaining API calls are 1",  data.getString("weatherServiceMessage"));
 
-        assertEquals("OpenWeatherMap", checks.getJsonObject(0).getString("name"));
-        assertEquals("UP", checks.getJsonObject(0).getString("state"));
+        assertEquals("OpenWeatherMap", weatherJson.getString("name"));
+        assertEquals("UP", weatherJson.getString("status"));
     }
 
     @Test
@@ -102,7 +113,7 @@ public class WeatherServiceTest {
                 data.getString("weatherServiceErrorMessage"));
 
         assertEquals("OpenWeatherMap", checks.getJsonObject(0).getString("name"));
-        assertEquals("DOWN", checks.getJsonObject(0).getString("state"));
+        assertEquals("DOWN", checks.getJsonObject(0).getString("status"));
     }
 
     @Test

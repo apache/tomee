@@ -110,8 +110,10 @@
     <module>movies-complete</module>
     <module>mp-config-example</module>
     <module>mp-config-source-database</module>
+    <!-- Todo not supported yet
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
+    -->
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
     <module>mp-metrics-counted</module>
