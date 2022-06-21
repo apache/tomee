@@ -224,7 +224,7 @@ public class JeeTest extends TestCase {
     public void testTld() throws Exception {
         marshalAndUnmarshal(TldTaglib.class, "tld-example.xml", null);
     }
-
+    
     public void testRar10() throws Exception {
         final Connector10 c10 = marshalAndUnmarshal(Connector10.class, "connector-1.0-example.xml", null);
         final Connector c = Connector.newConnector(c10);
@@ -277,6 +277,10 @@ public class JeeTest extends TestCase {
             System.out.println(JaxbJavaee.marshal(HandlerChains.class, handlerChains));
         }
     }
+    
+    public void testWebFragment() throws Exception {
+        marshalAndUnmarshal(WebFragment.class, "web-fragment-example.xml", null);
+    }
 
     public static <T> T marshalAndUnmarshal(final Class<T> type, final String sourceXmlFile, final String expectedXmlFile) throws Exception {
         final InputStream in = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
@@ -306,7 +310,7 @@ public class JeeTest extends TestCase {
         try {
             StaxCompare.compare(expected, actual);
         } catch (final Exception e) {
-//            System.out.append(actual);
+            System.out.append(actual);
             writeToTmpFile(bytes, sourceXmlFile);
             throw e;
         }

@@ -22,33 +22,56 @@
   <artifactId>mvc-resteasy</artifactId>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MVC (RestEasy-based)</name>
-  <description>OpenEJB :: Web Examples :: MVC 1.0 - RestEasy</description>
+  <description>TomEE :: Web Examples :: MVC 2.0 - RestEasy</description>
   <version>9.0.0-M8-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
-    <version.krazo>1.1.0-M1</version.krazo>
-    <resteasy.version>3.6.2.Final</resteasy.version>
+    <version.krazo>2.0.1</version.krazo>
+    <resteasy.version>3.15.2.Final</resteasy.version>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
-    <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
+    <version.graphene.webdriver>3.0.0-alpha.3</version.graphene.webdriver>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Override dependency resolver with test version. This must go *BEFORE*
+        the Arquillian BOM. -->
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>3.1.4</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <!-- Now pull in our server-based unit testing framework -->
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>1.7.0.Alpha10</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <finalName>mvc-resteasy</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.10.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>11</source>
+          <target>11</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.3.2</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
@@ -71,7 +94,12 @@
       <version>9.1-M2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    <!-- MVC 1.0(JSR 371) -->
+    <!-- MVC 2.0 -->
+    <dependency>
+      <groupId>jakarta.mvc</groupId>
+      <artifactId>jakarta.mvc-api</artifactId>
+      <version>2.0.0</version>
+    </dependency>
     <dependency>
       <groupId>org.eclipse.krazo</groupId>
       <artifactId>krazo-resteasy</artifactId>
@@ -81,11 +109,6 @@
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-cdi</artifactId>
-      <version>${resteasy.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-validator-provider-11</artifactId>
       <version>${resteasy.version}</version>
     </dependency>
     <dependency>
@@ -116,6 +139,11 @@
       <artifactId>graphene-webdriver</artifactId>
       <version>${version.graphene.webdriver}</version>
       <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

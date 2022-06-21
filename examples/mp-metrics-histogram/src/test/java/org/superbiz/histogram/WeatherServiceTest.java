@@ -89,16 +89,42 @@ public class WeatherServiceTest {
         final String[] metric =
             webTarget.path(metricPath).request().accept(MediaType.TEXT_PLAIN).get(String.class).split("\n");
         final Set<String> expected = new HashSet<>(Arrays.asList(
-            ("# TYPE application:temperatures_degrees F summary histogram\n" + "# TYPE " + "application" +
-                ":temperatures_degrees F_count histogram\n" + "application:temperatures_degrees " +
-                "F_count 15.0\n" + "# TYPE application:temperatures_min_degrees F histogram\n" +
-                "application:temperatures_min_degrees F 27.0\n" + "# TYPE " + "application" +
-                ":temperatures_max_degrees F histogram\n" + "application" + ":temperatures_max_degrees F " +
-                "55" + ".0\n" + "# TYPE application:temperatures_mean_degrees F " + "histogram\n" +
-                "application" + ":temperatures_mean_degrees F 44.4\n" + "# TYPE " + "application" +
-                ":temperatures_stddev_degrees F histogram\n" + "application" +
-                ":temperatures_stddev_degrees F 7.0710678118654755\n" + "# TYPE " + "application" +
-                ":temperatures_degrees F histogram\n" + "application:temperatures_degrees " + "F{quantile" + "=\"0.5\"} 45.0\n" + "# TYPE application:temperatures_degrees F histogram\n" + "application" + ":temperatures_degrees F{quantile=\"0.75\"} 46.0\n" + "# TYPE " + "application" + ":temperatures_degrees F histogram\n" + "application:temperatures_degrees " + "F{quantile" + "=\"0.95\"} 54.0\n" + "# TYPE application:temperatures_degrees F histogram\n" + "application:temperatures_degrees F{quantile=\"0.98\"} 54.0\n" + "# TYPE " + "application" + ":temperatures_degrees F histogram\n" + "application:temperatures_degrees " + "F{quantile" + "=\"0.99\"} 54.0\n" + "# TYPE application:temperatures_degrees F histogram\n" + "application:temperatures_degrees F{quantile=\"0.999\"} 54.0\n" + "# TYPE " + "application" + ":org_superbiz_histogram_weather_service_temperatures summary histogram\n" + "# " + "TYPE " + "application:org_superbiz_histogram_weather_service_temperatures_count histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures_count 0.0\n" + "# TYPE " + "application:org_superbiz_histogram_weather_service_temperatures_min histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures_min 0.0\n" + "# TYPE " + "application:org_superbiz_histogram_weather_service_temperatures_max histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures_max 0.0\n" + "# TYPE " + "application:org_superbiz_histogram_weather_service_temperatures_mean histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures_mean 0.0\n" + "# TYPE " + "application:org_superbiz_histogram_weather_service_temperatures_stddev histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures_stddev 0.0\n" + "# TYPE " + "application:org_superbiz_histogram_weather_service_temperatures histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures{quantile=\"0.5\"} 0.0\n" + "# TYPE application:org_superbiz_histogram_weather_service_temperatures histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures{quantile=\"0.75\"} 0.0\n" + "# TYPE application:org_superbiz_histogram_weather_service_temperatures histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures{quantile=\"0.95\"} 0.0\n" + "# TYPE application:org_superbiz_histogram_weather_service_temperatures histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures{quantile=\"0.98\"} 0.0\n" + "# TYPE application:org_superbiz_histogram_weather_service_temperatures histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures{quantile=\"0.99\"} 0.0\n" + "# TYPE application:org_superbiz_histogram_weather_service_temperatures histogram\n" + "application:org_superbiz_histogram_weather_service_temperatures{quantile=\"0.999\"} 0.0\n")
+            ("# HELP application_org_superbiz_histogram_WeatherService_temperatures A histogram metrics example.\n" +
+             "# TYPE application_org_superbiz_histogram_WeatherService_temperatures_min gauge\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures_min 0.0\n" +
+             "# TYPE application_org_superbiz_histogram_WeatherService_temperatures_max gauge\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures_max 0.0\n" +
+             "# TYPE application_org_superbiz_histogram_WeatherService_temperatures_mean gauge\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures_mean 0.0\n" +
+             "# TYPE application_org_superbiz_histogram_WeatherService_temperatures_stddev gauge\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures_stddev 0.0\n" +
+             "# TYPE application_org_superbiz_histogram_WeatherService_temperatures summary\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures_count 0.0\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures_sum 0.0\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures{quantile=\"0.5\"} 0.0\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures{quantile=\"0.75\"} 0.0\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures{quantile=\"0.95\"} 0.0\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures{quantile=\"0.98\"} 0.0\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures{quantile=\"0.99\"} 0.0\n" +
+             "application_org_superbiz_histogram_WeatherService_temperatures{quantile=\"0.999\"} 0.0\n" +
+             "# HELP application_temperatures_degrees F A histogram of recent New York temperatures.\n" +
+             "# TYPE application_temperatures_min_degrees F gauge\n" +
+             "application_temperatures_min_degrees F 27.0\n" +
+             "# TYPE application_temperatures_max_degrees F gauge\n" +
+             "application_temperatures_max_degrees F 55.0\n" +
+             "# TYPE application_temperatures_mean_degrees F gauge\n" +
+             "application_temperatures_mean_degrees F 44.4\n" +
+             "# TYPE application_temperatures_stddev_degrees F gauge\n" +
+             // "application_temperatures_stddev_degrees F 7.218494764607554\n" +
+             "# TYPE application_temperatures_degrees F summary\n" +
+             "application_temperatures_degrees F_count 15.0\n" +
+             "application_temperatures_degrees F_sum 666.0\n" +
+             "application_temperatures_degrees F{quantile=\"0.5\"} 45.0\n" +
+             "application_temperatures_degrees F{quantile=\"0.75\"} 48.0\n" +
+             "application_temperatures_degrees F{quantile=\"0.95\"} 55.0\n" +
+             "application_temperatures_degrees F{quantile=\"0.98\"} 55.0\n" +
+             "application_temperatures_degrees F{quantile=\"0.99\"} 55.0\n" +
+             "application_temperatures_degrees F{quantile=\"0.999\"} 55.0\n")
                 .split("\n")));
 
         final Set<String> result =
@@ -107,7 +133,7 @@ public class WeatherServiceTest {
         // temperatures_stddev_degrees
         assertEquals(1, result.size());
         // The part after 7. is performance dependant and is never the same for every new call
-        assertTrue(result.iterator().next().startsWith("application:temperatures_stddev_degrees F 7."));
+        assertTrue(result.iterator().next().startsWith("application_temperatures_stddev_degrees F 7."));
     }
 
     class JsonItem {
@@ -153,7 +179,36 @@ public class WeatherServiceTest {
             webTarget.path(metricPath).request().accept(MediaType.APPLICATION_JSON).get(String.class);
 
         List<JsonItem> expectedList = convertToMap(
-            "{\"temperatures\":{\"count\":15,\"max\":55,\"mean\":44.4,\"min\":27,\"p50\":45.0,\"p75\":46.0,\"p95\":54.0,\"p98\":54.0,\"p99\":54.0,\"p999\":54.0,\"stddev\":7.0710678118654755,\"unit\":\"degrees F\"},\"org.superbiz.histogram.WeatherService.temperatures\":{\"count\":0,\"max\":0,\"mean\":0.0,\"min\":0,\"p50\":0.0,\"p75\":0.0,\"p95\":0.0,\"p98\":0.0,\"p99\":0.0,\"p999\":0.0,\"stddev\":0.0,\"unit\":\"none\"}}");
+            "{\n" +
+            "  \"temperatures\":{\n" +
+            "    \"p99\":55.0,\n" +
+            "    \"min\":27,\n" +
+            "    \"max\":55,\n" +
+            "    \"mean\":44.4,\n" +
+            "    \"count\":15,\n" +
+            "    \"sum\":666,\n" +
+            "    \"p50\":45.0,\n" +
+            "    \"p999\":55.0,\n" +
+            "    \"stddev\":7.218494764607554,\n" +
+            "    \"p95\":55.0,\n" +
+            "    \"p98\":55.0,\n" +
+            "    \"p75\":48.0\n" +
+            "  },\n" +
+            "  \"org.superbiz.histogram.WeatherService.temperatures\":{\n" +
+            "    \"p99\":0.0,\n" +
+            "    \"min\":0,\n" +
+            "    \"max\":0,\n" +
+            "    \"mean\":0.0,\n" +
+            "    \"count\":0,\n" +
+            "    \"sum\":0,\n" +
+            "    \"p50\":0.0,\n" +
+            "    \"p999\":0.0,\n" +
+            "    \"stddev\":0.0,\n" +
+            "    \"p95\":0.0,\n" +
+            "    \"p98\":0.0,\n" +
+            "    \"p75\":0.0\n" +
+            "  }\n" +
+            "}");
 
         List<JsonItem> metricList = convertToMap(metric);
         assertEquals(expectedList.size(), metricList.size());
@@ -199,8 +254,11 @@ public class WeatherServiceTest {
 
         JsonObject metadataJson = Json.createReader(new StringReader(metaData)).readObject();
         final String expected =
-            "{\"temperatures\":{\"description\":\"A histogram of recent New York temperatures.\"," +
-                "\"displayName\":\"temperatures\",\"name\":\"temperatures\",\"reusable\":false," + "\"tags" + "\":\"\",\"type\":\"histogram\",\"typeRaw\":\"HISTOGRAM\",\"unit\":\"degrees F\"}," + "\"org.superbiz.histogram.WeatherService.temperatures\":{\"description\":\"A histogram " + "metrics example.\",\"displayName\":\"Histogram of Recent New York Temperatures\"," + "\"name\":\"org.superbiz.histogram.WeatherService.temperatures\",\"reusable\":false," + "\"tags\":\"\",\"type\":\"histogram\",\"typeRaw\":\"HISTOGRAM\",\"unit\":\"none\"}}";
+            "{\"org.superbiz.histogram.WeatherService.temperatures\":{\"unit\":\"none\",\"type\":\"histogram\"," +
+            "\"description\":\"A histogram metrics example.\",\"displayName\":\"Histogram of Recent New York " +
+            "Temperatures\",\"tags\":[[]]},\"temperatures\":{\"unit\":\"degrees F\",\"type\":\"histogram\"," +
+            "\"description\":\"A histogram of recent New York temperatures.\",\"displayName\":\"temperatures\"," +
+            "\"tags\":[[]]}}";
 
         JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
         assertEquals(expectedJson, metadataJson);

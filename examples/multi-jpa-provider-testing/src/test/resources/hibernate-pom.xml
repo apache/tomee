@@ -25,32 +25,29 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>4.1.8.Final</version>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>6.0.0.Final</version>
       <exclusions>
         <exclusion>
-          <groupId>org.hibernate.jakarta.persistence</groupId>
-          <artifactId>hibernate-jpa-2.0-api</artifactId>
+          <groupId>jakarta.persistence</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.jboss.spec.jakarta.transaction</groupId>
-          <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+          <groupId>jakarta.transaction</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.javassist</groupId>
-          <artifactId>javassist</artifactId>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>4.3.0.Final</version>
-      <exclusions>
         <exclusion>
-          <groupId>jakarta.validation</groupId>
-          <artifactId>validation-api</artifactId>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

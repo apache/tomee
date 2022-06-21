@@ -18,8 +18,10 @@ package org.apache.openejb.activemq;
 
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.SimpleLog;
+import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,6 +31,8 @@ import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -44,6 +48,18 @@ public class JMS2AMQDefaultConnectionFactoryTest {
 
     @Inject
     private JustToGetAJndiContext justToGetAJndiContext;
+
+    @Configuration
+    public Properties config() throws Exception {
+        Properties p = new Properties();
+        p.put("myActiveMQResourceAdapter", "new://Resource?type=ActiveMQResourceAdapter");
+        p.put("myActiveMQResourceAdapter.brokerXmlConfig",
+              "broker:(tcp://localhost:" + NetworkUtil.getNextAvailablePort() + ")?useJmx=false");
+        p.put("myActiveMQResourceAdapter.dataSource", "Default Unmanaged JDBC Database");
+        p.put("myActiveMQResourceAdapter.serverUrl", "vm://localhost?waitForStart=20000&async=true");
+        p.put("myActiveMQResourceAdapter.startupTimeout", "10 seconds");
+        return p;
+    }
 
     @Test
     public void checkCF() throws Exception {

@@ -24,6 +24,7 @@
   <name>TomEE :: Examples :: DeltaSpike ProjectStage</name>
   <properties>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
+    <version.deltaspike>1.9.7-SNAPSHOT</version.deltaspike>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <repositories>
@@ -42,8 +43,21 @@
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-impl</artifactId>
+      <version>${version.deltaspike}</version>
+      <classifier>jakarta</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.deltaspike.core</groupId>
+          <artifactId>deltaspike-core-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-api</artifactId>
-      <version>1.0.0</version>
+      <version>${version.deltaspike}</version>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>

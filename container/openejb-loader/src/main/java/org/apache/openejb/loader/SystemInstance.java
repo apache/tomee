@@ -141,6 +141,10 @@ public final class SystemInstance {
         if (! this.internalProperties.containsKey(ACTIVEMQ_CREATE_JMX_CONNECTOR)) {
             this.internalProperties.setProperty(ACTIVEMQ_CREATE_JMX_CONNECTOR, Boolean.FALSE.toString());
         }
+
+        if (getProperty("hsqldb.reconfig_logging") == null) {
+            setProperty("hsqldb.reconfig_logging", "false", true);
+        }
     }
 
     public <E> E fireEvent(final E event) {

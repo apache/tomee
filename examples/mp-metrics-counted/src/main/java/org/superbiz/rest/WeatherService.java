@@ -34,7 +34,7 @@ import jakarta.ws.rs.core.MediaType;
 public class WeatherService {
 
     @Path("/day/status")
-    @Counted(monotonic = true, name = "weather_day_status", absolute = true,
+    @Counted(name = "weather_day_status", absolute = true,
             displayName = "Weather Day Status",
             description = "This metric shows the weather status of the day.",
             tags = {"weather=day"})
@@ -45,7 +45,7 @@ public class WeatherService {
     }
 
     @Path("/week/status")
-    @Counted(monotonic = true, name = "weather_week_status", absolute = true)
+    @Counted(name = "weather_week_status", absolute = true)
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String weekStatus() {

@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>javamail-with-velocity</artifactId>
   <version>9.0.0-M8-SNAPSHOT</version>
-  <name>TomEE :: Examples :: JavaMail API with Velocity</name>
+  <name>TomEE :: Examples :: Jakarta Mail API with Velocity</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
@@ -103,14 +103,6 @@
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- todo hack: until we move geronimo mail to the jakarta namespace -->
-    <dependency>
-      <groupId>jakarta.mail</groupId>
-      <artifactId>jakarta.mail-api</artifactId>
-      <version>2.0.1</version>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-junit5</artifactId>

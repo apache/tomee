@@ -1,9 +1,9 @@
 :index-group: Unrevised
 :jbake-type: page
 :jbake-status: status=published
-= Javamail API with Apache Velocity Templating
+= Jakarta Mail API with Apache Velocity Templating
 
-This examples demonstrates the use of the Javamail API in combination with https://velocity.apache.org/[Apache Velocity] to create templated HTML Emails.
+This examples demonstrates the use of Jakarta Mail API in combination with https://velocity.apache.org/[Apache Velocity] to create templated HTML Emails.
 
 
 == A simple @Stateless service using the Javamail API

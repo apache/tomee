@@ -99,7 +99,7 @@ public class SWClassLoader extends ClassLoader implements Closeable {
             return super.getResources(null);
         }
         final boolean cdiExtensions = name.startsWith("META-INF/services/" + Extension.class.getName());
-        if (cdiExtensions || !name.contains("META-INF/services/javax")) {
+        if (cdiExtensions || !name.contains("META-INF/services/jakarta")) {
             final List<Archive<?>> node = findNodes(name);
             if (!node.isEmpty()) {
                 final List<URL> urls = new ArrayList<>();

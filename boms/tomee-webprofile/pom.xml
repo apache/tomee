@@ -167,17 +167,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>jakarta.mail</groupId>
-      <artifactId>jakarta.mail-api</artifactId>
-      <version>2.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>net.sourceforge.serp</groupId>
       <artifactId>serp</artifactId>
       <version>1.15.1</version>
@@ -191,7 +180,7 @@
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
-      <version>2.0.6-SNAPSHOT</version>
+      <version>2.0.6</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -247,9 +236,20 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.javamail</groupId>
-      <artifactId>geronimo-javamail_1.6_mail</artifactId>
-      <version>1.0.1</version>
+      <groupId>org.apache.geronimo.mail</groupId>
+      <artifactId>geronimo-mail_2.1_provider</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-mail_2.1_spec</artifactId>
+      <version>1.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -260,7 +260,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.17</version>
+      <version>1.2.18</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -272,7 +272,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.17</version>
+      <version>1.2.18</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -284,7 +284,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.17</version>
+      <version>1.2.18</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -296,7 +296,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.17</version>
+      <version>1.2.18</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -308,7 +308,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.17</version>
+      <version>1.2.18</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -376,7 +376,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -388,7 +388,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -400,7 +400,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -412,7 +412,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -424,7 +424,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -436,7 +436,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -448,7 +448,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -460,7 +460,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>2.0.27-SNAPSHOT</version>
+      <version>2.0.27</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -736,7 +736,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2-SNAPSHOT</version>
+      <version>9.1-M2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1275,7 +1275,7 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.3.4</version>
+      <version>2.5.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

@@ -24,7 +24,12 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
-import java.security.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Base64;
 
 /**
  * Utilities for generating a JWT for testing
@@ -60,9 +65,13 @@ public class Tokens {
         return publicKey;
     }
 
+    public String getEncodedPublicKey() {
+        return Base64.getEncoder().encodeToString(publicKey.getEncoded());
+    }
+
     public String asToken(final String claims) throws Exception {
         try {
-            final JWSHeader header = new JWSHeader.Builder(new JWSAlgorithm("RS"+hashSize, Requirement.OPTIONAL))
+            final JWSHeader header = new JWSHeader.Builder(new JWSAlgorithm("RS" + hashSize, Requirement.OPTIONAL))
                     .type(JOSEObjectType.JWT)
                     .build();
 

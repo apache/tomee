@@ -1,13 +1,13 @@
 :index-group: Unrevised
 :jbake-type: page
 :jbake-status: published
-= Javamail API
+= Jakarta Mail API
 
 Este é apenas um exemplo simples para demonstrar um uso muito básico da
 API. Deve ser o suficiente para você começar a usar o java mail
 pacotes.
 
-== Um serviço REST simples usando a API Javamail
+== Um serviço REST simples usando a API Jakarta Mail
 
 Aqui vemos um terminal RESTful muito simples que pode ser chamado com uma
 mensagem a ser enviada por e-mail. Não seria difícil modificar o aplicativo
@@ -21,54 +21,60 @@ https://java.net/projects/javamail/pages/Home#Samples[Javamail API aqui]
 ----
 package org.superbiz.rest;
 
-import jakarta.mail.Authenticator;
+import jakarta.annotation.Resource;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
+import jakarta.mail.URLName;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import java.util.Date;
-import java.util.Properties;
 
 @Path("/email")
 public class EmailService {
+
+    @Resource(mappedName = "java:comp/env/tomee/mail/exampleSMTP")
+    private Session mailSession;
 
     @POST
     public String lowerCase(final String message) {
 
         try {
 
-            //Create some properties and get the default Session
-            final Properties props = new Properties();
-            props.put("mail.smtp.host", "your.mailserver.host");
-            props.put("mail.debug", "true");
+            /* Ensures that smtp authentication mechanism works as configured */
+            boolean authenticate = "true".equals(mailSession.getProperty("mail.smtp.auth"));
+            if (authenticate) {
+                final String username = mailSession.getProperty("mail.smtp.user");
+                final String password = mailSession.getProperty("mail.smtp.password");
 
-            final Session session = Session.getInstance(props, new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("MyUsername", "MyPassword");
-                }
-            });
+                final URLName url = new URLName(
+                        mailSession.getProperty("mail.transport.protocol"),
+                        mailSession.getProperty("mail.smtp.host"), -1, null,
+                        username, null);
+
+                mailSession.setPasswordAuthentication(url, new PasswordAuthentication(username, password));
+            } else {
+                return "Using EMailService without SMTP auth configured. This might be valid, but could also be dangerous!";
+            }
 
             //Set this just to see some internal logging
-            session.setDebug(true);
+            mailSession.setDebug(true);
 
             //Create a message
-            final MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("your@email.address"));
-            final InternetAddress[] address = {new InternetAddress("general@email.com")};
+            final MimeMessage msg = new MimeMessage(mailSession);
+            msg.setFrom(new InternetAddress("admin@localhost")); //your e-mail address
+            final InternetAddress[] address = {new InternetAddress("user@provider.com")};
             msg.setRecipients(Message.RecipientType.TO, address);
             msg.setSubject("JavaMail API test");
             msg.setSentDate(new Date());
             msg.setText(message, "UTF-8");
 
-
             Transport.send(msg);
-        } catch (MessagingException e) {
+        } catch (final MessagingException e) {
             return "Failed to send message: " + e.getMessage();
         }
 
@@ -99,16 +105,24 @@ método.
 ----
 package org.superbiz.rest;
 
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertEquals;
 
@@ -116,21 +130,76 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class EmailServiceTest {
 
+    private static final int SMTP_TEST_PORT = NetworkUtil.getNextAvailablePort();
+
+    private static final String USER_PASSWORD = "s3cr3t";
+    private static final String USER_NAME = "admin@localhost";
+    private static final String EMAIL_USER_ADDRESS = "admin@localhost";
+
+    private static GreenMail mailServer;
+    private static CountDownLatch started = new CountDownLatch(1);
+
     @Module
     @Classes(EmailService.class)
     public WebApp app() {
         return new WebApp().contextRoot("test");
     }
 
+    @Configuration
+    public Properties config() {
+        //Note: We can also configure this via a resource.xml or via tomee.xml
+        Properties properties = new Properties();
+        properties.put("tomee/mail/mySMTP", "new://Resource?type=jakarta.mail.Session");
+        properties.put("tomee/mail/mySMTP.mail.debug", "false");
+        properties.put("tomee/mail/mySMTP.mail.transport.protocol", "smtp");
+        properties.put("tomee/mail/mySMTP.mail.smtp.host", "localhost");
+        properties.put("tomee/mail/mySMTP.mail.smtp.port", SMTP_TEST_PORT);
+        properties.put("tomee/mail/mySMTP.mail.smtp.auth", "true");
+        properties.put("tomee/mail/mySMTP.mail.smtp.user", USER_NAME);
+        properties.put("tomee/mail/mySMTP.password", USER_PASSWORD);
+        return properties;
+    }
+
+    @BeforeClass
+    public static void setUp() throws InterruptedException {
+        mailServer = new CustomGreenMailServer(new ServerSetup(SMTP_TEST_PORT, null, "smtp"));
+        mailServer.start();
+
+        //wait for the server startup...
+        started.await();
+
+        // create user on mail server
+        mailServer.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        if (mailServer != null) {
+            mailServer.stop();
+        }
+    }
+
     @Test
     public void post() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/email/").post("Hello General", String.class);
-        assertEquals("Failed to send message: Unknown SMTP host: your.mailserver.host", message);
+        final String message = WebClient.create("http://localhost:4204").path("/test/email/").post("Hello TomEE", String.class);
+        assertEquals("Sent", message);
+    }
+
+    public static class CustomGreenMailServer extends GreenMail {
+
+        public CustomGreenMailServer(ServerSetup config) {
+            super(new ServerSetup[]{config});
+        }
+
+        public synchronized void start() {
+            super.start();
+            started.countDown();
+        }
     }
 }
 ----
 
-#Corrida
+== Corrida
 
 A execução do exemplo é bastante simples. No diretório "javamail-api" excute:
 
@@ -143,63 +212,223 @@ O que deve criar uma saída como a seguir.
 
 [source,java]
 ----
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT
-INFO -   httpejbd             127.0.0.1       4204
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: D:\github\tomee\examples\javamail\EmailServiceTest
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.EmailServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory D:\windows\tmp for stateful session passivation
-INFO - Configuring Service(id=comp/DefaultManagedExecutorService, type=Resource, provider-id=Default Executor Service)
-INFO - Auto-creating a Resource with id 'comp/DefaultManagedExecutorService' of type 'jakarta.enterprise.concurrent.ManagedExecutorService for 'test'.
-INFO - Configuring Service(id=comp/DefaultManagedScheduledExecutorService, type=Resource, provider-id=Default Scheduled Executor Service)
-INFO - Auto-creating a Resource with id 'comp/DefaultManagedScheduledExecutorService' of type 'jakarta.enterprise.concurrent.ManagedScheduledExecutorService for 'test'.
-INFO - Configuring Service(id=comp/DefaultManagedThreadFactory, type=Resource, provider-id=Default Managed Thread Factory)
-INFO - Auto-creating a Resource with id 'comp/DefaultManagedThreadFactory' of type 'jakarta.enterprise.concurrent.ManagedThreadFactory for 'test'.
-INFO - Enterprise application "D:\github\tomee\examples\javamail\EmailServiceTest" loaded.
-INFO - Creating dedicated application classloader for EmailServiceTest
-INFO - Assembling app: D:\github\tomee\examples\javamail\EmailServiceTest
-INFO - Using providers:
-INFO -      org.apache.johnzon.jaxrs.JohnzonProvider@2687f956
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@1ded7b14
-INFO -      org.apache.johnzon.jaxrs.JsrProvider@29be7749
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@5f84abe8
-INFO -      org.apache.openejb.server.cxf.rs.EJBAccessExceptionMapper@4650a407
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@30135202
-INFO - REST Application: http://127.0.0.1:4204/test/       -> org.apache.openejb.server.rest.InternalApplication
-INFO -      Service URI: http://127.0.0.1:4204/test/email  -> Pojo org.superbiz.rest.EmailService
-INFO -              POST http://127.0.0.1:4204/test/email/ ->      String lowerCase(String)
-INFO - Deployed Application(path=D:\github\tomee\examples\javamail\EmailServiceTest)
-DEBUG: JavaMail version 1.4ea
-DEBUG: java.io.FileNotFoundException: D:\java\jdk8\jre\lib\javamail.providers (The system cannot find the file specified)
-DEBUG: !anyLoaded
-DEBUG: not loading resource: /META-INF/javamail.providers
-DEBUG: successfully loaded resource: /META-INF/javamail.default.providers
-DEBUG: Tables of loaded providers
-DEBUG: Providers Listed By Class Name: {com.sun.mail.smtp.SMTPSSLTransport=jakarta.mail.Provider[TRANSPORT,smtps,com.sun.mail.smtp.SMTPSSLTransport,Sun Microsystems, Inc], com.sun.mail.smtp.SMTPTransport=jakarta.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc], com.sun.mail.imap.IMAPSSLStore=jakarta.mail.Provider[STORE,imaps,com.sun.mail.imap.IMAPSSLStore,Sun Microsystems, Inc], com.sun.mail.pop3.POP3SSLStore=jakarta.mail.Provider[STORE,pop3s,com.sun.mail.pop3.POP3SSLStore,Sun Microsystems, Inc], com.sun.mail.imap.IMAPStore=jakarta.mail.Provider[STORE,imap,com.sun.mail.imap.IMAPStore,Sun Microsystems, Inc], com.sun.mail.pop3.POP3Store=jakarta.mail.Provider[STORE,pop3,com.sun.mail.pop3.POP3Store,Sun Microsystems, Inc]}
-DEBUG: Providers Listed By Protocol: {imaps=jakarta.mail.Provider[STORE,imaps,com.sun.mail.imap.IMAPSSLStore,Sun Microsystems, Inc], imap=jakarta.mail.Provider[STORE,imap,com.sun.mail.imap.IMAPStore,Sun Microsystems, Inc], smtps=jakarta.mail.Provider[TRANSPORT,smtps,com.sun.mail.smtp.SMTPSSLTransport,Sun Microsystems, Inc], pop3=jakarta.mail.Provider[STORE,pop3,com.sun.mail.pop3.POP3Store,Sun Microsystems, Inc], pop3s=jakarta.mail.Provider[STORE,pop3s,com.sun.mail.pop3.POP3SSLStore,Sun Microsystems, Inc], smtp=jakarta.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc]}
-DEBUG: successfully loaded resource: /META-INF/javamail.default.address.map
-DEBUG: !anyLoaded
-DEBUG: not loading resource: /META-INF/javamail.address.map
-DEBUG: java.io.FileNotFoundException: D:\java\jdk8\jre\lib\javamail.address.map (The system cannot find the file specified)
-DEBUG: setDebug: JavaMail version 1.4ea
-DEBUG: getProvider() returning jakarta.mail.Provider[TRANSPORT,smtp,com.sun.mail.smtp.SMTPTransport,Sun Microsystems, Inc]
-DEBUG SMTP: useEhlo true, useAuth false
-DEBUG SMTP: trying to connect to host "your.mailserver.host", port 25, isSSL false
-INFO - Undeploying app: D:\github\tomee\examples\javamail\EmailServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
+Running org.superbiz.rest.EmailServiceTest
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@5db250b4
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Succeeded in installing singleton service
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=tomee/mail/mySMTP, type=Resource, provider-id=Default Mail Session)
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating TransactionManager(id=Default Transaction Manager)
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating SecurityService(id=Default Security Service)
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Resource(id=tomee/mail/mySMTP)
+Mai 06, 2022 8:22:00 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Initializing network services
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating ServerService(id=cxf-rs)
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating ServerService(id=httpejbd)
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Initializing network services
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:   ** Bound Services **
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:   NAME                 IP              PORT
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:   httpejbd             127.0.0.1       4204
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: -------
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Ready!
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.openejb.server.httpd.util.HttpUtil (file:/home/zowallar/.m2/repository/org/apache/tomee/openejb-http/9.0.0-M8-SNAPSHOT/openejb-http-9.0.0-M8-SNAPSHOT.jar) to field java.lang.reflect.Field.modifiers
+WARNING: Please consider reporting this to the maintainers of org.apache.openejb.server.httpd.util.HttpUtil
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring enterprise application: /home/zowallar/Downloads/tomee/examples/javamail/EmailServiceTest
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-creating a container for bean org.superbiz.rest.EmailServiceTest: Container(type=MANAGED, id=Default Managed Container)
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Container(id=Default Managed Container)
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Using directory /tmp for stateful session passivation
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Enterprise application "/home/zowallar/Downloads/tomee/examples/javamail/EmailServiceTest" loaded.
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating dedicated application classloader for EmailServiceTest
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Assembling app: /home/zowallar/Downloads/tomee/examples/javamail/EmailServiceTest
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Ignoring XML Configuration for validator org.apache.bval.jsr.ConfigurationImpl
+Mai 06, 2022 8:22:01 VORM. org.apache.batchee.container.services.ServicesManager init
+WARNUNG: You didn't specify org.apache.batchee.jmx.application and JMX is already registered, skipping
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Application{path='http://127.0.0.1:4204/test/', class=org.apache.openejb.server.rest.InternalApplication, resources=1, providers=0, invalids=0}
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Resource{clazz=org.superbiz.rest.EmailService, discovered=false, singleton=false}
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Using readers:
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@71ad3d8a
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.FormEncodingProvider@5477a1ca
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.MultipartProvider@3ae9d1e2
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.SourceProvider@41522537
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@e9dc4d0
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.JAXBElementProvider@670d4d38
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@47af099e
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@131ff6fa
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.StringTextProvider@700f518a
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.BinaryDataProvider@b835727
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.DataSourceProvider@13da7ab0
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Using writers:
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@e9dc4d0
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@47af099e
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@2c8662ac
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@260ff5b7
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.StringTextProvider@700f518a
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@71ad3d8a
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.FormEncodingProvider@5477a1ca
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.MultipartProvider@3ae9d1e2
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.JAXBElementProvider@670d4d38
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.SourceProvider@41522537
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@131ff6fa
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.BinaryDataProvider@b835727
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.provider.DataSourceProvider@13da7ab0
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Using exception mappers:
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@150ede8b
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@d8d9199
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@161f6623
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      org.apache.openejb.server.cxf.rs.CxfRsHttpListener$CxfResponseValidationExceptionMapper@3e15bb06
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: REST Application: http://127.0.0.1:4204/test/      -> org.apache.openejb.server.rest.InternalApplication@72456279
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:      Service URI: http://127.0.0.1:4204/test/email -> Pojo org.superbiz.rest.EmailService
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION:              POST http://127.0.0.1:4204/test/email ->      String lowerCase(String)
+Mai 06, 2022 8:22:01 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Deployed Application(path=/home/zowallar/Downloads/tomee/examples/javamail/EmailServiceTest)
+Loading javamail.default.providers from jar:file:/home/zowallar/.m2/repository/org/apache/geronimo/mail/geronimo-mail_2.1_provider/1.0.0-SNAPSHOT/geronimo-mail_2.1_provider-1.0.0-SNAPSHOT.jar!/META-INF/javamail.default.providers
+DEBUG: loading new provider protocol=smtp, className=org.apache.geronimo.mail.transport.smtp.SMTPTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=smtps, className=org.apache.geronimo.mail.transport.smtp.SMTPSTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntp-post, className=org.apache.geronimo.mail.transport.nntp.NNTPTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntp-posts, className=org.apache.geronimo.mail.transport.nntp.NNTPSSLTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntp, className=org.apache.geronimo.mail.store.nntp.NNTPStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntps, className=org.apache.geronimo.mail.store.nntp.NNTPSSLStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=pop3, className=org.apache.geronimo.mail.store.pop3.POP3Store, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=pop3s, className=org.apache.geronimo.mail.store.pop3.POP3SSLStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=imap, className=org.apache.geronimo.mail.store.imap.IMAPStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=imaps, className=org.apache.geronimo.mail.store.imap.IMAPSSLStore, vendor=Apache Software Foundation, version=1.0
+Loading javamail.default.providers from jar:file:/home/zowallar/.m2/repository/com/sun/mail/jakarta.mail/2.0.1/jakarta.mail-2.0.1.jar!/META-INF/javamail.default.providers
+DEBUG: loading new provider protocol=imap, className=com.sun.mail.imap.IMAPStore, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=imaps, className=com.sun.mail.imap.IMAPSSLStore, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=smtp, className=com.sun.mail.smtp.SMTPTransport, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=smtps, className=com.sun.mail.smtp.SMTPSSLTransport, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=pop3, className=com.sun.mail.pop3.POP3Store, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=pop3s, className=com.sun.mail.pop3.POP3SSLStore, vendor=Oracle, version=null
+Loading javamail.default.providers from jar:file:/home/zowallar/.m2/repository/org/apache/geronimo/mail/geronimo-mail_2.1_provider/1.0.0-SNAPSHOT/geronimo-mail_2.1_provider-1.0.0-SNAPSHOT.jar!/META-INF/javamail.default.providers
+DEBUG: loading new provider protocol=smtp, className=org.apache.geronimo.mail.transport.smtp.SMTPTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=smtps, className=org.apache.geronimo.mail.transport.smtp.SMTPSTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntp-post, className=org.apache.geronimo.mail.transport.nntp.NNTPTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntp-posts, className=org.apache.geronimo.mail.transport.nntp.NNTPSSLTransport, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntp, className=org.apache.geronimo.mail.store.nntp.NNTPStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=nntps, className=org.apache.geronimo.mail.store.nntp.NNTPSSLStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=pop3, className=org.apache.geronimo.mail.store.pop3.POP3Store, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=pop3s, className=org.apache.geronimo.mail.store.pop3.POP3SSLStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=imap, className=org.apache.geronimo.mail.store.imap.IMAPStore, vendor=Apache Software Foundation, version=1.0
+DEBUG: loading new provider protocol=imaps, className=org.apache.geronimo.mail.store.imap.IMAPSSLStore, vendor=Apache Software Foundation, version=1.0
+Loading javamail.default.providers from jar:file:/home/zowallar/.m2/repository/com/sun/mail/jakarta.mail/2.0.1/jakarta.mail-2.0.1.jar!/META-INF/javamail.default.providers
+DEBUG: loading new provider protocol=imap, className=com.sun.mail.imap.IMAPStore, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=imaps, className=com.sun.mail.imap.IMAPSSLStore, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=smtp, className=com.sun.mail.smtp.SMTPTransport, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=smtps, className=com.sun.mail.smtp.SMTPSSLTransport, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=pop3, className=com.sun.mail.pop3.POP3Store, vendor=Oracle, version=null
+DEBUG: loading new provider protocol=pop3s, className=com.sun.mail.pop3.POP3SSLStore, vendor=Oracle, version=null
+DEBUG: getProvider() returning provider protocol=smtp; type=jakarta.mail.Provider$Type@38dbbb2d; class=org.apache.geronimo.mail.transport.smtp.SMTPTransport; vendor=Apache Software Foundation;version=1.0
+smtp DEBUG: Failing connection for missing authentication information
+smtp DEBUG: Attempting plain socket connection to server localhost:44959
+220 /127.0.0.1 GreenMail SMTP Service v2.0.0-alpha-2 ready
+EHLO node-147
+250-/127.0.0.1
+250 AUTH PLAIN LOGIN
+smtp DEBUG: Processing extension AUTH PLAIN LOGIN
+smtp DEBUG: Authenticating for user: admin@localhost using LOGIN
+AUTH LOGIN
+334 VXNlcm5hbWU6
+YWRtaW5AbG9jYWxob3N0
+334 UGFzc3dvcmQ6
+czNjcjN0
+235 2.7.0  Authentication Succeeded
+smtp DEBUG: Successful SMTP authentication
+smtp DEBUG: Successful connection
+MAIL FROM: <admin@localhost>
+250 OK
+RCPT TO: <user@provider.com>
+250 OK
+DATA
+354 Start mail input; end with <CRLF>.<CRLF>
+Date: Fri, 6 May 2022 08:22:02 +0200 (CEST)
+From: admin@localhost
+To: user@provider.com
+Message-ID: <1276594763.01651818122213.JavaMail.zowallar@node-147>
+Subject: JavaMail API test
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hello TomEE
+.
+250 OK
+QUIT
+221 /127.0.0.1 Service closing transmission channel
+Mai 06, 2022 8:22:02 VORM. com.icegreen.greenmail.user.UserManager$1 handle
+INFORMATION: Created user login user@provider.com for address user@provider.com with password user@provider.com because it didn't exist before.
+Mai 06, 2022 8:22:02 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Undeploying app: /home/zowallar/Downloads/tomee/examples/javamail/EmailServiceTest
+Mai 06, 2022 8:22:02 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Stopping network services
+Mai 06, 2022 8:22:02 VORM. org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Stopping server services
 ----

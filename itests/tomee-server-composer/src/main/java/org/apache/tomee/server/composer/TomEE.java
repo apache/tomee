@@ -258,6 +258,10 @@ public class TomEE {
 
             }
 
+            if (!env.containsKey("JAVA_HOME")) {
+                env.put("JAVA_HOME", System.getProperty("java.home"));
+            }
+            
             builder.environment().putAll(env);
 
             if (list) Files.visit(tmpdir, TomEE::print);
