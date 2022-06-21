@@ -23,8 +23,18 @@
             <property name="httpPort">-1</property>
             <property name="stopPort">-1</property>
             <property name="classifier">plus</property>
+            <property name="debug">false</property>
             <property name="dir">target/apache-tomee-remote</property>
             <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+            <!-- make sure it runs on our CI without ActiveMQ default 61616 conflict -->
+            <property name="properties">
+                AMQResourceAdapter = new://Resource?type=ActiveMQResourceAdapter
+                AMQResourceAdapter.BrokerXmlConfig = broker:(tcp://localhost:${activemq.port}?useJmx=false)
+                AMQMessageContainer = new://Container?type=MESSAGE
+                AMQMessageContainer.ResourceAdapter = AMQResourceAdapter
+                AMQConnectionFactory = new://Resource?type=jakarta.jms.ConnectionFactory
+                AMQConnectionFactory.ResourceAdapter = AMQResourceAdapter
+            </property>
         </configuration>
     </container>
 </arquillian>

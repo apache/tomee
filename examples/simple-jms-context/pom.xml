@@ -31,10 +31,35 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
+    <activemq.port>61616</activemq.port>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>reserve-activemq-port</id>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <portNames>
+                <portName>activemq.port</portName>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
