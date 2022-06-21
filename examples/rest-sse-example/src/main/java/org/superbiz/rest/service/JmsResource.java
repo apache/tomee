@@ -16,10 +16,20 @@
  */
 package org.superbiz.rest.service;
 
+import jakarta.annotation.Resource;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.Reception;
 import jakarta.inject.Singleton;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Message;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
+import jakarta.jms.Topic;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
@@ -33,6 +43,12 @@ import jakarta.ws.rs.sse.SseEventSink;
 @Singleton
 public class JmsResource {
 
+    @Resource(name="EVENT")
+    private Topic topic;
+
+    @Resource
+    private ConnectionFactory cf;
+
     private SseBroadcaster broadcaster;
     private OutboundSseEvent.Builder builder;
 
@@ -42,13 +58,30 @@ public class JmsResource {
         broadcaster.register(sink);
     }
 
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void sendMessage(final String message) {
+        try {
+            final Connection connection = cf.createConnection();
+            final Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+            final TextMessage textMessage = session.createTextMessage(message);
+            final MessageProducer producer = session.createProducer(topic);
+            producer.send(textMessage);
+            producer.close();
+            session.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Context
     public void setSse(final Sse sse) {
         this.broadcaster = sse.newBroadcaster();
         this.builder = sse.newEventBuilder();
     }
 
-    public void onMessage(final @Observes Message message) {
+    public void onMessage(final @Observes(notifyObserver = Reception.IF_EXISTS) Message message) {
         if (broadcaster == null) {
             return;
         }

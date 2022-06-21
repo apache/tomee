@@ -220,6 +220,7 @@
     <version.eclipselink>3.0.2</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
+    <version.micrometer>1.8.5</version.micrometer>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
@@ -244,9 +245,9 @@
     <microprofile.health.tck.version>4.0</microprofile.health.tck.version>
     <microprofile.health.impl.version>4.0.0-RC1</microprofile.health.impl.version>
 
-    <microprofile.metrics.version>4.0.1</microprofile.metrics.version>
-    <microprofile.metrics.tck.version>4.0.1</microprofile.metrics.tck.version>
-    <microprofile.metrics.impl.version>4.0.0-RC1</microprofile.metrics.impl.version>
+    <microprofile.metrics.version>5.0.0-SNAPSHOT</microprofile.metrics.version>
+    <microprofile.metrics.tck.version>5.0.0-SNAPSHOT</microprofile.metrics.tck.version>
+    <microprofile.metrics.impl.version>5.0.0-SNAPSHOT</microprofile.metrics.impl.version>
 
     <microprofile.rest-client.version>3.0</microprofile.rest-client.version>
     <microprofile.rest-client.tck.version>3.0</microprofile.rest-client.tck.version>

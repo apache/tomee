@@ -141,6 +141,7 @@
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-metrics</artifactId>
       <version>${microprofile.metrics.impl.version}</version>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -148,6 +149,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <version>${version.micrometer}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
