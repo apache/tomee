@@ -142,7 +142,7 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>1.0.1</batchee.version>
+    <batchee.version>1.0.2</batchee.version>
 
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
