@@ -113,6 +113,7 @@
     <!-- Todo not supported yet
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
+    <module>mp-faulttolerance-timeout</module>
     -->
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
@@ -126,6 +127,8 @@
     <module>mp-rest-jwt-jwk</module>
     <module>mp-rest-jwt-principal</module>
     <module>mp-rest-jwt-public-key</module>
+    <module>mp-rest-client</module>
+    <module>mp-custom-healthcheck</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -211,16 +214,13 @@
     <module>mvc-cxf</module>
     <module>mvc-cxf-hibernate</module>
     -->
-    <module>mp-rest-client</module>
     <module>mvc-resteasy</module>
-    <module>mp-custom-healthcheck</module>
     <module>jsonb-configuration</module>
     <module>jsonb-custom-serializer</module>
 <!--    <module>vaadin-lts-v08-simple</module>-->
 <!--    <module>vaadin-lts-v10-simple</module>-->
 <!--    <module>vaadin-vxx-simple</module>-->
     <module>cloud-tomee-azure</module>
-    <module>mp-faulttolerance-timeout</module>
     <module>xa-datasource</module>
     <module>websocket-jms</module>
 
