@@ -182,7 +182,7 @@
       'QuartzPersistenceForEJBTimersTest' is unable to obtain DB connection with
       commons-dbcp.version > 2.3.0
     -->
-    <commons-dbcp.version>2.3.0</commons-dbcp.version>
+    <commons-dbcp.version>2.9.0</commons-dbcp.version>
     <commons-pool.version>2.11.1</commons-pool.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.15</commons-codec.version>
