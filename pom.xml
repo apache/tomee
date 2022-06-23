@@ -108,7 +108,7 @@
       to update and release the jakartaee-api.jar. Different lifecycle.
     -->
     <geronimo-mail_2.1_spec.version>1.0.0-M1</geronimo-mail_2.1_spec.version>
-    <geronimo-mail_2.1_provider.version>1.0.0-SNAPSHOT</geronimo-mail_2.1_provider.version>
+    <geronimo-mail_2.1_provider.version>1.0.0</geronimo-mail_2.1_provider.version>
 
     <!-- Not yet included in EE APIs -->
     <!-- todo needs to be updated at some point -->
