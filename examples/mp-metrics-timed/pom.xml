@@ -23,7 +23,7 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Metrics Timed</name>
   <properties>
-    <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <microprofile.metrics.version>3.0.1</microprofile.metrics.version>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>

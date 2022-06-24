@@ -24,7 +24,7 @@
   <version>9.0.0-M8-SNAPSHOT</version>
   <packaging>war</packaging>
   <properties>
-    <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
   </properties>
