@@ -71,6 +71,7 @@
     <module>deltaspike-exception-handling</module>
     <module>deltaspike-fullstack</module>
     <module>deltaspike-i18n</module>
+    <module>projectstage-demo</module>
     -->
     <module>dynamic-dao-implementation</module>
     <module>dynamic-datasource-routing</module>
@@ -140,7 +141,6 @@
     <module>persistence-fragment</module>
     <module>pojo-webservice</module>
 <!--    <module>polling-parent</module>-->
-    <module>projectstage-demo</module>
     <module>quartz-app</module>
     <module>realm-in-tomee</module>
     <module>reload-persistence-unit-properties</module>
