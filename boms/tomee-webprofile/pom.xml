@@ -238,7 +238,7 @@
     <dependency>
       <groupId>org.apache.geronimo.mail</groupId>
       <artifactId>geronimo-mail_2.1_provider</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
