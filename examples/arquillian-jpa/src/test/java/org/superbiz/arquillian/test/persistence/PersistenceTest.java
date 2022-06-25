@@ -34,10 +34,12 @@ import org.superbiz.arquillian.persistence.User;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,11 +71,9 @@ public class PersistenceTest {
     
     @Test
     @Transactional(TransactionMode.COMMIT) // default with persistence extension
-    @UsingDataSet("datasets/users.yml")
-    @ShouldMatchDataSet("datasets/expected-users.yml")
     public void testWithTransaction() throws Exception {
-       // em.persist(new User(1L, "TomEE"));
-       // em.persist(new User(2L, "Old"));
+        em.persist(new User(1L, "TomEE"));
+        em.persist(new User(2L, "Old"));
         assertEquals(2, em.createQuery("select count(e) from User e", Number.class).getSingleResult().intValue());
         
         transactionalCaller.call(new Callable() {
