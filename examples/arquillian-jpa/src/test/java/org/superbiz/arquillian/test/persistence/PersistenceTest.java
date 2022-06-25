@@ -72,8 +72,8 @@ public class PersistenceTest {
     @UsingDataSet("datasets/users.yml")
     @ShouldMatchDataSet("datasets/expected-users.yml")
     public void testWithTransaction() throws Exception {
-        em.persist(new User(1L, "TomEE"));
-        em.persist(new User(2L, "Old"));
+       // em.persist(new User(1L, "TomEE"));
+       // em.persist(new User(2L, "Old"));
         assertEquals(2, em.createQuery("select count(e) from User e", Number.class).getSingleResult().intValue());
         
         transactionalCaller.call(new Callable() {
@@ -89,7 +89,6 @@ public class PersistenceTest {
     }
     
     @Stateless
-    @TransactionAttribute(REQUIRES_NEW)
     public static class TransactionBean implements Caller {
 
         public <V> V call(Callable<V> callable) throws Exception {
