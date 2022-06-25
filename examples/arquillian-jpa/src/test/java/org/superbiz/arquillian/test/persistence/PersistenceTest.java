@@ -19,11 +19,7 @@ package org.superbiz.arquillian.test.persistence;
 import java.util.concurrent.Callable;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import static jakarta.ejb.TransactionAttributeType.REQUIRES_NEW;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.persistence.ShouldMatchDataSet;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
@@ -34,12 +30,10 @@ import org.superbiz.arquillian.persistence.User;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.util.List;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
