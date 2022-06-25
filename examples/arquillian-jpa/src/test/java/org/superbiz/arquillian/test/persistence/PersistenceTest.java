@@ -58,7 +58,6 @@ public class PersistenceTest {
     
     @EJB
     private Caller transactionalCaller;
-
     
     public void seriouslyYouAlreadyForgotOpenEJB_questionMark() throws Exception {
         
@@ -77,19 +76,14 @@ public class PersistenceTest {
         em.persist(new User(2L, "Old"));
         assertEquals(2, em.createQuery("select count(e) from User e", Number.class).getSingleResult().intValue());
         
-        final User user = em.find(User.class, 2L);
-        assertNotNull(user);
-        
-        user.setName("OpenEJB"); // @Transactional(TransactionMode.COMMIT) will commit it and datasets/expected-users.yml will check it
-
-//        transactionalCaller.call(new Callable() {
-//            public Object call() throws Exception {
-//                seriouslyYouAlreadyForgotOpenEJB_questionMark();
-//                return null;
-//            }
-//        });
+        transactionalCaller.call(new Callable() {
+            public Object call() throws Exception {
+                seriouslyYouAlreadyForgotOpenEJB_questionMark();
+                return null;
+            }
+        });
     }
-    
+        
     public static interface Caller {
         public <V> V call(Callable<V> callable) throws Exception;
     }
