@@ -18,15 +18,15 @@ package org.superbiz;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.health.Health;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
+import org.eclipse.microprofile.health.Liveness;
 
 /**
  * Custom Health Check for OpenWeatherMap API Service.
  */
-@Health
+@Liveness
 @ApplicationScoped
 public class WeatherServiceHealthCheck implements HealthCheck {
 
@@ -34,14 +34,14 @@ public class WeatherServiceHealthCheck implements HealthCheck {
 
     @Override
     public HealthCheckResponse call() {
-        HealthCheckResponseBuilder responseBuilder = HealthCheckResponse.named("OpenWeatherMap");
+        final HealthCheckResponseBuilder responseBuilder = HealthCheckResponse.named("OpenWeatherMap");
         try {
             WeatherApiStatus status = weatherGateway.getApiStatus();
             return responseBuilder.withData("weatherServiceApiUrl", status.getUrl())
                     .withData("weatherServiceApiVersion", status.getVersion())
                     .withData("weatherServiceMessage", status.getMessage())
                     .up().build();
-        } catch (WeatherException e) {
+        } catch (final WeatherException e) {
             return responseBuilder.withData("weatherServiceErrorMessage", e.getMessage()).down().build();
         }
     }

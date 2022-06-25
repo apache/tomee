@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2-SNAPSHOT</version>
+      <version>9.1-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -128,6 +128,7 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${tomee.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.graphene</groupId>

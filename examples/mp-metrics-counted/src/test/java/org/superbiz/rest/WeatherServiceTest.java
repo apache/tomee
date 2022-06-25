@@ -89,7 +89,7 @@ public class WeatherServiceTest {
                 .get(String.class);
         assertEquals("# HELP application_weather_day_status_total This metric shows the weather status of the day.\n" +
                      "# TYPE application_weather_day_status_total counter\n" +
-                     "application_weather_day_status_total{weather=\"day\"} 1.0", metric);
+                     "application_weather_day_status_total{weather=\"day\"} 1.0\n", metric);
     }
 
     private void assertJsonFormat(final String metricPath) {
@@ -100,7 +100,9 @@ public class WeatherServiceTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
 
-        assertEquals("{\"weather_day_status\":1}", metric);
+        assertEquals("{\n" +
+                     "  \"weather_day_status;weather=day\":1\n" +
+                     "}", metric);
     }
 
     @Test

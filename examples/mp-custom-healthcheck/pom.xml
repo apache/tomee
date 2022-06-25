@@ -24,10 +24,10 @@
   <name>TomEE :: Examples :: Custom HealthCheck</name>
   <properties>
     <arquillian-junit-container.version>1.7.0.Alpha10</arquillian-junit-container.version>
-    <microprofile-health-api.version>1.0</microprofile-health-api.version>
+    <microprofile-health-api.version>4.0</microprofile-health-api.version>
     <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-war-plugin.version>3.1.0</maven-war-plugin.version>
-    <jakartaee-api.version>9.1-M2-SNAPSHOT</jakartaee-api.version>
+    <jakartaee-api.version>9.1-M2</jakartaee-api.version>
     <junit.version>4.13.2</junit.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
