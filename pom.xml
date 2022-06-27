@@ -266,7 +266,7 @@
     <jackson.dataformat.version>2.13.2</jackson.dataformat.version>
 
     <!-- Javadoc & Asciidoclet -->
-    <javadoc.version>3.0.1</javadoc.version>
+    <javadoc.version>3.3.2</javadoc.version>
     <asciidoclet.version>1.5.0</asciidoclet.version>
 
     <maven.compiler.source>11</maven.compiler.source>
@@ -974,6 +974,8 @@
                 <additionalOption>--attribute "version=${project.version}"</additionalOption>
               </additionalOptions>
               <doclint>none</doclint> <!-- Doclint is enabled by default in java 8+, this conf is needed disable it till a rewrite of javadoc is done (https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html#format)-->
+              <quiet>true</quiet>
+              <source>11</source>
             </configuration>
           </plugin>
         </plugins>
