@@ -983,6 +983,7 @@
               <doclint>none</doclint> <!-- Doclint is enabled by default in java 8+, this conf is needed disable it till a rewrite of javadoc is done (https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html#format)-->
               <quiet>true</quiet>
               <source>11</source>
+              <skip>true</skip>
             </configuration>
           </plugin>
         </plugins>
