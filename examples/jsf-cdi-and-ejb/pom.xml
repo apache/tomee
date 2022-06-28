@@ -23,7 +23,7 @@
   <artifactId>jsf-cdi-and-ejb</artifactId>
   <packaging>war</packaging>
   <name>TomEE :: Web Examples :: JSF - CDI and EJB</name>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M8</version>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

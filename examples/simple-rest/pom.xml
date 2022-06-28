@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>simple-rest</artifactId>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M8</version>
   <name>TomEE :: Examples :: Simple REST</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,7 +67,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M8</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

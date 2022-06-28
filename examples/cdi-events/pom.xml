@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-events</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M8</version>
   <name>TomEE :: Examples :: CDI Events</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M8</version>
       <scope>test</scope>
     </dependency>
     <!-- to show events we log them in the test -->

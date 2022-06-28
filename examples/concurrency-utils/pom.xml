@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>concurrency-utils</artifactId>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M8</version>
   <packaging>jar</packaging>
   <name>TomEE :: Examples :: Concurrency utilities example</name>
   <properties>

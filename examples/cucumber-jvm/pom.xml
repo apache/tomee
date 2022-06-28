@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cucumber-jvm</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M8</version>
   <name>TomEE :: Examples :: Cucumber JVM</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -66,14 +66,14 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M8</version>
       <scope>test</scope>
     </dependency>
     <!-- io.cucumber:cucumber-openejb:7.3.2 still uses javax.ejb.embeddable.EJBContainer in OpenEJBObjectFactory.java -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>cucumber-openejb-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M8</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
