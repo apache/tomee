@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>serverless-tomee-plume</artifactId>
-  <version>9.0.0-M8</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
 
   <name>TomEE :: Examples :: Serverless Apache TomEE Plume</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>9.0.0-M8</version.tomee>
+    <version.tomee>9.0.0-M9-SNAPSHOT</version.tomee>
   </properties>
   <dependencies>
     <dependency>

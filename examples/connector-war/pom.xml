@@ -15,11 +15,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-war</artifactId>
   <packaging>war</packaging>
-  <version>9.0.0-M8</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in WAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.0.0-M8</tomee.version>
+    <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>3.1.4</version.shrinkwrap.resolver>
   </properties>
   <repositories>
