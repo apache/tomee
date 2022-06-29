@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multiple-arquillian-adapters</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <name>TomEE :: Examples :: Multiple Arquillian Adapters</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
     <arquillian.version>1.7.0.Alpha10</arquillian.version>
   </properties>
   <build>

@@ -21,7 +21,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-M8-SNAPSHOT</version>
+    <version>9.0.0-M9-SNAPSHOT</version>
   </parent>
 
   <artifactId>mbean-annotation-api</artifactId>
@@ -40,6 +40,14 @@
           <compilerArgs>
             <arg>--patch-module=java.management=${basedir}/src/main/java</arg>
           </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${javadoc.version}</version>
+        <configuration>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
