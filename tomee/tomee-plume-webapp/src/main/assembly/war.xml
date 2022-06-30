@@ -100,6 +100,53 @@
         <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.5_mail</exclude>
         <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
         <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.4_mail</exclude>
+
+        <!--
+        list bellow should not be required because Maven should exclude them but looks like sometimes
+        it picks up transitive dependencies from shaded libraries
+        -->
+        <!-- exclude shaded artifacts because they are under our own groupId -->
+        <exclude>org.apache.activemq:activemq-broker</exclude>
+        <exclude>org.apache.activemq:activemq-kahadb-store</exclude>
+        <exclude>org.apache.activemq:activemq-ra</exclude>
+        <exclude>org.apache.commons.dbcp2:*</exclude>
+        <exclude>commons-fileupload:*</exclude>
+        <exclude>org.apache.cxf:*</exclude>
+        <exclude>org.metatype.sxc:*</exclude>
+        <exclude>org.apache.taglibs:*</exclude>
+
+        <!-- jakartaee-api -->
+        <exclude>com.sun.mail:*</exclude>
+        <exclude>jakarta.activation:*</exclude>
+        <exclude>jakarta.annotation:*</exclude>
+        <exclude>jakarta.authentication:*</exclude>
+        <exclude>jakarta.authorization:*</exclude>
+        <exclude>jakarta.batch:*</exclude>
+        <exclude>jakarta.ejb:*</exclude>
+        <exclude>jakarta.el:*</exclude>
+        <exclude>jakarta.enterprise:*</exclude>
+        <exclude>jakarta.enterprise.concurrent:*</exclude>
+        <exclude>jakarta.faces:*</exclude>
+        <exclude>jakarta.inject:*</exclude>
+        <exclude>jakarta.interceptor:*</exclude>
+        <exclude>jakarta.jms:*</exclude>
+        <exclude>jakarta.json:*</exclude>
+        <exclude>jakarta.json.bind:*</exclude>
+        <exclude>jakarta.jws:*</exclude>
+        <exclude>jakarta.mail:*</exclude>
+        <exclude>jakarta.persistence:*</exclude>
+        <exclude>jakarta.platform:*</exclude>
+        <exclude>jakarta.resource:*</exclude>
+        <exclude>jakarta.security.enterprise:*</exclude>
+        <exclude>jakarta.servlet:*</exclude>
+        <exclude>jakarta.servlet.jsp:*</exclude>
+        <exclude>jakarta.servlet.jsp.jstl:*</exclude>
+        <exclude>jakarta.transaction:*</exclude>
+        <exclude>jakarta.validation:*</exclude>
+        <exclude>jakarta.websocket:*</exclude>
+        <exclude>jakarta.ws.rs:*</exclude>
+        <exclude>jakarta.xml.bind:*</exclude>
+        <exclude>jakarta.xml.soap:*</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
