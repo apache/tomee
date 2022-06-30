@@ -464,17 +464,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>jakarta.xml.soap</groupId>
-      <artifactId>jakarta.xml.soap-api</artifactId>
-      <version>1.4.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.10.10</version>
@@ -2189,7 +2178,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.21</version>
+      <version>1.7.36</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2200,7 +2189,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.21</version>
+      <version>1.7.36</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
