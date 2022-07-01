@@ -149,7 +149,7 @@
 
     <tomcat.version>10.0.22</tomcat.version>
 
-    <cxf.version>3.5.3</cxf.version>
+    <cxf.version>3.5.0</cxf.version>
     <ehcache.version>3.10.0</ehcache.version>
     <wss4j.version>2.4.0</wss4j.version>
     <!-- used by cxf for security (replay attack) -->
