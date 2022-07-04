@@ -18,11 +18,11 @@ package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.commons.dbcp2.managed.TransactionContext;
 
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.sql.SQLException;
 public class DbcpTransactionRegistry extends org.apache.commons.dbcp2.managed.TransactionRegistry {
 
