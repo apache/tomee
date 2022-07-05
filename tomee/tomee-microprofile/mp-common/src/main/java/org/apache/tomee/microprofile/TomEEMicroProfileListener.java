@@ -122,6 +122,5 @@ public class TomEEMicroProfileListener {
                    // webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
                    // webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
                });
-
     }
 }

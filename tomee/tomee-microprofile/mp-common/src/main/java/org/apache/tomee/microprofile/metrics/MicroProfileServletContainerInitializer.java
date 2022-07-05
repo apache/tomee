@@ -45,9 +45,6 @@ public class MicroProfileServletContainerInitializer implements ServletContainer
 
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
-
-
-
         final FilterRegistration.Dynamic metricsServletFilter = ctx.addFilter("mp-metrics-filter", JaxRsMetricsServletFilter.class);
         metricsServletFilter.setAsyncSupported(true);
         metricsServletFilter.addMappingForUrlPatterns(null, false, "/*");
