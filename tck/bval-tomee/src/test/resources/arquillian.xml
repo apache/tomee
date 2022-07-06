@@ -35,6 +35,9 @@
       <property name="properties">
         validation.provider = org.apache.bval.jsr.ApacheValidationProvider
       </property>
+      <property name="additionalLibs">
+        mvn:org.openjfx:javafx-base:11:jar:mac
+      </property>
     </configuration>
   </container>
 </arquillian>
