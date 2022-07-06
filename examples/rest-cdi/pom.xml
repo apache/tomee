@@ -59,6 +59,12 @@
       <version>8.0-6</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>8.0.13-SNAPSHOT</version>
+      <type>pom</type>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>

@@ -50,6 +50,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -102,6 +105,12 @@
       <artifactId>javaee-api</artifactId>
       <version>${version.javaee-api}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>8.0.13-SNAPSHOT</version>
+      <type>pom</type>
     </dependency>
 
     <dependency>
