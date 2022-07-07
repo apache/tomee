@@ -485,7 +485,16 @@
           <pushChanges>false</pushChanges>
           <releaseProfiles />
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <arguments>-Pno-examples,apache-release -Dmaven.javadoc.skip=true -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
+          <arguments>-Pno-examples,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${javadoc.version}</version>
+        <configuration>
+          <source>8</source>
+          <release>8</release>
         </configuration>
       </plugin>
 
@@ -499,13 +508,6 @@
           <fork>true</fork>
           <executable>/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/javac</executable>
           -->
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
         </configuration>
       </plugin>
       <plugin>
@@ -978,8 +980,8 @@
               </additionalOptions>
               <doclint>none</doclint> <!-- Doclint is enabled by default in java 8+, this conf is needed disable it till a rewrite of javadoc is done (https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html#format)-->
               <quiet>true</quiet>
-              <source>11</source>
-              <skip>true</skip>
+              <source>8</source>
+              <release>8</release>
             </configuration>
           </plugin>
         </plugins>
