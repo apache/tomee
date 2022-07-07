@@ -23,7 +23,7 @@ For this examples we are adding two dependencies in the `pom.xml` dependencies s
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>cucumber-openejb-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
