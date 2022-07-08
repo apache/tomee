@@ -191,7 +191,9 @@
             <suiteXmlFile>${suiteFile}</suiteXmlFile>
           </suiteXmlFiles>
           <parallel>classes</parallel>
-          <threadCount>1</threadCount>
+          <threadCount>2</threadCount>
+          <reuseForks>false</reuseForks>
+          <forkCount>5</forkCount>
         </configuration>
         <dependencies>
           <!-- failsafe has dependencies on javax -->
