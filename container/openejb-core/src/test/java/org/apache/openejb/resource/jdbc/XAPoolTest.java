@@ -94,7 +94,7 @@ public class XAPoolTest {
 
             final Connection connection = c.getMetaData().getConnection(); // just to do something and force the connection init
             assertThat(connection, instanceOf(ManagedConnection.class));
-            assertTrue(connection.toString().contains("URL=jdbc:hsqldb:mem:dbcpxa, UserName=SA, HSQL Database Engine Driver"));
+            assertTrue(connection.toString().contains("URL=jdbc:hsqldb:mem:dbcpxa, HSQL Database Engine Driver"));
         } // here we close the connection so we are back in the initial state
 
         assertEquals(0, tds.getNumActive());

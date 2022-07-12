@@ -317,7 +317,7 @@ INFO: HV000001: Hibernate Validator 7.0.4.Final
 März 24, 2022 9:34:41 VORM. org.apache.openejb.util.LogStreamAsync run
 INFORMATION: PersistenceUnit(name=movie-unit, provider=org.hibernate.jpa.HibernatePersistenceProvider) - provider time 1292ms
 WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by org.apache.openejb.util.proxy.ClassDefiner (file:/home/zowallar/.m2/repository/org/apache/tomee/openejb-core/9.0.0-M8-SNAPSHOT/openejb-core-9.0.0-M8-SNAPSHOT.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
+WARNING: Illegal reflective access by org.apache.openejb.util.proxy.ClassDefiner (file:/home/zowallar/.m2/repository/org/apache/tomee/openejb-core/9.0.0-M9-SNAPSHOT/openejb-core-9.0.0-M9-SNAPSHOT.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
 WARNING: Please consider reporting this to the maintainers of org.apache.openejb.util.proxy.ClassDefiner
 WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
 WARNING: All illegal access operations will be denied in a future release

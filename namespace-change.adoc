@@ -214,7 +214,7 @@ a|
 ----
 <groupId>org.apache.tomee</groupId>
 <artifactId>taglibs-shade</artifactId>
-<version>9.0.0-M8-SNAPSHOT</version>
+<version>9.0.0-M9-SNAPSHOT</version>
 ----
 b|
 Shaded artifacts are described in the next section.

@@ -19,11 +19,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>jsonb-configuration</artifactId>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile JSONB Configuration</name>
   <properties>
-    <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

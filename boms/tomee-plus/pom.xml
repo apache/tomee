@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>9.0.0-M8-SNAPSHOT</version>
+    <version>9.0.0-M9-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
       <artifactId>woodstox-core</artifactId>
-      <version>5.2.1</version>
+      <version>6.2.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -542,17 +542,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>jakarta.xml.soap</groupId>
-      <artifactId>jakarta.xml.soap-api</artifactId>
-      <version>1.4.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.10.10</version>
@@ -713,7 +702,7 @@
     <dependency>
       <groupId>org.apache.geronimo.mail</groupId>
       <artifactId>geronimo-mail_2.1_provider</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -806,7 +795,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>3.0.1</version>
+      <version>3.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -817,7 +806,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>3.0.1</version>
+      <version>3.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -958,7 +947,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>2.2.3</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1200,7 +1189,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-broker-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1211,7 +1200,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-client-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1222,7 +1211,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-kahadb-store-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1233,7 +1222,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-ra-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1244,7 +1233,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>commons-dbcp2-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1255,7 +1244,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>cxf-rt-rs-mp-client-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1266,7 +1255,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>cxf-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1508,7 +1497,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>sxc-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1519,7 +1508,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2265,17 +2254,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm</artifactId>
-      <version>9.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.reactivestreams</groupId>
       <artifactId>reactive-streams</artifactId>
       <version>1.0.3</version>
@@ -2289,7 +2267,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.21</version>
+      <version>1.7.36</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2300,7 +2278,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.21</version>
+      <version>1.7.36</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

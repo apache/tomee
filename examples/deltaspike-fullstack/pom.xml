@@ -14,14 +14,14 @@
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-fullstack</artifactId>
   <name>TomEE :: Examples :: JSF2/CDI/BV/JPA/DeltaSpike</name>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <packaging>war</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.myfaces2>2.3.0</version.myfaces2>
     <version.deltaspike>1.9.3</version.deltaspike>
     <version.extval>2.0.8</version.extval>
-    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -63,7 +63,7 @@
           <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>jakartaee-api</artifactId>
-            <version>9.1-M2-SNAPSHOT</version>
+            <version>9.1-M2</version>
           </dependency>
           <dependency>
             <groupId>net.sourceforge.serp</groupId>
@@ -142,7 +142,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2-SNAPSHOT</version>
+      <version>9.1-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

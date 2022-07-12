@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-M8-SNAPSHOT</version>
+    <version>9.0.0-M9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -192,6 +192,7 @@
           </suiteXmlFiles>
           <parallel>classes</parallel>
           <threadCount>1</threadCount>
+          <reuseForks>false</reuseForks>
         </configuration>
         <dependencies>
           <!-- failsafe has dependencies on javax -->

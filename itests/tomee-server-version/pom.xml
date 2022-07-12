@@ -23,7 +23,7 @@
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-M8-SNAPSHOT</version>
+    <version>9.0.0-M9-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee-server-version</artifactId>
@@ -64,21 +64,6 @@
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>org.tomitribe</groupId>
-      <artifactId>tomitribe-util</artifactId>
-      <version>1.2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.tomitribe</groupId>
-      <artifactId>swizzle</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-compress</artifactId>
-      <version>1.14</version>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

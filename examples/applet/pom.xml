@@ -22,7 +22,7 @@
   <groupId>org.superbiz.applet</groupId>
   <artifactId>applet</artifactId>
   <packaging>war</packaging>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Signed Applet EJB Client</name>
   <url>http://tomee.apache.org</url>
   <properties>
@@ -38,13 +38,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2-SNAPSHOT</version>
+      <version>9.1-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>9.0.0-M8-SNAPSHOT</version>
+      <version>9.0.0-M9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -112,14 +112,14 @@
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
                   <artifactId>openejb-client</artifactId>
-                  <version>9.0.0-M8-SNAPSHOT</version>
+                  <version>9.0.0-M9-SNAPSHOT</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>openejb-client.jar</destFileName>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
                   <artifactId>jakartaee-api</artifactId>
-                  <version>9.1-M2-SNAPSHOT</version>
+                  <version>9.1-M2</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>jakartaee-api.jar</destFileName>
                 </artifactItem>

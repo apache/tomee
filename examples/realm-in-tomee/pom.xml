@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>realm-in-tomee</artifactId>
   <packaging>war</packaging>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <name>TomEE :: Examples :: DataSource Realm</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -49,7 +49,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>9.0.0-M8-SNAPSHOT</version>
+        <version>9.0.0-M9-SNAPSHOT</version>
       </plugin>
       
     </plugins>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2-SNAPSHOT</version>
+      <version>9.1-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

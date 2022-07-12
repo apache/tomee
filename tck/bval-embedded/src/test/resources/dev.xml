@@ -17,9 +17,9 @@
   -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="BVAL-TCK" verbose="1">
-    <test name="BVAL-TCK">
-      <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.bootstrap.customprovider.BootstrapNonAvailableValidationProviderTest" />
-      </classes>
-    </test>
+  <test name="BVal-TCK">
+    <classes>
+      <class name="org.hibernate.beanvalidation.tck.tests.valueextraction.builtin.JavaFXValueExtractorsTest" />
+    </classes>
+  </test>
 </suite>

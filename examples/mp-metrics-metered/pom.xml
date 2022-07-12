@@ -18,16 +18,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <artifactId>mp-metrics-metered</artifactId>
   <name>TomEE :: Examples :: MicroProfile Metrics Metered</name>
   <packaging>war</packaging>
   <properties>
-    <version.jakartaee-api>9.1-M2-SNAPSHOT</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <microprofile.metrics.version>3.0.1</microprofile.metrics.version>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
-    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>

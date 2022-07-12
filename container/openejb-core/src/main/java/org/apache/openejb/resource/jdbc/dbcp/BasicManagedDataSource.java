@@ -20,9 +20,13 @@ package org.apache.openejb.resource.jdbc.dbcp;
 import org.apache.commons.dbcp2.ConnectionFactory;
 import org.apache.commons.dbcp2.PoolableConnection;
 import org.apache.commons.dbcp2.PoolingDataSource;
+import org.apache.commons.dbcp2.Utils;
+import org.apache.commons.dbcp2.managed.DataSourceXAConnectionFactory;
+import org.apache.commons.dbcp2.managed.LocalXAConnectionFactory;
 import org.apache.commons.dbcp2.managed.ManagedConnection;
 import org.apache.commons.dbcp2.managed.ManagedDataSource;
 import org.apache.commons.dbcp2.managed.TransactionRegistry;
+import org.apache.commons.dbcp2.managed.XAConnectionFactory;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
@@ -37,9 +41,11 @@ import org.apache.openejb.util.reflection.Reflections;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -130,8 +136,63 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
                 // no-op
             }
         }
-        return super.createConnectionFactory();
+
+        if (getTransactionManager() == null) {
+            throw new SQLException("Transaction manager must be set before a connection can be created");
+        } else if (getXADataSource() == null) {
+            ConnectionFactory connectionFactory = super.createConnectionFactory();
+            XAConnectionFactory xaConnectionFactory = new LocalXAConnectionFactory(this.getTransactionManager(), this.getTransactionSynchronizationRegistry(), connectionFactory);
+            setTransactionRegistry(xaConnectionFactory, new DbcpTransactionRegistry(getTransactionManager()));
+            setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
+            return xaConnectionFactory;
+        } else {
+            XADataSource xaDataSourceInstance = getXaDataSourceInstance();
+            if (xaDataSourceInstance == null) {
+                Class xaDataSourceClass;
+
+                String message;
+                try {
+                    xaDataSourceClass = Class.forName(xaDataSource);
+                } catch (Exception var5) {
+                    message = "Cannot load XA data source class '" + xaDataSource + "'";
+                    throw new SQLException(message, var5);
+                }
+
+                try {
+                   setXaDataSourceInstance((XADataSource) xaDataSourceClass.getConstructor().newInstance());
+                } catch (Exception var4) {
+                    message = "Cannot create XA data source of class '" + xaDataSource + "'";
+                    throw new SQLException(message, var4);
+                }
+            }
+
+            XAConnectionFactory xaConnectionFactory = new DataSourceXAConnectionFactory(this.getTransactionManager(), getXaDataSourceInstance(), this.getUsername(), Utils.toCharArray(this.getPassword()), this.getTransactionSynchronizationRegistry());
+            setTransactionRegistry(xaConnectionFactory, new DbcpTransactionRegistry(getTransactionManager()));
+            setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
+            return xaConnectionFactory;
+        }
     }
+
+    private void setTransactionRegistry(final TransactionRegistry registry) {
+        try {
+            final Field field = org.apache.commons.dbcp2.managed.BasicManagedDataSource.class.getDeclaredField("transactionRegistry");
+            field.setAccessible(true);
+            field.set(this, registry);
+        } catch (final Throwable e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void setTransactionRegistry(XAConnectionFactory xaConnectionFactory, final TransactionRegistry registry) {
+        try {
+            final Field field = xaConnectionFactory.getClass().getDeclaredField("transactionRegistry");
+            field.setAccessible(true);
+            field.set(xaConnectionFactory, registry);
+        } catch (final Throwable e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 
     private void setJndiXaDataSource(final String xaDataSource) {
         setXaDataSourceInstance( // proxy cause we don't know if this datasource was created before or not the delegate

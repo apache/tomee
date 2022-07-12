@@ -16,11 +16,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>9.0.0-M8-SNAPSHOT</version>
+  <version>9.0.0-M9-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in EAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
+    <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
     <surefire.version>2.21.0</surefire.version>
   </properties>
@@ -42,7 +42,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>jakartaee-api</artifactId>
-        <version>9.1-M2-SNAPSHOT</version>
+        <version>9.1-M2</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

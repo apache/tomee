@@ -59,6 +59,7 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
             // Create the XAConectionFactory using the XA data source
             final XADataSource xaDataSourceInstance = (XADataSource) ds;
             final XAConnectionFactory xaConnectionFactory = new DataSourceXAConnectionFactory(getTransactionManager(), xaDataSourceInstance, getUsername(), getPassword());
+            setTransactionRegistry(xaConnectionFactory, new DbcpTransactionRegistry(getTransactionManager()));
             setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
             return xaConnectionFactory;
 
@@ -67,6 +68,7 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
         // If xa data source is not specified a DriverConnectionFactory is created and wrapped with a LocalXAConnectionFactory
         final ConnectionFactory connectionFactory = new DataSourceConnectionFactory(DataSource.class.cast(ds), getUsername(), getPassword());
         final XAConnectionFactory xaConnectionFactory = new LocalXAConnectionFactory(getTransactionManager(), connectionFactory);
+        setTransactionRegistry(xaConnectionFactory, new DbcpTransactionRegistry(getTransactionManager()));
         setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());
         return xaConnectionFactory;
     }
@@ -76,6 +78,16 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
             final Field field = org.apache.commons.dbcp2.managed.BasicManagedDataSource.class.getDeclaredField("transactionRegistry");
             field.setAccessible(true);
             field.set(this, registry);
+        } catch (final Throwable e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void setTransactionRegistry(XAConnectionFactory xaConnectionFactory, final TransactionRegistry registry) {
+        try {
+            final Field field = xaConnectionFactory.getClass().getDeclaredField("transactionRegistry");
+            field.setAccessible(true);
+            field.set(xaConnectionFactory, registry);
         } catch (final Throwable e) {
             throw new IllegalStateException(e);
         }

@@ -1,7 +1,7 @@
 FROM tomee:8-jre-8.0.1-microprofile
 
 RUN rm -Rf /usr/local/tomee/webapps/ROOT/
-COPY target/mp-metrics-counted-8.0.2-SNAPSHOT.war /usr/local/tomee/webapps/ROOT.war
+COPY target/mp-metrics-counted-9.0.0-M9-SNAPSHOT.war /usr/local/tomee/webapps/ROOT.war
 
 RUN groupadd --gid 1001 tomee
 RUN useradd --uid 1001 -g tomee tomee

@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-M8-SNAPSHOT</version>
+    <version>9.0.0-M9-SNAPSHOT</version>
   </parent>
   <artifactId>examples</artifactId>
   <packaging>pom</packaging>
@@ -64,10 +64,13 @@
     <module>datasource-definition</module>
     <module>datasource-versioning</module>
     <module>decorators</module>
+    <!-- deltaspike not yet released and ready for jakarta
     <module>deltaspike-configproperty</module>
     <module>deltaspike-exception-handling</module>
-<!--    <module>deltaspike-fullstack</module>-->
+    <module>deltaspike-fullstack</module>
     <module>deltaspike-i18n</module>
+    <module>projectstage-demo</module>
+    -->
     <module>dynamic-dao-implementation</module>
     <module>dynamic-datasource-routing</module>
     <module>dynamic-implementation</module>
@@ -110,8 +113,11 @@
     <module>movies-complete</module>
     <module>mp-config-example</module>
     <module>mp-config-source-database</module>
+    <!-- Todo not supported yet
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
+    <module>mp-faulttolerance-timeout</module>
+    -->
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
     <module>mp-metrics-counted</module>
@@ -124,6 +130,8 @@
     <module>mp-rest-jwt-jwk</module>
     <module>mp-rest-jwt-principal</module>
     <module>mp-rest-jwt-public-key</module>
+    <module>mp-rest-client</module>
+    <module>mp-custom-healthcheck</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -131,7 +139,6 @@
     <module>persistence-fragment</module>
     <module>pojo-webservice</module>
 <!--    <module>polling-parent</module>-->
-    <module>projectstage-demo</module>
     <module>quartz-app</module>
     <module>realm-in-tomee</module>
     <module>reload-persistence-unit-properties</module>
@@ -204,18 +211,18 @@
     <module>resources-jmx-example</module>
     <module>websocket-tls-basic-auth</module>
     <module>concurrency-utils</module>
+    <!-- Deltaspike and others not jakarta compliant
+    Too many to relocate for an example
     <module>mvc-cxf</module>
     <module>mvc-cxf-hibernate</module>
-    <module>mp-rest-client</module>
+    -->
     <module>mvc-resteasy</module>
-    <module>mp-custom-healthcheck</module>
     <module>jsonb-configuration</module>
     <module>jsonb-custom-serializer</module>
 <!--    <module>vaadin-lts-v08-simple</module>-->
 <!--    <module>vaadin-lts-v10-simple</module>-->
 <!--    <module>vaadin-vxx-simple</module>-->
     <module>cloud-tomee-azure</module>
-    <module>mp-faulttolerance-timeout</module>
     <module>xa-datasource</module>
     <module>websocket-jms</module>
 
@@ -229,6 +236,14 @@
       <id>apache-release</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.3.2</version>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
