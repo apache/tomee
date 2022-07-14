@@ -825,26 +825,9 @@ public class LocalBeanProxyFactory implements Opcodes {
             if (unsafeDefineClass != null) {
                 return (Class<?>) unsafeDefineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, loader, clsToProxy.getProtectionDomain());
             } else {
-                return (Class) getClassLoaderDefineClassMethod(loader).invoke(loader, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getProtectionDomain());
+                return ClassDefiner.defineClass(loader, proxyName, proxyBytes, clsToProxy, clsToProxy.getProtectionDomain());
+                //return (Class) getClassLoaderDefineClassMethod(loader).invoke(loader, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getProtectionDomain());
             }
-        }
-
-        private static Method getClassLoaderDefineClassMethod(ClassLoader classLoader) {
-            Class<?> clazz = classLoader.getClass();
-            Method defineClassMethod = null;
-            do {
-                try {
-                    defineClassMethod = clazz.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
-                } catch (NoSuchMethodException e) {
-                    // do nothing, we need to search the superclass
-                }
-                clazz = clazz.getSuperclass();
-            } while (defineClassMethod == null && clazz != Object.class);
-
-            if (defineClassMethod != null && !defineClassMethod.isAccessible()) {
-                defineClassMethod.setAccessible(true);
-            }
-            return defineClassMethod;
         }
 
     }
