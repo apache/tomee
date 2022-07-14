@@ -250,7 +250,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             } else if (remote != null) {
                 instance = (T) remote.create();
             } else { // shouldn't be called for an MDB
-                throw new IllegalStateException("no interface to proxy for ejb " + beanContext.getEjbName() + ", is this is a MDB maybe you shouldn't use a scope?");
+                throw new IllegalStateException("No interface to proxy for ejb " + beanContext.getEjbName() + ", if this is a @MessageDriven bean, try not using a scope?");
             }
 
             if (isDependentAndStateful) {
