@@ -194,7 +194,7 @@
 
     <bval.version>2.0.5</bval.version>
     <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
-    <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
+    <junit.version>4.13.2</junit.version>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -1373,26 +1373,6 @@
         <groupId>stax</groupId>
         <artifactId>stax</artifactId>
         <version>1.2.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-beans</artifactId>
-        <version>${org.springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>${org.springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context-support</artifactId>
-        <version>${org.springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-orm</artifactId>
-        <version>${org.springframework.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
