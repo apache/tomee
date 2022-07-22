@@ -1,4 +1,4 @@
-package org.apache.bcel.generic;
+package openejb.shade.org.apache.bcel.generic;
 
 /* ====================================================================
  * The Apache Software License, Version 1.1
@@ -54,8 +54,8 @@ package org.apache.bcel.generic;
  * <http://www.apache.org/>.
  */
 
-import org.apache.bcel.Constants;
-import org.apache.bcel.classfile.*;
+import openejb.shade.org.apache.bcel.Constants;
+import openejb.shade.org.apache.bcel.classfile.*;
 import java.util.HashMap;
 
 /**
