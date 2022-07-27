@@ -285,7 +285,7 @@
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.faces</artifactId>
-      <version>2.3.15</version>
+      <version>2.3.18</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
