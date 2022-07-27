@@ -172,7 +172,7 @@
     <bval.version>1.1.2</bval.version>
     <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.2</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
