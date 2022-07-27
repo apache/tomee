@@ -202,7 +202,7 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <myfaces.version>2.3.10</myfaces.version>
-    <mojarra.version>2.3.15</mojarra.version>
+    <mojarra.version>2.3.18</mojarra.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.17.1</log4j2.version>
