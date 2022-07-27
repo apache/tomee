@@ -421,7 +421,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-jose</artifactId>
+      <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
       <version>3.4.5</version>
       <exclusions>
         <exclusion>
@@ -432,7 +432,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
+      <artifactId>cxf-rt-rs-security-jose</artifactId>
       <version>3.4.5</version>
       <exclusions>
         <exclusion>
@@ -476,7 +476,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security</artifactId>
+      <artifactId>cxf-rt-security-saml</artifactId>
       <version>3.4.5</version>
       <exclusions>
         <exclusion>
@@ -487,7 +487,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security-saml</artifactId>
+      <artifactId>cxf-rt-security</artifactId>
       <version>3.4.5</version>
       <exclusions>
         <exclusion>
@@ -586,17 +586,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-health</artifactId>
-      <version>1.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-health-common</artifactId>
       <version>1.0.1</version>
       <exclusions>
@@ -608,8 +597,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo</groupId>
-      <artifactId>geronimo-metrics</artifactId>
-      <version>1.0.2</version>
+      <artifactId>geronimo-health</artifactId>
+      <version>1.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -620,6 +609,17 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-metrics-common</artifactId>
+      <version>1.0.2</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-metrics</artifactId>
       <version>1.0.2</version>
       <exclusions>
         <exclusion>
@@ -762,7 +762,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-ee</artifactId>
+      <artifactId>openwebbeans-ee-common</artifactId>
       <version>2.0.27</version>
       <exclusions>
         <exclusion>
@@ -773,7 +773,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-ee-common</artifactId>
+      <artifactId>openwebbeans-ee</artifactId>
       <version>2.0.27</version>
       <exclusions>
         <exclusion>
@@ -883,7 +883,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
+      <artifactId>tomcat-catalina-ha</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -894,7 +894,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina-ha</artifactId>
+      <artifactId>tomcat-catalina</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -938,7 +938,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper</artifactId>
+      <artifactId>tomcat-jasper-el</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -949,7 +949,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper-el</artifactId>
+      <artifactId>tomcat-jasper</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -1048,17 +1048,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-util</artifactId>
-      <version>${tomcat.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-util-scan</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
@@ -1070,7 +1059,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-websocket</artifactId>
+      <artifactId>tomcat-util</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -1082,6 +1071,17 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-websocket-api</artifactId>
+      <version>${tomcat.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-websocket</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -1180,17 +1180,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
       <version>${project.version}</version>
       <exclusions>
@@ -1203,6 +1192,17 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-transport</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-cxf</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1257,7 +1257,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee</artifactId>
+      <artifactId>openejb-jee-accessors</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1268,7 +1268,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee-accessors</artifactId>
+      <artifactId>openejb-jee</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1841,7 +1841,8 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.5.2</version>
+      <version>${version.hsqldb}</version>
+      <classifier>jdk8</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
