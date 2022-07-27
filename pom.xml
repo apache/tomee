@@ -191,8 +191,6 @@
     <version.eclipselink>2.6.4</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
 
-    <jackson.version>2.12.0</jackson.version>
-
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
@@ -1816,11 +1814,6 @@
             <artifactId>xalan</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

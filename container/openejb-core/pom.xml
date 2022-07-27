@@ -507,14 +507,17 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
+      <optional>true</optional>
       <exclusions>
         <exclusion>
           <artifactId>activemq-broker</artifactId>
@@ -533,10 +536,6 @@
     <dependency>
       <groupId>org.objectweb.howl</groupId>
       <artifactId>howl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
     </dependency>
     <!-- JavaMail -->
     <dependency>
