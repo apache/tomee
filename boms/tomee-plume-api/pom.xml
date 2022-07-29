@@ -230,7 +230,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>4.0</version>
+      <version>5.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
