@@ -123,6 +123,7 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.cryptacular");
         excluded.add("org.eclipse.jdt.core");
         excluded.add("org.eclipse.jdt.internal");
+        excluded.add("org.ehcache");
         excluded.add("org.fusesource.hawtbuf");
         excluded.add("org.hamcrest");
         excluded.add("org.hsqldb");

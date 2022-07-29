@@ -199,6 +199,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 || (name.startsWith("org.apache.") && !name.startsWith("org.apache.geronimo.connector.work.WorkerContext."))
                 || name.startsWith("openjpa.")
                 || name.startsWith("net.sf.ehcache.")
+                || name.startsWith("org.ehcache.")
                 || name.startsWith("org.quartz.")
                 || name.startsWith("org.hibernate.");
     }
