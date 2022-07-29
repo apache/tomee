@@ -1927,17 +1927,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <version>3.8.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.fusesource.hawtbuf</groupId>
       <artifactId>hawtbuf</artifactId>
       <version>1.11</version>
