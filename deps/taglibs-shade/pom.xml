@@ -143,6 +143,24 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.tomee.patch</groupId>
+        <artifactId>tomee-patch-plugin</artifactId>
+        <configuration>
+          <select>taglibs-shade-.*\.jar</select>
+          <transformSources>false</transformSources>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
