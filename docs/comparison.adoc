@@ -82,8 +82,8 @@ https://tomcat.apache.org/[Apache Tomcat^] 10.0.x
 https://myfaces.apache.org/[Apache MyFaces^] *(in all TomEE flavors except Plume)* +
 https://projects.eclipse.org/projects/ee4j.mojarra[Eclipse Mojarra^] *(in TomEE Plume only)*
 |Jakarta Bean Validation|
-[.line-through]#https://bval.apache.org/[Apache BVal^]# *(in TomEE 8.x and earlier)* +
-https://hibernate.org/validator/[Hibernate Validator^] 7.0.x *(in TomEE 9.x and later)*
+https://bval.apache.org/[Apache BVal^] *(in TomEE 8.x and earlier)* +
+https://hibernate.org/validator/[Hibernate Validator^] 7.0.x *(in TomEE 9.x)*
 |Jakarta Contexts and Dependency Injection (CDI)|https://openwebbeans.apache.org/[Apache OpenWebBeans^]
 |Jakarta Enterprise Beans (EJB)|https://openejb.apache.org/[Apache OpenEJB^]
 |Jakarta Persistence (JPA)|
@@ -92,7 +92,7 @@ https://www.eclipse.org/eclipselink/[EclipseLink^] 3.x *(in TomEE Plume only)*
 |Jakarta Transactions (JTA)|Apache{nbsp}Geronimo{nbsp}Transaction{nbsp}Manager
 |Jakarta Mail (JavaMail)|Apache Geronimo JavaMail
 |MicroProfile|
-[.line-through]#Apache Geronimo MicroProfile# *(in TomEE 7.1.x and 8.x)* +
+Apache Geronimo MicroProfile *(in TomEE 7.1.x and 8.x)* +
 https://smallrye.io/[SmallRye MicroProfile^] *(in TomEE 9.x and later)*
 |Jakarta JSON Binding (JSON-B), +
 Jakarta JSON Processing (JSON-P)|
