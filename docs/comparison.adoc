@@ -74,9 +74,8 @@ xref:../../comparison.adoc[See main comparison page.]
 [options="header",cols="1,1"]
 |===
 |Specifications|Implementations included by TomEE
-|Java Annotations, Servlet, Server Pages (JSP), +
-Java Expression Language (EL), WebSocket, +
-Java Authentication (JASPIC), Security, ...|
+|Java Servlet, Server Pages (JSP), Expression Language (EL), +
+Java Annotations, Authentication (JASPIC), WebSocket, ... |
 https://tomcat.apache.org/[Apache Tomcat^]
 |Java{nbsp}Standard{nbsp}Tag{nbsp}Library{nbsp}(JSTL)|https://tomcat.apache.org/taglibs.html[Apache Standard Taglib Implementation^]
 |Java Server Faces (JSF)|
