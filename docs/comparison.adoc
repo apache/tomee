@@ -88,7 +88,7 @@ https://hibernate.org/validator/[Hibernate Validator^] 7.0.x *(in TomEE 9.x and 
 |Jakarta Enterprise Beans (EJB)|https://openejb.apache.org/[Apache OpenEJB^]
 |Jakarta Persistence (JPA)|
 https://openjpa.apache.org/[Apache OpenJPA^] 3.2.x with classifier (in all TomEE flavors) +
-https://www.eclipse.org/eclipselink/[EclipseLink^] 3.1.x *(in TomEE Plume only)*
+https://www.eclipse.org/eclipselink/[EclipseLink^] 3.x *(in TomEE Plume only)*
 |Jakarta Transactions (JTA)|Apache{nbsp}Geronimo{nbsp}Transaction{nbsp}Manager
 |Jakarta Mail (JavaMail)|Apache Geronimo JavaMail
 |MicroProfile|
