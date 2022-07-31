@@ -87,8 +87,7 @@ https://www.eclipse.org/eclipselink/[EclipseLink^] *(in TomEE Plume only)*
 |MicroProfile|
 Apache Geronimo MicroProfile *(in TomEE 7.1.x and 8.x)* +
 https://smallrye.io/[SmallRye MicroProfile^] *(in TomEE 9.x and later)*
-|Java JSON Binding (JSON-B), +
-Java JSON Processing (JSON-P)|
+|Java JSON Processing (JSON-P)|
 https://johnzon.apache.org/[Apache Johnzon^]
 |Java XML Binding (JAXB)|https://projects.eclipse.org/projects/ee4j.jaxb-impl[Eclipse Implementation of JAXB^]
 |Web Services|https://cxf.apache.org/[Apache CXF^]
