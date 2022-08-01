@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>pojo-webservice</artifactId>
   <packaging>war</packaging>
-  <version>7.1.5-SNAPSHOT</version>
+  <version>7.1.5</version>
   <name>OpenEJB :: Web Examples :: Pojo WS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,7 +67,7 @@
       <plugin> <!-- http://localhost:8080/pojo-webservice?wsdl -->
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.1.5-SNAPSHOT</version>
+        <version>7.1.5</version>
         <configuration>
           <tomeeVersion>7.1.5-SNAPSHOT</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>

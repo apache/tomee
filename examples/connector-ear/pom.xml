@@ -20,7 +20,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>7.1.5-SNAPSHOT</version>
+  <version>7.1.5</version>
   <name>OpenEJB :: Connector Examples :: Connector in EAR</name>
 
   <properties>

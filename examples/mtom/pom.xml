@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mtom</artifactId>
-  <version>7.1.5-SNAPSHOT</version>
+  <version>7.1.5</version>
   <name>OpenEJB :: Examples :: MTOM</name>
 
   <properties>
@@ -56,19 +56,19 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>7.1.5-SNAPSHOT</version>
+      <version>7.1.5</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-junit</artifactId>
-      <version>7.1.5-SNAPSHOT</version>
+      <version>7.1.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-mockito</artifactId>
-      <version>7.1.5-SNAPSHOT</version>
+      <version>7.1.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
