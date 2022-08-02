@@ -106,7 +106,13 @@ public class WeatherServiceTest {
         String json = webTarget.path("/health").request(MediaType.APPLICATION_JSON).get().readEntity(String.class);
 
         JsonArray checks = this.readJson(json).getJsonArray("checks");
-        JsonObject data = checks.getJsonObject(0).getJsonObject("data");
+        final Optional<JsonValue> weatherCheck = checks.stream()
+                                                       .filter(c -> "OpenWeatherMap".equals(c.asJsonObject().getString("name")))
+                                                       .findFirst();
+
+        assertTrue(weatherCheck.isPresent());
+        final JsonObject weatherJson = weatherCheck.get().asJsonObject();
+        final JsonObject data = weatherJson.getJsonObject("data");
 
         assertEquals("Your account is temporary blocked due to exceeding of requests limitation of " +
                         "your subscription type. Please choose the proper subscription http://openweathermap.org/price",
