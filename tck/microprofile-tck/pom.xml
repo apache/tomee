@@ -33,7 +33,7 @@
     <module>config</module>
     <module>jwt</module>
     <module>health</module>
-        <!--<module>metrics</module>-->
+    <module>metrics</module>
     <module>rest-client</module>
     <!--
     <module>opentracing</module>

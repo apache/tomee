@@ -39,6 +39,7 @@
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-api-tck</dependency>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-rest-tck</dependency>
+            <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-optional-tck</dependency>
           </dependenciesToScan>
           <environmentVariables>
             <MP_METRICS_TAGS>tier=integration</MP_METRICS_TAGS>
@@ -113,6 +114,13 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-rest-tck</artifactId>
+      <version>${microprofile.metrics.tck.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-optional-tck</artifactId>
       <version>${microprofile.metrics.tck.version}</version>
       <scope>test</scope>
     </dependency>
