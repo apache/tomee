@@ -27,5 +27,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 public class MicroProfileMetricsTCKObserver {
     public void AfterDeploy(@Observes final AfterDeploy afterDeploy) {
         RestAssured.basePath = "microprofile-metrics";
+        System.setProperty("context.root", "");
     }
 }
