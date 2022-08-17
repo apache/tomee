@@ -1,9 +1,9 @@
-name: CI Master
+name: CI Main
 
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
     - name: Create Pull Request after BOM Regeneration
       uses: peter-evans/create-pull-request@v3
       with:
-        base: master
+        base: main
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "Minor: Regenerated BOMs for ${{ github.sha }}"
         committer: GitHub <noreply@github.com>
@@ -49,7 +49,7 @@ jobs:
         delete-branch: true
         title: "Regenerated BOMs after dependency upgrades"
         body: |
-          Found some uncommited changes (from BOM regeneration) after running build on TomEE master
+          Found some uncommited changes (from BOM regeneration) after running build on TomEE main
         labels: |
           dependencies
         assignees: cesarhernandezgt,dblevins,jeanouii,jgallimore,rzo1

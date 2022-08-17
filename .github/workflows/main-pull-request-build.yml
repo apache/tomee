@@ -1,9 +1,9 @@
-name: CI Pull Request Master
+name: CI Pull Request Main
 
 on:
   pull_request:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
