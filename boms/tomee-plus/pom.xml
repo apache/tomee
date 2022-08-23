@@ -657,7 +657,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.18</version>
+      <version>1.2.19</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -669,7 +669,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.18</version>
+      <version>1.2.19</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -681,7 +681,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.18</version>
+      <version>1.2.19</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -693,7 +693,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.18</version>
+      <version>1.2.19</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -705,7 +705,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.18</version>
+      <version>1.2.19</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
