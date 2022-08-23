@@ -69,11 +69,10 @@
       <version>9.0.0-M9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
-    <!-- io.cucumber:cucumber-openejb:7.3.2 still uses javax.ejb.embeddable.EJBContainer in OpenEJBObjectFactory.java -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cucumber-openejb-shade</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-jakarta-openejb</artifactId>
+      <version>7.6.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -85,13 +84,13 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>7.3.2</version>
+      <version>7.6.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>7.3.2</version>
+      <version>7.6.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
