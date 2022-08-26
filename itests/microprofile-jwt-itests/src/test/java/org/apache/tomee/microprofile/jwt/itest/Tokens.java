@@ -23,6 +23,7 @@ import com.nimbusds.jose.Requirement;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import io.churchkey.Keys;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -67,6 +68,18 @@ public class Tokens {
 
     public String getEncodedPublicKey() {
         return Base64.getEncoder().encodeToString(publicKey.getEncoded());
+    }
+
+    public String getJwkPublicKey() {
+        return Keys.of(publicKey).toJwk();
+    }
+
+    public String getJwksPublicKey() {
+        return Keys.of(publicKey).toJwks();
+    }
+
+    public String getPemPublicKey() {
+        return Keys.of(publicKey).toPem();
     }
 
     public String asToken(final String claims) throws Exception {
