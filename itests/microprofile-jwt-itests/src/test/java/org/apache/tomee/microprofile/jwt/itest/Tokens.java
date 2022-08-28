@@ -40,19 +40,37 @@ public class Tokens {
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
     private final int hashSize;
+    private final String id;
 
     public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize) {
+        this(privateKey, publicKey, hashSize, null);
+    }
+
+    public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize, final String id) {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.hashSize = hashSize;
+        this.id = id;
+    }
+
+    public int getHashSize() {
+        return hashSize;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public static Tokens rsa(int keyLength, int hashSize) {
+        return rsa(keyLength, hashSize, null);
+    }
+
+    public static Tokens rsa(int keyLength, int hashSize, final String id) {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(keyLength);
             final KeyPair pair = keyGen.generateKeyPair();
-            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize);
+            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, id);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
@@ -84,9 +102,14 @@ public class Tokens {
 
     public String asToken(final String claims) throws Exception {
         try {
-            final JWSHeader header = new JWSHeader.Builder(new JWSAlgorithm("RS" + hashSize, Requirement.OPTIONAL))
-                    .type(JOSEObjectType.JWT)
-                    .build();
+            final JWSHeader.Builder builder = new JWSHeader.Builder(new JWSAlgorithm("RS" + hashSize, Requirement.OPTIONAL))
+                    .type(JOSEObjectType.JWT);
+
+            if (id != null) {
+                builder.keyID(id);
+            }
+            
+            final JWSHeader header = builder.build();
 
             final JWTClaimsSet claimsSet = JWTClaimsSet.parse(claims);
 
