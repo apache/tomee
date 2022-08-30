@@ -16,17 +16,15 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.servlet.ServletContext;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
+
 import java.security.Key;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,7 +42,6 @@ import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCA
  */
 @ApplicationScoped
 public class JWTAuthConfigurationProperties {
-    public static final List<String> JWK_SUPPORTED_KEY_TYPES = Collections.singletonList("RSA");
     public static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
     public static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
 
@@ -75,10 +72,10 @@ public class JWTAuthConfigurationProperties {
     private JWTAuthConfiguration createJWTAuthConfiguration() {
         if (getVerifierPublicKey().isPresent() && getPublicKeyLocation().isPresent()) {
             throw new DeploymentException("Both " +
-                                          VERIFIER_PUBLIC_KEY +
-                                          " and " +
-                                          VERIFIER_PUBLIC_KEY_LOCATION +
-                                          " are being supplied. You must use only one.");
+                    VERIFIER_PUBLIC_KEY +
+                    " and " +
+                    VERIFIER_PUBLIC_KEY_LOCATION +
+                    " are being supplied. You must use only one.");
         }
 
         final Optional<String> publicKeyContents = getVerifierPublicKey();

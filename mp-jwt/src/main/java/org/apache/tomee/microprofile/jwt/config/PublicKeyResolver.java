@@ -16,39 +16,26 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import org.jose4j.jwk.JsonWebKey;
-import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.lang.JoseException;
-
+import io.churchkey.Keys;
+import io.churchkey.util.Pem;
 import jakarta.enterprise.inject.spi.DeploymentException;
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import jakarta.json.stream.JsonParsingException;
-import java.io.BufferedReader;
+import org.apache.openejb.loader.IO;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.Key;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.jose4j.jwk.JsonWebKeySet.JWK_SET_MEMBER_NAME;
+import static io.churchkey.Key.Type.PRIVATE;
+import static io.churchkey.Key.Type.SECRET;
 
 public class PublicKeyResolver {
 
@@ -65,25 +52,60 @@ public class PublicKeyResolver {
     }
 
     public Map<String, Key> readPublicKeys(final String publicKey) {
-        final Stream<Supplier<Map<String, Key>>> possiblePublicKeysParses =
-                Stream.of(() -> parsePCKS8(publicKey),
-                        () -> parseJwk(publicKey),
-                        () -> parseJwkDecoded(publicKey),
-                        () -> parseJwks(publicKey),
-                        () -> parseJwksDecoded(publicKey));
+        final List<io.churchkey.Key> keys;
+        try {
+            keys = Keys.decodeSet(publicKey);
+        } catch (Exception e) {
+            throw new DeploymentException("Unable to decode key contents: " + publicKey);
+        }
 
-        return possiblePublicKeysParses
-                .map(Supplier::get)
-                .filter(keys -> !keys.isEmpty())
-                .findFirst()
-                .orElseThrow(() -> new DeploymentException(": " + publicKey));
+        if (keys.size() == 0) {
+            throw new DeploymentException("No keys found in key contents: " + publicKey);
+        }
+
+        checkInvalidTypes(keys, PRIVATE);
+        checkInvalidTypes(keys, SECRET);
+
+        int unknown = 0;
+
+        final Map<String, Key> map = new HashMap<>();
+        for (final io.churchkey.Key key : keys) {
+            final String id;
+            if (defined(key, "kid")) {
+                id = key.getAttribute("kid");
+            } else if (defined(key, "Comment")) {
+                id = key.getAttribute("Comment");
+            } else {
+                id = "Unknown " + (unknown++);
+            }
+
+            map.put(id, key.getKey());
+        }
+
+        return map;
+    }
+
+    private boolean defined(final io.churchkey.Key key, final String kid) {
+        final String attribute = key.getAttribute(kid);
+        return attribute != null && attribute.length() > 0;
+    }
+
+    private void checkInvalidTypes(final List<io.churchkey.Key> keys, final io.churchkey.Key.Type type) {
+        final long invalid = keys.stream()
+                .map(io.churchkey.Key::getType)
+                .filter(type::equals)
+                .count();
+
+        if (invalid > 0) {
+            throw new DeploymentException("Found " + invalid + " " + type.name().toLowerCase() +
+                    " keys in MP JWT key configuration.  Only Public Keys must be configured for JWT validation");
+        }
     }
 
     private Map<String, Key> readPublicKeysFromLocation(final String publicKeyLocation) {
         final Stream<Supplier<Optional<String>>> possiblePublicKeysLocations =
                 Stream.of(() -> readPublicKeysFromClasspath(publicKeyLocation),
                         () -> readPublicKeysFromFile(publicKeyLocation),
-                        () -> readPublicKeysFromHttp(publicKeyLocation),
                         () -> readPublicKeysFromUrl(publicKeyLocation));
 
         return possiblePublicKeysLocations
@@ -103,7 +125,7 @@ public class PublicKeyResolver {
             if (is == null) {
                 return Optional.empty();
             }
-            return Optional.of(readPublicKeyFromInputStream(is));
+            return Optional.of(IO.slurp(is));
         } catch (final IOException e) {
             throw new DeploymentException(
                     JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
@@ -125,22 +147,8 @@ public class PublicKeyResolver {
                                 publicKeyLocation +
                                 ". File does not exist or it is a directory.");
             }
-            return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
+            return Optional.of(IO.slurp(locationURL));
         } catch (final IOException | URISyntaxException e) {
-            throw new DeploymentException(
-                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
-        }
-    }
-
-    private Optional<String> readPublicKeysFromHttp(final String publicKeyLocation) {
-        if (!publicKeyLocation.startsWith("http")) {
-            return Optional.empty();
-        }
-
-        try {
-            final URL locationURL = new URL(publicKeyLocation);
-            return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
-        } catch (final IOException e) {
             throw new DeploymentException(
                     JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
@@ -149,131 +157,11 @@ public class PublicKeyResolver {
     private Optional<String> readPublicKeysFromUrl(final String publicKeyLocation) {
         try {
             final URL locationURL = new URL(publicKeyLocation);
-            return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
+            return Optional.of(IO.slurp(locationURL));
         } catch (final IOException e) {
             throw new DeploymentException(
                     JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
-    private String readPublicKeyFromInputStream(final InputStream publicKey) throws IOException {
-        final StringWriter content = new StringWriter();
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(publicKey))) {
-            String line = reader.readLine();
-            while (line != null) {
-                content.write(line);
-                content.write('\n');
-                line = reader.readLine();
-            }
-        }
-        return content.toString();
-    }
-
-    private Map<String, Key> parsePCKS8(final String publicKey) {
-        try {
-            final X509EncodedKeySpec spec = new X509EncodedKeySpec(normalizeAndDecodePCKS8(publicKey));
-            final KeyFactory kf = KeyFactory.getInstance("RSA");
-            return Collections.singletonMap(null, kf.generatePublic(spec));
-        } catch (final NoSuchAlgorithmException | InvalidKeySpecException | IllegalArgumentException e) {
-            return Collections.emptyMap();
-        }
-    }
-
-    private Map<String, Key> parseJwk(final String publicKey) {
-        final JsonObject jwk;
-        try {
-            jwk = Json.createReader(new StringReader(publicKey)).readObject();
-        } catch (final JsonParsingException e) {
-            return Collections.emptyMap();
-        }
-
-        if (jwk.containsKey(JWK_SET_MEMBER_NAME)) {
-            return Collections.emptyMap();
-        }
-
-        validateJwk(jwk);
-
-        try {
-            final JsonWebKey key = JsonWebKey.Factory.newJwk(publicKey);
-            return Collections.singletonMap(key.getKeyId(), key.getKey());
-        } catch (final JoseException e) {
-            throw new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR + " JWK.", e);
-        }
-    }
-
-    private Map<String, Key> parseJwkDecoded(final String publicKey) {
-        final String publicKeyDecoded;
-        try {
-            publicKeyDecoded = new String(Base64.getDecoder().decode(publicKey));
-        } catch (final Exception e) {
-            return Collections.emptyMap();
-        }
-
-        return parseJwk(publicKeyDecoded);
-    }
-
-    private Map<String, Key> parseJwks(final String publicKey) {
-        final JsonObject jwks;
-        try {
-            jwks = Json.createReader(new StringReader(publicKey)).readObject();
-        } catch (final JsonParsingException e) {
-            return Collections.emptyMap();
-        }
-
-        try {
-            final JsonArray keys = jwks.getJsonArray(JWK_SET_MEMBER_NAME);
-            for (final JsonValue key : keys) {
-                validateJwk(key.asJsonObject());
-            }
-        } catch (final Exception e) {
-            throw new DeploymentException("MicroProfile Public Key JWKS invalid format.");
-        }
-
-        try {
-            final JsonWebKeySet keySet = new JsonWebKeySet(publicKey);
-            final Map<String, Key> keys =
-                    keySet.getJsonWebKeys()
-                            .stream()
-                            .collect(Collectors.toMap(JsonWebKey::getKeyId, JsonWebKey::getKey));
-            return Collections.unmodifiableMap(keys);
-        } catch (final JoseException e) {
-            throw new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR + " JWK.", e);
-        }
-    }
-
-    private Map<String, Key> parseJwksDecoded(final String publicKey) {
-        final String publicKeyDecoded;
-        try {
-            publicKeyDecoded = new String(Base64.getDecoder().decode(publicKey));
-        } catch (final Exception e) {
-            return Collections.emptyMap();
-        }
-
-        return parseJwks(publicKeyDecoded);
-    }
-
-    private void validateJwk(final JsonObject jwk) {
-        final String keyType = jwk.getString("kty", null);
-        if (keyType == null) {
-            throw new DeploymentException("MicroProfile Public Key JWK kty field is missing.");
-        }
-
-        if (!JWTAuthConfigurationProperties.JWK_SUPPORTED_KEY_TYPES.contains(keyType)) {
-            throw new DeploymentException("MicroProfile Public Key JWK kty not supported: " + keyType);
-        }
-    }
-
-    private byte[] normalizeAndDecodePCKS8(final String publicKey) {
-        if (publicKey.contains("PRIVATE KEY")) {
-            throw new DeploymentException("MicroProfile Public Key is Private.");
-        }
-
-        final String normalizedKey =
-                publicKey.replaceAll("-----BEGIN (.*)-----", "")
-                        .replaceAll("-----END (.*)----", "")
-                        .replaceAll("\r\n", "")
-                        .replaceAll("\n", "");
-
-        return Base64.getDecoder().decode(normalizedKey);
-    }
 }

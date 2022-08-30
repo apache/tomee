@@ -648,7 +648,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-        <module>deps</module>
+<!--        <module>deps</module>-->
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>

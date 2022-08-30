@@ -335,7 +335,10 @@ public class MPJWTFilter implements Filter {
                                 new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
                                         AlgorithmIdentifiers.RSA_USING_SHA256,
                                         AlgorithmIdentifiers.RSA_USING_SHA384,
-                                        AlgorithmIdentifiers.RSA_USING_SHA512
+                                        AlgorithmIdentifiers.RSA_USING_SHA512,
+                                        AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256,
+                                        AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384,
+                                        AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512
                                 ));
 
                 if (!authContextInfo.isAllowNoExpiryClaim()) {
