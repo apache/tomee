@@ -49,7 +49,9 @@ public class JWTAuthConfiguration {
     }
 
     private JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences) {
-        if (publicKeys.size() == 1) {
+        if (publicKeys == null) {
+            this.publicKeys = Collections.EMPTY_MAP;
+        } else if (publicKeys.size() == 1) {
             final Key singleKey = publicKeys.values().iterator().next();
             this.publicKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
         } else {
