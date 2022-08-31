@@ -16,7 +16,20 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
-import org.apache.commons.lang3.Validate;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
@@ -39,21 +52,7 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.jwt.consumer.JwtContext;
 import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
 import javax.security.auth.Subject;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.ext.ExceptionMapper;
-import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
@@ -294,7 +293,7 @@ public class MPJWTFilter implements Filter {
             }
 
             final String headerScheme = (jwtAuthConfiguration.getHeaderScheme() + " ").toLowerCase(Locale.ENGLISH);
-            if (headerScheme.trim().length() > 0 &&  !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
+            if (headerScheme.trim().length() > 0 && !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
                 throw new BadAuthorizationPrefixException(authorizationHeader);
             }
 
@@ -330,7 +329,6 @@ public class MPJWTFilter implements Filter {
                 final JwtConsumerBuilder builder = new JwtConsumerBuilder()
                         .setRelaxVerificationKeyValidation()
                         .setRequireSubject()
-                        .setSkipDefaultAudienceValidation()
                         .setJwsAlgorithmConstraints(
                                 new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
                                         AlgorithmIdentifiers.RSA_USING_SHA256,
@@ -340,6 +338,12 @@ public class MPJWTFilter implements Filter {
                                         AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384,
                                         AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512
                                 ));
+
+                if (authContextInfo.getAudiences().length > 0) {
+                    builder.setExpectedAudience(true, authContextInfo.getAudiences());
+                } else {
+                    builder.setSkipDefaultAudienceValidation();
+                }
 
                 if (!authContextInfo.isAllowNoExpiryClaim()) {
                     builder.setRequireExpirationTime();
