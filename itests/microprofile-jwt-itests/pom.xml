@@ -88,7 +88,12 @@
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>io.churchkey</groupId>
+      <artifactId>churchkey</artifactId>
+      <version>1.21</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

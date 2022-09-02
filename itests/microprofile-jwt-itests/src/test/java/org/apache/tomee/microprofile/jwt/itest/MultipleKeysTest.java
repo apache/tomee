@@ -18,6 +18,8 @@
 
 package org.apache.tomee.microprofile.jwt.itest;
 
+import io.churchkey.Key;
+import io.churchkey.Keys;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.ApplicationPath;
@@ -39,107 +41,86 @@ import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
-public class PublicKeyLocationTest {
+public class MultipleKeysTest {
 
-    @Ignore("TOMEE-3964")
     @Test
-    public void relativePathOnDisk() throws Exception {
-        final Tokens tokens = Tokens.rsa(2048, 256);
+    public void jwksWithKid() throws Exception {
+        final Tokens[] tokens = {
+                Tokens.rsa(2048, 256, "orange-1"),
+                Tokens.rsa(2048, 256, "orange-2"),
+                Tokens.rsa(2048, 256, "orange-3"),
+        };
+
+        final List<Key> publicKeys = Stream.of(tokens)
+                .map(tokens1 -> {
+                    final Key key = Keys.of(tokens1.getPublicKey());
+                    key.getAttributes().put("kid", tokens1.getId());
+                    return key;
+                })
+                .collect(Collectors.toList());
 
         final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
+                .add(MultipleKeysTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
+                .add("orange.jwks", Keys.encodeSet(publicKeys, Key.Format.JWK))
                 .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey.location=orange.pem")
+                        "mp.jwt.verify.publickey.location=orange.jwks")
                 .asJar();
 
         final TomEE tomee = TomEE.microprofile()
+//                .debug(5005)
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
-                .add("orange.pem", tokens.getEncodedPublicKey())
-//                .update()
                 .build();
 
-        assertVerification(tokens, tomee);
+        for (final Tokens token : tokens) {
+            assertVerification(token, tomee);
+        }
     }
 
+    @Ignore("TOMEE-4029")
     @Test
-    public void relativePathInApp() throws Exception {
-        final Tokens tokens = Tokens.rsa(2048, 256);
+    public void jwks() throws Exception {
+        final Tokens[] tokens = {
+                Tokens.rsa(2048, 256),
+                Tokens.rsa(2048, 256),
+                Tokens.rsa(2048, 256),
+        };
+
+        final AtomicInteger kids = new AtomicInteger();
+        final List<Key> publicKeys = Stream.of(tokens)
+                .map(Tokens::getPublicKey)
+                .map(Keys::of)
+                .peek(key -> key.getAttributes().put("kid", "orange" + kids.incrementAndGet()))
+                .collect(Collectors.toList());
 
         final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
+                .add(MultipleKeysTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
-                .add("orange.pem", tokens.getEncodedPublicKey())
+                .add("orange.jwks", Keys.encodeSet(publicKeys, Key.Format.JWK))
                 .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey.location=orange.pem")
+                        "mp.jwt.verify.publickey.location=orange.jwks")
                 .asJar();
 
         final TomEE tomee = TomEE.microprofile()
-//                .update()
+                .debug(5005)
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
                 .build();
 
-        assertVerification(tokens, tomee);
-    }
-
-    @Test
-    public void fileUrl() throws Exception {
-        final Tokens tokens = Tokens.rsa(2048, 256);
-
-        final File dir = Archive.archive()
-                .add("orange.pem", tokens.getEncodedPublicKey())
-                .toDir();
-
-        final File orangePem = new File(dir, "orange.pem");
-
-        final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
-                .add(ColorService.class)
-                .add(Api.class)
-                .add("orange.pem", tokens.getEncodedPublicKey())
-                .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey.location=" + orangePem.toURI())
-                .asJar();
-
-        final TomEE tomee = TomEE.microprofile()
-                .add("webapps/test/WEB-INF/beans.xml", "")
-                .add("webapps/test/WEB-INF/lib/app.jar", appJar)
-                .build();
-
-        assertVerification(tokens, tomee);
-    }
-
-    @Test
-    public void httpUrl() throws Exception {
-        final Tokens tokens = Tokens.rsa(2048, 256);
-
-        final TomEE keyServer = TomEE.microprofile()
-                .add("webapps/keys/orange.pem", tokens.getEncodedPublicKey())
-                .build();
-
-        final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
-                .add(ColorService.class)
-                .add(Api.class)
-                .add("orange.pem", tokens.getEncodedPublicKey())
-                .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey.location=" + keyServer.toURI().resolve("/keys/orange.pem"))
-                .asJar();
-
-        final TomEE tomee = TomEE.microprofile()
-                .add("webapps/test/WEB-INF/beans.xml", "")
-                .add("webapps/test/WEB-INF/lib/app.jar", appJar)
-                .build();
-
-        assertVerification(tokens, tomee);
+        for (final Tokens token : tokens) {
+            assertVerification(token, tomee);
+        }
     }
 
     private void assertVerification(final Tokens tokens, final TomEE tomee) throws Exception {

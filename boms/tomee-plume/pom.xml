@@ -222,6 +222,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>io.churchkey</groupId>
+      <artifactId>churchkey</artifactId>
+      <version>1.22</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>io.opentracing.contrib</groupId>
       <artifactId>opentracing-concurrent</artifactId>
       <version>0.4.0</version>

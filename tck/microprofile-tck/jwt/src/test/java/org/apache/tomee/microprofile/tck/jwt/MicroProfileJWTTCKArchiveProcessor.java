@@ -23,7 +23,16 @@ import org.apache.tomee.arquillian.remote.RemoteTomEEContainer;
 import org.apache.tomee.microprofile.tck.jwt.validation.ExpClaimAllowMissingExpValidationTest;
 import org.apache.tomee.microprofile.tck.jwt.validation.ExpClaimValidationTest;
 import org.eclipse.microprofile.jwt.tck.arquillian.BaseWarArchiveProcessor;
-import org.eclipse.microprofile.jwt.tck.config.*;
+import org.eclipse.microprofile.jwt.tck.config.IssValidationTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsBase64JWKTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsFileLocationURLTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKLocationTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKLocationURLTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKSLocationTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKSTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -59,30 +68,6 @@ public class MicroProfileJWTTCKArchiveProcessor extends BaseWarArchiveProcessor 
         war.addAsLibrary(JarLocation.jarLocation(TokenUtils.class))
            .addAsLibrary(JarLocation.jarLocation(JWSSigner.class))
            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        // Provide keys required for tests (vendor specific way)
-        war.addClass(JWTAuthContextInfoProvider.class);
-
-        // Spec says that vendor specific ways to load the keys take precedence, so we need to remove it in test
-        // cases that use the Config approach.
-        Stream.of(
-                PublicKeyAsPEMTest.class,
-                PublicKeyAsPEMLocationTest.class,
-                PublicKeyAsFileLocationURLTest.class,
-                PublicKeyAsJWKTest.class,
-                PublicKeyAsBase64JWKTest.class,
-                PublicKeyAsJWKLocationTest.class,
-                PublicKeyAsJWKLocationURLTest.class,
-                PublicKeyAsJWKSTest.class,
-                PublicKeyAsJWKSLocationTest.class,
-                IssValidationTest.class,
-                ExpClaimValidationTest.class,
-                ExpClaimAllowMissingExpValidationTest.class,
-                org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsPEMLocationTest.class,
-                org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsJWKLocationURLTest.class)
-              .filter(c -> c.equals(testClass.getJavaClass()))
-              .findAny()
-              .ifPresent(c -> war.deleteClass(JWTAuthContextInfoProvider.class));
 
         // MP Config in wrong place - See https://github.com/eclipse/microprofile/issues/46.
         final Map<ArchivePath, Node> content = war.getContent(object -> object.get().matches(".*META-INF/.*"));

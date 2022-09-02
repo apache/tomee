@@ -56,10 +56,6 @@ public class ServerListener implements LifecycleListener {
 
     @Override
     public void lifecycleEvent(final LifecycleEvent event) {
-        if (Lifecycle.BEFORE_INIT_EVENT.equals(event.getType()) && StandardServer.class.isInstance(event.getSource())) {
-            installServerInfo();
-        }
-
         synchronized (listenerInstalled) {
 
             // only install once
@@ -183,35 +179,4 @@ public class ServerListener implements LifecycleListener {
         addUrl.invoke(ucl, url);
     }
 
-    private synchronized void installServerInfo() {
-        if (SystemInstance.get().getOptions().get("tomee.keep-server-info", false)) {
-            return;
-        }
-
-        // force static init
-        final String value = ServerInfo.getServerInfo();
-
-        Field field = null;
-        boolean acc = true;
-        try {
-            field = ServerInfo.class.getDeclaredField("serverInfo");
-            acc = field.isAccessible();
-            final int slash = value.indexOf('/');
-            field.setAccessible(true);
-            final String tomeeVersion = OpenEjbVersion.get().getVersion();
-            final int modifiers = field.getModifiers();
-            if (Modifier.isFinal(modifiers)) { // this is a bit fragile, we can surely drop this feature at some point
-                final Field modifiersField = Field.class.getDeclaredField("modifiers");
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(field, modifiers & ~Modifier.FINAL);
-            }
-            field.set(null, value.substring(0, slash) + " (TomEE)" + value.substring(slash) + " (" + tomeeVersion + ")");
-        } catch (final Exception e) {
-            // no-op
-        } finally {
-            if (field != null) {
-                field.setAccessible(acc);
-            }
-        }
-    }
 }

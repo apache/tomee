@@ -16,20 +16,22 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.servlet.ServletContext;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
+
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.eclipse.microprofile.jwt.config.Names.AUDIENCES;
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
@@ -44,7 +46,6 @@ import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCA
  */
 @ApplicationScoped
 public class JWTAuthConfigurationProperties {
-    public static final List<String> JWK_SUPPORTED_KEY_TYPES = Collections.singletonList("RSA");
     public static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
     public static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
 
@@ -72,24 +73,29 @@ public class JWTAuthConfigurationProperties {
         return config.getOptionalValue(ISSUER, String.class);
     }
 
+    private List<String> getAudiences() {
+        final String audiences = config.getOptionalValue(AUDIENCES, String.class).orElse(null);
+        if (audiences == null) return Collections.EMPTY_LIST;
+        return Arrays.asList(audiences.split(" *, *"));
+    }
+
     private JWTAuthConfiguration createJWTAuthConfiguration() {
         if (getVerifierPublicKey().isPresent() && getPublicKeyLocation().isPresent()) {
             throw new DeploymentException("Both " +
-                                          VERIFIER_PUBLIC_KEY +
-                                          " and " +
-                                          VERIFIER_PUBLIC_KEY_LOCATION +
-                                          " are being supplied. You must use only one.");
+                    VERIFIER_PUBLIC_KEY +
+                    " and " +
+                    VERIFIER_PUBLIC_KEY_LOCATION +
+                    " are being supplied. You must use only one.");
         }
 
         final Optional<String> publicKeyContents = getVerifierPublicKey();
         final Optional<String> publicKeyLocation = getPublicKeyLocation();
+        final List<String> audiences = getAudiences();
 
-        final Optional<Map<String, Key>> first = new PublicKeyResolver().resolve(publicKeyContents, publicKeyLocation);
+        final Map<String, Key> keys = new PublicKeyResolver().resolve(publicKeyContents, publicKeyLocation).orElse(null);
         final Boolean allowNoExp = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).orElse(false);
 
-        return first
-                .map(keys -> JWTAuthConfiguration.authConfiguration(keys, getIssuer().orElse(null), allowNoExp))
-                .orElse(null);
+        return JWTAuthConfiguration.authConfiguration(keys, getIssuer().orElse(null), allowNoExp, audiences.toArray(new String[0]));
     }
 
 }

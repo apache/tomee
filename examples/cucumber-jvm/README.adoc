@@ -15,15 +15,14 @@ Cucumber was originally written in the Ruby programming language, but now suppor
 Is the pure Java implementation of Cucumber that can integrates with all the popular Dependency Injection containers.
 
 == Dependencies
-For this examples we are adding two dependencies in the `pom.xml` dependencies section. `cucumber-openejb-shade` for integration with Open EJB and `cucumber-junit` and `cucumber-java` to use JUnit to execute cucumber scenario(s).
+For this examples we are adding two dependencies in the `pom.xml` dependencies section. `cucumber-jakarta-openejb` for integration with Open EJB and `cucumber-junit` and `cucumber-java` to use JUnit to execute cucumber scenario(s).
 
 [source,xml]
 ----
-    <!-- io.cucumber:cucumber-openejb:7.3.2 still uses javax.ejb.embeddable.EJBContainer in OpenEJBObjectFactory.java -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cucumber-openejb-shade</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-jakarta-openejb</artifactId>
+      <version>7.6.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -35,13 +34,13 @@ For this examples we are adding two dependencies in the `pom.xml` dependencies s
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>7.3.2</version>
+      <version>7.6.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>7.3.2</version>
+      <version>7.6.0</version>
       <scope>test</scope>
     </dependency>
 
