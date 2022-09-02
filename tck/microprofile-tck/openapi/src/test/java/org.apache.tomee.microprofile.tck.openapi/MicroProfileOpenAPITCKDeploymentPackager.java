@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.microprofile.tck.openapi;
 
+import org.apache.ziplock.JarLocation;
+import org.hamcrest.Matchers;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocolDeploymentPackager;
@@ -35,10 +37,7 @@ public class MicroProfileOpenAPITCKDeploymentPackager extends ServletProtocolDep
                                          final Collection<ProtocolArchiveProcessor> processors) {
         final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "microprofile-openapi.war")
                                                 .merge(testDeployment.getApplicationArchive())
-                                                // TODO - This doesn't seem right. This is for the JAX-RS endpoints to be CDI scanned.
-                                                // This is to use CDI events to filter endpoints with configuration.
-                                                // Check org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension.findEndpointsAndApplication()
-                                                // A beans.xml should not be required.
+                                                .addAsLibrary(JarLocation.jarLocation(Matchers.class)) // required for ModelConstructionTest
                                                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 ;
 

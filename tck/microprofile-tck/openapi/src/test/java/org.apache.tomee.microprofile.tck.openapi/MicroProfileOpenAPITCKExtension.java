@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.tck.openapi;
 
+import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocol;
@@ -25,6 +26,7 @@ public class MicroProfileOpenAPITCKExtension implements LoadableExtension {
     public void register(final ExtensionBuilder extensionBuilder) {
         extensionBuilder
                 .override(Protocol.class, ServletProtocol.class, MicroProfileOpenAPITCKProtocol.class)
+                .service(ApplicationArchiveProcessor.class, MicroProfileOpenApiDeploymentProcessor.class)
                 .observer(MicroProfileOpenAPITCKObserver.class)
         ;
     }

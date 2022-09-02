@@ -1,1 +1,2 @@
-org.apache.tomee.microprofile.metrics.MicroProfileServletContainerInitializer
+org.apache.tomee.microprofile.metrics.MicroProfileMetricsRegistration
+org.apache.tomee.microprofile.openapi.MicroProfileOpenApiRegistration

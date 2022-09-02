@@ -35,10 +35,10 @@
     <module>health</module>
     <module>metrics</module>
     <module>rest-client</module>
+    <module>openapi</module>
     <!--
     <module>opentracing</module>
     <module>fault-tolerance</module>
-    <module>openapi</module>
     -->
   </modules>
 </project>

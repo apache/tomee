@@ -22,13 +22,6 @@ import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
-import jakarta.servlet.annotation.HandlesTypes;
-import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.Application;
-import org.apache.tomee.microprofile.jwt.MPJWTFilter;
-import org.eclipse.microprofile.auth.LoginConfig;
 
 import java.util.Set;
 
@@ -41,7 +34,7 @@ import java.util.Set;
                WebFilter.class
 })
  */
-public class MicroProfileServletContainerInitializer implements ServletContainerInitializer {
+public class MicroProfileMetricsRegistration implements ServletContainerInitializer {
 
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {

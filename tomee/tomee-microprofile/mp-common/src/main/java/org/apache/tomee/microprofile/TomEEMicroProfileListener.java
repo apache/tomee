@@ -28,6 +28,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
 import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
+import org.apache.tomee.microprofile.openapi.MicroProfileOpenApiEndpoint;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -105,7 +106,7 @@ public class TomEEMicroProfileListener {
 
         // These remove duplicated REST API endpoints.
         // webApp.restClass.removeIf(className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
-        // webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
+        // webApp.restClass.removeIf(className -> className.equals(MicroProfileOpenApiEndpoint.class.getName()));
 
         // There remove all of MP REST API endpoint if there is a servlet already registered in /*. The issue here is
         // that REST path has priority over servlet and there may override old applications that have servlets

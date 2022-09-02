@@ -25,6 +25,10 @@ import org.apache.webbeans.config.WebBeansContext;
 public final class AppFinder {
     public static <T> T findAppContextOrWeb(final ClassLoader cl, final Transformer<T> transformer) {
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        if (containerSystem == null) {
+            return null; // when used before the container even gets a chance to start
+        }
+
         for (final AppContext appContext : containerSystem.getAppContexts()) {
             final ClassLoader appContextClassLoader = appContext.getClassLoader();
             boolean found = false;
