@@ -34,20 +34,24 @@ public class JWTAuthConfiguration {
     public static final String DEFAULT_KEY = "DEFAULT";
 
     private Map<String, Key> publicKeys;
+    private String[] audiences;
     private String issuer;
     private int expGracePeriodSecs = 60;
     private String headerName = "Authorization";
     private String headerScheme = "Bearer";
     private boolean allowNoExpiryClaim = false;
 
-    private JWTAuthConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim) {
+    private JWTAuthConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences) {
         this.publicKeys = Collections.singletonMap(DEFAULT_KEY, publicKey);
         this.issuer = issuer;
         this.allowNoExpiryClaim = allowNoExpiryClaim;
+        this.audiences = audiences;
     }
 
-    private JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim) {
-        if (publicKeys.size() == 1) {
+    private JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences) {
+        if (publicKeys == null) {
+            this.publicKeys = Collections.EMPTY_MAP;
+        } else if (publicKeys.size() == 1) {
             final Key singleKey = publicKeys.values().iterator().next();
             this.publicKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
         } else {
@@ -55,14 +59,23 @@ public class JWTAuthConfiguration {
         }
         this.issuer = issuer;
         this.allowNoExpiryClaim = allowNoExpiryClaim;
+        this.audiences = audiences;
     }
 
     public static JWTAuthConfiguration authConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim) {
-        return new JWTAuthConfiguration(publicKey, issuer, allowNoExpiryClaim);
+        return new JWTAuthConfiguration(publicKey, issuer, allowNoExpiryClaim, new String[0]);
     }
 
     public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim) {
-        return new JWTAuthConfiguration(publicKeys, issuer, allowNoExpiryClaim);
+        return authConfiguration(publicKeys, issuer, allowNoExpiryClaim, new String[0]);
+    }
+
+    public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences) {
+        return new JWTAuthConfiguration(publicKeys, issuer, allowNoExpiryClaim, audiences);
+    }
+
+    public String[] getAudiences() {
+        return audiences;
     }
 
     public boolean isSingleKey() {

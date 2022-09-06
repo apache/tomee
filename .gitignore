@@ -23,3 +23,4 @@ transformer/jakartaee-prototype/
 transformer/transformer-0.1.0-SNAPSHOT/
 .DS_Store
 dependency-reduced-pom.xml
+/tomee/apache-tomee/src/patch/java/org/apache/catalina/util/ServerInfo.properties

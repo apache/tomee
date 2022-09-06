@@ -43,17 +43,19 @@ import java.net.URL;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
-public class PublicKeyLocationTest {
+public class PublicKeyFormatsTest {
 
-    @Ignore("TOMEE-3964")
     @Test
-    public void relativePathOnDisk() throws Exception {
+    public void pkcs8Pem() throws Exception {
         final Tokens tokens = Tokens.rsa(2048, 256);
 
         final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
+                .add(PublicKeyFormatsTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
+                .add("orange.pem", "-----BEGIN PUBLIC KEY-----\n" +
+                        tokens.getEncodedPublicKey() +
+                        "\n-----END PUBLIC KEY-----")
                 .add("META-INF/microprofile-config.properties", "#\n" +
                         "mp.jwt.verify.publickey.location=orange.pem")
                 .asJar();
@@ -61,52 +63,22 @@ public class PublicKeyLocationTest {
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
-                .add("orange.pem", tokens.getEncodedPublicKey())
-//                .update()
                 .build();
 
         assertVerification(tokens, tomee);
     }
 
     @Test
-    public void relativePathInApp() throws Exception {
+    public void jwk() throws Exception {
         final Tokens tokens = Tokens.rsa(2048, 256);
 
         final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
+                .add(PublicKeyFormatsTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
-                .add("orange.pem", tokens.getEncodedPublicKey())
+                .add("orange", tokens.getJwkPublicKey())
                 .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey.location=orange.pem")
-                .asJar();
-
-        final TomEE tomee = TomEE.microprofile()
-//                .update()
-                .add("webapps/test/WEB-INF/beans.xml", "")
-                .add("webapps/test/WEB-INF/lib/app.jar", appJar)
-                .build();
-
-        assertVerification(tokens, tomee);
-    }
-
-    @Test
-    public void fileUrl() throws Exception {
-        final Tokens tokens = Tokens.rsa(2048, 256);
-
-        final File dir = Archive.archive()
-                .add("orange.pem", tokens.getEncodedPublicKey())
-                .toDir();
-
-        final File orangePem = new File(dir, "orange.pem");
-
-        final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
-                .add(ColorService.class)
-                .add(Api.class)
-                .add("orange.pem", tokens.getEncodedPublicKey())
-                .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey.location=" + orangePem.toURI())
+                        "mp.jwt.verify.publickey.location=orange")
                 .asJar();
 
         final TomEE tomee = TomEE.microprofile()
@@ -118,20 +90,16 @@ public class PublicKeyLocationTest {
     }
 
     @Test
-    public void httpUrl() throws Exception {
+    public void jwks() throws Exception {
         final Tokens tokens = Tokens.rsa(2048, 256);
 
-        final TomEE keyServer = TomEE.microprofile()
-                .add("webapps/keys/orange.pem", tokens.getEncodedPublicKey())
-                .build();
-
         final File appJar = Archive.archive()
-                .add(PublicKeyLocationTest.class)
+                .add(PublicKeyFormatsTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
-                .add("orange.pem", tokens.getEncodedPublicKey())
+                .add("orange", tokens.getJwksPublicKey())
                 .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey.location=" + keyServer.toURI().resolve("/keys/orange.pem"))
+                        "mp.jwt.verify.publickey.location=orange")
                 .asJar();
 
         final TomEE tomee = TomEE.microprofile()

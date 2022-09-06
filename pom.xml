@@ -117,7 +117,7 @@
     <openjpa.version>3.2.2</openjpa.version>
     <openwebbeans.version>2.0.27</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.18</johnzon.version>
+    <johnzon.version>1.2.19</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
@@ -147,7 +147,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>10.0.22</tomcat.version>
+    <tomcat.version>10.0.23</tomcat.version>
 
     <cxf.version>3.5.0</cxf.version>
     <ehcache.version>3.10.0</ehcache.version>
@@ -200,7 +200,7 @@
     <mojarra.version>3.0.0</mojarra.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.17.2</log4j2.version>
+    <log4j2.version>2.18.0</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <derby.version>10.14.2.0</derby.version>
     <version.hsqldb>2.7.0</version.hsqldb>

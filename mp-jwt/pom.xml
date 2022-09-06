@@ -85,6 +85,11 @@
       <version>0.7.9</version>
     </dependency>
     <dependency>
+      <groupId>io.churchkey</groupId>
+      <artifactId>churchkey</artifactId>
+      <version>1.22</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
