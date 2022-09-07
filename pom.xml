@@ -210,7 +210,7 @@
     <version.eclipselink>3.0.2</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
-    <version.micrometer>1.8.5</version.micrometer>
+    <version.micrometer>1.9.3</version.micrometer>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
