@@ -206,8 +206,8 @@
     <version.hsqldb>2.7.0</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate.orm>6.1.2.Final</version.hibernate.orm>
-    <version.hibernate.validator>7.0.4.Final</version.hibernate.validator>
+    <version.hibernate.orm>6.1.3.Final</version.hibernate.orm>
+    <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
     <version.eclipselink>3.0.3</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
