@@ -85,7 +85,7 @@ public class JsonWebTokenValidator {
             if (authConfiguration.isSingleKey()) {
                 builder.setVerificationKey(authConfiguration.getPublicKey());
             } else {
-                builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authConfiguration.getPublicKeys()));
+                builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authConfiguration.getPublicKeysJwk()));
             }
 
             final JwtConsumer jwtConsumer = builder.build();
