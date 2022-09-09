@@ -92,7 +92,7 @@ public class JWTAuthConfigurationProperties {
         final Optional<String> publicKeyLocation = getPublicKeyLocation();
         final List<String> audiences = getAudiences();
 
-        final Map<String, Key> keys = new PublicKeyResolver().resolve(publicKeyContents, publicKeyLocation).orElse(null);
+        final Map<String, Key> keys = new KeyResolver().resolvePublicKey(publicKeyContents, publicKeyLocation).orElse(null);
         final Boolean allowNoExp = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).orElse(false);
 
         return JWTAuthConfiguration.authConfiguration(keys, getIssuer().orElse(null), allowNoExp, audiences.toArray(new String[0]));

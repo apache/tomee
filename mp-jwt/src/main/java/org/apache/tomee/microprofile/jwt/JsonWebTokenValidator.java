@@ -18,7 +18,7 @@ package org.apache.tomee.microprofile.jwt;
 
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
-import org.apache.tomee.microprofile.jwt.config.PublicKeyResolver;
+import org.apache.tomee.microprofile.jwt.config.KeyResolver;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -136,7 +136,7 @@ public class JsonWebTokenValidator {
         }
 
         public Builder publicKey(final String keyContent) {
-            final Map<String, Key> keys = new PublicKeyResolver().readPublicKeys(keyContent);
+            final Map<String, Key> keys = new KeyResolver().readPublicKeys(keyContent);
             final Map.Entry<String, Key> key = keys.entrySet().iterator().next();
             return verificationKey(key.getValue());
         }

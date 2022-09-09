@@ -17,7 +17,6 @@
 package org.apache.tomee.microprofile.jwt.config;
 
 import io.churchkey.Keys;
-import io.churchkey.util.Pem;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import org.apache.openejb.loader.IO;
 
@@ -31,18 +30,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static io.churchkey.Key.Type.PRIVATE;
+import static io.churchkey.Key.Type.PUBLIC;
 import static io.churchkey.Key.Type.SECRET;
 
-public class PublicKeyResolver {
+public class KeyResolver {
 
-    public Optional<Map<String, Key>> resolve(final Optional<String> publicKeyContents, final Optional<String> publicKeyLocation) {
+    public Optional<Map<String, Key>> resolvePublicKey(final Optional<String> keyContents, final Optional<String> keyLocation) {
+        return resolve(keyContents, keyLocation, this::validatePublicKeys);
+    }
+
+    public Optional<Map<String, Key>> resolveDecryptKey(final Optional<String> keyContents, final Optional<String> keyLocation) {
+        return resolve(keyContents, keyLocation, this::validateDecryptKeys);
+    }
+
+    private Optional<Map<String, Key>> resolve(final Optional<String> publicKeyContents, final Optional<String> publicKeyLocation, final Consumer<List<io.churchkey.Key>> validation) {
         final Stream<Supplier<Optional<Map<String, Key>>>> possiblePublicKeys =
-                Stream.of(() -> publicKeyContents.map(this::readPublicKeys),
-                        () -> publicKeyLocation.map(this::readPublicKeysFromLocation));
+                Stream.of(() -> publicKeyContents.map(publicKey -> readPublicKeys(publicKey, validation)),
+                        () -> publicKeyLocation.map(publicKeyLocation1 -> readPublicKeysFromLocation(publicKeyLocation1, validation)));
 
         return (Optional<Map<String, Key>>) possiblePublicKeys
                 .map(Supplier::get)
@@ -52,6 +61,10 @@ public class PublicKeyResolver {
     }
 
     public Map<String, Key> readPublicKeys(final String publicKey) {
+        return readPublicKeys(publicKey, this::validatePublicKeys);
+    }
+
+    public Map<String, Key> readPublicKeys(final String publicKey, final Consumer<List<io.churchkey.Key>> validation) {
         final List<io.churchkey.Key> keys;
         try {
             keys = Keys.decodeSet(publicKey);
@@ -63,8 +76,7 @@ public class PublicKeyResolver {
             throw new DeploymentException("No keys found in key contents: " + publicKey);
         }
 
-        checkInvalidTypes(keys, PRIVATE);
-        checkInvalidTypes(keys, SECRET);
+        validation.accept(keys);
 
         int unknown = 0;
 
@@ -85,6 +97,15 @@ public class PublicKeyResolver {
         return map;
     }
 
+    private void validatePublicKeys(final List<io.churchkey.Key> keys) {
+        checkInvalidTypes(keys, PRIVATE);
+        checkInvalidTypes(keys, SECRET);
+    }
+
+    private void validateDecryptKeys(final List<io.churchkey.Key> keys) {
+        checkInvalidTypes(keys, PUBLIC);
+    }
+
     private boolean defined(final io.churchkey.Key key, final String kid) {
         final String attribute = key.getAttribute(kid);
         return attribute != null && attribute.length() > 0;
@@ -102,7 +123,7 @@ public class PublicKeyResolver {
         }
     }
 
-    private Map<String, Key> readPublicKeysFromLocation(final String publicKeyLocation) {
+    private Map<String, Key> readPublicKeysFromLocation(final String publicKeyLocation, final Consumer<List<io.churchkey.Key>> validatePublicKeys) {
         final Stream<Supplier<Optional<String>>> possiblePublicKeysLocations =
                 Stream.of(() -> readPublicKeysFromClasspath(publicKeyLocation),
                         () -> readPublicKeysFromFile(publicKeyLocation),
@@ -113,7 +134,7 @@ public class PublicKeyResolver {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
-                .map(this::readPublicKeys)
+                .map(publicKey -> readPublicKeys(publicKey, validatePublicKeys))
                 .orElseThrow(() -> new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION +
                         publicKeyLocation));
     }
@@ -163,5 +184,6 @@ public class PublicKeyResolver {
                     JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
+
 
 }
