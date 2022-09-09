@@ -145,7 +145,6 @@
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-metrics</artifactId>
       <version>${microprofile.metrics.impl.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
