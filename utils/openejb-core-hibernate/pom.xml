@@ -88,7 +88,7 @@
     <dependency>
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-jcache</artifactId>
-      <version>${version.hibernate}</version>
+      <version>${version.hibernate.orm}</version>
       <exclusions>
         <exclusion>
           <groupId>org.hibernate.orm</groupId>
