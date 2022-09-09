@@ -29,9 +29,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
     <version.deltaspike>1.9.3</version.deltaspike>
-    <version.krazo>1.1.0-M1</version.krazo>
+    <version.krazo>2.0.2</version.krazo>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
+    <version.hibernate.orm>6.1.2.Final</version.hibernate.orm>
+    <version.hibernate.validator>7.0.4.Final</version.hibernate.validator>
   </properties>
   <build>
     <finalName>mvc-cxf</finalName>
@@ -61,7 +63,7 @@
           <args>-Xmx512m -XX:PermSize=256m</args>
           <libs>
             <!-- add hibernate -->
-            <lib>org.hibernate.orm:hibernate-core:6.0.0.Final</lib>
+            <lib>org.hibernate.orm:hibernate-core:${version.hibernate.orm}</lib>
             <lib>remove:openjpa</lib>
           </libs>
         </configuration>
@@ -113,7 +115,7 @@
       <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
-    <!-- MVC 1.0(JSR 371) -->
+    <!-- MVC -->
     <dependency>
       <groupId>org.eclipse.krazo</groupId>
       <artifactId>krazo-core</artifactId>
@@ -132,7 +134,7 @@
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
-      <version>2.7.7</version>
+      <version>${version.eclipselink}</version>
     </dependency>
     <!--  tests  -->
     <dependency>
