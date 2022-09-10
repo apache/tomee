@@ -34,6 +34,8 @@ import java.util.Optional;
 import static org.eclipse.microprofile.jwt.config.Names.AUDIENCES;
 import static org.eclipse.microprofile.jwt.config.Names.DECRYPTOR_KEY_LOCATION;
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
+import static org.eclipse.microprofile.jwt.config.Names.TOKEN_COOKIE;
+import static org.eclipse.microprofile.jwt.config.Names.TOKEN_HEADER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 
@@ -101,7 +103,14 @@ public class JWTAuthConfigurationProperties {
 
         final Boolean allowNoExp = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).orElse(false);
 
-        return JWTAuthConfiguration.authConfiguration(publicKeys, getIssuer().orElse(null), allowNoExp, audiences.toArray(new String[0]), decryptkeys);
+        return new JWTAuthConfiguration(
+                publicKeys,
+                getIssuer().orElse(null),
+                allowNoExp,
+                audiences.toArray(new String[0]),
+                decryptkeys,
+                config.getOptionalValue(TOKEN_HEADER, String.class).map(String::toLowerCase).orElse("authorization"),
+                config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"));
     }
 
 }

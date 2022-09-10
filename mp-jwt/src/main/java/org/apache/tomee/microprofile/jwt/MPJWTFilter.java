@@ -25,6 +25,7 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -71,6 +72,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // async is supported because we only need to do work on the way in
 //@WebFilter(asyncSupported = true, urlPatterns = "/*")
@@ -243,6 +245,25 @@ public class MPJWTFilter implements Filter {
         }
     }
 
+    private static class MissingTokenCookieException extends MPJWTException {
+
+        private final String cookieName;
+
+        public MissingTokenCookieException(final String authorizationHeader) {
+            this.cookieName = authorizationHeader;
+        }
+
+        @Override
+        public int getStatus() {
+            return HttpServletResponse.SC_UNAUTHORIZED;
+        }
+
+        @Override
+        public String getMessage() {
+            return String.format("Cookie of name '%s' holding a JWT was not found.", cookieName);
+        }
+    }
+
     private static class InvalidTokenException extends MPJWTException {
 
         private final String token;
@@ -293,17 +314,39 @@ public class MPJWTFilter implements Filter {
             }
 
             final String headerName = jwtAuthConfiguration.getHeaderName();
-            final String authorizationHeader = httpServletRequest.getHeader(headerName);
-            if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-                throw new MissingAuthorizationHeaderException();
+            final String token;
+
+            if ("cookie".equals(headerName)) {
+                final String cookieName = jwtAuthConfiguration.getCookieName();
+
+                if (httpServletRequest.getCookies() == null) {
+                    throw new MissingTokenCookieException(cookieName);
+                }
+
+                final Cookie tokenCookie = Stream.of(httpServletRequest.getCookies())
+                        .filter(cookie -> cookieName.equals(cookie.getName().toLowerCase()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (tokenCookie == null) {
+                    throw new MissingTokenCookieException(cookieName);
+                }
+
+                token = tokenCookie.getValue();
+            } else {
+                final String authorizationHeader = httpServletRequest.getHeader(headerName);
+                if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+                    throw new MissingAuthorizationHeaderException();
+                }
+
+                final String headerScheme = (jwtAuthConfiguration.getHeaderScheme() + " ").toLowerCase(Locale.ENGLISH);
+                if (headerScheme.trim().length() > 0 && !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
+                    throw new BadAuthorizationPrefixException(authorizationHeader);
+                }
+
+                token = authorizationHeader.substring(headerScheme.length());
             }
 
-            final String headerScheme = (jwtAuthConfiguration.getHeaderScheme() + " ").toLowerCase(Locale.ENGLISH);
-            if (headerScheme.trim().length() > 0 && !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
-                throw new BadAuthorizationPrefixException(authorizationHeader);
-            }
-
-            final String token = authorizationHeader.substring(headerScheme.length());
             try {
                 jsonWebToken = parse(token, jwtAuthConfiguration);
 
@@ -369,13 +412,13 @@ public class MPJWTFilter implements Filter {
                     builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(asJwks(authContextInfo.getPublicKeys())));
                 }
 
-                if (authContextInfo.getDecryptKeys().size() == 1){
+                if (authContextInfo.getDecryptKeys().size() == 1) {
                     final Key decryptionKey = authContextInfo.getDecryptKeys().values().iterator().next();
                     builder.setDecryptionKey(decryptionKey);
                 } else if (authContextInfo.getDecryptKeys().size() > 1) {
                     builder.setDecryptionKeyResolver(new JwksDecryptionKeyResolver(asJwks(authContextInfo.getDecryptKeys())));
                 }
-                
+
 
                 final JwtConsumer jwtConsumer = builder.build();
                 final JwtContext jwtContext = jwtConsumer.process(token);

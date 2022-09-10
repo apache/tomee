@@ -40,6 +40,7 @@ public class JWTAuthConfiguration {
     private String headerName = "Authorization";
     private String headerScheme = "Bearer";
     private boolean allowNoExpiryClaim = false;
+    private String cookieName = "Bearer";
 
     private JWTAuthConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences) {
         this.publicKeys = Collections.singletonMap(DEFAULT_KEY, publicKey);
@@ -48,7 +49,7 @@ public class JWTAuthConfiguration {
         this.audiences = audiences;
     }
 
-    private JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys) {
+    public JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys, final String header, final String cookie) {
         if (publicKeys == null) {
             this.publicKeys = Collections.EMPTY_MAP;
         } else if (publicKeys.size() == 1) {
@@ -67,6 +68,8 @@ public class JWTAuthConfiguration {
         this.issuer = issuer;
         this.allowNoExpiryClaim = allowNoExpiryClaim;
         this.audiences = audiences;
+        this.headerName = header;
+        this.cookieName = cookie;
     }
 
     public static JWTAuthConfiguration authConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim) {
@@ -82,7 +85,11 @@ public class JWTAuthConfiguration {
     }
 
     public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys) {
-        return new JWTAuthConfiguration(publicKeys, issuer, allowNoExpiryClaim, audiences, decryptKeys);
+        return new JWTAuthConfiguration(publicKeys, issuer, allowNoExpiryClaim, audiences, decryptKeys, null, null);
+    }
+
+    public String getCookieName() {
+        return cookieName;
     }
 
     public String[] getAudiences() {
