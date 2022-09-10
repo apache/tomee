@@ -415,9 +415,12 @@ public class MPJWTFilter implements Filter {
                 if (authContextInfo.getDecryptKeys().size() == 1) {
                     final Key decryptionKey = authContextInfo.getDecryptKeys().values().iterator().next();
                     builder.setDecryptionKey(decryptionKey);
+                    builder.setEnableRequireEncryption();
                 } else if (authContextInfo.getDecryptKeys().size() > 1) {
                     builder.setDecryptionKeyResolver(new JwksDecryptionKeyResolver(asJwks(authContextInfo.getDecryptKeys())));
+                    builder.setEnableRequireEncryption();
                 }
+
 
 
                 final JwtConsumer jwtConsumer = builder.build();
