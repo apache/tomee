@@ -48,7 +48,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.13.2</version>
+      <version>2.13.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.13.2</version>
+      <version>2.13.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.13.2.2</version>
+      <version>2.13.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.13.2</version>
+      <version>2.13.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -279,7 +279,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-annotation</artifactId>
-      <version>2.0.0-RC2</version>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -290,7 +290,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-classloader</artifactId>
-      <version>2.0.0-RC2</version>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -301,7 +301,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-constraint</artifactId>
-      <version>2.0.0-RC2</version>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -312,7 +312,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-expression</artifactId>
-      <version>2.0.0-RC2</version>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -323,7 +323,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-function</artifactId>
-      <version>2.0.0-RC2</version>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -334,7 +334,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-common</artifactId>
-      <version>3.0.0-RC2</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -345,7 +345,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-core</artifactId>
-      <version>3.0.0-RC2</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -356,7 +356,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config</artifactId>
-      <version>3.0.0-RC2</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -367,7 +367,29 @@
     <dependency>
       <groupId>io.smallrye.reactive</groupId>
       <artifactId>mutiny</artifactId>
-      <version>1.2.0</version>
+      <version>1.7.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>jandex</artifactId>
+      <version>3.0.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-fault-tolerance-api</artifactId>
+      <version>6.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -378,7 +400,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-core</artifactId>
-      <version>6.0.0-RC1</version>
+      <version>6.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -389,7 +411,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-health-api</artifactId>
-      <version>4.0.0-RC1</version>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -400,7 +422,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-health</artifactId>
-      <version>4.0.0-RC1</version>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -411,7 +433,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-metrics</artifactId>
-      <version>4.0.0-RC1</version>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -422,7 +444,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-open-api-core</artifactId>
-      <version>3.0.0-RC1</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -433,7 +455,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-open-api-jaxrs</artifactId>
-      <version>3.0.0-RC1</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -444,7 +466,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-opentracing-contrib</artifactId>
-      <version>3.0.0-RC1</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -455,7 +477,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-opentracing</artifactId>
-      <version>3.0.0-RC1</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1881,7 +1903,7 @@
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1936,7 +1958,18 @@
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.faces</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.2</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>jakarta.json</artifactId>
+      <version>2.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1969,18 +2002,7 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>3.4.3.Final</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jandex</artifactId>
-      <version>2.4.1.Final</version>
+      <version>3.5.0.Final</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2189,7 +2211,7 @@
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.30</version>
+      <version>1.31</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
