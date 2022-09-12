@@ -63,35 +63,31 @@ xref:../../comparison.adoc[See main comparison page.]
 
 * Please note that Tomcat does not ship with the jars for Standard Tag Library (JSTL) nor the javax.security.enterprise.* packages.
 
-== [[implementations]] Implementations of Java EE features in TomEE
+== [[implementations]] Implementations of Java EE features in TomEE 7.0.x
 
 [options="header",cols="1,1"]
 |===
-|Specifications|Implementations included by TomEE
+|Specifications|Implementations included by TomEE 7.0.x
 |Java Servlet, Server Pages (JSP), Expression Language (EL), +
 Java Annotations, Authentication (JASPIC), WebSocket, ... |
 https://tomcat.apache.org/[Apache Tomcat^]
 |Java{nbsp}Standard{nbsp}Tag{nbsp}Library{nbsp}(JSTL)|https://tomcat.apache.org/taglibs.html[Apache Standard Taglib Implementation^]
 |Java Server Faces (JSF)|
-https://myfaces.apache.org/[Apache MyFaces^] *(in all TomEE flavors except Plume)* +
-https://projects.eclipse.org/projects/ee4j.mojarra[Eclipse Mojarra^] *(in TomEE Plume only)*
-|Java Bean Validation|
-https://bval.apache.org/[Apache BVal^] *(in TomEE 8.x and earlier)* +
-https://hibernate.org/validator/[Hibernate Validator^] *(in TomEE 9.x and later)*
+https://myfaces.apache.org/[Apache MyFaces^] *(shipped in all TomEE flavors except Plume)* +
+https://projects.eclipse.org/projects/ee4j.mojarra[Eclipse Mojarra^] *(shipped in TomEE Plume)*
 |Java Contexts and Dependency Injection (CDI)|https://openwebbeans.apache.org/[Apache OpenWebBeans^]
 |Java Enterprise Beans (EJB)|https://openejb.apache.org/[Apache OpenEJB^]
-|Java Persistence (JPA)|
-https://openjpa.apache.org/[Apache OpenJPA^] (in all TomEE flavors) +
-https://www.eclipse.org/eclipselink/[EclipseLink^] *(in TomEE Plume only)*
 |Java Transactions (JTA)|Apache{nbsp}Geronimo{nbsp}Transaction{nbsp}Manager
-|Java Mail (JavaMail)|Apache Geronimo JavaMail
-|MicroProfile|
-Apache Geronimo MicroProfile *(in TomEE 7.1.x and 8.x)* +
-https://smallrye.io/[SmallRye MicroProfile^] *(in TomEE 9.x and later)*
+|Java Persistence (JPA)|
+https://openjpa.apache.org/[Apache OpenJPA^] (shipped in all TomEE flavors) +
+https://www.eclipse.org/eclipselink/[EclipseLink^] *(shipped in TomEE Plume)*
+|Java Bean Validation|
+https://bval.apache.org/[Apache BVal^]
+|Web Services|https://cxf.apache.org/[Apache CXF^]
 |Java JSON Processing (JSON-P)|
 https://johnzon.apache.org/[Apache Johnzon^]
 |Java XML Binding (JAXB)|https://projects.eclipse.org/projects/ee4j.jaxb-impl[Eclipse Implementation of JAXB^]
-|Web Services|https://cxf.apache.org/[Apache CXF^]
+|Java Mail (JavaMail)|Apache Geronimo JavaMail
 |Java Batch (JBatch)|https://geronimo.apache.org/batchee/[Apache BatchEE^]
 |Java Messaging (JMS)|https://activemq.apache.org/[Apache ActiveMQ^]
 |===
