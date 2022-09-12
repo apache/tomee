@@ -101,7 +101,7 @@
 
     <dependency>
       <groupId>io.smallrye</groupId>
-      <artifactId>smallrye-fault-tolerance-core</artifactId>
+      <artifactId>smallrye-fault-tolerance</artifactId>
       <version>${microprofile.fault-tolerance.impl.version}</version>
       <exclusions>
         <exclusion>
