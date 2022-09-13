@@ -16,20 +16,14 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import org.apache.tomee.microprofile.jwt.MPJWTFilter;
-import org.jose4j.jwk.JsonWebKey;
-
 import java.security.Key;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * The public key and expected issuer needed to validate a token.
  */
 public class JWTAuthConfiguration {
-    private static final Logger logger = Logger.getLogger(JWTAuthConfiguration.class.getName());
     public static final String DEFAULT_KEY = "DEFAULT";
 
     private Map<String, Key> publicKeys;
@@ -41,13 +35,6 @@ public class JWTAuthConfiguration {
     private String headerScheme = "Bearer";
     private boolean allowNoExpiryClaim = false;
     private String cookieName = "Bearer";
-
-    private JWTAuthConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences) {
-        this.publicKeys = Collections.singletonMap(DEFAULT_KEY, publicKey);
-        this.issuer = issuer;
-        this.allowNoExpiryClaim = allowNoExpiryClaim;
-        this.audiences = audiences;
-    }
 
     public JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys, final String header, final String cookie) {
         if (publicKeys == null) {
@@ -64,28 +51,12 @@ public class JWTAuthConfiguration {
         } else {
             this.decryptKeys = Collections.unmodifiableMap(decryptKeys);
         }
-        
+
         this.issuer = issuer;
         this.allowNoExpiryClaim = allowNoExpiryClaim;
         this.audiences = audiences;
         this.headerName = header;
         this.cookieName = cookie;
-    }
-
-    public static JWTAuthConfiguration authConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim) {
-        return new JWTAuthConfiguration(publicKey, issuer, allowNoExpiryClaim, new String[0]);
-    }
-
-    public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim) {
-        return authConfiguration(publicKeys, issuer, allowNoExpiryClaim, new String[0]);
-    }
-
-    public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences) {
-        return authConfiguration(publicKeys, issuer, allowNoExpiryClaim, audiences, null);
-    }
-
-    public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys) {
-        return new JWTAuthConfiguration(publicKeys, issuer, allowNoExpiryClaim, audiences, decryptKeys, null, null);
     }
 
     public String getCookieName() {
@@ -94,10 +65,6 @@ public class JWTAuthConfiguration {
 
     public String[] getAudiences() {
         return audiences;
-    }
-
-    public boolean isSingleKey() {
-        return publicKeys.size() == 1;
     }
 
     public Key getPublicKey() {
@@ -112,10 +79,6 @@ public class JWTAuthConfiguration {
         return decryptKeys;
     }
 
-    public List<JsonWebKey> getPublicKeysJwk() {
-        return MPJWTFilter.ValidateJSonWebToken.asJwks(publicKeys);
-    }
-
     public String getIssuer() {
         return issuer;
     }
@@ -124,31 +87,16 @@ public class JWTAuthConfiguration {
         return expGracePeriodSecs;
     }
 
-    public void setExpGracePeriodSecs(final int expGracePeriodSecs) {
-        this.expGracePeriodSecs = expGracePeriodSecs;
-    }
-
     public String getHeaderName() {
         return headerName;
-    }
-
-    public void setHeaderName(final String headerName) {
-        this.headerName = headerName;
     }
 
     public String getHeaderScheme() {
         return headerScheme;
     }
 
-    public void setHeaderScheme(final String headerScheme) {
-        this.headerScheme = headerScheme;
-    }
-
     public boolean isAllowNoExpiryClaim() {
         return allowNoExpiryClaim;
     }
 
-    public void setAllowNoExpiryClaim(boolean allowNoExpiryClaim) {
-        this.allowNoExpiryClaim = allowNoExpiryClaim;
-    }
 }
