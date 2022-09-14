@@ -27,7 +27,131 @@
   <artifactId>mp-common</artifactId>
   <name>TomEE :: TomEE :: MicroProfile Common</name>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- MicroProfile API -->
+      <dependency>
+        <groupId>org.eclipse.microprofile</groupId>
+        <artifactId>microprofile</artifactId>
+        <version>${microprofile.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-api</artifactId>
+        <version>${microprofile.config.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+        <artifactId>microprofile-fault-tolerance-api</artifactId>
+        <version>${microprofile.fault-tolerance.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.health</groupId>
+        <artifactId>microprofile-health-api</artifactId>
+        <version>${microprofile.health.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.jwt</groupId>
+        <artifactId>microprofile-jwt-auth-api</artifactId>
+        <version>${microprofile.jwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.metrics</groupId>
+        <artifactId>microprofile-metrics-api</artifactId>
+        <version>${microprofile.metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.openapi</groupId>
+        <artifactId>microprofile-openapi-api</artifactId>
+        <version>${microprofile.openapi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.opentracing</groupId>
+        <artifactId>microprofile-opentracing-api</artifactId>
+        <version>${microprofile.opentracing.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.rest.client</groupId>
+        <artifactId>microprofile-rest-client-api</artifactId>
+        <version>${microprofile.rest-client.version}</version>
+      </dependency>
+      <!-- SmallRye API & Impl -->
+      <dependency>
+        <groupId>io.smallrye.config</groupId>
+        <artifactId>smallrye-config</artifactId>
+        <version>${microprofile.config.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-fault-tolerance-api</artifactId>
+        <version>${microprofile.fault-tolerance.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-fault-tolerance</artifactId>
+        <version>${microprofile.fault-tolerance.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-fault-tolerance-autoconfig-core</artifactId>
+        <version>${microprofile.fault-tolerance.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-fault-tolerance-core</artifactId>
+        <version>${microprofile.fault-tolerance.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-health-api</artifactId>
+        <version>${microprofile.health.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-health</artifactId>
+        <version>${microprofile.health.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-metrics-api</artifactId>
+        <version>${microprofile.metrics.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-metrics</artifactId>
+        <version>${microprofile.metrics.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-open-api</artifactId>
+        <version>${microprofile.openapi.impl.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-open-api-core</artifactId>
+        <version>${microprofile.openapi.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-open-api-jaxrs</artifactId>
+        <version>${microprofile.openapi.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-opentracing</artifactId>
+        <version>${microprofile.opentracing.impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.smallrye</groupId>
+        <artifactId>smallrye-opentracing-contrib</artifactId>
+         <version>${microprofile.opentracing.impl.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
@@ -49,16 +173,15 @@
     </dependency>
 
     <!-- MicroProfile -->
+
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
     </dependency>
 
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config</artifactId>
-      <version>${microprofile.config.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -78,7 +201,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.version}</version>
     </dependency>
 
     <dependency>
@@ -96,13 +218,11 @@
     <dependency>
       <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
       <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>${microprofile.fault-tolerance.version}</version>
     </dependency>
 
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance</artifactId>
-      <version>${microprofile.fault-tolerance.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -114,7 +234,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
-      <version>${microprofile.health.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
@@ -126,7 +245,6 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-health</artifactId>
-      <version>${microprofile.health.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -138,13 +256,11 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.health.version}</version>
     </dependency>
 
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-metrics</artifactId>
-      <version>${microprofile.metrics.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -156,7 +272,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
@@ -181,13 +296,11 @@
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>
-      <version>${microprofile.openapi.version}</version>
     </dependency>
 
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-open-api</artifactId>
-      <version>${microprofile.openapi.impl.version}</version>
       <type>pom</type>
       <exclusions>
         <exclusion>
@@ -215,13 +328,11 @@
     <dependency>
       <groupId>org.eclipse.microprofile.opentracing</groupId>
       <artifactId>microprofile-opentracing-api</artifactId>
-      <version>${microprofile.opentracing.version}</version>
     </dependency>
 
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-opentracing</artifactId>
-      <version>${microprofile.opentracing.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -235,5 +346,6 @@
       <artifactId>opentracing-api</artifactId>
       <version>${opentracing.api}</version>
     </dependency>
+
   </dependencies>
 </project>
