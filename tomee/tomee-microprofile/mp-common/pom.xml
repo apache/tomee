@@ -201,7 +201,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mp-jwt</artifactId>
-      <version>${project.version}</version>
+      <version>${microprofile.jwt.impl.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
