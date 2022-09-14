@@ -147,7 +147,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>10.0.22</tomcat.version>
+    <tomcat.version>10.0.23</tomcat.version>
 
     <cxf.version>3.5.0</cxf.version>
     <ehcache.version>3.10.0</ehcache.version>
@@ -197,7 +197,7 @@
     <geronimo.connector.version>3.1.5</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <myfaces.version>3.0.2</myfaces.version>
-    <mojarra.version>3.0.0</mojarra.version>
+    <mojarra.version>3.0.2</mojarra.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.18.0</log4j2.version>
@@ -206,8 +206,9 @@
     <version.hsqldb>2.7.0</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate>6.0.2.Final</version.hibernate>
-    <version.eclipselink>3.0.2</version.eclipselink>
+    <version.hibernate.orm>6.1.3.Final</version.hibernate.orm>
+    <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
+    <version.eclipselink>3.0.3</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
 
@@ -220,7 +221,7 @@
 
     <microprofile.config.version>3.0.1</microprofile.config.version>
     <microprofile.config.tck.version>3.0.1</microprofile.config.tck.version>
-    <microprofile.config.impl.version>3.0.0-RC2</microprofile.config.impl.version>
+    <microprofile.config.impl.version>3.0.0</microprofile.config.impl.version>
 
     <microprofile.jwt.version>2.0</microprofile.jwt.version>
     <microprofile.jwt.tck.version>2.0</microprofile.jwt.tck.version>
@@ -230,13 +231,14 @@
     <microprofile.fault-tolerance.tck.version>4.0</microprofile.fault-tolerance.tck.version>
     <microprofile.fault-tolerance.impl.version>6.0.0-RC4</microprofile.fault-tolerance.impl.version>
 
+
     <microprofile.health.version>4.0</microprofile.health.version>
     <microprofile.health.tck.version>4.0</microprofile.health.tck.version>
-    <microprofile.health.impl.version>4.0.0-RC1</microprofile.health.impl.version>
+    <microprofile.health.impl.version>4.0.0</microprofile.health.impl.version>
 
     <microprofile.metrics.version>4.0.1</microprofile.metrics.version>
     <microprofile.metrics.tck.version>4.0.1</microprofile.metrics.tck.version>
-    <microprofile.metrics.impl.version>4.0.0-RC1</microprofile.metrics.impl.version>
+    <microprofile.metrics.impl.version>4.0.0</microprofile.metrics.impl.version>
 
     <microprofile.rest-client.version>3.0</microprofile.rest-client.version>
     <microprofile.rest-client.tck.version>3.0</microprofile.rest-client.tck.version>
@@ -244,16 +246,18 @@
 
     <microprofile.openapi.version>3.0</microprofile.openapi.version>
     <microprofile.openapi.tck.version>3.0</microprofile.openapi.tck.version>
-    <microprofile.openapi.impl.version>3.0.0-RC1</microprofile.openapi.impl.version>
+    <microprofile.openapi.impl.version>3.0.0</microprofile.openapi.impl.version>
 
     <microprofile.opentracing.version>3.0</microprofile.opentracing.version>
     <microprofile.opentracing.tck.version>3.0</microprofile.opentracing.tck.version>
-    <microprofile.opentracing.impl.version>3.0.0-RC1</microprofile.opentracing.impl.version>
+    <microprofile.opentracing.impl.version>3.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.33.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.13.2.2</jackson.version>
-    <jackson.dataformat.version>2.13.2</jackson.dataformat.version>
+    <jackson.version>2.13.4</jackson.version>
+    <jackson.dataformat.version>2.13.4</jackson.dataformat.version>
+    <!-- required by Jackson dataformat yaml -->
+    <snakeyaml.version>1.32</snakeyaml.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.3.2</javadoc.version>
@@ -1858,7 +1862,7 @@
       <dependency>
         <groupId>org.hibernate.orm</groupId>
         <artifactId>hibernate-core</artifactId>
-        <version>${version.hibernate}</version>
+        <version>${version.hibernate.orm}</version>
         <exclusions>
           <exclusion>
             <groupId>jakarta.persistence</groupId>
@@ -1885,7 +1889,7 @@
       <dependency>
         <groupId>org.hibernate.validator</groupId>
         <artifactId>hibernate-validator</artifactId>
-        <version>7.0.4.Final</version>
+        <version>${version.hibernate.validator}</version>
         <exclusions>
           <exclusion>
             <groupId>jakarta.validation</groupId>
@@ -1934,6 +1938,18 @@
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-yaml</artifactId>
         <version>${jackson.dataformat.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <!-- Jackson Dataformat Yaml requires snakeyaml -->
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${snakeyaml.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

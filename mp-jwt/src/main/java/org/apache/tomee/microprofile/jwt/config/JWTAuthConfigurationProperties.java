@@ -32,7 +32,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.eclipse.microprofile.jwt.config.Names.AUDIENCES;
+import static org.eclipse.microprofile.jwt.config.Names.DECRYPTOR_KEY_LOCATION;
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
+import static org.eclipse.microprofile.jwt.config.Names.TOKEN_COOKIE;
+import static org.eclipse.microprofile.jwt.config.Names.TOKEN_HEADER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 
@@ -92,10 +95,22 @@ public class JWTAuthConfigurationProperties {
         final Optional<String> publicKeyLocation = getPublicKeyLocation();
         final List<String> audiences = getAudiences();
 
-        final Map<String, Key> keys = new PublicKeyResolver().resolve(publicKeyContents, publicKeyLocation).orElse(null);
+        final Optional<String> decryptorKeyLocation = config.getOptionalValue(DECRYPTOR_KEY_LOCATION, String.class);
+
+        final KeyResolver resolver = new KeyResolver();
+        final Map<String, Key> publicKeys = resolver.resolvePublicKey(publicKeyContents, publicKeyLocation).orElse(null);
+        final Map<String, Key> decryptkeys = resolver.resolveDecryptKey(Optional.empty(), decryptorKeyLocation).orElse(null);
+
         final Boolean allowNoExp = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).orElse(false);
 
-        return JWTAuthConfiguration.authConfiguration(keys, getIssuer().orElse(null), allowNoExp, audiences.toArray(new String[0]));
+        return new JWTAuthConfiguration(
+                publicKeys,
+                getIssuer().orElse(null),
+                allowNoExp,
+                audiences.toArray(new String[0]),
+                decryptkeys,
+                config.getOptionalValue(TOKEN_HEADER, String.class).map(String::toLowerCase).orElse("authorization"),
+                config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"));
     }
 
 }

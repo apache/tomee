@@ -17,6 +17,7 @@
 package org.apache.tomee.microprofile.jwt;
 
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.inject.Inject;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -24,6 +25,7 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,6 +44,7 @@ import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
@@ -50,20 +53,26 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.jwt.consumer.JwtContext;
+import org.jose4j.keys.resolvers.JwksDecryptionKeyResolver;
 import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
+import org.jose4j.lang.JoseException;
 
 import javax.security.auth.Subject;
 import java.io.IOException;
+import java.security.Key;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // async is supported because we only need to do work on the way in
 //@WebFilter(asyncSupported = true, urlPatterns = "/*")
@@ -236,6 +245,25 @@ public class MPJWTFilter implements Filter {
         }
     }
 
+    private static class MissingTokenCookieException extends MPJWTException {
+
+        private final String cookieName;
+
+        public MissingTokenCookieException(final String authorizationHeader) {
+            this.cookieName = authorizationHeader;
+        }
+
+        @Override
+        public int getStatus() {
+            return HttpServletResponse.SC_UNAUTHORIZED;
+        }
+
+        @Override
+        public String getMessage() {
+            return String.format("Cookie of name '%s' holding a JWT was not found.", cookieName);
+        }
+    }
+
     private static class InvalidTokenException extends MPJWTException {
 
         private final String token;
@@ -277,7 +305,6 @@ public class MPJWTFilter implements Filter {
             this.jwtAuthConfiguration = authContextInfo;
         }
 
-
         public JsonWebToken validate(final HttpServletRequest request) {
 
             // not sure it's worth having synchronization inside a single request
@@ -287,17 +314,39 @@ public class MPJWTFilter implements Filter {
             }
 
             final String headerName = jwtAuthConfiguration.getHeaderName();
-            final String authorizationHeader = httpServletRequest.getHeader(headerName);
-            if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-                throw new MissingAuthorizationHeaderException();
+            final String token;
+
+            if ("cookie".equals(headerName)) {
+                final String cookieName = jwtAuthConfiguration.getCookieName();
+
+                if (httpServletRequest.getCookies() == null) {
+                    throw new MissingTokenCookieException(cookieName);
+                }
+
+                final Cookie tokenCookie = Stream.of(httpServletRequest.getCookies())
+                        .filter(cookie -> cookieName.equals(cookie.getName().toLowerCase()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (tokenCookie == null) {
+                    throw new MissingTokenCookieException(cookieName);
+                }
+
+                token = tokenCookie.getValue();
+            } else {
+                final String authorizationHeader = httpServletRequest.getHeader(headerName);
+                if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+                    throw new MissingAuthorizationHeaderException();
+                }
+
+                final String headerScheme = (jwtAuthConfiguration.getHeaderScheme() + " ").toLowerCase(Locale.ENGLISH);
+                if (headerScheme.trim().length() > 0 && !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
+                    throw new BadAuthorizationPrefixException(authorizationHeader);
+                }
+
+                token = authorizationHeader.substring(headerScheme.length());
             }
 
-            final String headerScheme = (jwtAuthConfiguration.getHeaderScheme() + " ").toLowerCase(Locale.ENGLISH);
-            if (headerScheme.trim().length() > 0 && !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
-                throw new BadAuthorizationPrefixException(authorizationHeader);
-            }
-
-            final String token = authorizationHeader.substring(headerScheme.length());
             try {
                 jsonWebToken = parse(token, jwtAuthConfiguration);
 
@@ -357,11 +406,22 @@ public class MPJWTFilter implements Filter {
                     builder.setEvaluationTime(NumericDate.fromSeconds(0));
                 }
 
-                if (authContextInfo.isSingleKey()) {
+                if (authContextInfo.getPublicKeys().size() == 1) {
                     builder.setVerificationKey(authContextInfo.getPublicKey());
-                } else {
-                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authContextInfo.getPublicKeys()));
+                } else if (authContextInfo.getPublicKeys().size() > 1) {
+                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(asJwks(authContextInfo.getPublicKeys())));
                 }
+
+                if (authContextInfo.getDecryptKeys().size() == 1) {
+                    final Key decryptionKey = authContextInfo.getDecryptKeys().values().iterator().next();
+                    builder.setDecryptionKey(decryptionKey);
+                    builder.setEnableRequireEncryption();
+                } else if (authContextInfo.getDecryptKeys().size() > 1) {
+                    builder.setDecryptionKeyResolver(new JwksDecryptionKeyResolver(asJwks(authContextInfo.getDecryptKeys())));
+                    builder.setEnableRequireEncryption();
+                }
+
+
 
                 final JwtConsumer jwtConsumer = builder.build();
                 final JwtContext jwtContext = jwtConsumer.process(token);
@@ -392,5 +452,19 @@ public class MPJWTFilter implements Filter {
 
             return principal;
         }
+
+        public static List<JsonWebKey> asJwks(final Map<String, Key> keys) {
+            return keys.entrySet().stream().map(key -> {
+                try {
+                    final JsonWebKey jsonWebKey = JsonWebKey.Factory.newJwk(key.getValue());
+                    jsonWebKey.setKeyId(key.getKey());
+                    return jsonWebKey;
+                } catch (final JoseException e) {
+                    throw new DeploymentException(e);
+                }
+            }).collect(Collectors.toList());
+        }
     }
+
+
 }
