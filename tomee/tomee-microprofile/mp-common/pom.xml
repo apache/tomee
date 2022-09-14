@@ -80,22 +80,22 @@
       <dependency>
         <groupId>io.smallrye.config</groupId>
         <artifactId>smallrye-config</artifactId>
-        <version>${microprofile.config.version}</version>
+        <version>${microprofile.config.impl.version}</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye</groupId>
         <artifactId>smallrye-fault-tolerance-api</artifactId>
-        <version>${microprofile.fault-tolerance.version}</version>
+        <version>${microprofile.fault-tolerance.impl.version}</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye</groupId>
         <artifactId>smallrye-fault-tolerance-autoconfig-core</artifactId>
-        <version>${microprofile.fault-tolerance.version}</version>
+        <version>${microprofile.fault-tolerance.impl.version}</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye</groupId>
         <artifactId>smallrye-fault-tolerance-core</artifactId>
-        <version>${microprofile.fault-tolerance.version}</version>
+        <version>${microprofile.fault-tolerance.impl.version}</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye</groupId>
@@ -110,7 +110,7 @@
       <dependency>
         <groupId>io.smallrye</groupId>
         <artifactId>smallrye-jwt</artifactId>
-        <version>${microprofile.jwt.impl.version}</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye</groupId>
