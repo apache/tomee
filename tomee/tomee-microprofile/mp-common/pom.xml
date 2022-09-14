@@ -110,7 +110,7 @@
       <dependency>
         <groupId>io.smallrye</groupId>
         <artifactId>smallrye-jwt</artifactId>
-        <version>4.0.0</version>
+        <version>${microprofile.jwt.impl.version}</version>
       </dependency>
       <dependency>
         <groupId>io.smallrye</groupId>
@@ -206,7 +206,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mp-jwt</artifactId>
-      <version>${microprofile.jwt.impl.version}</version>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>

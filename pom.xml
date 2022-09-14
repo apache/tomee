@@ -225,7 +225,7 @@
 
     <microprofile.jwt.version>2.0</microprofile.jwt.version>
     <microprofile.jwt.tck.version>2.0</microprofile.jwt.tck.version>
-    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
+    <microprofile.jwt.impl.version>4.0.0</microprofile.jwt.impl.version>
 
     <microprofile.fault-tolerance.version>4.0</microprofile.fault-tolerance.version>
     <microprofile.fault-tolerance.tck.version>4.0</microprofile.fault-tolerance.tck.version>
