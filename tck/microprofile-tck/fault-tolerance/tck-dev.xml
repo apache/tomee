@@ -17,9 +17,14 @@
 <suite name="microprofile-fault-tolerance-TCK" verbose="2" configfailurepolicy="continue" >
 
   <test name="microprofile-fault-tolerance TCK">
+    <packages>
+      <package name="org.eclipse.microprofile.fault.tolerance.tck.*">
+      </package>
+    </packages>
+<!--
     <classes>
       <class name="org.eclipse.microprofile.fault.tolerance.tck.CircuitBreakerLateSuccessTest"></class>
     </classes>
+-->
   </test>
-
 </suite>
