@@ -400,17 +400,6 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-api</artifactId>
-      <version>6.0.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.smallrye</groupId>
-      <artifactId>smallrye-fault-tolerance-api</artifactId>
       <version>6.0.0-RC4</version>
       <exclusions>
         <exclusion>
