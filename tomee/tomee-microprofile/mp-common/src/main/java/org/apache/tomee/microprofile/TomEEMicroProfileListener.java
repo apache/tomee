@@ -56,6 +56,7 @@ public class TomEEMicroProfileListener {
             "io.smallrye.config.inject.ConfigExtension",
             "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
             "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
+            "io.smallrye.faulttolerance.FaultToleranceExtension",
             };
 
     @SuppressWarnings("Duplicates")

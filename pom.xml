@@ -229,7 +229,8 @@
 
     <microprofile.fault-tolerance.version>4.0</microprofile.fault-tolerance.version>
     <microprofile.fault-tolerance.tck.version>4.0</microprofile.fault-tolerance.tck.version>
-    <microprofile.fault-tolerance.impl.version>6.0.0</microprofile.fault-tolerance.impl.version>
+    <microprofile.fault-tolerance.impl.version>6.0.0-RC4</microprofile.fault-tolerance.impl.version>
+
 
     <microprofile.health.version>4.0</microprofile.health.version>
     <microprofile.health.tck.version>4.0</microprofile.health.tck.version>
