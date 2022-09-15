@@ -44,6 +44,7 @@ import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
@@ -377,16 +378,39 @@ public class MPJWTFilter implements Filter {
             try {
                 final JwtConsumerBuilder builder = new JwtConsumerBuilder()
                         .setRelaxVerificationKeyValidation()
-                        .setRequireSubject()
-                        .setJwsAlgorithmConstraints(
-                                new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
-                                        AlgorithmIdentifiers.RSA_USING_SHA256,
-                                        AlgorithmIdentifiers.RSA_USING_SHA384,
-                                        AlgorithmIdentifiers.RSA_USING_SHA512,
-                                        AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256,
-                                        AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384,
-                                        AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512
-                                ));
+                        .setRequireSubject();
+
+                if (authContextInfo.getSignatureAlgorithm() != null) {
+                    builder.setJwsAlgorithmConstraints(
+                            new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+                                    authContextInfo.getSignatureAlgorithm()
+                            ));
+                } else {
+                    builder.setJwsAlgorithmConstraints(
+                            new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+                                    AlgorithmIdentifiers.RSA_USING_SHA256,
+                                    AlgorithmIdentifiers.RSA_USING_SHA384,
+                                    AlgorithmIdentifiers.RSA_USING_SHA512,
+                                    AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256,
+                                    AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384,
+                                    AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512
+                            ));
+                }
+
+                if (authContextInfo.getDecryptAlgorithm() != null) {
+                    builder.setJweAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+                            authContextInfo.getDecryptAlgorithm()
+                    );
+                } else {
+                    builder.setJweAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
+                            KeyManagementAlgorithmIdentifiers.RSA_OAEP,
+                            KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
+                            KeyManagementAlgorithmIdentifiers.ECDH_ES,
+                            KeyManagementAlgorithmIdentifiers.ECDH_ES_A128KW,
+                            KeyManagementAlgorithmIdentifiers.ECDH_ES_A192KW,
+                            KeyManagementAlgorithmIdentifiers.ECDH_ES_A256KW
+                    );
+                }
 
                 if (authContextInfo.getAudiences().length > 0) {
                     builder.setExpectedAudience(true, authContextInfo.getAudiences());
@@ -420,7 +444,6 @@ public class MPJWTFilter implements Filter {
                     builder.setDecryptionKeyResolver(new JwksDecryptionKeyResolver(asJwks(authContextInfo.getDecryptKeys())));
                     builder.setEnableRequireEncryption();
                 }
-
 
 
                 final JwtConsumer jwtConsumer = builder.build();

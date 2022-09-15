@@ -26,17 +26,34 @@ import java.util.Map;
 public class JWTAuthConfiguration {
     public static final String DEFAULT_KEY = "DEFAULT";
 
-    private Map<String, Key> publicKeys;
-    private Map<String, Key> decryptKeys;
-    private String[] audiences;
-    private String issuer;
-    private int expGracePeriodSecs = 60;
-    private String headerName = "Authorization";
-    private String headerScheme = "Bearer";
-    private boolean allowNoExpiryClaim = false;
-    private String cookieName = "Bearer";
+    private final Map<String, Key> publicKeys;
+    private final Map<String, Key> decryptKeys;
+    private final String[] audiences;
+    private final String issuer;
+    private final int expGracePeriodSecs = 60;
+    private final String headerName;
+    private final String headerScheme = "Bearer";
+    private final boolean allowNoExpiryClaim;
+    private final String cookieName;
 
-    public JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys, final String header, final String cookie) {
+    /**
+     * mp.jwt.verify.publickey.algorithm
+     *
+     * The mp.jwt.verify.publickey.algorithm configuration property allows for
+     * specifying which Public Key Signature Algorithm is supported by the MP JWT endpoint.
+     */
+    private String signatureAlgorithm;
+
+    /**
+     * mp.jwt.decrypt.key.algorithm
+     *
+     * The mp.jwt.decrypt.key.algorithm configuration property allows for specifying which key
+     * management key algorithm is supported by the MP JWT endpoint. Algorithms which must be
+     * supported are either RSA-OAEP or RSA-OAEP-256.
+     */
+    private String decryptAlgorithm;
+
+    public JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys, final String header, final String cookie, final String decryptAlgorithm, final String signatureAlgorithm) {
         if (publicKeys == null) {
             this.publicKeys = Collections.EMPTY_MAP;
         } else if (publicKeys.size() == 1) {
@@ -57,6 +74,8 @@ public class JWTAuthConfiguration {
         this.audiences = audiences;
         this.headerName = header;
         this.cookieName = cookie;
+        this.decryptAlgorithm = decryptAlgorithm;
+        this.signatureAlgorithm = signatureAlgorithm;
     }
 
     public String getCookieName() {
@@ -99,4 +118,11 @@ public class JWTAuthConfiguration {
         return allowNoExpiryClaim;
     }
 
+    public String getSignatureAlgorithm() {
+        return signatureAlgorithm;
+    }
+
+    public String getDecryptAlgorithm() {
+        return decryptAlgorithm;
+    }
 }

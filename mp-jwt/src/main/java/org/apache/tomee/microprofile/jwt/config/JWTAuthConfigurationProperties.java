@@ -110,7 +110,9 @@ public class JWTAuthConfigurationProperties {
                 audiences.toArray(new String[0]),
                 decryptkeys,
                 config.getOptionalValue(TOKEN_HEADER, String.class).map(String::toLowerCase).orElse("authorization"),
-                config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"));
+                config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"),
+                config.getOptionalValue("mp.jwt.decrypt.key.algorithm", String.class).orElse( null),
+                config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse( null));
     }
 
 }
