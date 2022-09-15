@@ -130,6 +130,14 @@
     </dependency>
 
     <dependency>
+      <!-- required by the MP TCK -->
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${project.version}</version>
