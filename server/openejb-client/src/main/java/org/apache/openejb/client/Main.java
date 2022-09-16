@@ -22,6 +22,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,7 +60,15 @@ public class Main {
         if (classLoader == null) {
             classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()});
         } else {
-            classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()}, classLoader);
+            Class<?> classLoaderCLass = URLClassLoader.class;
+            try {
+                classLoaderCLass = classLoader.loadClass("org.apache.openejb.util.classloader.URLClassLoaderFirst");
+            } catch (final Exception e) {
+                // ignore
+            }
+            final Constructor<ClassLoader> constructor =
+                (Constructor<ClassLoader>) classLoaderCLass.getConstructor(URL[].class, ClassLoader.class);
+            classLoader = constructor.newInstance(new URL[]{file.toURI().toURL()}, classLoader);
         }
         Thread.currentThread().setContextClassLoader(classLoader);
 
