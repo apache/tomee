@@ -20,16 +20,20 @@ import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.Requirement;
+import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.churchkey.Keys;
 
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.ECPrivateKey;
+import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
 
 /**
@@ -41,16 +45,27 @@ public class Tokens {
     private final PublicKey publicKey;
     private final int hashSize;
     private final String id;
+    private final String prefix;
 
-    public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize) {
-        this(privateKey, publicKey, hashSize, null);
-    }
-
-    public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize, final String id) {
+    public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize, final String id, final String prefix) {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.hashSize = hashSize;
         this.id = id;
+        this.prefix = prefix;
+
+    }
+
+    public static Tokens ec(final String curveName, int hashSize) {
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+            ECGenParameterSpec spec = new ECGenParameterSpec(curveName);
+            keyGen.initialize(spec);
+            final KeyPair pair = keyGen.generateKeyPair();
+            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, null, "ES");
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public int getHashSize() {
@@ -70,7 +85,7 @@ public class Tokens {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(keyLength);
             final KeyPair pair = keyGen.generateKeyPair();
-            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, id);
+            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, id, "RS");
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
@@ -102,24 +117,30 @@ public class Tokens {
 
     public String asToken(final String claims) throws Exception {
         try {
-            final JWSHeader.Builder builder = new JWSHeader.Builder(new JWSAlgorithm("RS" + hashSize, Requirement.OPTIONAL))
+            final JWSHeader.Builder builder = new JWSHeader.Builder(new JWSAlgorithm(prefix + hashSize, Requirement.OPTIONAL))
                     .type(JOSEObjectType.JWT);
 
             if (id != null) {
                 builder.keyID(id);
             }
-            
+
             final JWSHeader header = builder.build();
 
             final JWTClaimsSet claimsSet = JWTClaimsSet.parse(claims);
 
             final SignedJWT jwt = new SignedJWT(header, claimsSet);
 
-            jwt.sign(new RSASSASigner(privateKey));
+            if ("RS".equals(prefix)) {
+                jwt.sign(new RSASSASigner(privateKey));
+            } else if ("ES".equals(prefix)) {
+                jwt.sign(new ECDSASigner((ECPrivateKey) privateKey));
+            } else {
+                throw new IllegalStateException("Unsupported prefix: " + prefix);
+            }
 
             return jwt.serialize();
         } catch (Exception e) {
-            throw new RuntimeException("Could not sign JWT");
+            throw new RuntimeException("Could not sign JWT", e);
         }
     }
 }
