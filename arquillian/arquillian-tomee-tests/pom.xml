@@ -145,13 +145,13 @@
     <dependency>
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>6.0.0.Final</version>
+      <version>${version.hibernate.orm}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate.common</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
-      <version>5.1.2.Final</version>
+      <version>6.0.4.Final</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

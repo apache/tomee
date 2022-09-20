@@ -36,9 +36,9 @@
     <module>metrics</module>
     <module>rest-client</module>
     <module>openapi</module>
+    <module>fault-tolerance</module>
     <!--
     <module>opentracing</module>
-    <module>fault-tolerance</module>
     -->
   </modules>
 </project>

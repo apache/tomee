@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -14,6 +13,18 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
+  -->
+<suite name="microprofile-fault-tolerance-TCK" verbose="2" configfailurepolicy="continue" >
 
-<application-client/>
+  <test name="microprofile-fault-tolerance TCK">
+    <packages>
+      <package name="org.eclipse.microprofile.fault.tolerance.tck.*">
+      </package>
+    </packages>
+<!--
+    <classes>
+      <class name="org.eclipse.microprofile.fault.tolerance.tck.CircuitBreakerLateSuccessTest"></class>
+    </classes>
+-->
+  </test>
+</suite>

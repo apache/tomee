@@ -84,16 +84,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>microprofile-fault-tolerance-api-shade</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-          <artifactId>microprofile-fault-tolerance-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+      <artifactId>microprofile-fault-tolerance-api</artifactId>
+      <version>${microprofile.fault-tolerance.version}</version>
     </dependency>
 
     <dependency>
