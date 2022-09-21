@@ -115,6 +115,7 @@ public class Duration {
         this.unit = unit;
     }
 
+
     private static final class Normalize {
         private final long a;
         private final long b;
@@ -166,6 +167,26 @@ public class Duration {
     public Duration subtract(final Duration that) {
         final Normalize n = new Normalize(this, that);
         return new Duration(n.a - n.b, n.base);
+    }
+
+    public boolean greaterThan(final Duration that) {
+        final Normalize n = new Normalize(this, that);
+        return n.a > n.b;
+    }
+
+    public boolean greaterOrEqualTo(final Duration that) {
+        final Normalize n = new Normalize(this, that);
+        return n.a >= n.b;
+    }
+
+    public boolean lessThan(final Duration that) {
+        final Normalize n = new Normalize(this, that);
+        return n.a < n.b;
+    }
+
+    public boolean lessOrEqualTo(final Duration that) {
+        final Normalize n = new Normalize(this, that);
+        return n.a <= n.b;
     }
 
     public static Duration parse(final String text) {

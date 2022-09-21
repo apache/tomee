@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -74,5 +75,69 @@ public class DurationTest extends TestCase {
 
         assertEquals(new Duration(125, SECONDS), Duration.parse("2 minutes and 5 seconds"));
 
+    }
+
+    public void testAdd() {
+        final Duration a = new Duration(1, SECONDS);
+        final Duration b = new Duration(1, MINUTES);
+
+
+        final Duration c = a.add(b);
+        assertEquals(c.getUnit(), SECONDS);
+        assertEquals(c.getTime(), 61);
+
+        final Duration d = b.add(a);
+        assertEquals(d.getUnit(), SECONDS);
+        assertEquals(d.getTime(), 61);
+    }
+
+    public void testSubtract() {
+        final Duration a = new Duration(1, SECONDS);
+        final Duration b = new Duration(1, MINUTES);
+
+
+        final Duration c = a.subtract(b);
+        assertEquals(c.getUnit(), SECONDS);
+        assertEquals(c.getTime(), -59);
+
+        final Duration d = b.subtract(a);
+        assertEquals(d.getUnit(), SECONDS);
+        assertEquals(d.getTime(), 59);
+    }
+
+    public void testGreaterThan() {
+        final Duration a = new Duration(1, SECONDS);
+        final Duration b = new Duration(1, MINUTES);
+
+        assertFalse(a.greaterThan(b));
+        assertFalse(a.greaterThan(a));
+        assertTrue(b.greaterThan(a));
+    }
+
+    public void testLessThan() {
+        final Duration a = new Duration(1, SECONDS);
+        final Duration b = new Duration(1, MINUTES);
+
+        assertTrue(a.lessThan(b));
+        assertFalse(a.lessThan(a));
+        assertFalse(b.lessThan(a));
+    }
+
+    public void testGreaterOrEqual() {
+        final Duration a = new Duration(1, SECONDS);
+        final Duration b = new Duration(1, MINUTES);
+
+        assertFalse(a.greaterOrEqualTo(b));
+        assertTrue(a.greaterOrEqualTo(a));
+        assertTrue(b.greaterOrEqualTo(a));
+    }
+
+    public void testLessOrEqual() {
+        final Duration a = new Duration(1, SECONDS);
+        final Duration b = new Duration(1, MINUTES);
+
+        assertTrue(a.lessOrEqualTo(b));
+        assertTrue(a.lessOrEqualTo(a));
+        assertFalse(b.lessOrEqualTo(a));
     }
 }
