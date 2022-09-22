@@ -113,11 +113,9 @@
     <module>movies-complete</module>
     <module>mp-config-example</module>
     <module>mp-config-source-database</module>
-    <!-- Todo not supported yet
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
     <module>mp-faulttolerance-timeout</module>
-    -->
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
     <module>mp-metrics-counted</module>
@@ -215,7 +213,9 @@
     <module>mvc-cxf</module>
     <module>mvc-cxf-hibernate</module>
     -->
+    <!-- Needs krazo 3.0.0 to be released
     <module>mvc-resteasy</module>
+    -->
     <module>jsonb-configuration</module>
     <module>jsonb-custom-serializer</module>
 <!--    <module>vaadin-lts-v08-simple</module>-->
