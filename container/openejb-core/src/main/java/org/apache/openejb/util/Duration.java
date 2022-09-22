@@ -169,6 +169,10 @@ public class Duration {
         return new Duration(n.a - n.b, n.base);
     }
 
+    public Duration multiply(final long n) {
+        return new Duration(getTime() * n, getUnit());
+    }
+
     public boolean greaterThan(final Duration that) {
         final Normalize n = new Normalize(this, that);
         return n.a > n.b;
@@ -187,6 +191,16 @@ public class Duration {
     public boolean lessOrEqualTo(final Duration that) {
         final Normalize n = new Normalize(this, that);
         return n.a <= n.b;
+    }
+
+    public static Duration max(final Duration a, final Duration b) {
+        final Normalize n = new Normalize(a, b);
+        return (n.a >= n.b) ? a : b;
+    }
+
+    public static Duration min(final Duration a, final Duration b) {
+        final Normalize n = new Normalize(a, b);
+        return (n.a <= n.b) ? a : b;
     }
 
     public static Duration parse(final String text) {

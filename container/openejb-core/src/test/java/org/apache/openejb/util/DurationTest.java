@@ -140,4 +140,21 @@ public class DurationTest extends TestCase {
         assertTrue(a.lessOrEqualTo(a));
         assertFalse(b.lessOrEqualTo(a));
     }
+
+    public void testMultiply() {
+        {
+            final Duration a = new Duration(1, SECONDS);
+            final Duration b = a.multiply(3);
+
+            assertEquals(b.getUnit(), SECONDS);
+            assertEquals(b.getTime(), 3);
+        }
+        {
+            final Duration a = new Duration(3, MINUTES);
+            final Duration b = a.multiply(3);
+
+            assertEquals(b.getUnit(), MINUTES);
+            assertEquals(b.getTime(), 9);
+        }
+    }
 }
