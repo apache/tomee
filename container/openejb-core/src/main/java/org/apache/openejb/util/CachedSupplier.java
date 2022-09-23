@@ -80,8 +80,10 @@ public class CachedSupplier<T> implements Supplier<T> {
         @Override
         public T get() {
             try {
-                initialized.await(accessTimeout.getTime(), accessTimeout.getUnit());
-                return value.get();
+                if (initialized.await(accessTimeout.getTime(), accessTimeout.getUnit())){
+                    return value.get();
+                }
+                throw new TimeoutException();
             } catch (InterruptedException e) {
                 throw new TimeoutException();
             }
