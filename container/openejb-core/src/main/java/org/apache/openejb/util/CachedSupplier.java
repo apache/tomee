@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 
 public class CachedSupplier<T> implements Supplier<T> {
 
+    private final Logger logger;
     private final Duration initialRetryDelay;
     private final Duration maxRetryDelay;
     private final Duration accessTimeout;
@@ -39,7 +40,7 @@ public class CachedSupplier<T> implements Supplier<T> {
 
     private CachedSupplier(final Supplier<T> supplier, final Duration initialRetryDelay,
                            final Duration maxRetryDelay, final Duration accessTimeout,
-                           final Duration refreshInterval) {
+                           final Duration refreshInterval, final Logger logger) {
 
         Objects.requireNonNull(supplier, "supplier");
         Objects.requireNonNull(initialRetryDelay, "initialRetryDelay");
@@ -52,12 +53,19 @@ public class CachedSupplier<T> implements Supplier<T> {
         this.maxRetryDelay = maxRetryDelay;
         this.accessTimeout = accessTimeout;
         this.refreshInterval = refreshInterval;
+        this.logger = logger != null ? logger : createLogger(supplier);
 
         /*
          * This must be last as it starts running code
          * that uses the above settings
          */
         this.accessor.set(new BlockTillInitialized());
+    }
+
+    private Logger createLogger(final Supplier<T> supplier) {
+        final String simpleName = supplier.getClass().getSimpleName();
+        final LogCategory child = LogCategory.OPENEJB.createChild("cache").createChild(simpleName);
+        return Logger.getInstance(LogCategory.ACTIVEMQ, CachedSupplier.class);
     }
 
     @Override
@@ -80,11 +88,13 @@ public class CachedSupplier<T> implements Supplier<T> {
         @Override
         public T get() {
             try {
-                if (initialized.await(accessTimeout.getTime(), accessTimeout.getUnit())){
+                if (initialized.await(accessTimeout.getTime(), accessTimeout.getUnit())) {
                     return value.get();
                 }
+                logger.debug(String.format("Timeout of %s reached waiting for initial value from supplier: %s", accessTimeout, supplier));
                 throw new TimeoutException();
             } catch (InterruptedException e) {
+                logger.debug(String.format("InterruptedException encountered while waiting for initial value from supplier: %s", supplier), e);
                 throw new TimeoutException();
             }
         }
@@ -110,15 +120,35 @@ public class CachedSupplier<T> implements Supplier<T> {
             public void run() {
                 try {
                     final T t = supplier.get();
-                    if (t != null) {
+
+                    if (t != null) { // SUCCESS
+
                         value.set(t);
                         accessor.set(new Initialized());
                         initialized.countDown();
+
+                        logger.debug(String.format("Initialization attempt %s succeeded. Supplier %s returned valid result.",
+                                attempts,
+                                supplier
+                        ));
+
                         return;
+
+                    } else { // FAILED
+
+                        logger.error(String.format("Initialization attempt %s failed. Supplier %s returned null.  Next retry will be in %s",
+                                attempts,
+                                supplier,
+                                retry().delay
+                        ));
                     }
-                } catch (Throwable e) {
-                    // TODO
-                    e.printStackTrace();
+
+                } catch (final Throwable e) {
+                    logger.error(String.format("Initialization attempt %s failed. Supplier %s threw an exception.  Next retry will be in %s",
+                            attempts,
+                            supplier,
+                            retry().delay
+                    ), e);
                 }
 
                 /*
@@ -147,10 +177,21 @@ public class CachedSupplier<T> implements Supplier<T> {
                     final T t = supplier.get();
                     if (t != null) {
                         value.set(t);
+                        logger.debug(String.format("Refresh succeeded. Supplier %s returned valid value.  Next refresh will be in %s",
+                                supplier,
+                                refreshInterval
+                        ));
+                    } else {
+                        logger.error(String.format("Refresh failed. Supplier %s returned null.  Next refresh will be in %s",
+                                supplier,
+                                refreshInterval
+                        ));
                     }
                 } catch (Throwable e) {
-                    // TODO
-                    e.printStackTrace();
+                    logger.error(String.format("Refresh failed. Supplier %s threw an exception.  Next refresh will be in %s",
+                            supplier,
+                            refreshInterval
+                    ), e);
                 }
             }
         }
@@ -184,7 +225,7 @@ public class CachedSupplier<T> implements Supplier<T> {
         private Duration accessTimeout = new Duration(30, TimeUnit.SECONDS);
         private Duration refreshInterval = new Duration(1, TimeUnit.DAYS);
         private Supplier<T> supplier;
-
+        private Logger logger;
 
         public Builder<T> initialRetryDelay(final Duration initialRetryDelay) {
             this.initialRetryDelay = initialRetryDelay;
@@ -228,12 +269,18 @@ public class CachedSupplier<T> implements Supplier<T> {
             return this;
         }
 
+        public Builder<T> logger(final Logger logger) {
+            this.logger = logger;
+            return this;
+        }
+
         public CachedSupplier<T> build() {
             return new CachedSupplier<>(supplier,
                     initialRetryDelay,
                     maxRetryDelay,
                     accessTimeout,
-                    refreshInterval);
+                    refreshInterval,
+                    logger);
         }
     }
 }

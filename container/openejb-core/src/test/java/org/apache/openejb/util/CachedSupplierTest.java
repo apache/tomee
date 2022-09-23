@@ -158,7 +158,7 @@ public class CachedSupplierTest {
      * time between each call to ensure exponential backoff is working
      */
     @Test
-    public void initializationRetry() {
+    public void initializationRetryNull() {
         final Long[] calls = new Long[10];
         final AtomicInteger count = new AtomicInteger();
         final Supplier<Integer> supplier = () -> {
@@ -170,6 +170,57 @@ public class CachedSupplierTest {
             // Return null for the first three calls
             // Then return the actual value
             return i < 4 ? null : i;
+        };
+
+        final CachedSupplier<Integer> cached = CachedSupplier.builder(supplier)
+                .initialRetryDelay(500, MILLISECONDS)
+                .accessTimeout(1, MINUTES)
+                .build();
+
+        final Runner runner = Runner.threads(100);
+
+        runner.run(() -> assertEquals(4, (int) cached.get()))
+                .assertNoExceptions();
+
+        final Long[] tries = Stream.of(calls)
+                .filter(Objects::nonNull)
+                .toArray(Long[]::new);
+
+        assertEquals(4, tries.length);
+        assertEquals(4, count.get());
+
+        long first = NANOSECONDS.toSeconds(tries[1] - tries[0]);
+        long second = NANOSECONDS.toSeconds(tries[2] - tries[1]);
+        long third = NANOSECONDS.toSeconds(tries[3] - tries[2]);
+
+        assertEquals(1, first);
+        assertEquals(2, second);
+        assertEquals(4, third);
+    }
+
+    /**
+     * Supplier returns null on the first three calls to get.  On the
+     * fourth retry a valid result is returned from get.  We assert
+     * the number of times the supplier get is called as well as the
+     * time between each call to ensure exponential backoff is working
+     */
+    @Test
+    public void initializationRetryException() {
+        final Long[] calls = new Long[10];
+        final AtomicInteger count = new AtomicInteger();
+        final Supplier<Integer> supplier = () -> {
+            final int i = count.incrementAndGet();
+            if (i < calls.length) {
+                calls[i] = System.nanoTime();
+            }
+
+            // Throw an exception for the first three calls
+            // Then return the actual value
+            if (i < 4) {
+                throw new RuntimeException();
+            }
+
+            return i;
         };
 
         final CachedSupplier<Integer> cached = CachedSupplier.builder(supplier)
@@ -264,6 +315,77 @@ public class CachedSupplierTest {
      */
     @Test
     public void refreshReliablyCalled() {
+        final CountDownLatch thirdCall = new CountDownLatch(1);
+
+        final Long[] calls = new Long[10];
+        final AtomicInteger count = new AtomicInteger();
+        final Supplier<Integer> supplier = () -> {
+            final int i = count.incrementAndGet();
+            if (i < calls.length) {
+                calls[i] = System.nanoTime();
+            }
+            if (i == 3) {
+                thirdCall.countDown();
+            }
+            return i;
+        };
+
+        final CachedSupplier<Integer> cached = CachedSupplier.builder(supplier)
+                .refreshInterval(1, SECONDS)
+                .accessTimeout(1, MINUTES)
+                .build();
+
+        final Runner runner = Runner.threads(100);
+
+        runner.run(() -> assertEquals(1, (int) cached.get()))
+                .assertNoExceptions();
+
+        await(thirdCall);
+
+        runner.run(() -> assertEquals(3, (int) cached.get()))
+                .assertNoExceptions();
+
+        // Now loop with our 100 threads till each reaches 6
+        runner.run(() -> {
+                    int previous = 3;
+                    while (true) {
+                        final Integer value = cached.get();
+
+                        assertNotNull(value);
+
+                        if (value == previous) {
+                            continue;
+                        } else if (value == previous + 1) {
+                            previous = value;
+                        } else {
+                            fail("Unexpected value " + value + ", previous was " + previous);
+                        }
+                        if (value == 6) {
+                            return;
+                        }
+                        assertTrue(value < 7);
+                    }
+                })
+                .assertNoExceptions();
+
+        final Long[] tries = Stream.of(calls)
+                .filter(Objects::nonNull)
+                .toArray(Long[]::new);
+
+        assertEquals(6, tries.length);
+        assertEquals(6, count.get());
+
+        long first = NANOSECONDS.toMillis(tries[1] - tries[0]);
+        long second = NANOSECONDS.toMillis(tries[2] - tries[1]);
+        long third = NANOSECONDS.toMillis(tries[3] - tries[2]);
+        long fourth = NANOSECONDS.toMillis(tries[4] - tries[3]);
+        long fifth = NANOSECONDS.toMillis(tries[5] - tries[4]);
+
+        assertRange(first, 900, 1100);
+        assertRange(second, 900, 1100);
+        assertRange(third, 900, 1100);
+        assertRange(fourth, 900, 1100);
+        assertRange(fifth, 900, 1100);
     }
 
     /**
@@ -273,6 +395,38 @@ public class CachedSupplierTest {
      */
     @Test
     public void refreshFailedWithNull() {
+        final AtomicInteger count = new AtomicInteger();
+        final Supplier<Integer> supplier = () -> {
+            final int i = count.incrementAndGet();
+            if (i == 2) return null;
+            if (i == 3) return null;
+            return i;
+        };
+
+        final CachedSupplier<Integer> cached = CachedSupplier.builder(supplier)
+                .refreshInterval(1, SECONDS)
+                .accessTimeout(1, MINUTES)
+                .build();
+
+        final Runner runner = Runner.threads(100);
+
+        // We should see the value of 1 initially
+        runner.run(() -> assertEquals(1, (int) cached.get()))
+                .assertNoExceptions();
+
+        // Values 2 and 3 fail, so the next value we should see is 4
+        runner.run(() -> {
+                    while (true) {
+                        final Integer value = cached.get();
+                        assertNotNull(value);
+                        assertTrue(value == 1 || value == 4);
+                        if (value == 4) return;
+                    }
+                })
+                .assertNoExceptions();
+
+        runner.run(() -> assertEquals(4, (int) cached.get()))
+                .assertNoExceptions();
     }
 
     /**
@@ -282,6 +436,38 @@ public class CachedSupplierTest {
      */
     @Test
     public void refreshFailedWithException() {
+        final AtomicInteger count = new AtomicInteger();
+        final Supplier<Integer> supplier = () -> {
+            final int i = count.incrementAndGet();
+            if (i == 2) throw new RuntimeException();
+            if (i == 3) throw new RuntimeException();
+            return i;
+        };
+
+        final CachedSupplier<Integer> cached = CachedSupplier.builder(supplier)
+                .refreshInterval(1, SECONDS)
+                .accessTimeout(1, MINUTES)
+                .build();
+
+        final Runner runner = Runner.threads(100);
+
+        // We should see the value of 1 initially
+        runner.run(() -> assertEquals(1, (int) cached.get()))
+                .assertNoExceptions();
+
+        // Values 2 and 3 fail, so the next value we should see is 4
+        runner.run(() -> {
+                    while (true) {
+                        final Integer value = cached.get();
+                        assertNotNull(value);
+                        assertTrue(value == 1 || value == 4);
+                        if (value == 4) return;
+                    }
+                })
+                .assertNoExceptions();
+
+        runner.run(() -> assertEquals(4, (int) cached.get()))
+                .assertNoExceptions();
     }
 
     private void sleep(final int millis) {
@@ -298,6 +484,11 @@ public class CachedSupplierTest {
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public void assertRange(final long value, final long min, final long max) {
+        assertTrue(value > min);
+        assertTrue(value < max);
     }
 
     static class Timer {

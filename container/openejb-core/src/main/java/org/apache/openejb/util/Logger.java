@@ -217,6 +217,9 @@ public class Logger {
         @Override
         public String compute(final String key) throws InterruptedException {
             final int index = key.lastIndexOf('.');
+            if (index == -1) {
+                return null;
+            }
             final String parent = key.substring(0, index);
             if (parent.contains(OPENEJB)) {
                 return parent;
