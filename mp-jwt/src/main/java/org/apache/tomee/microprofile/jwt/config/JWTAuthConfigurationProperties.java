@@ -21,6 +21,10 @@ import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.servlet.ServletContext;
+import org.apache.openejb.util.CachedSupplier;
+import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.Logger;
+import org.apache.tomee.microprofile.jwt.JWTLogCategories;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -30,9 +34,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static org.eclipse.microprofile.jwt.config.Names.AUDIENCES;
-import static org.eclipse.microprofile.jwt.config.Names.DECRYPTOR_KEY_LOCATION;
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 import static org.eclipse.microprofile.jwt.config.Names.TOKEN_COOKIE;
 import static org.eclipse.microprofile.jwt.config.Names.TOKEN_HEADER;
@@ -91,15 +96,10 @@ public class JWTAuthConfigurationProperties {
                     " are being supplied. You must use only one.");
         }
 
-        final Optional<String> publicKeyContents = getVerifierPublicKey();
-        final Optional<String> publicKeyLocation = getPublicKeyLocation();
         final List<String> audiences = getAudiences();
 
-        final Optional<String> decryptorKeyLocation = config.getOptionalValue(DECRYPTOR_KEY_LOCATION, String.class);
-
-        final KeyResolver resolver = new KeyResolver();
-        final Map<String, Key> publicKeys = resolver.resolvePublicKey(publicKeyContents, publicKeyLocation).orElse(null);
-        final Map<String, Key> decryptkeys = resolver.resolveDecryptKey(Optional.empty(), decryptorKeyLocation).orElse(null);
+        final Supplier<Map<String, Key>> publicKeys = Keys.VERIFY.configure(config);
+        final Supplier<Map<String, Key>> decryptKeys = Keys.DECRYPT.configure(config);
 
         final Boolean allowNoExp = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).orElse(false);
 
@@ -108,11 +108,145 @@ public class JWTAuthConfigurationProperties {
                 getIssuer().orElse(null),
                 allowNoExp,
                 audiences.toArray(new String[0]),
-                decryptkeys,
+                decryptKeys,
                 config.getOptionalValue(TOKEN_HEADER, String.class).map(String::toLowerCase).orElse("authorization"),
                 config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"),
-                config.getOptionalValue("mp.jwt.decrypt.key.algorithm", String.class).orElse( null),
-                config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse( null));
+                config.getOptionalValue("mp.jwt.decrypt.key.algorithm", String.class).orElse(null),
+                config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse(null));
     }
 
+    enum Keys {
+        VERIFY("mp.jwt.verify.publickey", "tomee.jwt.verify.publickey"),
+        DECRYPT("mp.jwt.decrypt.key", "tomee.jwt.decrypt.key");
+
+        private final String mpPrefix;
+        private final String tomeePrefix;
+
+        Keys(final String mpPrefix, final String tomeePrefix) {
+            this.mpPrefix = mpPrefix;
+            this.tomeePrefix = tomeePrefix;
+        }
+
+        public Supplier<Map<String, Key>> configure(final Config config) {
+            final Options options = new Options(config);
+            final Optional<String> contents = options.contents();
+            final Optional<String> location = options.location();
+
+            if (contents.isEmpty() && location.isEmpty()) return new Unset();
+
+            final Supplier<Map<String, Key>> supplier;
+
+            switch (this) {
+                case VERIFY: supplier = new PublicKeys(contents, location);
+                    break;
+                case DECRYPT: supplier = new DecryptKeys(contents, location);
+                    break;
+                default: throw new IllegalArgumentException("Unsupported enum value: " + this);
+            }
+
+            if (options.cached()) {
+                return CachedSupplier.builder(supplier)
+                        .refreshInterval(options.refreshInterval())
+                        .initialRetryDelay(options.initialRetryDelay())
+                        .maxRetryDelay(options.maxRetryDelay())
+                        .accessTimeout(options.accessTimeout())
+                        .logger(Logger.getInstance(JWTLogCategories.KEYS, supplier.getClass()))
+                        .build();
+            }
+
+            return new FixedKeys(supplier.get());
+        }
+
+        class Options {
+            private final Config config;
+
+            public Options(final Config config) {
+                this.config = config;
+            }
+
+            Optional<String> contents() {
+                return config.getOptionalValue(mpPrefix, String.class);
+            }
+
+            Optional<String> location() {
+                return config.getOptionalValue(mpPrefix + ".location", String.class);
+            }
+
+            boolean cached() {
+                return config.getOptionalValue(tomeePrefix + ".cache", Boolean.class).orElse(false);
+            }
+
+            Duration initialRetryDelay() {
+                return config.getOptionalValue(tomeePrefix + ".cache.initialRetryDelay", Duration.class)
+                        .orElse(new Duration(2, TimeUnit.SECONDS));
+            }
+
+            Duration maxRetryDelay() {
+                return config.getOptionalValue(tomeePrefix + ".cache.maxRetryDelay", Duration.class)
+                        .orElse(new Duration(1, TimeUnit.HOURS));
+            }
+
+            Duration accessTimeout() {
+                return config.getOptionalValue(tomeePrefix + ".cache.accessTimeout", Duration.class)
+                        .orElse(new Duration(30, TimeUnit.SECONDS));
+            }
+
+            Duration refreshInterval() {
+                return config.getOptionalValue(tomeePrefix + ".cache.refreshInterval", Duration.class)
+                        .orElse(new Duration(1, TimeUnit.DAYS));
+            }
+        }
+    }
+
+    public static class Unset implements Supplier<Map<String, Key>> {
+        @Override
+        public Map<String, Key> get() {
+            return Collections.EMPTY_MAP;
+        }
+    }
+
+    public static class FixedKeys implements Supplier<Map<String, Key>> {
+        private final Map<String, Key> keys;
+
+        public FixedKeys(final Map<String, Key> keys) {
+            this.keys = keys != null ? keys : Collections.EMPTY_MAP;
+        }
+
+        @Override
+        public Map<String, Key> get() {
+            return keys;
+        }
+    }
+
+    public static class PublicKeys implements Supplier<Map<String, Key>> {
+        final Optional<String> contents;
+        final Optional<String> location;
+
+        public PublicKeys(final Optional<String> contents, final Optional<String> location) {
+            this.contents = contents;
+            this.location = location;
+        }
+
+        @Override
+        public Map<String, Key> get() {
+            final KeyResolver resolver = new KeyResolver();
+            return resolver.resolvePublicKey(contents, location).orElse(Collections.EMPTY_MAP);
+        }
+    }
+
+    public static class DecryptKeys implements Supplier<Map<String, Key>> {
+        final Optional<String> contents;
+        final Optional<String> location;
+
+        public DecryptKeys(final Optional<String> contents, final Optional<String> location) {
+            this.contents = contents;
+            this.location = location;
+        }
+
+        @Override
+        public Map<String, Key> get() {
+            final KeyResolver resolver = new KeyResolver();
+            return resolver.resolveDecryptKey(contents, location).orElse(Collections.EMPTY_MAP);
+        }
+    }
 }

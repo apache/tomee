@@ -1,0 +1,116 @@
+# TomEE MicroProfile JWT
+
+Apache TomEE supports https://download.eclipse.org/microprofile/microprofile-jwt-auth-2.0/microprofile-jwt-auth-spec-2.0.html[MicroProfile JWT 2.0], which allows applications to be secured using JWTs.
+JWTs may be either:
+
+- Signed (https://www.rfc-editor.org/rfc/rfc7515[JWS]) tokens, verified via a public key you configure
+- Encrypted (https://www.rfc-editor.org/rfc/rfc7516[JWE]) tokens, decrypted via a private key you configure
+
+Key types supported:
+
+- RSA
+- Elliptic curve (EC)
+
+Key formats supported:
+
+- PEM PKCS1 and PKCS8
+- JWK and JWKS
+- OpenSSH Public Key (`.pub` and `authorized_keys`)
+- SSH 2 Public Key
+
+Signature algorithms supported:
+
+- RS256
+- RS384
+- RS512
+- ES256
+- ES384
+- ES512
+
+Decryption algorithms supported:
+
+- RSA-OAEP
+- RSA-OAEP-256
+- ECDH-ES
+- ECDH-ES+A128KW
+- ECDH-ES+A192KW
+- ECDH-ES+A256KW
+
+## MicroProfile JWT Configuration Properties
+
+Specifying the keys for verifying or decrypting JWTs is done via a `META-INF/microprofile-config.properties` and the following MP JWT 2.0 Configuration Properties.
+
+[%header,cols="1,1,3"]
+|===
+| Property
+| Type
+| Description
+| `mp.jwt.verify.publickey`
+| String
+| The contents of any valid public key file.  Allows the public key to be inlined into the `microprofile-config.properties` withou the need for separate files.
+| `mp.jwt.verify.publickey.location`
+| String
+| The location of any valid public key file.  Can be specified as a relative path on disk, relative path on the classpath, or valid URL such a `file:`, `http:`, or `https:`.   Custom URLs are supported as long as there is a corresponding `java.net.URLStreamHandler` installed in the JVM.
+| `mp.jwt.decrypt.key.location`
+| String
+| The location of any valid private key file.  Can be specified as a relative path on disk, relative path on the classpath, or valid URL such a `file:`, `http:`, or `https:`.   Custom URLs are supported as long as there is a corresponding `java.net.URLStreamHandler` installed in the JVM.
+| `mp.jwt.token.header`
+| String
+| The name of the HTTP Request header where clients will JWTs.  The default value is `Authorization`, but may be any header name including a customer header.  Specifying a value of `Cookie` will enable JWTs to be passed to the server as HTTP Cookies.
+| `mp.jwt.token.cookie`
+| String
+| When `mp.jwt.token.header=Cookie` the value of `mp.jwt.token.cookie` specifies the exact cookie name holding the JWT.  The default is `Bearer`.
+| `mp.jwt.verify.audiences`
+| String
+| A comma delimited list of allowable values for the JWT `aud` claim.  When specified, a JWT with an `aud` that does not apper in the allowed list will result in an HTTP `401`. When not specified, all `aud` values are accepted including no `aud` at all.
+| `mp.jwt.verify.issuer`
+| String
+| The expected value of the `iss` JWT claim. When specified, a JWT with an `iss` that does not match the configured value will result in an HTTP `401`. When not specified, any `iss` values are accepted including no `iss` at all.
+| `mp.jwt.verify.publickey.algorithm`
+| String
+| The expected value of the `alg` JWT header. When specified, a JWT with an `alg` that does not match the configured value will result in an HTTP `401` and no signature check will occur.  When not specified, any of the supported signature algorithms are considered applicable.
+|===
+
+
+## TomEE JWT Configuration Properties
+
+In addition to the standard MicroProfile JWT configuration properties above, the `META-INF/microprofile-config.properties` may contain any of the following TomEE-specific configuration properties.
+
+[%header,cols="1,1,3"]
+|===
+| Property
+| Type
+| Description
+| `mp.jwt.tomee.allow.no-exp` | Boolean | Disables enforcing the `exp` time of the JWT.  Useful if JWTs are also verified by an API Gateway or proxy before reaching the server.  The default value is `false`
+| `tomee.jwt.verify.publickey.cache`
+| Boolean
+| Enables public keys to be supplied after deployment has occurred or refreshed periodically at runtime.  Useful for when keys are supplied via an `http` or `https` URL.  Setting `tomee.jwt.verify.publickey.cache=true` is required for any of the subsequent `tomee.jwt.verify.publickey.cache.*` properties to take effect.
+| `tomee.jwt.verify.publickey.cache.initialRetryDelay`
+| link:../configuring-durations.html[Duration]
+| Should the first attempt to load keys fail, this setting specifies how long we should wait before trying again.  An exponential backoff will occur and the delay will double on each subsequent retry.  This allows retrying to be very aggressive in the event of a temporary issue, but prevents overloading the server supplying the keys.  The default value is `2 seconds`
+| `tomee.jwt.verify.publickey.cache.maxRetryDelay`
+| link:../configuring-durations.html[Duration]
+| Allows the retry attempts to eventually reach a fixed rate after a certain maximum delay is reached.  This property disables the exponential backoff once the specified maximum delay is reached.  All subsequent retries will happen at the interval specifed.  To disable exponential backoff entirely, set `initialRetryDelay` and `maxRetryDelay` to the same value.   The default value is `1 hour`
+| `tomee.jwt.verify.publickey.cache.accessTimeout`
+| link:../configuring-durations.html[Duration]
+| Specifies the maximum time incoming HTTP Requests with JWTs will block and wait for keys when no keys are available.  If specified time is reached, callers will recieve a HTTP `401`.  The default value is `30 seconds`
+| `tomee.jwt.verify.publickey.cache.refreshInterval`
+| link:../configuring-durations.html[Duration]
+| Specifies how frequently TomEE should check the configured location for new keys.  Should any refresh fail or result in no valid keys, the keys currently in use are not replaced and no subsequent attempts are made until the next refresh interval.  The default value is `1 day`
+| `tomee.jwt.decrypt.key.cache`
+| Boolean
+| Enables private keys to be supplied after deployment has occurred or refreshed periodically at runtime.  Useful for when keys are supplied via an `http` or `https` URL.  Setting `tomee.jwt.decrypt.key.cache=true` is required for any of the subsequent `tomee.jwt.decrypt.key.cache.*` properties to take effect.
+| `tomee.jwt.decrypt.key.cache.initialRetryDelay`
+| link:../configuring-durations.html[Duration]
+| Should the first attempt to load keys fail, this setting specifies how long we should wait before trying again.  An exponential backoff will occur and the delay will double on each subsequent retry.  This allows retrying to be very aggressive in the event of a temporary issue, but prevents overloading the server supplying the keys.  The default value is `2 seconds`
+| `tomee.jwt.decrypt.key.cache.maxRetryDelay`
+| link:../configuring-durations.html[Duration]
+| Allows the retry attempts to eventually reach a fixed rate after a certain maximum delay is reached.  This property disables the exponential backoff once the specified maximum delay is reached.  All subsequent retries will happen at the interval specifed.  To disable exponential backoff entirely, set `initialRetryDelay` and `maxRetryDelay` to the same value.   The default value is `1 hour`
+| `tomee.jwt.decrypt.key.cache.accessTimeout`
+| link:../configuring-durations.html[Duration]
+| Specifies the maximum time incoming HTTP Requests with JWTs will block and wait for keys when no keys are available.  If specified time is reached, callers will recieve a HTTP `401`.  The default value is `30 seconds`
+| `tomee.jwt.decrypt.key.cache.refreshInterval`
+| link:../configuring-durations.html[Duration]
+| Specifies how frequently TomEE should check the configured location for new keys.  Should any refresh fail or result in no valid keys, the keys currently in use are not replaced and no subsequent attempts are made until the next refresh interval.  The default value is `1 day`
+|===
+

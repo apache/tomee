@@ -430,18 +430,21 @@ public class MPJWTFilter implements Filter {
                     builder.setEvaluationTime(NumericDate.fromSeconds(0));
                 }
 
-                if (authContextInfo.getPublicKeys().size() == 1) {
-                    builder.setVerificationKey(authContextInfo.getPublicKey());
-                } else if (authContextInfo.getPublicKeys().size() > 1) {
-                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(asJwks(authContextInfo.getPublicKeys())));
+                final Map<String, Key> publicKeys = authContextInfo.getPublicKeys();
+                if (publicKeys.size() == 1) {
+                    final Key key = publicKeys.values().iterator().next();
+                    builder.setVerificationKey(key);
+                } else if (publicKeys.size() > 1) {
+                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(asJwks(publicKeys)));
                 }
 
-                if (authContextInfo.getDecryptKeys().size() == 1) {
-                    final Key decryptionKey = authContextInfo.getDecryptKeys().values().iterator().next();
-                    builder.setDecryptionKey(decryptionKey);
+                final Map<String, Key> decryptKeys = authContextInfo.getDecryptKeys();
+                if (decryptKeys.size() == 1) {
+                    final Key key = decryptKeys.values().iterator().next();
+                    builder.setDecryptionKey(key);
                     builder.setEnableRequireEncryption();
-                } else if (authContextInfo.getDecryptKeys().size() > 1) {
-                    builder.setDecryptionKeyResolver(new JwksDecryptionKeyResolver(asJwks(authContextInfo.getDecryptKeys())));
+                } else if (decryptKeys.size() > 1) {
+                    builder.setDecryptionKeyResolver(new JwksDecryptionKeyResolver(asJwks(decryptKeys)));
                     builder.setEnableRequireEncryption();
                 }
 
