@@ -35,7 +35,8 @@ import java.util.List;
 
 /**
  * This class is more a hack than an actual peace of integration code for SmallRye Fault Tolerance. It addresses an issue
- * in SmallRye because it's relying on a Weld behavior as opposed to a specified CDI feature.
+ * in SmallRye because it's relying on a Weld behavior as opposed to a specified CDI feature. Or the spec is not clear
+ * enough such as OWB and Weld did a different implementation. There is a good opportunity to add some TCKs to Jakarta
  */
 public class MPFaultToleranceCDIExtension implements Extension {
 
@@ -51,7 +52,7 @@ public class MPFaultToleranceCDIExtension implements Extension {
      * Observer to a CDI lifecycle event to correctly add the interceptor binding to the actual bean. The SmallRye
      * extension adds the interceptor binding to the interceptor binding.
      *
-     * This will go threw classes annotations and add the FaultToleranceBinding on the type if it has one of the known
+     * This will go through classes annotations and add the FaultToleranceBinding on the type if it has one of the known
      * fault tolerance annotations. In case, fault tolerance annotations are applied on some methods of a class, we
      * also look for annotations on methods.
      *
