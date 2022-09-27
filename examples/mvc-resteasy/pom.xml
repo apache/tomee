@@ -28,7 +28,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
-    <version.krazo>3.0.0</version.krazo>
+    <version.krazo>2.0.2</version.krazo>
     <resteasy.version>3.15.3.Final</resteasy.version>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <version.graphene.webdriver>3.0.0-alpha.3</version.graphene.webdriver>

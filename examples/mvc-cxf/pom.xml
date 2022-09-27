@@ -29,7 +29,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
     <version.deltaspike>1.9.3</version.deltaspike>
-    <version.krazo>1.1.0-M1</version.krazo>
+    <version.krazo>2.0.2</version.krazo>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
   </properties>
