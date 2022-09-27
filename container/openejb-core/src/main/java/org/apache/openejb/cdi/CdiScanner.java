@@ -216,7 +216,10 @@ public class CdiScanner implements BdaScannerService {
 
             if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cdi.debug", "false"))) {
                 final Logger logger =  Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName());
-                logger.info("CDI beans for " + startupObject.getAppInfo().appId + (startupObject.getWebContext() != null ? " webcontext = " + startupObject.getWebContext().getContextRoot() : ""));
+                final String webContextName = startupObject.getWebContext() != null ?
+                                 " webcontext = " + startupObject.getWebContext().getContextRoot() :
+                                 "";
+                logger.info("Found " + classes.size() + " CDI beans for " + startupObject.getAppInfo().appId + webContextName);
                 final List<String> names = new ArrayList<>(classes.size());
                 for (final Class<?> c : classes) {
                     names.add(c.getName());
