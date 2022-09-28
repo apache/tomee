@@ -93,7 +93,7 @@
     <!-- allows release plugin to be overridden -->
     <arguments />
     <tomee.version>${project.version}</tomee.version>
-    <surefire.version>3.0.0-M5</surefire.version>
+    <surefire.version>3.0.0-M7</surefire.version>
 
     <!-- for the default name of the module. Needs to be overridden -->
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
@@ -149,7 +149,7 @@
 
     <tomcat.version>10.0.23</tomcat.version>
 
-    <cxf.version>3.5.0</cxf.version>
+    <cxf.version>3.5.3</cxf.version>
     <ehcache.version>3.10.0</ehcache.version>
     <wss4j.version>2.4.1</wss4j.version>
     <!-- used by cxf for security (replay attack) -->
@@ -165,7 +165,7 @@
       Old CXF versions were only compatible with 1.3.x. But JDK 9+ requires 1.4.x and higher
       We used to have some weird exclusions to not run test, but we should try to upgrade to 1.4.x anyway
     -->
-    <saaj-impl.version>2.0.0</saaj-impl.version>
+    <saaj-impl.version>2.0.1</saaj-impl.version>
 
     <!--
     - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
@@ -175,7 +175,7 @@
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-cli.version>1.4</commons-cli.version>
+    <commons-cli.version>1.5.0</commons-cli.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <commons-dbcp.version>2.9.0</commons-dbcp.version>
@@ -200,7 +200,7 @@
     <mojarra.version>3.0.2</mojarra.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.18.0</log4j2.version>
+    <log4j2.version>2.19.0</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <derby.version>10.14.2.0</derby.version>
     <version.hsqldb>2.7.0</version.hsqldb>
@@ -219,16 +219,16 @@
     <!-- Micro Profile -->
     <microprofile.version>5.0</microprofile.version>
 
-    <microprofile.config.version>3.0.1</microprofile.config.version>
-    <microprofile.config.tck.version>3.0.1</microprofile.config.tck.version>
+    <microprofile.config.version>3.0.2</microprofile.config.version>
+    <microprofile.config.tck.version>3.0.2</microprofile.config.tck.version>
     <microprofile.config.impl.version>3.0.0</microprofile.config.impl.version>
 
     <microprofile.jwt.version>2.0</microprofile.jwt.version>
     <microprofile.jwt.tck.version>2.0</microprofile.jwt.tck.version>
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
 
-    <microprofile.fault-tolerance.version>4.0</microprofile.fault-tolerance.version>
-    <microprofile.fault-tolerance.tck.version>4.0</microprofile.fault-tolerance.tck.version>
+    <microprofile.fault-tolerance.version>4.0.1</microprofile.fault-tolerance.version>
+    <microprofile.fault-tolerance.tck.version>4.0.1</microprofile.fault-tolerance.tck.version>
     <microprofile.fault-tolerance.impl.version>6.0.0</microprofile.fault-tolerance.impl.version>
 
     <microprofile.health.version>4.0</microprofile.health.version>
