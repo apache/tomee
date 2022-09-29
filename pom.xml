@@ -245,7 +245,7 @@
     <jackson.version>2.13.4</jackson.version>
     <jackson.dataformat.version>2.13.4</jackson.dataformat.version>
     <!-- required by Jackson dataformat yaml -->
-    <snakeyaml.version>1.32</snakeyaml.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
