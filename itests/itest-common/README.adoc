@@ -1,0 +1,3 @@
+# iTest Common
+
+iTest Common is similar to iTest Util, but dependencies are allowed. We should still try to keep iTest Common from getting too bloated.  For example if we end up with a great deal of code focused on say http calls, pulling in http clients and tracing libraries, we may want to eventually throw that into a dedicated module.  Meanwhile, iTest Common is fine place to house that code till it grows into something bigger and more worthy of its own module.

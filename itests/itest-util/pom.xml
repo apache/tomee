@@ -16,52 +16,40 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
-<!-- $Rev$ $Date$ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
-    <artifactId>tomee-project</artifactId>
+    <artifactId>itests</artifactId>
     <groupId>org.apache.tomee</groupId>
     <version>9.0.0-M9-SNAPSHOT</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>itests</artifactId>
-  <packaging>pom</packaging>
-  <name>TomEE :: iTests</name>
-
-  <modules>
-    <module>tomee-server-composer</module>
-    <module>tomee-server-version</module>
-    <module>microprofile-jwt-itests</module>
-    <module>failover</module>
-    <module>failover-ejb</module>
-    <module>legacy-client</module>
-    <module>legacy-server</module>
-    <module>openejb-itests-app</module>
-    <module>openejb-itests-beans</module>
-    <module>openejb-itests-client</module>
-    <module>openejb-itests-interceptor-beans</module>
-    <module>openejb-itests-servlets</module>
-    <module>openejb-itests-web</module>
-    <module>jaxrs</module>
-    <module>itest-common</module>
-    <module>itest-util</module>
-  </modules>
+  <artifactId>itest-util</artifactId>
+  <packaging>jar</packaging>
+  <name>TomEE :: iTests :: Util</name>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${javadoc.version}</version>
+        <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <skip>true</skip>
+          <systemPropertyVariables>
+            <version>${project.version}</version>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>
 
