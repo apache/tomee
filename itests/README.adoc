@@ -1,0 +1,23 @@
+# iTest
+
+The goal of the itests are to test and use the TomEE binaries exactly how users use them; unpack the server, update configurations, deploy an application and send it requests.  When tests are done, we're asserting responses, files on disk, log output and all expected behavior of the server.
+
+## Why not use Arquillian?
+
+The focus of Arquillian is to create tests for applications that are abstracted from the server details.  iTests are the opposite -- we're testing the server itself and cannot do that while also abstracting ourselves from the server.
+
+It's the job of an iTest to manipulate the server exactly the way users would and assert that the user experience is what we want it to be.  Some examples:
+
+- If we tell users, "throw this file in this directory and it should work", there is ideally an itest that sets up a server, puts that file in the directory and asserts it does in fact work.
+- If we tell a user, "turn on debug logging and you should see these details", there is ideally an itest that tries this and asserts the expected debug messages do show up.
+- If we tell a user, "set this flag to X and it should enable Y behavior", ideally there is an itest that not only tests the behavior when the flag is enabled, but tests the behavior when the flag is not enabled and possibly even tests the error handling when the flag is set to an invalid value.
+
+We're not testing applications, we're testing the server.  We don't want to be abstracted from the server and we don't any magic plumbing like Arquillian's adapters, deployment code or local/remote testing code.  Arquillian is an awesome hammer, but this problem is not a nail.  It solves a different problem.
+
+## Why no dependencies on internals?
+
+While we do not want to be abstracted from the server, we still want to limit ourselves to using the server the way users would use it.  We should not touch any internal API that is forbidden or off-limits to users.  iTests should only use server features that are supported and considered user-facing.  Should users be using the code in openejb-core? No, they should not, so neither should itests.  Remember, when you're writing an itest the code inside the server is not "our" code -- you need to change roles and act like a user.
+
+Not only is this good for ensuring the user experience always works as expected, it also means we can theoretically throw alway all the existing TomEE code, rewrite it entirely and verify user's applications and configuration file's still work.  There are advantages to testing strictly from the user's perspective and not digging into guts like unit tests do.  If we wanted to do something large and aggressive like cut the size of the server in half, the itests should continue to work without change and would play an invaluable role in that goal.  Our unit tests, however, would be significantly impacted.
+
+A good itest should work even if the server is entirely rewritten.
