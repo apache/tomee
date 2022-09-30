@@ -24,8 +24,11 @@ import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import io.churchkey.Key;
 import io.churchkey.Keys;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -91,6 +94,10 @@ public class Tokens {
         }
     }
 
+    public String getPemPrivateKey() {
+        return Keys.of(privateKey).toPem();
+    }
+
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
@@ -115,7 +122,7 @@ public class Tokens {
         return Keys.of(publicKey).toPem();
     }
 
-    public String asToken(final String claims) throws Exception {
+    public String asToken(final String claims) {
         try {
             final JWSHeader.Builder builder = new JWSHeader.Builder(new JWSAlgorithm(prefix + hashSize, Requirement.OPTIONAL))
                     .type(JOSEObjectType.JWT);
@@ -142,5 +149,27 @@ public class Tokens {
         } catch (Exception e) {
             throw new RuntimeException("Could not sign JWT", e);
         }
+    }
+
+    public static Tokens fromPrivateKey(final String contents) {
+        final Key key;
+        try {
+            key = Keys.decode(contents);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        if (!key.getType().equals(Key.Type.PRIVATE)) {
+            throw new IllegalArgumentException("Not a private key: " + key.getType());
+        }
+
+        final String prefix;
+        switch (key.getAlgorithm()) {
+            case EC: prefix = "EC";
+                break;
+            case RSA: prefix = "RS";
+                break;
+            default: throw new IllegalStateException("Unsupported Algorithm: " + key.getAlgorithm());
+        }
+        return new Tokens((PrivateKey) key.getKey(), (PublicKey) key.getPublicKey().getKey(), 256, null, prefix);
     }
 }

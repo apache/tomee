@@ -28,7 +28,7 @@
 
   <artifactId>microprofile-jwt-itests</artifactId>
   <packaging>jar</packaging>
-  <name>TomEE :: iTests :: Server Composer</name>
+  <name>TomEE :: iTests :: MicroProfile JWT</name>
 
   <build>
     <plugins>
@@ -48,6 +48,16 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-server-composer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>itest-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>itest-util</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

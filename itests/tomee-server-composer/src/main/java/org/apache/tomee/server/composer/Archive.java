@@ -21,13 +21,16 @@ import org.tomitribe.util.IO;
 import org.tomitribe.util.Join;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -103,6 +106,18 @@ public class Archive {
         } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public Archive add(final String name, final Properties properties) {
+        return add(name, () -> {
+            try {
+                final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                properties.store(out,"");
+                return out.toByteArray();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
     }
 
     public Archive addDir(final File dir) {
