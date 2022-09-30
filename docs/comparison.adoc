@@ -107,17 +107,19 @@ https://smallrye.io/[SmallRye MicroProfile^] {y} *(ok with TomEE 9.x and later)*
 
 In bold : Implementations that differ between flavors or between versions
 
-== [[Compatibility]] Compatibility with other implementations
+== [[Compatibility]] Implementations compatibility and alternatives
 
 [options="header",cols="1,1"]
 |===
 |Specifications|Implementations alternatives +
-//(see icons for compatibilities with TomEE 9.x)
-|Jakarta Persistence (JPA)|https://hibernate.org/orm/[Hibernate ORM^] {y} 6.1.x +
-|Jakarta MVC|
+|https://jakarta.ee/specifications/mvc/[Jakarta MVC^] (Controllers)|
 https://eclipse-ee4j.github.io/krazo/[Eclipse Krazo^] {y} 2.0.x +
-|Other containers (CDI, EJB, JTA, etc.) and frameworks|
-https://spring.io/[Spring^] {y} 6.0.x +
+https://spring.io/[Spring Web MVC^] {y} 6.0.x +
+|https://jakarta.ee/specifications/data/[Jakarta Data^] (Repositories)|
+https://deltaspike.apache.org/[Apache DeltaSpike^] {y} 1.9.x +
+https://spring.io/[Spring Data JPA^] {y} 3.0.x +
+|https://jakarta.ee/specifications/persistence/[Jakarta Persistence] (ORM)|
+https://hibernate.org/orm/[Hibernate ORM^] {y} 6.1.x +
 |===
 
-* Please note that TomEE does not ship with the jars for Hibernate ORM, Jersey, Krazo, Spring.
+* Please note that TomEE does not ship with the jars for DeltaSpike, Hibernate ORM, Jersey, Krazo, Spring.
