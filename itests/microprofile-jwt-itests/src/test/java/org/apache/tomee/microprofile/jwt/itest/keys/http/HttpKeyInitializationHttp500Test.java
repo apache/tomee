@@ -25,10 +25,10 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.openejb.loader.IO;
@@ -48,15 +48,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
-public class HttpKeyLocationTest {
+/**
+ * Keys server returns an HTTP 500 on initialization
+ */
+public class HttpKeyInitializationHttp500Test {
 
     @Test
-    public void happyPath() throws Exception {
+    public void test() throws Exception {
 
         final TomEE keyServer = TomEE.microprofile()
                 .add("webapps/ROOT/WEB-INF/beans.xml", "")
                 .add("webapps/ROOT/WEB-INF/lib/app.jar", Archive.archive()
-                        .add(HttpKeyLocationTest.class)
+                        .add(HttpKeyInitializationHttp500Test.class)
                         .add(KeyServer.KeysService.class)
                         .add(KeyServer.class)
                         .add(Tokens.class)
@@ -67,12 +70,14 @@ public class HttpKeyLocationTest {
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/ROOT/WEB-INF/beans.xml", "")
                 .add("webapps/ROOT/WEB-INF/lib/app.jar", Archive.archive()
-                        .add(HttpKeyLocationTest.class)
+                        .add(HttpKeyInitializationHttp500Test.class)
                         .add(MicroProfileWebApp.class)
                         .add(MicroProfileWebApp.ColorService.class)
                         .add(MicroProfileWebApp.Api.class)
                         .add(KeyServer.class)
                         .add("META-INF/microprofile-config.properties", new PublicKeyLocation()
+                                .initialRetryDelay(500, TimeUnit.MILLISECONDS)
+                                .accessTimeout(10, TimeUnit.SECONDS)
                                 .refreshInterval(1, TimeUnit.HOURS)
                                 .location(keyServer.toURI().resolve("/keys/publicKey"))
                                 .build())
@@ -121,7 +126,7 @@ public class HttpKeyLocationTest {
 
 
         final int publicKeyCalls = Integer.parseInt(IO.slurp(keyServer.toURI().resolve("/keys/calls").toURL()));
-        assertEquals(1, publicKeyCalls);
+        assertEquals(5, publicKeyCalls);
     }
 
     public static class MicroProfileWebApp {
@@ -157,7 +162,9 @@ public class HttpKeyLocationTest {
             @GET
             @Path("publicKey")
             public String publicKey() throws Exception {
-                calls.incrementAndGet();
+                if (calls.getAndIncrement() < 4) {
+                    throw new WebApplicationException(500);
+                }
                 return tokens.getPemPublicKey();
             }
 
