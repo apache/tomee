@@ -92,10 +92,10 @@ public class CachedSupplier<T> implements Supplier<T> {
                     return value.get();
                 }
                 logger.debug(String.format("Timeout of %s reached waiting for initial value from supplier: %s", accessTimeout, supplier));
-                throw new TimeoutException();
+                throw new AccessTimeoutException(accessTimeout, supplier);
             } catch (InterruptedException e) {
                 logger.debug(String.format("InterruptedException encountered while waiting for initial value from supplier: %s", supplier), e);
-                throw new TimeoutException();
+                throw new AccessInterruptedException(supplier);
             }
         }
 
@@ -205,8 +205,36 @@ public class CachedSupplier<T> implements Supplier<T> {
         return new Builder<T>().supplier(supplier);
     }
 
-    public static class TimeoutException extends RuntimeException {
-        // TODO
+    public static class AccessTimeoutException extends RuntimeException {
+        private final Duration timeout;
+        private final Supplier<?> supplier;
+
+        public AccessTimeoutException(final Duration timeout, final Supplier<?> supplier) {
+            super(String.format("Timeout of %s reached waiting for initial value from supplier: %s", timeout, supplier));
+            this.timeout = timeout;
+            this.supplier = supplier;
+        }
+
+        public Duration getTimeout() {
+            return timeout;
+        }
+
+        public Supplier<?> getSupplier() {
+            return supplier;
+        }
+    }
+
+    public static class AccessInterruptedException extends RuntimeException {
+        private final Supplier<?> supplier;
+
+        public AccessInterruptedException(final Supplier<?> supplier) {
+            super(String.format("Interrupted while waiting for initial value from supplier: %s", supplier));
+            this.supplier = supplier;
+        }
+
+        public Supplier<?> getSupplier() {
+            return supplier;
+        }
     }
 
     private static class DaemonThreadFactory implements ThreadFactory {

@@ -430,7 +430,13 @@ public class MPJWTFilter implements Filter {
                     builder.setEvaluationTime(NumericDate.fromSeconds(0));
                 }
 
-                final Map<String, Key> publicKeys = authContextInfo.getPublicKeys();
+                final Map<String, Key> publicKeys;
+                try {
+                    publicKeys = authContextInfo.getPublicKeys();
+                } catch (Exception e) {
+                    throw new NoPublicKeysException(e);
+                }
+
                 if (publicKeys.size() == 1) {
                     final Key key = publicKeys.values().iterator().next();
                     builder.setVerificationKey(key);
@@ -438,7 +444,12 @@ public class MPJWTFilter implements Filter {
                     builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(asJwks(publicKeys)));
                 }
 
-                final Map<String, Key> decryptKeys = authContextInfo.getDecryptKeys();
+                final Map<String, Key> decryptKeys;
+                try {
+                    decryptKeys = authContextInfo.getDecryptKeys();
+                } catch (Exception e) {
+                    throw new NoPrivateKeysException(e);
+                }
                 if (decryptKeys.size() == 1) {
                     final Key key = decryptKeys.values().iterator().next();
                     builder.setDecryptionKey(key);
@@ -474,6 +485,14 @@ public class MPJWTFilter implements Filter {
             } catch (final MalformedClaimException e) {
                 VALIDATION.warning(e.getMessage());
                 throw new ParseException("Failed to verify token claims", e);
+
+            } catch (final NoPublicKeysException e) {
+                VALIDATION.error(e.getMessage());
+                throw e;
+
+            } catch (final NoPrivateKeysException e) {
+                VALIDATION.error(e.getMessage());
+                throw e;
             }
 
             return principal;
@@ -492,5 +511,37 @@ public class MPJWTFilter implements Filter {
         }
     }
 
+    private static class NoPublicKeysException extends MPJWTException {
 
+        public NoPublicKeysException(final Throwable cause) {
+            super(cause);
+        }
+
+        @Override
+        public int getStatus() {
+            return HttpServletResponse.SC_UNAUTHORIZED;
+        }
+
+        @Override
+        public String getMessage() {
+            return "No public keys available. Cannot validate JWT. " + getCause().getMessage();
+        }
+    }
+
+    private static class NoPrivateKeysException extends MPJWTException {
+
+        public NoPrivateKeysException(final Throwable cause) {
+            super(cause);
+        }
+
+        @Override
+        public int getStatus() {
+            return HttpServletResponse.SC_UNAUTHORIZED;
+        }
+
+        @Override
+        public String getMessage() {
+            return "No private keys available. Cannot validate JWT. " + getCause().getMessage();
+        }
+    }
 }

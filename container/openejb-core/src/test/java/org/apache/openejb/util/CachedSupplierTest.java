@@ -128,7 +128,7 @@ public class CachedSupplierTest {
 
         runner.pre(causeSomeDelays::countDown)
                 .run(() -> assertEquals(1, (int) cached.get()))
-                .assertExceptions(CachedSupplier.TimeoutException.class)
+                .assertExceptions(CachedSupplier.AccessTimeoutException.class)
                 .assertTimesGreaterThan(99, MILLISECONDS)
                 .assertTimesLessThan(150, MILLISECONDS);
 

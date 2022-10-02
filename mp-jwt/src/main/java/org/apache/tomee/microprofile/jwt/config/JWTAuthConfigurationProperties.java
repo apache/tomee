@@ -25,6 +25,9 @@ import org.apache.openejb.util.CachedSupplier;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.microprofile.jwt.JWTLogCategories;
+import org.apache.tomee.microprofile.jwt.keys.DecryptKeys;
+import org.apache.tomee.microprofile.jwt.keys.FixedKeys;
+import org.apache.tomee.microprofile.jwt.keys.PublicKeys;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -205,48 +208,4 @@ public class JWTAuthConfigurationProperties {
         }
     }
 
-    public static class FixedKeys implements Supplier<Map<String, Key>> {
-        private final Map<String, Key> keys;
-
-        public FixedKeys(final Map<String, Key> keys) {
-            this.keys = keys != null ? keys : Collections.EMPTY_MAP;
-        }
-
-        @Override
-        public Map<String, Key> get() {
-            return keys;
-        }
-    }
-
-    public static class PublicKeys implements Supplier<Map<String, Key>> {
-        final Optional<String> contents;
-        final Optional<String> location;
-
-        public PublicKeys(final Optional<String> contents, final Optional<String> location) {
-            this.contents = contents;
-            this.location = location;
-        }
-
-        @Override
-        public Map<String, Key> get() {
-            final KeyResolver resolver = new KeyResolver();
-            return resolver.resolvePublicKey(contents, location).orElse(Collections.EMPTY_MAP);
-        }
-    }
-
-    public static class DecryptKeys implements Supplier<Map<String, Key>> {
-        final Optional<String> contents;
-        final Optional<String> location;
-
-        public DecryptKeys(final Optional<String> contents, final Optional<String> location) {
-            this.contents = contents;
-            this.location = location;
-        }
-
-        @Override
-        public Map<String, Key> get() {
-            final KeyResolver resolver = new KeyResolver();
-            return resolver.resolveDecryptKey(contents, location).orElse(Collections.EMPTY_MAP);
-        }
-    }
 }

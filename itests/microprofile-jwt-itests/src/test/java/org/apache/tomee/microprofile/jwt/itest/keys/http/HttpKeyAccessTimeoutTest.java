@@ -42,16 +42,17 @@ import org.eclipse.microprofile.auth.LoginConfig;
 import org.junit.Test;
 import org.tomitribe.util.Longs;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Keys server returns an HTTP 500 on initialization
- */
-public class HttpKeyInitializationHttp500Test {
+public class HttpKeyAccessTimeoutTest {
 
     @Test
     public void test() throws Exception {
@@ -59,7 +60,7 @@ public class HttpKeyInitializationHttp500Test {
         final TomEE keyServer = TomEE.microprofile()
                 .add("webapps/ROOT/WEB-INF/beans.xml", "")
                 .add("webapps/ROOT/WEB-INF/lib/app.jar", Archive.archive()
-                        .add(HttpKeyInitializationHttp500Test.class)
+                        .add(HttpKeyAccessTimeoutTest.class)
                         .add(KeyServer.KeysService.class)
                         .add(KeyServer.class)
                         .add(Tokens.class)
@@ -70,63 +71,79 @@ public class HttpKeyInitializationHttp500Test {
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/ROOT/WEB-INF/beans.xml", "")
                 .add("webapps/ROOT/WEB-INF/lib/app.jar", Archive.archive()
-                        .add(HttpKeyInitializationHttp500Test.class)
+                        .add(HttpKeyAccessTimeoutTest.class)
                         .add(MicroProfileWebApp.class)
                         .add(MicroProfileWebApp.ColorService.class)
                         .add(MicroProfileWebApp.Api.class)
                         .add(KeyServer.class)
                         .add("META-INF/microprofile-config.properties", new PublicKeyLocation()
                                 .initialRetryDelay(500, TimeUnit.MILLISECONDS)
-                                .accessTimeout(1, TimeUnit.MINUTES)
+                                .accessTimeout(1, TimeUnit.SECONDS)
                                 .refreshInterval(1, TimeUnit.HOURS)
                                 .location(keyServer.toURI().resolve("/keys/publicKey"))
                                 .build())
                         .toJar())
                 .build();
 
+        /*
+         * Ensure we do reject JWTs we don't know
+         */
+        final Tokens unknownKey = Tokens.rsa(2048, 256);
 
+        /*
+         * The keypair for the server.  This won't be returned TomEE and calls won't succeed till
+         * we call GET /keys/release
+         */
         final String privateKey = IO.slurp(keyServer.toURI().resolve("/keys/privateKey").toURL());
+        final Tokens publicKey = Tokens.fromPrivateKey(privateKey);
 
-        Runner.threads(100).run(() -> {
+        /*
+         * Verify calls do fail as noted above
+         */
+        Runner.threads(100).run(() -> assertKeys(tomee, unknownKey, publicKey, 401)).assertNoExceptions();
 
-            final Tokens unknownKey = Tokens.rsa(2048, 256);
-            final Tokens validKey = Tokens.fromPrivateKey(privateKey);
+        /*
+         * Unblock the key server and allow it to communicate the public key to TomEE
+         */
+        IO.slurp(keyServer.toURI().resolve("/keys/release").toURL());
+                
+        /*
+         * Verify calls now succeed
+         */
+        Runner.threads(100).run(() -> assertKeys(tomee, unknownKey, publicKey, 200)).assertNoExceptions();
+    }
 
-            final String id = Longs.toHex(System.nanoTime());
-            final String claims = "{" +
-                    "  \"sub\":\"Jane Awesome\"," +
-                    "  \"iss\":\"https://server.example.com\"," +
-                    "  \"groups\":[\"manager\",\"user\"]," +
-                    "  \"jti\":\"" + id + "\"," +
-                    "  \"exp\":2552047942" +
-                    "}";
+    private void assertKeys(final TomEE tomee, final Tokens invalidKey, final Tokens validKey, final int expected) {
+        final String id = Longs.toHex(System.nanoTime());
+        final String claims = "{" +
+                "  \"sub\":\"Jane Awesome\"," +
+                "  \"iss\":\"https://server.example.com\"," +
+                "  \"groups\":[\"manager\",\"user\"]," +
+                "  \"jti\":\"" + id + "\"," +
+                "  \"exp\":2552047942" +
+                "}";
 
-            final WebClient client = WebClient.create(tomee.toURI().toASCIIString(),
-                    singletonList(new JohnzonProvider<>()),
+        final WebClient client = WebClient.create(tomee.toURI().toASCIIString(),
+                singletonList(new JohnzonProvider<>()),
 //                    singletonList(new LoggingFeature()),
-                    null);
+                null);
 
-            {// valid token
-                final Response response = client.reset()
-                        .path("/api/colors")
-                        .header("Content-Type", "application/json")
-                        .header("Authorization", "Bearer " + validKey.asToken(claims))
-                        .get();
-                assertEquals(200, response.getStatus());
-            }
-            {// invalid token
-                final Response response = client.reset()
-                        .path("/api/colors")
-                        .header("Content-Type", "application/json")
-                        .header("Authorization", "Bearer " + unknownKey.asToken(claims))
-                        .get();
-                assertEquals(401, response.getStatus());
-            }
-        }).assertNoExceptions();
-
-
-        final int publicKeyCalls = Integer.parseInt(IO.slurp(keyServer.toURI().resolve("/keys/calls").toURL()));
-        assertEquals(5, publicKeyCalls);
+        {// valid token
+            final Response response = client.reset()
+                    .path("/api/colors")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + validKey.asToken(claims))
+                    .get();
+            assertEquals(expected, response.getStatus());
+        }
+        {// invalid token
+            final Response response = client.reset()
+                    .path("/api/colors")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + invalidKey.asToken(claims))
+                    .get();
+            assertEquals(401, response.getStatus());
+        }
     }
 
     public static class MicroProfileWebApp {
@@ -156,22 +173,22 @@ public class HttpKeyInitializationHttp500Test {
         @ApplicationScoped
         public static class KeysService {
 
-            private final Tokens tokens = Tokens.rsa(2048, 256);
+            private final AtomicReference<Tokens> tokens = new AtomicReference<>(Tokens.rsa(2048, 256));
             private final AtomicInteger calls = new AtomicInteger();
+            private final Semaphore semaphore = new Semaphore(0);
 
             @GET
             @Path("publicKey")
             public String publicKey() throws Exception {
-                if (calls.getAndIncrement() < 4) {
-                    throw new WebApplicationException(500);
-                }
-                return tokens.getPemPublicKey();
+                semaphore.acquire();
+                calls.incrementAndGet();
+                return tokens.get().getPemPublicKey();
             }
 
             @GET
             @Path("privateKey")
             public String privateKey() {
-                return tokens.getPemPrivateKey();
+                return tokens.get().getPemPrivateKey();
             }
 
             @GET
@@ -179,8 +196,12 @@ public class HttpKeyInitializationHttp500Test {
             public int calls() {
                 return calls.get();
             }
+
+            @GET
+            @Path("release")
+            public void release() {
+                semaphore.release();
+            }
         }
     }
-
-
 }

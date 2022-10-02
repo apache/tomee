@@ -78,7 +78,7 @@ public class HttpKeyInitializationEmptyKeySetTest {
                         .add(KeyServer.class)
                         .add("META-INF/microprofile-config.properties", new PublicKeyLocation()
                                 .initialRetryDelay(500, TimeUnit.MILLISECONDS)
-                                .accessTimeout(10, TimeUnit.SECONDS)
+                                .accessTimeout(1, TimeUnit.MINUTES)
                                 .refreshInterval(1, TimeUnit.HOURS)
                                 .location(keyServer.toURI().resolve("/keys/publicKey"))
                                 .build())
