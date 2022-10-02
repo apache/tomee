@@ -118,6 +118,10 @@ public class Tokens {
         return Keys.of(publicKey).toJwks();
     }
 
+    public String getJwksPrivateKey() {
+        return Keys.of(privateKey).toJwks();
+    }
+
     public String getPemPublicKey() {
         return Keys.of(publicKey).toPem();
     }
