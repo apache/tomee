@@ -136,7 +136,7 @@ public class CachedSupplier<T> implements Supplier<T> {
 
                     } else { // FAILED
 
-                        logger.error(String.format("Initialization attempt %s failed. Supplier %s returned null.  Next retry will be in %s",
+                        logger.error(String.format("Initialization attempt %s failed. Supplier %s returned null. Next retry will be in %s",
                                 attempts,
                                 supplier,
                                 retry().delay
@@ -144,7 +144,7 @@ public class CachedSupplier<T> implements Supplier<T> {
                     }
 
                 } catch (final Throwable e) {
-                    logger.error(String.format("Initialization attempt %s failed. Supplier %s threw an exception.  Next retry will be in %s",
+                    logger.error(String.format("Initialization attempt %s failed. Supplier %s threw an exception. Next retry will be in %s",
                             attempts,
                             supplier,
                             retry().delay

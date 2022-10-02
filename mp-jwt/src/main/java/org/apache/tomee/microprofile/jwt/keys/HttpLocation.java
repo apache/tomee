@@ -71,7 +71,7 @@ public class HttpLocation implements Supplier<byte[]> {
                 final String message = String.format("Key Server connection failed: %s, %s ms", location, elapsed);
                 LOG.error(message);
             } else if (responseCode != 200) {
-                final String message = String.format("Key Server returned HTTP %s: %s, %s, %s ms", responseCode, location, contentType, elapsed);
+                final String message = String.format("Key Server returned HTTP %s: %s, %s ms", responseCode, location, elapsed);
                 LOG.error(message);
             } else {
                 final String message = String.format("Key Server returned HTTP %s: %s, %s, %s bytes, %s ms",

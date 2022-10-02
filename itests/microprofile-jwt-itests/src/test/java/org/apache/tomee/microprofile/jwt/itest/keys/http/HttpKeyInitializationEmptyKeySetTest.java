@@ -32,6 +32,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
+import org.apache.tomee.itest.common.Logging;
 import org.apache.tomee.itest.util.Runner;
 import org.apache.tomee.microprofile.jwt.itest.Tokens;
 import org.apache.tomee.microprofile.jwt.itest.keys.PublicKeyLocation;
@@ -68,7 +69,9 @@ public class HttpKeyInitializationEmptyKeySetTest {
                 .add("webapps/ROOT/WEB-INF/lib/jose.jar", JarLocation.jarLocation(JWSSigner.class))
                 .build();
 
+        final Logging logging = new Logging();
         final TomEE tomee = TomEE.microprofile()
+                .and(logging::install)
                 .add("webapps/ROOT/WEB-INF/beans.xml", "")
                 .add("webapps/ROOT/WEB-INF/lib/app.jar", Archive.archive()
                         .add(HttpKeyInitializationEmptyKeySetTest.class)
@@ -128,6 +131,19 @@ public class HttpKeyInitializationEmptyKeySetTest {
 
         final int publicKeyCalls = Integer.parseInt(IO.slurp(keyServer.toURI().resolve("/keys/calls").toURL()));
         assertEquals(5, publicKeyCalls);
+
+        logging.assertPresent(5, " INFO .* Key Server returned HTTP 200: http://localhost:[0-9]+/keys/publicKey," +
+                        " text/plain, [0-9]+ bytes, [0-9]+ ms")
+                .assertPresent(4, "Invalid JWKS; 'keys' entry is empty.")
+                .assertPresent("Initialization attempt 1 failed. Supplier PublicKeys\\{location=http://localhost:[0-9]+/keys/publicKey\\} threw an exception." +
+                        " Next retry will be in 1000 MILLISECONDS")
+                .assertPresent("Initialization attempt 2 failed. Supplier PublicKeys\\{location=http://localhost:[0-9]+/keys/publicKey\\} threw an exception." +
+                        " Next retry will be in 2000 MILLISECONDS")
+                .assertPresent("Initialization attempt 3 failed. Supplier PublicKeys\\{location=http://localhost:[0-9]+/keys/publicKey\\} threw an exception." +
+                        " Next retry will be in 4000 MILLISECONDS")
+                .assertPresent("Initialization attempt 4 failed. Supplier PublicKeys\\{location=http://localhost:[0-9]+/keys/publicKey\\} threw an exception." +
+                        " Next retry will be in 5 SECONDS")
+        ;
     }
 
     public static class MicroProfileWebApp {
