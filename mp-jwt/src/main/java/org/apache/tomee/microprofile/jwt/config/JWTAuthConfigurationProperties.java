@@ -176,7 +176,8 @@ public class JWTAuthConfigurationProperties {
             }
 
             boolean cached() {
-                return config.getOptionalValue(tomeePrefix + ".cache", Boolean.class).orElse(false);
+                final boolean cacheByDefault = location().filter(s -> s.startsWith("http")).isPresent();
+                return config.getOptionalValue(tomeePrefix + ".cache", Boolean.class).orElse(cacheByDefault);
             }
 
             Duration initialRetryDelay() {

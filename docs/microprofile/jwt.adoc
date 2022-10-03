@@ -81,10 +81,12 @@ In addition to the standard MicroProfile JWT configuration properties above, the
 | Property
 | Type
 | Description
-| `mp.jwt.tomee.allow.no-exp` | Boolean | Disables enforcing the `exp` time of the JWT.  Useful if JWTs are also verified by an API Gateway or proxy before reaching the server.  The default value is `false`
+| `mp.jwt.tomee.allow.no-exp`
+| Boolean
+| Disables enforcing the `exp` time of the JWT.  Useful if JWTs are also verified by an API Gateway or proxy before reaching the server.  The default value is `false`
 | `tomee.jwt.verify.publickey.cache`
 | Boolean
-| Enables public keys to be supplied after deployment has occurred or refreshed periodically at runtime.  Useful for when keys are supplied via an `http` or `https` URL.  Setting `tomee.jwt.verify.publickey.cache=true` is required for any of the subsequent `tomee.jwt.verify.publickey.cache.*` properties to take effect.
+| Enables public keys to be supplied after deployment has occurred or refreshed periodically at runtime.  Useful for when keys are supplied via an `http` or `https` URL.  Setting `tomee.jwt.verify.publickey.cache=true` is required for any of the subsequent `tomee.jwt.verify.publickey.cache.*` properties to take effect.  Default value is `true` or `http` or `https` URLs and `false` for all other key locations.
 | `tomee.jwt.verify.publickey.cache.initialRetryDelay`
 | link:../configuring-durations.html[Duration]
 | Should the first attempt to load keys fail, this setting specifies how long we should wait before trying again.  An exponential backoff will occur and the delay will double on each subsequent retry.  This allows retrying to be very aggressive in the event of a temporary issue, but prevents overloading the server supplying the keys.  The default value is `2 seconds`
@@ -99,7 +101,7 @@ In addition to the standard MicroProfile JWT configuration properties above, the
 | Specifies how frequently TomEE should check the configured location for new keys.  Should any refresh fail or result in no valid keys, the keys currently in use are not replaced and no subsequent attempts are made until the next refresh interval.  The default value is `1 day`
 | `tomee.jwt.decrypt.key.cache`
 | Boolean
-| Enables private keys to be supplied after deployment has occurred or refreshed periodically at runtime.  Useful for when keys are supplied via an `http` or `https` URL.  Setting `tomee.jwt.decrypt.key.cache=true` is required for any of the subsequent `tomee.jwt.decrypt.key.cache.*` properties to take effect.
+| Enables private keys to be supplied after deployment has occurred or refreshed periodically at runtime.  Useful for when keys are supplied via an `http` or `https` URL.  Setting `tomee.jwt.decrypt.key.cache=true` is required for any of the subsequent `tomee.jwt.decrypt.key.cache.*` properties to take effect.  Default value is `true` or `http` or `https` URLs and `false` for all other key locations.
 | `tomee.jwt.decrypt.key.cache.initialRetryDelay`
 | link:../configuring-durations.html[Duration]
 | Should the first attempt to load keys fail, this setting specifies how long we should wait before trying again.  An exponential backoff will occur and the delay will double on each subsequent retry.  This allows retrying to be very aggressive in the event of a temporary issue, but prevents overloading the server supplying the keys.  The default value is `2 seconds`
