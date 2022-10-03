@@ -32,6 +32,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
+import org.apache.tomee.itest.common.Logging;
 import org.apache.tomee.itest.util.Runner;
 import org.apache.tomee.microprofile.jwt.itest.Tokens;
 import org.apache.tomee.microprofile.jwt.itest.keys.PublicKeyLocation;
@@ -42,6 +43,7 @@ import org.junit.Test;
 import org.tomitribe.util.Longs;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -75,7 +77,9 @@ public class HttpKeyRotationEmptyKeySetTest {
                 .add("webapps/ROOT/WEB-INF/lib/jose.jar", JarLocation.jarLocation(JWSSigner.class))
                 .build();
 
+        final Logging logging = new Logging();
         final TomEE tomee = TomEE.microprofile()
+                .and(logging::install)
                 .add("webapps/ROOT/WEB-INF/beans.xml", "")
                 .add("webapps/ROOT/WEB-INF/lib/app.jar", Archive.archive()
                         .add(HttpKeyRotationEmptyKeySetTest.class)
@@ -126,7 +130,7 @@ public class HttpKeyRotationEmptyKeySetTest {
          */
         final Tokens unknownKey = Tokens.rsa(2048, 256);
         final Tokens firstKey = getPrivateKey.call();
-        
+
         Runner.threads(100).run(() -> assertKeys(tomee, unknownKey, firstKey)).assertNoExceptions();
 
         /*
@@ -145,6 +149,23 @@ public class HttpKeyRotationEmptyKeySetTest {
          * Make sure the new key works and the first key no longer works
          */
         Runner.threads(100).run(() -> assertKeys(tomee, firstKey, secondKey)).assertNoExceptions();
+
+        /*
+         * Stop responding to publicKey requests so we can reliably assert logging
+         */
+        IO.slurp(keyServer.toURI().resolve("/keys/block").toURL());
+
+        /*
+         * How many times did we request the public key?  That should be the total log lines
+         */
+        final int total = Integer.parseInt(IO.slurp(keyServer.toURI().resolve("/keys/total").toURL()));
+
+        logging.assertPresent(total, " INFO .* Key Server returned HTTP 200: http://localhost:[0-9]+/keys/publicKey," +
+                        " text/plain, [0-9]+ bytes, [0-9]+ ms")
+                .assertPresent(total - 2, "Invalid JWKS; 'keys' entry is empty.")
+                .assertPresent(total - 2, "Refresh failed. Supplier PublicKeys\\{location=http://localhost:[0-9]+/keys/publicKey\\} " +
+                        "threw an exception.  Next refresh will be in 1 SECONDS")
+        ;
     }
 
     private void assertKeys(final TomEE tomee, final Tokens invalidKey, final Tokens validKey) {
@@ -209,13 +230,17 @@ public class HttpKeyRotationEmptyKeySetTest {
 
             private final AtomicReference<Tokens> tokens = new AtomicReference<>(Tokens.rsa(2048, 256));
             private final AtomicInteger calls = new AtomicInteger();
+            private final AtomicInteger total = new AtomicInteger();
+            private final Semaphore semaphore = new Semaphore(100);
 
             @GET
             @Path("publicKey")
             public String publicKey() throws Exception {
+                semaphore.acquire();
+                total.incrementAndGet();
                 /*
-                 * Return a valid public key on the first call (initialization)
-                 * After that return only private keys
+                 * Return a valid public key only on the first call
+                 * After that return an empty key set
                  */
                 if (calls.getAndIncrement() > 0) {
                     return "{ \"keys\" : [] }";
@@ -239,9 +264,21 @@ public class HttpKeyRotationEmptyKeySetTest {
             }
 
             @GET
+            @Path("block")
+            public void block() {
+                semaphore.drainPermits();
+            }
+
+            @GET
             @Path("calls")
             public int calls() {
                 return calls.get();
+            }
+
+            @GET
+            @Path("total")
+            public int total() {
+                return total.get();
             }
         }
     }
