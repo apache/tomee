@@ -21,6 +21,7 @@ import org.apache.tomee.server.composer.TomEE.Builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
@@ -28,14 +29,14 @@ import static org.junit.Assert.assertTrue;
 
 public class Logging {
 
-    private final List<String> output = new ArrayList<>();
-
+    private final List<String> output = new CopyOnWriteArrayList<>();
 
     public void install(final Builder builder) {
         builder.watch("", "\n", output::add);
     }
 
     public Logging assertPresent(final String regex) {
+        final ArrayList<String> output = new ArrayList<>(this.output);
         final Pattern pattern = Pattern.compile(regex);
         final long count = output.stream()
                 .filter(line -> pattern.matcher(line).find())
@@ -46,6 +47,7 @@ public class Logging {
     }
 
     public Logging assertPresent(final int count, final String regex) {
+        final ArrayList<String> output = new ArrayList<>(this.output);
         final Pattern pattern = Pattern.compile(regex);
         final long actual = output.stream()
                 .filter(line -> pattern.matcher(line).find())
@@ -56,10 +58,11 @@ public class Logging {
     }
 
     public Logging assertNotPresent(final String s) {
+        final ArrayList<String> output = new ArrayList<>(this.output);
         final Optional<String> actual = output.stream()
                 .filter(line -> line.contains(s))
                 .findFirst();
-
+        
         assertTrue(actual.isEmpty());
         return this;
     }
