@@ -195,7 +195,6 @@
     <bval.version>2.0.5</bval.version>
     <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
     <junit.version>4.13.2</junit.version>
-    <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
