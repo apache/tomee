@@ -244,7 +244,7 @@
     <version.deltaspike>1.9.6</version.deltaspike>
 
     <!-- JDBC Drivers -->
-    <version.derby>10.14.2.0</version.derby>
+    <version.derby>10.15.2.0</version.derby>
     <version.hsqldb>2.7.1</version.hsqldb>
 
     <!-- unused properties -->
