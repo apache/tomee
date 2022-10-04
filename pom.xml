@@ -147,7 +147,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.65</tomcat.version>
+    <tomcat.version>9.0.67</tomcat.version>
 
     <cxf.version>3.4.8</cxf.version>
     <ehcache.version>2.10.6</ehcache.version>
@@ -191,13 +191,13 @@
     <commons-io.version>2.11.0</commons-io.version>
     <commons-net.version>3.8.0</commons-net.version>
 
-    <bval.version>2.0.5</bval.version>
+    <bval.version>2.0.6</bval.version>
     <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
-    <geronimo.connector.version>3.1.4</geronimo.connector.version>
+    <geronimo.connector.version>3.1.5</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <myfaces.version>2.3.10</myfaces.version>
     <mojarra.version>2.3.18</mojarra.version>
@@ -205,8 +205,6 @@
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.19.0</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
-    <derby.version>10.14.2.0</derby.version>
-    <version.hsqldb>2.7.0</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.groovy>2.4.12</version.groovy>
@@ -217,6 +215,8 @@
     <version.openjpa>3.2.2</version.openjpa>
     <version.eclipselink>2.7.11</version.eclipselink>
     <version.hibernate>5.6.12.Final</version.hibernate>
+    <version.derby>10.14.2.0</version.derby>
+    <version.hsqldb>2.7.0</version.hsqldb>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
