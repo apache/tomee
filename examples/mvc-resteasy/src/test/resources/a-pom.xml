@@ -28,7 +28,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.krazo>1.1.0-M1</version.krazo>
+    <version.krazo>1.1.1</version.krazo>
     <resteasy.version>3.6.2.Final</resteasy.version>
   </properties>
 

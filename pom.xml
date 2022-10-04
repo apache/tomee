@@ -116,7 +116,6 @@
     <!-- not part of EE APIs so we have to add it manually -->
     <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
 
-    <openjpa.version>3.2.2</openjpa.version>
     <openwebbeans.version>2.0.27</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.19</johnzon.version>
@@ -210,10 +209,14 @@
     <version.hsqldb>2.7.0</version.hsqldb>
     <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate>5.6.9.Final</version.hibernate>
-    <version.eclipselink>2.7.9</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
+
+    <version.krazo>1.1.1</version.krazo>
+    <version.deltaspike>1.9.6</version.deltaspike>
+    <version.openjpa>3.2.2</version.openjpa>
+    <version.eclipselink>2.7.11</version.eclipselink>
+    <version.hibernate>5.6.12.Final</version.hibernate>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
@@ -1452,7 +1455,7 @@
       <dependency>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
-        <version>${openjpa.version}</version>
+        <version>${version.openjpa}</version>
         <exclusions>
           <exclusion>
             <groupId>asm</groupId>
