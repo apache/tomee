@@ -205,7 +205,7 @@
     <mojarra.version>2.3.18</mojarra.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.18.0</log4j2.version>
+    <log4j2.version>2.19.0</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <derby.version>10.14.2.0</derby.version>
     <version.hsqldb>2.7.0</version.hsqldb>
