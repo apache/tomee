@@ -186,6 +186,12 @@
       <version>${version.derby}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>${version.derby}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
