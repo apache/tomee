@@ -150,7 +150,7 @@
 
     <tomcat.version>9.0.65</tomcat.version>
 
-    <cxf.version>3.4.5</cxf.version>
+    <cxf.version>3.4.8</cxf.version>
     <ehcache.version>2.10.6</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.6.9.v20130131</jetty.version>
