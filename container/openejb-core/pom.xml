@@ -293,20 +293,20 @@
                 <artifactItem>
                   <groupId>org.apache.derby</groupId>
                   <artifactId>derby</artifactId>
-                  <version>${derby.version}</version>
+                  <version>${version.derby}</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/drivers</outputDirectory>
-                  <destFileName>derby-${derby.version}.jar</destFileName>
+                  <destFileName>derby-${version.derby}.jar</destFileName>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.apache.derby</groupId>
                   <artifactId>derby</artifactId>
-                  <version>${derby.version}</version>
+                  <version>${version.derby}</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/drivers</outputDirectory>
-                  <destFileName>derby-${derby.version}.jar</destFileName>
+                  <destFileName>derby-${version.derby}.jar</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
