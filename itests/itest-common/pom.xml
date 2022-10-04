@@ -26,9 +26,9 @@
     <version>9.0.0-M9-SNAPSHOT</version>
   </parent>
 
-  <artifactId>microprofile-jwt-itests</artifactId>
+  <artifactId>itest-common</artifactId>
   <packaging>jar</packaging>
-  <name>TomEE :: iTests :: MicroProfile JWT</name>
+  <name>TomEE :: iTests :: Common</name>
 
   <build>
     <plugins>
@@ -47,66 +47,18 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
+      <artifactId>tomee-server-version</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-server-composer</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>itest-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>itest-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>apache-tomee</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
-      <type>tar.gz</type>
-      <classifier>microprofile</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.nimbusds</groupId>
-      <artifactId>nimbus-jose-jwt</artifactId>
-      <version>4.23</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.churchkey</groupId>
-      <artifactId>churchkey</artifactId>
-      <version>1.21</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

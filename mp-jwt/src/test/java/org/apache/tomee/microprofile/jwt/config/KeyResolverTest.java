@@ -22,6 +22,7 @@ import jakarta.enterprise.inject.spi.DeploymentException;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.tomee.microprofile.jwt.KeyAsserts;
+import org.apache.tomee.microprofile.jwt.keys.KeyResolver;
 import org.junit.Test;
 
 import java.io.File;
