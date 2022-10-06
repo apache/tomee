@@ -378,6 +378,7 @@ public class MPJWTFilter implements Filter {
             try {
                 final JwtConsumerBuilder builder = new JwtConsumerBuilder()
                         .setRelaxVerificationKeyValidation()
+                        .setRelaxDecryptionKeyValidation()
                         .setRequireSubject();
 
                 if (authContextInfo.getSignatureAlgorithm() != null) {

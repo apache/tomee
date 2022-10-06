@@ -16,11 +16,18 @@
  */
 package org.apache.tomee.microprofile.jwt.itest;
 
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.Requirement;
+import com.nimbusds.jose.crypto.ECDHEncrypter;
 import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -36,6 +43,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
 
@@ -48,24 +57,36 @@ public class Tokens {
     private final PublicKey publicKey;
     private final int hashSize;
     private final String id;
-    private final String prefix;
+    private final String alg;
 
-    public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize, final String id, final String prefix) {
+    public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize, final String id, final String alg) {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.hashSize = hashSize;
         this.id = id;
-        this.prefix = prefix;
+        this.alg = alg;
 
     }
 
+    public String getAlg() {
+        return alg;
+    }
+
     public static Tokens ec(final String curveName, int hashSize) {
+        return ec(curveName, hashSize, "ES");
+    }
+
+    public static Tokens ec(final String curveName, final String alg) {
+        return ec(curveName, -1, alg);
+    }
+
+    public static Tokens ec(final String curveName, int hashSize, final String alg) {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
             ECGenParameterSpec spec = new ECGenParameterSpec(curveName);
             keyGen.initialize(spec);
             final KeyPair pair = keyGen.generateKeyPair();
-            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, null, "ES");
+            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, null, alg);
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
             throw new IllegalStateException(e);
         }
@@ -84,11 +105,19 @@ public class Tokens {
     }
 
     public static Tokens rsa(int keyLength, int hashSize, final String id) {
+        return rsa(keyLength, hashSize, id, "RS");
+    }
+
+    public static Tokens rsa(int keyLength, final String alg) {
+        return rsa(keyLength, -1, null, alg);
+    }
+
+    public static Tokens rsa(int keyLength, int hashSize, final String id, final String rs) {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(keyLength);
             final KeyPair pair = keyGen.generateKeyPair();
-            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, id, "RS");
+            return new Tokens(pair.getPrivate(), pair.getPublic(), hashSize, id, rs);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
@@ -127,8 +156,12 @@ public class Tokens {
     }
 
     public String asToken(final String claims) {
+        return sign(claims).serialize();
+    }
+
+    public SignedJWT sign(final String claims) {
         try {
-            final JWSHeader.Builder builder = new JWSHeader.Builder(new JWSAlgorithm(prefix + hashSize, Requirement.OPTIONAL))
+            final JWSHeader.Builder builder = new JWSHeader.Builder(new JWSAlgorithm(alg + hashSize, Requirement.OPTIONAL))
                     .type(JOSEObjectType.JWT);
 
             if (id != null) {
@@ -141,17 +174,45 @@ public class Tokens {
 
             final SignedJWT jwt = new SignedJWT(header, claimsSet);
 
-            if ("RS".equals(prefix)) {
+            if (alg.startsWith("RS")) {
                 jwt.sign(new RSASSASigner(privateKey));
-            } else if ("ES".equals(prefix)) {
+            } else if (alg.startsWith("ES")) {
                 jwt.sign(new ECDSASigner((ECPrivateKey) privateKey));
             } else {
-                throw new IllegalStateException("Unsupported prefix: " + prefix);
+                throw new IllegalStateException("Unsupported prefix: " + alg);
             }
 
-            return jwt.serialize();
+            return jwt;
         } catch (Exception e) {
             throw new RuntimeException("Could not sign JWT", e);
+        }
+    }
+
+    public String asEncryptedToken(final String claims, final Tokens signer) {
+        try {
+
+            final SignedJWT signedJWT = signer.sign(claims);
+
+            // Create JWE object with signed JWT as payload
+            final JWEObject jweObject = new JWEObject(
+                    new JWEHeader.Builder(new JWEAlgorithm(alg), EncryptionMethod.A256GCM)
+                            .contentType("JWT") // required to indicate nested JWT
+                            .build(),
+                    new Payload(signedJWT));
+
+            // Encrypt with the recipient's public key
+            if (alg.startsWith("RS")) {
+                jweObject.encrypt(new RSAEncrypter((RSAPublicKey) this.getPublicKey()));
+            } else if (alg.startsWith("EC")) {
+                jweObject.encrypt(new ECDHEncrypter((ECPublicKey) this.getPublicKey()));
+            } else {
+                throw new IllegalStateException("Unsupported prefix: " + alg);
+            }
+
+            // Serialise to JWE compact form
+            return jweObject.serialize();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not encrypt JWT", e);
         }
     }
 

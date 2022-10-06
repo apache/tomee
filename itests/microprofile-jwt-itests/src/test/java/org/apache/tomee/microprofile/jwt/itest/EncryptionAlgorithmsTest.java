@@ -18,16 +18,11 @@
 
 package org.apache.tomee.microprofile.jwt.itest;
 
-import org.apache.cxf.feature.LoggingFeature;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.johnzon.jaxrs.JohnzonProvider;
-import org.apache.tomee.server.composer.Archive;
-import org.apache.tomee.server.composer.TomEE;
-import org.eclipse.microprofile.auth.LoginConfig;
-import org.junit.Test;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -36,6 +31,15 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.apache.cxf.feature.LoggingFeature;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.johnzon.jaxrs.JohnzonProvider;
+import org.apache.tomee.server.composer.Archive;
+import org.apache.tomee.server.composer.TomEE;
+import org.eclipse.microprofile.auth.LoginConfig;
+import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.Base64;
@@ -43,31 +47,55 @@ import java.util.Base64;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
-public class RsaKeySizesTest {
+public class EncryptionAlgorithmsTest {
 
     @Test
-    public void test2048() throws Exception {
-        assertKey(Tokens.rsa(2048, 256));
+    public void rsaOaep() throws Exception {
+        assertAlgorithm(Tokens.rsa(2048, "RSA-OAEP"), Tokens.rsa(2048, 256));
     }
 
     @Test
-    public void test4096() throws Exception {
-        assertKey(Tokens.rsa(4096, 256));
+    public void rsaOaep256() throws Exception {
+        assertAlgorithm(Tokens.rsa(2048, "RSA-OAEP-256"), Tokens.rsa(2048, 256));
     }
 
-    public void assertKey(final Tokens tokens) throws Exception {
+    @Test
+    public void ecdhEs() throws Exception {
+        assertAlgorithm(Tokens.ec("secp256r1", "ECDH-ES"), Tokens.ec("secp256r1", 256));
+    }
+
+    @Test
+    public void ecdhEsA128KW() throws Exception {
+        assertAlgorithm(Tokens.ec("secp256r1", "ECDH-ES+A128KW"), Tokens.ec("secp256r1", 256));
+    }
+
+    @Test
+    public void ecdhEsA192KW() throws Exception {
+        assertAlgorithm(Tokens.ec("secp256r1", "ECDH-ES+A192KW"), Tokens.ec("secp256r1", 256));
+    }
+
+    @Test
+    public void ecdhEsA256KW() throws Exception {
+        assertAlgorithm(Tokens.ec("secp256r1", "ECDH-ES+A256KW"), Tokens.ec("secp256r1", 256));
+    }
+
+    public void assertAlgorithm(final Tokens encryptor, final Tokens singer) throws Exception {
         final File appJar = Archive.archive()
-                .add(RsaKeySizesTest.class)
+                .add(EncryptionAlgorithmsTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
+                .add("signer.pem", singer.getPemPublicKey())
+                .add("encryptor.pem", encryptor.getPemPrivateKey())
                 .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey=" + Base64.getEncoder().encodeToString(tokens.getPublicKey().getEncoded()))
+                        "mp.jwt.decrypt.key.location=encryptor.pem\n" +
+                        "mp.jwt.verify.publickey.location=signer.pem\n")
                 .asJar();
 
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
 //                .update()
+//                .debug(5005)
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
@@ -81,7 +109,10 @@ public class RsaKeySizesTest {
                 "}";
 
         {// valid token
-            final String token = tokens.asToken(claims);
+            final String token = encryptor.asEncryptedToken(claims, singer);
+
+            assertAlg(encryptor.getAlg(), token);
+
             final Response response = webClient.reset()
                     .path("/movies")
                     .header("Content-Type", "application/json")
@@ -91,7 +122,7 @@ public class RsaKeySizesTest {
         }
 
         {// invalid token
-            final String token = tokens.asToken(claims) + "a";
+            final String token = "a" + encryptor.asEncryptedToken(claims, singer);
             final Response response = webClient.reset()
                     .path("/movies")
                     .header("Content-Type", "application/json")
@@ -99,6 +130,17 @@ public class RsaKeySizesTest {
                     .get();
             assertEquals(401, response.getStatus());
         }
+    }
+
+    private void assertAlg(final String expected, final String token) {
+        final String encodedHeader = token.split("\\.")[0];
+
+        final byte[] decoded = Base64.getDecoder().decode(encodedHeader);
+        final JsonReader reader = Json.createReader(new ByteArrayInputStream(decoded));
+        final JsonObject jsonObject = reader.readObject();
+        final String actual = jsonObject.getString("alg");
+
+        assertEquals(expected, actual);
     }
 
     private static WebClient createWebClient(final URL base) {
