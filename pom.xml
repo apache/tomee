@@ -244,8 +244,8 @@
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.13.4</jackson.version>
-    <jackson.dataformat.version>2.13.4</jackson.dataformat.version>
+    <jackson.version>2.14.0-rc1</jackson.version>
+    <jackson.dataformat.version>2.14.0-rc1</jackson.dataformat.version>
     <!-- required by Jackson dataformat yaml -->
     <snakeyaml.version>1.33</snakeyaml.version>
 
