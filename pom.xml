@@ -152,7 +152,7 @@
     <cxf.version>3.4.8</cxf.version>
     <ehcache.version>2.10.6</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
-    <jetty.version>7.6.9.v20130131</jetty.version>
+    <jetty.version>9.4.49.v20220914</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
     <aether.version>1.13.1</aether.version>
     <maven.version>3.0.5</maven.version>
