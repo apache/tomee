@@ -162,6 +162,18 @@
           <groupId>jakarta.activation</groupId>
           <artifactId>jakarta.activation-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>jakarta.xml.ws</groupId>
+          <artifactId>jakarta.xml.ws-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.jws:jakarta</groupId>
+          <artifactId>jws-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.xml.soap</groupId>
+          <artifactId>soap-api</artifactId>
+        </exclusion>
         <!-- exclude in favor of cxf-shade -->
         <exclusion>
           <groupId>org.apache.cxf</groupId>
@@ -186,6 +198,24 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>cxf-shade</artifactId>
       <version>${tomee.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
