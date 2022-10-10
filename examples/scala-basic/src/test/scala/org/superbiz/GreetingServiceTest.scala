@@ -18,10 +18,10 @@ package org.superbiz
 
 import jakarta.ejb.embeddable.EJBContainer
 import jakarta.inject.Inject
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.funsuite.AnyFunSuite
 
-import org.scalatest._
-
-class GreetingServiceTest extends FunSuite with BeforeAndAfterAll with BeforeAndAfterEach {
+class GreetingServiceTest extends AnyFunSuite with BeforeAndAfterAll with BeforeAndAfterEach {
   @Inject
   private var service: GreetingService = null
 
