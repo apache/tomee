@@ -1,0 +1,3 @@
+# iTest Util
+
+The goal of itest util is to have a module that doesn't become bloated with external dependencies.  If the code is self-contained and not dragging in libraries, feel fee to throw it here.  Any code from org.apache.openejb.util you need, feel free to copy it here.

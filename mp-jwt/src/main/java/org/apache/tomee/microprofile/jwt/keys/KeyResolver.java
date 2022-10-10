@@ -14,17 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.config;
+package org.apache.tomee.microprofile.jwt.keys;
 
 import io.churchkey.Keys;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import org.apache.openejb.loader.IO;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthConfigurationProperties;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
@@ -60,16 +63,12 @@ public class KeyResolver {
                 .findFirst();
     }
 
-    public Map<String, Key> readPublicKeys(final String publicKey) {
-        return readPublicKeys(publicKey, this::validatePublicKeys);
-    }
-
     public Map<String, Key> readPublicKeys(final String publicKey, final Consumer<List<io.churchkey.Key>> validation) {
         final List<io.churchkey.Key> keys;
         try {
             keys = Keys.decodeSet(publicKey);
         } catch (Exception e) {
-            throw new DeploymentException("Unable to decode key contents: " + publicKey);
+            throw new DeploymentException("Unable to decode key contents: " + publicKey, e);
         }
 
         if (keys.size() == 0) {
@@ -176,14 +175,14 @@ public class KeyResolver {
     }
 
     private Optional<String> readPublicKeysFromUrl(final String publicKeyLocation) {
-        try {
-            final URL locationURL = new URL(publicKeyLocation);
-            return Optional.of(IO.slurp(locationURL));
-        } catch (final IOException e) {
-            throw new DeploymentException(
-                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+        final URI uri = URI.create(publicKeyLocation);
+
+        if (uri.getScheme().startsWith("http")) {
+            final byte[] bytes = new HttpLocation(uri).get();
+            return Optional.of(new String(bytes, StandardCharsets.UTF_8));
         }
+
+        final byte[] bytes = new UrlLocation(uri).get();
+        return Optional.of(new String(bytes, StandardCharsets.UTF_8));
     }
-
-
 }

@@ -46,11 +46,6 @@ import static org.junit.Assert.assertEquals;
 public class RsaKeySizesTest {
 
     @Test
-    public void test1024() throws Exception {
-        assertKey(Tokens.rsa(1024, 256));
-    }
-
-    @Test
     public void test2048() throws Exception {
         assertKey(Tokens.rsa(2048, 256));
     }

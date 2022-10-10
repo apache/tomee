@@ -26,12 +26,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <junit.version>4.23</junit.version>
     <arquillian-bom.version>1.7.0.Alpha10</arquillian-bom.version>
-    <mp-jwt.version>1.1.1</mp-jwt.version>
-    <mp-config.version>1.0</mp-config.version>
-    <mp-rest-client.version>1.1</mp-rest-client.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -89,27 +85,9 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${mp-jwt.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.rest.client</groupId>
-      <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${mp-rest-client.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>${mp-config.version}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile-api</artifactId>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

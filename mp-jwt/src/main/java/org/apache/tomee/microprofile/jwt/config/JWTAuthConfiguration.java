@@ -19,6 +19,7 @@ package org.apache.tomee.microprofile.jwt.config;
 import java.security.Key;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * The public key and expected issuer needed to validate a token.
@@ -26,8 +27,8 @@ import java.util.Map;
 public class JWTAuthConfiguration {
     public static final String DEFAULT_KEY = "DEFAULT";
 
-    private final Map<String, Key> publicKeys;
-    private final Map<String, Key> decryptKeys;
+    private final Supplier<Map<String, Key>> publicKeys;
+    private final Supplier<Map<String, Key>> decryptKeys;
     private final String[] audiences;
     private final String issuer;
     private final int expGracePeriodSecs = 60;
@@ -53,22 +54,9 @@ public class JWTAuthConfiguration {
      */
     private String decryptAlgorithm;
 
-    public JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Map<String, Key> decryptKeys, final String header, final String cookie, final String decryptAlgorithm, final String signatureAlgorithm) {
-        if (publicKeys == null) {
-            this.publicKeys = Collections.EMPTY_MAP;
-        } else if (publicKeys.size() == 1) {
-            final Key singleKey = publicKeys.values().iterator().next();
-            this.publicKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
-        } else {
-            this.publicKeys = Collections.unmodifiableMap(publicKeys);
-        }
-
-        if (decryptKeys == null) {
-            this.decryptKeys = Collections.EMPTY_MAP;
-        } else {
-            this.decryptKeys = Collections.unmodifiableMap(decryptKeys);
-        }
-
+    public JWTAuthConfiguration(final Supplier<Map<String, Key>> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Supplier<Map<String, Key>> decryptKeys, final String header, final String cookie, final String decryptAlgorithm, final String signatureAlgorithm) {
+        this.publicKeys = publicKeys;
+        this.decryptKeys = decryptKeys;
         this.issuer = issuer;
         this.allowNoExpiryClaim = allowNoExpiryClaim;
         this.audiences = audiences;
@@ -86,16 +74,12 @@ public class JWTAuthConfiguration {
         return audiences;
     }
 
-    public Key getPublicKey() {
-        return publicKeys.get(DEFAULT_KEY);
-    }
-
     public Map<String, Key> getPublicKeys() {
-        return publicKeys;
+        return publicKeys.get();
     }
 
     public Map<String, Key> getDecryptKeys() {
-        return decryptKeys;
+        return decryptKeys.get();
     }
 
     public String getIssuer() {

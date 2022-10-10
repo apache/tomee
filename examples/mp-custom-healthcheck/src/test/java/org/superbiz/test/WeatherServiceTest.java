@@ -118,8 +118,8 @@ public class WeatherServiceTest {
                         "your subscription type. Please choose the proper subscription http://openweathermap.org/price",
                 data.getString("weatherServiceErrorMessage"));
 
-        assertEquals("OpenWeatherMap", checks.getJsonObject(0).getString("name"));
-        assertEquals("DOWN", checks.getJsonObject(0).getString("status"));
+        assertEquals("OpenWeatherMap", weatherJson.getString("name"));
+        assertEquals("DOWN", weatherJson.getString("status"));
     }
 
     @Test
