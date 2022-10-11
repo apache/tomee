@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian-tomee-tests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.13</version>
+    <version>8.0.14-SNAPSHOT</version>
   </parent>
 
   <artifactId>arquillian-tomee-codi-tests</artifactId>

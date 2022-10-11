@@ -22,7 +22,7 @@
   <parent>
     <artifactId>polling-parent</artifactId>
     <groupId>jug</groupId>
-    <version>8.0.13</version>
+    <version>8.0.14-SNAPSHOT</version>
   </parent>
 
   <artifactId>polling-web</artifactId>

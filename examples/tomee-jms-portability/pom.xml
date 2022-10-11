@@ -22,7 +22,7 @@
   <groupId>com.company.tutorials</groupId>
   <artifactId>simple-tomee</artifactId>
   <packaging>war</packaging>
-  <version>8.0.13</version>
+  <version>1.0</version>
   <name>TomEE :: TomEE :: IBM MQ AMQ Portability Examples :: MDB Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
