@@ -64,6 +64,7 @@ import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
+import org.apache.xbean.recipe.ConstructionException;
 
 import javax.annotation.ManagedBean;
 import javax.ejb.TimerService;
@@ -931,6 +932,9 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         resourceLink.setResId(destinationId);
                     } catch (final OpenEJBException e) {
                         // The MDB doesn't need the auto configured "openejb/destination" env entry
+                        ejbDeployment.removeResourceLink("openejb/destination");
+                    } catch (ConstructionException e) {
+                        logger.warning("Unable to create destination {0} for {1}. The MDB may not require this, so attempting to continue without it.", resourceLink.getResId(), mdb.getEjbName());
                         ejbDeployment.removeResourceLink("openejb/destination");
                     }
                 }
