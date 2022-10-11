@@ -57,19 +57,24 @@ public class MDBWithWildcardTest {
     @Deployment(testable = false)
     public static WebArchive getArchive() {
 
-        return ShrinkWrap.create(WebArchive.class, "jsf-jms-test.war")
-                .addClasses(WildcardMdb.class)
-                .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
-                        .version("3.0")
-                        .createServlet()
-                            .servletName("jmx")
-                            .servletClass(JmxServlet.class.getName())
-                        .up()
-                        .createServletMapping()
-                            .servletName("jmx")
-                            .urlPattern("/jmx")
-                        .up()
-                        .exportAsString()));
+        final WebArchive war = ShrinkWrap.create(WebArchive.class, "jsf-jms-test.war")
+                    .addClasses(MDBWithWildcardTest.class)
+                    .addClasses(WildcardMdb.class)
+                    .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
+                                                          .version("3.0")
+                                                          .createServlet()
+                                                          .servletName("jmx")
+                                                          .servletClass(
+                                                              JmxServlet.class.getName())
+                                                          .up()
+                                                          .createServletMapping()
+                                                          .servletName("jmx")
+                                                          .urlPattern("/jmx")
+                                                          .up()
+                                                          .exportAsString()));
+        System.out.println(war.toString(true));
+
+        return war;
     }
 
     @Test
