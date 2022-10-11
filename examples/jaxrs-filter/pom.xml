@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>jaxrs-filter</artifactId>
   <packaging>war</packaging>
-  <version>8.0.13-SNAPSHOT</version>
+  <version>8.0.13</version>
   <name>TomEE :: Examples :: JAXRS Filter</name>
 
   <url>http://maven.apache.org</url>

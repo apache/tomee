@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.13-SNAPSHOT</version>
+    <version>8.0.13</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -510,10 +510,10 @@
                 <configuration>
                   <target>
                     <tstamp>
-                      <format property="today" pattern="MMM d yyyy" locale="en" timezone="UTC"/>
-                      <format property="tstamp" pattern="HH:mm:ss" locale="en" timezone="UTC"/>
+                      <format property="today" pattern="MMM d yyyy" locale="en" timezone="UTC" />
+                      <format property="tstamp" pattern="HH:mm:ss" locale="en" timezone="UTC" />
                     </tstamp>
-                    <copy file="src/template/patch/java/org/apache/catalina/util/ServerInfo.properties" tofile="src/patch/java/org/apache/catalina/util/ServerInfo.properties"/>
+                    <copy file="src/template/patch/java/org/apache/catalina/util/ServerInfo.properties" tofile="src/patch/java/org/apache/catalina/util/ServerInfo.properties" />
                     <replace file="src/patch/java/org/apache/catalina/util/ServerInfo.properties" token="@TOMCAT-VERSION-REPLACED-BY-MAVEN@" value="${tomcat.version}" />
                     <replace file="src/patch/java/org/apache/catalina/util/ServerInfo.properties" token="@TOMEE-VERSION-REPLACED-BY-MAVEN@" value="${tomee.version}" />
                     <replace file="src/patch/java/org/apache/catalina/util/ServerInfo.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${today} ${tstamp} UTC" />

@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>filter-cdi</artifactId>
   <packaging>war</packaging>
-  <version>8.0.13-SNAPSHOT</version>
+  <version>8.0.13</version>
   <name>TomEE :: Examples :: Filter with CDI</name>
 
   <url>http://maven.apache.org</url>
@@ -52,7 +52,7 @@
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <tomee.version>8.0.13-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.13</tomee.version>
   </properties>
 
   <!--
