@@ -35,6 +35,8 @@
         <!-- Updated version to fix hanging text -->
         <version>3.0.0-M6</version>
         <configuration>
+          <reuseForks>true</reuseForks>
+          <forkCount>1C</forkCount>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.fault-tolerance:microprofile-fault-tolerance-tck</dependency>
           </dependenciesToScan>
@@ -59,6 +61,8 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1C</forkCount>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plus</arquillian.launch>
                   </systemPropertyVariables>
@@ -70,6 +74,8 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1C</forkCount>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plume</arquillian.launch>
                   </systemPropertyVariables>
