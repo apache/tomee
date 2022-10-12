@@ -36,8 +36,8 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected int httpsPort = 8443;
     protected int httpPort = 8080;
     protected int stopPort = 8005;
-    protected String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
-    protected String appWorkingDir = System.getProperty("java.io.tmpdir") + "/arquillian-tomee-app-working-dir";
+    protected String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee-" + ProcessHandle.current().pid();
+    protected String appWorkingDir = System.getProperty("java.io.tmpdir") + "/arquillian-tomee-app-working-dir-" + ProcessHandle.current().pid();
     protected String host = "localhost";
     protected String stopHost = "localhost"; // generally localhost but host (http) can be different
     protected String stopCommand = "SHUTDOWN"; // default one - can be overriden in server.xml
