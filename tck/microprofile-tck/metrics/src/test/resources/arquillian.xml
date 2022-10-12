@@ -42,7 +42,6 @@
       <property name="stopPort">-1</property>
       <property name="classifier">plus</property>
       <property name="conf">src/test/conf</property>
-      <property name="dir">target/tomee</property>
       <property name="properties">
         tomee.mp.scan = all
         MP_METRICS_TAGS = tier=integration
