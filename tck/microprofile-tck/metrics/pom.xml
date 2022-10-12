@@ -35,7 +35,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M6</version>
         <configuration>
-          <reuseForks>false</reuseForks>
+          <reuseForks>true</reuseForks>
+          <forkCount>1C</forkCount>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-api-tck</dependency>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-rest-tck</dependency>
@@ -44,7 +45,7 @@
             <MP_METRICS_TAGS>tier=integration</MP_METRICS_TAGS>
           </environmentVariables>
           <systemPropertyVariables>
-            <test.url>http://localhost:50290</test.url>
+            <java.io.tmpdir>./target</java.io.tmpdir>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -66,8 +67,11 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1C</forkCount>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plus</arquillian.launch>
+                    <java.io.tmpdir>./target</java.io.tmpdir>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -77,8 +81,11 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1C</forkCount>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plume</arquillian.launch>
+                    <java.io.tmpdir>./target</java.io.tmpdir>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

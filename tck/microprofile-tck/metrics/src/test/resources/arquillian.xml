@@ -23,14 +23,12 @@
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
   <container qualifier="tomee-microprofile" default="true">
     <configuration>
-      <property name="httpPort">50290</property>
+      <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">microprofile</property>
       <property name="debug">false</property>
       <property name="conf">src/test/conf</property>
-      <property name="dir">target/tomee</property>
-      <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         MP_METRICS_TAGS = tier=integration
@@ -39,14 +37,12 @@
   </container>
   <container qualifier="tomee-plus">
     <configuration>
-      <property name="httpPort">50290</property>
+      <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">plus</property>
       <property name="conf">src/test/conf</property>
       <property name="dir">target/tomee</property>
-      <property name="appWorkingDir">target/workdir</property>
-      <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all
         MP_METRICS_TAGS = tier=integration
@@ -55,13 +51,11 @@
   </container>
   <container qualifier="tomee-plume">
     <configuration>
-      <property name="httpPort">50290</property>
+      <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">plume</property>
       <property name="conf">src/test/conf</property>
-      <property name="dir">target/tomee</property>
-      <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all

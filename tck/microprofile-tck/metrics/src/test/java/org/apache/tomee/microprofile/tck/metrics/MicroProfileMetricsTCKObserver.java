@@ -17,6 +17,7 @@
 package org.apache.tomee.microprofile.tck.metrics;
 
 import io.restassured.RestAssured;
+import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
@@ -25,7 +26,13 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * so the test archives are not required to be deployed in the / context root.
  */
 public class MicroProfileMetricsTCKObserver {
+
+
+
     public void AfterDeploy(@Observes final AfterDeploy afterDeploy) {
+        final int httpPort = ((TomEEContainer<?>) afterDeploy.getDeployableContainer()).getConfiguration().getHttpPort();
+        final String targetUrl = "http://localhost:" + httpPort;
+        System.setProperty("test.url", targetUrl);
         RestAssured.basePath = "microprofile-metrics";
     }
 }
