@@ -17,6 +17,7 @@
 package org.apache.openejb.activemq;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
@@ -35,7 +36,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
-import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.XAConnectionFactory;
@@ -47,12 +47,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
-public class ActivationContainerOverwriteBothConfigurationTest {
+public class MDBAutoConfigOffTest {
     private static final String TEXT = "foo";
 
     @Configuration
     public Properties config() {
         return new PropertiesBuilder()
+                .p("tomee.autoconfig", "false")
 
                 .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
                 .p("amq.DataSource", "")
@@ -63,13 +64,13 @@ public class ActivationContainerOverwriteBothConfigurationTest {
 
                 .p("mdbs", "new://Container?type=MESSAGE")
                 .p("mdbs.ResourceAdapter", "amq")
-                .p("mdb.container.amq.activation.destination","wrongTarget")
-                .p("mdbs.activation.destination", "target")
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
 
                 .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
                 .p("xaCf.BrokerURL", "vm://localhost")
+
+                .p("managedContainer", "new://Container?type=MANAGED")
 
                 .build();
     }
@@ -78,9 +79,6 @@ public class ActivationContainerOverwriteBothConfigurationTest {
     public MessageDrivenBean jar() {
         return new MessageDrivenBean(Listener.class);
     }
-
-    @Resource(name = "target")
-    private Queue destination;
 
     @Resource(name = "xaCf")
     private XAConnectionFactory xacf;
@@ -96,17 +94,13 @@ public class ActivationContainerOverwriteBothConfigurationTest {
     @Test
     public void test() throws Exception {
         assertNotNull(cf);
-
-
-        final Connection connection = cf.createConnection();
-        testConnection(connection);
+        testConnection(cf.createConnection());
     }
-
 
     private void testConnection(final Connection connection) throws JMSException, InterruptedException {
         try {
             final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            final MessageProducer producer = session.createProducer(destination);
+            final MessageProducer producer = session.createProducer(new ActiveMQQueue("testQueue"));
             producer.send(session.createTextMessage(TEXT));
             assertTrue(Listener.sync());
         } finally {
@@ -120,7 +114,7 @@ public class ActivationContainerOverwriteBothConfigurationTest {
 
     @MessageDriven(activationConfig = {
             @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @ActivationConfigProperty(propertyName = "destination", propertyValue = "toBeOverwrite")
+            @ActivationConfigProperty(propertyName = "destination", propertyValue = "testQueue")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
