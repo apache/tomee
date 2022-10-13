@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scala.version>2.13</scala.version>
-    <scala.full-version>${scala.version}.0</scala.full-version>
+    <scala.full-version>${scala.version}.9</scala.full-version>
   </properties>
   <repositories>
     <repository>
@@ -114,7 +114,7 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.version}</artifactId>
-      <version>3.0.8</version>
+      <version>3.2.14</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

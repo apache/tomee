@@ -98,17 +98,17 @@ public class WeatherServiceTest {
         String[] expected = {
             "# TYPE weather_day_status_seconds summary",
             "# HELP weather_day_status_seconds This metric shows the weather status of the day.",
-            "weather_day_status_seconds{scope=\"application\",quantile=\"0.5\"}",
-            "weather_day_status_seconds{scope=\"application\",quantile=\"0.75\"}",
-            "weather_day_status_seconds{scope=\"application\",quantile=\"0.95\"}",
-            "weather_day_status_seconds{scope=\"application\",quantile=\"0.98\"}",
-            "weather_day_status_seconds{scope=\"application\",quantile=\"0.99\"}",
-            "weather_day_status_seconds{scope=\"application\",quantile=\"0.999\"}",
-            "weather_day_status_seconds_count{scope=\"application\"}",
-            "weather_day_status_seconds_sum{scope=\"application\"}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.5\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.75\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.95\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.98\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.99\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.999\",}",
+            "weather_day_status_seconds_count{mp_scope=\"weather\",}",
+            "weather_day_status_seconds_sum{mp_scope=\"weather\",}",
             "# TYPE weather_day_status_seconds_max gauge",
             "# HELP weather_day_status_seconds_max This metric shows the weather status of the day.",
-            "weather_day_status_seconds_max{scope=\"application\"}"
+            "weather_day_status_seconds_max{mp_scope=\"weather\",}"
         };
 
         Stream.of(expected)
@@ -176,7 +176,6 @@ public class WeatherServiceTest {
         final String expected = "{\n" +
                 "  \"weather_day_status\": {\n" +
                 "    \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "    \"displayName\": \"Weather Day Status\",\n" +
                 "    \"name\": \"weather_day_status\",\n" +
                 "    \"reusable\": false,\n" +
                 "    \"tags\": \"\",\n" +
@@ -191,7 +190,6 @@ public class WeatherServiceTest {
 
         String[] expectedKeys = {
                 "description",
-                "displayName",
                 "name",
                 "reusable",
                 "tags",

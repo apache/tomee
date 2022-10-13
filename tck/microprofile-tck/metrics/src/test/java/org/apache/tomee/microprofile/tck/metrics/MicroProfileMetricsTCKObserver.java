@@ -22,6 +22,7 @@ import io.restassured.filter.FilterContext;
 import io.restassured.response.Response;
 import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
+import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
@@ -32,8 +33,14 @@ import java.util.Arrays;
  * so the test archives are not required to be deployed in the / context root.
  */
 public class MicroProfileMetricsTCKObserver {
+
+
+
     public void AfterDeploy(@Observes final AfterDeploy afterDeploy) {
         RestAssured.filters(Arrays.asList(new SingleRequestFilter()));
+        final int httpPort = ((TomEEContainer<?>) afterDeploy.getDeployableContainer()).getConfiguration().getHttpPort();
+        final String targetUrl = "http://localhost:" + httpPort;
+        System.setProperty("test.url", targetUrl);
         RestAssured.basePath = "microprofile-metrics";
         System.setProperty("context.root", "");
     }
