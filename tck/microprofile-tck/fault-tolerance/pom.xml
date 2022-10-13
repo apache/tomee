@@ -35,14 +35,13 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M6</version>
         <configuration>
-          <reuseForks>false</reuseForks>
-          <forkCount>0</forkCount>
+          <reuseForks>true</reuseForks>
+          <forkCount>1</forkCount>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.fault-tolerance:microprofile-fault-tolerance-tck</dependency>
           </dependenciesToScan>
           <trimStackTrace>false</trimStackTrace>
           <systemPropertyVariables>
-            <arquillian.launch>tomee-microprofile</arquillian.launch>
             <java.io.tmpdir>./target</java.io.tmpdir>
           </systemPropertyVariables>
         </configuration>
@@ -65,8 +64,8 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <reuseForks>false</reuseForks>
-                  <forkCount>0</forkCount>
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1</forkCount>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plus</arquillian.launch>
                     <java.io.tmpdir>./target</java.io.tmpdir>
@@ -79,8 +78,8 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <reuseForks>false</reuseForks>
-                  <forkCount>0</forkCount>
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1</forkCount>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plume</arquillian.launch>
                     <java.io.tmpdir>./target</java.io.tmpdir>
