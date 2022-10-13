@@ -30,8 +30,6 @@
       <property name="classifier">microprofile</property>
       <property name="debug">false</property>
       <property name="conf">src/test/conf</property>
-      <property name="dir">target/tomee</property>
-      <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
     </configuration>
   </container>
@@ -42,8 +40,6 @@
       <property name="stopPort">-1</property>
       <property name="classifier">plus</property>
       <property name="conf">src/test/conf</property>
-      <property name="dir">target/tomee</property>
-      <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all
@@ -57,8 +53,6 @@
       <property name="stopPort">-1</property>
       <property name="classifier">plume</property>
       <property name="conf">src/test/conf</property>
-      <property name="dir">target/tomee</property>
-      <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all

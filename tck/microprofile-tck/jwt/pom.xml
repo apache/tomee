@@ -188,9 +188,11 @@
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/suites/tck-base-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <reuseForks>false</reuseForks>
-          <parallel>none</parallel>
-          <threadCount>4</threadCount>
+          <reuseForks>true</reuseForks>
+          <forkCount>1C</forkCount>
+          <systemPropertyVariables>
+            <java.io.tmpdir>./target</java.io.tmpdir>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
@@ -228,8 +230,11 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemPropertyVariables combine.children="append">
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1C</forkCount>
+                  <systemPropertyVariables>
                     <arquillian.launch>tomee-plus</arquillian.launch>
+                    <java.io.tmpdir>./target</java.io.tmpdir>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -239,8 +244,11 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemPropertyVariables combine.children="append">
+                  <reuseForks>true</reuseForks>
+                  <forkCount>1C</forkCount>
+                  <systemPropertyVariables>
                     <arquillian.launch>tomee-plume</arquillian.launch>
+                    <java.io.tmpdir>./target</java.io.tmpdir>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

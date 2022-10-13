@@ -39,6 +39,10 @@
           <systemPropertyVariables>
             <version>${project.version}</version>
           </systemPropertyVariables>
+          <!--
+          <reuseForks>true</reuseForks>
+          <forkCount>1C</forkCount>
+          -->
         </configuration>
       </plugin>
     </plugins>
