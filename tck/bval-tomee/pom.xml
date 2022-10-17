@@ -190,8 +190,7 @@
           <suiteXmlFiles>
             <suiteXmlFile>${suiteFile}</suiteXmlFile>
           </suiteXmlFiles>
-          <parallel>classes</parallel>
-          <threadCount>1</threadCount>
+          <forkCount>1</forkCount>
           <reuseForks>false</reuseForks>
         </configuration>
         <dependencies>
