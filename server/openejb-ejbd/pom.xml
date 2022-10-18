@@ -91,14 +91,18 @@
             -Dopenejb.classloader.forced-load=org.apache.openejb
           </argLine>
           <systemPropertyVariables>
+            <!--
             <openejb.home>${project.build.directory}/test-classes</openejb.home>
+            -->
             <myActiveMQResourceAdapter>new://Resource?type=ActiveMQResourceAdapter</myActiveMQResourceAdapter>
             <myActiveMQResourceAdapter.brokerXmlConfig>broker:(tcp://localhost:${activemq.port})?useJmx=false</myActiveMQResourceAdapter.brokerXmlConfig>
             <myActiveMQResourceAdapter.dataSource>Default Unmanaged JDBC Database</myActiveMQResourceAdapter.dataSource>
             <myActiveMQResourceAdapter.serverUrl>vm://localhost?waitForStart=20000&amp;async=true</myActiveMQResourceAdapter.serverUrl>
             <myActiveMQResourceAdapter.startupTimeout>10 seconds</myActiveMQResourceAdapter.startupTimeout>
           </systemPropertyVariables>
+          <!--
           <basedir>${project.build.directory}</basedir>
+          -->
         </configuration>
       </plugin>
     </plugins>
