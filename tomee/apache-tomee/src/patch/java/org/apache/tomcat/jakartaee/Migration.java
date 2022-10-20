@@ -86,6 +86,14 @@ public class Migration {
         DEFAULT_EXCLUDES.add("spring-expression-*.jar");
         DEFAULT_EXCLUDES.add("spring-security-crypto-*.jar");
         DEFAULT_EXCLUDES.add("spring-security-rsa-*.jar");
+        // TomEE
+        DEFAULT_EXCLUDES.add("tomee-*.jar");
+        DEFAULT_EXCLUDES.add("openejb-*.jar");
+        DEFAULT_EXCLUDES.add("geronimo-*-specs.jar");
+        DEFAULT_EXCLUDES.add("openjpa-*.jar");
+        DEFAULT_EXCLUDES.add("myfaces-*.jar");
+        // Arquillian
+        DEFAULT_EXCLUDES.add("arquillian-*.jar");
     }
 
     private EESpecProfile profile = EESpecProfile.EE;
