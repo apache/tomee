@@ -47,6 +47,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected boolean quickSession = true;
     protected boolean unsafeEjbd = true;
     protected boolean unpackWars = true;
+    protected boolean convertFromJavax = false;
 
     protected String properties = "";
     protected String webContextToUseWithEars;
@@ -77,6 +78,14 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setUnpackWars(final boolean unpackWars) {
         this.unpackWars = unpackWars;
+    }
+
+    public boolean isConvertFromJavax() {
+        return convertFromJavax;
+    }
+
+    public void setConvertFromJavax(final boolean convertFromJavax) {
+        this.convertFromJavax = convertFromJavax;
     }
 
     public int getHttpsPort() {

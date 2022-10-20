@@ -187,6 +187,13 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>jakartaee-migration</artifactId>
+      <classifier>shaded</classifier>
+      <version>1.0.4</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>
       <version>${project.version}</version>

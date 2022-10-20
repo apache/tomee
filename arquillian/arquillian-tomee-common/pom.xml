@@ -103,6 +103,12 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>jakartaee-migration</artifactId>
+      <classifier>shaded</classifier>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>

@@ -27,6 +27,8 @@ import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.NetworkUtil;
+import org.apache.tomcat.jakartaee.EESpecProfile;
+import org.apache.tomcat.jakartaee.Migration;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -348,6 +350,27 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         }
     }
 
+    private void migrateLegacyApp(final File source) {
+        try {
+            // delegate to Tomcat migration tool
+            Migration migration = new Migration();
+            migration.setSource(source);
+            migration.setDestination(source); // in place replacement
+            migration.setEESpecProfile(EESpecProfile.EE);
+            migration.addExclude("tomee-*.jar");
+            migration.addExclude("openejb-*.jar");
+            migration.addExclude("openwebbeans-*.jar");
+            migration.addExclude("geronimo-*.jar");
+            migration.addExclude("openjpa-*.jar");
+            migration.addExclude("cxf-*.jar");
+            migration.addExclude("arquillian-*.jar");
+            migration.execute();
+
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+
     protected Collection<AppInfo> getDeployedApps() throws NamingException {
         return deployer().getDeployedApps();
     }
@@ -421,6 +444,14 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
                     + "\n");
         }
 
+        if (configuration.isConvertFromJavax()) {
+            try {
+                migrateLegacyApp(file);
+
+            } catch (final Exception e) {
+                LOGGER.warning("Failed to migrate application " + file.getAbsolutePath());
+            }
+        }
         return new Dump(file, created);
     }
 

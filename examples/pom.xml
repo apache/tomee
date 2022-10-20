@@ -93,6 +93,7 @@
     <module>javamail</module>
     <module>javamail-velocity</module>
     <module>java-modules</module>
+    <module>javax-to-jakarta-namespace</module>
     <module>jaxrs-filter</module>
     <module>jaxrs-json-provider-jettison</module>
     <module>jpa-eclipselink</module>
