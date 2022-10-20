@@ -84,6 +84,16 @@
       <type>zip</type>
       <scope>provided</scope>
     </dependency>
+
+    <!-- Needed to compile Migration but not required because it's already backed into the shaded jar -->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>jakartaee-migration</artifactId>
+      <classifier>shaded</classifier>
+      <version>1.0.4</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-common</artifactId>
