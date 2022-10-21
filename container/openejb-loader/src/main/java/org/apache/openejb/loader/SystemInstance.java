@@ -145,6 +145,13 @@ public final class SystemInstance {
         if (getProperty("hsqldb.reconfig_logging") == null) {
             setProperty("hsqldb.reconfig_logging", "false", true);
         }
+
+        // TOMEE-4086
+        // Prevent CVE-2022-41853 by setting hsqldb.method_class_names if it isn't set.
+        // See: https://github.com/advisories/GHSA-77xx-rxvh-q682
+        if (getProperty("hsqldb.method_class_names") == null) {
+            setProperty("hsqldb.method_class_names", "invalid", true);
+        }
     }
 
     public <E> E fireEvent(final E event) {

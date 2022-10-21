@@ -39,6 +39,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.File;
 import java.net.URL;
 import java.util.Base64;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -72,6 +73,7 @@ public class ShaHashSizesTest {
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
+            .await(2, TimeUnit.MINUTES) // Jenkins CI instances are 12 years old machines and they are slow sometimes
 //                .update()
                 .build();
 
