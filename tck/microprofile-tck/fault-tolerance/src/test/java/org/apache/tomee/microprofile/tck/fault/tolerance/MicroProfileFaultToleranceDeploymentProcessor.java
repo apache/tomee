@@ -23,6 +23,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.container.ClassContainer;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import java.util.logging.Logger;
 
@@ -39,6 +40,14 @@ public class MicroProfileFaultToleranceDeploymentProcessor implements Applicatio
         ClassContainer<?> classContainer = (ClassContainer<?>) applicationArchive;
 
         if (applicationArchive instanceof LibraryContainer) {
+            if (applicationArchive instanceof WebArchive) {
+                WebArchive webArchive = (WebArchive) applicationArchive;
+                webArchive.addClass(CleanupMetricRegistries.class);
+                webArchive.addAsManifestResource(getClass().getResource("META-INF/org.apache.openejb.extension"), "org.apache.openejb.extension");
+
+                System.out.println(webArchive.toString(true));
+            }
+
             JavaArchive additionalBeanArchive = ShrinkWrap.create(JavaArchive.class);
             additionalBeanArchive.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
             ((LibraryContainer<?>) applicationArchive).addAsLibrary(additionalBeanArchive);
