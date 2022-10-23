@@ -216,7 +216,7 @@
     <version.eclipselink>2.7.11</version.eclipselink>
     <version.hibernate>5.6.12.Final</version.hibernate>
     <version.derby>10.14.2.0</version.derby>
-    <version.hsqldb>2.7.0</version.hsqldb>
+    <version.hsqldb>2.7.1</version.hsqldb>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
@@ -244,8 +244,8 @@
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.14.0-rc1</jackson.version>
-    <jackson.dataformat.version>2.14.0-rc1</jackson.dataformat.version>
+    <version.jackson>2.14.0-rc2</version.jackson>
+    <version.jackson.dataformat>2.14.0-rc2</version.jackson.dataformat>
     <!-- required by Jackson dataformat yaml -->
     <snakeyaml.version>1.33</snakeyaml.version>
 
@@ -2017,13 +2017,13 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
+        <version>${version.jackson}</version>
       </dependency>
       <!-- Jackson required by OpenAPI Impl -->
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-yaml</artifactId>
-        <version>${jackson.dataformat.version}</version>
+        <version>${version.jackson.dataformat}</version>
         <exclusions>
           <exclusion>
             <groupId>org.yaml</groupId>
