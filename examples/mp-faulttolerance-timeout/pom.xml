@@ -26,13 +26,13 @@
   <name>TomEE :: Examples :: Microprofile Fault Tolerance :: Timeout</name>
 
   <properties>
-    <microprofile-fault-tolerance-api.version>1.0</microprofile-fault-tolerance-api.version>
+    <version.microprofile.fault-tolerance-api>1.0</version.microprofile.fault-tolerance-api>
     <arquillian-junit-container.version>1.4.0.Final</arquillian-junit-container.version>
     <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-war-plugin.version>3.1.0</maven-war-plugin.version>
     <tomee.version>8.0.14-SNAPSHOT</tomee.version>
     <javaee-api.version>8.0</javaee-api.version>
-    <junit.version>4.13.2</junit.version>
+    <version.junit>4.13.2</version.junit>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
@@ -47,13 +47,13 @@
     <dependency>
       <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
       <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>${microprofile-fault-tolerance-api.version}</version>
+      <version>${version.microprofile.fault-tolerance-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

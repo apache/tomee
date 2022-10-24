@@ -83,7 +83,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
     </dependency>
 
     <dependency>
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
+      <version>${version.commons-io}</version>
       <scope>test</scope>
     </dependency>
 

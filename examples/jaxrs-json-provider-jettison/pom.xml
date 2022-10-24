@@ -29,9 +29,9 @@
 
 
   <properties>
-    <version.javaee-api>8.0</version.javaee-api>
+    <version.tomee.javaee-api>8.0</version.tomee.javaee-api>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <junit.version>4.13.2</junit.version>
+    <version.junit>4.13.2</version.junit>
   </properties>
 
 
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <version>${version.tomee.javaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

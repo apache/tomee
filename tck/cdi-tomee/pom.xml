@@ -39,13 +39,13 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <version>${version.tomee.javaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -147,13 +147,13 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>${geronimo-jcache_1.0_spec.version}</version>
+      <version>${version.geronimo-jcache_1.0_spec}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
-      <version>${jcs.version}</version>
+      <version>${version.commons-jcs-cache}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -226,7 +226,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
+        <version>${version.plugin.surefire}</version>
         <configuration>
           <reuseForks>true</reuseForks>
           <forkCount>1</forkCount>

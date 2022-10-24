@@ -28,8 +28,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.14-SNAPSHOT</tomee.version>
-    <version.javaee-api>8.0</version.javaee-api>
-    <junit.version>4.23</junit.version>
+    <version.tomee.javaee-api>8.0</version.tomee.javaee-api>
+    <version.junit>4.23</version.junit>
     <arquillian-bom.version>1.4.1.Final</arquillian-bom.version>
     <mp-jwt.version>1.1.1</mp-jwt.version>
     <mp-config.version>1.0</mp-config.version>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <version>${version.tomee.javaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -118,7 +118,7 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
 

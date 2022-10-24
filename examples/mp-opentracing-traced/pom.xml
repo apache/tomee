@@ -27,7 +27,7 @@
   <packaging>war</packaging>
 
   <properties>
-    <version.javaee-api>8.0</version.javaee-api>
+    <version.tomee.javaee-api>8.0</version.tomee.javaee-api>
     <tomee.version>8.0.14-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
   </properties>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <version>${version.tomee.javaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

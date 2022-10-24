@@ -25,9 +25,9 @@
   <packaging>war</packaging>
 
   <properties>
-    <junit.version>4.13.2</junit.version>
-    <version.javaee-api>8.0-1</version.javaee-api>
-    <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
+    <version.junit>4.13.2</version.junit>
+    <version.tomee.javaee-api>8.0-1</version.tomee.javaee-api>
+    <version.microprofile.metrics>1.1.1</version.microprofile.metrics>
     <tomee.version>8.0.14-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
   </properties>
@@ -36,13 +36,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <version>${version.tomee.javaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <version>${version.microprofile.metrics}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -54,7 +54,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -30,7 +30,7 @@
   <name>TomEE :: Maven Plugins</name>
 
   <properties>
-    <maven.version>2.2.1</maven.version>
+    <version.maven>2.2.1</version.maven>
   </properties>
 
   <modules>
@@ -58,27 +58,27 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-plugin-api</artifactId>
-        <version>${maven.version}</version>
+        <version>${version.maven}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-project</artifactId>
-        <version>${maven.version}</version>
+        <version>${version.maven}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-core</artifactId>
-        <version>${maven.version}</version>
+        <version>${version.maven}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-artifact</artifactId>
-        <version>${maven.version}</version>
+        <version>${version.maven}</version>
       </dependency>
       <dependency>
         <groupId>org.sonatype.aether</groupId>
         <artifactId>aether-api</artifactId>
-        <version>${aether.version}</version>
+        <version>${version.aether}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>

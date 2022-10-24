@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
-    <surefire.version>2.21.0</surefire.version>
+    <version.plugin.surefire>2.21.0</version.plugin.surefire>
   </properties>
 
   <repositories>
@@ -82,7 +82,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
+        <version>${version.plugin.surefire}</version>
         <configuration>
           <systemProperties>
             <property>

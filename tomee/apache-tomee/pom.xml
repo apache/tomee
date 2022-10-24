@@ -324,7 +324,7 @@
               <dependency>
                 <groupId>org.apache.tomee</groupId>
                 <artifactId>javaee-api</artifactId>
-                <version>${version.javaee-api}</version>
+                <version>${version.tomee.javaee-api}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.tomee.bom</groupId>
@@ -340,7 +340,7 @@
               <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-asm9-shaded</artifactId>
-                <version>${xbeanVersion}</version>
+                <version>${version.xbean}</version>
               </dependency>
               <dependency>
                 <groupId>org.codehaus.groovy</groupId>
@@ -370,7 +370,7 @@
                   <properties>
                     <tomee.workdir>${webprofile.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -387,7 +387,7 @@
                   <properties>
                     <tomee.workdir>${plus.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plus-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -404,7 +404,7 @@
                   <properties>
                     <tomee.workdir>${plume.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plume-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -421,7 +421,7 @@
                   <properties>
                     <tomee.workdir>${microprofile.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-microprofile-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -704,7 +704,7 @@
               <dependency>
                 <groupId>org.apache.tomee</groupId>
                 <artifactId>javaee-api</artifactId>
-                <version>${version.javaee-api}</version>
+                <version>${version.tomee.javaee-api}</version>
               </dependency>
               <dependency>
                 <groupId>org.apache.tomee.bom</groupId>
@@ -720,7 +720,7 @@
               <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-asm9-shaded</artifactId>
-                <version>${xbeanVersion}</version>
+                <version>${version.xbean}</version>
               </dependency>
               <dependency>
                 <groupId>org.codehaus.groovy</groupId>
@@ -750,7 +750,7 @@
                   <properties>
                     <tomee.workdir>${plume.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plume-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()

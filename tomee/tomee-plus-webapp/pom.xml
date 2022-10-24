@@ -39,7 +39,7 @@
     <dependency><!-- needed by myfaces -->
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>${commons-beanutils.version}</version>
+      <version>${version.commons-beanutils}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -353,19 +353,19 @@
     <dependency>
       <groupId>org.apache.batchee</groupId>
       <artifactId>batchee-jbatch</artifactId>
-      <version>${batchee.version}</version>
+      <version>${version.batchee}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>${geronimo-jcache_1.0_spec.version}</version>
+      <version>${version.geronimo-jcache_1.0_spec}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
-      <version>${jcs.version}</version>
+      <version>${version.commons-jcs-cache}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -390,7 +390,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -405,7 +405,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.myfaces.core</groupId>
@@ -428,7 +428,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

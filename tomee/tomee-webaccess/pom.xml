@@ -71,7 +71,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -113,7 +113,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
+      <version>${version.commons-io}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -191,7 +191,7 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>${commons-codec.version}</version>
+      <version>${version.commons-codec}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -208,7 +208,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
+      <version>${version.tomee.javaee-api}</version>
       <classifier>tomcat</classifier>
       <scope>provided</scope>
     </dependency>
@@ -246,7 +246,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
+        <version>${version.plugin.surefire}</version>
         <configuration>
           <systemPropertyVariables>
             <arquillian.tomee.path>${project.basedir}/target/arquillian-tomee</arquillian.tomee.path>

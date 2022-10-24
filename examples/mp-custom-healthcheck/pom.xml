@@ -26,11 +26,11 @@
 
   <properties>
     <arquillian-junit-container.version>1.4.0.Final</arquillian-junit-container.version>
-    <microprofile-health-api.version>1.0</microprofile-health-api.version>
+    <version.microprofile.health-api>1.0</version.microprofile.health-api>
     <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-war-plugin.version>3.1.0</maven-war-plugin.version>
     <javaee-api.version>8.0</javaee-api.version>
-    <junit.version>4.13.2</junit.version>
+    <version.junit>4.13.2</version.junit>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <tomee.version>8.0.14-SNAPSHOT</tomee.version>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
-      <version>${microprofile-health-api.version}</version>
+      <version>${version.microprofile.health-api}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

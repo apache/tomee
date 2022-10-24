@@ -170,7 +170,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version> <!-- 2.21 snapshot has a bug with classloader due to j9 work -->
+        <version>${version.plugin.surefire}</version> <!-- 2.21 snapshot has a bug with classloader due to j9 work -->
       </plugin>
     </plugins>
   </build>

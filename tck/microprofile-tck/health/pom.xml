@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
-      <version>${microprofile.health.version}</version>
+      <version>${version.microprofile.health}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
@@ -97,7 +97,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-tck</artifactId>
-      <version>${microprofile.health.version}</version>
+      <version>${version.microprofile.health}</version>
       <scope>test</scope>
     </dependency>
 

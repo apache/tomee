@@ -97,14 +97,14 @@
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <version>${version.microprofile.openapi}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-tck</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <version>${version.microprofile.openapi}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -133,7 +133,7 @@
       <!-- required by the MP TCK -->
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
+      <version>${version.snakeyaml}</version>
       <scope>test</scope>
     </dependency>
 
