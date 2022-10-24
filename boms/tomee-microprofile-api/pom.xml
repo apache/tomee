@@ -208,7 +208,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
       <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>4.0.1</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -219,7 +219,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
-      <version>4.0</version>
+      <version>4.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -274,7 +274,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <version>3.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
