@@ -97,13 +97,13 @@
     <dependency>
       <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
       <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>${microprofile.fault-tolerance.version}</version>
+      <version>${version.microprofile.fault-tolerance}</version>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
       <artifactId>microprofile-fault-tolerance-tck</artifactId>
-      <version>${microprofile.fault-tolerance.tck.version}</version>
+      <version>${version.microprofile.fault-tolerance}</version>
       <scope>test</scope>
     </dependency>
 

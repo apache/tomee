@@ -35,13 +35,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <version>${version.tomee.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>

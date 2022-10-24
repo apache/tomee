@@ -29,7 +29,7 @@
     <jakarta.websocket-api.version>2.0.0</jakarta.websocket-api.version>
     <tomee.classifier>webprofile</tomee.classifier>
     <tomcat.version>10.0.27</tomcat.version>
-    <junit.version>4.13.2</junit.version>
+    <version.junit>4.13.2</version.junit>
   </properties>
   <dependencies>
     <dependency>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

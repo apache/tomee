@@ -28,7 +28,7 @@
         <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
         <tomcat.version>10.0.16</tomcat.version>
 
-        <junit.jupiter.version>5.8.2</junit.jupiter.version>
+        <version.junit.jupiter>5.8.2</version.junit.jupiter>
         <!-- version >= 1.7.0.Alpha5 is required for JUnit5 -->
         <arquillian.version>1.7.0.Alpha10</arquillian.version>
 
@@ -75,13 +75,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>${version.junit.jupiter}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>${version.junit.jupiter}</version>
             <scope>test</scope>
         </dependency>
         <!--

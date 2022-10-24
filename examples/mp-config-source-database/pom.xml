@@ -23,7 +23,7 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile Config Source Database</name>
   <properties>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
+    <version.tomee.jakartaee-api>9.1-M2</version.tomee.jakartaee-api>
     <version.microprofile>5.0</version.microprofile>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
@@ -32,7 +32,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <version>${version.tomee.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

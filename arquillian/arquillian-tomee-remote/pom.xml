@@ -158,7 +158,7 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
       <classifier>jakarta</classifier>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -232,7 +232,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
+        <version>${version.plugin.surefire}</version>
         <configuration>
           <reuseForks>true</reuseForks>
           <forkCount>1</forkCount>

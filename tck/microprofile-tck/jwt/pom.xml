@@ -96,7 +96,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.tck.version}</version>
+      <version>${version.microprofile.jwt}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${microprofile.jwt.tck.version}</version>
+      <version>${version.microprofile.jwt}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -138,7 +138,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-core</artifactId>
-      <version>${microprofile.config.impl.version}</version>
+      <version>${version.microprofile.impl.config}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

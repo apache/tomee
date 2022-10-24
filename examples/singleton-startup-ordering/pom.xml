@@ -24,21 +24,21 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples ::  Singleton startup ordering</name>
   <properties>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
+    <version.tomee.jakartaee-api>9.1-M2</version.tomee.jakartaee-api>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
-    <junit.version>4.13.2</junit.version>
+    <version.junit>4.13.2</version.junit>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <version>${version.tomee.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -31,7 +31,7 @@
     <dependency>
       <artifactId>commons-lang3</artifactId>
       <groupId>org.apache.commons</groupId>
-      <version>${commons-lang3.version}</version>
+      <version>${version.commons-lang3}</version>
     </dependency>
   </dependencies>
 

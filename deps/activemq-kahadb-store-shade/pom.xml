@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
-      <version>${org.apache.activemq.version}</version>
+      <version>${version.activemq}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.activemq</groupId>

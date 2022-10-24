@@ -31,7 +31,7 @@
     <dependency>
       <artifactId>commons-lang3</artifactId>
       <groupId>org.apache.commons</groupId>
-      <version>${commons-lang3.version}</version>
+      <version>${version.commons-lang3}</version>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
@@ -70,7 +70,7 @@
           <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jakartaee-api</artifactId>
-            <version>${version.jakartaee-api}</version>
+            <version>${version.tomee.jakartaee-api}</version>
           </dependency>
           <dependency>
             <groupId>net.sourceforge.serp</groupId>

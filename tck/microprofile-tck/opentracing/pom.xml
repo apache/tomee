@@ -84,27 +84,27 @@
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
+      <version>${version.microprofile.config}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.microprofile.opentracing</groupId>
       <artifactId>microprofile-opentracing-api</artifactId>
-      <version>${microprofile.opentracing.version}</version>
+      <version>${version.microprofile.opentracing}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.opentracing</groupId>
       <artifactId>microprofile-opentracing-tck</artifactId>
-      <version>${microprofile.opentracing.tck.version}</version>
+      <version>${version.microprofile.opentracing}</version>
       <scope>test</scope>
     </dependency>
     <!--
     <dependency>
       <groupId>org.eclipse.microprofile.opentracing</groupId>
       <artifactId>microprofile-opentracing-tck-rest-client</artifactId>
-      <version>${microprofile.opentracing.tck.version}</version>
+      <version>${version.microprofile.opentracing}</version>
       <scope>test</scope>
     </dependency>
     -->
@@ -112,7 +112,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <version>${version.tomee.jakartaee-api}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -166,21 +166,21 @@
     <dependency>
       <groupId>io.opentracing</groupId>
       <artifactId>opentracing-mock</artifactId>
-      <version>${opentracing.api}</version>
+      <version>${version.io.opentracing}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.opentracing</groupId>
       <artifactId>opentracing-api</artifactId>
-      <version>${opentracing.api}</version>
+      <version>${version.io.opentracing}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-opentracing</artifactId>
-      <version>${microprofile.opentracing.impl.version}</version>
+      <version>${version.microprofile.impl.opentracing}</version>
       <scope>provided</scope>
     </dependency>
 

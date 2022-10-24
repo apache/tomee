@@ -33,7 +33,7 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf</tomee.build.name>
-    <wss4j.version>2.3.3</wss4j.version>
+    <version.wss4j>2.3.3</version.wss4j>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
@@ -68,7 +68,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.santuario</groupId>
@@ -117,12 +117,12 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
       <exclusions>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
@@ -137,7 +137,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
       <exclusions>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
@@ -189,7 +189,7 @@
     <dependency>
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
-      <version>${saaj-impl.version}</version>
+      <version>${version.impl.saaj}</version>
       <exclusions>
         <exclusion>
           <groupId>jakarta.activation</groupId>

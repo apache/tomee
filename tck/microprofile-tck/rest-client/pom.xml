@@ -29,7 +29,7 @@
   <name>TomEE :: TCK :: MicroProfile Rest Client TCK</name>
 
   <properties>
-    <!--<jetty-tck.version>${jetty.version}</jetty-tck.version>-->
+    <!--<jetty-tck.version>${version.jetty}</jetty-tck.version>-->
     <jetty-tck.version>9.2.28.v20190418</jetty-tck.version>
   </properties>
 
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <version>${version.microprofile.rest-client}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -138,7 +138,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-tck</artifactId>
-      <version>${microprofile.rest-client.tck.version}</version>
+      <version>${version.microprofile.rest-client}</version>
       <scope>test</scope>
     </dependency>
 

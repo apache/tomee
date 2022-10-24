@@ -36,13 +36,13 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -101,7 +101,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <classifier>jakarta</classifier>
       <scope>test</scope>
       <exclusions>
@@ -187,7 +187,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>
@@ -239,7 +239,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
+        <version>${version.plugin.surefire}</version>
         <configuration>
           <reuseForks>false</reuseForks>
           <forkCount>1</forkCount>

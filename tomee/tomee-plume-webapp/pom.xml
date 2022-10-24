@@ -56,7 +56,7 @@
     <dependency><!-- needed by myfaces -->
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>${commons-beanutils.version}</version>
+      <version>${version.commons-beanutils}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -361,7 +361,7 @@
     <dependency>
       <groupId>org.apache.batchee</groupId>
       <artifactId>batchee-jbatch</artifactId>
-      <version>${batchee.version}</version>
+      <version>${version.batchee}</version>
       <scope>runtime</scope>
       <classifier>jakarta</classifier>
       <exclusions>
@@ -374,13 +374,13 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>${geronimo-jcache_1.0_spec.version}</version>
+      <version>${version.geronimo-jcache_1.0_spec}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
-      <version>${jcs.version}</version>
+      <version>${version.commons-jcs-cache}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -556,7 +556,7 @@
     <dependency>
       <groupId>org.apache.openejb.shade</groupId>
       <artifactId>quartz-openejb-shade</artifactId>
-      <version>${quartz-openejb-shade.version}</version>
+      <version>${version.quartz-openejb-shade}</version>
       <exclusions>
         <exclusion>
           <groupId>org.quartz-scheduler</groupId>

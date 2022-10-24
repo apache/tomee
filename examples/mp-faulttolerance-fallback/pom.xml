@@ -26,7 +26,7 @@
     <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-war-plugin.version>3.1.0</maven-war-plugin.version>
     <jakartaee-api.version>9.1-M2</jakartaee-api.version>
-    <junit.version>4.13.2</junit.version>
+    <version.junit>4.13.2</version.junit>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

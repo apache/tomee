@@ -24,29 +24,29 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile REST Client</name>
   <properties>
-    <microprofile.rest-client.version>3.0</microprofile.rest-client.version>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
+    <version.microprofile.rest-client>3.0</version.microprofile.rest-client>
+    <version.tomee.jakartaee-api>9.1-M2</version.tomee.jakartaee-api>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
-    <junit.version>4.13.2</junit.version>
+    <version.junit>4.13.2</version.junit>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <version>${version.tomee.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <version>${version.microprofile.rest-client}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

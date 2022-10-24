@@ -30,7 +30,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <version>${version.tomee.jakartaee-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

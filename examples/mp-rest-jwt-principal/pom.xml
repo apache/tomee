@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M9-SNAPSHOT</tomee.version>
-    <junit.version>4.23</junit.version>
+    <version.junit>4.23</version.junit>
     <arquillian-bom.version>1.7.0.Alpha10</arquillian-bom.version>
   </properties>
   <build>
@@ -93,7 +93,7 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
