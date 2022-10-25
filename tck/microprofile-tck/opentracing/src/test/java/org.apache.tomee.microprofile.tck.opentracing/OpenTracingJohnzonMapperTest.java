@@ -17,8 +17,13 @@
 package org.apache.tomee.microprofile.tck.opentracing;
 
 import org.apache.johnzon.mapper.Mapper;
+import org.eclipse.microprofile.opentracing.tck.tracer.TestSpan;
 import org.eclipse.microprofile.opentracing.tck.tracer.TestTracer;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class OpenTracingJohnzonMapperTest {
     @Test
@@ -32,6 +37,19 @@ public class OpenTracingJohnzonMapperTest {
                             ".method\":\"GET\"}}]}";
 
         final Mapper objectMapper = new MicroProfileOpenTrackingContextResolver().getContext(null);
-        objectMapper.readObject(json, TestTracer.class);
+        final TestTracer tracer = objectMapper.readObject(json, TestTracer.class);
+
+        Assert.assertNotNull(tracer);
+        Assert.assertEquals(1, tracer.getSpans().size());
+
+        final TestSpan testSpan = tracer.getSpans().get(0);
+        Assert.assertNotNull(testSpan);
+        Assert.assertNotNull(testSpan.getTags());
+        Assert.assertEquals(5, testSpan.getTags().size());
+
+        // very important because it is not really define per spec so not really portable but the TCK for OpenTracing
+        // are developed such as it expects BigInteger
+        Assert.assertTrue(testSpan.getTags().containsKey("http.status_code"));
+        Assert.assertEquals(new BigDecimal("200"), testSpan.getTags().get("http.status_code"));
     }
 }

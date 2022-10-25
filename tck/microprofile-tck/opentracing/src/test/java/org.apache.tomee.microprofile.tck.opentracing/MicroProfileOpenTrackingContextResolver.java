@@ -28,6 +28,7 @@ public class MicroProfileOpenTrackingContextResolver implements ContextResolver<
     public Mapper getContext(final Class<?> type) {
         return new MapperBuilder()
             .setFailOnUnknownProperties(false)
+            .setUseBigDecimalForObjectNumbers(true)
             .build();
     }
 }
