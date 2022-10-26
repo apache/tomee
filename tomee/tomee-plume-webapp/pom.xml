@@ -544,7 +544,7 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>${openjpa.version}</version>
+      <version>${version.openjpa}</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>

@@ -32,7 +32,7 @@
     <version.krazo>2.0.2</version.krazo>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
-    <version.hibernate.orm>6.1.3.Final</version.hibernate.orm>
+    <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
   </properties>
   <build>
