@@ -41,6 +41,7 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public TomEEJsonbProvider() {
         config.withPropertyVisibilityStrategy(new TomEEJsonbPropertyVisibilityStrategy());
         setThrowNoContentExceptionOnEmptyStreams(true); // this is to make TCK tests happy
+        config.setProperty("johnzon.use-big-decimal-for-object", true);
     }
 
     @Override
