@@ -33,15 +33,22 @@ public class MicroProfileOpenTracingClientBuilder extends ClientBuilderImpl {
     public MicroProfileOpenTracingClientBuilder() {
         super();
 
+        // we could add openejb-cxf-rs maven module as test and register the TomEEJsonbProvider which would work
+        // to deserialize the http.status_code as a BigDecimal as opposed to an Integer as required by the TCK
+        // but this is the TCK client only to run the TCK, so the shorter version bellow works fine
+        // register(new TomEEJsonbProvider<TestSpanTree>());
+
         // Johnzon jaxrs/jsonb Provider with its configuration
         final Mapper mapper = new MapperBuilder()
             .setFailOnUnknownProperties(false)
             // very important or the assert will fail because the TCK expects a BigDecimal for the status code
             // as opposed to a regular integer. We can configure the behavior with Johnzon, with Jackson it would just fail
             // the TCK and SmallRye are developed using RestEasy which is using Yasson under the cover and it does that by
-            // default - hence the following change https://github.com/eclipse/microprofile-opentracing/commit/fb9557a39c5d1216b1a22eebb3f8508e1ba067ff#diff-7d2ffd37d7235895694d34ea99cc68775cd34966ffdc91886a17da55d625440eL346
+            // default - hence the following change
+            // https://github.com/eclipse/microprofile-opentracing/commit/fb9557a39c5d1216b1a22eebb3f8508e1ba067ff#diff-7d2ffd37d7235895694d34ea99cc68775cd34966ffdc91886a17da55d625440eL346
             .setUseBigDecimalForObjectNumbers(true)
             .build();
         register(new JohnzonProvider<TestSpanTree>(mapper, Collections.emptyList()));
+
     }
 }

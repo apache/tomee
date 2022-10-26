@@ -121,6 +121,15 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--
+    This would be the simplest to set the provider, see MicroProfileOpenTracingClientBuilder comments and code
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-cxf-rs</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    -->
 
     <dependency>
       <groupId>org.apache.johnzon</groupId>
@@ -131,6 +140,12 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
+      <classifier>jakarta</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-jsonb</artifactId>
       <classifier>jakarta</classifier>
       <scope>provided</scope>
     </dependency>
