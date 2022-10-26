@@ -26,7 +26,7 @@ import javax.naming.NamingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Tomcat thread context listener.
@@ -49,7 +49,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
      * getThreadName method in class ContextBindings
      */
     protected Method method;
-    private Hashtable<Thread, Object> threadNameBindings;
+    private Map<Thread, Object> threadNameBindings;
 
     /**
      * Creates a new instance.
@@ -63,7 +63,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
 
             final Field threadNameBindingsField = ContextBindings.class.getDeclaredField("threadObjectBindings");
             threadNameBindingsField.setAccessible(true);
-            threadNameBindings = (Hashtable<Thread, Object>) threadNameBindingsField.get(null);
+            threadNameBindings = (Map<Thread, Object>) threadNameBindingsField.get(null);
         } catch (final Exception e) {
             LOGGER.error("Expected ContextBinding to have the method getThreadName()");
         }
