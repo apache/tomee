@@ -988,7 +988,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
                 // remove JohnzonProvider default versions
                 if (("org.apache.johnzon.jaxrs.JohnzonProvider".equals(name) ||
-                        "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) && customJsonProvider) {
+                        "org.apache.openejb.server.cxf.rs.johnzon.TomEEJohnzonProvider".equals(name)) && customJsonProvider) {
                     it.remove();
                 }
 
