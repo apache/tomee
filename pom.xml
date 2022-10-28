@@ -107,8 +107,8 @@
 
     <!-- Plugins and Build -->
     <maven.version>3.0.5</maven.version>
-    <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
-    <javadoc.version>3.0.1</javadoc.version>
+    <version.plugin.bundle>3.3.0</version.plugin.bundle>
+    <version.plugin.javadoc>3.0.1</version.plugin.javadoc>
     <asciidoclet.version>1.5.0</asciidoclet.version>
     <surefire.version>3.0.0-M5</surefire.version>
 
@@ -133,7 +133,7 @@
     <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
+    <version.quartz-openejb-shade>2.2.4</version.quartz-openejb-shade>
     <version.axiom>1.3.0</version.axiom>
     <xbeanVersion>4.22</xbeanVersion>
     <version.groovy>2.4.12</version.groovy>
@@ -142,7 +142,7 @@
     <ehcache.version>2.10.6</ehcache.version>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
-    <osgi.framework.version>4.2.0</osgi.framework.version>
+    <version.osgi.framework>4.2.0</version.osgi.framework>
     <aether.version>1.13.1</aether.version>
     <version.xalan>2.7.2</version.xalan>
 
@@ -151,28 +151,28 @@
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.19.0</log4j2.version>
     <commons-logging.version>1.2</commons-logging.version>
-    <commons-logging-api.version>1.1</commons-logging-api.version>
+    <version.commons-logging-api>1.1</version.commons-logging-api>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-cli.version>1.5.0</commons-cli.version>
+    <version.commons-cli>1.5.0</version.commons-cli>
     <commons-codec.version>1.15</commons-codec.version>
-    <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-dbcp.version>2.9.0</commons-dbcp.version>
-    <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-fileupload.version>1.4</commons-fileupload.version>
+    <version.commons-collections>3.2.2</version.commons-collections>
+    <version.commons-dbcp2>2.9.0</version.commons-dbcp2>
+    <version.commons-discovery>0.5</version.commons-discovery>
+    <version.commons-fileupload>1.4</version.commons-fileupload>
     <commons-io.version>2.11.0</commons-io.version>
     <jcs.version>2.1</jcs.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
-    <commons-net.version>3.8.0</commons-net.version>
-    <commons-pool.version>2.11.1</commons-pool.version>
+    <version.commons-net>3.8.0</version.commons-net>
+    <version.commons-pool2>2.11.1</version.commons-pool2>
 
     <!-- Java SE version -->
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
     <!-- Micro Profile API -->
-    <microprofile.version>2.0</microprofile.version>
+    <version.microprofile>2.0</version.microprofile>
     <microprofile.config.version>1.3</microprofile.config.version>
     <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
     <microprofile.health.version>1.0</microprofile.health.version>
@@ -211,11 +211,11 @@
     <!-- org.apache -->
     <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
     <batchee.version>1.0.2</batchee.version>
-    <bval.version>2.0.5</bval.version>
+    <version.bval>2.0.5</version.bval>
     <cxf.version>3.4.8</cxf.version>
-    <geronimo.connector.version>3.1.5</geronimo.connector.version>
-    <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
-    <johnzon.version>1.2.19</johnzon.version>
+    <version.geronimo.components>3.1.5</version.geronimo.components>
+    <version.geronimo-javamail_1.6_mail>1.0.1</version.geronimo-javamail_1.6_mail>
+    <version.johnzon>1.2.19</version.johnzon>
     <myfaces.version>2.3.10</myfaces.version>
     <version.openjpa>3.2.2</version.openjpa>
     <openwebbeans.version>2.0.27</openwebbeans.version>
@@ -259,7 +259,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>${maven-bundle-plugin.version}</version>
+          <version>${version.plugin.bundle}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -912,7 +912,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${javadoc.version}</version>
+            <version>${version.plugin.javadoc}</version>
             <configuration>
               <doclet>org.asciidoctor.Asciidoclet</doclet>
               <docletArtifact>
@@ -1084,17 +1084,17 @@
       <dependency>
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
-        <version>${bval.version}</version>
+        <version>${version.bval}</version>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
         <artifactId>commons-cli</artifactId>
-        <version>${commons-cli.version}</version>
+        <version>${version.commons-cli}</version>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging-api</artifactId>
-        <version>${commons-logging-api.version}</version>
+        <version>${version.commons-logging-api}</version>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
@@ -1221,7 +1221,7 @@
       <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
-        <version>${commons-net.version}</version>
+        <version>${version.commons-net}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
@@ -1384,7 +1384,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
-        <version>${geronimo.connector.version}</version>
+        <version>${version.geronimo.components}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1407,7 +1407,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
-        <version>${geronimo.connector.version}</version>
+        <version>${version.geronimo.components}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1436,7 +1436,7 @@
       <dependency>
         <groupId>org.apache.geronimo.javamail</groupId>
         <artifactId>geronimo-javamail_1.6_mail</artifactId>
-        <version>${geronimo-javamail_1.6_mail.version}</version>
+        <version>${version.geronimo-javamail_1.6_mail}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.javamail</groupId>
@@ -1574,12 +1574,12 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-dbcp2</artifactId>
-        <version>${commons-dbcp.version}</version>
+        <version>${version.commons-dbcp2}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-pool2</artifactId>
-        <version>${commons-pool.version}</version>
+        <version>${version.commons-pool2}</version>
       </dependency>
       <dependency>
         <artifactId>xmlsec</artifactId>
@@ -1605,7 +1605,7 @@
       <dependency>
         <groupId>org.apache.openejb.shade</groupId>
         <artifactId>quartz-openejb-shade</artifactId>
-        <version>${quartz-openejb-shade.version}</version>
+        <version>${version.quartz-openejb-shade}</version>
         <exclusions>
           <exclusion>
             <groupId>org.quartz-scheduler</groupId>
@@ -1632,12 +1632,12 @@
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>${osgi.framework.version}</version>
+        <version>${version.osgi.framework}</version>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
-        <version>${osgi.framework.version}</version>
+        <version>${version.osgi.framework}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.neethi</groupId>
@@ -1717,7 +1717,7 @@
       <dependency>
         <artifactId>commons-collections</artifactId>
         <groupId>commons-collections</groupId>
-        <version>${commons-collections.version}</version>
+        <version>${version.commons-collections}</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
@@ -1727,7 +1727,7 @@
       <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
-        <version>${commons-fileupload.version}</version>
+        <version>${version.commons-fileupload}</version>
       </dependency>
       <dependency>
         <groupId>regexp</groupId>
@@ -1737,7 +1737,7 @@
       <dependency>
         <groupId>commons-discovery</groupId>
         <artifactId>commons-discovery</artifactId>
-        <version>${commons-discovery.version}</version>
+        <version>${version.commons-discovery}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
@@ -1858,27 +1858,27 @@
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-core</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-mapper</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jaxrs</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonb</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonp-strict</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
       </dependency>
 
       <dependency>
