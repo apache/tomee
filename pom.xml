@@ -93,9 +93,6 @@
     <!-- allows release plugin to be overridden -->
     <arguments />
     <tomee.version>${project.version}</tomee.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <surefire.version>3.0.0-M5</surefire.version>
 
     <!-- for the default name of the module. Needs to be overridden -->
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
@@ -103,29 +100,17 @@
     <!-- To easily change the javaee api version -->
     <version.javaee-api>8.0-6</version.javaee-api>
     <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
-    
-    <!--
-      Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
-      We decided to add them here in the project so we can patch/update the 2 libraries without having
-      to update and release the javaee-api.jar. Different lifecycle.
-    -->
-    <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
-    <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
-    <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
-    <!-- not part of EE APIs so we have to add it manually -->
-    <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
+    <!-- Project encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <openwebbeans.version>2.0.27</openwebbeans.version>
-    <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.19</johnzon.version>
-    <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
-
-    <!-- Maven module versions -->
+    <!-- Plugins and Build -->
+    <maven.version>3.0.5</maven.version>
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
-
-    <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.22</xbeanVersion>
+    <javadoc.version>3.0.1</javadoc.version>
+    <asciidoclet.version>1.5.0</asciidoclet.version>
+    <surefire.version>3.0.0-M5</surefire.version>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
@@ -141,117 +126,124 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>1.0.2</batchee.version>
-
+    <!-- arquillian related -->
     <version.arquillian>1.1.13.Final</version.arquillian>
+    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
+    <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.68</tomcat.version>
-
-    <cxf.version>3.4.8</cxf.version>
-    <ehcache.version>2.10.6</ehcache.version>
-    <!-- used by cxf for security (replay attack) -->
+    <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
+    <version.axiom>1.3.0</version.axiom>
+    <xbeanVersion>4.22</xbeanVersion>
+    <version.groovy>2.4.12</version.groovy>
+    <version.ecj>4.6.1</version.ecj>
     <jetty.version>9.4.49.v20220914</jetty.version>
-    <pax-url.version>1.3.5</pax-url.version>
+    <ehcache.version>2.10.6</ehcache.version>
+    <junit.version>4.13.2</junit.version>
+    <junit.jupiter.version>5.8.2</junit.jupiter.version>
+    <osgi.framework.version>4.2.0</osgi.framework.version>
     <aether.version>1.13.1</aether.version>
-    <maven.version>3.0.5</maven.version>
-    <wagon.version>2.2</wagon.version>
-    <plexus.version>1.5.5</plexus.version>
-    <plexus-utils.version>3.0.10</plexus-utils.version>
+    <version.xalan>2.7.2</version.xalan>
 
-    <!--
-      Old CXF versions were only compatible with 1.3.x. But JDK 9+ requires 1.4.x and higher
-      We used to have some weird exclusions to not run test, but we should try to upgrade to 1.4.x anyway
-    -->
-    <saaj-impl.version>1.5.1</saaj-impl.version>
-
-    <!--
-    - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
-    -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!-- Logging frameworks -->
+    <slf4j.version>1.7.36</slf4j.version>
+    <log4j.version>1.2.17</log4j.version>
+    <log4j2.version>2.19.0</log4j2.version>
+    <commons-logging.version>1.2</commons-logging.version>
+    <commons-logging-api.version>1.1</commons-logging-api.version>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-cli.version>1.5.0</commons-cli.version>
-    <commons-logging.version>1.2</commons-logging.version>
-    <commons-logging-api.version>1.1</commons-logging-api.version>
-    <!--
-      'QuartzPersistenceForEJBTimersTest' is unable to obtain DB connection with
-      commons-dbcp.version > 2.3.0
-    -->
-    <commons-dbcp.version>2.9.0</commons-dbcp.version>
-    <commons-pool.version>2.11.1</commons-pool.version>
-    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.15</commons-codec.version>
-    <commons-fileupload.version>1.4</commons-fileupload.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
+    <commons-dbcp.version>2.9.0</commons-dbcp.version>
     <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-io.version>2.11.0</commons-io.version>
+    <jcs.version>2.1</jcs.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-net.version>3.8.0</commons-net.version>
+    <commons-pool.version>2.11.1</commons-pool.version>
 
-    <bval.version>2.0.5</bval.version>
-    <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
-    <junit.version>4.13.2</junit.version>
-    <junit.jupiter.version>5.8.2</junit.jupiter.version>
-    <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <scannotation.version>1.0.2</scannotation.version>
-    <geronimo.connector.version>3.1.5</geronimo.connector.version>
-    <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <myfaces.version>2.3.10</myfaces.version>
-    <mojarra.version>2.3.18</mojarra.version>
-    <slf4j.version>1.7.36</slf4j.version>
-    <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.19.0</log4j2.version>
-    <osgi.framework.version>4.2.0</osgi.framework.version>
-    <version.axiom>1.3.0</version.axiom>
-    <version.xalan>2.7.2</version.xalan>
-    <version.groovy>2.4.12</version.groovy>
-    <version.ecj>4.6.1</version.ecj>
+    <!-- Java SE version -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
 
-    <version.krazo>1.1.1</version.krazo>
-    <version.deltaspike>1.9.6</version.deltaspike>
-    <version.openjpa>3.2.2</version.openjpa>
-    <version.eclipselink>2.7.11</version.eclipselink>
-    <version.hibernate>5.6.12.Final</version.hibernate>
-    <version.derby>10.14.2.0</version.derby>
-    <version.hsqldb>2.7.1</version.hsqldb>
-
-    <!-- arquillian related -->
-    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
-
-    <!-- Micro Profile -->
+    <!-- Micro Profile API -->
     <microprofile.version>2.0</microprofile.version>
     <microprofile.config.version>1.3</microprofile.config.version>
-    <microprofile.config.impl.version>1.2.1</microprofile.config.impl.version>
-    <microprofile.jwt.version>1.1.1</microprofile.jwt.version>
-    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
-    <!-- 1.1 Implementation not started yet -->
     <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
-    <microprofile.fault-tolerance.impl.version>1.2.1</microprofile.fault-tolerance.impl.version>
     <microprofile.health.version>1.0</microprofile.health.version>
-    <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
+    <microprofile.jwt.version>1.1.1</microprofile.jwt.version>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
-    <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
-    <microprofile.rest-client.version>1.3.3</microprofile.rest-client.version>
-    <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.1.2</microprofile.openapi.version>
-    <microprofile.openapi.impl.version>1.0.12</microprofile.openapi.impl.version>
     <microprofile.opentracing.version>1.1.2</microprofile.opentracing.version>
-    <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
+    <microprofile.rest-client.version>1.3.3</microprofile.rest-client.version>
+
     <opentracing.api>0.31.0</opentracing.api>
+
+    <!-- Micro Profile Impl. -->
+    <microprofile.config.impl.version>1.2.1</microprofile.config.impl.version>
+    <microprofile.fault-tolerance.impl.version>1.2.1</microprofile.fault-tolerance.impl.version>
+    <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
+    <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
+    <microprofile.openapi.impl.version>1.0.12</microprofile.openapi.impl.version>
+    <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
+
+    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
+    <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
 
     <!-- Jackson required by OpenAPI Impl -->
     <version.jackson>2.14.0-rc2</version.jackson>
     <version.jackson.dataformat>2.14.0-rc2</version.jackson.dataformat>
-    <!-- required by Jackson dataformat yaml -->
     <snakeyaml.version>1.33</snakeyaml.version>
 
-    <!-- Javadoc & Asciidoclet -->
-    <javadoc.version>3.0.1</javadoc.version>
-    <asciidoclet.version>1.5.0</asciidoclet.version>
+    <!-- Jakarta EE API -->
+    <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
+    <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
+
+    <!-- Jakarta EE Impl. -->
+    <tomcat.version>9.0.68</tomcat.version>
+    <!-- com.sun -->
+    <saaj-impl.version>1.5.1</saaj-impl.version>
+    <!-- org.apache -->
+    <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
+    <batchee.version>1.0.2</batchee.version>
+    <bval.version>2.0.5</bval.version>
+    <cxf.version>3.4.8</cxf.version>
+    <geronimo.connector.version>3.1.5</geronimo.connector.version>
+    <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
+    <johnzon.version>1.2.19</johnzon.version>
+    <myfaces.version>2.3.10</myfaces.version>
+    <version.openjpa>3.2.2</version.openjpa>
+    <openwebbeans.version>2.0.27</openwebbeans.version>
+    <!-- org.eclipse -->
+    <version.eclipselink>2.7.11</version.eclipselink>
+    <!-- org.glassfish -->
+    <mojarra.version>2.3.18</mojarra.version>
+    <!-- org.hibernate -->
+    <version.hibernate>5.6.12.Final</version.hibernate>
+    <version.hibernate.validator>6.2.5.Final</version.hibernate.validator>
+
+    <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
+    <version.krazo>1.1.1</version.krazo>
+    <version.deltaspike>1.9.6</version.deltaspike>
+
+    <!-- JDBC Drivers -->
+    <version.derby>10.14.2.0</version.derby>
+    <version.hsqldb>2.7.1</version.hsqldb>
+
+    <!-- unused properties -->
+    <geronimo-osgi.version>1.1</geronimo-osgi.version>
+    <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
+    <pax-url.version>1.3.5</pax-url.version>
+    <plexus.version>1.5.5</plexus.version>
+    <plexus-utils.version>3.0.10</plexus-utils.version>
+    <scannotation.version>1.0.2</scannotation.version>
+    <wagon.version>2.2</wagon.version>
+
   </properties>
 
   <build>
