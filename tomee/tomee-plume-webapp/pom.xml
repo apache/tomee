@@ -556,7 +556,7 @@
     <dependency>
       <groupId>org.apache.openejb.shade</groupId>
       <artifactId>quartz-openejb-shade</artifactId>
-      <version>${quartz-openejb-shade.version}</version>
+      <version>${version.quartz-openejb-shade}</version>
       <exclusions>
         <exclusion>
           <groupId>org.quartz-scheduler</groupId>
