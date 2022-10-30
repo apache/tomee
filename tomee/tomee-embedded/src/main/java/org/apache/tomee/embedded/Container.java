@@ -80,7 +80,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
@@ -1016,7 +1015,6 @@ public class Container implements AutoCloseable {
 
         // don't break apps using Velocity facade
         final VelocityEngine engine = new VelocityEngine();
-        engine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
         engine.setProperty(Velocity.RESOURCE_LOADER, "class");
         engine.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
         engine.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
