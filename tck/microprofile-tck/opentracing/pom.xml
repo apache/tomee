@@ -85,14 +85,12 @@
     <dependency>
       <groupId>org.eclipse.microprofile.opentracing</groupId>
       <artifactId>microprofile-opentracing-api</artifactId>
-      <version>${microprofile.opentracing.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.opentracing</groupId>
       <artifactId>microprofile-opentracing-tck</artifactId>
-      <version>${microprofile.opentracing.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -121,14 +119,12 @@
     <dependency>
       <groupId>io.opentracing</groupId>
       <artifactId>opentracing-mock</artifactId>
-      <version>${opentracing.api}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.opentracing</groupId>
       <artifactId>opentracing-api</artifactId>
-      <version>${opentracing.api}</version>
       <scope>provided</scope>
     </dependency>
 
