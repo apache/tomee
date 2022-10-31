@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-applicationcomposer-mockito</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.0.RC1</version>
+  <version>9.0.0-SNAPSHOT</version>
   <name>TomEE :: Examples :: REST, Mockito and Application Composer</name>
 
   <properties>
@@ -75,19 +75,19 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.0.0.RC1</version>
+      <version>9.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>9.0.0.RC1</version>
+      <version>9.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-mockito</artifactId>
-      <version>9.0.0.RC1</version>
+      <version>9.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -31,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>9.0.0.RC1</version>
+  <version>9.0.0-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -86,7 +86,7 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
     <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
-    <tag>tomee-project-9.0.0.RC1</tag>
+    <tag>tomee-project-9.0.0-M8</tag>
   </scm>
 
   <properties>
