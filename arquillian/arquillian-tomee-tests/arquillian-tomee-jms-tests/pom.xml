@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian-tomee-tests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-M9-SNAPSHOT</version>
+    <version>9.0.0.RC1</version>
   </parent>
 
   <artifactId>arquillian-tomee-jms-tests</artifactId>

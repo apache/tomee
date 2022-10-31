@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>cloud-tomee-azure</artifactId>
-  <version>9.0.0-M9-SNAPSHOT</version>
+  <version>9.0.0.RC1</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Azure deployment example</name>
   <properties>
