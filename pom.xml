@@ -240,7 +240,7 @@
 
     <microprofile.metrics.version>5.0.0-RC4</microprofile.metrics.version>
     <microprofile.metrics.tck.version>5.0.0-RC4</microprofile.metrics.tck.version>
-    <microprofile.metrics.impl.version>5.0.0-SNAPSHOT</microprofile.metrics.impl.version>
+    <microprofile.metrics.impl.version>5.0.0-M5</microprofile.metrics.impl.version>
 
     <microprofile.rest-client.version>3.0.1</microprofile.rest-client.version>
     <microprofile.rest-client.tck.version>3.0.1</microprofile.rest-client.tck.version>
