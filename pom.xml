@@ -195,9 +195,8 @@
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
 
-    <!-- Jackson required by OpenAPI Impl -->
-    <version.jackson>2.14.0-rc2</version.jackson>
-    <version.jackson.dataformat>2.14.0-rc2</version.jackson.dataformat>
+    <!-- Jackson and snakeyaml required by OpenAPI Impl -->
+    <version.jackson>2.14.0</version.jackson>
     <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- Jakarta EE API -->
@@ -2015,7 +2014,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-yaml</artifactId>
-        <version>${version.jackson.dataformat}</version>
+        <version>${version.jackson}</version>
         <exclusions>
           <exclusion>
             <groupId>org.yaml</groupId>
