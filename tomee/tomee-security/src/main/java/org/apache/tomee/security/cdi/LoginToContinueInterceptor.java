@@ -218,6 +218,10 @@ public class LoginToContinueInterceptor {
             return ((LoginToContinueMechanism) invocationContext.getTarget()).getLoginToContinue();
         }
 
-        throw new IllegalArgumentException();
+        if (invocationContext.getTarget().getClass().isAnnotationPresent(LoginToContinue.class)) {
+            return invocationContext.getTarget().getClass().getAnnotation(LoginToContinue.class);
+        }
+
+        throw new IllegalArgumentException("Missing @LoginToContinue on type " + invocationContext.getTarget().getClass());
     }
 }
