@@ -36,6 +36,8 @@ public class JWTAuthConfiguration {
     private final String headerScheme = "Bearer";
     private final boolean allowNoExpiryClaim;
     private final String cookieName;
+    private final Integer tokenAge;
+    private final Integer clockSkew;
 
     /**
      * mp.jwt.verify.publickey.algorithm
@@ -54,7 +56,7 @@ public class JWTAuthConfiguration {
      */
     private String decryptAlgorithm;
 
-    public JWTAuthConfiguration(final Supplier<Map<String, Key>> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Supplier<Map<String, Key>> decryptKeys, final String header, final String cookie, final String decryptAlgorithm, final String signatureAlgorithm) {
+    public JWTAuthConfiguration(final Supplier<Map<String, Key>> publicKeys, final String issuer, final boolean allowNoExpiryClaim, final String[] audiences, final Supplier<Map<String, Key>> decryptKeys, final String header, final String cookie, final String decryptAlgorithm, final String signatureAlgorithm, final Integer tokenAge, final Integer clockSkew) {
         this.publicKeys = publicKeys;
         this.decryptKeys = decryptKeys;
         this.issuer = issuer;
@@ -64,6 +66,8 @@ public class JWTAuthConfiguration {
         this.cookieName = cookie;
         this.decryptAlgorithm = decryptAlgorithm;
         this.signatureAlgorithm = signatureAlgorithm;
+        this.tokenAge = tokenAge;
+        this.clockSkew = clockSkew;
     }
 
     public String getCookieName() {
@@ -108,5 +112,13 @@ public class JWTAuthConfiguration {
 
     public String getDecryptAlgorithm() {
         return decryptAlgorithm;
+    }
+    
+    public Integer getTokenAge() {
+        return tokenAge;
+    }
+    
+    public Integer getClockSkew() {
+        return clockSkew;
     }
 }

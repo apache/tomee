@@ -1771,7 +1771,7 @@
     <dependency>
       <groupId>org.bitbucket.b_c</groupId>
       <artifactId>jose4j</artifactId>
-      <version>0.7.9</version>
+      <version>0.9.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1870,7 +1870,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>2.0</version>
+      <version>2.1-RC6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
