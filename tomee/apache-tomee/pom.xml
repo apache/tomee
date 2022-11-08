@@ -513,10 +513,10 @@
                       <format property="today" pattern="MMM d yyyy" locale="en" timezone="UTC" />
                       <format property="tstamp" pattern="HH:mm:ss" locale="en" timezone="UTC" />
                     </tstamp>
-                    <copy file="src/template/patch/java/org/apache/catalina/util/ServerInfo.properties" tofile="src/patch/java/org/apache/catalina/util/ServerInfo.properties" />
-                    <replace file="src/patch/java/org/apache/catalina/util/ServerInfo.properties" token="@TOMCAT-VERSION-REPLACED-BY-MAVEN@" value="${tomcat.version}" />
-                    <replace file="src/patch/java/org/apache/catalina/util/ServerInfo.properties" token="@TOMEE-VERSION-REPLACED-BY-MAVEN@" value="${tomee.version}" />
-                    <replace file="src/patch/java/org/apache/catalina/util/ServerInfo.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${today} ${tstamp} UTC" />
+                    <copy file="src/template/patch/java/org/apache/catalina/util/ServerInfo.properties" tofile="target/classes/ServerInfo.properties" />
+                    <replace file="target/classes/ServerInfo.properties" token="@TOMCAT-VERSION-REPLACED-BY-MAVEN@" value="${tomcat.version}" />
+                    <replace file="target/classes/ServerInfo.properties" token="@TOMEE-VERSION-REPLACED-BY-MAVEN@" value="${tomee.version}" />
+                    <replace file="target/classes/ServerInfo.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${today} ${tstamp} UTC" />
                   </target>
                 </configuration>
               </execution>
@@ -587,9 +587,11 @@
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
               <createTarGz>true</createTarGz>
-    <!--          <sourceExcludes>-->
-    <!--            <exclude>org/apache/cxf</exclude>-->
-    <!--          </sourceExcludes>-->
+              <replace>
+                <resources>
+                  <ServerInfo.properties>${project.build.outputDirectory}/ServerInfo.properties</ServerInfo.properties>
+                </resources>
+              </replace>
             </configuration>
             <executions>
               <execution>
@@ -816,9 +818,11 @@
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
               <createTarGz>true</createTarGz>
-    <!--          <sourceExcludes>-->
-    <!--            <exclude>org/apache/cxf</exclude>-->
-    <!--          </sourceExcludes>-->
+              <replace>
+                <resources>
+                  <ServerInfo.properties>${project.build.sourceDirectory}/ServerInfo.properties</ServerInfo.properties>
+                </resources>
+              </replace>
             </configuration>
             <executions>
               <execution>
