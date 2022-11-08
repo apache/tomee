@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>jpa-hibernate</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.0-M9-SNAPSHOT</version>
+  <version>9.0.0-SNAPSHOT</version>
   <name>TomEE :: Examples :: JPA with Hibernate</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -79,14 +79,14 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core-hibernate</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

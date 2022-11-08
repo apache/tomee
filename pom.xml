@@ -31,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>9.0.0-M9-SNAPSHOT</version>
+  <version>9.0.0-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -255,11 +255,8 @@
 
     <opentracing.api>0.33.0</opentracing.api>
 
-    <!-- Jackson required by OpenAPI Impl -->
-    <version.jackson>2.13.4</version.jackson>
-    <version.jackson.databind>2.13.4.2</version.jackson.databind>
-    <version.jackson.dataformat>2.13.4</version.jackson.dataformat>
-    <!-- required by Jackson dataformat yaml -->
+    <!-- Jackson and snakeyaml required by OpenAPI Impl -->
+    <version.jackson>2.14.0</version.jackson>
     <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- Javadoc & Asciidoclet -->
@@ -1934,13 +1931,13 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${version.jackson.databind}</version>
+        <version>${version.jackson}</version>
       </dependency>
       <!-- Jackson required by OpenAPI Impl -->
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-yaml</artifactId>
-        <version>${version.jackson.dataformat}</version>
+        <version>${version.jackson}</version>
         <exclusions>
           <exclusion>
             <groupId>org.yaml</groupId>

@@ -20,7 +20,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>bval-evaluation-redeployment</artifactId>
-  <version>9.0.0-M9-SNAPSHOT</version>
+  <version>9.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -81,7 +81,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
-        <version>9.0.0-M9-SNAPSHOT</version>
+        <version>9.0.0-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -99,13 +99,13 @@
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-webprofile</artifactId>
-        <version>9.0.0-M9-SNAPSHOT</version>
+        <version>9.0.0-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-webprofile-api</artifactId>
-        <version>9.0.0-M9-SNAPSHOT</version>
+        <version>9.0.0-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

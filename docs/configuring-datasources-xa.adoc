@@ -220,6 +220,7 @@ Please note that using XA with Microsoft SQL Server requires the MS DTC to be co
       TimeBetweenEvictionRuns 1 minute
       MaxWaitTime 0 seconds
       ValidationQuery select 1
+    </Resource>
 
     <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.mysql.cj.jdbc.MysqlXADataSource">
       Url jdbc:mysql://192.168.37.202:3306/movie
