@@ -92,7 +92,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-ehcache</artifactId>
-      <version>${version.hibernate}</version>
+      <version>${version.hibernate.orm}</version>
       <exclusions>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
@@ -103,7 +103,7 @@
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>${ehcache.version}</version>
+      <version>${version.ehcache}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
