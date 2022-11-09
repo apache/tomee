@@ -139,7 +139,6 @@
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
     <jetty.version>9.4.49.v20220914</jetty.version>
-    <ehcache.version>2.10.6</ehcache.version>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
@@ -194,36 +193,38 @@
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.14.0</version.jackson>
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <version.snakeyaml>1.33</version.snakeyaml>
 
     <!-- Jakarta EE API -->
-    <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
-    <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
+    <version.geronimo-activation_1.1_spec>1.1</version.geronimo-activation_1.1_spec>
+    <version.geronimo-javamail_1.6_spec>1.0.1</version.geronimo-javamail_1.6_spec>
 
     <!-- Jakarta EE Impl. -->
     <tomcat.version>9.0.68</tomcat.version>
     <!-- com.sun -->
-    <saaj-impl.version>1.5.1</saaj-impl.version>
+    <version.impl.saaj>1.5.1</version.impl.saaj>
     <!-- org.apache -->
-    <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
-    <batchee.version>1.0.2</batchee.version>
+    <version.activemq>5.16.5</version.activemq>
+    <version.batchee>1.0.2</version.batchee>
     <version.bval>2.0.5</version.bval>
-    <cxf.version>3.4.8</cxf.version>
+    <version.cxf>3.4.8</version.cxf>
     <version.geronimo.components>3.1.5</version.geronimo.components>
     <version.geronimo-javamail_1.6_mail>1.0.1</version.geronimo-javamail_1.6_mail>
     <version.johnzon>1.2.19</version.johnzon>
-    <myfaces.version>2.3.10</myfaces.version>
+    <version.myfaces>2.3.10</version.myfaces>
     <version.openjpa>3.2.2</version.openjpa>
-    <openwebbeans.version>2.0.27</openwebbeans.version>
+    <version.openwebbeans>2.0.27</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>2.7.11</version.eclipselink>
     <!-- org.glassfish -->
-    <mojarra.version>2.3.18</mojarra.version>
+    <version.mojarra>2.3.18</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate>5.6.12.Final</version.hibernate>
+    <version.hibernate.orm>5.6.12.Final</version.hibernate.orm>
     <version.hibernate.validator>6.2.5.Final</version.hibernate.validator>
 
-    <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
+    <!-- Other API and Impl. not in Jakarta EE -->
+    <version.ehcache>2.10.6</version.ehcache>
+    <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>1.1.1</version.krazo>
     <version.deltaspike>1.9.6</version.deltaspike>
 
@@ -1210,7 +1211,7 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-jdbc-store</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <version>${version.activemq}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.derby</groupId>
@@ -1221,7 +1222,7 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-ra</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <version>${version.activemq}</version>
         <exclusions>
           <exclusion>
             <groupId>org.springframework</groupId>
@@ -1277,7 +1278,7 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-broker</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <version>${version.activemq}</version>
         <exclusions>
           <exclusion>
             <groupId>org.fusesource.mqtt-client</groupId>
@@ -1482,7 +1483,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-javamail_1.6_spec</artifactId>
-        <version>${geronimo-javamail_1.6_spec.version}</version>
+        <version>${version.geronimo-javamail_1.6_spec}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.javamail</groupId>
@@ -1793,7 +1794,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
@@ -1804,12 +1805,12 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1832,7 +1833,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1851,7 +1852,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1882,7 +1883,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
@@ -1893,7 +1894,7 @@
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1971,7 +1972,7 @@
       <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache-core</artifactId>
-        <version>${ehcache.version}</version>
+        <version>${version.ehcache}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
@@ -2001,7 +2002,7 @@
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
-        <version>${version.hibernate}</version>
+        <version>${version.hibernate.orm}</version>
         <exclusions>
           <exclusion>
             <artifactId>jboss-logging</artifactId>
@@ -2078,7 +2079,7 @@
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>${snakeyaml.version}</version>
+        <version>${version.snakeyaml}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

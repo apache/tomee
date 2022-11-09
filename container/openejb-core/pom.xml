@@ -550,7 +550,7 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-activation_1.1_spec</artifactId>
-      <version>${geronimo-activation_1.1_spec.version}</version>
+      <version>${version.geronimo-activation_1.1_spec}</version>
       <scope>provided</scope>
     </dependency>
     <!-- JavaMail -->
@@ -702,7 +702,7 @@
     <dependency>
       <groupId>org.apache.batchee</groupId>
       <artifactId>batchee-jbatch</artifactId>
-      <version>${batchee.version}</version>
+      <version>${version.batchee}</version>
       <scope>provided</scope>
     </dependency>
 

@@ -111,7 +111,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
