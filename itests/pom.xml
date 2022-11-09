@@ -49,6 +49,7 @@
     <module>jaxrs</module>
     <module>itest-common</module>
     <module>itest-util</module>
+    <module>tomee-security-itests</module>
   </modules>
 
   <build>
