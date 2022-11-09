@@ -60,31 +60,32 @@ public class LoginToContinueTest {
     @Test
     public void testAnnotation() throws Exception {
         final File appJar = Archive.archive()
-                .add(this.getClass())
-                .add(ColorService.class)
-                .add(Api.class)
-                .add(LoginServlet.class)
-                .add(ErrorServlet.class)
-                .add(TestServlet.class)
-                .add(AuthMechanism.class)
-                .asJar();
+                                   .add(this.getClass())
+                                   .add(ColorService.class)
+                                   .add(Api.class)
+                                   .add(LoginServlet.class)
+                                   .add(FormLoginServlet.class)
+                                   .add(ErrorServlet.class)
+                                   .add(TestServlet.class)
+                                   .add(AuthMechanism.class)
+                                   .asJar();
 
         final ArrayList<String> output = new ArrayList<>();
         final TomEE tomee = TomEE.microprofile()
-                //.debug(5005, true)
-                .add("webapps/test/WEB-INF/beans.xml", "")
-                .add("webapps/test/WEB-INF/lib/app.jar", appJar)
-                .watch("org.apache.tomee.", "\n", output::add)
-                .update()
-                .build();
+                                 //.debug(5005, true)
+                                 .add("webapps/test/WEB-INF/beans.xml", "")
+                                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
+                                 .watch("org.apache.tomee.", "\n", output::add)
+                                 .update()
+                                 .build();
 
 
         { // do something
             final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
             final Response response = webClient.reset()
-                    .path("/colors")
-                    .header("Content-Type", "application/json")
-                    .get();
+                                               .path("/colors")
+                                               .header("Content-Type", "application/json")
+                                               .get();
             assertEquals(200, response.getStatus());
         }
 
@@ -112,6 +113,7 @@ public class LoginToContinueTest {
                                    .add(ColorService.class)
                                    .add(Api.class)
                                    .add(LoginServlet.class)
+                                   .add(FormLoginServlet.class)
                                    .add(ErrorServlet.class)
                                    .add(TestServlet.class)
                                    .add(AnotherAuthMechanism.class)
@@ -147,6 +149,56 @@ public class LoginToContinueTest {
 
             final HtmlForm login = page.getFormByName("login");
             login.getInputByName("token").setValueAttribute("1234ABCD");
+
+            final Page result = login.getInputByName("submit").click();
+            assertEquals(200, result.getWebResponse().getStatusCode());
+            assertEquals("ok!", result.getWebResponse().getContentAsString());
+        }
+    }
+
+    @Test
+    public void testFormDefinition() throws Exception {
+        final File appJar = Archive.archive()
+                                   .add(this.getClass())
+                                   .add(ColorService.class)
+                                   .add(Api.class)
+                                   .add(LoginServlet.class)
+                                   .add(FormLoginServlet.class)
+                                   .add(ErrorServlet.class)
+                                   .add(TestServlet.class)
+                                   .add(FormAuthConfig.class)
+                                   .asJar();
+
+        final ArrayList<String> output = new ArrayList<>();
+        final TomEE tomee = TomEE.microprofile()
+                                 //.debug(5005, true)
+                                 .add("webapps/test/WEB-INF/beans.xml", "")
+                                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
+                                 .watch("org.apache.tomee.", "\n", output::add)
+                                 .update()
+                                 .build();
+
+
+        { // do something
+            final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
+            final Response response = webClient.reset()
+                                               .path("/colors")
+                                               .header("Content-Type", "application/json")
+                                               .get();
+            assertEquals(200, response.getStatus());
+        }
+
+        // assert logs
+        assertNotPresent(output, "\tat org."); // no stack traces
+
+        {
+            final com.gargoylesoftware.htmlunit.WebClient webClient = new com.gargoylesoftware.htmlunit.WebClient();
+            final HtmlPage page = webClient.getPage(tomee.toURI().resolve("/test/auth-app").toURL());
+            assertEquals(200, page.getWebResponse().getStatusCode());
+
+            final HtmlForm login = page.getFormByName("login");
+            login.getInputByName("j_username").setValueAttribute("testuser");
+            login.getInputByName("j_password").setValueAttribute("1234ABCD");
 
             final Page result = login.getInputByName("submit").click();
             assertEquals(200, result.getWebResponse().getStatusCode());
@@ -208,6 +260,29 @@ public class LoginToContinueTest {
                 "  </form>" +
                 "</body>" +
                 "</html>";
+            resp.getWriter().write(loginPage);
+        }
+    }
+
+    @TomcatUserIdentityStoreDefinition
+    @WebServlet(urlPatterns = "/login-form-app")
+    public static class FormLoginServlet extends HttpServlet {
+        @Override
+        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
+            final String loginPage =
+                    "<html>" +
+                    "<body>" +
+                    "  <h1>Login Page</h1>" +
+                    "  <form name=\"login\" method=post action=\"j_security_check\">\n" +
+                    "    <p>Credentials:</p>" +
+                    "    <input type=\"text\" name=\"j_username\">\n" +
+                    "    <input type=\"password\" name=\"j_password\">\n" +
+                    "    <input type=\"submit\" name=\"submit\" value=\"Submit\">\n" +
+                    "    <input type=\"reset\" value=\"Reset\">" +
+                    "  </form>" +
+                    "</body>" +
+                    "</html>";
             resp.getWriter().write(loginPage);
         }
     }
