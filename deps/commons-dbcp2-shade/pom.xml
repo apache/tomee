@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-dbcp2</artifactId>
-      <version>${commons-dbcp.version}</version>
+      <version>${version.commons-dbcp2}</version>
     </dependency>
   </dependencies>
 

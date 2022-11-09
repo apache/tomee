@@ -49,6 +49,7 @@
     <module>jaxrs</module>
     <module>itest-common</module>
     <module>itest-util</module>
+    <module>tomee-security-itests</module>
   </modules>
 
   <build>
@@ -56,7 +57,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${javadoc.version}</version>
+        <version>${version.plugin.javadoc}</version>
         <configuration>
           <skip>true</skip>
         </configuration>

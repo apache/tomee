@@ -93,7 +93,6 @@
     <!-- allows release plugin to be overridden -->
     <arguments />
     <tomee.version>${project.version}</tomee.version>
-    <surefire.version>3.0.0-M7</surefire.version>
 
     <!-- for the default name of the module. Needs to be overridden -->
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
@@ -102,28 +101,16 @@
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
 
-    <!--
-      JavaMail is both API and IMPL so we don't have them in the jakartaee-api uber jar.
-      We decided to add them here in the project so we can patch/update the 2 libraries without having
-      to update and release the jakartaee-api.jar. Different lifecycle.
-    -->
-    <geronimo-mail_2.1_spec.version>1.0.0-M1</geronimo-mail_2.1_spec.version>
-    <geronimo-mail_2.1_provider.version>1.0.0</geronimo-mail_2.1_provider.version>
+    <!-- Project encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <!-- Not yet included in EE APIs -->
-    <!-- todo needs to be updated at some point -->
-    <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
-
-    <openwebbeans.version>2.0.27</openwebbeans.version>
-    <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.19</johnzon.version>
-    <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
-
-    <!-- Maven module versions -->
-    <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
-
-    <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.22</xbeanVersion>
+    <!-- Plugins and Build -->
+    <maven.version>3.0.5</maven.version>
+    <version.plugin.bundle>3.3.0</version.plugin.bundle>
+    <version.plugin.javadoc>3.3.2</version.plugin.javadoc>
+    <asciidoclet.version>1.5.0</asciidoclet.version>
+    <surefire.version>3.0.0-M7</surefire.version>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
@@ -139,133 +126,134 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>1.0.2</batchee.version>
-
+    <!-- arquillian related -->
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
+    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <version.arquillian-protocol-servlet-jakarta>1.7.0.Alpha10</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
+    <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>10.0.27</tomcat.version>
-
-    <cxf.version>3.5.0</cxf.version>
-    <ehcache.version>3.10.0</ehcache.version>
-    <wss4j.version>2.4.1</wss4j.version>
-    <!-- used by cxf for security (replay attack) -->
+    <version.quartz-openejb-shade>2.2.4</version.quartz-openejb-shade>
+    <version.axiom>1.3.0</version.axiom>
+    <xbeanVersion>4.22</xbeanVersion>
+    <version.groovy>2.4.12</version.groovy>
+    <version.ecj>4.6.1</version.ecj>
     <jetty.version>11.0.8</jetty.version>
-    <pax-url.version>1.3.5</pax-url.version>
-    <aether.version>1.13.1</aether.version>
-    <maven.version>3.0.5</maven.version>
-    <wagon.version>2.2</wagon.version>
-    <plexus.version>1.5.5</plexus.version>
-    <plexus-utils.version>3.0.10</plexus-utils.version>
-
-    <!--
-      Old CXF versions were only compatible with 1.3.x. But JDK 9+ requires 1.4.x and higher
-      We used to have some weird exclusions to not run test, but we should try to upgrade to 1.4.x anyway
-    -->
-    <saaj-impl.version>2.0.1</saaj-impl.version>
-
-    <!--
-    - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
-    -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <!-- Apache Commons -->
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-cli.version>1.5.0</commons-cli.version>
-    <commons-logging.version>1.2</commons-logging.version>
-    <commons-logging-api.version>1.1</commons-logging-api.version>
-    <commons-dbcp.version>2.9.0</commons-dbcp.version>
-    <commons-pool.version>2.11.1</commons-pool.version>
-    <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-codec.version>1.15</commons-codec.version>
-    <commons-fileupload.version>1.4</commons-fileupload.version>
-    <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang3.version>3.12.0</commons-lang3.version>
-    <commons-io.version>2.11.0</commons-io.version>
-    <commons-net.version>3.8.0</commons-net.version>
-
-    <bval.version>2.0.6</bval.version>
-    <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
+    <ehcache.version>3.10.0</ehcache.version>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
-    <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <scannotation.version>1.0.2</scannotation.version>
-    <geronimo.connector.version>3.1.5</geronimo.connector.version>
-    <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <myfaces.version>3.0.2</myfaces.version>
-    <mojarra.version>3.0.2</mojarra.version>
+    <version.osgi.framework>4.2.0</version.osgi.framework>
+    <aether.version>1.13.1</aether.version>
+    <version.xalan>2.7.2</version.xalan>
+
+    <!-- Logging frameworks -->
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.19.0</log4j2.version>
-    <osgi.framework.version>4.2.0</osgi.framework.version>
-    <version.axiom>1.3.0</version.axiom>
-    <version.xalan>2.7.2</version.xalan>
-    <version.groovy>2.4.12</version.groovy>
-    <version.ecj>4.6.1</version.ecj>
+    <commons-logging.version>1.2</commons-logging.version>
+    <version.commons-logging-api>1.1</version.commons-logging-api>
 
-    <version.deltaspike>1.9.6</version.deltaspike>
-    <version.openjpa>3.2.2</version.openjpa>
-    <version.eclipselink>3.0.3</version.eclipselink>
-    <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
-    <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
-    <version.derby>10.14.2.0</version.derby>
-    <version.hsqldb>2.7.1</version.hsqldb>
+    <!-- Apache Commons -->
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <version.commons-cli>1.5.0</version.commons-cli>
+    <commons-codec.version>1.15</commons-codec.version>
+    <version.commons-collections>3.2.2</version.commons-collections>
+    <version.commons-dbcp2>2.9.0</version.commons-dbcp2>
+    <version.commons-discovery>0.5</version.commons-discovery>
+    <version.commons-fileupload>1.4</version.commons-fileupload>
+    <commons-io.version>2.11.0</commons-io.version>
+    <jcs.version>2.1</jcs.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <version.commons-net>3.8.0</version.commons-net>
+    <commons-pool.version>2.11.1</commons-pool.version>
 
-    <!-- arquillian related -->
-    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
+    <!-- Java SE version -->
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.release>11</maven.compiler.release>
 
-    <!-- Micro Profile -->
+    <!-- Micro Profile API -->
     <microprofile.version>5.0</microprofile.version>
-
     <microprofile.config.version>3.0.2</microprofile.config.version>
     <microprofile.config.tck.version>3.0.2</microprofile.config.tck.version>
-    <microprofile.config.impl.version>3.0.0</microprofile.config.impl.version>
-
-    <microprofile.jwt.version>2.1-RC6</microprofile.jwt.version>
-    <microprofile.jwt.tck.version>2.1-RC6</microprofile.jwt.tck.version>
-    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
-
     <microprofile.fault-tolerance.version>4.0.2</microprofile.fault-tolerance.version>
     <microprofile.fault-tolerance.tck.version>4.0.2</microprofile.fault-tolerance.tck.version>
-    <microprofile.fault-tolerance.impl.version>6.0.0</microprofile.fault-tolerance.impl.version>
-
     <microprofile.health.version>4.0.1</microprofile.health.version>
     <microprofile.health.tck.version>4.0.1</microprofile.health.tck.version>
-    <microprofile.health.impl.version>4.0.0</microprofile.health.impl.version>
-
+    <microprofile.jwt.version>2.1-RC6</microprofile.jwt.version>
+    <microprofile.jwt.tck.version>2.1-RC6</microprofile.jwt.tck.version>
     <microprofile.metrics.version>4.0.1</microprofile.metrics.version>
     <microprofile.metrics.tck.version>4.0.1</microprofile.metrics.tck.version>
-    <microprofile.metrics.impl.version>4.0.0</microprofile.metrics.impl.version>
-
-    <microprofile.rest-client.version>3.0.1</microprofile.rest-client.version>
-    <microprofile.rest-client.tck.version>3.0.1</microprofile.rest-client.tck.version>
-    <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
-
     <microprofile.openapi.version>3.0</microprofile.openapi.version>
     <microprofile.openapi.tck.version>3.0</microprofile.openapi.tck.version>
-    <microprofile.openapi.impl.version>3.0.0</microprofile.openapi.impl.version>
-
     <microprofile.opentracing.version>3.0</microprofile.opentracing.version>
     <microprofile.opentracing.tck.version>3.0</microprofile.opentracing.tck.version>
-    <microprofile.opentracing.impl.version>3.0.0</microprofile.opentracing.impl.version>
+    <microprofile.rest-client.version>3.0.1</microprofile.rest-client.version>
+    <microprofile.rest-client.tck.version>3.0.1</microprofile.rest-client.tck.version>
 
     <opentracing.api>0.33.0</opentracing.api>
+
+    <!-- Micro Profile Impl. -->
+    <microprofile.config.impl.version>3.0.0</microprofile.config.impl.version>
+    <microprofile.fault-tolerance.impl.version>6.0.0</microprofile.fault-tolerance.impl.version>
+    <microprofile.health.impl.version>4.0.0</microprofile.health.impl.version>
+    <microprofile.metrics.impl.version>4.0.0</microprofile.metrics.impl.version>
+    <microprofile.openapi.impl.version>3.0.0</microprofile.openapi.impl.version>
+    <microprofile.opentracing.impl.version>3.0.0</microprofile.opentracing.impl.version>
+
+    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
+    <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.14.0</version.jackson>
     <snakeyaml.version>1.33</snakeyaml.version>
 
-    <!-- Javadoc & Asciidoclet -->
-    <javadoc.version>3.3.2</javadoc.version>
-    <asciidoclet.version>1.5.0</asciidoclet.version>
+    <!-- Jakarta EE API -->
+    <!-- we currently rely on Mail API from Geronimo, this might change in the future -->
+    <geronimo-mail_2.1_spec.version>1.0.0-M1</geronimo-mail_2.1_spec.version>
 
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.compiler.release>11</maven.compiler.release>
+    <!-- Jakarta EE Impl. -->
+    <tomcat.version>10.0.27</tomcat.version>
+    <!-- com.sun -->
+    <saaj-impl.version>2.0.1</saaj-impl.version>
+    <!-- org.apache -->
+    <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
+    <batchee.version>1.0.2</batchee.version>
+    <version.bval>2.0.6</version.bval>
+    <cxf.version>3.5.0</cxf.version>
+    <version.geronimo.components>3.1.5</version.geronimo.components>
+    <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
+    <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
+    <version.johnzon>1.2.19</version.johnzon>
+    <myfaces.version>3.0.2</myfaces.version>
+    <version.openjpa>3.2.2</version.openjpa>
+    <openwebbeans.version>2.0.27</openwebbeans.version>
+    <wss4j.version>2.4.1</wss4j.version>
+    <!-- org.eclipse -->
+    <version.eclipselink>3.0.3</version.eclipselink>
+    <!-- org.glassfish -->
+    <mojarra.version>3.0.2</mojarra.version>
+    <!-- org.hibernate -->
+    <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
+    <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
+
+    <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
+    <version.krazo>2.0.2</version.krazo>
+    <version.deltaspike>1.9.6</version.deltaspike>
+
+    <!-- JDBC Drivers -->
+    <version.derby>10.14.2.0</version.derby>
+    <version.hsqldb>2.7.1</version.hsqldb>
+
+    <!-- unused properties -->
+    <geronimo-osgi.version>1.1</geronimo-osgi.version>
+    <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
+    <pax-url.version>1.3.5</pax-url.version>
+    <plexus.version>1.5.5</plexus.version>
+    <plexus-utils.version>3.0.10</plexus-utils.version>
+    <scannotation.version>1.0.2</scannotation.version>
+    <wagon.version>2.2</wagon.version>
 
   </properties>
 
@@ -287,7 +275,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>${maven-bundle-plugin.version}</version>
+          <version>${version.plugin.bundle}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -489,7 +477,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${javadoc.version}</version>
+        <version>${version.plugin.javadoc}</version>
         <configuration>
           <source>8</source>
           <release>8</release>
@@ -963,7 +951,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${javadoc.version}</version>
+            <version>${version.plugin.javadoc}</version>
             <configuration>
               <doclet>org.asciidoctor.Asciidoclet</doclet>
               <docletArtifact>
@@ -1141,17 +1129,17 @@
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
         <classifier>jakarta</classifier>
-        <version>${bval.version}</version>
+        <version>${version.bval}</version>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
         <artifactId>commons-cli</artifactId>
-        <version>${commons-cli.version}</version>
+        <version>${version.commons-cli}</version>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging-api</artifactId>
-        <version>${commons-logging-api.version}</version>
+        <version>${version.commons-logging-api}</version>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
@@ -1237,7 +1225,7 @@
       <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
-        <version>${commons-net.version}</version>
+        <version>${version.commons-net}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
@@ -1295,7 +1283,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
-        <version>${geronimo.connector.version}</version>
+        <version>${version.geronimo.components}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
@@ -1315,7 +1303,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
-        <version>${geronimo.connector.version}</version>
+        <version>${version.geronimo.components}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
@@ -1341,7 +1329,7 @@
       <dependency>
         <groupId>org.apache.geronimo.mail</groupId>
         <artifactId>geronimo-mail_2.1_provider</artifactId>
-        <version>${geronimo-mail_2.1_provider.version}</version>
+        <version>${version.geronimo-mail_2.1_provider}</version>
       </dependency>
       <dependency>
         <groupId>stax</groupId>
@@ -1469,7 +1457,7 @@
       <dependency>
         <groupId>org.apache.openejb.shade</groupId>
         <artifactId>quartz-openejb-shade</artifactId>
-        <version>${quartz-openejb-shade.version}</version>
+        <version>${version.quartz-openejb-shade}</version>
         <exclusions>
           <exclusion>
             <groupId>org.quartz-scheduler</groupId>
@@ -1496,12 +1484,12 @@
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>${osgi.framework.version}</version>
+        <version>${version.osgi.framework}</version>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
-        <version>${osgi.framework.version}</version>
+        <version>${version.osgi.framework}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.neethi</groupId>
@@ -1576,7 +1564,7 @@
       <dependency>
         <artifactId>commons-collections</artifactId>
         <groupId>commons-collections</groupId>
-        <version>${commons-collections.version}</version>
+        <version>${version.commons-collections}</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
@@ -1596,7 +1584,7 @@
       <dependency>
         <groupId>commons-discovery</groupId>
         <artifactId>commons-discovery</artifactId>
-        <version>${commons-discovery.version}</version>
+        <version>${version.commons-discovery}</version>
       </dependency>
 
       <dependency>
@@ -1735,7 +1723,7 @@
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-core</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
@@ -1747,7 +1735,7 @@
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-mapper</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
@@ -1759,7 +1747,7 @@
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jaxrs</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
@@ -1771,7 +1759,7 @@
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonb</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
@@ -1783,7 +1771,7 @@
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonp-strict</artifactId>
-        <version>${johnzon.version}</version>
+        <version>${version.johnzon}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
