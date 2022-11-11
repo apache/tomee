@@ -78,7 +78,7 @@
       <dependency>
         <groupId>org.sonatype.aether</groupId>
         <artifactId>aether-api</artifactId>
-        <version>${aether.version}</version>
+        <version>${version.aether}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>

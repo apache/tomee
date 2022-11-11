@@ -224,7 +224,7 @@
       <dependency>
         <artifactId>commons-beanutils</artifactId>
         <groupId>commons-beanutils</groupId>
-        <version>${commons-beanutils.version}</version>
+        <version>${version.commons-beanutils}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
