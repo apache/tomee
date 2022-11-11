@@ -340,7 +340,7 @@
               <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-asm9-shaded</artifactId>
-                <version>${xbeanVersion}</version>
+                <version>${version.xbean}</version>
               </dependency>
               <dependency>
                 <groupId>org.codehaus.groovy</groupId>
@@ -722,7 +722,7 @@
               <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-asm9-shaded</artifactId>
-                <version>${xbeanVersion}</version>
+                <version>${version.xbean}</version>
               </dependency>
               <dependency>
                 <groupId>org.codehaus.groovy</groupId>

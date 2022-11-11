@@ -39,7 +39,7 @@
     <dependency><!-- needed by myfaces -->
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>${commons-beanutils.version}</version>
+      <version>${version.commons-beanutils}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -365,7 +365,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
-      <version>${jcs.version}</version>
+      <version>${version.commons-jcs-cache}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
