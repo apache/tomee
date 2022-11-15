@@ -230,6 +230,7 @@
     <version.openjpa>3.2.2</version.openjpa>
     <openwebbeans.version>2.0.27</openwebbeans.version>
     <wss4j.version>3.0.0</wss4j.version>
+    <santuario-xmlsec.version>3.0.1</santuario-xmlsec.version>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
@@ -1441,7 +1442,7 @@
       <dependency>
         <artifactId>xmlsec</artifactId>
         <groupId>org.apache.santuario</groupId>
-        <version>2.2.3</version>
+        <version>${santuario-xmlsec.version}</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>

@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>3.0.1</version>
+      <version>${santuario-xmlsec.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.woodstox</groupId>
@@ -124,7 +124,7 @@
     <!-- Override the bcprov from the previous artifact -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
+      <artifactId>bcprov-jdk15to18</artifactId>
       <version>1.70</version>
     </dependency>
     <dependency>
