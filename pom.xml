@@ -229,7 +229,7 @@
     <myfaces.version>3.0.2</myfaces.version>
     <version.openjpa>3.2.2</version.openjpa>
     <openwebbeans.version>2.0.27</openwebbeans.version>
-    <wss4j.version>2.4.1</wss4j.version>
+    <wss4j.version>3.0.0</wss4j.version>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
@@ -1018,6 +1018,16 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </repository>
+
+    <!-- transitive dependency from WSS4J -->
+    <repository>
+      <id>B_shibboleth</id>
+      <name>OpenSAML</name>
+      <url>https://build.shibboleth.net/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
   </repositories>
   <pluginRepositories>
