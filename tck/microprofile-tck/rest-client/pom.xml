@@ -125,7 +125,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -138,7 +137,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-tck</artifactId>
-      <version>${microprofile.rest-client.tck.version}</version>
       <scope>test</scope>
     </dependency>
 
