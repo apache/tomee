@@ -24,7 +24,7 @@
   <name>TomEE :: Examples :: Microprofile Metrics Timed</name>
   <properties>
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <microprofile.metrics.version>3.0.1</microprofile.metrics.version>
+    <version.microprofile.metrics>3.0.1</version.microprofile.metrics>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
     <tomee.version>9.0.1-SNAPSHOT</tomee.version>
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <version>${version.microprofile.metrics}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
