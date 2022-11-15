@@ -53,7 +53,7 @@ public abstract class ServerBuilder<T extends ServerBuilder<T>> {
 
     protected final File archive;
     protected FileFilter filter = pathname -> true;
-    protected Duration await = new Duration("1 minute");
+    protected Duration await = new Duration("3 minutes");
     protected boolean list = false;
     protected boolean debug = false;
     protected final ArrayList<Consumer<File>> homeConsumers = new ArrayList<>();
