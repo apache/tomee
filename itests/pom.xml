@@ -48,6 +48,7 @@
     <module>openejb-itests-web</module>
     <module>jaxrs</module>
     <module>ejb</module>
+    <module>tomee-security-itests</module>
   </modules>
 
 </project>

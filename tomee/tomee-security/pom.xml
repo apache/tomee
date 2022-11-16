@@ -34,7 +34,7 @@
 
   <properties>
     <!-- Reset Jetty Version to not clash with HtmlUnit -->
-    <jetty.version />
+    <version.jetty />
   </properties>
 
   <dependencies>

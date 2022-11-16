@@ -26,10 +26,9 @@
     <version>8.0.14-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.tomee.itests</groupId>
-  <artifactId>ejb</artifactId>
+  <artifactId>tomee-security-itests</artifactId>
   <packaging>jar</packaging>
-  <name>TomEE :: iTests :: EJB</name>
+  <name>TomEE :: iTests :: TomEE Security</name>
 
   <build>
     <plugins>
@@ -40,6 +39,10 @@
           <systemPropertyVariables>
             <version>${project.version}</version>
           </systemPropertyVariables>
+          <!--
+          <reuseForks>true</reuseForks>
+          <forkCount>1C</forkCount>
+          -->
         </configuration>
       </plugin>
     </plugins>
@@ -65,26 +68,32 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee.bom</groupId>
-      <artifactId>tomee-webprofile-api</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0-6</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-client</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
+      <artifactId>openejb-cxf-rs</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
-      <version>${version.activemq}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>tomee-security</artifactId>
+      <version>8.0.14-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>2.33</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

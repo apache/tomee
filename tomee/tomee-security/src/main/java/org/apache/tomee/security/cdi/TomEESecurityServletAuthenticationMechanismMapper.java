@@ -74,7 +74,7 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
 
         final Set<HttpAuthenticationMechanism> availableBeans = authenticationMechanisms.stream().collect(Collectors.toSet());
         availableBeans.removeAll(servletAuthenticationMapper.values());
-        availableBeans.remove(defaultAuthenticationMechanism); // this our wrapper
+        availableBeans.remove(defaultAuthenticationMechanism); // this is our wrapper
 
         if (availableBeans.size() == 1) {
             defaultAuthenticationMechanism.setDelegate(availableBeans.iterator().next());
@@ -89,7 +89,7 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
                     "Deploy a single one for the application, or associate it with a @WebServlet.");
 
         } else if (servletAuthenticationMapper.size() == 1) {
-            // don't think it's covered by the spec but sotera seems to support such a case
+            // don't think it's covered by the spec but soteria seems to support such a case
             defaultAuthenticationMechanism.setDelegate(servletAuthenticationMapper.values().iterator().next());
 
         }

@@ -224,7 +224,7 @@
       <dependency>
         <artifactId>commons-beanutils</artifactId>
         <groupId>commons-beanutils</groupId>
-        <version>${commons-beanutils.version}</version>
+        <version>${version.commons-beanutils}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -285,12 +285,12 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-api</artifactId>
-        <version>${myfaces.version}</version>
+        <version>${version.myfaces}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -305,7 +305,7 @@
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-impl</artifactId>
-        <version>${myfaces.version}</version>
+        <version>${version.myfaces}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -385,7 +385,7 @@
       <dependency>
         <groupId>org.glassfish</groupId>
         <artifactId>jakarta.faces</artifactId>
-        <version>${mojarra.version}</version>
+        <version>${version.mojarra}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
