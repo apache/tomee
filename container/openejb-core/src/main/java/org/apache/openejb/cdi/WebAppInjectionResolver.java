@@ -114,6 +114,7 @@ public class WebAppInjectionResolver extends InjectionResolver {
 
     @Override
     public void setStartup(boolean startup) {
+        this.startup = startup;
         super.setStartup(startup);
     }
 
@@ -121,5 +122,9 @@ public class WebAppInjectionResolver extends InjectionResolver {
     public void clearCaches() {
         super.clearCaches();
         this.resolutionFailures.clear();
+    }
+
+    public int getCacheSize() {
+        return this.resolutionFailures.size();
     }
 }
