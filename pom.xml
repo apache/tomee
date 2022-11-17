@@ -238,8 +238,8 @@
     <microprofile.health.tck.version>4.0.1</microprofile.health.tck.version>
     <microprofile.health.impl.version>4.0.0</microprofile.health.impl.version>
 
-    <microprofile.metrics.version>5.0.0-RC4</microprofile.metrics.version>
-    <microprofile.metrics.tck.version>5.0.0-RC4</microprofile.metrics.tck.version>
+    <microprofile.metrics.version>5.0.0</microprofile.metrics.version>
+    <microprofile.metrics.tck.version>5.0.0</microprofile.metrics.tck.version>
     <microprofile.metrics.impl.version>5.0.0-M5</microprofile.metrics.impl.version>
 
     <microprofile.rest-client.version>3.0.1</microprofile.rest-client.version>
