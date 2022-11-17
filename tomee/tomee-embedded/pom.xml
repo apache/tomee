@@ -24,14 +24,14 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-M9-SNAPSHOT</version>
+    <version>9.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-embedded</artifactId>
   <packaging>jar</packaging>
   <name>TomEE :: TomEE :: TomEE Embedded</name>
-  <version>9.0.0-M9-SNAPSHOT</version>
+  <version>9.0.0-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -48,7 +48,7 @@
               https://github.com/apache/tomcat/blob/main/java/org/apache/tomcat/util/scan/StandardJarScanner.java#L467
 
               We end up with things like
-              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/9.0.0-M9-SNAPSHOT/tomee-config-9.0.0-M9-SNAPSHOT.jar
+              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/9.0.0-SNAPSHOT/tomee-config-9.0.0-SNAPSHOT.jar
               <addClasspath>true</addClasspath>
               -->
             </manifest>
@@ -111,7 +111,7 @@
                   <exclude>org.jasypt:*</exclude>
                   <exclude>net.shibboleth.utilities:java-support</exclude>
                   <exclude>org.cryptacular:cryptacular</exclude>
-                  <exclude>org.bouncycastle:bcprov-jdk15on</exclude>
+                  <exclude>org.bouncycastle:bcprov-jdk15to18</exclude>
                   <exclude>org.apache.neethi:neethi</exclude>
                   <exclude>org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
                   <exclude>org.apache.cxf:cxf-rt-bindings-soap</exclude>
@@ -511,8 +511,8 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcmail-jdk15on</artifactId>
-      <version>1.60</version>
+      <artifactId>bcmail-jdk15to18</artifactId>
+      <version>1.70</version>
       <scope>test</scope>
     </dependency>
 

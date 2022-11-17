@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>9.0.0-M9-SNAPSHOT</version>
+    <version>9.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -43,12 +43,12 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.13.4</version>
+      <version>2.14.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.13.4</version>
+      <version>2.14.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.13.4.2</version>
+      <version>2.14.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.13.4</version>
+      <version>2.14.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
       <artifactId>woodstox-core</artifactId>
-      <version>5.2.1</version>
+      <version>6.4.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -574,31 +574,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>jakarta.xml.ws</groupId>
-      <artifactId>jakarta.xml.ws-api</artifactId>
-      <version>2.3.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.10.10</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>net.shibboleth.utilities</groupId>
       <artifactId>java-support</artifactId>
-      <version>7.5.2</version>
+      <version>8.3.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -912,7 +890,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>2.2.3</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1154,7 +1132,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>commons-dbcp2-shade</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1165,7 +1143,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>cxf-rt-rs-mp-client-shade</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1176,7 +1154,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>cxf-shade</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1418,7 +1396,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>sxc-shade</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1429,7 +1407,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>9.0.0-M9-SNAPSHOT</version>
+      <version>9.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1583,7 +1561,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-bindings</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1594,7 +1572,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1605,7 +1583,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-common</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1616,7 +1594,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1627,7 +1605,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1638,7 +1616,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>2.3.3</version>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1758,7 +1736,51 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <version>1.70</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.70</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15to18</artifactId>
+      <version>1.70</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk18on</artifactId>
+      <version>1.71</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcutil-jdk15on</artifactId>
       <version>1.70</version>
       <exclusions>
         <exclusion>
@@ -1792,7 +1814,7 @@
     <dependency>
       <groupId>org.cryptacular</groupId>
       <artifactId>cryptacular</artifactId>
-      <version>1.2.4</version>
+      <version>1.2.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1858,7 +1880,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>5.0.0-RC4</version>
+      <version>5.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2023,7 +2045,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-core</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2034,7 +2056,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-profile-api</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2045,7 +2067,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-api</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2056,7 +2078,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-impl</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2067,7 +2089,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-security-api</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2078,7 +2100,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-security-impl</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2089,7 +2111,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-soap-api</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2100,7 +2122,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-api</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2111,7 +2133,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-impl</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2122,7 +2144,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-saml-api</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2133,7 +2155,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-saml-impl</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2144,7 +2166,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xmlsec-api</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2155,7 +2177,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xmlsec-impl</artifactId>
-      <version>3.4.6</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
