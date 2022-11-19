@@ -117,6 +117,7 @@
       <artifactId>cxf-rt-transports-http</artifactId>
       <version>${cxf.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
@@ -126,6 +127,12 @@
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
           <artifactId>jaxb-runtime</artifactId>
+        </exclusion>
+
+        <!-- we need this so it compiles the patch for the interceptor -->
+        <exclusion>
+          <groupId>org.apache.wss4j</groupId>
+          <artifactId>wss4j-ws-security-dom</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -144,7 +151,7 @@
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
       <artifactId>woodstox-core</artifactId>
-      <version>6.2.8</version>
+      <version>6.4.0</version>
     </dependency>
     <dependency>
       <groupId>wsdl4j</groupId>
@@ -368,6 +375,10 @@
             <dependency>org.springframework:spring-context:jar:5.3.6</dependency>
             <dependency>org.springframework:spring-core:jar:5.3.6</dependency>
             <dependency>org.springframework:spring-webmvc:jar:5.3.6</dependency>
+
+            <!-- We patch the interceptor so it's compliant with WSS4J 3.0.0 which is picked up in openejb-cxf -->
+            <!-- adding here because we don't want to shade it in cxf-shade jar -->
+            <dependency>org.apache.wss4j:wss4j-ws-security-dom:jar:3.0.0</dependency>
           </dependencies>
         </configuration>
         <executions>

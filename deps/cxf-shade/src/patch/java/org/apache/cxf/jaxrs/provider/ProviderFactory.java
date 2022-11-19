@@ -40,7 +40,9 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import jakarta.annotation.Priority;
+import jakarta.ws.rs.ConstrainedTo;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.MediaType;
@@ -248,7 +250,7 @@ public abstract class ProviderFactory {
                     return c.newInstance(bus);
                 }
             }
-            return cls.newInstance();
+            return cls.getDeclaredConstructor().newInstance();
         } catch (Throwable ex) {
             String message = "Problem with creating the default provider " + className;
             if (ex.getMessage() != null) {
@@ -641,13 +643,18 @@ public abstract class ProviderFactory {
     protected abstract void setProviders(boolean custom, boolean busGlobal, Object... providers);
 
     @SuppressWarnings("unchecked")
-    protected void setCommonProviders(List<ProviderInfo<? extends Object>> theProviders) {
+    protected void setCommonProviders(List<ProviderInfo<? extends Object>> theProviders, RuntimeType type) {
         List<ProviderInfo<ReaderInterceptor>> readInts =
             new LinkedList<>();
         List<ProviderInfo<WriterInterceptor>> writeInts =
             new LinkedList<>();
         for (ProviderInfo<? extends Object> provider : theProviders) {
             Class<?> providerCls = ClassHelper.getRealClass(bus, provider.getProvider());
+
+            // Check if provider is constrained to runtime type
+            if (!constrainedTo(providerCls, type)) {
+                continue;
+            }
 
             if (filterContractSupported(provider, providerCls, MessageBodyReader.class)) {
                 addProviderToList(messageReaders, provider);
@@ -680,7 +687,7 @@ public abstract class ProviderFactory {
         sortReaders();
         sortWriters();
         sortContextResolvers();
-        sortParamConverters();
+        sortParamConverterProviders();
 
         mapInterceptorFilters(readerInterceptors, readInts, ReaderInterceptor.class, true);
         mapInterceptorFilters(writerInterceptors, writeInts, WriterInterceptor.class, true);
@@ -762,6 +769,14 @@ public abstract class ProviderFactory {
         }
     }
 
+    private <T> void sortParamConverterProviders() {
+        if (!customComparatorAvailable(ParamConverterProvider.class)) {
+            paramConverters.sort(new ParamConverterProviderComparator(bus));
+        } else {
+            doCustomSort(paramConverters);
+        }
+    }
+
     private boolean customComparatorAvailable(Class<?> providerClass) {
         if (providerComparator != null) {
             Type type = ((ParameterizedType)providerComparator.getClass()
@@ -802,9 +817,7 @@ public abstract class ProviderFactory {
         contextResolvers.sort(new ContextResolverComparator());
     }
 
-    private void sortParamConverters() {
-        paramConverters.sort(new ParamConverterComparator());
-    }
+
 
 
 
@@ -874,11 +887,8 @@ public abstract class ProviderFactory {
         setProviders(true, false, userProviders.toArray());
     }
 
-    static class MessageBodyReaderComparator
+    private static class MessageBodyReaderComparator
         implements Comparator<ProviderInfo<MessageBodyReader<?>>> {
-
-        private final GenericArgumentComparator classComparator =
-                new GenericArgumentComparator(MessageBodyReader.class);
 
         public int compare(ProviderInfo<MessageBodyReader<?>> p1,
                            ProviderInfo<MessageBodyReader<?>> p2) {
@@ -894,10 +904,7 @@ public abstract class ProviderFactory {
             if (result != 0) {
                 return result;
             }
-
-            final Class<?> class1 = ClassHelper.getRealClass(e1);
-            final Class<?> class2 = ClassHelper.getRealClass(e2);
-            result = classComparator.compare(class1, class2);
+            result = compareClasses(e1, e2);
             if (result != 0) {
                 return result;
             }
@@ -905,30 +912,19 @@ public abstract class ProviderFactory {
             if (result != 0) {
                 return result;
             }
-
-            result = comparePriorityStatus(p1.getProvider().getClass(), p2.getProvider().getClass());
-            if (result != 0) {
-                return result;
-            }
-
-            return p1.getProvider().getClass().getName().compareTo(p2.getProvider().getClass().getName());
+            return comparePriorityStatus(p1.getProvider().getClass(), p2.getProvider().getClass());
         }
     }
 
-    static class MessageBodyWriterComparator
+    private static class MessageBodyWriterComparator
         implements Comparator<ProviderInfo<MessageBodyWriter<?>>> {
-
-        private final GenericArgumentComparator classComparator =
-                new GenericArgumentComparator(MessageBodyWriter.class);
 
         public int compare(ProviderInfo<MessageBodyWriter<?>> p1,
                            ProviderInfo<MessageBodyWriter<?>> p2) {
             MessageBodyWriter<?> e1 = p1.getProvider();
             MessageBodyWriter<?> e2 = p2.getProvider();
 
-            final Class<?> class1 = ClassHelper.getRealClass(e1);
-            final Class<?> class2 = ClassHelper.getRealClass(e2);
-            int result = classComparator.compare(class1, class2);
+            int result = compareClasses(e1, e2);
             if (result != 0) {
                 return result;
             }
@@ -947,12 +943,28 @@ public abstract class ProviderFactory {
                 return result;
             }
 
-            result = comparePriorityStatus(p1.getProvider().getClass(), p2.getProvider().getClass());
+            return comparePriorityStatus(p1.getProvider().getClass(), p2.getProvider().getClass());
+        }
+    }
+
+    private static class ParamConverterProviderComparator implements Comparator<ProviderInfo<ParamConverterProvider>> {
+        private final Bus bus;
+
+        ParamConverterProviderComparator(Bus bus) {
+            this.bus = bus;
+        }
+
+        @Override
+        public int compare(ProviderInfo<ParamConverterProvider> p1, ProviderInfo<ParamConverterProvider> p2) {
+            final int result = compareCustomStatus(p1, p2);
             if (result != 0) {
                 return result;
             }
 
-            return p1.getProvider().getClass().getName().compareTo(p2.getProvider().getClass().getName());
+            final Class<?> cl1 = ClassHelper.getRealClass(bus, p1.getProvider());
+            final Class<?> cl2 = ClassHelper.getRealClass(bus, p2.getProvider());
+
+            return comparePriorityStatus(cl1, cl2);
         }
     }
 
@@ -1524,6 +1536,7 @@ public abstract class ProviderFactory {
 
         sortReaders();
         sortWriters();
+        sortParamConverterProviders();
 
         NameKeyMap<ProviderInfo<ReaderInterceptor>> sortedReaderInterceptors =
             new NameKeyMap<>(
@@ -1538,56 +1551,15 @@ public abstract class ProviderFactory {
         writerInterceptors = sortedWriterInterceptors;
     }
 
-    protected static class ParamConverterComparator implements Comparator<ProviderInfo<ParamConverterProvider>> {
-
-        @Override
-        public int compare(final ProviderInfo<ParamConverterProvider> a,
-                           final ProviderInfo<ParamConverterProvider> b) {
-
-            /*
-             * Primary sort.  Also takes care of sorting custom
-             * converters from system converters due to priority
-             * defaults
-             */
-            int result = sortByPriority(a, b);
-
-            /*
-             * Secondary sort as this list *will* change order
-             * once in a while between jvm restarts, which can
-             * have frustrating consequences for users who are
-             * expecting no change in behavior as they aren't
-             * changing their code.
-             */
-            if (result == 0) {
-                result = sortByClassName(a, b);
-            }
-
-            return result;
-        }
-
-        public int sortByPriority(final ProviderInfo<ParamConverterProvider> a,
-                           final ProviderInfo<ParamConverterProvider> b) {
-            final int aPriority = getPriority(a);
-            final int bPriority = getPriority(b);
-
-            // Sort ascending as the priority with the lowest number wins
-            return Integer.compare(aPriority, bPriority);
-        }
-
-        public int sortByClassName(final ProviderInfo<ParamConverterProvider> a,
-                           final ProviderInfo<ParamConverterProvider> b) {
-
-            // Sort ascending as the priority with the lowest number wins
-            return a.getProvider().getClass().getName().compareTo(b.getProvider().getClass().getName());
-        }
-
-        private int getPriority(final ProviderInfo<ParamConverterProvider> providerInfo) {
-            final Priority priority = providerInfo.getProvider().getClass().getAnnotation(Priority.class);
-            if (priority!=null) {
-                return priority.value();
-            }
-            return providerInfo.isCustom() ? USER : USER + 1000;
-        }
+    /**
+     * Checks the presence of {@link ConstrainedTo} annotation and, if present, applicability to
+     * the runtime type.
+     * @param providerCls provider class
+     * @param type runtime type
+     * @return "true" if provider could be used with runtime type, "false" otherwise
+     */
+    protected static boolean constrainedTo(Class<?> providerCls, RuntimeType type) {
+        final ConstrainedTo constrained = AnnotationUtils.getClassAnnotation(providerCls, ConstrainedTo.class);
+        return constrained == null || constrained.value() == type;
     }
-
 }
