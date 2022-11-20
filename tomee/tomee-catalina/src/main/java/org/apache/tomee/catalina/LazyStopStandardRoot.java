@@ -338,6 +338,21 @@ public class LazyStopStandardRoot implements WebResourceRoot, JmxEnabled {
         delegate.stop();
     }
 
+    @Override
+    public String getArchiveIndexStrategy() {
+        return delegate.getArchiveIndexStrategy();
+    }
+
+    @Override
+    public void setArchiveIndexStrategy( String archiveIndexStrategy ) {
+        delegate.setArchiveIndexStrategy( archiveIndexStrategy );
+    }
+
+    @Override
+    public WebResourceRoot.ArchiveIndexStrategy getArchiveIndexStrategyEnum() {
+        return delegate.getArchiveIndexStrategyEnum();
+    }
+
     public WebResourceRoot getDelegate() {
         return delegate;
     }
