@@ -200,7 +200,7 @@
     <version.geronimo-javamail_1.6_spec>1.0.1</version.geronimo-javamail_1.6_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>9.0.68</tomcat.version>
+    <tomcat.version>9.0.69</tomcat.version>
     <!-- com.sun -->
     <version.impl.saaj>1.5.1</version.impl.saaj>
     <!-- org.apache -->
