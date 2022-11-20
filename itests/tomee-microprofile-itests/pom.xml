@@ -86,13 +86,13 @@
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>
-      <version>${microprofile.openapi.version}</version>
+      <version>${version.microprofile.openapi}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <version>${version.microprofile.metrics}</version>
       <scope>compile</scope>
     </dependency>
 
