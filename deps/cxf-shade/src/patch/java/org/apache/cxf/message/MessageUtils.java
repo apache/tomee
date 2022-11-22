@@ -76,7 +76,7 @@ public final class MessageUtils {
         return message != null
                && message.getExchange() != null
                && (message == message.getExchange().getInFaultMessage() || message == message.getExchange()
-                   .getOutFaultMessage());
+                                                                                             .getOutFaultMessage());
     }
 
     /**
@@ -249,7 +249,7 @@ public final class MessageUtils {
         }
         return Optional.ofNullable(method);
     }
-    
+
     /**
      * Gets the response code from the message and tries to deduct one if it 
      * is not set yet. 
@@ -288,7 +288,7 @@ public final class MessageUtils {
         // suppress additionally empty responses for decoupled twoway calls =>
         return (ow && !pr) || epr;
     }
-    
+
     /**
      * Checks if the message is oneway or not
      * @param message the message under consideration
