@@ -118,6 +118,16 @@
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
       <version>${wss4j.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.woodstox</groupId>
+          <artifactId>woodstox-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
