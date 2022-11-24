@@ -40,7 +40,9 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import jakarta.annotation.Priority;
+import jakarta.ws.rs.ConstrainedTo;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Configuration;
 import jakarta.ws.rs.core.MediaType;
@@ -248,7 +250,7 @@ public abstract class ProviderFactory {
                     return c.newInstance(bus);
                 }
             }
-            return cls.newInstance();
+            return cls.getDeclaredConstructor().newInstance();
         } catch (Throwable ex) {
             String message = "Problem with creating the default provider " + className;
             if (ex.getMessage() != null) {
@@ -278,7 +280,7 @@ public abstract class ProviderFactory {
             ctProperty = requestMessage.get(Message.CONTENT_TYPE);
         }
         MediaType mt = ctProperty != null ? JAXRSUtils.toMediaType(ctProperty.toString())
-            : MediaType.WILDCARD_TYPE;
+                                          : MediaType.WILDCARD_TYPE;
         return createContextResolver(contextType, m, mt);
 
     }
@@ -303,7 +305,7 @@ public abstract class ProviderFactory {
 
                         if (argCls != null && argCls.isAssignableFrom(contextCls)) {
                             List<MediaType> mTypes = JAXRSUtils.getProduceTypes(
-                                 cr.getProvider().getClass().getAnnotation(Produces.class));
+                                cr.getProvider().getClass().getAnnotation(Produces.class));
                             if (JAXRSUtils.doMimeTypesIntersect(mTypes, type)) {
                                 injectContextValues(cr, m);
                                 candidates.add((ContextResolver<T>)cr.getProvider());
@@ -439,17 +441,17 @@ public abstract class ProviderFactory {
 
 
     public <T> List<ReaderInterceptor> createMessageBodyReaderInterceptor(Class<T> bodyType,
-                                                            Type parameterType,
-                                                            Annotation[] parameterAnnotations,
-                                                            MediaType mediaType,
-                                                            Message m,
-                                                            boolean checkMbrNow,
-                                                            Set<String> names) {
+                                                                          Type parameterType,
+                                                                          Annotation[] parameterAnnotations,
+                                                                          MediaType mediaType,
+                                                                          Message m,
+                                                                          boolean checkMbrNow,
+                                                                          Set<String> names) {
         MessageBodyReader<T> mr = !checkMbrNow ? null : createMessageBodyReader(bodyType,
-                                                      parameterType,
-                                                      parameterAnnotations,
-                                                      mediaType,
-                                                      m);
+                                                                                parameterType,
+                                                                                parameterAnnotations,
+                                                                                mediaType,
+                                                                                m);
         int size = readerInterceptors.size();
         if (mr != null || size > 0) {
             ReaderInterceptor mbrReader = new ReaderInterceptorMBR(mr, getResponseMessage(m));
@@ -480,10 +482,10 @@ public abstract class ProviderFactory {
                                                                           Message m,
                                                                           Set<String> names) {
         MessageBodyWriter<T> mw = createMessageBodyWriter(bodyType,
-                                                      parameterType,
-                                                      parameterAnnotations,
-                                                      mediaType,
-                                                      m);
+                                                          parameterType,
+                                                          parameterAnnotations,
+                                                          mediaType,
+                                                          m);
         int size = writerInterceptors.size();
         if (mw != null || size > 0) {
 
@@ -641,13 +643,18 @@ public abstract class ProviderFactory {
     protected abstract void setProviders(boolean custom, boolean busGlobal, Object... providers);
 
     @SuppressWarnings("unchecked")
-    protected void setCommonProviders(List<ProviderInfo<? extends Object>> theProviders) {
+    protected void setCommonProviders(List<ProviderInfo<? extends Object>> theProviders, RuntimeType type) {
         List<ProviderInfo<ReaderInterceptor>> readInts =
             new LinkedList<>();
         List<ProviderInfo<WriterInterceptor>> writeInts =
             new LinkedList<>();
         for (ProviderInfo<? extends Object> provider : theProviders) {
             Class<?> providerCls = ClassHelper.getRealClass(bus, provider.getProvider());
+
+            // Check if provider is constrained to runtime type
+            if (!constrainedTo(providerCls, type)) {
+                continue;
+            }
 
             if (filterContractSupported(provider, providerCls, MessageBodyReader.class)) {
                 addProviderToList(messageReaders, provider);
@@ -680,13 +687,13 @@ public abstract class ProviderFactory {
         sortReaders();
         sortWriters();
         sortContextResolvers();
-        sortParamConverters();
+        sortParamConverterProviders();
 
         mapInterceptorFilters(readerInterceptors, readInts, ReaderInterceptor.class, true);
         mapInterceptorFilters(writerInterceptors, writeInts, WriterInterceptor.class, true);
 
         injectContextProxies(messageReaders, messageWriters, contextResolvers, paramConverters,
-            readerInterceptors.values(), writerInterceptors.values());
+                             readerInterceptors.values(), writerInterceptors.values());
         checkParamConverterContexts();
     }
 
@@ -762,10 +769,18 @@ public abstract class ProviderFactory {
         }
     }
 
+    private <T> void sortParamConverterProviders() {
+        if (!customComparatorAvailable(ParamConverterProvider.class)) {
+            paramConverters.sort(new ParamConverterProviderComparator(bus));
+        } else {
+            doCustomSort(paramConverters);
+        }
+    }
+
     private boolean customComparatorAvailable(Class<?> providerClass) {
         if (providerComparator != null) {
             Type type = ((ParameterizedType)providerComparator.getClass()
-                .getGenericInterfaces()[0]).getActualTypeArguments()[0];
+                                                              .getGenericInterfaces()[0]).getActualTypeArguments()[0];
             if (type instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType)type;
                 if (pt.getRawType() == ProviderInfo.class) {
@@ -788,7 +803,7 @@ public abstract class ProviderFactory {
     private <T> void doCustomSort(List<?> listOfProviders) {
         Comparator<?> theProviderComparator = providerComparator;
         Type type = ((ParameterizedType)providerComparator.getClass()
-            .getGenericInterfaces()[0]).getActualTypeArguments()[0];
+                                                          .getGenericInterfaces()[0]).getActualTypeArguments()[0];
         if (type == Object.class) {
             theProviderComparator =
                 new ProviderInfoClassComparator((Comparator<Object>)theProviderComparator);
@@ -802,9 +817,7 @@ public abstract class ProviderFactory {
         contextResolvers.sort(new ContextResolverComparator());
     }
 
-    private void sortParamConverters() {
-        paramConverters.sort(new ParamConverterComparator());
-    }
+
 
 
 
@@ -838,11 +851,11 @@ public abstract class ProviderFactory {
     }
 
     private boolean isWriteable(ProviderInfo<MessageBodyWriter<?>> pi,
-                               Class<?> type,
-                               Type genericType,
-                               Annotation[] annotations,
-                               MediaType mediaType,
-                               Message m) {
+                                Class<?> type,
+                                Type genericType,
+                                Annotation[] annotations,
+                                MediaType mediaType,
+                                Message m) {
         MessageBodyWriter<?> ep = pi.getProvider();
         if (m.get(ACTIVE_JAXRS_PROVIDER_KEY) != ep) {
             injectContextValues(pi, m);
@@ -874,11 +887,11 @@ public abstract class ProviderFactory {
         setProviders(true, false, userProviders.toArray());
     }
 
-    static class MessageBodyReaderComparator
+    private static class MessageBodyReaderComparator
         implements Comparator<ProviderInfo<MessageBodyReader<?>>> {
 
         private final GenericArgumentComparator classComparator =
-                new GenericArgumentComparator(MessageBodyReader.class);
+            new GenericArgumentComparator(MessageBodyReader.class);
 
         public int compare(ProviderInfo<MessageBodyReader<?>> p1,
                            ProviderInfo<MessageBodyReader<?>> p2) {
@@ -915,11 +928,11 @@ public abstract class ProviderFactory {
         }
     }
 
-    static class MessageBodyWriterComparator
+    private static class MessageBodyWriterComparator
         implements Comparator<ProviderInfo<MessageBodyWriter<?>>> {
 
         private final GenericArgumentComparator classComparator =
-                new GenericArgumentComparator(MessageBodyWriter.class);
+            new GenericArgumentComparator(MessageBodyWriter.class);
 
         public int compare(ProviderInfo<MessageBodyWriter<?>> p1,
                            ProviderInfo<MessageBodyWriter<?>> p2) {
@@ -956,6 +969,27 @@ public abstract class ProviderFactory {
         }
     }
 
+    private static class ParamConverterProviderComparator implements Comparator<ProviderInfo<ParamConverterProvider>> {
+        private final Bus bus;
+
+        ParamConverterProviderComparator(Bus bus) {
+            this.bus = bus;
+        }
+
+        @Override
+        public int compare(ProviderInfo<ParamConverterProvider> p1, ProviderInfo<ParamConverterProvider> p2) {
+            final int result = compareCustomStatus(p1, p2);
+            if (result != 0) {
+                return result;
+            }
+
+            final Class<?> cl1 = ClassHelper.getRealClass(bus, p1.getProvider());
+            final Class<?> cl2 = ClassHelper.getRealClass(bus, p2.getProvider());
+
+            return comparePriorityStatus(cl1, cl2);
+        }
+    }
+
     protected static int compareCustomStatus(ProviderInfo<?> p1, ProviderInfo<?> p2) {
         boolean custom1 = p1.isCustom();
         int result = Boolean.compare(p2.isCustom(), custom1);
@@ -979,10 +1013,10 @@ public abstract class ProviderFactory {
 
             List<MediaType> types1 =
                 JAXRSUtils.sortMediaTypes(JAXRSUtils.getProduceTypes(
-                     e1.getClass().getAnnotation(Produces.class)), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+                    e1.getClass().getAnnotation(Produces.class)), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
             List<MediaType> types2 =
                 JAXRSUtils.sortMediaTypes(JAXRSUtils.getProduceTypes(
-                     e2.getClass().getAnnotation(Produces.class)), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+                    e2.getClass().getAnnotation(Produces.class)), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
 
             return JAXRSUtils.compareSortedMediaTypes(types1, types2, JAXRSUtils.MEDIA_TYPE_QS_PARAM);
         }
@@ -1021,7 +1055,7 @@ public abstract class ProviderFactory {
     }
 
     private boolean injectProviderProperty(Object provider, String mName, Class<?> pClass,
-                                        Object pValue) {
+                                           Object pValue) {
         try {
             Method m = provider.getClass().getMethod(mName, new Class[]{pClass});
             m.invoke(provider, new Object[]{pValue});
@@ -1039,7 +1073,7 @@ public abstract class ProviderFactory {
     }
 
     protected static <T> List<ProviderInfo<T>> getBoundFilters(Map<NameKey, ProviderInfo<T>> boundFilters,
-                                                                          Set<String> names) {
+                                                               Set<String> names) {
         if (boundFilters.isEmpty()) {
             return Collections.emptyList();
         }
@@ -1091,7 +1125,7 @@ public abstract class ProviderFactory {
     }
 
     public static class ClassComparator implements
-        Comparator<Object> {
+                                        Comparator<Object> {
         private Class<?> expectedCls;
         public ClassComparator() {
         }
@@ -1265,10 +1299,10 @@ public abstract class ProviderFactory {
     }
 
     public static ProviderInfo<? extends Object> createProviderFromConstructor(Constructor<?> c,
-                                                                 Map<Class<?>, Object> values,
-                                                                 Bus theBus,
-                                                                 boolean checkContexts,
-                                                                 boolean custom) {
+                                                                               Map<Class<?>, Object> values,
+                                                                               Bus theBus,
+                                                                               boolean checkContexts,
+                                                                               boolean custom) {
 
 
         Map<Class<?>, Map<Class<?>, ThreadLocalProxy<?>>> proxiesMap =
@@ -1360,7 +1394,7 @@ public abstract class ProviderFactory {
             }
             NameKey other = (NameKey)o;
             return name.equals(other.name) && priority.equals(other.priority)
-                && providerCls == other.providerCls;
+                   && providerCls == other.providerCls;
         }
 
         public int hashCode() {
@@ -1407,7 +1441,7 @@ public abstract class ProviderFactory {
 
     protected static int getFilterPriority(ProviderInfo<?> p, Class<?> providerCls) {
         return p instanceof FilterProviderInfo ? ((FilterProviderInfo<?>)p).getPriority(providerCls)
-            : AnnotationUtils.getBindingPriority(p.getProvider().getClass());
+                                               : AnnotationUtils.getBindingPriority(p.getProvider().getClass());
     }
 
     protected static class NameKeyComparator extends AbstractPriorityComparator
@@ -1494,7 +1528,7 @@ public abstract class ProviderFactory {
             }
             if (provider instanceof Constructor) {
                 Map<Class<?>, Object> values = CastUtils.cast(application == null ? null
-                    : Collections.singletonMap(Application.class, application.getProvider()));
+                                                                                  : Collections.singletonMap(Application.class, application.getProvider()));
                 theProviders.add(
                     createProviderFromConstructor((Constructor<?>)provider, values, getBus(), true, custom));
             } else if (provider instanceof ProviderInfo) {
@@ -1566,7 +1600,7 @@ public abstract class ProviderFactory {
         }
 
         public int sortByPriority(final ProviderInfo<ParamConverterProvider> a,
-                           final ProviderInfo<ParamConverterProvider> b) {
+                                  final ProviderInfo<ParamConverterProvider> b) {
             final int aPriority = getPriority(a);
             final int bPriority = getPriority(b);
 
@@ -1575,7 +1609,7 @@ public abstract class ProviderFactory {
         }
 
         public int sortByClassName(final ProviderInfo<ParamConverterProvider> a,
-                           final ProviderInfo<ParamConverterProvider> b) {
+                                   final ProviderInfo<ParamConverterProvider> b) {
 
             // Sort ascending as the priority with the lowest number wins
             return a.getProvider().getClass().getName().compareTo(b.getProvider().getClass().getName());
@@ -1588,6 +1622,18 @@ public abstract class ProviderFactory {
             }
             return providerInfo.isCustom() ? USER : USER + 1000;
         }
+    }
+
+    /**
+     * Checks the presence of {@link ConstrainedTo} annotation and, if present, applicability to
+     * the runtime type.
+     * @param providerCls provider class
+     * @param type runtime type
+     * @return "true" if provider could be used with runtime type, "false" otherwise
+     */
+    protected static boolean constrainedTo(Class<?> providerCls, RuntimeType type) {
+        final ConstrainedTo constrained = AnnotationUtils.getClassAnnotation(providerCls, ConstrainedTo.class);
+        return constrained == null || constrained.value() == type;
     }
 
 }

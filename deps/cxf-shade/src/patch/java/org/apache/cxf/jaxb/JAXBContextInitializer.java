@@ -316,8 +316,7 @@ class JAXBContextInitializer extends ServiceModelVisitor {
             }
             addClass(String.class);
         } else if (claz.getName().startsWith("java.")
-            || claz.getName().startsWith("javax.")
-            || claz.getName().startsWith("jakarta.")) {
+            || claz.getName().startsWith("jakarta.") || claz.getName().startsWith("javax.")) {
             return;
         } else {
             Class<?> cls = JAXBUtils.getValidClass(claz);
@@ -376,8 +375,7 @@ class JAXBContextInitializer extends ServiceModelVisitor {
             return;
         }
         if (cls.getName().startsWith("java.")
-            || cls.getName().startsWith("javax.")
-            || cls.getName().startsWith("jakarta.")) {
+            || cls.getName().startsWith("jakarta.") || cls.getName().startsWith("javax.")) {
             return;
         }
         //walk the public fields/methods to try and find all the classes. JAXB will only load the
@@ -560,7 +558,7 @@ class JAXBContextInitializer extends ServiceModelVisitor {
 
         Class<?> factoryClass = creator.createFactory(cls);
         try {
-            return factoryClass.newInstance();
+            return factoryClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
            //ignore
         }
