@@ -133,6 +133,11 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
         FilteredIndexView filteredIndexView = new FilteredIndexView(null, config);
         Indexer indexer = new Indexer();
 
+        // when there is no JAX RS classes found
+        if (classes == null) {
+            return indexer.complete();
+        }
+
         // todo load all classes and build up an index with the content
         for (Class clazz : classes) {
             try {
