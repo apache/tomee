@@ -30,5 +30,6 @@
   <modules>
     <module>taglibs-shade</module>
     <module>cxf-shade</module>
+    <module>servicemix-bcel-shade</module>
   </modules>
 </project>
