@@ -26,18 +26,16 @@ import io.smallrye.openapi.runtime.OpenApiProcessor;
 import io.smallrye.openapi.runtime.OpenApiStaticFile;
 import io.smallrye.openapi.runtime.io.Format;
 import io.smallrye.openapi.runtime.scanner.FilteredIndexView;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
-import jakarta.servlet.annotation.HandlesTypes;
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.Path;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
-import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.openapi.models.OpenAPI;
 import org.jboss.jandex.DotName;
@@ -45,10 +43,7 @@ import org.jboss.jandex.Index;
 import org.jboss.jandex.Indexer;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -61,7 +56,6 @@ import static io.smallrye.openapi.runtime.OpenApiProcessor.modelFromReader;
 import static io.smallrye.openapi.runtime.io.Format.JSON;
 import static io.smallrye.openapi.runtime.io.Format.YAML;
 import static java.lang.Thread.currentThread;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -73,26 +67,29 @@ import static java.util.Optional.ofNullable;
  * model on the fly for the endpoints.
  *
  */
-// we'll get all the classes of the application and when creating the index we'll apply the filtering
-// we could have used only @Path from JAX RS because in the end, we only need those to generate the OpenAPI Model
-@HandlesTypes({
-    Path.class,
-    ApplicationPath.class
-})
+
+// unfortunately can't use handle types annotation to collect all OpenAPI related annotated classes.
 public class MicroProfileOpenApiRegistration implements ServletContainerInitializer {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.MICROPROFILE, MicroProfileOpenApiRegistration.class);
 
+    @Inject // not supported, see bellow in onStartup method
+    private MPOpenAPICDIExtension extension;
+
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
 
+        // no CDI injection in ServletContextInitializer
+        extension = CDI.current().select(MPOpenAPICDIExtension.class).get();
+
         LOGGER.info("Registering OpenAPI servlet on /openapi for application " + ctx.getContextPath());
+
         final ServletRegistration.Dynamic servletRegistration =
             ctx.addServlet("mp-openapi-servlet", MicroProfileOpenApiEndpoint.class);
         servletRegistration.addMapping("/openapi/*");
 
         // generate the OpenAPI document from static file or model reader or from annotations
-        final Optional<OpenAPI> openAPI = generateOpenAPI(classes, ctx);
+        final Optional<OpenAPI> openAPI = generateOpenAPI(ctx);
         openAPI.ifPresent(openApi -> setOpenApi(ctx, openAPI.get()));
     }
 
@@ -101,22 +98,23 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
      *
      * @return The generated OpenAPI model wrapped into an Optional
      */
-    private Optional<OpenAPI> generateOpenAPI(final Set<Class<?>> classes, final ServletContext servletContext) {
+    private Optional<OpenAPI> generateOpenAPI(final ServletContext servletContext) {
         final OpenApiConfig openApiConfig = config(servletContext);
-        final Index index = index(classes, servletContext, openApiConfig);
+        final Index index = index(openApiConfig);
         final ClassLoader contextClassLoader = currentThread().getContextClassLoader();
 
-        Optional<OpenAPI> annotationModel = ofNullable(modelFromAnnotations(openApiConfig, contextClassLoader, index));
+        // the order is defined in the spec: reader, static and then annotations
         Optional<OpenAPI> readerModel = ofNullable(modelFromReader(openApiConfig, contextClassLoader));
         Optional<OpenAPI> staticFileModel = openApiFromStaticFile(servletContext);
+        Optional<OpenAPI> annotationModel = ofNullable(modelFromAnnotations(openApiConfig, contextClassLoader, index));
 
         final OpenApiDocument document = OpenApiDocument.INSTANCE;
         try {
             document.reset();
             document.config(openApiConfig);
-            annotationModel.ifPresent(document::modelFromAnnotations);
             readerModel.ifPresent(document::modelFromReader);
             staticFileModel.ifPresent(document::modelFromStaticFile);
+            annotationModel.ifPresent(document::modelFromAnnotations);
             document.filter(getFilter(openApiConfig, contextClassLoader));
             document.initialize();
             return Optional.ofNullable(document.get());
@@ -129,17 +127,11 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
     /**
      * Provides the Jandex index.
      */
-    private static Index index(final Set<Class<?>> classes, final ServletContext servletContext, final OpenApiConfig config) {
+    private Index index(final OpenApiConfig config) {
         FilteredIndexView filteredIndexView = new FilteredIndexView(null, config);
         Indexer indexer = new Indexer();
 
-        // when there is no JAX RS classes found
-        if (classes == null) {
-            return indexer.complete();
-        }
-
-        // todo load all classes and build up an index with the content
-        for (Class clazz : classes) {
+        for (Class clazz : extension.getClasses()) {
             try {
                 // We remove the OpenApinEndpoint so the /openapi is not generated
                 if (clazz.equals(MicroProfileOpenApiEndpoint.class)
@@ -149,6 +141,7 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
 
                 final DotName dotName = DotName.createSimple(clazz.getName());
                 if (filteredIndexView.accepts(dotName)) {
+                    LOGGER.debug("Indexing OpenAPI class " + clazz);
                     indexer.indexClass(clazz);
                 }
             } catch (IOException e) {
@@ -163,7 +156,7 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
      * Creates the config from the microprofile-config.properties file in the application. The spec defines that the
      * config file may be present in two locations.
      */
-    private static OpenApiConfig config(final ServletContext servletContext) {
+    private OpenApiConfig config(final ServletContext servletContext) {
         try {
             final Optional<URL> microprofileConfig = Stream.of(ofNullable(servletContext.getResource("/META-INF/microprofile-config.properties")),
                                                           ofNullable(servletContext.getResource("/WEB-INF/classes/META-INF/microprofile-config.properties")))
@@ -218,11 +211,8 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
     }
 
 
-    private Optional<OpenAPI> readOpenApiFile(
-        final ServletContext servletContext,
-        final String location,
-        final Format format)
-        throws Exception {
+    private Optional<OpenAPI> readOpenApiFile(final ServletContext servletContext, final String location,
+        final Format format) throws Exception {
 
         final URL resource = servletContext.getResource(location);
         if (resource == null) {
@@ -232,19 +222,8 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
 
         LOGGER.debug("Found static OpenAPI file " + location);
 
-        final OpenApiDocument document = OpenApiDocument.INSTANCE;
         try (OpenApiStaticFile staticFile = new OpenApiStaticFile(resource.openStream(), format)) {
-            Config config = ConfigProvider.getConfig();
-            OpenApiConfig openApiConfig = new OpenApiConfigImpl(config);
-            document.reset();
-            document.config(openApiConfig);
-            document.filter(OpenApiProcessor.getFilter(openApiConfig, Thread.currentThread().getContextClassLoader()));
-            document.modelFromStaticFile(OpenApiProcessor.modelFromStaticFile(staticFile));
-            document.initialize();
-            return Optional.of(document.get());
-
-        } finally {
-            document.reset();
+            return Optional.of(OpenApiProcessor.modelFromStaticFile(staticFile));
         }
     }
 

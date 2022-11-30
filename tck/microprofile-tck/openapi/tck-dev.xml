@@ -18,7 +18,7 @@
 
   <test name="microprofile-openapi TCK">
     <classes>
-      <class name="org.eclipse.microprofile.openapi.tck.ModelConstructionTest"></class>
+      <class name="org.eclipse.microprofile.openapi.tck.AirlinesAppTest"></class>
     </classes>
   </test>
 
