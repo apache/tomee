@@ -102,6 +102,11 @@ public abstract class ServerBuilder<T extends ServerBuilder<T>> {
         return (T) this;
     }
 
+    public T addDir(final String name, final File content) {
+        modifications.addDir(content);
+        return (T) this;
+    }
+
     public T home(final Consumer<File> customization) {
         homeConsumers.add(customization);
         return (T) this;

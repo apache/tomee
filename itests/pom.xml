@@ -50,6 +50,7 @@
     <module>itest-common</module>
     <module>itest-util</module>
     <module>tomee-security-itests</module>
+    <module>tomee-microprofile-itests</module>
   </modules>
 
   <build>
