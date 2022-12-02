@@ -35,7 +35,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This is not a JAXRS endpoint but a regular servlet because the Smallrye does the remaining job. We could do it as
- * a regular REST endpoint though.
+ * a regular REST endpoint though but does not bring much more
  */
 @WebServlet(name = "openapi-servlet", urlPatterns = "/openapi/*")
 public class MicroProfileOpenApiEndpoint extends HttpServlet {
@@ -47,7 +47,12 @@ public class MicroProfileOpenApiEndpoint extends HttpServlet {
         final String format = request.getParameter("format");
         final Format formatOpenApi = getOpenApiFormat(request, format);
         response.setContentType(formatOpenApi.getMimeType());
-        response.getOutputStream().write(serialize(openAPI, formatOpenApi).getBytes(UTF_8));
+
+        if (openAPI == null) {
+            response.sendError(404, "No OpenAPI model available");
+        } else {
+            response.getOutputStream().write(serialize(openAPI, formatOpenApi).getBytes(UTF_8));
+        }
     }
 
     private Format getOpenApiFormat(final HttpServletRequest request, final String format) {

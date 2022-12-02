@@ -26,28 +26,21 @@ import jakarta.servlet.ServletRegistration;
 import java.util.Set;
 
 /**
- * Responsible for adding the filter into the chain and doing all other initialization
+ * Responsible for adding the SmallRye metrics filter in the chain to catch all servlet + JAX RS calls. It also
+ * adds the Metrics servlet endpoint to render the results.
  *
- * todo do we want to be so restrictive with the HandlesTypes annotation?
-@HandlesTypes({Path.class,
-               WebServlet.class,
-               WebFilter.class
-})
  */
+// todo do we want to be so restrictive with the HandlesTypes annotation for @Path @ApplicationPath @Servlet ... ?
 public class MicroProfileMetricsRegistration implements ServletContainerInitializer {
 
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
-
-
-
         final FilterRegistration.Dynamic metricsServletFilter = ctx.addFilter("mp-metrics-filter", JaxRsMetricsServletFilter.class);
         metricsServletFilter.setAsyncSupported(true);
         metricsServletFilter.addMappingForUrlPatterns(null, false, "/*");
 
         final ServletRegistration.Dynamic servletRegistration = ctx.addServlet("mp-metrics-servlet", MicroProfileMetricsEndpoint.class);
         servletRegistration.addMapping("/metrics/*");
-
     }
 
 }

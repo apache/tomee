@@ -24,9 +24,10 @@ import jakarta.enterprise.inject.spi.Extension;
 public class MPOpenTracingCDIExtension implements Extension {
 
     /**
-     * Get some beans registered
-     * @param bbd
-     * @param beanManager
+     * This event is used to add the TracerProducer bean to the application
+     *
+     * @param bbd         BeanDiscoveryEvent passed in by CDI
+     * @param beanManager the BeanManager reference
      */
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
         bbd.addAnnotatedType(beanManager.createAnnotatedType(TracerProducer.class));
