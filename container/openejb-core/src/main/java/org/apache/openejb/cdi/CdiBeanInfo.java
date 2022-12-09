@@ -52,6 +52,7 @@ public class CdiBeanInfo implements JndiConsumer {
     protected KeyedCollection<String, MessageDestinationRef> messageDestinationRef;
     protected KeyedCollection<String, PersistenceContextRef> persistenceContextRef;
     protected KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef;
+    protected List<LifecycleCallback> aroundConstruct;
     protected List<LifecycleCallback> postConstruct;
     protected List<LifecycleCallback> preDestroy;
     protected KeyedCollection<String, DataSource> dataSource;
@@ -225,6 +226,13 @@ public class CdiBeanInfo implements JndiConsumer {
             persistenceUnitRef = new KeyedCollection<>();
         }
         return this.persistenceUnitRef.toMap();
+    }
+
+    public List<LifecycleCallback> getAroundConstruct() {
+        if (aroundConstruct == null) {
+            aroundConstruct = new ArrayList<>();
+        }
+        return this.aroundConstruct;
     }
 
     public List<LifecycleCallback> getPostConstruct() {

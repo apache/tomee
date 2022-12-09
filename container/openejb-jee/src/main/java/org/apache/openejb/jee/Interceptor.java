@@ -118,6 +118,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "jms-destination")
     protected KeyedCollection<String, JMSDestination> jmsDestinations;
+    @XmlElement(name = "around-construct", required = true)
+    protected List<LifecycleCallback> aroundConstruct;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -335,6 +337,13 @@ public class Interceptor implements JndiConsumer, Session {
             dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource.toMap();
+    }
+
+    public List<LifecycleCallback> getAroundConstruct() {
+        if (aroundConstruct == null) {
+            aroundConstruct = new ArrayList<LifecycleCallback>();
+        }
+        return this.aroundConstruct;
     }
 
     public List<LifecycleCallback> getPostConstruct() {

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.stateful;
 
+import jakarta.interceptor.AroundConstruct;
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -76,6 +77,7 @@ public class StatefulInterceptorTest extends TestCase {
 
         assertEquals(3, ejbJar.interceptors.size());
         assertEquals(1, ejbJar.interceptors.get(0).aroundInvoke.size());
+        assertEquals(1, ejbJar.interceptors.get(0).aroundConstruct.size());
         assertEquals(1, ejbJar.interceptors.get(0).postConstruct.size());
 
         assertEquals(3, ejbJar.interceptorBindings.size());
@@ -117,7 +119,13 @@ public class StatefulInterceptorTest extends TestCase {
         assertEquals(join("\n", expected), join("\n", calls));
     }
 
-    public static enum Call {
+    public enum Call {
+        Default_AroundConstruct_BEFORE,
+        Class_AroundConstruct_BEFORE,
+        Bean_AroundConstruct,
+        Class_AroundConstruct_AFTER,
+        Default_AroundConstruct_AFTER,
+
         Default_PostConstruct_BEFORE,
         Class_PostConstruct_BEFORE,
         Bean_PostConstruct,
@@ -160,6 +168,10 @@ public class StatefulInterceptorTest extends TestCase {
     public static List<Call> calls = new ArrayList<Call>();
 
     public static class TargetBean implements Target {
+
+        public TargetBean() {
+            calls.add(Call.Bean_AroundConstruct);
+        }
 
         @PostConstruct
         public void construct() {
@@ -232,6 +244,14 @@ public class StatefulInterceptorTest extends TestCase {
             calls.add(Call.Class_PostConstruct_AFTER);
         }
 
+        @AroundConstruct
+        public void aroundConstruct(final InvocationContext context) throws Exception {
+            calls.add(Call.Class_AroundConstruct_BEFORE);
+            context.proceed();
+            calls.add(Call.Class_AroundConstruct_AFTER);
+        }
+
+
         @AroundInvoke
         public Object invoke(final InvocationContext context) throws Exception {
             calls.add(Call.Class_Invoke_BEFORE);
@@ -248,6 +268,13 @@ public class StatefulInterceptorTest extends TestCase {
             calls.add(Call.Default_PostConstruct_BEFORE);
             context.proceed();
             calls.add(Call.Default_PostConstruct_AFTER);
+        }
+
+        @AroundConstruct
+        public void aroundConstruct(final InvocationContext context) throws Exception {
+            calls.add(Call.Default_AroundConstruct_BEFORE);
+            context.proceed();
+            calls.add(Call.Default_AroundConstruct_AFTER);
         }
 
         @AroundInvoke

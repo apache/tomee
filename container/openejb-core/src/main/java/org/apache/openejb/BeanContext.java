@@ -143,8 +143,21 @@ public class BeanContext extends DeploymentContext {
             return;
         }
 
+        final Collection<Interceptor<?>> aroundConstructInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "aroundConstructInterceptors"));
         final Collection<Interceptor<?>> postConstructInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors"));
         final Collection<Interceptor<?>> preDestroyInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors"));
+
+        if (aroundConstructInterceptors != null) {
+            for (final Interceptor<?> pc : aroundConstructInterceptors) {
+                if (isEjbInterceptor(pc)) {
+                    continue;
+                }
+
+                final InterceptorData interceptorData = createInterceptorData(pc);
+                instanceScopedInterceptors.add(interceptorData);
+                cdiInterceptors.add(interceptorData);
+            }
+        }
         if (postConstructInterceptors != null) {
             for (final Interceptor<?> pc : postConstructInterceptors) {
                 if (isEjbInterceptor(pc)) {
@@ -201,6 +214,7 @@ public class BeanContext extends DeploymentContext {
         Map.class.cast(Reflections.get(injectionTarget, "methodInterceptors")).clear();
         clear(Collection.class.cast(postConstructInterceptors));
         clear(Collection.class.cast(preDestroyInterceptors));
+        clear(Collection.class.cast(Reflections.get(injectionTarget, "aroundConstructMethods")));
         clear(Collection.class.cast(Reflections.get(injectionTarget, "postConstructMethods")));
         clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")));
         clear(Collection.class.cast(Reflections.get(info, "ejbInterceptors")));
@@ -1593,6 +1607,9 @@ public class BeanContext extends DeploymentContext {
 
             // Create bean instance
             Object beanInstance;
+
+            // TODO we need to create the interceptor stack for the instance and
+            // invoke it to wrap what's bellow to create the beanInstance
 
             final InjectionProcessor injectionProcessor;
             if (!dynamicallyImplemented) {
