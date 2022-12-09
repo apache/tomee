@@ -77,7 +77,7 @@ public class StatefulInterceptorTest extends TestCase {
 
         assertEquals(3, ejbJar.interceptors.size());
         assertEquals(1, ejbJar.interceptors.get(0).aroundInvoke.size());
-        assertEquals(1, ejbJar.interceptors.get(0).aroundConstruct.size());
+        assertEquals(1, ejbJar.interceptors.get(0).aroundConstruct.size()); // only on interceptor per spec. Can't be on the bean
         assertEquals(1, ejbJar.interceptors.get(0).postConstruct.size());
 
         assertEquals(3, ejbJar.interceptorBindings.size());
