@@ -296,7 +296,8 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     public String toString() {
         final String methodName = method != null ? method.getName() : null;
+        final String targetName = target != null ? target.getClass().getName() : null;
 
-        return "InvocationContext(operation=" + operation + ", target=" + target.getClass().getName() + ", method=" + methodName + ")";
+        return "InvocationContext(operation=" + operation + ", target=" + targetName + ", method=" + methodName + ")";
     }
 }
