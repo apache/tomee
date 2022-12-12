@@ -17,7 +17,31 @@
 
 package org.apache.openejb;
 
+import jakarta.ejb.ApplicationException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.Handle;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.MessageDrivenBean;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.AnnotatedMethod;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.Decorator;
+import jakarta.enterprise.inject.spi.InterceptionType;
+import jakarta.enterprise.inject.spi.Interceptor;
 import jakarta.interceptor.InvocationContext;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SynchronizationType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
@@ -60,31 +84,7 @@ import org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory;
 import org.apache.webbeans.util.AnnotationUtil;
 import org.apache.xbean.recipe.ConstructionException;
 
-import jakarta.ejb.ApplicationException;
-import jakarta.ejb.EJBHome;
-import jakarta.ejb.EJBLocalHome;
-import jakarta.ejb.EJBLocalObject;
-import jakarta.ejb.EJBObject;
-import jakarta.ejb.EntityBean;
-import jakarta.ejb.Handle;
-import jakarta.ejb.Lock;
-import jakarta.ejb.LockType;
-import jakarta.ejb.MessageDrivenBean;
-import jakarta.ejb.SessionBean;
-import jakarta.ejb.TimedObject;
-import jakarta.ejb.Timer;
-import jakarta.enterprise.context.ConversationScoped;
-import jakarta.enterprise.context.spi.Contextual;
-import jakarta.enterprise.context.spi.CreationalContext;
-import jakarta.enterprise.inject.spi.AnnotatedMethod;
-import jakarta.enterprise.inject.spi.AnnotatedType;
-import jakarta.enterprise.inject.spi.Bean;
-import jakarta.enterprise.inject.spi.Decorator;
-import jakarta.enterprise.inject.spi.InterceptionType;
-import jakarta.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.SynchronizationType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -106,7 +106,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
 
@@ -219,7 +218,6 @@ public class BeanContext extends DeploymentContext {
         Map.class.cast(Reflections.get(injectionTarget, "methodInterceptors")).clear();
         clear(Collection.class.cast(postConstructInterceptors));
         clear(Collection.class.cast(preDestroyInterceptors));
-        clear(Collection.class.cast(Reflections.get(injectionTarget, "aroundConstructMethods")));
         clear(Collection.class.cast(Reflections.get(injectionTarget, "postConstructMethods")));
         clear(Collection.class.cast(Reflections.get(injectionTarget, "preDestroyMethods")));
         clear(Collection.class.cast(Reflections.get(info, "ejbInterceptors")));
@@ -1712,6 +1710,11 @@ public class BeanContext extends DeploymentContext {
                                 } catch (final InvocationTargetException e) {
                                     throw unwrapInvocationTargetException(e);
                                 }
+                            }
+
+                            @Override
+                            public Object getTarget() {
+                                return rootInstanceRef.get();
                             }
                         };
                     }
