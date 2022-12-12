@@ -1683,7 +1683,12 @@ public class BeanContext extends DeploymentContext {
 
             final Object rootInstance;
             if (cdiEjbBean != null && !dynamicallyImplemented && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
-                rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).createNewPojo(creationalContext);
+                rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget())
+                                                                      .createNewPojo(creationalContext);
+
+            } else if (dynamicallyImplemented) { // todo why this needs to be separated from else?
+                rootInstance = getManagedClass().newInstance();
+
             } else { // not a cdi bean
                 final AtomicReference<Object> rootInstanceRef = new AtomicReference<>();
                 final InterceptorStack aroundConstruct = new InterceptorStack(null, null,
