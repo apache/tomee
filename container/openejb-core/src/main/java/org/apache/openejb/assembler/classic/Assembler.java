@@ -17,7 +17,6 @@
 
 package org.apache.openejb.assembler.classic;
 
-import jakarta.interceptor.AroundConstruct;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
