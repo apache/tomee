@@ -99,7 +99,7 @@
 
     <!-- To easily change the javaee api version -->
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
+    <version.tomee-patch-plugin>0.10-SNAPSHOT</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -633,6 +633,22 @@
       </plugin>
     </plugins>
   </build>
+  <modules>
+    <module>deps</module>
+    <module>boms</module>
+    <module>itests</module>
+    <module>maven</module>
+    <module>gradle</module>
+    <module>container</module>
+    <module>server</module>
+    <module>mp-jwt</module>
+    <module>examples</module>
+    <module>assembly</module>
+    <module>tck</module>
+    <module>arquillian</module>
+    <module>utils</module>
+    <module>tomee</module>
+  </modules>
 
   <profiles>
     <profile>
