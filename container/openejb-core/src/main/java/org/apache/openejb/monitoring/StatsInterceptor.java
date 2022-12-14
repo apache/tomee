@@ -110,11 +110,7 @@ public class StatsInterceptor {
 
     @AroundConstruct
     public void AroundConstruct(final InvocationContext invocationContext) throws Exception {
-        final long start = System.nanoTime();
         record(invocationContext, AroundConstruct());
-        final long end = System.nanoTime();
-        Logger.getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
-              .debug("instance.creating", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
     public Method PostConstruct() throws NoSuchMethodException {
