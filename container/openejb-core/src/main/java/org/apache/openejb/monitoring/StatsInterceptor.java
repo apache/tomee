@@ -39,6 +39,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -54,7 +55,7 @@ public class StatsInterceptor {
 
     public static final InterceptorData metadata = InterceptorData.scan(StatsInterceptor.class);
 
-    private final Map<Method, Stats> map = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Method, Stats> map = new ConcurrentHashMap<>();
     private final AtomicLong invocations = new AtomicLong();
     private final AtomicLong invocationTime = new AtomicLong();
 
@@ -108,11 +109,7 @@ public class StatsInterceptor {
 
     @PostConstruct
     public void PostConstruct(final InvocationContext invocationContext) throws Exception {
-        final long start = System.nanoTime();
         record(invocationContext, PostConstruct());
-        final long end = System.nanoTime();
-        Logger.getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
-                .debug("instance.created", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
     public Method PreDestroy() throws NoSuchMethodException {
@@ -121,11 +118,7 @@ public class StatsInterceptor {
 
     @PreDestroy
     public void PreDestroy(final InvocationContext invocationContext) throws Exception {
-        final long start = System.nanoTime();
         record(invocationContext, PreDestroy());
-        final long end = System.nanoTime();
-        Logger.getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
-                .debug("instance.discarded", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
     public Method PostActivate() throws NoSuchMethodException {
@@ -206,16 +199,7 @@ public class StatsInterceptor {
     private Stats stats(final InvocationContext invocationContext, final Method callback) {
         final Method method = callback == null ? invocationContext.getMethod() : callback;
 
-        Stats stats = map.get(method);
-        if (stats == null) {
-            synchronized (map) {
-                stats = map.get(method);
-                if (stats == null) {
-                    stats = new Stats(method, monitor);
-                    map.put(method, stats);
-                }
-            }
-        }
+        final Stats stats = map.computeIfAbsent(method, m -> new Stats(m, monitor));
         return stats;
     }
 
