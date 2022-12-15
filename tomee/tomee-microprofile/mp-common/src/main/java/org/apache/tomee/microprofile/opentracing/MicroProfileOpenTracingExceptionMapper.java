@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.tck.opentracing;
+package org.apache.tomee.microprofile.opentracing;
 
-import jakarta.ws.rs.ext.Provider;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class MicroProfileOpenTracingExceptionMapper implements jakarta.ws.rs.ext.ExceptionMapper<RuntimeException> {

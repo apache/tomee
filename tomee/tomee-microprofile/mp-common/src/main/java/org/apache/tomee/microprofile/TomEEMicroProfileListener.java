@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile;
 
+import io.smallrye.opentracing.SmallRyeTracingDynamicFeature;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -25,12 +26,14 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.BeforeEvent;
+import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
 import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
 import org.apache.tomee.microprofile.openapi.MicroProfileOpenApiRegistration;
+import org.apache.tomee.microprofile.opentracing.MicroProfileOpenTracingExceptionMapper;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.Indexer;
 
@@ -141,6 +144,15 @@ public class TomEEMicroProfileListener {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
 
+    }
+
+    public void registerMicroProfileJaxRsProviders(@Observes final ExtensionProviderRegistration extensionProviderRegistration) {
+        extensionProviderRegistration.getProviders().add(new SmallRyeTracingDynamicFeature());
+
+        // The OpenTracing TCK tests that an exception is turned into a 500. JAX-RS 3.1 (?) mandates a default mapper
+        // which was not required on the current versions. I'm not sure if we should do this by default in the server
+        // of if we should do it with an arquillian extension to add it only for the TCK
+        extensionProviderRegistration.getProviders().add(new MicroProfileOpenTracingExceptionMapper());
     }
 
     /**
