@@ -171,6 +171,12 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <artifactId>openejb-cxf-rs</artifactId>
+      <groupId>org.apache.tomee</groupId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- MicroProfile -->
 
