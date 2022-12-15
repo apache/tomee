@@ -97,13 +97,14 @@ public abstract class AbstractJAXBProvider<T> extends AbstractConfigurableProvid
     protected static final String NS_MAPPER_PROPERTY_RI_INT = "com.sun.xml.internal.bind.namespacePrefixMapper";
     private static final String JAXB_DEFAULT_NAMESPACE = "##default";
     private static final String JAXB_DEFAULT_NAME = "##default";
-    private static final Set<Class<?>> UNSUPPORTED_CLASSES = 
+    private static final Set<Class<?>> UNSUPPORTED_CLASSES =
         new HashSet<Class<?>>(Arrays.asList(InputStream.class,
                                             OutputStream.class,
                                             StreamingOutput.class));
     protected Set<Class<?>> collectionContextClasses = ConcurrentHashMap.newKeySet();
 
     protected Map<String, String> jaxbElementClassMap = Collections.emptyMap();
+    protected Map<String, Boolean> objectFactoryOrIndexMap = new ConcurrentHashMap<>();
     protected boolean unmarshalAsJaxbElement;
     protected boolean marshalAsJaxbElement;
     protected boolean xmlTypeAsJaxbElementOnly;
@@ -146,7 +147,7 @@ public abstract class AbstractJAXBProvider<T> extends AbstractConfigurableProvid
     private DocumentDepthProperties depthProperties;
     private String namespaceMapperPropertyName;
 
-    private static JAXBContext newJAXBContextInstance(Class<?>[] classes, Map<String, Object> cProperties) 
+    private static JAXBContext newJAXBContextInstance(Class<?>[] classes, Map<String, Object> cProperties)
         throws JAXBException {
 
         try {
@@ -552,7 +553,7 @@ public abstract class AbstractJAXBProvider<T> extends AbstractConfigurableProvid
         final String packageName = PackageUtils.getPackageName(type);
         return packageContexts.computeIfAbsent(packageName, p -> {
             try {
-                final ClassLoader loader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) 
+                final ClassLoader loader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>)
                     () -> {
                         return type.getClassLoader();
                     });
@@ -597,8 +598,15 @@ public abstract class AbstractJAXBProvider<T> extends AbstractConfigurableProvid
     }
 
     protected boolean objectFactoryOrIndexAvailable(Class<?> type) {
-        return type.getResource("ObjectFactory.class") != null
-               || type.getResource("jaxb.index") != null;
+        if (this.objectFactoryOrIndexMap.get(type.getName()) != null) {
+            return this.objectFactoryOrIndexMap.get(type.getName());
+        } else {
+            boolean ret = type.getResource("ObjectFactory.class") != null
+                    || type.getResource("jaxb.index") != null;
+            this.objectFactoryOrIndexMap.put(type.getName(), ret);
+            return ret;
+        }
+
     }
 
     private boolean objectFactoryForType(Type genericType) {
@@ -707,6 +715,7 @@ public abstract class AbstractJAXBProvider<T> extends AbstractConfigurableProvid
     public void clearContexts() {
         classContexts.clear();
         packageContexts.clear();
+        objectFactoryOrIndexMap.clear();
     }
 
     //TODO: move these methods into the dedicated utility class
