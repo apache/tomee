@@ -312,7 +312,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -323,7 +323,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -334,7 +334,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -345,7 +345,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -356,7 +356,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -367,7 +367,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -378,7 +378,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-search</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -389,7 +389,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-json-basic</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -400,7 +400,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -411,7 +411,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-cors</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -422,7 +422,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -433,7 +433,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-jose</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -444,7 +444,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -455,7 +455,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -466,7 +466,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -477,7 +477,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -488,7 +488,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -499,7 +499,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -510,7 +510,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -521,7 +521,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -532,7 +532,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
-      <version>3.4.9</version>
+      <version>3.4.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
