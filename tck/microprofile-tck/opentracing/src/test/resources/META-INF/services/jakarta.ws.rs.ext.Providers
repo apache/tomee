@@ -1,2 +1,0 @@
-org.apache.tomee.microprofile.tck.opentracing.MicroProfileOpenTrackingContextResolver
-org.apache.tomee.microprofile.tck.opentracing.MicroProfileOpenTracingExceptionMapper
