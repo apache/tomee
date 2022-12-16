@@ -1571,20 +1571,9 @@ public class BeanContext extends DeploymentContext {
 
     @SuppressWarnings("unchecked")
     public InstanceContext newInstance() throws Exception {
-        final WebBeansContext webBeansContext = getWebBeansContext();
-        final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
-        final boolean isCdi = webBeansContext != null && cdiEjbBean != null;
-
-        if (isCdi) {
-            return doCdiBeanInstance();
-        } else {
-            return doBeanInstance();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public InstanceContext doBeanInstance() throws Exception {
         final boolean dynamicallyImplemented = isDynamicallyImplemented();
+
+        final WebBeansContext webBeansContext = getWebBeansContext();
 
         if (dynamicallyImplemented) {
             if (!InvocationHandler.class.isAssignableFrom(getProxyClass())) {
@@ -1599,6 +1588,19 @@ public class BeanContext extends DeploymentContext {
             final Context ctx = getJndiEnc();
             final Class beanClass = getBeanClass();
 
+            final CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
+            CreationalContext<Object> creationalContext = currentCreationalContext != null ? currentCreationalContext.get() : null;
+
+            final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
+
+            if (!CreationalContextImpl.class.isInstance(creationalContext) && webBeansContext != null) {
+                if (creationalContext == null) {
+                    creationalContext = webBeansContext.getCreationalContextFactory().getCreationalContext(cdiEjbBean);
+                } else {
+                    creationalContext = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(creationalContext, cdiEjbBean);
+                }
+            }
+
             // Create interceptors
             final Map<String, Object> interceptorInstances = new LinkedHashMap<>();
 
@@ -1608,31 +1610,87 @@ public class BeanContext extends DeploymentContext {
                 interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
             }
 
+            final Collection<DependentCreationalContext<?>> createdDependents = getDependents(creationalContext);
             for (final InterceptorData interceptorData : this.getInstanceScopedInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) {
                     continue;
                 }
 
                 final Class clazz = interceptorData.getInterceptorClass();
-                final Object iInstance = clazz.newInstance();
+
+                final Object iInstance;
+                if (webBeansContext != null) {
+                    Object preInstantiated = null;
+                    if (createdDependents != null) {
+                        for (final DependentCreationalContext<?> dcc : createdDependents) {
+                            if (clazz.isInstance(dcc.getInstance())) { // is that enough? do we have more to match?
+                                preInstantiated = dcc.getInstance();
+                                break;
+                            }
+                        }
+                    }
+                    if (preInstantiated != null) {
+                        iInstance = preInstantiated;
+                    } else {
+                        ConstructorInjectionBean interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                        if (interceptorConstructor == null) {
+                            synchronized (this) {
+                                interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                                if (interceptorConstructor == null) {
+                                    interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
+                                    interceptorData.set(ConstructorInjectionBean.class, interceptorConstructor);
+                                }
+                            }
+                        }
+                        CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
+                        // Object oldDelegate = cc.putDelegate(beanInstance);
+                        Bean<?> oldBean = cc.putBean(cdiEjbBean);
+                        Contextual<?> oldContextual = cc.putContextual(interceptorData.getCdiInterceptorBean() != null
+                                                                       ? interceptorData.getCdiInterceptorBean()
+                                                                       : interceptorConstructor); // otherwise BeanMetaData is broken
+
+                        try {
+                            iInstance = interceptorConstructor.create(creationalContext);
+
+                        } finally {
+                            cc.putBean(oldBean);
+                            cc.putContextual(oldContextual);
+                            // cc.putDelegate(oldDelegate);
+                        }
+
+                    }
+                } else {
+                    iInstance = clazz.newInstance();
+                }
 
                 final InjectionProcessor interceptorInjector = new InjectionProcessor(iInstance, this.getInjections(), InjectionProcessor.unwrap(ctx));
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
-                    interceptorInstances.put(clazz.getName(), interceptorInstance);
+                    if (webBeansContext != null) {
+                        try {
+                            OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
+                        } catch (final Throwable t) {
+                            // TODO handle this differently
+                            // this is temporary till the injector can be rewritten
+                        }
+                    }
 
+                    interceptorInstances.put(clazz.getName(), interceptorInstance);
                 } catch (final ConstructionException e) {
                     throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
                 }
             }
 
             final Object rootInstance;
-            if (dynamicallyImplemented) { // todo why this needs to be separated from else?
-                rootInstance = getManagedClass().getDeclaredConstructor().newInstance();
+            if (cdiEjbBean != null && !dynamicallyImplemented && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
+                rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget())
+                                                                      .createNewPojo(creationalContext);
+
+            } else if (dynamicallyImplemented) { // todo why this needs to be separated from else?
+                rootInstance = getManagedClass().newInstance();
 
             } else { // not a cdi bean
                 final AtomicReference<Object> rootInstanceRef = new AtomicReference<>();
-                callContext.setCurrentOperation(Operation.AROUND_CONSTRUCT);
                 final InterceptorStack aroundConstruct = new InterceptorStack(null, null,
                                                                               getManagedClass().getDeclaredConstructor(),
                                                                               Operation.AROUND_CONSTRUCT, callbackInterceptors, interceptorInstances) {
@@ -1681,7 +1739,7 @@ public class BeanContext extends DeploymentContext {
             if (!dynamicallyImplemented) {
                 injectionProcessor = new InjectionProcessor(rootInstance, getInjections(), InjectionProcessor.unwrap(ctx));
                 beanInstance = injectionProcessor.createInstance();
-
+                inject(beanInstance, creationalContext);
             } else {
                 // update target
                 final List<Injection> newInjections = new ArrayList<>();
@@ -1699,6 +1757,7 @@ public class BeanContext extends DeploymentContext {
                 injectionProcessor = new InjectionProcessor(rootInstance, injections, InjectionProcessor.unwrap(ctx));
                 final InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
                 beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
+                inject(handler, creationalContext);
             }
 
             interceptorInstances.put(beanClass.getName(), beanInstance);
@@ -1727,163 +1786,9 @@ public class BeanContext extends DeploymentContext {
             final TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
             try {
                 //Call the chain
-                postConstruct.invoke();
-            } catch (final Throwable e) {
-                //RollBack Transaction
-                EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
-            } finally {
-                EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
-            }
-
-            return new InstanceContext(this, beanInstance, interceptorInstances, null);
-        } finally {
-            ThreadContext.exit(oldContext);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public InstanceContext doCdiBeanInstance() throws Exception {
-        final WebBeansContext webBeansContext = getWebBeansContext();
-        final boolean dynamicallyImplemented = isDynamicallyImplemented();
-
-        if (dynamicallyImplemented) {
-            if (!InvocationHandler.class.isAssignableFrom(getProxyClass())) {
-                throw new OpenEJBException("proxy class can only be InvocationHandler");
-            }
-        }
-
-        final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
-        final ThreadContext oldContext = ThreadContext.enter(callContext);
-
-        try {
-            final Context ctx = getJndiEnc();
-            final Class beanClass = getBeanClass();
-
-            final CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
-            CreationalContext<Object> creationalContext = currentCreationalContext != null ? currentCreationalContext.get() : null;
-
-            final CdiEjbBean cdiEjbBean = get(CdiEjbBean.class);
-
-            if (!CreationalContextImpl.class.isInstance(creationalContext)) {
-                if (creationalContext == null) {
-                    creationalContext = webBeansContext.getCreationalContextFactory().getCreationalContext(cdiEjbBean);
-                } else {
-                    creationalContext = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(creationalContext, cdiEjbBean);
+                if (cdiEjbBean != null) { // call it, it has no postconstruct but extensions can add stuff here, TODO: see if it should be called before or after effective postconstruct
+                    cdiEjbBean.getInjectionTarget().postConstruct(beanInstance);
                 }
-            }
-
-            final Object rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget())
-                                                                               .createNewPojo(creationalContext);
-
-            // Create bean instance
-            Object beanInstance;
-
-            final InjectionProcessor injectionProcessor = new InjectionProcessor(rootInstance, getInjections(), InjectionProcessor.unwrap(ctx));
-            beanInstance = injectionProcessor.createInstance();
-            inject(beanInstance, creationalContext);
-
-            // Create interceptors
-            final Map<String, Object> interceptorInstances = new LinkedHashMap<>();
-
-            // Add the stats interceptor instance and other already created interceptor instances
-            for (final InterceptorInstance interceptorInstance : this.getUserAndSystemInterceptors()) {
-                final Class clazz = interceptorInstance.getData().getInterceptorClass();
-                interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
-            }
-
-            final Collection<DependentCreationalContext<?>> createdDependents = getDependents(creationalContext);
-            for (final InterceptorData interceptorData : this.getInstanceScopedInterceptors()) {
-                if (interceptorData.getInterceptorClass().equals(beanClass)) {
-                    continue;
-                }
-
-                final Class clazz = interceptorData.getInterceptorClass();
-
-                final Object iInstance;
-                    Object preInstantiated = null;
-                    if (createdDependents != null) {
-                        for (final DependentCreationalContext<?> dcc : createdDependents) {
-                            if (clazz.isInstance(dcc.getInstance())) { // is that enough? do we have more to match?
-                                preInstantiated = dcc.getInstance();
-                                break;
-                            }
-                        }
-                    }
-                    if (preInstantiated != null) {
-                        iInstance = preInstantiated;
-                    } else {
-                        ConstructorInjectionBean interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
-                        if (interceptorConstructor == null) {
-                            synchronized (this) {
-                                interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
-                                if (interceptorConstructor == null) {
-                                    interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
-                                    interceptorData.set(ConstructorInjectionBean.class, interceptorConstructor);
-                                }
-                            }
-                        }
-                        CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
-                        Object oldDelegate = cc.putDelegate(beanInstance);
-                        Bean<?> oldBean = cc.putBean(cdiEjbBean);
-                        Contextual<?> oldContextual = cc.putContextual(interceptorData.getCdiInterceptorBean() != null
-                                                                       ? interceptorData.getCdiInterceptorBean()
-                                                                       : interceptorConstructor); // otherwise BeanMetaData is broken
-
-                        try {
-                            iInstance = interceptorConstructor.create(creationalContext);
-
-                        } finally {
-                            cc.putBean(oldBean);
-                            cc.putContextual(oldContextual);
-                            cc.putDelegate(oldDelegate);
-                        }
-
-                    }
-
-                final InjectionProcessor interceptorInjector = new InjectionProcessor(iInstance, this.getInjections(), InjectionProcessor.unwrap(ctx));
-                try {
-                    final Object interceptorInstance = interceptorInjector.createInstance();
-                    try {
-                        OWBInjector.inject(webBeansContext.getBeanManagerImpl(), interceptorInstance, creationalContext);
-                    } catch (final Throwable t) {
-                        // TODO handle this differently
-                        // this is temporary till the injector can be rewritten
-                    }
-
-                    interceptorInstances.put(clazz.getName(), interceptorInstance);
-                } catch (final ConstructionException e) {
-                    throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
-                }
-            }
-
-            interceptorInstances.put(beanClass.getName(), beanInstance);
-
-            // Invoke post construct method
-            callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
-            final List<InterceptorData> callbackInterceptors = this.getCallbackInterceptors();
-            final InterceptorStack postConstruct = new InterceptorStack(beanInstance, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
-
-            //Transaction Demarcation for Singleton PostConstruct method
-            TransactionType transactionType;
-
-            if (componentType == BeanType.SINGLETON || componentType == BeanType.STATEFUL) {
-                final Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() - 1).getPostConstruct();
-                if (callbacks.isEmpty()) {
-                    transactionType = TransactionType.RequiresNew;
-                } else {
-                    transactionType = getTransactionType(callbacks.iterator().next()); // TODO: we should take the last one I think
-                    if (transactionType == TransactionType.Required) {
-                        transactionType = TransactionType.RequiresNew;
-                    }
-                }
-            } else {
-                transactionType = isBeanManagedTransaction() ? TransactionType.BeanManaged : TransactionType.NotSupported;
-            }
-
-            final TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
-            try {
-                //Call the chain
-                cdiEjbBean.getInjectionTarget().postConstruct(beanInstance);
                 postConstruct.invoke();
             } catch (final Throwable e) {
                 //RollBack Transaction
@@ -1893,52 +1798,46 @@ public class BeanContext extends DeploymentContext {
             }
 
             // handle cdi decorators
-            beanInstance = decorateCdiBean(webBeansContext, creationalContext, cdiEjbBean, beanInstance);
+            if (cdiEjbBean != null) {
+                final Class<?> proxyClass = Class.class.cast(Reflections.get(cdiEjbBean.getInjectionTarget(), "proxyClass"));
+                if (proxyClass != null) { // means interception
+                    final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = cdiEjbBean.getBeanContext().get(InterceptorResolutionService.BeanInterceptorInfo.class);
+                    if (interceptorInfo.getDecorators() != null && !interceptorInfo.getDecorators().isEmpty()) {
+                        final InterceptorDecoratorProxyFactory pf = webBeansContext.getInterceptorDecoratorProxyFactory();
+
+                        // decorators
+                        final Object instance = beanInstance;
+                        final List<Decorator<?>> decorators = interceptorInfo.getDecorators();
+                        final Map<Decorator<?>, Object> instances = new HashMap<>();
+                        for (int i = decorators.size(); i > 0; i--) {
+                            final Decorator<?> decorator = decorators.get(i - 1);
+                            CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
+                            Object oldDelegate = cc.putDelegate(beanInstance);
+                            Bean<?> oldBean = cc.putBean(cdiEjbBean);
+                            Contextual<?> oldContextual = cc.putContextual(decorator); // otherwise BeanMetaData is broken
+
+                            Object decoratorInstance = null;
+                            try {
+                                decoratorInstance = decorator.create(CreationalContext.class.cast(creationalContext));
+                            }
+                            finally {
+                                cc.putBean(oldBean);
+                                cc.putContextual(oldContextual);
+                                cc.putDelegate(oldDelegate);
+                            }
+                            instances.put(decorator, decoratorInstance);
+                            beanInstance = pf.createProxyInstance(proxyClass, instance,
+                                new DecoratorHandler(interceptorInfo, decorators, instances, i - 1, instance, cdiEjbBean.getId()));
+                        }
+                    }
+                }
+            }
 
             return new InstanceContext(this, beanInstance, interceptorInstances, creationalContext);
         } finally {
             ThreadContext.exit(oldContext);
         }
     }
-
-    private Object decorateCdiBean(final WebBeansContext webBeansContext, final CreationalContext<Object> creationalContext,
-                                    final CdiEjbBean cdiEjbBean, Object beanInstance) {
-
-        final Class<?> proxyClass = Class.class.cast(Reflections.get(cdiEjbBean.getInjectionTarget(), "proxyClass"));
-        if (proxyClass != null) { // means interception
-            final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = cdiEjbBean.getBeanContext().get(InterceptorResolutionService.BeanInterceptorInfo.class);
-            if (interceptorInfo.getDecorators() != null && !interceptorInfo.getDecorators().isEmpty()) {
-                final InterceptorDecoratorProxyFactory pf = webBeansContext.getInterceptorDecoratorProxyFactory();
-
-                // decorators
-                final Object instance = beanInstance;
-                final List<Decorator<?>> decorators = interceptorInfo.getDecorators();
-                final Map<Decorator<?>, Object> instances = new HashMap<>();
-                for (int i = decorators.size(); i > 0; i--) {
-                    final Decorator<?> decorator = decorators.get(i - 1);
-                    CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
-                    Object oldDelegate = cc.putDelegate(beanInstance);
-                    Bean<?> oldBean = cc.putBean(cdiEjbBean);
-                    Contextual<?> oldContextual = cc.putContextual(decorator); // otherwise BeanMetaData is broken
-
-                    Object decoratorInstance = null;
-                    try {
-                        decoratorInstance = decorator.create(CreationalContext.class.cast(creationalContext));
-                    }
-                    finally {
-                        cc.putBean(oldBean);
-                        cc.putContextual(oldContextual);
-                        cc.putDelegate(oldDelegate);
-                    }
-                    instances.put(decorator, decoratorInstance);
-                    beanInstance = pf.createProxyInstance(proxyClass, instance,
-                                                          new DecoratorHandler(interceptorInfo, decorators, instances, i - 1, instance, cdiEjbBean.getId()));
-                }
-            }
-        }
-        return beanInstance;
-    }
-
 
     private Collection<DependentCreationalContext<?>> getDependents(final CreationalContext<Object> creationalContext) {
         try {
