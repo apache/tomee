@@ -195,55 +195,64 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
     }
 
-    public interface Invocation {
-        Object invoke() throws Exception;
-    }
-    protected abstract static class InvocationBase implements Invocation {
-        private final Executable executable;
+    protected abstract static class Invocation {
+        private final Method method;
         private final Object[] args;
         private final Object target;
 
-        public InvocationBase(final Object target, final Executable executable, final Object[] args) {
+        public Invocation(final Object target, final Method method, final Object[] args) {
             this.target = target;
-            this.executable = executable;
+            this.method = method;
             this.args = args;
         }
 
         public Object invoke() throws Exception {
 
-            if (executable instanceof Method) {
-                return ((Method) executable).invoke(target, args);
-
-            } else {
-                return ((Constructor) executable).newInstance(args);
-            }
+            final Object value = method.invoke(target, args);
+            return value;
         }
 
 
         public String toString() {
-            return executable.getDeclaringClass().getName() + "." + executable.getName();
+            return method.getDeclaringClass().getName() + "." + method.getName();
         }
     }
 
-    private static class BeanInvocation extends InvocationBase {
+    private static class BeanInvocation extends Invocation {
         public BeanInvocation(final Object target, final Method method, final Object[] args) {
             super(target, method, args);
         }
     }
 
-    protected static class ConstructorInvocation extends InvocationBase {
+    protected static class ConstructorInvocation extends Invocation {
+        private final Constructor constructor;
+        private final Object[] args;
+
         public ConstructorInvocation(final Constructor constructor, final Object[] args) {
-            super(null, constructor, args);
+            super(null, null, args);
+            this.args = args;
+            this.constructor = constructor;
+        }
+
+        @Override
+        public Object invoke() throws Exception {
+            final Object value = constructor.newInstance(args);
+            return value;
+        }
+
+
+        public String toString() {
+            return constructor.getDeclaringClass().getName() + "." + constructor.getName();
         }
     }
 
-    private static class InterceptorInvocation extends InvocationBase {
+    private static class InterceptorInvocation extends Invocation {
         public InterceptorInvocation(final Object target, final Method method, final InvocationContext invocationContext) {
             super(target, method, new Object[]{invocationContext});
         }
     }
 
-    private static class LifecycleInvocation extends InvocationBase {
+    private static class LifecycleInvocation extends Invocation {
         private final InvocationContext invocationContext;
 
         public LifecycleInvocation(final Object target, final Method method, final InvocationContext invocationContext, final Object[] args) {
@@ -261,7 +270,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
     }
 
-    private static class NoOpInvocation extends InvocationBase {
+    private static class NoOpInvocation extends Invocation {
         public NoOpInvocation() {
             super(null, null, null);
         }
