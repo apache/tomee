@@ -17,6 +17,7 @@
 
 package org.apache.openejb.config;
 
+import jakarta.interceptor.AroundConstruct;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
@@ -2527,6 +2528,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 /*
+                 * @AroundConstruct can't be on the bean itself per spec
                  * @PostConstruct
                  * @PreDestroy
                  * @AroundInvoke
@@ -2982,6 +2984,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @Remove
                  */
                 processCallbacks(interceptor, annotationFinder);
+
+                /*
+                 * @PAroundConstruct can only be on the interceptor itself
+                 */
+                final boolean override = "true".equalsIgnoreCase(getProperty("openejb.callbacks.override", "false"));
+                if (apply(override, interceptor.getAroundConstruct())) {
+                    for (final Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(AroundConstruct.class))) {
+                        interceptor.getAroundConstruct().add(new LifecycleCallback(method.get()));
+                    }
+                }
 
                 /*
                  * @ApplicationException

@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(ApplicationComposer.class)
@@ -70,9 +72,19 @@ public class EjbModuleOnlyInterceptorsTest {
         assertNotNull(interceptorBean);
         final List<String> postConstructRecordsFor = historySingletonBean.getPostConstructRecordsFor();
 
-        // todo, when we have an idea about the fix, we can add asserts so build does not fail for now
-        // this is a placeholder for people to jump in and help, because I'm getting a bit stuck on this one.
-        System.out.println(postConstructRecordsFor);
+        String[] expectedPostConstruct = {
+            // class-level AroundConstruct interceptors Juice, Color. It's in reverse order
+            // because the record has to be added after InvocationContext.proceed().
+            // "Juice",
+            // "Color", "Juice",
+            "InterceptorJuice", "InterceptorColor", "InterceptorJuice",
+            // class-level PostConstructor interceptors Color, Juice
+            "InterceptorBaseBase", "InterceptorBase", "InterceptorBaseBase",
+            "InterceptorBase",
+            // PostConstruct methods on bean superclass and bean class
+            "InterceptorBeanBase", "InterceptorBean" };
+
+        assertArrayEquals(expectedPostConstruct, postConstructRecordsFor.toArray(new String[0]));
     }
 
     @Singleton

@@ -17,6 +17,7 @@
 
 package org.apache.openejb.monitoring;
 
+import jakarta.interceptor.AroundConstruct;
 import org.apache.openejb.api.Monitor;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.loader.SystemInstance;
@@ -101,6 +102,15 @@ public class StatsInterceptor {
     @AroundInvoke
     public Object invoke(final InvocationContext invocationContext) throws Exception {
         return record(invocationContext, null);
+    }
+
+    public Method AroundConstruct() throws NoSuchMethodException {
+        return this.getClass().getMethod("AroundConstruct");
+    }
+
+    @AroundConstruct
+    public void AroundConstruct(final InvocationContext invocationContext) throws Exception {
+        record(invocationContext, AroundConstruct());
     }
 
     public Method PostConstruct() throws NoSuchMethodException {
