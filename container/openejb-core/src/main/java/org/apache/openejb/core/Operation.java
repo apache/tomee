@@ -19,6 +19,7 @@ package org.apache.openejb.core;
 
 public enum Operation {
     INJECTION(true),
+    AROUND_CONSTRUCT(true),
     POST_CONSTRUCT(true),
     BUSINESS(false),
     BUSINESS_WS(false),

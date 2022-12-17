@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.opentracing;
 
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 
@@ -24,6 +25,11 @@ public class MicroProfileOpenTracingExceptionMapper implements jakarta.ws.rs.ext
 
     @Override
     public Response toResponse(final RuntimeException exception) {
+        if (exception instanceof WebApplicationException) {
+            final WebApplicationException o = (WebApplicationException) exception;
+            return o.getResponse();
+        }
+
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                        .entity(exception.getMessage())
                        .build();

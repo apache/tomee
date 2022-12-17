@@ -449,6 +449,7 @@ public class EjbJarInfoBuilder {
 
             copyCallbacks(s.getAroundInvoke(), info.aroundInvoke);
 
+            copyCallbacks(s.getAroundConstruct(), info.aroundConstruct);
             copyCallbacks(s.getPostConstruct(), info.postConstruct);
             copyCallbacks(s.getPreDestroy(), info.preDestroy);
 

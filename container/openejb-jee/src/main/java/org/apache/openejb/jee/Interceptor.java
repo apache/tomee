@@ -48,6 +48,7 @@ import java.util.Map;
  *         &lt;element name="interceptor-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
  *         &lt;element name="around-invoke" type="{http://java.sun.com/xml/ns/javaee}around-invokeType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="around-timeout" type="{http://java.sun.com/xml/ns/javaee}around-timeoutType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="around-construct" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}jndiEnvironmentRefsGroup"/&gt;
  *         &lt;element name="post-activate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="pre-passivate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
@@ -73,6 +74,7 @@ import java.util.Map;
     "messageDestinationRef",
     "persistenceContextRef",
     "persistenceUnitRef",
+    "aroundConstruct",
     "postConstruct",
     "preDestroy",
     "dataSource",
@@ -118,6 +120,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "jms-destination")
     protected KeyedCollection<String, JMSDestination> jmsDestinations;
+    @XmlElement(name = "around-construct", required = true)
+    protected List<LifecycleCallback> aroundConstruct;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -335,6 +339,13 @@ public class Interceptor implements JndiConsumer, Session {
             dataSource = new KeyedCollection<String, DataSource>();
         }
         return this.dataSource.toMap();
+    }
+
+    public List<LifecycleCallback> getAroundConstruct() {
+        if (aroundConstruct == null) {
+            aroundConstruct = new ArrayList<LifecycleCallback>();
+        }
+        return this.aroundConstruct;
     }
 
     public List<LifecycleCallback> getPostConstruct() {

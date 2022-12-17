@@ -17,12 +17,11 @@
 
 package org.apache.openejb.monitoring;
 
+import jakarta.interceptor.AroundConstruct;
 import org.apache.openejb.api.Monitor;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.math.stat.descriptive.SynchronizedDescriptiveStatistics;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
 import jakarta.annotation.PostConstruct;
@@ -37,7 +36,6 @@ import jakarta.interceptor.AroundTimeout;
 import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -101,6 +99,15 @@ public class StatsInterceptor {
     @AroundInvoke
     public Object invoke(final InvocationContext invocationContext) throws Exception {
         return record(invocationContext, null);
+    }
+
+    public Method AroundConstruct() throws NoSuchMethodException {
+        return this.getClass().getMethod("AroundConstruct");
+    }
+
+    @AroundConstruct
+    public void AroundConstruct(final InvocationContext invocationContext) throws Exception {
+        record(invocationContext, AroundConstruct());
     }
 
     public Method PostConstruct() throws NoSuchMethodException {

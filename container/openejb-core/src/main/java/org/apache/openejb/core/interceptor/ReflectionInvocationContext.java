@@ -22,6 +22,7 @@ import org.apache.openejb.util.Classes;
 
 import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -36,27 +37,30 @@ public class ReflectionInvocationContext implements InvocationContext {
     private final Iterator<Interceptor> interceptors;
     private final Object target;
     private final Method method;
+    private final Constructor constructor;
     private final Object[] parameters;
     private final Map<String, Object> contextData = new TreeMap<>();
     private final Class<?>[] parameterTypes;
-
     private final Operation operation;
 
-    public ReflectionInvocationContext(final Operation operation, final List<Interceptor> interceptors, final Object target, final Method method, final Object... parameters) {
+    public ReflectionInvocationContext(final Operation operation, final List<Interceptor> interceptors,
+                                       final Object target, final Method method, final Constructor constructor,
+                                       final Object... parameters) {
         if (operation == null) {
             throw new NullPointerException("operation is null");
         }
         if (interceptors == null) {
             throw new NullPointerException("interceptors is null");
         }
-        if (target == null) {
-            throw new NullPointerException("target is null");
+        if (target == null && constructor == null) {
+            throw new NullPointerException("target/constructor are null");
         }
 
         this.operation = operation;
         this.interceptors = interceptors.iterator();
         this.target = target;
         this.method = method;
+        this.constructor = constructor;
         this.parameters = parameters;
 
         if (method == null) {
@@ -86,7 +90,7 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     @Override
     public Constructor<?> getConstructor() {
-        throw new IllegalStateException(); // TODO
+        return constructor;
     }
 
     @Override
@@ -150,7 +154,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         return contextData;
     }
 
-    private Invocation next() {
+    protected Invocation next() {
         if (interceptors.hasNext()) {
             final Interceptor interceptor = interceptors.next();
             final Object nextInstance = interceptor.getInstance();
@@ -161,6 +165,8 @@ public class ReflectionInvocationContext implements InvocationContext {
             } else {
                 return new LifecycleInvocation(nextInstance, nextMethod, this, parameters);
             }
+        } else if (constructor != null) {
+            return new ConstructorInvocation(constructor, parameters);
         } else if (method != null) {
             //EJB 3.1, it is allowed that timeout method does not have parameter Timer.class,
             //However, while invoking the timeout method, the timer value is passed, as it is also required by InnvocationContext.getTimer() method
@@ -189,7 +195,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
     }
 
-    private abstract static class Invocation {
+    protected abstract static class Invocation {
         private final Method method;
         private final Object[] args;
         private final Object target;
@@ -215,6 +221,28 @@ public class ReflectionInvocationContext implements InvocationContext {
     private static class BeanInvocation extends Invocation {
         public BeanInvocation(final Object target, final Method method, final Object[] args) {
             super(target, method, args);
+        }
+    }
+
+    protected static class ConstructorInvocation extends Invocation {
+        private final Constructor constructor;
+        private final Object[] args;
+
+        public ConstructorInvocation(final Constructor constructor, final Object[] args) {
+            super(null, null, args);
+            this.args = args;
+            this.constructor = constructor;
+        }
+
+        @Override
+        public Object invoke() throws Exception {
+            final Object value = constructor.newInstance(args);
+            return value;
+        }
+
+
+        public String toString() {
+            return constructor.getDeclaringClass().getName() + "." + constructor.getName();
         }
     }
 
@@ -262,7 +290,7 @@ public class ReflectionInvocationContext implements InvocationContext {
      * @return the cause of the exception
      * @throws AssertionError if the cause is not an Exception or Error.
      */
-    private Exception unwrapInvocationTargetException(final InvocationTargetException e) {
+    protected Exception unwrapInvocationTargetException(final InvocationTargetException e) {
         final Throwable cause = e.getCause();
         if (cause == null) {
             return e;
@@ -277,7 +305,8 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     public String toString() {
         final String methodName = method != null ? method.getName() : null;
+        final String targetName = target != null ? target.getClass().getName() : null;
 
-        return "InvocationContext(operation=" + operation + ", target=" + target.getClass().getName() + ", method=" + methodName + ")";
+        return "InvocationContext(operation=" + operation + ", target=" + targetName + ", method=" + methodName + ")";
     }
 }

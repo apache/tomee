@@ -14,12 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.stateful;
+package org.apache.openejb.interceptors;
 
 import jakarta.interceptor.AroundConstruct;
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -34,29 +35,48 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatefulBean;
-import org.junit.AfterClass;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.After;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJBException;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.InvocationContext;
+import org.junit.Assert;
+import org.junit.Test;
+
 import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @version $Rev$ $Date$
- */
-public class StatefulInterceptorTest extends TestCase {
+public class AroundConstructInterceptorTest {
 
-    @AfterClass
-    public static void afterClass() throws Exception {
+    @After
+    public void closeOpenEjbContainer() throws Exception {
+        calls.clear();
         OpenEJB.destroy();
     }
 
-    public void test() throws Exception {
+    @Test
+    public void statefulWithAnnotation() throws Exception {
+        doTest(StatefulSessionContainerInfo.class, new StatefulBean(TargetBean.class));
+    }
+
+    @Test
+    public void singletonWithAnnotation() throws Exception {
+        doTest(StatefulSessionContainerInfo.class, new SingletonBean(TargetBean.class));
+    }
+
+    @Test
+    public void statelessWithAnnotation() throws Exception {
+        doTest(StatefulSessionContainerInfo.class, new StatelessBean(TargetBean.class));
+    }
+
+    public void doTest(final Class<? extends ContainerInfo> container, final EnterpriseBean enterpriseBean) throws Exception {
+
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -67,20 +87,20 @@ public class StatefulInterceptorTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        assembler.createContainer(config.configureService(StatefulSessionContainerInfo.class));
+        assembler.createContainer(config.configureService(container));
 
-        final EjbJarInfo ejbJar = config.configureApplication(buildTestApp());
-        assertNotNull(ejbJar);
-        assertEquals(1, ejbJar.enterpriseBeans.size());
-        assertEquals(1, ejbJar.enterpriseBeans.get(0).aroundInvoke.size());
-        assertEquals(1, ejbJar.enterpriseBeans.get(0).postConstruct.size());
+        final EjbJarInfo ejbJar = config.configureApplication(buildTestApp(enterpriseBean));
+        Assert.assertNotNull(ejbJar);
+        Assert.assertEquals(1, ejbJar.enterpriseBeans.size());
+        Assert.assertEquals(1, ejbJar.enterpriseBeans.get(0).aroundInvoke.size());
+        Assert.assertEquals(1, ejbJar.enterpriseBeans.get(0).postConstruct.size());
 
-        assertEquals(3, ejbJar.interceptors.size());
-        assertEquals(1, ejbJar.interceptors.get(0).aroundInvoke.size());
-        assertEquals(1, ejbJar.interceptors.get(0).aroundConstruct.size()); // only on interceptor per spec. Can't be on the bean
-        assertEquals(1, ejbJar.interceptors.get(0).postConstruct.size());
+        Assert.assertEquals(3, ejbJar.interceptors.size());
+        Assert.assertEquals(1, ejbJar.interceptors.get(0).aroundInvoke.size());
+        Assert.assertEquals(1, ejbJar.interceptors.get(0).aroundConstruct.size()); // only on interceptor per spec. Can't be on the bean
+        Assert.assertEquals(1, ejbJar.interceptors.get(0).postConstruct.size());
 
-        assertEquals(3, ejbJar.interceptorBindings.size());
+        Assert.assertEquals(3, ejbJar.interceptorBindings.size());
 
         assembler.createApplication(ejbJar);
 
@@ -93,30 +113,30 @@ public class StatefulInterceptorTest extends TestCase {
         calls.clear();
 
         final int i = target.echo(123);
-        assertEquals(123, i);
+        Assert.assertEquals(123, i);
 
         try {
             target.throwAppException();
-            fail("Should have thrown app exception");
+            Assert.fail("Should have thrown app exception");
         } catch (final AppException e) {
             // pass
         }
 
         try {
             target.throwSysException();
-            fail("Should have thrown a sys exception");
+            Assert.fail("Should have thrown a sys exception");
         } catch (final EJBException e) {
             // so far so good
             final Throwable cause = e.getCause();
             if (!(cause instanceof SysException)) {
-                fail("Inner Exception should be a SysException");
+                Assert.fail("Inner Exception should be a SysException");
             }
         }
     }
 
     private void assertCalls(final Call... expectedCalls) {
         final List expected = Arrays.asList(expectedCalls);
-        assertEquals(join("\n", expected), join("\n", calls));
+        Assert.assertEquals(join("\n", expected), join("\n", calls));
     }
 
     public enum Call {
@@ -141,14 +161,13 @@ public class StatefulInterceptorTest extends TestCase {
         Method_Invoke_AFTER,
         Class_Invoke_AFTER,
         Default_Invoke_AFTER,
-
     }
 
-    public EjbModule buildTestApp() {
+    public EjbModule buildTestApp(final EnterpriseBean enterpriseBean) {
         final EjbJar ejbJar = new EjbJar();
         final AssemblyDescriptor ad = ejbJar.getAssemblyDescriptor();
 
-        final EnterpriseBean bean = ejbJar.addEnterpriseBean(new StatefulBean(TargetBean.class));
+        final EnterpriseBean bean = ejbJar.addEnterpriseBean(enterpriseBean);
 
         Interceptor interceptor;
 
@@ -204,7 +223,7 @@ public class StatefulInterceptorTest extends TestCase {
         }
     }
 
-    public static interface Target {
+    public interface Target {
         List echo(List data);
 
         void throwAppException() throws AppException;

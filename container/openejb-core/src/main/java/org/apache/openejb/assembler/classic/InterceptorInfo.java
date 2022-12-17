@@ -25,6 +25,7 @@ public class InterceptorInfo extends InfoObject {
 
     public final List<CallbackInfo> aroundInvoke = new ArrayList<>();
 
+    public final List<CallbackInfo> aroundConstruct = new ArrayList<>();
     public final List<CallbackInfo> postConstruct = new ArrayList<>();
     public final List<CallbackInfo> preDestroy = new ArrayList<>();
 
