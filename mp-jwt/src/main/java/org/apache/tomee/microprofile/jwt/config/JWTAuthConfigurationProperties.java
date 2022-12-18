@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import static org.eclipse.microprofile.jwt.config.Names.AUDIENCES;
@@ -59,6 +60,7 @@ import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCA
 public class JWTAuthConfigurationProperties {
     public static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
     public static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
+    private static final Logger CONFIGURATION = Logger.getInstance(JWTLogCategories.CONFIG, JWTAuthConfigurationProperties.class);
 
     private Config config;
     private JWTAuthConfiguration jwtAuthConfiguration;
@@ -104,8 +106,8 @@ public class JWTAuthConfigurationProperties {
         final Supplier<Map<String, Key>> publicKeys = Keys.VERIFY.configure(config);
         final Supplier<Map<String, Key>> decryptKeys = Keys.DECRYPT.configure(config);
 
-        final Boolean allowNoExp = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).orElse(false);
-
+        final Boolean allowNoExp = queryAllowExp();
+        
         return new JWTAuthConfiguration(
                 publicKeys,
                 getIssuer().orElse(null),
@@ -116,6 +118,15 @@ public class JWTAuthConfigurationProperties {
                 config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"),
                 config.getOptionalValue("mp.jwt.decrypt.key.algorithm", String.class).orElse(null),
                 config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse(null));
+    }
+    
+    private Boolean queryAllowExp(){
+        AtomicBoolean result = new AtomicBoolean(false);
+        config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).ifPresent(value -> {
+            result.set(value);
+            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp propert instead.");
+            });
+        return config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class).orElse(result.get());
     }
 
     enum Keys {
