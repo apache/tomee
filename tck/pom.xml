@@ -42,6 +42,7 @@
     <module>bval-tomee</module>
     <module>bval-signature-test</module>
     <module>microprofile-tck</module>
+    <module>mvc-tck</module>
   </modules>
 
   <build>

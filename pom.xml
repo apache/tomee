@@ -239,7 +239,9 @@
     <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
+    <!-- Other API and Impl. not in Jakarta EE -->
     <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
+    <version.mvc>2.0.1</version.mvc>
     <version.krazo>2.0.2</version.krazo>
     <version.deltaspike>1.9.6</version.deltaspike>
 
