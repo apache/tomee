@@ -226,6 +226,7 @@
     <!-- Other API and Impl. not in Jakarta EE -->
     <version.ehcache>2.10.6</version.ehcache>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
+    <version.mvc>1.1.0</version.mvc>
     <version.krazo>1.1.1</version.krazo>
     <version.deltaspike>1.9.6</version.deltaspike>
 

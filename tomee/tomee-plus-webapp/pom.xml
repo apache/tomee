@@ -485,6 +485,17 @@
       <version>3.2</version>
       <scope>test</scope>
     </dependency>
+    <!-- Jakarta MVC -->
+    <dependency>
+      <groupId>jakarta.mvc</groupId>
+      <artifactId>jakarta.mvc-api</artifactId>
+      <version>${version.mvc}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.krazo</groupId>
+      <artifactId>krazo-cxf</artifactId>
+      <version>${version.krazo}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
