@@ -20,21 +20,17 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.util.ServerInfo;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.tomee.loader.TomcatHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -48,7 +44,6 @@ import java.util.logging.Logger;
 import static java.util.Arrays.asList;
 
 // this listener is the real tomee one (the OpenEJBListener is more tomcat oriented)
-// so it even changes the server info
 public class ServerListener implements LifecycleListener {
     private static final Logger LOGGER = Logger.getLogger(ServerListener.class.getName());
 
