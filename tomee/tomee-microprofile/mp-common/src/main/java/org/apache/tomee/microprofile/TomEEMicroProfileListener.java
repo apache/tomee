@@ -149,9 +149,8 @@ public class TomEEMicroProfileListener {
     public void registerMicroProfileJaxRsProviders(@Observes final ExtensionProviderRegistration extensionProviderRegistration) {
         extensionProviderRegistration.getProviders().add(new SmallRyeTracingDynamicFeature());
 
-        // The OpenTracing TCK tests that an exception is turned into a 500. JAX-RS 3.1 (?) mandates a default mapper
-        // which was not required on the current versions. I'm not sure if we should do this by default in the server
-        // of if we should do it with an arquillian extension to add it only for the TCK
+        // The OpenTracing TCK tests that an exception is turned into a 500. JAX-RS 3.1 mandates a default mapper
+        // which was not required on the current versions; see TOMEE-4133 for details.
         extensionProviderRegistration.getProviders().add(new MicroProfileOpenTracingExceptionMapper());
     }
 
