@@ -20,6 +20,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 
+// See TOMEE-4133 for details
 @Provider
 public class MicroProfileOpenTracingExceptionMapper implements jakarta.ws.rs.ext.ExceptionMapper<RuntimeException> {
 
