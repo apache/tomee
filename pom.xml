@@ -206,7 +206,7 @@
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
-    <version.jackson>2.14.0</version.jackson>
+    <version.jackson>2.14.1</version.jackson>
     <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- Jakarta EE API -->
