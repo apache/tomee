@@ -67,26 +67,37 @@ public class ServerInfo {
             ExceptionUtils.handleThrowable(t);
         }
         if (info == null || info.equals("Apache Tomcat/@VERSION@")) {
-            info = "Apache Tomcat/9.0.x-dev";
+            info = "Apache Tomcat/10.0.x-dev";
         }
         if (built == null || built.equals("@VERSION_BUILT@")) {
             built = "unknown";
         }
         if (number == null || number.equals("@VERSION_NUMBER@")) {
-            number = "9.0.x";
+            number = "10.0.x";
         }
 
+        // TOMEE-4014 - PATCH START
         try {
-            final int slash = info.indexOf('/');
-            Class<?> versionClass = Class.forName("org.apache.openejb.util.OpenEjbVersion");
-            Object instance = versionClass.getDeclaredMethod("get").invoke(null);
-            final String tomeeVersion = (String) versionClass.getDeclaredMethod("getVersion").invoke(instance);
+            final Class<?> systemInstanceClass = Class.forName("org.apache.openejb.loader.SystemInstance");
+            final Class<?> optionsClass = Class.forName("org.apache.openejb.loader.Options");
+            final Object systemInstance = systemInstanceClass.getDeclaredMethod("get").invoke(null);
+            final Object optionsInstance = systemInstanceClass.getDeclaredMethod("getOptions").invoke(systemInstance);
 
-            info = info.substring(0, slash) + " (TomEE)" + info.substring(slash) + " (" + tomeeVersion + ")";
+            final boolean keepServerInfo = (boolean) optionsClass.getDeclaredMethod("get", String.class, boolean.class).invoke(optionsInstance, "tomee.keep-server-info", false);
+
+            if (!keepServerInfo) {
+                final int slash = info.indexOf('/');
+                final Class<?> versionClass = Class.forName("org.apache.openejb.util.OpenEjbVersion");
+                final Object instance = versionClass.getDeclaredMethod("get").invoke(null);
+                final String tomeeVersion = (String) versionClass.getDeclaredMethod("getVersion").invoke(instance);
+
+                info = info.substring(0, slash) + " (TomEE)" + info.substring(slash) + " (" + tomeeVersion + ")";
+            }
         } catch (Throwable t) {
             // ignore
             t.printStackTrace();
         }
+        // TOMEE-4014 - PATCH END
 
         serverInfo = info;
         serverBuilt = built;
