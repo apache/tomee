@@ -22,11 +22,11 @@
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.tomee.maven</groupId>
-    <version>9.0.0</version>
+    <version>9.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee-maven-plugin</artifactId>
-  <version>9.0.0</version>
+  <version>9.0.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>TomEE :: Maven Plugins :: TomEE Maven Plugin</name>
 

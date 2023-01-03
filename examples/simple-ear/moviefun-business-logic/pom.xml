@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>moviefun-ear-parent</artifactId>
-    <version>9.0.0</version>
+    <version>9.0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>moviefun-business-logic</artifactId>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.0.0</version>
+      <version>9.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

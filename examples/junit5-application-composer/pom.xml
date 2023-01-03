@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>junit5-application-composer</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.0</version>
+  <version>9.0.1-SNAPSHOT</version>
   <name>TomEE :: Examples :: JUnit 5 :: Application Composer</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,13 +73,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.0.0</version>
+      <version>9.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-junit5</artifactId>
-      <version>9.0.0</version>
+      <version>9.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
