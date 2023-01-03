@@ -64,7 +64,7 @@ INFO - *************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Tue Mar 05 17:05:52 GMT 2019
 INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
-INFO - Version: 8.0.0-SNAPSHOT
+INFO - Version: 10.0.0-SNAPSHOT
 INFO - Build date: 20190305
 INFO - Build time: 01:33
 INFO - ********************************************************************************

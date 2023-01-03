@@ -23,7 +23,7 @@
 
   <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-vxx-simple</artifactId>
-  <version>9.0.0-SNAPSHOT</version>
+  <version>10.0.0-SNAPSHOT</version>
 
   <name>TomEE :: Examples :: Vaadin LATEST</name>
   <packaging>war</packaging>

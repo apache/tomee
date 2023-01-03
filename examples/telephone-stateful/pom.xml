@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>telephone-stateful</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.1-SNAPSHOT</version>
+  <version>10.0.0-SNAPSHOT</version>
   <name>TomEE :: Examples :: Telephone Stateful Pojo</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>9.0.1-SNAPSHOT</version>
+      <version>10.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <!-- END SNIPPET: openejbdep -->

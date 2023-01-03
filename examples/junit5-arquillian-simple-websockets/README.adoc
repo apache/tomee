@@ -8,7 +8,7 @@
 
 A simple Websocket example project.
 
-This was originally created for TomEE 9.0.0-SNAPSHOT using Jakarta EE 9 and Websocket
+This was originally created for TomEE 10.0.0-SNAPSHOT using Jakarta EE 9 and Websocket
 API 1.1.
 
 The example was created with a server to server typo of connection in

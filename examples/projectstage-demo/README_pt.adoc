@@ -112,12 +112,12 @@ Running org.superbiz.projectstage.ProductionProjectStageTest
 dez 30, 2018 11:59:39 AM org.apache.openejb.arquillian.common.Setup findHome
 INFO: Unable to find home in: /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote
 dez 30, 2018 11:59:39 AM org.apache.openejb.arquillian.common.MavenCache getArtifact
-INFO: Downloading org.apache.tomee:apache-tomee:8.0.0-SNAPSHOT:zip:webprofile please wait...
+INFO: Downloading org.apache.tomee:apache-tomee:10.0.0-SNAPSHOT:zip:webprofile please wait...
 dez 30, 2018 11:59:39 AM org.apache.openejb.arquillian.common.Zips unzip
-INFO: Extracting '/home/rmpestano/.m2/repository/org/apache/tomee/apache-tomee/8.0.0-SNAPSHOT/apache-tomee-8.0.0-SNAPSHOT-webprofile.zip' to '/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote'
+INFO: Extracting '/home/rmpestano/.m2/repository/org/apache/tomee/apache-tomee/10.0.0-SNAPSHOT/apache-tomee-10.0.0-SNAPSHOT-webprofile.zip' to '/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote'
 dez 30, 2018 11:59:39 AM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
-INFO: Downloaded container to: /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT
-30-Dec-2018 11:59:40.779 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version:        Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+INFO: Downloaded container to: /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT
+30-Dec-2018 11:59:40.779 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version:        Apache Tomcat (TomEE)/9.0.12 (10.0.0-SNAPSHOT)
 30-Dec-2018 11:59:40.779 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          Sep 4 2018 22:13:41 UTC
 30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server number:         9.0.12.0
 30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Name:               Linux
@@ -126,8 +126,8 @@ INFO: Downloaded container to: /home/rmpestano/projects/tomee/examples/projectst
 30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Java Home:             /usr/lib/jvm/java-8-oracle/jre
 30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Version:           1.8.0_191-b12
 30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Vendor:            Oracle Corporation
-30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_BASE:         /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT
-30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_HOME:         /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT
+30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_BASE:         /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT
+30-Dec-2018 11:59:40.780 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_HOME:         /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT
 30-Dec-2018 11:59:40.781 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -XX:+HeapDumpOnOutOfMemoryError
 30-Dec-2018 11:59:40.781 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xmx512m
 30-Dec-2018 11:59:40.781 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xms256m
@@ -137,13 +137,13 @@ INFO: Downloaded container to: /home/rmpestano/projects/tomee/examples/projectst
 30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.openejb.servlet.filters=org.apache.openejb.arquillian.common.ArquillianFilterRunner=/ArquillianServletRunner
 30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dopenejb.system.apps=true
 30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.remote.support=true
-30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.config.file=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/conf/logging.properties
-30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -javaagent:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/openejb-javaagent.jar
+30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.config.file=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/conf/logging.properties
+30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -javaagent:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/lib/openejb-javaagent.jar
 30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
-30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.io.tmpdir=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/temp
-30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.base=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT
-30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.home=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT
-30-Dec-2018 11:59:40.786 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.ext.dirs=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib
+30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.io.tmpdir=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/temp
+30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.base=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT
+30-Dec-2018 11:59:40.785 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.home=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT
+30-Dec-2018 11:59:40.786 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.ext.dirs=/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/lib
 30-Dec-2018 11:59:40.786 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
 30-Dec-2018 11:59:40.786 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -ea
 30-Dec-2018 11:59:40.786 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib]
@@ -157,15 +157,15 @@ INFO: Downloaded container to: /home/rmpestano/projects/tomee/examples/projectst
 30-Dec-2018 11:59:41.402 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 30-Dec-2018 11:59:41.402 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Sun Dec 30 11:59:41 BRST 2018
 30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
-30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.0-SNAPSHOT
+30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-SNAPSHOT
 30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20181221
 30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 07:57
 30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
-30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT
-30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT
+30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT
+30-Dec-2018 11:59:41.403 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT
 30-Dec-2018 11:59:41.406 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@53ca01a2
 30-Dec-2018 11:59:41.407 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
-30-Dec-2018 11:59:41.453 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/conf/tomee.xml'
+30-Dec-2018 11:59:41.453 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/conf/tomee.xml'
 30-Dec-2018 11:59:41.557 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
 30-Dec-2018 11:59:41.559 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 30-Dec-2018 11:59:41.562 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=true'
@@ -199,7 +199,7 @@ INFO: Downloaded container to: /home/rmpestano/projects/tomee/examples/projectst
 30-Dec-2018 11:59:41.961 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
 30-Dec-2018 11:59:41.961 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
 30-Dec-2018 11:59:41.979 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting service [Catalina]
-30-Dec-2018 11:59:41.979 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet Engine: Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+30-Dec-2018 11:59:41.979 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet Engine: Apache Tomcat (TomEE)/9.0.12 (10.0.0-SNAPSHOT)
 30-Dec-2018 11:59:42.072 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
 30-Dec-2018 11:59:42.073 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
 30-Dec-2018 11:59:42.073 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Unable to set the web application class loader property [skipMemoryLeakChecksOnJvmShutdown] to [false] as the property does not exist.
@@ -217,7 +217,7 @@ INFO: RemoteInitialContextCreated{providerUri=http://localhost:20003/tomee/ejb}
 30-Dec-2018 11:59:43.885 INFO [http-nio-20003-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 30-Dec-2018 11:59:43.885 INFO [http-nio-20003-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean 2525c909-8c3e-4486-a9b1-6d7d654ff153.Comp1117946264: Container(type=MANAGED, id=Default Managed Container)
 30-Dec-2018 11:59:43.885 INFO [http-nio-20003-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
-30-Dec-2018 11:59:43.895 INFO [http-nio-20003-exec-3] org.apache.openejb.core.managed.SimplePassivater.init Using directory /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/temp for stateful session passivation
+30-Dec-2018 11:59:43.895 INFO [http-nio-20003-exec-3] org.apache.openejb.core.managed.SimplePassivater.init Using directory /home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/temp for stateful session passivation
 30-Dec-2018 11:59:43.925 INFO [http-nio-20003-exec-3] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/home/rmpestano/projects/tomee/examples/projectstage-demo/target/arquillian-remote-working-dir/0/2525c909-8c3e-4486-a9b1-6d7d654ff153" loaded.
 30-Dec-2018 11:59:43.926 INFO [http-nio-20003-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /home/rmpestano/projects/tomee/examples/projectstage-demo/target/arquillian-remote-working-dir/0/2525c909-8c3e-4486-a9b1-6d7d654ff153
 30-Dec-2018 11:59:43.984 INFO [http-nio-20003-exec-3] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@53ca01a2
@@ -232,10 +232,10 @@ INFO: RemoteInitialContextCreated{providerUri=http://localhost:20003/tomee/ejb}
 30-Dec-2018 11:59:45.784 INFO [http-nio-20003-exec-3] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
 30-Dec-2018 11:59:45.790 INFO [http-nio-20003-exec-3] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
 30-Dec-2018 11:59:45.858 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getStandardFacesConfig Reading standard config META-INF/standard-faces-config.xml
-30-Dec-2018 11:59:46.139 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/openwebbeans-jsf-2.0.8.jar!/META-INF/faces-config.xml
-30-Dec-2018 11:59:46.142 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/openwebbeans-el22-2.0.8.jar!/META-INF/faces-config.xml
-30-Dec-2018 11:59:46.243 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.2' from path 'file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/myfaces-api-2.3.2.jar'
-30-Dec-2018 11:59:46.243 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.2' from path 'file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/myfaces-impl-2.3.2.jar'
+30-Dec-2018 11:59:46.139 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/lib/openwebbeans-jsf-2.0.8.jar!/META-INF/faces-config.xml
+30-Dec-2018 11:59:46.142 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/lib/openwebbeans-el22-2.0.8.jar!/META-INF/faces-config.xml
+30-Dec-2018 11:59:46.243 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.2' from path 'file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/lib/myfaces-api-2.3.2.jar'
+30-Dec-2018 11:59:46.243 INFO [http-nio-20003-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.2' from path 'file:/home/rmpestano/projects/tomee/examples/projectstage-demo/target/tomee-remote/apache-tomee-webprofile-10.0.0-SNAPSHOT/lib/myfaces-impl-2.3.2.jar'
 30-Dec-2018 11:59:46.252 INFO [http-nio-20003-exec-3] org.apache.myfaces.util.ExternalSpecifications.isCDIAvailable MyFaces CDI support enabled
 30-Dec-2018 11:59:46.253 INFO [http-nio-20003-exec-3] org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory.getInjectionProvider Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
 30-Dec-2018 11:59:46.298 INFO [http-nio-20003-exec-3] org.apache.myfaces.util.ExternalSpecifications.isBeanValidationAvailable MyFaces Bean Validation support enabled

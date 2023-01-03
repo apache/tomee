@@ -91,7 +91,7 @@ O azure-webapp é explicitamente chamado porque depende de sua conta do Azure. O
 
 O URL final será semelhante a:
 
-`https://<your-sub-domain>.azurewebsites.net/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
+`https://<your-sub-domain>.azurewebsites.net/cloud-tomee-azure-10.0.0-SNAPSHOT/echo/send-this-back`
 
 ==== Notas
 
@@ -103,7 +103,7 @@ Para implantar o aplicativo de echo localmente, você pode executar:
 
 `mvn tomee:run`
 
-Você pode testar o aplicativo chamando `http://localhost/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
+Você pode testar o aplicativo chamando `http://localhost/cloud-tomee-azure-10.0.0-SNAPSHOT/echo/send-this-back`
 
 Ele retornará send-this-back.
 

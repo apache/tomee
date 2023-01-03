@@ -255,7 +255,7 @@ Pragma=[no-cache]
 **********************************************
 
 DETALHADO - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 97
 Date: Sat, 01 Aug 2020 22:56:06 GMT
@@ -349,7 +349,7 @@ Content-Type=[application/xml]
 **********************************************
 
 DETALHADO - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 97
 Date: Sat, 01 Aug 2020 22:56:07 GMT
@@ -442,7 +442,7 @@ Pragma=[no-cache]
 **********************************************
 
 DETALHADO - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 22
 Date: Sat, 01 Aug 2020 22:56:07 GMT
@@ -537,7 +537,7 @@ Content-Type=[application/json]
 **********************************************
 
 DETALHADO - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 22
 Date: Sat, 01 Aug 2020 22:56:08 GMT
