@@ -32,7 +32,6 @@
     <module>access-timeout-meta</module>
     <module>access-timeout</module>
     <module>alternate-descriptors</module>
-    <!--<module>applet</module>-->
     <module>application-composer</module>
     <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
@@ -64,13 +63,6 @@
     <module>datasource-definition</module>
     <module>datasource-versioning</module>
     <module>decorators</module>
-    <!-- deltaspike not yet released and ready for jakarta
-    <module>deltaspike-configproperty</module>
-    <module>deltaspike-exception-handling</module>
-    <module>deltaspike-fullstack</module>
-    <module>deltaspike-i18n</module>
-    <module>projectstage-demo</module>
-    -->
     <module>dynamic-dao-implementation</module>
     <module>dynamic-datasource-routing</module>
     <module>dynamic-implementation</module>
@@ -179,8 +171,6 @@
     <module>simple-webservice</module>
     <module>simple-webservice-without-interface</module>
     <module>async-servlet</module>
-<!--    <module>spring-data-proxy</module>-->
-<!--    <module>spring-data-proxy-meta</module>-->
     <module>struts</module>
     <module>telephone-stateful</module>
     <module>testcase-injection</module>
@@ -208,19 +198,8 @@
     <module>resources-jmx-example</module>
     <module>websocket-tls-basic-auth</module>
     <module>concurrency-utils</module>
-    <!-- Deltaspike and others not jakarta compliant
-    Too many to relocate for an example
-    <module>mvc-cxf</module>
-    <module>mvc-cxf-hibernate</module>
-    -->
-    <!-- Needs krazo 3.0.0 to be released
-    <module>mvc-resteasy</module>
-    -->
     <module>jsonb-configuration</module>
     <module>jsonb-custom-serializer</module>
-<!--    <module>vaadin-lts-v08-simple</module>-->
-<!--    <module>vaadin-lts-v10-simple</module>-->
-<!--    <module>vaadin-vxx-simple</module>-->
     <module>cloud-tomee-azure</module>
     <module>xa-datasource</module>
     <module>websocket-jms</module>
