@@ -43,6 +43,7 @@ public class MicroProfileMetricsEndpoint extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        /*
         final String requestPath = request.getContextPath().length() > 1
                                    ? request.getRequestURI().substring(request.getContextPath().length())
                                    : request.getRequestURI();
@@ -54,5 +55,6 @@ public class MicroProfileMetricsEndpoint extends HttpServlet {
             response.setStatus(status);
             response.getWriter().write(message);
         });
+        */
     }
 }

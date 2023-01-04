@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.microprofile.metrics;
 
-import io.smallrye.metrics.setup.JmxRegistrar;
+//import io.smallrye.metrics.setup.JmxRegistrar;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -27,6 +27,7 @@ import org.apache.openejb.util.Logger;
 public class MPMetricsCDIExtension implements Extension {
 
     private void afterDeploymentValidation(@Observes final AfterDeploymentValidation avd, BeanManager bm) {
+        /*
         try {
             final JmxRegistrar registrar = new JmxRegistrar();
             registrar.init();
@@ -34,6 +35,7 @@ public class MPMetricsCDIExtension implements Extension {
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB, MPMetricsCDIExtension.class).error("Can't initialize Metrics Registrar: " + e.getMessage());
         }
+        */
     }
 
 }
