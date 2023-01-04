@@ -691,7 +691,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-websocket</artifactId>
+      <artifactId>tomcat-websocket-client-api</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
@@ -702,7 +702,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-websocket-client-api</artifactId>
+      <artifactId>tomcat-websocket</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
