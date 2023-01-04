@@ -489,7 +489,7 @@ public class GenerateBoms {
                 return new Artifact("org.apache.tomcat", "tomcat-websocket-api", "${tomcat.version}", null);
             }
             if (jar.getName().equals("websocket-client-api.jar")) {
-                return new Artifact("org.apache.tomcat", "websocket-client-api", "${tomcat.version}", null);
+                return new Artifact("org.apache.tomcat", "tomcat-websocket-client-api", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-coyote.jar")) {
                 return new Artifact("org.apache.tomcat", "tomcat-coyote", "${tomcat.version}", null);
