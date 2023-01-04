@@ -287,20 +287,11 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cxf-rt-rs-mp-client-shade</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <!-- exclude in favor of cxf-shade -->
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
+      <version>${cxf.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>

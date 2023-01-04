@@ -69,6 +69,12 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-client</artifactId>
+      <version>4.0.0</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>

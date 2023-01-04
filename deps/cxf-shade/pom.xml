@@ -43,110 +43,25 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>${cxf.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-      </exclusions>
-      <!--
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-ws-addr</artifactId>
-        </exclusion>
-      </exclusions>
-      -->
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-management</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
+
     <!--
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-search</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
+    Following dependencies won't be patched or shaded, but at least when we referenced this shaded jar, we get the
+    same transitive dependencies as if we were using the plain CXF dependencies
+
+    To update run mvn dependency:tree
     -->
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-cors</artifactId>
-      <version>${cxf.version}</version>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-security</artifactId>
-      <version>${cxf.version}</version>
-      <exclusions>
-        <!-- Exclude some weird transient dependency to jaxb-runtime from ehcache -->
-        <exclusion>
-          <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-runtime</artifactId>
-        </exclusion>
-
-        <!-- we need this so it compiles the patch for the interceptor -->
-        <exclusion>
-          <groupId>org.apache.wss4j</groupId>
-          <artifactId>wss4j-ws-security-dom</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-wsdl</artifactId>
-      <version>${cxf.version}</version>
-    </dependency>
-
-    <!-- add transitive dependencies so including this is equivalent to including regular deps -->
-    <dependency>
-      <groupId>org.apache.ws.xmlschema</groupId>
-      <artifactId>xmlschema-core</artifactId>
-      <version>2.2.5</version>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>3.0.2</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
@@ -154,28 +69,25 @@
       <version>6.4.0</version>
     </dependency>
     <dependency>
-      <groupId>wsdl4j</groupId>
-      <artifactId>wsdl4j</artifactId>
-      <version>1.6.3</version>
+      <groupId>org.apache.ws.xmlschema</groupId>
+      <artifactId>xmlschema-core</artifactId>
+      <version>2.3.0</version>
     </dependency>
     <dependency>
-      <groupId>org.reactivestreams</groupId>
-      <artifactId>reactive-streams</artifactId>
-      <version>1.0.3</version>
+      <groupId>org.eclipse.angus</groupId>
+      <artifactId>angus-activation</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.neethi</groupId>
-      <artifactId>neethi</artifactId>
-      <version>3.0.3</version>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>3.0.0</version>
     </dependency>
-
-    <!-- is this required -->
     <dependency>
-      <groupId>com.sun.xml.messaging.saaj</groupId>
-      <artifactId>saaj-impl</artifactId>
-      <version>1.5.3</version>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http</artifactId>
+      <version>${cxf.version}</version>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -229,7 +141,6 @@
               <createSourcesJar>true</createSourcesJar>
               <useBaseVersion>true</useBaseVersion>
               <createDependencyReducedPom>false</createDependencyReducedPom>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <artifactSet>
                 <includes>
                   <include>org.apache.cxf:*</include> <!-- only CXF to make sure we don't add other things -->
@@ -250,103 +161,6 @@
                   <resource>META-INF/cxf/bus-extensions.txt</resource>
                 </transformer>
               </transformers>
-              <relocations>
-                <relocation>
-                  <pattern>javax.activation</pattern>
-                  <shadedPattern>jakarta.activation</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.annotation</pattern>
-                  <shadedPattern>jakarta.annotation</shadedPattern>
-                  <excludes>
-                    <exclude>javax.annotation.processing.**</exclude>
-                  </excludes>
-                </relocation>
-                <relocation>
-                  <pattern>javax.ejb</pattern>
-                  <shadedPattern>jakarta.ejb</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.enterprise</pattern>
-                  <shadedPattern>jakarta.enterprise</shadedPattern>
-                  <excludes>
-                    <exclude>javax.enterprise.deploy.**</exclude>
-                  </excludes>
-                </relocation>
-                <relocation>
-                  <pattern>javax.inject</pattern>
-                  <shadedPattern>jakarta.inject</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.interceptor</pattern>
-                  <shadedPattern>jakarta.interceptor</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.jms</pattern>
-                  <shadedPattern>jakarta.jms</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.json</pattern>
-                  <shadedPattern>jakarta.json</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.jws</pattern>
-                  <shadedPattern>jakarta.jws</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.mail</pattern>
-                  <shadedPattern>jakarta.mail</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.persistence</pattern>
-                  <shadedPattern>jakarta.persistence</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.resource</pattern>
-                  <shadedPattern>jakarta.resource</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.servlet</pattern>
-                  <shadedPattern>jakarta.servlet</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.transaction</pattern>
-                  <shadedPattern>jakarta.transaction</shadedPattern>
-                  <excludes>
-                    <exclude>javax.transaction.xa.**</exclude>
-                  </excludes>
-                </relocation>
-                <relocation>
-                  <pattern>javax.validation</pattern>
-                  <shadedPattern>jakarta.validation</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.ws.rs</pattern>
-                  <shadedPattern>jakarta.ws.rs</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.xml.bind</pattern>
-                  <shadedPattern>jakarta.xml.bind</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.xml.soap</pattern>
-                  <shadedPattern>jakarta.xml.soap</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>javax.xml.ws</pattern>
-                  <shadedPattern>jakarta.xml.ws</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>com.sun.xml.bind</pattern>
-                  <shadedPattern>org.glassfish.jaxb</shadedPattern>
-                  <rawString>true</rawString>
-                </relocation>
-                <relocation>
-                  <pattern>com.sun.xml.internal.bind</pattern>
-                  <shadedPattern>org.glassfish.jaxb</shadedPattern>
-                  <rawString>true</rawString>
-                </relocation>
-              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -362,23 +176,6 @@
           <target>1.8</target>
           <dependencies>
             <dependency>${project.groupId}:jakartaee-api:jar:9.1-M2</dependency>
-
-            <dependency>org.apache.aries.blueprint:blueprint-parser:jar:1.6.0</dependency>
-            <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.api:jar:1.0.1</dependency>
-            <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.core:jar:1.10.2</dependency>
-            <dependency>org.apache.tomcat:tomcat-servlet-api:jar:10.0.4</dependency>
-            <dependency>org.osgi:org.osgi.core:jar:6.0.0</dependency>
-            <dependency>org.osgi:osgi.cmpn:jar:6.0.0</dependency>
-            <dependency>org.ow2.asm:asm:jar:9.1</dependency>
-            <dependency>org.springframework:spring-aop:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-beans:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-context:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-core:jar:5.3.6</dependency>
-            <dependency>org.springframework:spring-webmvc:jar:5.3.6</dependency>
-
-            <!-- We patch the interceptor so it's compliant with WSS4J 3.0.0 which is picked up in openejb-cxf -->
-            <!-- adding here because we don't want to shade it in cxf-shade jar -->
-            <dependency>org.apache.wss4j:wss4j-ws-security-dom:jar:3.0.0</dependency>
           </dependencies>
         </configuration>
         <executions>

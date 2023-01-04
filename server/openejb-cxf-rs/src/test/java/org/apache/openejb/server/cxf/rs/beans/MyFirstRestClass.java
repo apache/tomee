@@ -16,13 +16,11 @@
  */
 package org.apache.openejb.server.cxf.rs.beans;
 
-import org.apache.cxf.jaxrs.model.wadl.Description;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
 @Path("/first")
-@Description("MyFirstRestClass service")
 public class MyFirstRestClass {
     @Path("/hi")
     @GET
