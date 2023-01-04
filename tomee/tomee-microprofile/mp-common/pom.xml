@@ -193,7 +193,7 @@
       <artifactId>opentracing-api</artifactId>
     </dependency>
 
-    <!-- Geronimo Impl. -->
+    <!-- SmallRye Impl. -->
 
     <dependency>
       <groupId>io.smallrye.config</groupId>
