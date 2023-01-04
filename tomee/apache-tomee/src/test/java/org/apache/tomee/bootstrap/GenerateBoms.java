@@ -220,6 +220,7 @@ public class GenerateBoms {
                     .or(startsWith("jakarta.").and(endsWith("-api")))
                     .or(startsWith("microprofile-").and(endsWith("-api")))
                     .or(startsWith("microprofile-").and(endsWith("-api-shade")))
+                    .or(startsWith("websocket-").and(endsWith("-api"))) // websocket-client-api.jar in Tomcat 10.1+
                     .or(startsWith("tomcat-").and(endsWith("-api")));
 
             final List<Artifact> apiArtifacts = distribution.getArtifacts().stream()
@@ -486,6 +487,9 @@ public class GenerateBoms {
             }
             if (jar.getName().equals("websocket-api.jar")) {
                 return new Artifact("org.apache.tomcat", "tomcat-websocket-api", "${tomcat.version}", null);
+            }
+            if (jar.getName().equals("websocket-client-api.jar")) {
+                return new Artifact("org.apache.tomcat", "websocket-client-api", "${tomcat.version}", null);
             }
             if (jar.getName().equals("tomcat-coyote.jar")) {
                 return new Artifact("org.apache.tomcat", "tomcat-coyote", "${tomcat.version}", null);
