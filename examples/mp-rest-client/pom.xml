@@ -24,7 +24,7 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile REST Client</name>
   <properties>
-    <version.microprofile.rest-client>3.0</version.microprofile.rest-client>
+    <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
