@@ -175,7 +175,7 @@
           <source>1.8</source>
           <target>1.8</target>
           <dependencies>
-            <dependency>${project.groupId}:jakartaee-api:jar:9.1-M2</dependency>
+            <dependency>${project.groupId}:jakartaee-api:jar:10.0-SNAPSHOT</dependency>
           </dependencies>
         </configuration>
         <executions>
