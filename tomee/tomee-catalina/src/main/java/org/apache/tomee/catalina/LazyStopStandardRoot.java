@@ -191,21 +191,6 @@ public class LazyStopStandardRoot implements WebResourceRoot, JmxEnabled {
         return delegate.getTrackLockedFiles();
     }
 
-    @Override
-    public void setArchiveIndexStrategy(final String s) {
-        delegate.setArchiveIndexStrategy(s);
-    }
-
-    @Override
-    public String getArchiveIndexStrategy() {
-        return delegate.getArchiveIndexStrategy();
-    }
-
-    @Override
-    public ArchiveIndexStrategy getArchiveIndexStrategyEnum() {
-        return delegate.getArchiveIndexStrategyEnum();
-    }
-
     public List<String> getTrackedResources() { // IDE?
         return StandardRoot.class.cast(delegate).getTrackedResources();
     }
