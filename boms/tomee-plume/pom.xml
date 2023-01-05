@@ -1110,7 +1110,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-websocket-client-api</artifactId>
+      <artifactId>websocket-client-api</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
