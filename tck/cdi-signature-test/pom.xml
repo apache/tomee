@@ -35,7 +35,7 @@
     </dependency>
     <dependency>
       <groupId>jakarta.enterprise</groupId>
-      <artifactId>cdi-tck-impl</artifactId>
+      <artifactId>cdi-tck-core-impl</artifactId>
       <version>${cdi-tck.version}</version>
       <exclusions>
         <exclusion>
@@ -86,20 +86,19 @@
             <id>copy-tck-cdi-api-signature-file</id>
             <phase>generate-test-sources</phase>
             <goals>
-              <goal>unpack</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <artifactItems>
                 <artifactItem>
                   <groupId>jakarta.enterprise</groupId>
-                  <artifactId>cdi-tck-impl</artifactId>
+                  <artifactId>cdi-tck-core-impl</artifactId>
+                  <classifier>sigtest-jdk11</classifier>
+                  <type>sig</type>
                   <version>${cdi-tck.version}</version>
-                  <type>jar</type>
                   <overWrite>true</overWrite>
                 </artifactItem>
               </artifactItems>
-              <!-- We just need the signature file and nothing else -->
-              <includes>**/*.sig</includes>
               <outputDirectory>${project.build.directory}/api-signature</outputDirectory>
             </configuration>
           </execution>
@@ -109,17 +108,19 @@
       <plugin>
         <groupId>org.netbeans.tools</groupId>
         <artifactId>sigtest-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.5</version>
         <executions>
           <execution>
+            <id>sigtest</id>
+            <phase>verify</phase>
             <goals>
               <goal>check</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
-          <packages>jakarta.inject,jakarta.decorator</packages>
-          <sigfile>${project.build.directory}/api-signature/cdi-api-jdk8.sig</sigfile>
+          <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-4.0.7-sigtest-jdk11.sig</sigfile>
+          <packages>jakarta.decorator,jakarta.enterprise,jakarta.interceptor</packages>
         </configuration>
       </plugin>
 
