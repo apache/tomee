@@ -41,6 +41,8 @@
     <module>bval-embedded</module>
     <module>bval-tomee</module>
     <module>bval-signature-test</module>
+    <module>jsonp-standalone</module>
+    <module>jsonp-signature-test</module>
     <module>microprofile-tck</module>
   </modules>
 
