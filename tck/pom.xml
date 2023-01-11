@@ -43,6 +43,8 @@
     <module>bval-signature-test</module>
     <module>jsonb-standalone</module>
     <module>jsonb-signature-test</module>
+    <module>jsonp-standalone</module>
+    <module>jsonp-signature-test</module>
     <module>microprofile-tck</module>
   </modules>
 
