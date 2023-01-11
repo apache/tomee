@@ -260,8 +260,8 @@
           <artifactId>jakarta.xml.ws-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>jakarta.jws:jakarta</groupId>
-          <artifactId>jws-api</artifactId>
+          <groupId>jakarta.jws</groupId>
+          <artifactId>jakarta.jws-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.xml.soap</groupId>
