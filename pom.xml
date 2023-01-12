@@ -98,7 +98,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
+    <version.jakartaee-api>10.0-M1</version.jakartaee-api>
     <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
@@ -223,9 +223,10 @@
     <version.bval>2.0.6</version.bval>
     <cxf.version>3.5.5</cxf.version>
     <version.geronimo.components>3.1.5</version.geronimo.components>
+    <version.geronimo.components.transaction>4.0.0-SNAPSHOT</version.geronimo.components.transaction>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
-    <version.johnzon>1.2.19</version.johnzon>
+    <version.johnzon>2.0.0-SNAPSHOT</version.johnzon>
     <myfaces.version>3.0.2</myfaces.version>
     <version.openjpa>3.2.2</version.openjpa>
     <openwebbeans.version>2.0.27</openwebbeans.version>
@@ -1314,13 +1315,8 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
-        <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
+        <version>${version.geronimo.components.transaction}</version>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
             <artifactId>howl</artifactId>
@@ -1735,61 +1731,21 @@
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-core</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-mapper</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jaxrs</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonb</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.johnzon</groupId>
-        <artifactId>johnzon-jsonp-strict</artifactId>
-        <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>

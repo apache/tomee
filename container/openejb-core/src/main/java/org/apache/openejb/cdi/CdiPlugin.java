@@ -628,11 +628,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
 
         @Override
-        public boolean isNullable() {
-            return bean.isNullable();
-        }
-
-        @Override
         public Set<InjectionPoint> getInjectionPoints() {
             return Collections.emptySet();
         }

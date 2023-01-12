@@ -25,7 +25,7 @@
   <name>TomEE :: Examples :: MicroProfile JWT Bean Validation</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
+    <version.jakartaee-api>10.0-M1</version.jakartaee-api>
     <tomee.version>10.0.0-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
     <mp-jwt.version>1.1</mp-jwt.version>
