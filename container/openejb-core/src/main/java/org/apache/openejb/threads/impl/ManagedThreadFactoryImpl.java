@@ -18,6 +18,9 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ManageableThread;
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
+
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
@@ -42,6 +45,11 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
         return thread;
     }
 
+    @Override
+    public ForkJoinWorkerThread newThread(final ForkJoinPool pool) {
+        return new ManagedForkJoinWorkerThread(pool);
+    }
+
     public static class ManagedThread extends Thread implements ManageableThread {
         public ManagedThread(final Runnable r) {
             super(r);
@@ -50,6 +58,19 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
         @Override
         public boolean isShutdown() {
             return !isAlive();
+        }
+    }
+
+    public static class ManagedForkJoinWorkerThread extends ForkJoinWorkerThread {
+
+        /**
+         * Creates a ForkJoinWorkerThread operating in the given pool.
+         *
+         * @param pool the pool this thread works in
+         * @throws NullPointerException if pool is null
+         */
+        protected ManagedForkJoinWorkerThread(ForkJoinPool pool) {
+            super(pool);
         }
     }
 }

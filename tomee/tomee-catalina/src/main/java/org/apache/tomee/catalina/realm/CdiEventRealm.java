@@ -47,7 +47,7 @@ public class CdiEventRealm extends RealmBase {
         }
 
         final UserPasswordAuthenticationEvent event = new UserPasswordAuthenticationEvent(username, credentials);
-        beanManager().fireEvent(event);
+        beanManager().getEvent().fire(event);
         return event.getPrincipal();
     }
 
@@ -60,7 +60,7 @@ public class CdiEventRealm extends RealmBase {
 
         final DigestAuthenticationEvent event = new DigestAuthenticationEvent(username, digest, nonce, nc,
                 cnonce, qop, realm, md5a2);
-        beanManager().fireEvent(event);
+        beanManager().getEvent().fire(event);
         return event.getPrincipal();
     }
 
@@ -71,7 +71,7 @@ public class CdiEventRealm extends RealmBase {
         }
 
         final GssAuthenticationEvent event = new GssAuthenticationEvent(gssContext, storeCreds);
-        beanManager().fireEvent(event);
+        beanManager().getEvent().fire(event);
         return event.getPrincipal();
     }
 
@@ -82,7 +82,7 @@ public class CdiEventRealm extends RealmBase {
         }
 
         final SslAuthenticationEvent event = new SslAuthenticationEvent(certs);
-        beanManager().fireEvent(event);
+        beanManager().getEvent().fire(event);
         return event.getPrincipal();
     }
 
@@ -100,7 +100,7 @@ public class CdiEventRealm extends RealmBase {
         }
 
         final FindSecurityConstraintsEvent event = new FindSecurityConstraintsEvent(request.getRequest(), context.getPath());
-        beanManager().fireEvent(event);
+        beanManager().getEvent().fire(event);
 
         if (!event.getRoles().isEmpty()) {
             final SecurityConstraint s = new SecurityConstraint();

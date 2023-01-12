@@ -55,5 +55,10 @@ final class ThreadFactories {
         public Thread newThread(final Runnable r) {
             return delegate.newThread(r);
         }
+
+        @Override
+        public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+            return null;
+        }
     }
 }
