@@ -56,7 +56,6 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                 } else {
                     handler = EJBObjectHandler.createEJBObjectHandler(executor, ejb, server, client, primKey, authenticationInfo);
                     handler.setEJBHomeProxy((EJBHomeProxy) proxy);
-                    registerHandler(ejb.deploymentID + ":" + primKey, handler);
                     return handler.createEJBObjectProxy();
                 }
 
@@ -69,7 +68,6 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                     if (primKey != null) {
                         handler = EJBObjectHandler.createEJBObjectHandler(executor, ejb, server, client, primKey, authenticationInfo);
                         handler.setEJBHomeProxy((EJBHomeProxy) proxy);
-                        registerHandler(ejb.deploymentID + ":" + primKey, handler);
                         primaryKeys[i] = handler.createEJBObjectProxy();
                     }
                 }
@@ -83,7 +81,6 @@ public class EntityEJBHomeHandler extends EJBHomeHandler {
                     if (primKey != null) {
                         handler = EJBObjectHandler.createEJBObjectHandler(executor, ejb, server, client, primKey, authenticationInfo);
                         handler.setEJBHomeProxy((EJBHomeProxy) proxy);
-                        registerHandler(ejb.deploymentID + ":" + primKey, handler);
                         primaryKeys[i] = handler.createEJBObjectProxy();
                     }
                 }
