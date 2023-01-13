@@ -208,13 +208,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     	l.lock();
 
     	try {
-        	// this map lookup must be synchronized even though it is a ConcurrentHashMap to avoid race condition with the clean up below
-    		final Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.get(key);
-    		if (set == null) {
-    			set = new HashSet<WeakReference<EJBInvocationHandler>>();
-    			liveHandleRegistry.put(key, set);
-    		}
-    		set.add(new WeakReference<EJBInvocationHandler>(handler));
+        	// this map lookup must be synchronized even though it is a ConcurrentHashMap to avoid race condition with the cleanup below
+            final Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.computeIfAbsent(key, k -> new HashSet<>());
+            set.add(new WeakReference<>(handler));
 
     		// loop through and remove old references that have been garbage collected
     		for (Iterator<Map.Entry<Object,Set<WeakReference<EJBInvocationHandler>>>> i = liveHandleRegistry.entrySet().iterator(); i.hasNext(); ) {
@@ -236,7 +232,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     }
 
     /**
-     * Renamed method so it shows up with a much more understandable purpose as it
+     * Renamed method, so it shows up with a much more understandable purpose as it
      * will be the top element in the stacktrace
      *
      * @param e      Throwable
@@ -251,7 +247,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
                 return new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
             }
 
-            /**
+            /*
              * If a client attempts to invoke a method on a removed bean's business interface,
              * we must throw a javax.ejb.NoSuchEJBException. If the business interface is a
              * remote business interface that extends java.rmi.Remote, the
