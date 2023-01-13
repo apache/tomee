@@ -208,8 +208,8 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     	l.lock();
 
     	try {
-        	// this map lookup must be the synchronized even though it is a ConcurrentHashMap to avoid race condition with the clean up below
-    		Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.get(key);
+        	// this map lookup must be synchronized even though it is a ConcurrentHashMap to avoid race condition with the clean up below
+    		final Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.get(key);
     		if (set == null) {
     			set = new HashSet<WeakReference<EJBInvocationHandler>>();
     			liveHandleRegistry.put(key, set);
@@ -218,10 +218,10 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     		// loop through and remove old references that have been garbage collected
     		for (Iterator<Map.Entry<Object,Set<WeakReference<EJBInvocationHandler>>>> i = liveHandleRegistry.entrySet().iterator(); i.hasNext(); ) {
-    			Map.Entry<Object,Set<WeakReference<EJBInvocationHandler>>> entry = i.next();
-    			Set<WeakReference<EJBInvocationHandler>> s = entry.getValue();
+                final Map.Entry<Object,Set<WeakReference<EJBInvocationHandler>>> entry = i.next();
+                final Set<WeakReference<EJBInvocationHandler>> s = entry.getValue();
     			for (Iterator<WeakReference<EJBInvocationHandler>> j = s.iterator(); j.hasNext(); ) {
-    				WeakReference<EJBInvocationHandler> ref = j.next();
+                    final WeakReference<EJBInvocationHandler> ref = j.next();
     				if (ref.get() == null) {
     					j.remove(); // clean up old WeakReference
     				}
