@@ -35,7 +35,7 @@
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
-  <url>http://tomee.apache.org</url>
+  <url>https://tomee.apache.org</url>
   <inceptionYear>1999</inceptionYear>
 
   <prerequisites>
@@ -44,7 +44,7 @@
 
   <issueManagement>
     <system>jira</system>
-    <url>http://issues.apache.org/jira/browse/TOMEE</url>
+    <url>https://issues.apache.org/jira/browse/TOMEE</url>
   </issueManagement>
 
   <mailingLists>
@@ -53,39 +53,28 @@
       <subscribe>commits-subscribe@tomee.apache.org</subscribe>
       <unsubscribe>commits-unsubscribe@tomee.apache.org</unsubscribe>
       <post>commits@tomee.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/tomee-commits/</archive>
+      <archive>https://mail-archives.apache.org/mod_mbox/tomee-commits/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Developer List</name>
       <subscribe>dev-subscribe@tomee.apache.org</subscribe>
       <unsubscribe>dev-unsubscribe@tomee.apache.org</unsubscribe>
       <post>dev@tomee.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/tomee-dev/</archive>
+      <archive>https://mail-archives.apache.org/mod_mbox/tomee-dev/</archive>
     </mailingList>
     <mailingList>
       <name>OpenEJB Users List</name>
       <subscribe>users-subscribe@tomee.apache.org</subscribe>
       <unsubscribe>users-unsubscribe@tomee.apache.org</unsubscribe>
       <post>users@tomee.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/tomee-users/</archive>
+      <archive>https://mail-archives.apache.org/mod_mbox/tomee-users/</archive>
     </mailingList>
   </mailingLists>
-  <ciManagement>
-    <system>continuum</system>
-    <url>http://vmbuild.apache.org/continuum</url>
-    <notifiers>
-      <notifier>
-        <configuration>
-          <address>commits@tomee.apache.org</address>
-        </configuration>
-      </notifier>
-    </notifiers>
-  </ciManagement>
 
   <scm>
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
-    <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
+    <url>https://git-wip-us.apache.org/repos/asf/tomee.git</url>
     <tag>HEAD</tag>
   </scm>
 
