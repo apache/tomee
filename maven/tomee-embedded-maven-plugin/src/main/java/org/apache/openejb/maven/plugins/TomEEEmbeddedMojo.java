@@ -693,7 +693,13 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         }
         if (containerProperties != null) {
             final Properties props = new Properties();
-            props.putAll(containerProperties);
+            for(Map.Entry<String, String> e : containerProperties.entrySet()) {
+                if(e.getValue() == null) {
+                    getLog().warn("Value for container property '" + e.getKey() + "' is NULL. Skipping.'");
+                } else {
+                    props.put(e.getKey(), e.getValue());
+                }
+            }
             config.setProperties(props);
         }
         if (forceJspDevelopment) {
