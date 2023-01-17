@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-jmx</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.14</version>
+  <version>8.0.15-SNAPSHOT</version>
   <name>TomEE :: Examples :: Resources/JMX Example</name>
 
   <properties>
@@ -78,7 +78,7 @@
       <dependency>
         <groupId>org.superbiz</groupId>
         <artifactId>resources-jmx-ejb</artifactId>
-        <version>8.0.14</version>
+        <version>8.0.15-SNAPSHOT</version>
         <type>ejb</type>
         <scope>compile</scope>
       </dependency>

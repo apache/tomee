@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-webservice</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.14</version>
+  <version>8.0.15-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple Webservice</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,7 +54,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>8.0.14</version>
+      <version>8.0.15-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>8.0.14</version>
+      <version>8.0.15-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
