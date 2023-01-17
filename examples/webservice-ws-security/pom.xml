@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-ws-security</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.14-SNAPSHOT</version>
+  <version>8.0.14</version>
   <name>TomEE :: Web Examples :: EJB WebService with WS-Security</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>8.0.14-SNAPSHOT</version>
+      <version>8.0.14</version>
     </dependency>
 
     <!--
@@ -64,7 +64,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>8.0.14-SNAPSHOT</version>
+      <version>8.0.14</version>
       <scope>test</scope>
     </dependency>
 
