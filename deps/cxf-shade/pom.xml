@@ -358,8 +358,8 @@
         <configuration>
           <select>cxf-shade-.*\.jar</select>
           <transformSources>false</transformSources>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>11</source>
+          <target>11</target>
           <dependencies>
             <dependency>${project.groupId}:jakartaee-api:jar:10.0-M1</dependency>
 
