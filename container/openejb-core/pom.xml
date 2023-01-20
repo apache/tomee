@@ -722,13 +722,6 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${batchee.version}</version>
       <scope>provided</scope>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.batchee</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
   </dependencies>
