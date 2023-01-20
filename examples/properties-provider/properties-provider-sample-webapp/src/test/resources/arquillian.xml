@@ -30,7 +30,7 @@
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
       <property name="conf">src/test/conf</property>
       <property name="additionalLibs">
-        mvn:org.superbiz:properties-provider-impl:8.0.14-SNAPSHOT
+        mvn:org.superbiz:properties-provider-impl:8.0.15-SNAPSHOT
       </property>
     </configuration>
   </container>
