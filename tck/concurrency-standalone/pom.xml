@@ -135,6 +135,20 @@
       <artifactId>sigtest-maven-plugin</artifactId>
       <version>${sigtest.version}</version>
     </dependency>
+    <!-- To ensure its available for the TomEE lib directory -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.16.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>10.16.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
   <!-- end::testClientDep[] -->
 

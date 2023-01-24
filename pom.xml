@@ -229,7 +229,7 @@
     <version.johnzon>2.0.0-SNAPSHOT</version.johnzon>
     <myfaces.version>3.0.2</myfaces.version>
     <version.openjpa>3.2.2</version.openjpa>
-    <openwebbeans.version>2.0.27</openwebbeans.version>
+    <openwebbeans.version>2.0.28-SNAPSHOT</openwebbeans.version>
     <wss4j.version>3.0.0</wss4j.version>
     <santuario-xmlsec.version>3.0.1</santuario-xmlsec.version>
     <!-- org.eclipse -->
