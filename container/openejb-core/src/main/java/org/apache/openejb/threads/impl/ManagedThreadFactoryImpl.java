@@ -18,6 +18,7 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ManageableThread;
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import org.apache.openejb.threads.task.CURunnable;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
@@ -38,7 +39,8 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
 
     @Override
     public Thread newThread(final Runnable r) {
-        final Thread thread = new ManagedThread(r);
+        final CURunnable wrapper = new CURunnable(r);
+        final Thread thread = new ManagedThread(wrapper);
         thread.setDaemon(true);
         thread.setName(prefix + ID.incrementAndGet());
         thread.setContextClassLoader(ManagedThreadFactoryImpl.class.getClassLoader()); // ensure we use container loader as main context classloader to avoid leaks
