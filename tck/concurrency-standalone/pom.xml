@@ -50,7 +50,7 @@
          Use suite.xml to test the full profile
          Use suite-web.xml to test the web profile
      -->
-    <suiteXmlFile>suite.xml</suiteXmlFile>
+    <suiteXmlFile>dev.xml</suiteXmlFile>
 
     <!-- Pointer to logging.properties file that has the java.util.logging configuration -->
     <logging.config>logging.properties</logging.config>

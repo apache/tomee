@@ -33,8 +33,12 @@
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.16.1.1
                 mvn:org.apache.derby:derbytools:10.16.1.1
+                mvn:org.testng:testng:6.14.3
             </property>
             <property name="dir">target/tomee</property>
+            <property name="properties">
+                openejb.environment.default=true
+            </property>
         </configuration>
     </container>
     <container qualifier="tomee-plus">
