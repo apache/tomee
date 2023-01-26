@@ -145,17 +145,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.2</version>
@@ -180,7 +169,7 @@
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
-      <version>2.0.6</version>
+      <version>2.0.7-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -303,7 +292,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.0-RC3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -314,7 +303,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.0-RC3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -359,7 +348,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -371,7 +360,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -383,7 +372,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -395,7 +384,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -407,7 +396,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -419,7 +408,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -431,7 +420,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -443,7 +432,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>2.0.27</version>
+      <version>2.0.28-SNAPSHOT</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>

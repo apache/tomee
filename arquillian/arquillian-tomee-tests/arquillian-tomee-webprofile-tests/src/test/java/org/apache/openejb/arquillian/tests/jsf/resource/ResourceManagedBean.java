@@ -17,10 +17,11 @@
 package org.apache.openejb.arquillian.tests.jsf.resource;
 
 import jakarta.annotation.Resource;
-import jakarta.faces.bean.ManagedBean;
+import jakarta.enterprise.context.Dependent;
+
 import javax.sql.DataSource;
 
-@ManagedBean
+@Dependent
 public class ResourceManagedBean {
     @Resource
     private DataSource ds;

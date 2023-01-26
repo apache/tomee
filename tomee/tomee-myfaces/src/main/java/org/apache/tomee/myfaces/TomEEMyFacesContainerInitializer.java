@@ -22,11 +22,9 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ApplicationContext;
 import org.apache.catalina.core.ApplicationContextFacade;
 import org.apache.catalina.core.StandardContext;
-import org.apache.myfaces.ee.MyFacesContainerInitializer;
-import org.apache.myfaces.webapp.AbstractFacesInitializer;
+import org.apache.myfaces.webapp.MyFacesContainerInitializer;
 import org.apache.myfaces.webapp.StartupServletContextListener;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.log.RemoveLogMessage;
 import org.apache.openejb.util.URLs;
 
 import jakarta.faces.webapp.FacesServlet;
@@ -69,11 +67,11 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
         }
 
         // some message filtering, not a perf killer since this class don't log a lot
-        final Logger abstractInitializerLogger = Logger.getLogger(AbstractFacesInitializer.class.getName());
-        abstractInitializerLogger.setFilter(new RemoveLogMessage(
-                new RemoveLogMessage(abstractInitializerLogger.getFilter(),
-                        Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
-                Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
+//        final Logger abstractInitializerLogger = Logger.getLogger(AbstractFacesInitializer.class.getName());
+//        abstractInitializerLogger.setFilter(new RemoveLogMessage(
+//                new RemoveLogMessage(abstractInitializerLogger.getFilter(),
+//                        Level.WARNING, "No mappings of FacesServlet found. Abort initializing MyFaces."),
+//                Level.WARNING, "No mappings of FacesServlet found. Abort destroy MyFaces."));
 
         final boolean facesServletPresent = isFacesServletPresent(ctx);
         if (facesServletPresent || isFacesConfigPresent(ctx)) {
@@ -135,7 +133,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
     }
 
     private void addListener(final ServletContext ctx) {
-        final Logger logger = Logger.getLogger(AbstractFacesInitializer.class.getName());
+        final Logger logger = Logger.getLogger(MyFacesContainerInitializer.class.getName());
         logger.log(Level.INFO, "Installing <listener>" + StartupServletContextListener.class.getName() + "</listener>");
         ctx.addListener(StartupServletContextListener.class);
     }

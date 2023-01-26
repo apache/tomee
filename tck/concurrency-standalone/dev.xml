@@ -23,7 +23,7 @@
 <suite name="jakarta-concurrency" verbose="2" configfailurepolicy="continue">
     <test name="jakarta-concurrency.tck">
       <classes>
-	      <class name="ee.jakarta.tck.concurrent.spec.ManagedThreadFactory.context.ContextTests" />
+	      <class name="ee.jakarta.tck.concurrent.spec.ContextService.contextPropagate.ContextPropagationTests" />
       </classes>
     </test>
 </suite>

@@ -27,7 +27,7 @@
             <property name="ajpPort">-1</property>
             <property name="stopPort">-1</property>
             <property name="classifier">microprofile</property>
-            <property name="debug">false</property>
+            <property name="debug">true</property>
             <property name="conf">src/test/conf</property>
             <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
