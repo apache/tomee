@@ -133,8 +133,8 @@ public final class InjectionUtils {
         boolean useJaxb;
         try {
             ClassLoaderUtils.loadClass(
-                    "javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter",
-                    InjectionUtils.class);
+                "javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter",
+                InjectionUtils.class);
             useJaxb = true;
         } catch (final ClassNotFoundException cnfe) {
             useJaxb = false;
@@ -273,7 +273,7 @@ public final class InjectionUtils {
                     f.set(o, v);
                 } catch (IllegalAccessException ex) {
                     reportServerError("FIELD_ACCESS_FAILURE",
-                                      f.getType().getName());
+                        f.getType().getName());
                 }
                 return null;
             }
@@ -281,7 +281,7 @@ public final class InjectionUtils {
     }
 
     public static Object extractFieldValue(final Field f,
-                                        final Object o) {
+                                           final Object o) {
         return AccessController.doPrivileged(new PrivilegedAction<Object>() {
             public Object run() {
                 try {
@@ -289,7 +289,7 @@ public final class InjectionUtils {
                     return f.get(o);
                 } catch (IllegalAccessException ex) {
                     reportServerError("FIELD_ACCESS_FAILURE",
-                                      f.getType().getName());
+                        f.getType().getName());
                 }
                 return null;
             }
@@ -370,15 +370,15 @@ public final class InjectionUtils {
     }
 
     public static void injectThroughMethod(Object requestObject,
-                                               Method method,
-                                               Object parameterValue) {
+                                           Method method,
+                                           Object parameterValue) {
         injectThroughMethod(requestObject, method, parameterValue, null);
     }
 
     public static void injectThroughMethod(Object requestObject,
-                                               Method method,
-                                               Object parameterValue,
-                                               Message inMessage) {
+                                           Method method,
+                                           Object parameterValue,
+                                           Message inMessage) {
         try {
             Method methodToInvoke = checkProxy(method, requestObject);
             methodToInvoke.invoke(requestObject, new Object[]{parameterValue});
@@ -481,8 +481,8 @@ public final class InjectionUtils {
         boolean adapterHasToBeUsed = false;
         Class<?> cls = pClass;
         Class<?> valueType = !USE_JAXB
-                ? cls
-                : JAXBUtils.getValueTypeFromAdapter(pClass, pClass, paramAnns);
+            ? cls
+            : JAXBUtils.getValueTypeFromAdapter(pClass, pClass, paramAnns);
         if (valueType != cls) {
             cls = valueType;
             adapterHasToBeUsed = true;
@@ -501,8 +501,8 @@ public final class InjectionUtils {
         } catch (Exception ex) {
             Throwable t = getOrThrowActualException(ex);
             LOG.warning(new org.apache.cxf.common.i18n.Message("CLASS_CONSTRUCTOR_FAILURE",
-                                                               BUNDLE,
-                                                               pClass.getName()).toString());
+                BUNDLE,
+                pClass.getName()).toString());
             Response r = JAXRSUtils.toResponse(HttpUtils.getParameterFailureStatus(pType));
             throw ExceptionUtils.toHttpException(t, r);
         }
@@ -551,30 +551,30 @@ public final class InjectionUtils {
          */
         return ExceptionUtils.toNotAcceptableException(ex, null);
     }
-    
+
     public static <T> Optional<ParamConverter<T>> getParamConverter(Class<T> pClass,
-            Type genericType, Annotation[] anns, Message message) {
-        
+                                                                    Type genericType, Annotation[] anns, Message message) {
+
         if (message != null) {
             ServerProviderFactory pf = ServerProviderFactory.getInstance(message);
             ParamConverter<T> pm = pf.createParameterHandler(pClass, genericType, anns, message);
             return Optional.ofNullable(pm);
         }
-        
+
         return Optional.empty();
     }
 
     public static <T> T createFromParameterHandler(String value,
-                                                    Class<T> pClass,
-                                                    Type genericType,
-                                                    Annotation[] anns,
-                                                    Message message) {
+                                                   Class<T> pClass,
+                                                   Type genericType,
+                                                   Annotation[] anns,
+                                                   Message message) {
         return getParamConverter(pClass, genericType, anns, message)
             .map(pm -> pm.fromString(value))
             .orElse(null);
     }
-    
-    
+
+
 
     public static void reportServerError(String messageName, String parameter) {
         reportServerError(messageName, parameter, true);
@@ -583,14 +583,14 @@ public final class InjectionUtils {
     public static void reportServerError(String messageName, String parameter, boolean logError) {
         org.apache.cxf.common.i18n.Message errorMessage =
             new org.apache.cxf.common.i18n.Message(messageName,
-                                                   BUNDLE,
-                                                   parameter);
+                BUNDLE,
+                parameter);
         if (logError) {
             LOG.severe(errorMessage.toString());
         }
         Response r = JAXRSUtils.toResponseBuilder(Response.Status.INTERNAL_SERVER_ERROR)
-                         .type(MediaType.TEXT_PLAIN_TYPE)
-                         .entity(errorMessage.toString()).build();
+            .type(MediaType.TEXT_PLAIN_TYPE)
+            .entity(errorMessage.toString()).build();
         throw ExceptionUtils.toInternalServerErrorException(null, r);
     }
 
@@ -616,8 +616,8 @@ public final class InjectionUtils {
         if (factoryMethodEx != null) {
             Throwable t = getOrThrowActualException(factoryMethodEx);
             LOG.warning(new org.apache.cxf.common.i18n.Message("CLASS_VALUE_OF_FAILURE",
-                                                               BUNDLE,
-                                                               cls.getName()).toString());
+                BUNDLE,
+                cls.getName()).toString());
             throw new WebApplicationException(t, HttpUtils.getParameterFailureStatus(pType));
         }
         return result;
@@ -656,8 +656,8 @@ public final class InjectionUtils {
         try {
             if (paramType.isInterface()) {
                 paramType = org.apache.cxf.jaxrs.utils.JAXBUtils.getValueTypeFromAdapter(paramType,
-                                                                                         paramType,
-                                                                                         paramAnns);
+                    paramType,
+                    paramAnns);
             }
             bean = paramType.newInstance();
         } catch (IllegalAccessException ex) {
@@ -705,7 +705,7 @@ public final class InjectionUtils {
                         setter = m;
                     } else if (m.getName().equalsIgnoreCase("get" + memberKey)
                         || isBooleanType(m.getReturnType())
-                           && m.getName().equalsIgnoreCase("is" + memberKey)) {
+                        && m.getName().equalsIgnoreCase("is" + memberKey)) {
                         getter = m;
                     }
                     if (setter != null && getter != null) {
@@ -742,11 +742,11 @@ public final class InjectionUtils {
                     for (MultivaluedMap<String, String> processedValues : processedValuesList) {
                         if (InjectionUtils.isSupportedCollectionOrArray(type)) {
                             Object appendValue = InjectionUtils.injectIntoCollectionOrArray(type,
-                                                            genericType, paramAnns, processedValues,
-                                                            isbean, true,
-                                                            pType, message);
+                                genericType, paramAnns, processedValues,
+                                isbean, true,
+                                pType, message);
                             paramValue = InjectionUtils.mergeCollectionsOrArrays(paramValue, appendValue,
-                                                            genericType);
+                                genericType);
                         } else if (isSupportedMap(genericType)) {
                             Object appendValue = injectIntoMap(
                                 genericType, paramAnns, processedValues, true, pType, message);
@@ -754,7 +754,7 @@ public final class InjectionUtils {
 
                         } else if (isbean) {
                             paramValue = InjectionUtils.handleBean(type, paramAnns, processedValues,
-                                                            pType, message, decoded);
+                                pType, message, decoded);
                         } else {
                             paramValue = InjectionUtils.handleParameter(
                                 processedValues.values().iterator().next().get(0),
@@ -800,13 +800,13 @@ public final class InjectionUtils {
             MultivaluedMap<Object, Object> theValues = new MetadataMap<>();
             ParameterizedType valueParamType = (ParameterizedType) secondType;
             Class<?> valueType = (Class<?>) InjectionUtils.getType(valueParamType
-                               .getActualTypeArguments(), 0);
+                .getActualTypeArguments(), 0);
 
             for (Map.Entry<String, List<String>> processedValuesEntry : processedValues.entrySet()) {
                 List<String> valuesList = processedValuesEntry.getValue();
                 for (String value : valuesList) {
                     Object o = InjectionUtils.handleParameter(value,
-                                       decoded, valueType, valueType, paramAnns, pathParam, message);
+                        decoded, valueType, valueType, paramAnns, pathParam, message);
                     theValues.add(convertStringToPrimitive(processedValuesEntry.getKey(), keyType), o);
                 }
             }
@@ -819,7 +819,7 @@ public final class InjectionUtils {
             List<String> valuesList = processedValuesEntry.getValue();
             for (String value : valuesList) {
                 Object o = InjectionUtils.handleParameter(value,
-                                   decoded, valueType, valueType, paramAnns, pathParam, message);
+                    decoded, valueType, valueType, paramAnns, pathParam, message);
                 theValues.put(
                     convertStringToPrimitive(processedValuesEntry.getKey(), keyType),
                     o);
@@ -841,7 +841,7 @@ public final class InjectionUtils {
 
                 return InjectionUtils.isPrimitive(firstType)
                     && (InjectionUtils.isPrimitive(secondRawType)
-                        || allowedMapListValue(secondRawType, secondType));
+                    || allowedMapListValue(secondRawType, secondType));
             }
         }
         return false;
@@ -857,8 +857,8 @@ public final class InjectionUtils {
     }
 
     private static List<MultivaluedMap<String, String>> processValues(Class<?> type, Type genericType,
-                                        MultivaluedMap<String, String> values,
-                                        boolean isbean) {
+                                                                      MultivaluedMap<String, String> values,
+                                                                      boolean isbean) {
         final List<MultivaluedMap<String, String>> valuesList;
 
         if (isbean && InjectionUtils.isSupportedCollectionOrArray(type)) {
@@ -934,7 +934,7 @@ public final class InjectionUtils {
             int firstLen = Array.getLength(first);
             int secondLen = Array.getLength(second);
             Object mergedArray = Array.newInstance(InjectionUtils.getActualType(genericType),
-                                                    firstLen + secondLen);
+                firstLen + secondLen);
             System.arraycopy(first, 0, mergedArray, 0, firstLen);
             System.arraycopy(second, 0, mergedArray, firstLen, secondLen);
             return mergedArray;
@@ -958,10 +958,10 @@ public final class InjectionUtils {
     private static Object injectIntoCollectionOrArray(Class<?> rawType,
                                                       Type genericType,
                                                       Annotation[] paramAnns,
-                                        MultivaluedMap<String, String> values,
-                                        boolean isbean, boolean decoded,
-                                        ParameterType pathParam, Message message) {
-     //CHECKSTYLE:ON
+                                                      MultivaluedMap<String, String> values,
+                                                      boolean isbean, boolean decoded,
+                                                      ParameterType pathParam, Message message) {
+        //CHECKSTYLE:ON
         Class<?> type = getCollectionType(rawType);
 
         final Class<?> realType;
@@ -999,7 +999,7 @@ public final class InjectionUtils {
             valuesList = checkPathSegment(valuesList, realType, pathParam);
             for (int ind = 0; ind < valuesList.size(); ind++) {
                 Object o = InjectionUtils.handleParameter(valuesList.get(ind), decoded,
-                               realType, realGenericType, paramAnns, pathParam, message);
+                    realType, realGenericType, paramAnns, pathParam, message);
                 addToCollectionValues(theValues, o, ind);
             }
         }
@@ -1048,7 +1048,7 @@ public final class InjectionUtils {
                                                boolean decoded,
                                                ParameterType pathParam,
                                                Message message) {
-    //CHECKSTYLE:ON
+        //CHECKSTYLE:ON
 
         if (paramValues == null || paramValues.size() == 1 && paramValues.get(0) == null) {
             if (defaultValue != null) {
@@ -1071,17 +1071,17 @@ public final class InjectionUtils {
             MultivaluedMap<String, String> paramValuesMap = new MetadataMap<>();
             paramValuesMap.put("", paramValues);
             value = InjectionUtils.injectIntoCollectionOrArray(paramType, genericType, paramAnns,
-                                                paramValuesMap, false, decoded, pathParam, message);
+                paramValuesMap, false, decoded, pathParam, message);
         } else {
             String result = null;
             if (!paramValues.isEmpty()) {
                 boolean isLast = pathParam == ParameterType.PATH ? true : false;
                 result = isLast ? paramValues.get(paramValues.size() - 1)
-                                : paramValues.get(0);
+                    : paramValues.get(0);
             }
             if (result != null) {
                 value = InjectionUtils.handleParameter(result, decoded, paramType, genericType,
-                                                       paramAnns, pathParam, message);
+                    paramAnns, pathParam, message);
             }
         }
         return value;
@@ -1115,7 +1115,7 @@ public final class InjectionUtils {
         if (proxy == null) {
             ClassLoader loader
                 = proxyClassLoaderCache.getProxyClassLoader(Proxy.class.getClassLoader(),
-                                                            new Class<?>[]{Proxy.class, ThreadLocalProxy.class, type});
+                new Class<?>[]{Proxy.class, ThreadLocalProxy.class, type});
             if (!canSeeAllClasses(loader, new Class<?>[]{Proxy.class, ThreadLocalProxy.class, type})) {
                 LOG.log(Level.FINE, "find a loader from ProxyClassLoader cache,"
                     + " but can't see all interfaces");
@@ -1123,13 +1123,13 @@ public final class InjectionUtils {
                 LOG.log(Level.FINE, "create a new one with parent  " + Proxy.class.getClassLoader());
                 proxyClassLoaderCache.removeStaleProxyClassLoader(type);
                 proxyClassLoaderCache.getProxyClassLoader(Proxy.class.getClassLoader(),
-                                                          new Class<?>[]{Proxy.class, ThreadLocalProxy.class, type});
+                    new Class<?>[]{Proxy.class, ThreadLocalProxy.class, type});
 
 
             }
             return (ThreadLocalProxy<T>)Proxy.newProxyInstance(loader,
-                                   new Class[] {type, ThreadLocalProxy.class },
-                                   new ThreadLocalInvocationHandler<T>());
+                new Class[] {type, ThreadLocalProxy.class },
+                new ThreadLocalInvocationHandler<T>());
         }
 
         return (ThreadLocalProxy<T>)proxy;
@@ -1205,8 +1205,8 @@ public final class InjectionUtils {
                 }
                 try {
                     if (value == InjectionUtils.extractFromMethod(instance,
-                                                                  getGetterFromSetter(method),
-                                                                  false)) {
+                        getGetterFromSetter(method),
+                        false)) {
                         continue;
                     }
 
@@ -1259,8 +1259,8 @@ public final class InjectionUtils {
     }
 
     public static void injectContexts(Object requestObject,
-                                 AbstractResourceInfo resource,
-                                 Message message) {
+                                      AbstractResourceInfo resource,
+                                      Message message) {
         if (resource.contextsAvailable()) {
             injectContextMethods(requestObject, resource, message);
             injectContextFields(requestObject, resource, message);
@@ -1279,8 +1279,8 @@ public final class InjectionUtils {
                 continue;
             }
             Object o = JAXRSUtils.createContextValue(message,
-                                              method.getGenericParameterTypes()[0],
-                                              entry.getKey());
+                method.getGenericParameterTypes()[0],
+                entry.getKey());
 
             if (o != null) {
                 if (!cri.isSingleton()) {
@@ -1381,7 +1381,7 @@ public final class InjectionUtils {
                         Map<Object, Object> map = CastUtils.cast((Map<?, ?>)value);
                         for (Map.Entry<Object, Object> entry : map.entrySet()) {
                             values.add(propertyName + '.' + entry.getKey().toString(),
-                                       entry.getValue().toString());
+                                entry.getValue().toString());
                         }
                     }
                 } else {
@@ -1523,10 +1523,10 @@ public final class InjectionUtils {
     }
 
     public static Type getGenericResponseType(Method invoked,
-                                        Class<?> serviceCls,
-                                        Object targetObject,
-                                        Class<?> targetType,
-                                        Exchange exchange) {
+                                              Class<?> serviceCls,
+                                              Object targetObject,
+                                              Class<?> targetType,
+                                              Exchange exchange) {
         if (targetObject == null) {
             return null;
         }
@@ -1534,7 +1534,7 @@ public final class InjectionUtils {
         if (GenericEntity.class.isAssignableFrom(targetObject.getClass())) {
             type = processGenericTypeIfNeeded(serviceCls, targetType, ((GenericEntity<?>)targetObject).getType());
         } else if (invoked == null
-                   || !invoked.getReturnType().isAssignableFrom(targetType)) {
+            || !invoked.getReturnType().isAssignableFrom(targetType)) {
             // when a method has been invoked it is still possible that either an ExceptionMapper
             // or a ResponseHandler filter overrides a response entity; if it happens then
             // the Type is the class of the response object, unless this new entity is assignable
