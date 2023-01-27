@@ -26,6 +26,10 @@ import java.util.Comparator;
 
 import org.apache.cxf.jaxrs.utils.GenericsUtils;
 
+/**
+ * Note: This class isn't contained in the official CXF release series. <p></p>
+ * It is only present in the cxf-shade of the TomEE project.
+ */
 public class GenericArgumentComparator implements Comparator<Class<?>> {
 
     private final Class<?> genericInterface;

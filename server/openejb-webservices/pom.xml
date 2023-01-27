@@ -74,6 +74,12 @@
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
       <version>${version.impl.saaj}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.xml.soap</groupId>
+          <artifactId>jakarta.xml.soap-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- spec dependencies -->

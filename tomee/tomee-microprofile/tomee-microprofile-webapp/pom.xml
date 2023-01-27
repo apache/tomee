@@ -74,6 +74,26 @@
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-rt-databinding-jaxb</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.jws</groupId>
+          <artifactId>jakarta.jws-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.xml.soap</groupId>
+          <artifactId>jakarta.xml.soap-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.xml.ws</groupId>
+          <artifactId>jakarta.xml.ws-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
