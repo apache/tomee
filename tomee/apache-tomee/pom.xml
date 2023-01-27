@@ -562,6 +562,11 @@
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
               <createTarGz>true</createTarGz>
+              <skips>
+                <jars>
+                  <bcprov-jdk15on-1.70.jar>org.bouncycastle:bcprov-jdk15on:jar:1.70</bcprov-jdk15on-1.70.jar>
+                </jars>
+              </skips>
             </configuration>
             <executions>
               <execution>
