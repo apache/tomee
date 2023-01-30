@@ -100,14 +100,12 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api-tck</artifactId>
-      <version>${microprofile.metrics.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.jboss.arquillian.container</groupId>
@@ -120,7 +118,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-rest-tck</artifactId>
-      <version>${microprofile.metrics.tck.version}</version>
       <scope>test</scope>
     </dependency>
 

@@ -24,7 +24,7 @@
   <name>TomEE :: Examples :: MicroProfile Config</name>
   <properties>
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <microprofile.config.version>3.0.1</microprofile.config.version>
+    <version.microprofile.config>3.0.2</version.microprofile.config>
     <tomee.version>9.0.1-SNAPSHOT</tomee.version>
     <version.arquillian>1.7.0.Alpha10</version.arquillian>
   </properties>
@@ -38,7 +38,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
+      <version>${version.microprofile.config}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

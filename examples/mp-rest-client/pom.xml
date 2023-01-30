@@ -24,7 +24,7 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile REST Client</name>
   <properties>
-    <microprofile.rest-client.version>3.0</microprofile.rest-client.version>
+    <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <version>${version.microprofile.rest-client}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
