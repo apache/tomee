@@ -46,10 +46,18 @@
             <property name="httpPort">-1</property>
             <property name="ajpPort">-1</property>
             <property name="stopPort">-1</property>
-            <property name="classifier">plus</property>
+            <property name="classifier">microprofile</property>
+            <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
+            <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.16.1.1
+                mvn:org.apache.derby:derbytools:10.16.1.1
+                mvn:org.testng:testng:6.14.3
+            </property>
+            <property name="dir">target/tomee</property>
+            <property name="properties">
+                openejb.environment.default=true
             </property>
         </configuration>
     </container>
@@ -58,11 +66,38 @@
             <property name="httpPort">-1</property>
             <property name="ajpPort">-1</property>
             <property name="stopPort">-1</property>
-            <property name="classifier">plume</property>
+            <property name="classifier">microprofile</property>
+            <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
-            <property name="cleanOnStartUp">true</property>
+            <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.16.1.1
+                mvn:org.apache.derby:derbytools:10.16.1.1
+                mvn:org.testng:testng:6.14.3
+            </property>
+            <property name="dir">target/tomee</property>
+            <property name="properties">
+                openejb.environment.default=true
+            </property>
+        </configuration>
+    </container>
+    <container qualifier="tomee-webprofile">
+        <configuration>
+            <property name="httpPort">-1</property>
+            <property name="ajpPort">-1</property>
+            <property name="stopPort">-1</property>
+            <property name="classifier">webprofile</property>
+            <property name="debug">false</property>
+            <property name="conf">src/test/conf</property>
+            <property name="cleanOnStartUp">false</property>
+            <property name="additionalLibs">
+                mvn:org.apache.derby:derby:10.16.1.1
+                mvn:org.apache.derby:derbytools:10.16.1.1
+                mvn:org.testng:testng:6.14.3
+            </property>
+            <property name="dir">target/tomee</property>
+            <property name="properties">
+                openejb.environment.default=true
             </property>
         </configuration>
     </container>
