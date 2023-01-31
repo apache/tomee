@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>${santuario-xmlsec.version}</version>
+      <version>${version.xmlsec}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.woodstox</groupId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.santuario</groupId>
@@ -147,12 +147,12 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
       <exclusions>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
@@ -167,7 +167,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>${wss4j.version}</version>
+      <version>${version.wss4j}</version>
       <exclusions>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
@@ -219,7 +219,7 @@
     <dependency>
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
-      <version>${saaj-impl.version}</version>
+      <version>${version.impl.saaj}</version>
       <exclusions>
         <exclusion>
           <groupId>jakarta.activation</groupId>

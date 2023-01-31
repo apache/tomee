@@ -42,7 +42,7 @@
     <dependency><!-- needed by myfaces -->
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>${commons-beanutils.version}</version>
+      <version>${version.commons-beanutils}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -301,7 +301,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -312,7 +312,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.myfaces.core</groupId>
@@ -331,7 +331,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -343,7 +343,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -355,7 +355,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -367,7 +367,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -379,7 +379,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>

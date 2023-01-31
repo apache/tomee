@@ -113,7 +113,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
+      <version>${version.commons-io}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -191,7 +191,7 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>${commons-codec.version}</version>
+      <version>${version.commons-codec}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
