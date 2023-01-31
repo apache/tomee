@@ -174,24 +174,24 @@
     <maven.compiler.release>11</maven.compiler.release>
 
     <!-- Micro Profile API -->
-    <version.microprofile>5.0</version.microprofile>
+    <version.microprofile>6.0</version.microprofile>
     <version.microprofile.config>3.0.2</version.microprofile.config>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.health>4.0.1</version.microprofile.health>
-    <version.microprofile.jwt>2.0</version.microprofile.jwt>
-    <version.microprofile.metrics>4.0.1</version.microprofile.metrics>
-    <version.microprofile.openapi>3.0</version.microprofile.openapi>
+    <version.microprofile.jwt>2.1</version.microprofile.jwt>
+    <version.microprofile.metrics>5.0.0</version.microprofile.metrics>
+    <version.microprofile.openapi>3.1</version.microprofile.openapi>
     <version.microprofile.opentracing>3.0</version.microprofile.opentracing>
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
 
     <version.io.opentracing>0.33.0</version.io.opentracing>
 
     <!-- Micro Profile Impl. -->
-    <version.microprofile.impl.config>3.0.0</version.microprofile.impl.config>
-    <version.microprofile.impl.fault-tolerance>6.0.0</version.microprofile.impl.fault-tolerance>
-    <version.microprofile.impl.health>4.0.0</version.microprofile.impl.health>
+    <version.microprofile.impl.config>3.1.1</version.microprofile.impl.config>
+    <version.microprofile.impl.fault-tolerance>6.1.0</version.microprofile.impl.fault-tolerance>
+    <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>4.0.0</version.microprofile.impl.metrics>
-    <version.microprofile.impl.openapi>3.0.0</version.microprofile.impl.openapi>
+    <version.microprofile.impl.openapi>3.1.2</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentracing>3.0.0</version.microprofile.impl.opentracing>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
