@@ -158,7 +158,7 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
       <classifier>jakarta</classifier>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
