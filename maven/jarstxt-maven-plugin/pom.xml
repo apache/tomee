@@ -50,7 +50,7 @@ Licensed to the Apache Software Foundation (ASF) under one or more
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang3.version}</version>
+      <version>${version.commons-lang3}</version>
     </dependency>
   </dependencies>
 
