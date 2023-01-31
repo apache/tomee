@@ -214,7 +214,7 @@
     <geronimo-mail_2.1_spec.version>1.0.0-M1</geronimo-mail_2.1_spec.version>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>10.0.27</tomcat.version>
+    <tomcat.version>10.1.5</tomcat.version>
     <!-- com.sun -->
     <saaj-impl.version>2.0.1</saaj-impl.version>
     <!-- org.apache -->
