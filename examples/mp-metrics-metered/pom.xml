@@ -24,7 +24,7 @@
   <packaging>war</packaging>
   <properties>
     <version.jakartaee-api>10.0-M1</version.jakartaee-api>
-    <microprofile.metrics.version>3.0.1</microprofile.metrics.version>
+    <version.microprofile.metrics>3.0.1</version.microprofile.metrics>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
     <tomee.version>10.0.0-SNAPSHOT</tomee.version>
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
+      <version>${version.microprofile.metrics}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
