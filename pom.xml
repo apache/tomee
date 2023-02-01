@@ -226,7 +226,7 @@
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>1.2.19</version.johnzon>
-    <myfaces.version>3.0.2</myfaces.version>
+    <myfaces.version>4.0.0-RC4</myfaces.version>
     <version.openjpa>3.2.2</version.openjpa>
     <openwebbeans.version>2.0.27</openwebbeans.version>
     <wss4j.version>3.0.0</wss4j.version>
@@ -234,7 +234,7 @@
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
-    <mojarra.version>3.0.2</mojarra.version>
+    <mojarra.version>4.0.1</mojarra.version>
     <!-- org.hibernate -->
     <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
