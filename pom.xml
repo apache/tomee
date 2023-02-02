@@ -222,15 +222,6 @@
     <version.derby>10.14.2.0</version.derby>
     <version.hsqldb>2.7.1</version.hsqldb>
 
-    <!-- unused properties -->
-    <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <pax-url.version>1.3.5</pax-url.version>
-    <plexus.version>1.5.5</plexus.version>
-    <plexus-utils.version>3.0.10</plexus-utils.version>
-    <scannotation.version>1.0.2</scannotation.version>
-    <wagon.version>2.2</wagon.version>
-
   </properties>
 
   <build>
