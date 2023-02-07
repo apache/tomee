@@ -398,7 +398,7 @@
             <manifestEntries>
               <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
               <Class-Path>openejb-loader-${project.version}.jar openejb-client-${project.version}.jar
-                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm9-shaded-${xbeanVersion}.jar
+                xbean-finder-shaded-${version.xbean}.jar xbean-asm9-shaded-${version.xbean}.jar
               </Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
                 org.apache.openejb.config.VmDeploymentFactory
@@ -439,7 +439,7 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>${log4j2.version}</version>
+      <version>${version.log4j2}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -720,7 +720,7 @@
     <dependency>
       <groupId>org.apache.batchee</groupId>
       <artifactId>batchee-jbatch</artifactId>
-      <version>${batchee.version}</version>
+      <version>${version.batchee}</version>
       <scope>provided</scope>
     </dependency>
 

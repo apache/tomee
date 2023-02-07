@@ -73,7 +73,7 @@
     <dependency>
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
-      <version>${saaj-impl.version}</version>
+      <version>${version.impl.saaj}</version>
     </dependency>
 
     <!-- spec dependencies -->
