@@ -26,7 +26,7 @@
   <name>TomEE :: Examples :: XA Datasource configuration and usage</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.derby>10.14.2.0</version.derby>
+    <version.derby>10.15.2.0</version.derby>
     <tomee.version>10.0.0-SNAPSHOT</tomee.version>
   </properties>
   <build>
