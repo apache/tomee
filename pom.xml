@@ -216,7 +216,7 @@
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.0-SNAPSHOT</version.johnzon>
-    <version.myfaces>4.0.0-RC3</version.myfaces>
+    <version.myfaces>4.0.0-RC4</version.myfaces>
     <version.openjpa>3.2.2</version.openjpa>
     <version.openwebbeans>2.0.28-SNAPSHOT</version.openwebbeans>
     <!-- org.eclipse -->
