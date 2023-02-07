@@ -20,12 +20,10 @@ import org.eclipse.microprofile.metrics.Histogram;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetadataBuilder;
 import org.eclipse.microprofile.metrics.MetricRegistry;
-import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.annotation.Metric;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -41,8 +39,7 @@ public class WeatherService {
     private MetricRegistry registry;
 
     @Inject
-    @Metric(name = "temperatures", description = "A histogram metrics example.",
-        displayName = "Histogram of Recent New York Temperatures")
+    @Metric(name = "temperatures", description = "A histogram metrics example.")
     private Histogram histogram;
 
     @Path("/histogram")
@@ -52,7 +49,6 @@ public class WeatherService {
         final Metadata metadata = new MetadataBuilder()
             .withName("temperatures")
             .withDescription("A histogram of recent New York temperatures.")
-            .withType(MetricType.HISTOGRAM)
             .withUnit("degrees F")
             .build();
         histogram = registry.histogram(metadata);

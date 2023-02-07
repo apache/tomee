@@ -35,7 +35,6 @@ public class WeatherService {
 
     @Path("/day/temperature")
     @Gauge(name = "weather_day_temperature", absolute = true, unit = "celsius",
-            displayName = "Weather Day Temperature",
             description = "This metric shows the day temperature.",
             tags = {"weather=temperature"})
     @GET
