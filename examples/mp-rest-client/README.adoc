@@ -23,7 +23,7 @@ To use MicroProfile Rest Client you need 3 changes in your project:
  <dependency>
      <groupId>org.eclipse.microprofile.rest.client</groupId>
      <artifactId>microprofile-rest-client-api</artifactId>
-     <version>${microprofile.rest-client.version}</version>
+     <version>${version.microprofile.rest-client}</version>
      <scope>provided</scope>
  </dependency>
 ----
