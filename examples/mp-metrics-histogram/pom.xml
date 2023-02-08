@@ -25,7 +25,7 @@
   <name>TomEE :: Examples :: Microprofile Metrics Histogram</name>
   <properties>
     <version.jakartaee-api>10.0-M1</version.jakartaee-api>
-    <version.microprofile.metrics>5.0.0</version.microprofile.metrics>
+    <version.microprofile.metrics>4.0</version.microprofile.metrics>
     <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
     <tomee.version>10.0.0-SNAPSHOT</tomee.version>
