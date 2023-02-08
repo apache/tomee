@@ -211,14 +211,13 @@
     <version.batchee>2.0.0-SNAPSHOT</version.batchee>
     <version.bval>3.0.0-SNAPSHOT</version.bval>
     <version.cxf>3.5.5</version.cxf>
-    <version.geronimo.components>3.1.5</version.geronimo.components>
-    <version.geronimo.components.transaction>4.0.0-SNAPSHOT</version.geronimo.components.transaction>
+    <version.geronimo.components>4.0.0-SNAPSHOT</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.0-SNAPSHOT</version.johnzon>
     <version.myfaces>4.0.0-RC4</version.myfaces>
     <version.openjpa>3.2.2</version.openjpa>
-    <version.openwebbeans>2.0.28-SNAPSHOT</version.openwebbeans>
+    <version.openwebbeans>4.0.0-SNAPSHOT</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
@@ -1340,16 +1339,7 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
         <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.components</groupId>
-            <artifactId>geronimo-transaction</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
             <artifactId>howl</artifactId>
@@ -1359,7 +1349,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
-        <version>${version.geronimo.components.transaction}</version>
+        <version>${version.geronimo.components}</version>
         <exclusions>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
@@ -1642,12 +1632,7 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
@@ -1658,117 +1643,36 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
-        <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
-          <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-el_2.2_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
-        <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-finder-shaded</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-el22</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
-        <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>

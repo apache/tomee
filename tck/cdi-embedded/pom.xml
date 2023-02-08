@@ -102,7 +102,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
       <version>${version.openwebbeans}</version>
-      <classifier>jakarta</classifier>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -110,19 +109,7 @@
           <artifactId>openejb-core</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.apache.tomcat</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.cdi.tck</groupId>
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
@@ -227,7 +214,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${version.openwebbeans}</version>
-      <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
