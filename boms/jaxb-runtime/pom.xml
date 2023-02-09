@@ -44,7 +44,7 @@
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>3.0.1</version>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion> <!-- Is already included in java-ee-api -->
           <artifactId>jakarta.activation</artifactId>
@@ -55,7 +55,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.2</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion> <!-- Is already included in java-ee-api -->
@@ -65,9 +65,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.sun.activation</groupId>
-      <artifactId>jakarta.activation</artifactId>
-      <version>2.0.1</version>
+      <groupId>org.eclipse.angus</groupId>
+      <artifactId>angus-activation</artifactId>
+      <version>2.0.0</version>
     </dependency>
   </dependencies>
 
