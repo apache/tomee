@@ -108,6 +108,7 @@ public class DeployInWebAppsDirectoryTest {
         configuration.setVersion(System.getProperty("tomee.version"));
 //        configuration.setDebug(true);
         configuration.setHttpPort(-1);
+        configuration.setStopPort(-1);
 
         final RemoteTomEEContainer container = new RemoteTomEEContainer();
         container.setup(configuration);
@@ -130,7 +131,7 @@ public class DeployInWebAppsDirectoryTest {
                     runTests(appUrl);
                     return null;
                 }
-            }, 30);
+            }, 60);
 
             container.stop();
 
