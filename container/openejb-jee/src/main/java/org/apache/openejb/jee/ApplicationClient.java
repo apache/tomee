@@ -149,6 +149,8 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
 
     @XmlTransient
     protected String mainClass;
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     public ApplicationClient() {
     }
@@ -446,5 +448,13 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

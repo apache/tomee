@@ -119,11 +119,11 @@ public class MPJWTCDIExtension implements Extension {
     }
 
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(JWTAuthConfigurationProperties.class));
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class));
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(org.apache.tomee.microprofile.jwt.bval.BValInterceptor.class));
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(JWTAuthConfigurationProperties.class), "JWTAuthConfigurationProperties");
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class), "JsonbProducer");
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class), "MPJWTFilter");
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class), "MPJWTInitializer");
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(org.apache.tomee.microprofile.jwt.bval.BValInterceptor.class), "BValInterceptor");
     }
 
     public static <T> T getContextualReference(Class<T> type, final BeanManager beanManager) {

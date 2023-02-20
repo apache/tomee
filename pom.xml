@@ -98,8 +98,8 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
+    <version.jakartaee-api>10.0-M1</version.jakartaee-api>
+    <version.tomee-patch-plugin>0.10</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -219,16 +219,16 @@
     <saaj-impl.version>2.0.1</saaj-impl.version>
     <!-- org.apache -->
     <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
-    <batchee.version>1.0.2</batchee.version>
-    <version.bval>2.0.6</version.bval>
+    <batchee.version>2.0.0-SNAPSHOT</batchee.version>
+    <version.bval>2.0.7-SNAPSHOT</version.bval>
     <cxf.version>3.5.5</cxf.version>
     <version.geronimo.components>3.1.5</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>1.2.19</version.johnzon>
-    <myfaces.version>3.0.2</myfaces.version>
+    <myfaces.version>4.0.0-RC3</myfaces.version>
     <version.openjpa>3.2.2</version.openjpa>
-    <openwebbeans.version>2.0.27</openwebbeans.version>
+    <openwebbeans.version>4.0.0-SNAPSHOT</openwebbeans.version>
     <wss4j.version>3.0.0</wss4j.version>
     <santuario-xmlsec.version>3.0.1</santuario-xmlsec.version>
     <!-- org.eclipse -->
@@ -1602,7 +1602,6 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
         <version>${openwebbeans.version}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.openwebbeans</groupId>
@@ -1618,7 +1617,6 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${openwebbeans.version}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.openwebbeans</groupId>
@@ -1630,7 +1628,6 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
         <version>${openwebbeans.version}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1645,7 +1642,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
@@ -1662,7 +1658,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
           <exclusions>
           <exclusion>
@@ -1683,7 +1678,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
@@ -1700,7 +1694,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-el22</artifactId>
-        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
@@ -1712,7 +1705,6 @@
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
-        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>

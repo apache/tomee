@@ -140,6 +140,8 @@ public class Interceptor implements JndiConsumer, Session {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     public Interceptor() {
     }
@@ -471,5 +473,13 @@ public class Interceptor implements JndiConsumer, Session {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

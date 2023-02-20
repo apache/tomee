@@ -17,6 +17,7 @@
 
 package org.apache.openejb.config;
 
+import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.interceptor.AroundConstruct;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
@@ -30,98 +31,8 @@ import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.dyni.DynamicSubclass;
-import org.apache.openejb.jee.ActivationConfig;
-import org.apache.openejb.jee.ActivationSpec;
-import org.apache.openejb.jee.AdminObject;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.AroundInvoke;
-import org.apache.openejb.jee.AroundTimeout;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.AsyncMethod;
-import org.apache.openejb.jee.AuthenticationMechanism;
-import org.apache.openejb.jee.Beans;
-import org.apache.openejb.jee.ConcurrencyManagementType;
-import org.apache.openejb.jee.ConcurrentLockType;
-import org.apache.openejb.jee.ConcurrentMethod;
-import org.apache.openejb.jee.ConfigProperty;
-import org.apache.openejb.jee.ContainerConcurrency;
-import org.apache.openejb.jee.ContainerTransaction;
-import org.apache.openejb.jee.DataSource;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.EjbReference;
-import org.apache.openejb.jee.Empty;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.ExcludeList;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.FacesManagedBean;
-import org.apache.openejb.jee.Filter;
-import org.apache.openejb.jee.Handler;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.Icon;
-import org.apache.openejb.jee.InboundResourceadapter;
-import org.apache.openejb.jee.InitMethod;
-import org.apache.openejb.jee.Injectable;
-import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.InterceptorBinding;
-import org.apache.openejb.jee.Invokable;
-import org.apache.openejb.jee.IsolationLevel;
-import org.apache.openejb.jee.JMSConnectionFactory;
-import org.apache.openejb.jee.JMSDestination;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.JndiReference;
-import org.apache.openejb.jee.License;
-import org.apache.openejb.jee.Lifecycle;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.Listener;
-import org.apache.openejb.jee.MessageAdapter;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.MessageListener;
-import org.apache.openejb.jee.MethodAttribute;
-import org.apache.openejb.jee.MethodParams;
-import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.OutboundResourceAdapter;
-import org.apache.openejb.jee.ParamValue;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.PersistenceContextSynchronization;
-import org.apache.openejb.jee.PersistenceContextType;
-import org.apache.openejb.jee.PersistenceUnitRef;
-import org.apache.openejb.jee.PortComponent;
-import org.apache.openejb.jee.Property;
-import org.apache.openejb.jee.RemoteBean;
-import org.apache.openejb.jee.RemoveMethod;
-import org.apache.openejb.jee.ResAuth;
-import org.apache.openejb.jee.ResSharingScope;
-import org.apache.openejb.jee.ResourceAdapter;
-import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.SecurityIdentity;
-import org.apache.openejb.jee.SecurityRoleRef;
-import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.Servlet;
-import org.apache.openejb.jee.ServletMapping;
-import org.apache.openejb.jee.Session;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.Tag;
-import org.apache.openejb.jee.Text;
-import org.apache.openejb.jee.Timeout;
-import org.apache.openejb.jee.Timer;
-import org.apache.openejb.jee.TimerConsumer;
-import org.apache.openejb.jee.TimerSchedule;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.TransAttribute;
-import org.apache.openejb.jee.TransactionSupportType;
-import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.jba.JndiName;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
@@ -4064,6 +3975,22 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             //
+            // @ContextServiceDefinition
+            //
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ContextServiceDefinition.List.class)) {
+                final ContextServiceDefinition.List defs = annotated.getAnnotation(ContextServiceDefinition.List.class);
+                for (final ContextServiceDefinition definition : defs.value()) {
+                    buildContextServiceDefinition(consumer, definition);
+                }
+            }
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ContextServiceDefinition.class)) {
+                final ContextServiceDefinition definition = annotated.getAnnotation(ContextServiceDefinition.class);
+                buildContextServiceDefinition(consumer, definition);
+            }
+
+            //
             // @JMSConnectionFactoryDefinition
             //
 
@@ -4092,6 +4019,31 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(JMSDestinationDefinition.class)) {
                 buildDestinationDefinition(consumer, annotated.getAnnotation(JMSDestinationDefinition.class));
             }
+        }
+
+        private void buildContextServiceDefinition(final JndiConsumer consumer, final ContextServiceDefinition definition) {
+            final ContextService existing = consumer.getContextServiceMap().get(definition.name());
+            final ContextService contextService = (existing != null) ? existing : new ContextService();
+
+            if (contextService.getName() == null) {
+                final JndiName jndiName = new JndiName();
+                jndiName.setvalue(definition.name());
+                contextService.setName(jndiName);
+            }
+
+            if (contextService.getCleared().isEmpty()) {
+                contextService.getCleared().addAll(Arrays.asList(definition.cleared()));
+            }
+
+            if (contextService.getPropagated().isEmpty()) {
+                contextService.getPropagated().addAll(Arrays.asList(definition.propagated()));
+            }
+
+            if (contextService.getUnchanged().isEmpty()) {
+                contextService.getUnchanged().addAll(Arrays.asList(definition.unchanged()));
+            }
+
+            consumer.getContextServiceMap().put(definition.name(), contextService);
         }
 
         private void buildContext(final JndiConsumer consumer, final Member member) {

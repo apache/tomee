@@ -268,6 +268,8 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     @XmlTransient
     private final Collection<String> parents = new ArrayList<String>(); // always needed so initialize it early
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     public SessionBean() {
     }
@@ -952,5 +954,13 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

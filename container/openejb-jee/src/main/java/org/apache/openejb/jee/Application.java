@@ -138,6 +138,8 @@ public class Application implements JndiConsumer, NamedModule {
     protected KeyedCollection<String, MessageDestination> messageDestination;
     @XmlElement(name = "data-source")
     protected KeyedCollection<String, DataSource> dataSource;
+    @XmlElement(name = "context-service")
+    protected KeyedCollection<String, ContextService> contextService;
     @XmlElement(name = "jms-connection-factory", required = true)
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "jms-destination")
@@ -440,5 +442,13 @@ public class Application implements JndiConsumer, NamedModule {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

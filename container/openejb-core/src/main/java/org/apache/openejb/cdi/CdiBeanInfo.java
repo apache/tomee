@@ -17,7 +17,9 @@
 
 package org.apache.openejb.cdi;
 
+import jakarta.xml.bind.annotation.XmlElement;
 import org.apache.openejb.Injection;
+import org.apache.openejb.jee.ContextService;
 import org.apache.openejb.jee.DataSource;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
@@ -65,6 +67,8 @@ public class CdiBeanInfo implements JndiConsumer {
     private String beanName;
     private ClassLoader classLoader;
     private List<Injection> injections;
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     public String getBeanName() {
         return beanName;
@@ -320,5 +324,12 @@ public class CdiBeanInfo implements JndiConsumer {
 
     public Class<?> getBeanClass() {
         return this.beanClass;
+    }
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.threads.impl;
 
+import jakarta.enterprise.concurrent.ContextService;
 import org.apache.openejb.api.resource.DestroyableResource;
 import org.apache.openejb.threads.future.CUFuture;
 import org.apache.openejb.threads.task.CUCallable;
@@ -25,12 +26,8 @@ import org.apache.openejb.util.Logger;
 
 import jakarta.enterprise.concurrent.ManagedExecutorService;
 import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class ManagedExecutorServiceImpl extends AbstractExecutorService implements ManagedExecutorService, DestroyableResource {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImpl.class);
@@ -171,5 +168,55 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
                 }
             }
         }
+    }
+
+    @Override
+    public <U> CompletableFuture<U> completedFuture(U u) {
+        return null;
+    }
+
+    @Override
+    public <U> CompletionStage<U> completedStage(U u) {
+        return null;
+    }
+
+    @Override
+    public <T> CompletableFuture<T> copy(CompletableFuture<T> completableFuture) {
+        return null;
+    }
+
+    @Override
+    public <T> CompletionStage<T> copy(CompletionStage<T> completionStage) {
+        return null;
+    }
+
+    @Override
+    public <U> CompletableFuture<U> failedFuture(Throwable throwable) {
+        return null;
+    }
+
+    @Override
+    public <U> CompletionStage<U> failedStage(Throwable throwable) {
+        return null;
+    }
+
+    @Override
+    public ContextService getContextService() {
+        return null;
+    }
+
+    @Override
+    public <U> CompletableFuture<U> newIncompleteFuture() {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> runAsync(Runnable runnable) {
+        return null;
+    }
+
+    @Override
+    public <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) {
+        return null;
     }
 }

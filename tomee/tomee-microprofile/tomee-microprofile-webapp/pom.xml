@@ -332,7 +332,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
       <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -344,7 +343,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
       <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -356,7 +354,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
       <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -368,7 +365,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
       <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -380,7 +376,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>

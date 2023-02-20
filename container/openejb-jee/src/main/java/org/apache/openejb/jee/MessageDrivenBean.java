@@ -173,6 +173,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     public MessageDrivenBean() {
     }
@@ -642,5 +644,13 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @Override
     public String getTimerConsumerName() {
         return ejbName;
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

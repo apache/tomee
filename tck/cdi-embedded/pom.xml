@@ -102,7 +102,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
       <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -188,7 +187,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

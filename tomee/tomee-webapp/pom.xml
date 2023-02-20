@@ -448,7 +448,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -459,7 +458,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -470,7 +468,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -481,7 +478,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -492,7 +488,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -503,7 +498,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -514,7 +508,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -525,7 +518,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>

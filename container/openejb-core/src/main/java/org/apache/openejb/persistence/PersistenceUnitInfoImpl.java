@@ -18,6 +18,7 @@
 package org.apache.openejb.persistence;
 
 
+import jakarta.persistence.spi.TransformerException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.managed.xa.DataSourceXADataSource;
@@ -362,7 +363,8 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             this.classTransformer = classTransformer;
         }
 
-        public byte[] transform(final ClassLoader classLoader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
+        public byte[] transform(final ClassLoader classLoader, final String className, final Class<?> classBeingRedefined,
+                                final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
             // Example code to easily debug transformation of a specific class
             // if ("org/apache/openejb/test/entity/cmp/BasicCmpBean".equals(className) ||
             //        "org/apache/openejb/test/entity/cmp/BasicCmp2Bean_BasicCmp2Bean".equals(className)) {
@@ -375,7 +377,12 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             if (isServerClass(replace)) {
                 return classfileBuffer;
             }
-            return classTransformer.transform(classLoader, replace, classBeingRedefined, protectionDomain, classfileBuffer);
+            try {
+                return classTransformer.transform(classLoader, replace, classBeingRedefined, protectionDomain, classfileBuffer);
+            } catch (final TransformerException e) {
+                // TODO log stack trace here because we can not pass the exception received to the one forwarded
+                throw new IllegalClassFormatException(e.getMessage());
+            }
         }
     }
 

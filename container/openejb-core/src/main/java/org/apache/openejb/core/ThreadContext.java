@@ -39,6 +39,13 @@ public class ThreadContext {
         return threadStorage.get();
     }
 
+    public static ThreadContext clear() {
+        final ThreadContext oldContext = threadStorage.get();
+        threadStorage.set(null);
+        return oldContext;
+    }
+
+
     public static ThreadContext enter(final ThreadContext newContext) {
         if (newContext == null) {
             throw new NullPointerException("newContext is null");
