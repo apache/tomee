@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.arquillian.tests.jsf.jpa;
 
-import jakarta.faces.bean.ManagedBean;
+import jakarta.enterprise.context.Dependent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceUnit;
 
-@ManagedBean
+@Dependent
 public class DummyManagedBean {
     @PersistenceUnit(unitName ="test-pu")
     EntityManagerFactory emf;
