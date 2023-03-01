@@ -16,7 +16,10 @@
  */
 package org.apache.openejb.threads.impl;
 
+import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
+import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
+import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.threads.task.CUTask;
 
@@ -137,13 +140,88 @@ public class ContextServiceImpl implements ContextService {
         return createContextualProxy(completionStage, CompletionStage.class);
     }
 
+    public Snapshot snapshot(final Map<String, String> props) {
+        final List<ThreadContextSnapshot> snapshots = new ArrayList<>();
+
+        // application context needs to be applied first
+
+        boolean appContextPropagated;
+        ThreadContextProvider appContext = find(ContextServiceDefinition.APPLICATION, propagated);
+        if (appContext != null) {
+            appContextPropagated = true;
+        } else {
+            appContext = find(ContextServiceDefinition.APPLICATION, cleared);
+            appContextPropagated = false;
+        }
+
+        if (appContext != null) {
+            if (appContextPropagated) {
+                snapshots.add(appContext.currentContext(props));
+            } else {
+                snapshots.add(appContext.clearedContext(props));
+            }
+        }
+
+        for (ThreadContextProvider threadContextProvider : propagated) {
+            if (ContextServiceDefinition.APPLICATION.equals(threadContextProvider.getThreadContextType()))
+                continue;
+
+            final ThreadContextSnapshot snapshot = threadContextProvider.currentContext(props);
+            snapshots.add(snapshot);
+        }
+
+        for (ThreadContextProvider threadContextProvider : cleared) {
+            if (ContextServiceDefinition.APPLICATION.equals(threadContextProvider.getThreadContextType()))
+                continue;
+
+            final ThreadContextSnapshot snapshot = threadContextProvider.clearedContext(props);
+            snapshots.add(snapshot);
+        }
+
+        return new Snapshot(snapshots);
+    }
+
+    private ThreadContextProvider find(final String name, final List<ThreadContextProvider> threadContextProviders) {
+        for (final ThreadContextProvider threadContextProvider : threadContextProviders) {
+            if (name.equals(threadContextProvider.getThreadContextType())) {
+                return threadContextProvider;
+            }
+        }
+
+        return null;
+    }
+
+    public State enter(final Snapshot snapshot) {
+
+        final List<ThreadContextRestorer> restorers = new ArrayList<>();
+
+        for (ThreadContextSnapshot tcs : snapshot.getSnapshots()) {
+            try {
+                restorers.add(0, tcs.begin());
+            } catch (Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }
+
+        return new State(restorers);
+    }
+
+    public void exit(final State state) {
+        if (state != null) {
+            final List<ThreadContextRestorer> restorers = state.getRestorers();
+            for (ThreadContextRestorer restorer : restorers) {
+                restorer.endContext();
+            }
+        }
+    }
+
     private final class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
         private final Object instance;
         private final Map<String, String> properties;
         private final boolean suspendTx;
 
         private CUHandler(final Object instance, final Map<String, String> props) {
-            super(instance);
+            super(instance, ContextServiceImpl.this);
             this.instance = instance;
             this.properties = props;
             this.suspendTx = ManagedTask.SUSPEND.equals(props.get(ManagedTask.TRANSACTION));
@@ -177,4 +255,26 @@ public class ContextServiceImpl implements ContextService {
         }
     }
 
+    public class State {
+        private final List<ThreadContextRestorer> restorers;
+
+        public State(final List<ThreadContextRestorer> restorers) {
+            this.restorers = restorers;
+        }
+
+        public List<ThreadContextRestorer> getRestorers() {
+            return restorers;
+        }
+    }
+    public class Snapshot {
+        private final List<ThreadContextSnapshot> snapshots;
+
+        public Snapshot(final List<ThreadContextSnapshot> snapshots) {
+            this.snapshots = snapshots;
+        }
+
+        public List<ThreadContextSnapshot> getSnapshots() {
+            return snapshots;
+        }
+    }
 }

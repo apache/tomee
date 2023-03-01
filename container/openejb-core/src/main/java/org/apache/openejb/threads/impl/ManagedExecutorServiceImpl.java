@@ -33,9 +33,11 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImpl.class);
 
     private final ExecutorService delegate;
+    private final ContextServiceImpl contextService;
 
-    public ManagedExecutorServiceImpl(final ExecutorService delegate) {
+    public ManagedExecutorServiceImpl(final ExecutorService delegate, final ContextServiceImpl contextService) {
         this.delegate = delegate;
+        this.contextService = contextService;
     }
 
     @Override
@@ -121,7 +123,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <T> Future<T> submit(final Callable<T> task) {
-        final CUCallable<T> wrapper = new CUCallable<>(task);
+        final CUCallable<T> wrapper = new CUCallable<>(task, contextService);
         final Future<T> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
         return new CUFuture<>(future, wrapper);
@@ -129,7 +131,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <T> Future<T> submit(final Runnable task, final T result) {
-        final CURunnable wrapper = new CURunnable(task);
+        final CURunnable wrapper = new CURunnable(task, contextService);
         final Future<T> future = delegate.submit(wrapper, result);
         wrapper.taskSubmitted(future, this, task);
         return new CUFuture<>(future, wrapper);
@@ -137,7 +139,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public Future<?> submit(final Runnable task) {
-        final CURunnable wrapper = new CURunnable(task);
+        final CURunnable wrapper = new CURunnable(task, contextService);
         final Future<?> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
         return new CUFuture<>(Future.class.cast(future), wrapper);
@@ -145,7 +147,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public void execute(final Runnable command) {
-        final CURunnable wrapper = new CURunnable(command);
+        final CURunnable wrapper = new CURunnable(command, contextService);
         delegate.execute(wrapper);
         wrapper.taskSubmitted(null, this, command);
     }

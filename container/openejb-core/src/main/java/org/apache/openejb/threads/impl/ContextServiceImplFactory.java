@@ -66,6 +66,17 @@ public class ContextServiceImplFactory {
         }
     }
 
+    public static ContextServiceImpl newDefaultContextService() {
+        return new ContextServiceImplFactory().create();
+    }
+
+    public static ContextServiceImpl newPropagateEverythingContextService() {
+        final ContextServiceImplFactory factory = new ContextServiceImplFactory();
+        factory.setPropagated(ContextServiceDefinition.ALL_REMAINING);
+        return factory.create();
+    }
+
+
     public ContextServiceImpl create() {
         // some complication around this is ContextServiceDefinition.ALL_REMAINING, which looks like it
         // should reference everything that isn't explicitly mentioned in this.propagated, this.cleared and this.unchanged.

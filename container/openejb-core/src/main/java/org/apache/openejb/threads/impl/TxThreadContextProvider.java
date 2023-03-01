@@ -20,20 +20,18 @@ import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
-import org.apache.openejb.core.ThreadContext;
 
 import java.util.Map;
 
 public class TxThreadContextProvider implements ThreadContextProvider {
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
-        // TODO: is there anything we need to mess around with here? ClassLoader?
-        return new TxThreadContextSnapshot(ThreadContext.getThreadContext());
+        return new TxThreadContextSnapshot();
     }
 
     @Override
     public ThreadContextSnapshot clearedContext(final Map<String, String> props) {
-        return new TxThreadContextSnapshot(null);
+        return new TxThreadContextSnapshot();
     }
 
     @Override
@@ -43,35 +41,23 @@ public class TxThreadContextProvider implements ThreadContextProvider {
 
     public class TxThreadContextSnapshot implements ThreadContextSnapshot {
 
-        private final ThreadContext threadContext;
 
-        public TxThreadContextSnapshot(final ThreadContext threadContext) {
-            this.threadContext = threadContext;
+        public TxThreadContextSnapshot() {
         }
 
         @Override
         public ThreadContextRestorer begin() {
-            final ThreadContext restoreContext = (threadContext == null) ?
-                    ThreadContext.clear() :
-                    ThreadContext.enter(threadContext);
-
-            return new TxThreadContextRestorer(restoreContext);
+            return new TxThreadContextRestorer();
         }
     }
 
     public class TxThreadContextRestorer implements ThreadContextRestorer {
 
-        private final ThreadContext restoreContext;
-
-        public TxThreadContextRestorer(final ThreadContext restoreContext) {
-            this.restoreContext = restoreContext;
+        public TxThreadContextRestorer() {
         }
 
         @Override
         public void endContext() throws IllegalStateException {
-            if (restoreContext != null) {
-                ThreadContext.exit(restoreContext);
-            }
         }
     }
 }

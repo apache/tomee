@@ -49,7 +49,7 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
     protected TriggerTask(final Object original, final ManagedScheduledExecutorServiceImpl es, final Trigger trigger,
                           final Date taskScheduledTime, final String id, final AtomicReference<Future<T>> ref) {
-        super(original);
+        super(original, null);
         this.executorService = es;
         this.trigger = trigger;
         this.scheduledTime = taskScheduledTime;

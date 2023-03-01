@@ -791,6 +791,13 @@
   # Concurrency Utilities
   # ==========================================================
   -->
+  <ServiceProvider id="Default Context Service"
+                   service="Resource"
+                   types="ContextService, jakarta.enterprise.concurrent.ContextService"
+                   class-name="org.apache.openejb.threads.impl.ContextServiceImplFactory"
+                   factory-name="create">
+    SkipImplicitAttributes = true
+  </ServiceProvider>
   <ServiceProvider id="Default Executor Service"
                    service="Resource"
                    types="ManagedExecutorService, jakarta.enterprise.concurrent.ManagedExecutorService"
@@ -801,6 +808,7 @@
     KeepAlive = 5 s
     Queue = 15
     ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
+    Context = Default Context Service
     Lazy = true
   </ServiceProvider>
   <ServiceProvider id="Default Scheduled Executor Service"
@@ -810,6 +818,7 @@
                    class-name="org.apache.openejb.resource.thread.ManagedScheduledExecutorServiceImplFactory">
     Core = 5
     ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
+    Context = Default Context Service
     Lazy = true
     SkipImplicitAttributes = true
   </ServiceProvider>
@@ -820,12 +829,6 @@
                    class-name="org.apache.openejb.resource.thread.ManagedThreadFactoryImplFactory">
     Prefix = openejb-managed-thread-
     Lazy = true
-    SkipImplicitAttributes = true
-  </ServiceProvider>
-  <ServiceProvider id="Default Context Service"
-                   service="Resource"
-                   types="ContextService, jakarta.enterprise.concurrent.ContextService"
-                   class-name="org.apache.openejb.threads.impl.ContextServiceImpl">
     SkipImplicitAttributes = true
   </ServiceProvider>
 

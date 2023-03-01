@@ -20,20 +20,59 @@ import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ivm.ClientSecurity;
+import org.apache.openejb.core.security.AbstractSecurityService;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
 
+import javax.security.auth.login.LoginException;
 import java.util.Map;
 
 public class SecurityThreadContextProvider implements ThreadContextProvider {
+
+    private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
+
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
-        // TODO: is there anything we need to mess around with here? ClassLoader?
-        return new SecurityThreadContextSnapshot(ThreadContext.getThreadContext());
+        boolean associate = false;
+        Object state = SECURITY_SERVICE.currentState();
+
+        if (state == null) {
+            state = ClientSecurity.getIdentity();
+            associate = state != null;
+        }
+
+        final Object securityServiceState = state;
+        final AbstractSecurityService.SecurityContext sc = getSecurityContext();
+
+        return new SecurityThreadContextSnapshot(associate, securityServiceState, sc);
+    }
+
+    private AbstractSecurityService.SecurityContext getSecurityContext() {
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+
+        if (threadContext == null) {
+            return null;
+        }
+
+        if (threadContext.getBeanContext() == null) {
+            return threadContext.get(AbstractSecurityService.SecurityContext.class);
+        }
+
+        final BeanContext beanContext = threadContext.getBeanContext();
+        if (beanContext.getRunAs() == null && beanContext.getRunAsUser() == null) {
+            return threadContext.get(AbstractSecurityService.SecurityContext.class);
+        }
+
+        final AbstractSecurityService securityService = AbstractSecurityService.class.cast(SECURITY_SERVICE);
+        return new AbstractSecurityService.SecurityContext(securityService.getRunAsSubject(beanContext));
     }
 
     @Override
     public ThreadContextSnapshot clearedContext(final Map<String, String> props) {
-        return new SecurityThreadContextSnapshot(null);
+        return new SecurityThreadContextSnapshot(false, null, null);
     }
 
     @Override
@@ -43,34 +82,70 @@ public class SecurityThreadContextProvider implements ThreadContextProvider {
 
     public class SecurityThreadContextSnapshot implements ThreadContextSnapshot {
 
-        private final ThreadContext threadContext;
+        private final boolean associate;
+        private final Object securityServiceState;
+        private final AbstractSecurityService.SecurityContext sc;
 
-        public SecurityThreadContextSnapshot(final ThreadContext threadContext) {
-            this.threadContext = threadContext;
+        public SecurityThreadContextSnapshot(final boolean associate, final Object securityServiceState, final AbstractSecurityService.SecurityContext sc) {
+            this.associate = associate;
+            this.securityServiceState = securityServiceState;
+            this.sc = sc;
         }
 
         @Override
         public ThreadContextRestorer begin() {
-            final ThreadContext restoreContext = (threadContext == null) ?
-                    ThreadContext.clear() :
-                    ThreadContext.enter(threadContext);
+            final Object threadState;
 
-            return new SecurityThreadContextRestorer(restoreContext);
+            if (associate) {
+                try {
+                    SECURITY_SERVICE.associate(securityServiceState);
+                } catch (final LoginException e) {
+                    throw new IllegalStateException(e);
+                }
+                threadState = null;
+            } else {
+                threadState = SECURITY_SERVICE.currentState();
+                SECURITY_SERVICE.setState(securityServiceState);
+            }
+
+            final ThreadContext threadContext = ThreadContext.getThreadContext();
+            final ThreadContext oldCtx;
+            if (threadContext != null) {
+                final ThreadContext newContext = new ThreadContext(threadContext);
+                oldCtx = ThreadContext.enter(newContext);
+                if (sc != null) {
+                    newContext.set(AbstractSecurityService.SecurityContext.class, sc);
+                }
+            } else {
+                oldCtx = null;
+            }
+
+            return new SecurityThreadContextRestorer(associate, oldCtx, threadState);
         }
     }
 
     public class SecurityThreadContextRestorer implements ThreadContextRestorer {
 
-        private final ThreadContext restoreContext;
+        private final boolean associate;
+        private final ThreadContext oldCtx;
+        private final Object threadState;
 
-        public SecurityThreadContextRestorer(final ThreadContext restoreContext) {
-            this.restoreContext = restoreContext;
+        public SecurityThreadContextRestorer(final boolean associate, final ThreadContext oldCtx, final Object threadState) {
+            this.associate = associate;
+            this.oldCtx = oldCtx;
+            this.threadState = threadState;
         }
 
         @Override
         public void endContext() throws IllegalStateException {
-            if (restoreContext != null) {
-                ThreadContext.exit(restoreContext);
+            if (oldCtx != null) {
+                ThreadContext.exit(oldCtx);
+            }
+
+            if (!associate) {
+                SECURITY_SERVICE.setState(threadState);
+            } else {
+                SECURITY_SERVICE.disassociate();
             }
         }
     }

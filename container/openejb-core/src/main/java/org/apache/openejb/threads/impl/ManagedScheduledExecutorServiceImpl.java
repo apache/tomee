@@ -40,10 +40,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceImpl implements ManagedScheduledExecutorService {
     private final ScheduledExecutorService delegate;
+    private final ContextServiceImpl contextService;
 
-    public ManagedScheduledExecutorServiceImpl(final ScheduledExecutorService delegate) {
-        super(delegate);
+    public ManagedScheduledExecutorServiceImpl(final ScheduledExecutorService delegate, final ContextServiceImpl contextService) {
+        super(delegate, contextService);
         this.delegate = delegate;
+        this.contextService = contextService;
     }
 
 
