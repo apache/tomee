@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.threads.task;
 
+import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 
 import jakarta.enterprise.concurrent.Trigger;
@@ -27,11 +28,12 @@ public class TriggerRunnable extends TriggerTask<Void> implements Runnable {
     private final Runnable delegate;
 
     public TriggerRunnable(final ManagedScheduledExecutorServiceImpl es,
+                           final ContextServiceImpl contextService,
                            final Runnable original, final Runnable runnable,
                            final Trigger trigger,
                            final Date taskScheduledTime, final String id,
                            final AtomicReference<Future<Void>> ref) {
-        super(original, es, trigger, taskScheduledTime, id, ref);
+        super(original, contextService, es, trigger, taskScheduledTime, id, ref);
         this.delegate = runnable;
     }
 

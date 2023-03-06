@@ -39,6 +39,9 @@ public class ManagedScheduledExecutorServiceImplFactory {
 
     private String context;
 
+    public ManagedScheduledExecutorServiceImpl create(final ContextServiceImpl contextService) {
+        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), contextService);
+    }
     public ManagedScheduledExecutorServiceImpl create() {
         return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), findContextService());
     }

@@ -53,7 +53,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     public ScheduledFuture<?> schedule(final Runnable runnable, final Trigger trigger) {
         final Date taskScheduledTime = new Date();
         final AtomicReference<Future<?>> futureHandle = new AtomicReference<>();
-        final TriggerRunnable wrapper = new TriggerRunnable(this, runnable, new CURunnable(runnable), trigger, taskScheduledTime, getTaskId(runnable), AtomicReference.class.cast(futureHandle));
+        final TriggerRunnable wrapper = new TriggerRunnable(this, contextService, runnable, new CURunnable(runnable), trigger, taskScheduledTime, getTaskId(runnable), AtomicReference.class.cast(futureHandle));
         final ScheduledFuture<?> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
         return initTriggerScheduledFuture(runnable, AtomicReference.class.cast(futureHandle), wrapper, ScheduledFuture.class.cast(future));
     }
@@ -62,7 +62,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     public <V> ScheduledFuture<V> schedule(final Callable<V> vCallable, final Trigger trigger) {
         final Date taskScheduledTime = new Date();
         final AtomicReference<Future<V>> futureHandle = new AtomicReference<>();
-        final TriggerCallable<V> wrapper = new TriggerCallable<>(this, vCallable, new CUCallable<>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
+        final TriggerCallable<V> wrapper = new TriggerCallable<>(this, this.contextService, vCallable, new CUCallable<>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
         final ScheduledFuture<V> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
         return initTriggerScheduledFuture(vCallable, futureHandle, wrapper, future);
     }
