@@ -14,25 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.junit5;
 
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class AppComposerSnifferExtension implements BeforeEachCallback {
 
-@Inherited
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(ApplicationComposerExtension.class)
-public @interface RunWithApplicationComposer {
+  private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ApplicationComposerExtension.class.getName());
+  public static Class<?> COMPOSER_CLASS = null;
 
-    /**
-     * The test container lifecycle <em>mode</em> to use.
-     */
-    ExtensionMode mode() default ExtensionMode.AUTO;
+  @Override
+  public void beforeEach(ExtensionContext context) throws Exception {
+    ApplicationComposerPerXYExtensionBase delegate = context.getStore(NAMESPACE).get(ApplicationComposerPerXYExtensionBase.class, ApplicationComposerPerXYExtensionBase.class);
+    AppComposerSnifferExtension.COMPOSER_CLASS = (null == delegate) ? null : delegate.getClass();
+  }
 }
