@@ -1105,6 +1105,13 @@ public class ApplicationComposers {
             }
 
             OpenEJB.destroy();
+            SystemInstance.reset();
+            /*
+            * Clear additional references
+            */
+            appContext.getWebContexts().clear();
+            appContext.getInjections().clear();
+            appContext.getSystemInstance().removeComponent(TestInstance.class);
         } finally {
             runAll(afterRunnables);
             if (originalLoader != null) {
