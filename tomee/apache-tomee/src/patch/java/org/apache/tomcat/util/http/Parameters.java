@@ -47,7 +47,7 @@ public final class Parameters {
     private static final UserDataHelper maxParamCountLog = new UserDataHelper(log);
 
     private static final StringManager sm =
-        StringManager.getManager("org.apache.tomcat.util.http");
+            StringManager.getManager("org.apache.tomcat.util.http");
 
     private final Map<String,ArrayList<String>> paramHashValues =
             new LinkedHashMap<>();
@@ -122,6 +122,11 @@ public final class Parameters {
         if (this.parseFailedReason == null) {
             this.parseFailedReason = failReason;
         }
+    }
+
+
+    public int size() {
+        return parameterCount;
     }
 
 
@@ -471,7 +476,7 @@ public final class Parameters {
     }
 
     private void urlDecode(ByteChunk bc)
-        throws IOException {
+            throws IOException {
         if( urlDec==null ) {
             urlDec=new UDecoder();
         }

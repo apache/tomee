@@ -1569,7 +1569,7 @@ public class Request implements HttpServletRequest {
      * @param oldValue Old attribute value
      */
     private void notifyAttributeAssigned(String name, Object value,
-            Object oldValue) {
+                                         Object oldValue) {
         Context context = getContext();
         if (context == null) {
             return;
@@ -1671,7 +1671,7 @@ public class Request implements HttpServletRequest {
     @Override
     public ServletContext getServletContext() {
         return getContext().getServletContext();
-     }
+    }
 
     @Override
     public AsyncContext startAsync() {
@@ -1680,7 +1680,7 @@ public class Request implements HttpServletRequest {
 
     @Override
     public AsyncContext startAsync(ServletRequest request,
-            ServletResponse response) {
+                                   ServletResponse response) {
         if (!isAsyncSupported()) {
             IllegalStateException ise =
                     new IllegalStateException(sm.getString("request.asyncNotSupported"));
@@ -2041,7 +2041,7 @@ public class Request implements HttpServletRequest {
                 handler = (T) instanceManager.newInstance(httpUpgradeHandlerClass);
             }
         } catch (ReflectiveOperationException | NamingException | IllegalArgumentException |
-                SecurityException e) {
+                 SecurityException e) {
             throw new ServletException(e);
         }
         UpgradeToken upgradeToken = new UpgradeToken(handler, getContext(), instanceManager,
@@ -2704,7 +2704,7 @@ public class Request implements HttpServletRequest {
         Session session = this.getSessionInternal(false);
         if (session == null) {
             throw new IllegalStateException(
-                sm.getString("coyoteRequest.changeSessionId"));
+                    sm.getString("coyoteRequest.changeSessionId"));
         }
 
         Manager manager = this.getContext().getManager();
@@ -2840,8 +2840,9 @@ public class Request implements HttpServletRequest {
             }
         }
 
+        int maxParameterCount = getConnector().getMaxParameterCount();
         Parameters parameters = coyoteRequest.getParameters();
-        parameters.setLimit(getConnector().getMaxParameterCount());
+        parameters.setLimit(maxParameterCount);
 
         boolean success = false;
         try {
@@ -2893,6 +2894,13 @@ public class Request implements HttpServletRequest {
             upload.setFileItemFactory(factory);
             upload.setFileSizeMax(mce.getMaxFileSize());
             upload.setSizeMax(mce.getMaxRequestSize());
+            if (maxParameterCount > -1) {
+                // There is a limit. The limit for parts needs to be reduced by
+                // the number of parameters we have already parsed.
+                // Must be under the limit else parsing parameters would have
+                // triggered an exception.
+                upload.setFileCountMax(maxParameterCount - parameters.size());
+            }
 
             parts = new ArrayList<>();
             try {
@@ -3544,7 +3552,7 @@ public class Request implements HttpServletRequest {
                     public Object get(Request request, String name) {
                         return Boolean.valueOf(
                                 request.getConnector().getProtocolHandler(
-                                        ).isSendfileSupported() && request.getCoyoteRequest().getSendfile());
+                                ).isSendfileSupported() && request.getCoyoteRequest().getSendfile());
                     }
                     @Override
                     public void set(Request request, String name, Object value) {
