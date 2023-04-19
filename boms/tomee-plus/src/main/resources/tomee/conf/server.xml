@@ -69,7 +69,7 @@
     -->
     <Connector port="8080" protocol="HTTP/1.1"
                connectionTimeout="20000"
-               redirectPort="8443" xpoweredBy="false" server="Apache TomEE" />
+               redirectPort="8443"  maxParameterCount="1000" xpoweredBy="false" server="Apache TomEE" />
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
@@ -86,7 +86,7 @@
     -->
     <!--
     <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
-               maxThreads="150" SSLEnabled="true" xpoweredBy="false" server="Apache TomEE" >
+               maxThreads="150" SSLEnabled="true" maxParameterCount="1000" xpoweredBy="false" server="Apache TomEE" >
         <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
         <SSLHostConfig>
             <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
