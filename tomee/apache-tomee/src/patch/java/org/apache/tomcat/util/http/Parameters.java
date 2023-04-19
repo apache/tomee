@@ -206,14 +206,15 @@ public final class Parameters {
             return;
         }
 
-        parameterCount ++;
-        if (limit > -1 && parameterCount > limit) {
+
+        if (limit > -1 && parameterCount >= limit) {
             // Processing this parameter will push us over the limit. ISE is
             // what Request.parseParts() uses for requests that are too big
             setParseFailedReason(FailReason.TOO_MANY_PARAMETERS);
             throw new IllegalStateException(sm.getString(
                     "parameters.maxCountFail", Integer.valueOf(limit)));
         }
+        parameterCount ++;
 
         paramHashValues.computeIfAbsent(key, k -> new ArrayList<>(1)).add(value);
     }
