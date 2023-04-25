@@ -119,13 +119,30 @@
           <artifactId>jakarta.activation-api</artifactId>
           <groupId>jakarta.activation</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk15on</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk18on</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
-    <!-- Override the bcprov from the previous artifact -->
+    <!-- Override the bcprov & bcpkix from the previous artifact -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.70</version>
+      <version>1.73</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15to18</artifactId>
+      <version>1.73</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>

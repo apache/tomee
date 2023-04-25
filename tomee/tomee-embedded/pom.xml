@@ -512,7 +512,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcmail-jdk15to18</artifactId>
-      <version>1.70</version>
+      <version>1.73</version>
       <scope>test</scope>
     </dependency>
 
