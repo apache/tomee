@@ -175,7 +175,7 @@
 
     <!-- Micro Profile API -->
     <version.microprofile>5.0</version.microprofile>
-    <version.microprofile.config>3.0.2</version.microprofile.config>
+    <version.microprofile.config>3.0.3</version.microprofile.config>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.health>4.0.1</version.microprofile.health>
     <version.microprofile.jwt>2.0</version.microprofile.jwt>
@@ -188,11 +188,11 @@
 
     <!-- Micro Profile Impl. -->
     <version.microprofile.impl.config>3.0.0</version.microprofile.impl.config>
-    <version.microprofile.impl.fault-tolerance>6.0.0</version.microprofile.impl.fault-tolerance>
+    <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>4.0.0</version.microprofile.impl.metrics>
     <version.microprofile.impl.openapi>3.0.1</version.microprofile.impl.openapi>
-    <version.microprofile.impl.opentracing>3.0.0</version.microprofile.impl.opentracing>
+    <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.14.1</version.jackson>
