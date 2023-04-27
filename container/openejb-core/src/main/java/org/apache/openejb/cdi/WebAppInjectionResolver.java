@@ -20,6 +20,7 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanCacheKey;
 import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
@@ -35,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class WebAppInjectionResolver extends InjectionResolver {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, WebAppInjectionResolver.class);
-    private final WebappWebBeansContext context;
+    private final WebBeansContext context;
 
     private final boolean cacheResolutionFailure = Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cache.cdi-type-resolution-failure", "false"));
 
@@ -43,7 +44,7 @@ public class WebAppInjectionResolver extends InjectionResolver {
 
     private final Set<BeanCacheKey> resolutionFailures = ConcurrentHashMap.newKeySet();
 
-    public WebAppInjectionResolver(final WebappWebBeansContext ctx) {
+    public WebAppInjectionResolver(final WebBeansContext ctx) {
         super(ctx);
         context = ctx;
         startup = true;
@@ -89,11 +90,14 @@ public class WebAppInjectionResolver extends InjectionResolver {
             set = super.implResolveByType(delegate, injectionPointType, injectionPointClass, qualifiers);
         }
 
-        if (set.isEmpty() && context.getParent() != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Resolution of " + injectionPointType.getTypeName() + " from context failed, trying to resolve from parent context");
+        if (context instanceof WebappWebBeansContext) {
+            final WebappWebBeansContext wwbc = (WebappWebBeansContext) context;
+            if (set.isEmpty() && wwbc.getParent() != null) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Resolution of " + injectionPointType.getTypeName() + " from context failed, trying to resolve from parent context");
+                }
+                return wwbc.getParent().getBeanManagerImpl().getInjectionResolver().implResolveByType(delegate, injectionPointType, injectionPointClass, qualifiers);
             }
-            return context.getParent().getBeanManagerImpl().getInjectionResolver().implResolveByType(delegate, injectionPointType, injectionPointClass, qualifiers);
         }
         return set;
     }
