@@ -99,7 +99,7 @@
 
     <!-- To easily change the javaee api version -->
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
+    <version.tomee-patch-plugin>0.10</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
