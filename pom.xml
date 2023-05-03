@@ -193,7 +193,7 @@
     <!-- com.sun -->
     <version.impl.saaj>1.5.3</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>5.16.5</version.activemq>
+    <version.activemq>5.16.6</version.activemq>
     <version.batchee>1.0.2</version.batchee>
     <version.bval>2.0.5</version.bval>
     <version.cxf>3.5.5</version.cxf>
