@@ -204,7 +204,7 @@
     <version.openjpa>3.2.2</version.openjpa>
     <version.openwebbeans>2.0.27</version.openwebbeans>
     <!-- org.eclipse -->
-    <version.eclipselink>2.7.11</version.eclipselink>
+    <version.eclipselink>2.7.12</version.eclipselink>
     <!-- org.glassfish -->
     <version.mojarra>2.3.19</version.mojarra>
     <!-- org.hibernate -->
