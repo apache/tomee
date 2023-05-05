@@ -246,7 +246,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -257,7 +257,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -268,7 +268,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -279,7 +279,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -290,7 +290,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
