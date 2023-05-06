@@ -40,8 +40,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>activemq-client-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client-jakarta</artifactId>
     </dependency>
   </dependencies>
 
