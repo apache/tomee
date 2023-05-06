@@ -553,8 +553,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-jdbc-store</artifactId>
-      <version>5.16.5</version>
+      <artifactId>activemq-client-jakarta</artifactId>
+      <version>5.18.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -564,8 +564,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-openwire-legacy</artifactId>
-      <version>5.16.5</version>
+      <artifactId>activemq-jdbc-store</artifactId>
+      <version>5.18.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1144,17 +1144,6 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-broker-shade</artifactId>
-      <version>9.0.1-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>activemq-client-shade</artifactId>
       <version>9.0.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
