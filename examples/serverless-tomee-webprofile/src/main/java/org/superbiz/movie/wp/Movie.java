@@ -16,6 +16,8 @@
  */
 package org.superbiz.movie.wp;
 
+import java.util.StringJoiner;
+
 public class Movie {
 
     private String title;
@@ -73,5 +75,16 @@ public class Movie {
 
     public void setYear(final int year) {
         this.year = year;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Movie.class.getSimpleName() + "[", "]")
+            .add("title='" + title + "'")
+            .add("director='" + director + "'")
+            .add("genre='" + genre + "'")
+            .add("id=" + id)
+            .add("year=" + year)
+            .toString();
     }
 }

@@ -18,6 +18,7 @@ package org.superbiz.movie.wp;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -28,23 +29,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 @Path("/movies")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class MovieService {
-
+    private static final Logger LOG = Logger.getLogger(MovieService.class.getName());
     private Map<Integer, Movie> store = new ConcurrentHashMap<>();
+
+    @Inject
+    private EchoServiceClient echoServiceClient;
 
     @PostConstruct
     public void construct(){
+        /*
         this.addMovie(new Movie("Wedding Crashers", "David Dobkin", "Comedy", 1, 2005));
         this.addMovie(new Movie("Starsky & Hutch", "Todd Phillips", "Action", 2, 2004));
         this.addMovie(new Movie("Shanghai Knights", "David Dobkin", "Action", 3, 2003));
         this.addMovie(new Movie("I-Spy", "Betty Thomas", "Adventure", 4, 2002));
         this.addMovie(new Movie("The Royal Tenenbaums", "Wes Anderson", "Comedy", 5, 2001));
         this.addMovie(new Movie("Zoolander", "Ben Stiller", "Comedy", 6, 2001));
+        */
     }
     @GET
     public List<Movie> getAllMovies() {
@@ -53,7 +60,9 @@ public class MovieService {
 
     @POST
     public Movie addMovie(final Movie newMovie) {
+        LOG.info("adding movie: " + newMovie);
         store.put(newMovie.getId(), newMovie);
+        echoServiceClient.getEcho(newMovie);
         return newMovie;
     }
 

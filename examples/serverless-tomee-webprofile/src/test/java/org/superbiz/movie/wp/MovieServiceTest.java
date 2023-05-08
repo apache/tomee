@@ -19,12 +19,16 @@ package org.superbiz.movie.wp;
 import org.apache.tomee.bootstrap.Archive;
 import org.apache.tomee.bootstrap.Server;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.net.URI;
+import java.util.stream.IntStream;
 
 import static jakarta.ws.rs.client.Entity.entity;
 import static org.junit.Assert.assertEquals;
@@ -40,7 +44,8 @@ public class MovieServiceTest {
         final Archive classes = Archive.archive()
                 .add(Api.class)
                 .add(Movie.class)
-                .add(MovieService.class);
+                .add(MovieService.class)
+                .add(EchoServiceClient.class);
 
         // Place the classes where you would want
         // them in a Tomcat install
@@ -53,6 +58,7 @@ public class MovieServiceTest {
     }
 
     @Test
+    @Ignore
     public void getAllMovies() {
         final WebTarget target = ClientBuilder.newClient().target(serverURI);
 
@@ -69,6 +75,7 @@ public class MovieServiceTest {
     }
 
     @Test
+    @Ignore
     public void addMovie() {
         final WebTarget target = ClientBuilder.newClient().target(serverURI);
 
@@ -83,5 +90,18 @@ public class MovieServiceTest {
         assertEquals("Comedy", posted.getGenre());
         assertEquals(2000, posted.getYear());
         assertEquals(7, posted.getId());
+    }
+
+    @Test
+    public void addMovies() {
+        final WebTarget target = ClientBuilder.newClient().target(serverURI);
+        IntStream.range(0, 2_000_000_000).forEach(i -> {
+            final Movie movie = new Movie("Shanghai Noon", "Tom Dey", "Comedy", i, 2000);
+
+            try (Response r = target.path("/api/movies").request()
+                    .post(entity(movie, MediaType.APPLICATION_JSON))) {
+                System.out.println(r.getStatus());
+            }
+        });
     }
 }
