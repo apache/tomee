@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>properties-provider</artifactId>
-  <version>8.0.15-SNAPSHOT</version>
+  <version>8.0.15</version>
   <packaging>pom</packaging>
   <name>TomEE :: Examples :: Properties Provider</name>
   <modules>
@@ -65,7 +65,7 @@
             <systemProperties>
               <property>
                 <name>tomee.version</name>
-                <value>8.0.15-SNAPSHOT</value>
+                <value>8.0.15</value>
               </property>
             </systemProperties>
           </configuration>

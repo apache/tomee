@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>bval-evaluation-redeployment</artifactId>
-    <version>8.0.15-SNAPSHOT</version>
+    <version>8.0.15</version>
   </parent>
 
   <artifactId>WebApp1</artifactId>
