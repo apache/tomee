@@ -564,9 +564,7 @@
               <createTarGz>true</createTarGz>
               <skips>
                 <jars>
-                  <bcpkix-jdk15to18-1.73.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.73</bcpkix-jdk15to18-1.73.jar>
-                  <bcprov-jdk15to18-1.73.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.73</bcprov-jdk15to18-1.73.jar>
-                  <bcutil-jdk15to18-1.73.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.73</bcutil-jdk15to18-1.73.jar>
+                  <bcprov-jdk15on-1.70.jar>org.bouncycastle:bcprov-jdk15on:jar:1.70</bcprov-jdk15on-1.70.jar>
                 </jars>
               </skips>
             </configuration>
@@ -795,13 +793,11 @@
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
               <createTarGz>true</createTarGz>
-              <skips>
-                <jars>
-                  <bcpkix-jdk15to18-1.73.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.73</bcpkix-jdk15to18-1.73.jar>
-                  <bcprov-jdk15to18-1.73.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.73</bcprov-jdk15to18-1.73.jar>
-                  <bcutil-jdk15to18-1.73.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.73</bcutil-jdk15to18-1.73.jar>
-                </jars>
-              </skips>
+              <replace>
+                <resources>
+                  <ServerInfo.properties>${project.build.sourceDirectory}/ServerInfo.properties</ServerInfo.properties>
+                </resources>
+              </replace>
             </configuration>
             <executions>
               <execution>
