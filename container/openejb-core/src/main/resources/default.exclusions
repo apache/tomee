@@ -71,6 +71,8 @@ deploy.jar
 derby-
 derbyclient-
 derbynet-
+derbyshared-
+derbytools-
 dom4j
 dtd-parser-
 ecj-
