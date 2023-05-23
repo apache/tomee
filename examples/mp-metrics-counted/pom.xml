@@ -26,7 +26,7 @@
   <properties>
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <version.microprofile.metrics>4.0.1</version.microprofile.metrics>
-    <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
+    <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
     <docker.image.name>tomee/${project.artifactId}</docker.image.name>
     <docker.file.name>Dockerfile</docker.file.name>

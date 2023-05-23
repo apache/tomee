@@ -23,7 +23,7 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Custom HealthCheck</name>
   <properties>
-    <arquillian-junit-container.version>1.7.0.Alpha10</arquillian-junit-container.version>
+    <arquillian-junit-container.version>1.7.0.Final</arquillian-junit-container.version>
     <version.microprofile.health-api>4.0.1</version.microprofile.health-api>
     <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-war-plugin.version>3.1.0</maven-war-plugin.version>

@@ -25,7 +25,7 @@
   <name>TomEE :: Examples :: JAXRS JSON Provider with Jettison </name>
   <properties>
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
+    <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
   </properties>
   <dependencies>

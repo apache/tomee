@@ -45,7 +45,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.7.0.Alpha10</version>
+        <version>1.7.0.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.7.0.Alpha10</version>
+      <version>1.7.0.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
