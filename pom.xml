@@ -127,9 +127,9 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- arquillian related -->
-    <version.arquillian>1.7.0.Alpha10</version.arquillian>
-    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <version.arquillian-protocol-servlet-jakarta>1.7.0.Alpha10</version.arquillian-protocol-servlet-jakarta>
+    <version.arquillian>1.7.0.Final</version.arquillian>
+    <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
+    <version.arquillian-protocol-servlet-jakarta>1.7.0.Final</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>

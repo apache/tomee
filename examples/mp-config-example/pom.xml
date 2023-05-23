@@ -26,7 +26,7 @@
     <version.jakartaee-api>9.1-M2</version.jakartaee-api>
     <version.microprofile.config>3.0.2</version.microprofile.config>
     <tomee.version>9.0.1-SNAPSHOT</tomee.version>
-    <version.arquillian>1.7.0.Alpha10</version.arquillian>
+    <version.arquillian>1.7.0.Final</version.arquillian>
   </properties>
   <dependencies>
     <dependency>

@@ -139,7 +139,7 @@ language governing permissions and limitations under the License. -->
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.7.0.Alpha10</version>
+        <version>1.7.0.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>

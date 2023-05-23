@@ -30,7 +30,7 @@
 
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
         <!-- version >= 1.7.0.Alpha5 is required for JUnit5 -->
-        <arquillian.version>1.7.0.Alpha10</arquillian.version>
+        <arquillian.version>1.7.0.Final</arquillian.version>
 
     </properties>
     <build>

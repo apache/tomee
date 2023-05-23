@@ -30,7 +30,7 @@
     <tomee.version>9.0.1-SNAPSHOT</tomee.version>
     <version.deltaspike>1.9.3</version.deltaspike>
     <version.krazo>2.0.2</version.krazo>
-    <version.arquillian>1.7.0.Alpha10</version.arquillian>
+    <version.arquillian>1.7.0.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
   </properties>
   <build>
