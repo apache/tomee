@@ -1,0 +1,49 @@
+pipeline {
+        agent  {
+            label "c6i2xlarge"
+           }
+
+    stages {
+        stage('checkout') {
+            steps {
+              checkout scmGit(branches: [[name: '*/main']], browser: github('https://github.com/apache/tomee'), extensions: [cleanBeforeCheckout()], userRemoteConfigs: [[url: 'https://github.com/apache/tomee']])
+            }
+        }
+        stage('Build without tests') {
+            tools {
+                 maven 'maven_3_latest'
+                  jdk 'jdk_11_latest'
+            }
+            steps {
+                timeout(time: 180, unit: 'MINUTES') {
+                    sh 'mvn -U --show-version clean install -DskipTests'
+                }
+            }
+        }
+        stage('Test') {
+            tools {
+                 maven 'maven_3_latest'
+                  jdk 'jdk_11_latest'
+            }
+            steps {
+                timeout(time: 180, unit: 'MINUTES') {
+                    sh 'mvn -T 2C -U --show-version --fail-at-end clean install -pl tomee/apache-tomee -am -Dfile.encoding=UTF-8'
+                }
+            }
+            post {
+                    always {
+                            timeout(time: 15, unit: 'MINUTES') {
+                            junit '**/target/surefire-reports/TEST-*.xml'
+                        }
+                    }
+                }
+        }
+    }
+    post{
+        changed{
+            emailext to: "commits@tomee.apache.org",
+            subject: "Jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
+            body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}"
+        }
+    }
+}
