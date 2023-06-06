@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>9.1.0-SNAPSHOT</version>
+    <version>9.1.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>

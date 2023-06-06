@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-inheritance</artifactId>
   <packaging>jar</packaging>
-  <version>9.1.0-SNAPSHOT</version>
+  <version>9.1.0</version>
   <name>TomEE :: Examples :: Webservice Inheritance</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>9.1.0-SNAPSHOT</version>
+      <version>9.1.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>9.1.0-SNAPSHOT</version>
+      <version>9.1.0</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
