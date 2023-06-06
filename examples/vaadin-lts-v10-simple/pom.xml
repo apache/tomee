@@ -72,7 +72,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <dependency>
         <groupId>javax</groupId>
         <artifactId>jakartaee-api</artifactId>
-        <version>9.1-M2</version>
+        <version>9.1.1</version>
         <scope>provided</scope>
       </dependency>
       <!--Vaadin -->
