@@ -30,7 +30,6 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.util.log4j2</tomee.build.name>
-    <version.log4j2>2.3</version.log4j2>
     <log4j.groupId>org.apache.logging.log4j</log4j.groupId>
   </properties>
 

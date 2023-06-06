@@ -137,7 +137,7 @@
     <!-- Logging frameworks -->
     <version.slf4j>1.7.36</version.slf4j>
     <version.log4j>1.2.17</version.log4j>
-    <version.log4j2>2.19.0</version.log4j2>
+    <version.log4j2>2.20.0</version.log4j2>
     <version.commons-logging>1.2</version.commons-logging>
     <version.commons-logging-api>1.1</version.commons-logging-api>
 
