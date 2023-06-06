@@ -1335,7 +1335,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-asm9-shaded</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1346,7 +1346,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-bundleutils</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1357,7 +1357,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1368,7 +1368,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1379,7 +1379,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

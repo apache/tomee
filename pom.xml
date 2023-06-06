@@ -124,7 +124,7 @@
 
     <version.quartz-openejb-shade>2.2.4</version.quartz-openejb-shade>
     <version.axiom>1.3.0</version.axiom>
-    <version.xbean>4.22</version.xbean>
+    <version.xbean>4.23</version.xbean>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
     <version.jetty>9.4.49.v20220914</version.jetty>
