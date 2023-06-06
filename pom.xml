@@ -129,7 +129,7 @@
     <version.ecj>4.6.1</version.ecj>
     <version.jetty>9.4.49.v20220914</version.jetty>
     <version.junit>4.13.2</version.junit>
-    <version.junit.jupiter>5.9.2</version.junit.jupiter>
+    <version.junit.jupiter>5.9.3</version.junit.jupiter>
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.2</version.xalan>
