@@ -142,7 +142,7 @@
     <version.jetty>11.0.8</version.jetty>
     <version.ehcache>3.10.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
-    <junit.jupiter.version>5.8.2</junit.jupiter.version>
+    <junit.jupiter.version>5.9.3</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.2</version.xalan>
