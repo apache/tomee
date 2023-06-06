@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-configproperty</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.1-SNAPSHOT</version>
+  <version>9.1.0-SNAPSHOT</version>
   <name>TomEE :: Examples :: DeltaSpike @ConfigProperty</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -116,13 +116,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>9.0.1-SNAPSHOT</version>
+      <version>9.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>9.0.1-SNAPSHOT</version>
+      <version>9.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
