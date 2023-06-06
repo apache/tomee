@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>change-jaxws-url</artifactId>
   <packaging>war</packaging>
-  <version>9.1.0</version>
+  <version>9.1.1-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Change JAXWS URL</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.1.0</tomee.version>
+    <tomee.version>9.1.1-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
