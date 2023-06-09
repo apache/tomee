@@ -16,29 +16,17 @@
  */
 package org.apache.tomee.security.http;
 
-
-import java.security.Principal;
-import java.util.Set;
-
-import static java.util.Collections.unmodifiableSet;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 
-public final class SavedAuthentication implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private final Principal principal;
-    private final Set<String> groups;
+import org.junit.Test;
 
-    SavedAuthentication(final Principal principal, final Set<String> groups) {
-        this.principal = principal;
-        this.groups = unmodifiableSet(groups);
-    }
-
-    public Principal getPrincipal() {
-        return principal;
-    }
-
-    public Set<String> getGroups() {
-        return groups;
-    }
+class SavedRequestTest {
+  @Test
+  public void testSerializable() {
+    final SavedRequest savedRequest = new SavedRequest();
+    assertTrue("SavedRequest  must implement Serializable, since it will be set as a session attribute",
+        savedRequest instanceof Serializable);
+  }
 }
