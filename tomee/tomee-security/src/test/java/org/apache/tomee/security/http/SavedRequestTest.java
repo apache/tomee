@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 import org.junit.Test;
 
-class SavedRequestTest {
+public class SavedRequestTest {
   @Test
   public void testSerializable() {
     final SavedRequest savedRequest = new SavedRequest();
