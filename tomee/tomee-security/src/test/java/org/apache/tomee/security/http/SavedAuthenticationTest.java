@@ -23,7 +23,7 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
-class SavedAuthenticationTest {
+public class SavedAuthenticationTest {
 
   @Test
   public void testSerializable() {
