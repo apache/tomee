@@ -86,7 +86,7 @@
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
                   <artifactId>taglibs-shade</artifactId>
-                  <version>9.1.0-SNAPSHOT</version>
+                  <version>9.1.1-SNAPSHOT</version>
                 </artifactItem>
               </artifactItems>
               <outputDirectory>
