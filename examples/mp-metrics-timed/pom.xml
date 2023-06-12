@@ -19,15 +19,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-metrics-timed</artifactId>
-  <version>9.0.1-SNAPSHOT</version>
+  <version>9.1.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Metrics Timed</name>
   <properties>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
+    <version.jakartaee-api>9.1.1</version.jakartaee-api>
     <version.microprofile.metrics>4.0.1</version.microprofile.metrics>
     <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
-    <tomee.version>9.0.1-SNAPSHOT</tomee.version>
+    <tomee.version>9.1.1-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>

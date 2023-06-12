@@ -23,7 +23,7 @@
 
   <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-vxx-simple</artifactId>
-  <version>9.0.1-SNAPSHOT</version>
+  <version>9.1.0-SNAPSHOT</version>
 
   <name>TomEE :: Examples :: Vaadin LATEST</name>
   <packaging>war</packaging>
@@ -85,7 +85,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <dependency>
         <groupId>javax</groupId>
         <artifactId>jakartaee-api</artifactId>
-        <version>9.1-M2</version>
+        <version>9.1.1</version>
         <scope>provided</scope>
       </dependency>
 
