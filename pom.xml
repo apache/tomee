@@ -165,7 +165,6 @@
     <version.commons-io>2.11.0</version.commons-io>
     <version.commons-jcs-cache>2.1</version.commons-jcs-cache>
     <version.commons-lang3>3.12.0</version.commons-lang3>
-    <version.commons-net>3.8.0</version.commons-net>
     <version.commons-pool>2.11.1</version.commons-pool>
 
     <!-- Java SE version -->
@@ -1277,11 +1276,6 @@
             <artifactId>activemq-ra</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>commons-net</groupId>
-        <artifactId>commons-net</artifactId>
-        <version>${version.commons-net}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>

@@ -222,17 +222,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>3.8.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>io.churchkey</groupId>
       <artifactId>churchkey</artifactId>
       <version>1.22</version>
