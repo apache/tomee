@@ -85,11 +85,11 @@ public class DataSourceDefinitionUrlBuildTest {
 
     @Test
     public void assertDataSourceDefinition() throws Exception {
-        assertDataSourceDefinitionValues(uniqueDataSource.getDs(), "org.hsqldb.jdbc.JDBCDataSource", "sa", "");
+        assertDataSourceDefinitionValues(uniqueDataSource.getDs());
         uniqueDataSource.validProperties();
     }
 
-    private void assertDataSourceDefinitionValues(final DataSource dataSource, final String clazz, final String user, final String password) throws Exception {
+    private void assertDataSourceDefinitionValues(final DataSource dataSource) throws Exception {
         assertNotNull("injection should work", dataSource);
 
         final Movies movies = new Movies(dataSource);
