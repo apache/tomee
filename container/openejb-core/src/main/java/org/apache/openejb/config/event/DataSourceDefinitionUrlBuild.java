@@ -20,10 +20,6 @@ package org.apache.openejb.config.event;
 import org.apache.openejb.jee.DataSource;
 import org.apache.openejb.observer.Event;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Properties;
-
 @Event
 public class DataSourceDefinitionUrlBuild {
 
