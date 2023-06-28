@@ -214,7 +214,7 @@
     <version.geronimo.components>3.1.5</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
-    <version.johnzon>1.2.20</version.johnzon>
+    <version.johnzon>1.2.21</version.johnzon>
     <version.myfaces>3.0.2</version.myfaces>
     <version.openjpa>3.2.2</version.openjpa>
     <version.openwebbeans>2.0.27</version.openwebbeans>
