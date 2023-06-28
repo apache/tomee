@@ -181,7 +181,7 @@
     <version.microprofile.impl.opentracing>1.0.0</version.microprofile.impl.opentracing>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
-    <version.jackson>2.15.1</version.jackson>
+    <version.jackson>2.15.2</version.jackson>
     <version.snakeyaml>2.0</version.snakeyaml>
 
     <!-- Jakarta EE API -->
