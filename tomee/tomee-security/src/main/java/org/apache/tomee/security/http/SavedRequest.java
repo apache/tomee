@@ -19,6 +19,8 @@ package org.apache.tomee.security.http;
 import org.apache.tomcat.util.buf.ByteChunk;
 
 import jakarta.servlet.http.Cookie;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,7 +32,8 @@ import java.util.Map;
 /**
  * Mostly copied from org.apache.catalina.authenticator.SavedRequest.
  */
-public final class SavedRequest {
+public final class SavedRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     SavedRequest() {
     }

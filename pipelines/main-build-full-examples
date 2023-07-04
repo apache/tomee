@@ -1,0 +1,69 @@
+/*
+*
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*/
+
+pipeline {
+        agent  {
+            label "c6i2xlarge"
+           }
+
+    stages {
+        stage('checkout') {
+            steps {
+              checkout scmGit(branches: [[name: '*/main']], browser: github('https://github.com/apache/tomee'), extensions: [cleanBeforeCheckout()], userRemoteConfigs: [[url: 'https://github.com/apache/tomee']])
+            }
+        }
+        stage('Build without tests') {
+            tools {
+                 maven 'maven_3_latest'
+                  jdk 'jdk_11_latest'
+            }
+            steps {
+                timeout(time: 180, unit: 'MINUTES') {
+                    sh 'mvn -U --show-version clean install -DskipTests'
+                }
+            }
+        }
+        stage('Test') {
+            tools {
+                 maven 'maven_3_latest'
+                  jdk 'jdk_11_latest'
+            }
+            steps {
+                timeout(time: 180, unit: 'MINUTES') {
+                    sh 'mvn -U --show-version --fail-at-end clean install -Pall-adapters -Dfile.encoding=UTF-8 -pl examples/access-timeout-meta/,examples/access-timeout/,examples/alternate-descriptors/,examples/application-composer/,examples/applicationcomposer-jaxws-cdi/,examples/applicationexception/,examples/arquillian-jpa/,examples/async-methods/,examples/async-postconstruct/,examples/async-servlet/,examples/bean-validation-design-by-contract/,examples/bval-evaluation-redeployment/,examples/cdi-alternative-and-stereotypes/,examples/cdi-application-scope/,examples/cdi-basic/,examples/cdi-ejbcontext-jaas/,examples/cdi-events/,examples/cdi-interceptors/,examples/cdi-produces-disposes/,examples/cdi-produces-field/,examples/cdi-qualifier/,examples/cdi-realm/,examples/cdi-request-scope/,examples/cdi-session-scope/,examples/change-jaxws-url/,examples/client-resource-lookup-preview/,examples/cloud-tomee-azure/,examples/component-interfaces/,examples/concurrency-utils/,examples/connector-ear/,examples/connector-war/,examples/cucumber-jvm/,examples/custom-injection/,examples/datasource-ciphered-password/,examples/datasource-definition/,examples/datasource-versioning/,examples/decorators/,examples/dynamic-dao-implementation/,examples/dynamic-datasource-routing/,examples/dynamic-implementation/,examples/dynamic-proxy-to-access-mbean/,examples/ear-testing/,examples/ejb-examples/,examples/ejb-remote-call-2/,examples/ejb-remote-call/,examples/ejb-webservice/,examples/groovy-cdi/,examples/groovy-jpa/,examples/groovy-spock/,examples/helloworld-weblogic/,examples/injection-of-connectionfactory/,examples/injection-of-datasource/,examples/injection-of-ejbs/,examples/injection-of-entitymanager/,examples/injection-of-env-entry/,examples/interceptors/,examples/java-modules/,examples/javamail-velocity/,examples/javamail/,examples/jaxrs-filter/,examples/jaxrs-json-provider-jettison/,examples/jpa-eclipselink/,examples/jpa-enumerated/,examples/jpa-hibernate-arquillian/,examples/jpa-hibernate/,examples/jsf-cdi-and-ejb/,examples/jsf-managedBean-and-ejb/,examples/jsonb-configuration/,examples/jsonb-custom-serializer/,examples/junit5-application-composer/,examples/junit5-arquillian-multiple-tomee/,examples/junit5-arquillian-simple-websockets/,examples/lookup-of-ejbs-with-descriptor/,examples/lookup-of-ejbs/,examples/moviefun-rest/,examples/moviefun/,examples/movies-complete-meta/,examples/movies-complete/,examples/mp-config-example/,examples/mp-config-source-database/,examples/mp-custom-healthcheck/,examples/mp-faulttolerance-fallback/,examples/mp-faulttolerance-retry/,examples/mp-jwt-bean-validation-strongly-typed/,examples/mp-jwt-bean-validation/,examples/mp-metrics-counted/,examples/mp-metrics-gauge/,examples/mp-metrics-histogram/,examples/mp-metrics-metered/,examples/mp-metrics-timed/,examples/mp-opentracing-traced/,examples/mp-rest-jwt-principal/,examples/mp-rest-jwt-public-key/,examples/mtom/,examples/multi-jpa-provider-testing/,examples/multiple-arquillian-adapters/,examples/persistence-fragment/,examples/pojo-webservice/,examples/quartz-app/,examples/realm-in-tomee/,examples/reload-persistence-unit-properties/,examples/resources-declared-in-webapp/,examples/resources-jmx-example/,examples/rest-applicationcomposer-mockito/,examples/rest-applicationcomposer/,examples/rest-cdi/,examples/rest-example-with-application/,examples/rest-example/,examples/rest-jaas/,examples/rest-on-ejb/,examples/rest-xml-json/,examples/scala-basic/,examples/schedule-events/,examples/schedule-expression/,examples/schedule-methods-meta/,examples/schedule-methods/,examples/security-custom-identitystore/,examples/security-tomcat-user-identitystore/,examples/server-events/,examples/serverless-builder/,examples/serverless-tomee-microprofile/,examples/serverless-tomee-plume/,examples/serverless-tomee-plus/,examples/serverless-tomee-webprofile/,examples/simple-cdi-interceptor/,examples/simple-cmp2/,examples/simple-ear/,examples/simple-jms-context/,examples/simple-jms/,examples/simple-mdb-and-cdi/,examples/simple-mdb-with-descriptor/,examples/simple-mdb/,examples/simple-remote-tomcatusers/,examples/simple-rest/,examples/simple-singleton/,examples/simple-stateful-callbacks/,examples/simple-stateful/,examples/simple-stateless-callbacks/,examples/simple-stateless-with-descriptor/,examples/simple-stateless/,examples/simple-webservice-without-interface/,examples/simple-webservice/,examples/singleton-startup-ordering/,examples/struts/,examples/telephone-stateful/,examples/testcase-injection/,examples/testing-security-2/,examples/testing-security-3/,examples/testing-security-4/,examples/testing-security-meta/,examples/testing-security/,examples/testing-transactions-bmt/,examples/testing-transactions/,examples/tomee-jms-portability/,examples/transaction-rollback/,examples/troubleshooting/,examples/webservice-attachments/,examples/webservice-handlerchain/,examples/webservice-holder/,examples/webservice-inheritance/,examples/webservice-security/,examples/webservice-ssl-client-cert/,examples/webservice-ws-security/,examples/webservice-ws-with-resources-config/,examples/websocket-jms/,examples/websocket-tls-basic-auth/,examples/xa-datasource/'
+                }
+            }
+            post {
+                    always {
+                            timeout(time: 15, unit: 'MINUTES') {
+                            junit '**/target/surefire-reports/TEST-*.xml'
+                        }
+                    }
+                }
+        }
+    }
+    post{
+        changed{
+            emailext to: "commits@tomee.apache.org",
+            subject: "Jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
+            body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}"
+        }
+    }
+}

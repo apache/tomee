@@ -34,13 +34,11 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -82,7 +80,7 @@
     <dependency>
       <groupId>org.bitbucket.b_c</groupId>
       <artifactId>jose4j</artifactId>
-      <version>0.7.9</version>
+      <version>0.9.3</version>
     </dependency>
     <dependency>
       <groupId>io.churchkey</groupId>

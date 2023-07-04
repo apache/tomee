@@ -631,13 +631,20 @@ public class Installer implements InstallerInterface {
 
         // add our magic bits to the catalina sh file
         String openejbJavaagentPath = paths.getCatalinaHomeDir().toURI().relativize(javaagentJar.toURI()).getPath();
-        final String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
+        String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
                 "# Add OpenEJB javaagent\n" +
                         "if [ -r \"$CATALINA_HOME\"/" + openejbJavaagentPath + " ]; then\n" +
                         "  JAVA_OPTS=\"\\\"-javaagent:$CATALINA_HOME/" + openejbJavaagentPath + "\\\" $JAVA_OPTS\"\n" +
                         "fi\n" +
                         "\n" +
                         "# ----- Execute The Requested Command");
+
+        newCatalinaSh = newCatalinaSh.replace("    \"$_RUNJAVA\"   \\\n" +
+            "      -classpath \"$CATALINA_HOME/lib/catalina.jar\" \\\n" +
+            "      org.apache.catalina.util.ServerInfo",
+            "   eval \"\\\"$_RUNJAVA\\\"\" \"$JAVA_OPTS\" \\\n" +
+                "         -classpath \"\\\"$CATALINA_HOME/lib/catalina.jar:$CATALINA_HOME/lib/openejb-core-"+ properties.get("tomee.version") + ".jar\\\"\" \\\n" +
+                "         org.apache.catalina.util.ServerInfo");
 
         // overwrite the catalina.sh file
         if (Installers.writeAll(paths.getCatalinaShFile(), newCatalinaSh, alerts)) {
@@ -681,13 +688,16 @@ public class Installer implements InstallerInterface {
 
         // add our magic bits to the catalina bat file
         openejbJavaagentPath = openejbJavaagentPath.replace('/', '\\');
-        final String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
+        String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
                 "rem Add OpenEJB javaagent\r\n" +
                         "if not exist \"%CATALINA_HOME%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
                         "set JAVA_OPTS=\"-javaagent:%CATALINA_HOME%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
                         ":noOpenEJBJavaagent\r\n" +
                         "\r\n" +
                         "rem ----- Execute The Requested Command");
+
+        newCatalinaBat = newCatalinaBat.replace("%_EXECJAVA% %JAVA_OPTS% -classpath \"%CATALINA_HOME%\\lib\\catalina.jar\" org.apache.catalina.util.ServerInfo",
+            "%_EXECJAVA% %JAVA_OPTS% -classpath \"%CATALINA_HOME%\\lib\\catalina.jar;%CATALINA_HOME%\\lib\\openejb-core-" + properties.get("tomee.version") + ".jar\" org.apache.catalina.util.ServerInfo");
 
         // overwrite the catalina.bat file
         if (Installers.writeAll(paths.getCatalinaBatFile(), newCatalinaBat, alerts)) {

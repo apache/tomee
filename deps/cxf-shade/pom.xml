@@ -39,22 +39,22 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
       <exclusions>
         <exclusion>
           <groupId>org.ow2.asm</groupId>
@@ -73,55 +73,55 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <!--
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-search</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-cors</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
       <exclusions>
         <!-- Exclude some weird transient dependency to jaxb-runtime from ehcache -->
         <exclusion>
@@ -139,7 +139,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
-      <version>${cxf.version}</version>
+      <version>${version.cxf}</version>
     </dependency>
 
     <!-- add transitive dependencies so including this is equivalent to including regular deps -->
@@ -361,7 +361,7 @@
           <source>1.8</source>
           <target>1.8</target>
           <dependencies>
-            <dependency>${project.groupId}:jakartaee-api:jar:9.1-M2</dependency>
+            <dependency>${project.groupId}:jakartaee-api:jar:9.1.1</dependency>
 
             <dependency>org.apache.aries.blueprint:blueprint-parser:jar:1.6.0</dependency>
             <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.api:jar:1.0.1</dependency>

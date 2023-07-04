@@ -24,7 +24,7 @@
   <name>TomEE :: Examples :: Concurrency utilities example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jakartaee-api.version>9.1-M2</jakartaee-api.version>
+    <jakartaee-api.version>9.1.1</jakartaee-api.version>
     <junit.version>4.13.2</junit.version>
   </properties>
   <dependencies>
@@ -50,13 +50,13 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.7.0.Alpha10</version>
+      <version>1.7.0.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.container</groupId>
       <artifactId>arquillian-container-test-api</artifactId>
-      <version>1.7.0.Alpha10</version>
+      <version>1.7.0.Final</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

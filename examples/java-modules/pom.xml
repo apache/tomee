@@ -24,7 +24,7 @@
   <version>10.0.0-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Java Modules (Simple REST resource)</name>
   <properties>
-    <arquillian.version>1.7.0.Alpha10</arquillian.version>
+    <arquillian.version>1.7.0.Final</arquillian.version>
     <tomee.version>10.0.0-SNAPSHOT</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
+      <version>9.1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

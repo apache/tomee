@@ -79,7 +79,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.7.0.Alpha10</version>
+                <version>1.7.0.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>jakartaee-api</artifactId>
-            <version>9.1-M2</version>
+            <version>9.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

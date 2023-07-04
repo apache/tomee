@@ -24,6 +24,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
+import org.apache.openejb.config.event.DataSourceDefinitionUrlBuild;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -4891,6 +4892,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             consumer.getDataSource().add(dataSource);
+            SystemInstance.get().fireEvent(new DataSourceDefinitionUrlBuild(dataSource));
         }
 
 

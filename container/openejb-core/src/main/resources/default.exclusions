@@ -68,9 +68,7 @@ cssparser-
 cxf-
 debugger-agent
 deploy.jar
-derby-
-derbyclient-
-derbynet-
+derby
 dom4j
 dtd-parser-
 ecj-

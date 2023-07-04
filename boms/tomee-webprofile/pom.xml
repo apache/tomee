@@ -260,7 +260,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.21</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -272,7 +272,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.21</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -284,7 +284,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.21</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -296,7 +296,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.21</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -308,7 +308,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.19</version>
+      <version>1.2.21</version>
       <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
@@ -725,7 +725,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
+      <version>9.1.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1099,7 +1099,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-asm9-shaded</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1110,7 +1110,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-bundleutils</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1121,7 +1121,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1132,7 +1132,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1143,7 +1143,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
-      <version>4.22</version>
+      <version>4.23</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1197,8 +1197,30 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15to18</artifactId>
+      <version>1.73</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.70</version>
+      <version>1.73</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcutil-jdk15to18</artifactId>
+      <version>1.73</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1275,7 +1297,7 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.7.1</version>
+      <version>2.7.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

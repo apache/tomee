@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
+      <version>9.1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -97,7 +97,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.7.0.Alpha10</version>
+      <version>1.7.0.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -27,7 +27,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.apache.openejb" % "jakartaee-api" % "9.1-M2",
+  "org.apache.openejb" % "jakartaee-api" % "9.1.1",
   "org.apache.openejb" % "openejb-core" % "9.0.0-M9-SNAPSHOT" % "test",
   "org.scalatest" %% "scalatest_2.13" % "3.2.14" % "test"
 )

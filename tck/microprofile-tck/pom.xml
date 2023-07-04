@@ -39,4 +39,72 @@
     <module>fault-tolerance</module>
     <module>opentracing</module>
   </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Micro Profile TCK -->
+      <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-tck</artifactId>
+        <version>${version.microprofile.config}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+        <artifactId>microprofile-fault-tolerance-tck</artifactId>
+        <version>${version.microprofile.fault-tolerance}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.health</groupId>
+        <artifactId>microprofile-health-tck</artifactId>
+        <version>${version.microprofile.health}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.jwt</groupId>
+        <artifactId>microprofile-jwt-auth-tck</artifactId>
+        <version>${version.microprofile.jwt}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.jwt</groupId>
+        <artifactId>microprofile-jwt-auth-tck</artifactId>
+        <version>${version.microprofile.jwt}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.metrics</groupId>
+        <artifactId>microprofile-metrics-api-tck</artifactId>
+        <version>${version.microprofile.metrics}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.metrics</groupId>
+        <artifactId>microprofile-metrics-rest-tck</artifactId>
+        <version>${version.microprofile.metrics}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.openapi</groupId>
+        <artifactId>microprofile-openapi-tck</artifactId>
+        <version>${version.microprofile.openapi}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.opentracing</groupId>
+        <artifactId>microprofile-opentracing-tck</artifactId>
+        <version>${version.microprofile.opentracing}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.rest.client</groupId>
+        <artifactId>microprofile-rest-client-tck</artifactId>
+        <version>${version.microprofile.rest-client}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
 </project>
