@@ -1660,7 +1660,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>1.73</version>
+      <version>1.74</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1671,7 +1671,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.73</version>
+      <version>1.74</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1682,7 +1682,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcutil-jdk15to18</artifactId>
-      <version>1.73</version>
+      <version>1.74</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
