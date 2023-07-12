@@ -137,12 +137,12 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.73</version>
+      <version>1.74</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>1.73</version>
+      <version>1.74</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
