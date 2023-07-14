@@ -32,6 +32,8 @@ axis-
 axis2-
 batchee-jbatch
 bcprov-
+bcutil-
+bcpkix-
 bootstrap.jar
 bsh-
 bval-core
@@ -210,6 +212,7 @@ opentracing-
 openwebbeans-
 openws-
 ops4j-
+org.apache.servicemix.bundles.bcel-
 org.eclipse.
 org.junit.
 org.osgi.annotation.versioning-
@@ -302,5 +305,6 @@ xmlsec-
 xmltooling-
 xmlunit-
 xsom-
+yoko-
 zipfs.jar
 ziplock-

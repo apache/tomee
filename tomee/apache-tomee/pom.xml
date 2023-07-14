@@ -564,7 +564,9 @@
               <createTarGz>true</createTarGz>
               <skips>
                 <jars>
-                  <bcprov-jdk15on-1.70.jar>org.bouncycastle:bcprov-jdk15on:jar:1.70</bcprov-jdk15on-1.70.jar>
+                  <bcpkix-jdk15to18-1.75.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.75</bcpkix-jdk15to18-1.75.jar>
+                  <bcprov-jdk15to18-1.75.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.75</bcprov-jdk15to18-1.75.jar>
+                  <bcutil-jdk15to18-1.75.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.75</bcutil-jdk15to18-1.75.jar>
                 </jars>
               </skips>
             </configuration>
@@ -795,7 +797,9 @@
               <createTarGz>true</createTarGz>
               <skips>
                 <jars>
-                  <bcprov-jdk15on-1.70.jar>org.bouncycastle:bcprov-jdk15on:jar:1.70</bcprov-jdk15on-1.70.jar>
+                  <bcpkix-jdk15to18-1.75.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.75</bcpkix-jdk15to18-1.75.jar>
+                  <bcprov-jdk15to18-1.75.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.75</bcprov-jdk15to18-1.75.jar>
+                  <bcutil-jdk15to18-1.75.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.75</bcutil-jdk15to18-1.75.jar>
                 </jars>
               </skips>
             </configuration>

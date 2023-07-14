@@ -101,7 +101,9 @@
                   <exclude>org.jasypt:*</exclude>
                   <exclude>net.shibboleth.utilities:java-support</exclude>
                   <exclude>org.cryptacular:cryptacular</exclude>
-                  <exclude>org.bouncycastle:bcprov-jdk15on</exclude>
+                  <exclude>org.bouncycastle:bcprov-jdk15to18</exclude>
+                  <exclude>org.bouncycastle:bcutil-jdk15to18</exclude>
+                  <exclude>org.bouncycastle:bcpkix-jdk15to18</exclude>
                   <exclude>org.apache.neethi:neethi</exclude>
                   <exclude>org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
                   <exclude>org.apache.cxf:cxf-rt-bindings-soap</exclude>
