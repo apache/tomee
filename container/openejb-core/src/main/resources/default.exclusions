@@ -32,6 +32,8 @@ axis-
 axis2-
 batchee-jbatch
 bcprov-
+bcutil-
+bcpkix-
 bootstrap.jar
 bsh-
 bval-core
