@@ -203,6 +203,7 @@
     <module>cloud-tomee-azure</module>
     <module>xa-datasource</module>
     <module>websocket-jms</module>
+    <module>activemq-multiple-brokers</module>
 
     <!-- Jakarta Security Examples -->
     <module>security-tomcat-user-identitystore</module>
