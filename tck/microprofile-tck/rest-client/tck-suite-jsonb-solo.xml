@@ -20,12 +20,7 @@
 
   <test name="microprofile-rest-client TCK">
     <packages>
-      <package name="org.eclipse.microprofile.rest.client.tck.*">
-        <!-- bug in MyEventSourceServlet which depends on javax servlet api, see https://github.com/eclipse/microprofile-rest-client/issues/316-->
-        <exclude name="org.eclipse.microprofile.rest.client.tck.sse.*"></exclude>
-        <!-- will pass if run in solo mode -->
-        <exclude name="org.eclipse.microprofile.rest.client.tck.jsonb.*"></exclude>
-      </package>
+      <package name="org.eclipse.microprofile.rest.client.tck.jsonb.*"></package>
     </packages>
   </test>
 
