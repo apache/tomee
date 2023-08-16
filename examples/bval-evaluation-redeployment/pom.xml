@@ -23,6 +23,8 @@
   <version>9.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>TomEE :: Examples :: Bean Validation Evaluation on Re-Deployment</name>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.test.version>9.1.1-SNAPSHOT</tomee.test.version>

@@ -22,7 +22,7 @@
   <artifactId>serverless-builder</artifactId>
   <version>9.1.1-SNAPSHOT</version>
 
-  <name>TomEE :: Examples :: Serverless Apache TomEE WebProfile</name>
+  <name>TomEE :: Examples :: Serverless Builder</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
