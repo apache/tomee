@@ -207,10 +207,6 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>jakartaee-api</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -222,10 +218,6 @@
         <exclusion>
           <groupId>${project.groupId}</groupId>
           <artifactId>jakartaee-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
