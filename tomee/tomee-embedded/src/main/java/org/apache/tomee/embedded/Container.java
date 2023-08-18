@@ -29,36 +29,11 @@ import org.apache.catalina.startup.CatalinaProperties;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.coyote.http2.Http2Protocol;
-import org.apache.openejb.AppContext;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.Injector;
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
+import org.apache.openejb.*;
 import org.apache.openejb.assembler.WebAppDeployer;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.BeansInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.ManagedBeanInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.config.AnnotationDeployer;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.FinderFactory;
-import org.apache.openejb.config.NewLoaderLogic;
-import org.apache.openejb.config.WebModule;
-import org.apache.openejb.config.WebappAggregatedArchive;
-import org.apache.openejb.jee.Beans;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.ManagedBean;
-import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.config.*;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.Files;
@@ -92,24 +67,10 @@ import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.Arrays.asList;
@@ -613,6 +574,10 @@ public class Container implements AutoCloseable {
             }
             if (configuration.isHttp2()) { // would likely need SSLHostConfig programmatically
                 connector.addUpgradeProtocol(new Http2Protocol());
+            }
+
+            if ("true".equals(System.getProperty("is_tck_mode", "false"))) {
+                connector.setAllowTrace(true);
             }
 
             tomcat.getService().addConnector(connector);
