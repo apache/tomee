@@ -728,6 +728,12 @@ public class FormAuthenticator
             sb.append('?');
             sb.append(saved.getQueryString());
         }
+
+        // Avoid protocol relative redirects
+        while (sb.length() > 1 && sb.charAt(1) == '/') {
+            sb.deleteCharAt(0);
+        }
+
         return sb.toString();
     }
 }
