@@ -9,13 +9,23 @@
         <version>10.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jakartarestfulwstck</artifactId>
+    <artifactId>jax-rs-tck</artifactId>
     <name>TomEE :: TCK :: Jakarta-Restfull-WS-TCK</name>
 
     <properties>
         <junit.jupiter.version>5.9.3</junit.jupiter.version>
         <tomee-version>10.0.0-SNAPSHOT</tomee-version>
     </properties>
+
+    <repositories>
+        <!--TODO: We use the staging repository of jakarta as the tck dependencies are not yet pushed to central. Remove this asap.-->
+        <repository>
+            <id>my-repo1</id>
+            <name>TCK-Staging-Repo</name>
+            <url>https://jakarta.oss.sonatype.org/content/groups/staging</url>
+        </repository>
+
+    </repositories>
 
     <profiles>
         <profile>
@@ -53,12 +63,6 @@
             </activation>
 
             <build>
-                <!--Hint: Needed, as resources and java files are mixed.-->
-                <testResources>
-                    <testResource>
-                        <directory>src/test/java</directory>
-                    </testResource>
-                </testResources>
                 <plugins>
                     <plugin>
                         <artifactId>maven-compiler-plugin</artifactId>
@@ -72,22 +76,23 @@
                             <forkCount>1</forkCount>
                             <useFile>false</useFile>
                             <disableXmlReport>false</disableXmlReport>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>src/test/resources/suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
 
                             <includes>
                                 <include>**/*.java</include>
                             </includes>
 
+                            <dependenciesToScan>
+                                <dependency>jakarta.ws.rs:jakarta-restful-ws-tck</dependency>
+                            </dependenciesToScan>
+
                             <systemPropertyVariables>
                                 <servlet_adaptor>org.apache.cxf.transport.servlet.CXFNonSpringServlet</servlet_adaptor>
                                 <webServerHost>localhost</webServerHost>
                                 <webServerPort>8080</webServerPort>
-                                <web.home>/home/sollder1/opensource/tomee/JakartaEE10/container</web.home>
+                                <!--web.home>/home/sollder1/opensource/tomee/JakartaEE10/container</web.home-->
                                 <porting.ts.url.class.1>ee.jakarta.tck.ws.rs.lib.implementation.sun.common.SunRIURL
                                 </porting.ts.url.class.1>
-                                <signature.sigTestClasspath>TODO</signature.sigTestClasspath>
+                                <!--signature.sigTestClasspath>TODO</signature.sigTestClasspath-->
                                 <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
                             </systemPropertyVariables>
 
@@ -121,9 +126,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
+            <artifactId>jakarta-restful-ws-tck</artifactId>
+            <groupId>jakarta.ws.rs</groupId>
+            <version>3.1.3-1</version>
         </dependency>
         <dependency>
             <groupId>jakarta.ws.rs</groupId>

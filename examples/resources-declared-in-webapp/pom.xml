@@ -68,7 +68,7 @@
           <tomcatHttpPort>1234</tomcatHttpPort>
           <tomcatShutdownPort>13245</tomcatShutdownPort>
           <tomcatVersion>7.0.27</tomcatVersion>
-          <webapps>
+          <webapps>n
             <webappArtifact>
               <groupId>org.apache.tomee</groupId>
               <artifactId>openejb-tomcat-plus-webapp</artifactId>
