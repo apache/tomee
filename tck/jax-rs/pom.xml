@@ -52,16 +52,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
 
-            <dependencies>
-                <!--dependency>
-                    <groupId>jakarta.ws.rs</groupId>
-                    <artifactId>jakarta-restful-ws-tck</artifactId>
-                    <systemPath>${basedir}/jakarta-restful-ws-tck-3.1.3.jar</systemPath>
-                    <version>3.1.3</version>
-                    <scope>system</scope>
-                </dependency-->
-            </dependencies>
-
             <build>
                 <!--Hint: Needed, as resources and java files are mixed.-->
                 <testResources>
@@ -89,10 +79,6 @@
                             <includes>
                                 <include>**/*.java</include>
                             </includes>
-
-                            <!--dependenciesToScan>
-                                <dependency>jakarta.ws.rs:jakarta-restful-ws-tck</dependency>
-                            </dependenciesToScan-->
 
                             <systemPropertyVariables>
                                 <servlet_adaptor>org.apache.cxf.transport.servlet.CXFNonSpringServlet</servlet_adaptor>
