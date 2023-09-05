@@ -31,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
-      <artifactId>tomee-webprofile</artifactId>
+      <artifactId>tomee-plume</artifactId>
       <version>${version.tomee}</version>
     </dependency>
     <dependency>

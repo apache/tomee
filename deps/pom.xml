@@ -29,8 +29,6 @@
 
   <modules>
     <module>taglibs-shade</module>
-    <module>cxf-shade</module>
-    <module>cxf-rt-rs-mp-client-shade</module>
     <module>sxc-shade</module>
     <module>activemq-broker-shade</module>
     <module>activemq-kahadb-store-shade</module>
