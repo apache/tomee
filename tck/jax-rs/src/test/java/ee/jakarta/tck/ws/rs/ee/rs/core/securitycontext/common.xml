@@ -1,0 +1,58 @@
+<!--
+
+    Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project name="jaxrs_ee_core_securitycontext" basedir="." default="package" >    
+    <property name="resource.classes" 
+              value="com/sun/ts/tests/jaxrs/ee/rs/core/securitycontext/TestServlet.class,
+    				 com/sun/ts/tests/jaxrs/ee/rs/core/securitycontext/TestServlet$Security.class,
+    				 com/sun/ts/tests/jaxrs/ee/rs/core/securitycontext/TestServlet$Scheme.class,
+					 com/sun/ts/tests/jaxrs/ee/rs/core/securitycontext/TestServlet$Role.class,
+    				 com/sun/ts/tests/jaxrs/ee/rs/core/securitycontext/TestServlet$Principal.class"/>
+    <property name="appconfig.class"
+              value="com/sun/ts/tests/jaxrs/ee/rs/core/securitycontext/TSAppConfig.class" />
+              
+	<include file="../../../../common/common.xml"/>              
+                     
+	<target name="package" depends="build.TSAppConfig">
+		<ant antfile="${ts.home}/src/com/sun/ts/tests/jaxrs/common/common.xml" target="package"/>
+        <antcall target="copy.sun-web.xml"/>        
+        <antcall target="copy.sun-application.xml"/>        		   
+	</target>    
+	    
+    <target name="copy.sun-web.xml"> 
+        <copy failonerror="true" 
+        file="${app.name}_web.war.sun-web.xml" 
+        tofile="${ts.home}/dist/${pkg.dir}/${app.name}_web.war.sun-web.xml"/>
+    </target>
+    
+    <target name="copy.sun-application.xml">
+        <copy failonerror="true"
+              file="${app.name}_web.ear.sun-application.xml"
+              tofile="${ts.home}/dist/${pkg.dir}/${app.name}_web.ear.sun-application.xml" />    
+    </target>
+	
+	<target name="check.TSAppConfig.built">
+		<available file="${ts.home}/classes/${appconfig.class}" property="ts.app.config.present"/>
+	</target>
+	
+	<target name="build.TSAppConfig" depends="check.TSAppConfig.built" unless="ts.app.config.present">
+		<echo>BUILDING</echo>
+		<ant antfile="../build.xml" useNativeBasedir="true" target="compile"/>
+	</target>	
+    
+</project>
