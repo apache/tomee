@@ -23,10 +23,12 @@
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
     <container qualifier="tomee-embedded" default="true">
         <configuration>
+            <!--Defines the users with their passwords. Syntax: <username>=<password>-->
             <property name="users">
                 javajoe=javajoe
                 j2ee=j2ee
             </property>
+            <!--Assigns roles to users, multiple definitions per user are allowed and compounded. Syntax: <username>=<role>-->
             <property name="roles">
                 javajoe=OTHERROLE
                 j2ee=DIRECTOR
