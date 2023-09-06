@@ -74,6 +74,7 @@
                         <porting.ts.url.class.1>ee.jakarta.tck.ws.rs.lib.implementation.sun.common.SunRIURL
                         </porting.ts.url.class.1>
                         <org.apache.cxf.transport.http.forceURLConnection>true</org.apache.cxf.transport.http.forceURLConnection>
+                        <openejb.jaxrs.fail-on-constrainedto>false</openejb.jaxrs.fail-on-constrainedto>
                         <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
                     </systemPropertyVariables>
                 </configuration>
