@@ -45,6 +45,12 @@
     </repositories>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -59,6 +65,7 @@
                     <useFile>false</useFile>
                     <disableXmlReport>false</disableXmlReport>
 
+                    <!--Hint: Default naming of surefire is not followed.-->
                     <includes>
                         <include>**/*.java</include>
                     </includes>
@@ -76,6 +83,10 @@
                         <org.apache.cxf.transport.http.forceURLConnection>true</org.apache.cxf.transport.http.forceURLConnection>
                         <openejb.jaxrs.fail-on-constrainedto>false</openejb.jaxrs.fail-on-constrainedto>
                         <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
+                        <user>j2ee</user>
+                        <password>j2ee</password>
+                        <authuser>javajoe</authuser>
+                        <authpassword>javajoe</authpassword>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
