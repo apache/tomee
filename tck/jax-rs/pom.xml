@@ -40,7 +40,9 @@
             <id>jakarta.staging.repo</id>
             <name>TCK-Staging-Repo</name>
             <url>https://jakarta.oss.sonatype.org/content/groups/staging</url>
-            <snapshots>false</snapshots>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
