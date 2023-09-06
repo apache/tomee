@@ -68,7 +68,7 @@
                     </dependenciesToScan>
 
                     <systemPropertyVariables>
-                        <servlet_adaptor>org.apache.cxf.transport.servlet.CXFNonSpringServlet</servlet_adaptor>
+                        <servlet_adaptor>org.apache.openejb.server.rest.OpenEJBRestServlet</servlet_adaptor>
                         <webServerHost>localhost</webServerHost>
                         <webServerPort>8080</webServerPort>
                         <porting.ts.url.class.1>ee.jakarta.tck.ws.rs.lib.implementation.sun.common.SunRIURL
@@ -113,6 +113,16 @@
             <scope>import</scope>
         </dependency>
 
+        <!-- Needed by some TCK tests:
+            JsonbContextProviderIT.shouldUseApplicationProvidedJsonbInstance
+            UriBuilderIT.shouldBuildValidInstanceFromScratch
+        -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
         <!--Tomee-Deps:-->
         <!-- https://mvnrepository.com/artifact/org.apache.tomee/arquillian-tomee-remote -->
         <dependency>
