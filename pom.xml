@@ -98,7 +98,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>9.1.1</version.jakartaee-api>
+    <version.jakartaee-api>10.0-M1</version.jakartaee-api>
     <version.tomee-patch-plugin>0.10</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
@@ -217,7 +217,7 @@
     <version.johnzon>1.2.21</version.johnzon>
     <version.myfaces>3.0.2</version.myfaces>
     <version.openjpa>3.2.2</version.openjpa>
-    <version.openwebbeans>2.0.27</version.openwebbeans>
+    <version.openwebbeans>4.0.0</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
@@ -1785,7 +1785,6 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.openwebbeans</groupId>
@@ -1801,7 +1800,6 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.openwebbeans</groupId>
@@ -1813,7 +1811,6 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1828,7 +1825,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
@@ -1845,7 +1841,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
           <exclusions>
           <exclusion>
@@ -1866,7 +1861,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
@@ -1883,7 +1877,6 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-el22</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
@@ -1895,7 +1888,6 @@
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>

@@ -321,7 +321,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <classifier>jakarta</classifier>
       <scope>compile</scope>
       <!-- we already have jakarta version coming from core. We don't want non jakarta version transitively -->
       <exclusions>
