@@ -629,7 +629,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         @Override
         public boolean isNullable() {
-            return bean.isNullable();
+            return false;
         }
 
         @Override
