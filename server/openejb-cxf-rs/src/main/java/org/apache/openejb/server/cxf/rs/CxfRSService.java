@@ -372,11 +372,6 @@ public class CxfRSService extends RESTService {
         }
 
         @Override
-        public boolean isNullable() {
-            return false;
-        }
-
-        @Override
         public Set<InjectionPoint> getInjectionPoints() {
             return Collections.emptySet();
         }
