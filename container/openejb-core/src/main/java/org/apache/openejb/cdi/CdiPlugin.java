@@ -463,7 +463,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
     @Override
     public <T> Bean<T> defineNewSessionBean(final Class<T> clazz) {
-        return new NewCdiEjbBean<>(findBeanContext(webBeansContext, clazz).get(CdiEjbBean.class));
+        return findBeanContext(webBeansContext, clazz).get(CdiEjbBean.class);
     }
 
     private static Map<Class<?>, BeanContext> pluginBeans(final WebBeansContext ctx) {
