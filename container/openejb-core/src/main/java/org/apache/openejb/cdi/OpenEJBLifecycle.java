@@ -471,6 +471,11 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         public Class<?> proxyableType() {
             return null;
         }
+
+        @Override
+        public boolean isNullable() {
+            return false;
+        }
     }
 
     public static class HttpServletRequestBean extends InternalBean<HttpServletRequest> {
