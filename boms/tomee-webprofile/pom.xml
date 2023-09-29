@@ -585,8 +585,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -597,8 +596,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -609,8 +607,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -621,8 +618,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -633,8 +629,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -645,8 +640,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -657,8 +651,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -669,8 +662,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
