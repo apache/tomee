@@ -209,7 +209,7 @@
     <!-- org.apache -->
     <version.activemq>5.18.1</version.activemq>
     <version.batchee>1.0.2</version.batchee>
-    <version.bval>2.0.6</version.bval>
+    <version.bval>3.0.0-SNAPSHOT</version.bval>
     <version.cxf>4.0.3</version.cxf>
     <version.geronimo.components>3.1.5</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
@@ -1184,7 +1184,6 @@
       <dependency>
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.bval}</version>
       </dependency>
       <dependency>

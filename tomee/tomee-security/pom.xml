@@ -92,7 +92,6 @@
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
-      <classifier>jakarta</classifier>
     </dependency>
 
     <!-- Test -->
