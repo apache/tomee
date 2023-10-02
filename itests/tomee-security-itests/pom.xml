@@ -80,7 +80,6 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -101,9 +100,9 @@
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
+      <groupId>org.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
-      <version>2.33</version>
+      <version>3.5.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
