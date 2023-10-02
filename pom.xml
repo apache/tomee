@@ -139,7 +139,7 @@
     <version.xbean>4.23</version.xbean>
     <version.groovy>2.4.12</version.groovy>
     <version.ecj>4.6.1</version.ecj>
-    <version.jetty>12.0.1</version.jetty>
+    <version.jetty>11.0.8</version.jetty>
     <version.ehcache>3.10.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.9.3</junit.jupiter.version>
