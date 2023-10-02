@@ -498,8 +498,8 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcmail-jdk15on</artifactId>
-      <version>1.60</version>
+      <artifactId>bcmail-jdk15to18</artifactId>
+      <version>1.76</version>
       <scope>test</scope>
     </dependency>
 
