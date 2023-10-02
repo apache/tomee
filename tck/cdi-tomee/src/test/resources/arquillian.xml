@@ -41,7 +41,6 @@
         openejb.cdi.requestScope.cached = false
         openejb.cdi.conversation.http.use-get-parameter = true
         openejb.classloader.forced-load = org.apache.webbeans.test.tck.,org.apache.openejb.tck.cdi.tomee.
-        tomee.tomcat.cookieProcessor = org.apache.tomcat.util.http.LegacyCookieProcessor
 
         jmsRa = new://Resource?type=ActiveMQResourceAdapter
         jmsRa.BrokerXmlConfig = broker:(tcp://localhost:0)?useJmx=false
