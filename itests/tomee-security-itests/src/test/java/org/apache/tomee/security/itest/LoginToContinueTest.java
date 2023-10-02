@@ -143,7 +143,7 @@ public class LoginToContinueTest {
         assertNotPresent(output, "\tat org."); // no stack traces
 
         {
-            final com.gargoylesoftware.htmlunit.WebClient webClient = new com.gargoylesoftware.htmlunit.WebClient();
+            final org.htmlunit.WebClient webClient = new org.htmlunit.WebClient();
             final HtmlPage page = webClient.getPage(tomee.toURI().resolve("/test/auth-app").toURL());
             assertEquals(200, page.getWebResponse().getStatusCode());
 
@@ -192,7 +192,7 @@ public class LoginToContinueTest {
         assertNotPresent(output, "\tat org."); // no stack traces
 
         {
-            final com.gargoylesoftware.htmlunit.WebClient webClient = new com.gargoylesoftware.htmlunit.WebClient();
+            final org.htmlunit.WebClient webClient = new org.htmlunit.WebClient();
             final HtmlPage page = webClient.getPage(tomee.toURI().resolve("/test/auth-app").toURL());
             assertEquals(200, page.getWebResponse().getStatusCode());
 
