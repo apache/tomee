@@ -17,7 +17,7 @@
 package org.apache.tomee.myfaces;
 
 import org.apache.myfaces.config.DefaultFacesConfigResourceProvider;
-import org.apache.myfaces.shared.util.ClassUtils;
+import org.apache.myfaces.util.lang.ClassUtils;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.util.AppFinder;
