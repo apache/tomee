@@ -58,18 +58,8 @@ public class ServletSessionAdapter implements HttpSession {
         return session.getMaxInactiveInterval();
     }
 
-    @Override
-    public HttpSessionContext getSessionContext() {
-        return session.getSessionContext();
-    }
-
     public Object getAttribute(String name) {
         return session.getAttribute(name);
-    }
-
-    @Override
-    public Object getValue(String s) {
-        return session.getValue(s);
     }
 
     @Override
@@ -77,27 +67,12 @@ public class ServletSessionAdapter implements HttpSession {
         return session.getAttributeNames();
     }
 
-    @Override
-    public String[] getValueNames() {
-        return session.getValueNames();
-    }
-
     public void setAttribute(String name, Object value) {
         session.setAttribute(name, value);
     }
 
-    @Override
-    public void putValue(String s, Object o) {
-        session.putValue(s, o);
-    }
-
     public void removeAttribute(String name) {
         session.removeAttribute(name);
-    }
-
-    @Override
-    public void removeValue(String s) {
-        session.removeValue(s);
     }
 
     @Override
