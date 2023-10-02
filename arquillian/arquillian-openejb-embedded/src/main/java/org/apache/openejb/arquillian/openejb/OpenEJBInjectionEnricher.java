@@ -61,7 +61,7 @@ public class OpenEJBInjectionEnricher implements TestEnricher {
                 try {
                     final BeanManager bm = appContext.getWebBeansContext().getBeanManagerImpl();
                     final AnnotatedType<?> at = bm.createAnnotatedType(clazz);
-                    bm.createInjectionTarget(at);
+//                    bm.createInjectionTarget(at);
                     final CreationalContext<Object> cc = bm.createCreationalContext(null);
                     OWBInjector.inject(bm, testInstance, cc);
                     cc.release();

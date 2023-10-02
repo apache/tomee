@@ -18,9 +18,6 @@
 
 package org.apache.tomee.security.itest;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.HttpConstraint;
@@ -43,6 +40,9 @@ import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
 import org.apache.tomee.server.composer.Archive;
 import org.apache.tomee.server.composer.TomEE;
+import org.htmlunit.Page;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlPage;
 import org.junit.Test;
 
 import java.io.File;
@@ -93,7 +93,7 @@ public class LoginToContinueTest {
         assertNotPresent(output, "\tat org."); // no stack traces
 
         {
-            final com.gargoylesoftware.htmlunit.WebClient webClient = new com.gargoylesoftware.htmlunit.WebClient();
+            final org.htmlunit.WebClient webClient = new org.htmlunit.WebClient();
             final HtmlPage page = webClient.getPage(tomee.toURI().resolve("/test/auth-app").toURL());
             assertEquals(200, page.getWebResponse().getStatusCode());
 
