@@ -146,7 +146,7 @@
     <version.commons-cli>1.5.0</version.commons-cli>
     <version.commons-codec>1.15</version.commons-codec>
     <version.commons-collections>3.2.2</version.commons-collections>
-    <version.commons-dbcp2>2.9.0</version.commons-dbcp2>
+    <version.commons-dbcp2>2.10.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
     <version.commons-fileupload>1.5</version.commons-fileupload>
     <version.commons-io>2.11.0</version.commons-io>
