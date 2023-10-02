@@ -24,7 +24,7 @@
   <name>TomEE :: Examples :: Concurrency utilities example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jakartaee-api.version>10.0-M2</jakartaee-api.version>
+    <jakartaee-api.version>10.0-SNAPSHOT</jakartaee-api.version>
     <junit.version>4.13.2</junit.version>
   </properties>
   <dependencies>
