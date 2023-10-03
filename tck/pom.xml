@@ -27,7 +27,7 @@
   <name>TomEE :: TCK</name>
 
   <properties>
-    <cdi-tck.version>4.0.7</cdi-tck.version>
+    <cdi-tck.version>4.0.10</cdi-tck.version>
     <bval-tck.version>3.0.1</bval-tck.version>
 
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
