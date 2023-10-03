@@ -32,19 +32,6 @@
         <jaxrs.tck.version>3.1.3-1</jaxrs.tck.version>
     </properties>
 
-    <repositories>
-        <!--TODO: We use the staging repository of jakarta as the tck dependencies are not yet pushed to central. Remove this asap.-->
-        <repository>
-            <id>jakarta.staging.repo</id>
-            <name>TCK-Staging-Repo</name>
-            <url>https://jakarta.oss.sonatype.org/content/groups/staging</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-
     <build>
         <plugins>
             <plugin>
