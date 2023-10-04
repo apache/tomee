@@ -143,7 +143,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.eclipse.jdt.core.compiler</groupId>
+        <groupId>org.eclipse.jdt</groupId>
         <artifactId>ecj</artifactId>
         <version>${version.ecj}</version>
       </dependency>
@@ -203,7 +203,7 @@
         <version>${tomcat.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <groupId>org.eclipse.jdt</groupId>
             <artifactId>ecj</artifactId>
           </exclusion>
         </exclusions>

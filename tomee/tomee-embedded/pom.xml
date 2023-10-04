@@ -426,7 +426,7 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <groupId>org.eclipse.jdt</groupId>
           <artifactId>ecj</artifactId>
         </exclusion>
         <exclusion>
@@ -462,7 +462,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jdt.core.compiler</groupId>
+      <groupId>org.eclipse.jdt</groupId>
       <artifactId>ecj</artifactId>
       <type>jar</type>
       <scope>compile</scope>
