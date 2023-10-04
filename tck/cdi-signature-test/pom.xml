@@ -119,7 +119,7 @@
           </execution>
         </executions>
         <configuration>
-          <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-4.0.10-sigtest-jdk11.sig</sigfile>
+          <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-${cdi-tck.version}-sigtest-jdk11.sig</sigfile>
           <packages>jakarta.decorator,jakarta.enterprise,jakarta.interceptor</packages>
         </configuration>
       </plugin>
