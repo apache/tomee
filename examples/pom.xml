@@ -121,7 +121,8 @@
     <module>mp-rest-jwt-public-key</module>
     <module>mp-rest-client</module>
     <module>mp-custom-healthcheck</module>
-    <module>mtom</module>
+    <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
+<!--    <module>mtom</module>-->
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
@@ -168,8 +169,9 @@
     <module>simple-stateless</module>
     <module>simple-stateless-callbacks</module>
     <module>simple-stateless-with-descriptor</module>
-    <module>simple-webservice</module>
-    <module>simple-webservice-without-interface</module>
+    <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
+<!--    <module>simple-webservice</module>-->
+<!--    <module>simple-webservice-without-interface</module>-->
     <module>async-servlet</module>
     <module>struts</module>
     <module>telephone-stateful</module>
@@ -185,14 +187,15 @@
     <module>tomee-jms-portability</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
-    <module>webservice-attachments</module>
-    <module>webservice-inheritance</module>
-    <module>webservice-security</module>
-    <module>webservice-ssl-client-cert</module>
-    <module>webservice-ws-security</module>
-    <module>webservice-ws-with-resources-config</module>
-    <module>webservice-handlerchain</module>
-    <module>webservice-holder</module>
+    <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
+<!--    <module>webservice-attachments</module>-->
+<!--    <module>webservice-inheritance</module>-->
+<!--    <module>webservice-security</module>-->
+<!--    <module>webservice-ssl-client-cert</module>-->
+<!--    <module>webservice-ws-security</module>-->
+<!--    <module>webservice-ws-with-resources-config</module>-->
+<!--    <module>webservice-handlerchain</module>-->
+<!--    <module>webservice-holder</module>-->
     <module>moviefun</module>
     <module>moviefun-rest</module>
     <module>resources-jmx-example</module>
