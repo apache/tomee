@@ -432,7 +432,7 @@ public class GenerateBoms {
          * exist in Maven Central.  For Tomcat, all the `catalina-foo.jar` files tend
          * to map to `tomcat-foo-1.2.3.jar` files in Maven Central.
          *
-         * There is another known limitation that the Eclipse Compiler jar (ecj-4.12.jar)
+         * There is another known limitation that the Eclipse Compiler jar (ecj-4.27.jar)
          * found in the Tomcat distribution is not available in Maven Central.  The Tomcat
          * build will download it directly from the Eclipse website.  Very strangely, the
          * Eclipse Compiler team does publish jars to Maven Central, but only for version 3.x
@@ -520,7 +520,7 @@ public class GenerateBoms {
             }
 
             if (jar.getName().startsWith("ecj-")) {
-                return new Artifact("org.eclipse.jdt", "ecj", "3.22.0", null);
+                return new Artifact("org.eclipse.jdt", "ecj", "3.35.0", null);
             }
 
             if (jar.getName().equals("openejb-javaagent.jar")) {
