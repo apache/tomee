@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-stateful-callbacks</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple Stateful Pojo Callbacks</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
     <dependency>
@@ -75,7 +75,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>reload-persistence-unit-properties</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <name>TomEE :: Examples :: Reloadable Persistence Unit Properties</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -77,7 +77,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>

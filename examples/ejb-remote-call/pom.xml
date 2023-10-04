@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>ejb-remote-call</artifactId>
   <packaging>war</packaging>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: EJB Remote Call</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,7 +62,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>10.0.0-SNAPSHOT</version>
+        <version>10.0.0-M1-SNAPSHOT</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
           <config>${project.basedir}/src/test/conf</config>
