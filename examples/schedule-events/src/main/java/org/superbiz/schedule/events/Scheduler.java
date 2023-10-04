@@ -51,7 +51,7 @@ public class Scheduler {
     private void timeout(Timer timer) {
         final EventConfig config = (EventConfig) timer.getInfo();
 
-        beanManager.fireEvent(config.getEvent(), config.getQualifiers());
+        beanManager.getEvent().fire(config.getEvent());
     }
 
     // Doesn't actually need to be serializable, just has to implement it
