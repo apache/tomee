@@ -71,6 +71,22 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
+            <exclude>**/RootContextTest.java</exclude>
+            <exclude>**/JAXWSTest.java</exclude>
+            <exclude>**/WebServiceContextEJBTest.java</exclude>
+            <exclude>**/WebServiceContextTest.java</exclude>
+            <exclude>**/JAXWSDDTest.java</exclude>
+            <exclude>**/OpenEJBJarForAddressDeploymentTest.java</exclude>
+            <exclude>**/WsRsTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
