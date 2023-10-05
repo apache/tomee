@@ -380,8 +380,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jsonp-strict</artifactId>
-      <classifier>jakarta</classifier>
+      <artifactId>johnzon-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>

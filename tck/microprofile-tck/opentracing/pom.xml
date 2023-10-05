@@ -130,26 +130,18 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <classifier>jakarta</classifier>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <classifier>jakarta</classifier>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <classifier>jakarta</classifier>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <classifier>jakarta</classifier>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
