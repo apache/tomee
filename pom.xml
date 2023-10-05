@@ -138,7 +138,8 @@
     <version.axiom>1.3.0</version.axiom>
     <version.xbean>4.23</version.xbean>
     <version.groovy>2.4.12</version.groovy>
-    <version.ecj>3.35.0</version.ecj>
+    <!-- Starting from 3.34.0 it requires J17+ -->
+    <version.ecj>3.33.0</version.ecj>
     <version.jetty>11.0.8</version.jetty>
     <version.ehcache>3.10.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
