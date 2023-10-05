@@ -17,9 +17,9 @@
 package org.apache.openejb.arquillian.tests.jsf.ejb;
 
 import jakarta.ejb.EJB;
-import jakarta.faces.bean.ManagedBean;
+import jakarta.enterprise.context.Dependent;
 
-@ManagedBean
+@Dependent
 public class DummyManagedBean {
     @EJB
     private DummyEJB ejb;
