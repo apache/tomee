@@ -34,7 +34,8 @@
   moviesBean.addMovie(new Movie("Zoolander", "Ben Stiller", "Comedy", 6, 2001));
   moviesBean.addMovie(new Movie("Shanghai Noon", "Tom Dey", "Comedy", 7, 2000));
 %>
-<c:set var="language" value="${pageContext.request.locale}"/>
+<c:set var="language" value="en"/>
+<%--<c:set var="language" value="${pageContext.request.locale}"/>--%> <!-- TODO: This does not work in EE10 / OWB4 anymore -->
 <fmt:setLocale value="${language}"/>
 
 <!DOCTYPE html>
