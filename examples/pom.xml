@@ -53,7 +53,8 @@
     <module>cdi-realm</module>
     <module>cdi-request-scope</module>
     <module>cdi-session-scope</module>
-    <module>change-jaxws-url</module>
+    <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
+<!--    <module>change-jaxws-url</module>-->
     <module>component-interfaces</module>
     <module>client-resource-lookup-preview</module>
     <module>connector-ear</module>
