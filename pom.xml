@@ -212,7 +212,7 @@
     <version.batchee>2.0.0-SNAPSHOT</version.batchee>
     <version.bval>3.0.0-SNAPSHOT</version.bval>
     <version.cxf>4.0.3</version.cxf>
-    <version.geronimo.components>3.1.5</version.geronimo.components>
+    <version.geronimo.components>4.0.0-SNAPSHOT</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.0-SNAPSHOT</version.johnzon>
@@ -1487,12 +1487,7 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
         <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.components</groupId>
-            <artifactId>geronimo-transaction</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>*</artifactId>
@@ -1507,7 +1502,6 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
         <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
