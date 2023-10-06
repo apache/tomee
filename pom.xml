@@ -217,7 +217,7 @@
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.0-SNAPSHOT</version.johnzon>
     <version.myfaces>4.0.1</version.myfaces>
-    <version.openjpa>3.2.2</version.openjpa>
+    <version.openjpa>4.0.0-SNAPSHOT</version.openjpa>
     <version.openwebbeans>4.0.0</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
@@ -1544,13 +1544,6 @@
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${version.openjpa}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>

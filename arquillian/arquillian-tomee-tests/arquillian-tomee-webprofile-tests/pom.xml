@@ -87,13 +87,6 @@
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
             <version>${version.openjpa}</version>
-            <classifier>jakarta</classifier>
-            <exclusions>
-              <exclusion>
-                <groupId>*</groupId>
-                <artifactId>*</artifactId>
-              </exclusion>
-            </exclusions>
           </dependency>
         </dependencies>
       </plugin>
