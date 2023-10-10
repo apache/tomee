@@ -143,6 +143,10 @@
           <groupId>org.bouncycastle</groupId>
           <artifactId>bcprov-jdk18on</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk18on</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- Override the bcprov & bcpkix from the previous artifact -->
