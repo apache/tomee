@@ -221,7 +221,7 @@
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
-    <version.mojarra>3.0.2</version.mojarra>
+    <version.mojarra>3.0.5</version.mojarra>
     <!-- org.hibernate -->
     <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
