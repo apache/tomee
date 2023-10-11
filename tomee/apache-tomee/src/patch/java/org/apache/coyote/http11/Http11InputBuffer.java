@@ -989,7 +989,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
                     } else if (prevChr == Constants.CR) {
                         // Invalid value - also need to delete header
                         return skipLine(true);
-                    } else if (chr != Constants.HT && HttpParser.isControl(chr)) {
+                    } else if (HttpParser.isControl(chr) && chr != Constants.HT) {
                         // Invalid value - also need to delete header
                         return skipLine(true);
                     } else if (chr == Constants.SP || chr == Constants.HT) {
