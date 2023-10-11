@@ -312,7 +312,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>3.5.5</version>
+      <version>3.5.7</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1853,7 +1853,7 @@
     <dependency>
       <groupId>org.reactivestreams</groupId>
       <artifactId>reactive-streams</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
