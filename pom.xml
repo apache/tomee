@@ -196,7 +196,7 @@
     <version.activemq>5.16.6</version.activemq>
     <version.batchee>1.0.2</version.batchee>
     <version.bval>2.0.5</version.bval>
-    <version.cxf>3.5.5</version.cxf>
+    <version.cxf>3.5.7</version.cxf>
     <version.geronimo.components>3.1.5</version.geronimo.components>
     <version.geronimo-javamail_1.6_mail>1.0.1</version.geronimo-javamail_1.6_mail>
     <version.johnzon>1.2.21</version.johnzon>
