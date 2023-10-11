@@ -584,6 +584,8 @@
                   <bcpkix-jdk15to18-1.76.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.76</bcpkix-jdk15to18-1.76.jar>
                   <bcprov-jdk15to18-1.76.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.76</bcprov-jdk15to18-1.76.jar>
                   <bcutil-jdk15to18-1.76.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.76</bcutil-jdk15to18-1.76.jar>
+                  <!-- Don't modify bootstrap.jar. Current patch plugin 0.10 has an ambiguity adding classes in more than one target jar if the packages are matching -->
+                  <bootstrap.jar>bootstrap.jar</bootstrap.jar>
                 </jars>
               </skips>
             </configuration>
@@ -817,6 +819,8 @@
                   <bcpkix-jdk15to18-1.76.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.76</bcpkix-jdk15to18-1.76.jar>
                   <bcprov-jdk15to18-1.76.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.76</bcprov-jdk15to18-1.76.jar>
                   <bcutil-jdk15to18-1.76.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.76</bcutil-jdk15to18-1.76.jar>
+                  <!-- Don't modify bootstrap.jar. Current patch plugin 0.10 has an ambiguity adding classes in more than one target jar if the packages are matching -->
+                  <bootstrap.jar>bootstrap.jar</bootstrap.jar>
                 </jars>
               </skips>
             </configuration>
