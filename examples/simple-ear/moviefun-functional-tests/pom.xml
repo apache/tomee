@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>moviefun-ear-parent</artifactId>
-    <version>9.1.1-SNAPSHOT</version>
+    <version>9.1.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>moviefun-functional-test</artifactId>
@@ -81,13 +81,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.1.1-SNAPSHOT</version>
+      <version>9.1.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>9.1.1-SNAPSHOT</version>
+      <version>9.1.1</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>9.1.1-SNAPSHOT</version>
+      <version>9.1.1</version>
       <!--<classifier>uber</classifier> -->
       <scope>test</scope>
     </dependency>
@@ -129,7 +129,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>9.1.1-SNAPSHOT</version>
+      <version>9.1.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

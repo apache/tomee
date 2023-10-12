@@ -21,13 +21,13 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-rest-jwt-public-key</artifactId>
-  <version>9.1.1-SNAPSHOT</version>
+  <version>9.1.1</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MP REST JWT Public Key</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.1.1-SNAPSHOT</tomee.version>
+    <tomee.version>9.1.1</tomee.version>
     <version.jakartaee-api>9.1.1</version.jakartaee-api>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
     <mp-jwt.version>1.1</mp-jwt.version>
