@@ -1022,14 +1022,6 @@
       </releases>
     </repository>
 
-    <repository>
-      <id>jakarta-ee-10-m2</id>
-      <name>jakarta-ee-10-m2</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1219</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
