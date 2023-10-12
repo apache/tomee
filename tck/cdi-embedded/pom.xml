@@ -259,66 +259,71 @@
 
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
-        <configuration>
-          <reuseForks>false</reuseForks>
-          <forkCount>1</forkCount>
-          <argLine>${surefire.argline}</argLine>
-          <useFile>false</useFile>
-          <disableXmlReport>false</disableXmlReport>
-          <excludedGroups>javaee-full,se</excludedGroups>
-          <dependenciesToScan>
-            <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
-            <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
-          </dependenciesToScan>
-          <!-- easier to debug
-          <suiteXmlFiles>
-            <suiteXmlFile>${testngSuiteXml}</suiteXmlFile>
-          </suiteXmlFiles>
-          -->
-          <properties>
-            <property> <!-- broken cause @RequestScoped beans are parameters and testng logs parameters -->
-              <name>usedefaultlisteners</name>
-              <value>false</value>
-            </property>
-          </properties>
-          <systemPropertyVariables>
-            <cdiTckExcludeDummy>true</cdiTckExcludeDummy>
+  <profiles>
+    <profile>
+      <id>tck-cdi</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${surefire.version}</version>
+            <configuration>
+              <reuseForks>false</reuseForks>
+              <forkCount>1</forkCount>
+              <argLine>${surefire.argline}</argLine>
+              <useFile>false</useFile>
+              <disableXmlReport>false</disableXmlReport>
+              <excludedGroups>javaee-full,se</excludedGroups>
+              <dependenciesToScan>
+                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
+              </dependenciesToScan>
+              <!-- easier to debug
+              <suiteXmlFiles>
+                <suiteXmlFile>${testngSuiteXml}</suiteXmlFile>
+              </suiteXmlFiles>
+              -->
+              <properties>
+                <property> <!-- broken cause @RequestScoped beans are parameters and testng logs parameters -->
+                  <name>usedefaultlisteners</name>
+                  <value>false</value>
+                </property>
+              </properties>
+              <systemPropertyVariables>
+                <cdiTckExcludeDummy>true</cdiTckExcludeDummy>
 
-            <queue>new://Resource?type=Queue</queue>
-            <topic>new://Resource?type=Topic</topic>
-            <jdbc>new://Resource?type=DataSource</jdbc>
-            <jms>new://Resource?type=jakarta.jms.ConnectionFactory</jms>
+                <queue>new://Resource?type=Queue</queue>
+                <topic>new://Resource?type=Topic</topic>
+                <jdbc>new://Resource?type=DataSource</jdbc>
+                <jms>new://Resource?type=jakarta.jms.ConnectionFactory</jms>
 
-            <admin.disabled>true</admin.disabled>
-            <ejbd.disabled>true</ejbd.disabled>
-            <ejbds.disabled>true</ejbds.disabled>
-            <httpejbd.port>0</httpejbd.port>
-            <!-- random port for http one -> CI friendly -->
+                <admin.disabled>true</admin.disabled>
+                <ejbd.disabled>true</ejbd.disabled>
+                <ejbds.disabled>true</ejbds.disabled>
+                <httpejbd.port>0</httpejbd.port>
+                <!-- random port for http one -> CI friendly -->
 
-            <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
-            <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
-            <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
-            <openejb.cdi.conversation.http.use-get-parameter>true</openejb.cdi.conversation.http.use-get-parameter>
+                <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
+                <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
+                <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
+                <openejb.cdi.conversation.http.use-get-parameter>true</openejb.cdi.conversation.http.use-get-parameter>
 
-            <openejb.jul.forceReload>true</openejb.jul.forceReload>
-            <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>
-            <openejb.http.mock-request>true</openejb.http.mock-request>
-            <openejb.http.default-content-type>text/plain</openejb.http.default-content-type>
-            <!-- TODO: remove it -->
-            <openejb.http.eviction.duration>1 second</openejb.http.eviction.duration>
-            <openejb.embedded.try-jsp>true</openejb.embedded.try-jsp>
-            <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
-            <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+                <openejb.jul.forceReload>true</openejb.jul.forceReload>
+                <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>
+                <openejb.http.mock-request>true</openejb.http.mock-request>
+                <openejb.http.default-content-type>text/plain</openejb.http.default-content-type>
+                <!-- TODO: remove it -->
+                <openejb.http.eviction.duration>1 second</openejb.http.eviction.duration>
+                <openejb.embedded.try-jsp>true</openejb.embedded.try-jsp>
+                <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
+                <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
