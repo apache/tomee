@@ -16,7 +16,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>9.1.1</version>
+  <version>9.1.2-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in EAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

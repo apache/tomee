@@ -17,7 +17,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-faulttolerance-fallback</artifactId>
-  <version>9.1.1</version>
+  <version>9.1.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Fault Tolerance :: Fallback</name>
   <properties>
@@ -29,7 +29,7 @@
     <junit.version>4.13.2</junit.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <tomee.version>9.1.1</tomee.version>
+    <tomee.version>9.1.2-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>

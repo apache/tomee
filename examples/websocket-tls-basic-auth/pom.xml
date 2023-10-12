@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>websocket-tls-basic-auth</artifactId>
-  <version>9.1.1</version>
+  <version>9.1.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: WebSocket with tls and basic auth Example</name>
   <properties>

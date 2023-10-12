@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>mp-opentracing-traced</artifactId>
   <name>TomEE :: Examples :: MicroProfile OpenTracing Traced</name>
-  <version>9.1.1</version>
+  <version>9.1.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <properties>
     <version.jakartaee-api>9.1.1</version.jakartaee-api>
-    <tomee.version>9.1.1</tomee.version>
+    <tomee.version>9.1.2-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
   </properties>
   <dependencies>
