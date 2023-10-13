@@ -631,7 +631,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>3.0.1</version>
+      <version>3.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1258,7 +1258,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-bindings</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1269,7 +1269,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1280,7 +1280,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-common</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1291,7 +1291,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1302,7 +1302,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1313,7 +1313,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1423,7 +1423,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>1.75</version>
+      <version>1.76</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1434,7 +1434,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.75</version>
+      <version>1.76</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1445,7 +1445,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcutil-jdk15to18</artifactId>
-      <version>1.75</version>
+      <version>1.76</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

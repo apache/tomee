@@ -197,7 +197,7 @@
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.15.2</version.jackson>
-    <version.snakeyaml>2.0</version.snakeyaml>
+    <version.snakeyaml>2.2</version.snakeyaml>
 
     <!-- Jakarta EE API -->
     <!-- we currently rely on Mail API from Geronimo, this might change in the future -->
@@ -208,7 +208,7 @@
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>5.18.1</version.activemq>
+    <version.activemq>5.18.2</version.activemq>
     <version.batchee>2.0.0-SNAPSHOT</version.batchee>
     <version.bval>3.0.0-SNAPSHOT</version.bval>
     <version.cxf>4.0.3</version.cxf>
@@ -228,8 +228,8 @@
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
-    <version.wss4j>3.0.0</version.wss4j>
-    <version.xmlsec>3.0.1</version.xmlsec>
+    <version.wss4j>3.0.1</version.wss4j>
+    <version.xmlsec>3.0.2</version.xmlsec>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
     <version.deltaspike>1.9.6</version.deltaspike>
