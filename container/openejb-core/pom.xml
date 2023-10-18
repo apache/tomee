@@ -510,12 +510,6 @@
       <artifactId>commons-collections</artifactId>
     </dependency>
 
-    <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
-        <groupId>com.sun.activation</groupId>
-        <artifactId>jakarta.activation</artifactId>
-        <version>1.2.1</version>
-     </dependency>
-
     <!-- ActiveMQ -->
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -712,6 +706,12 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${version.batchee}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>

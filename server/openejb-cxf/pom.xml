@@ -173,6 +173,10 @@
           <groupId>org.ehcache</groupId>
           <artifactId>*</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -224,17 +228,12 @@
           <groupId>jakarta.xml.soap</groupId>
           <artifactId>jakarta.xml.soap-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.sun.activation</groupId>
+          <artifactId>jakarta.activation</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
-    <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
-         on Sun's internal copy of Xerces. See OPENEJB-1126. -->
-    <dependency>
-      <groupId>com.sun.xml.parsers</groupId>
-      <artifactId>jaxp-ri</artifactId>
-      <version>1.4.5</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
