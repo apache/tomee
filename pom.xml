@@ -210,7 +210,7 @@
     <!-- org.apache -->
     <version.activemq>5.18.2</version.activemq>
     <version.batchee>2.0.0-SNAPSHOT</version.batchee>
-    <version.bval>3.0.0-SNAPSHOT</version.bval>
+    <version.bval>3.0.0</version.bval>
     <version.cxf>4.0.3</version.cxf>
     <version.geronimo.components>4.0.0-SNAPSHOT</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
