@@ -79,14 +79,6 @@
       <version>10.0.0-M1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
-    <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
-         on Sun's internal copy of Xerces. See OPENEJB-1126. -->
-    <dependency>
-      <groupId>com.sun.xml.parsers</groupId>
-      <artifactId>jaxp-ri</artifactId>
-      <version>1.4.5</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <!--
   This section allows you to configure where to publish libraries for sharing.
