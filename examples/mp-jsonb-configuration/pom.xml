@@ -19,13 +19,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-jsonb-configuration</artifactId>
-  <version>9.1.1-SNAPSHOT</version>
+  <version>9.1.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile JSONB Configuration</name>
   <properties>
     <version.jakartaee-api>9.1.1</version.jakartaee-api>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.1.1-SNAPSHOT</tomee.version>
+    <tomee.version>9.1.2-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
