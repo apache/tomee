@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>4.0.3</version>
+      <version>4.0.4</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion> <!-- Is already included in jakarta-ee-api -->
