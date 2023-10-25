@@ -154,7 +154,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldDelegateToTheContainer(final ClassLoader loader, final String name) {
-        return shouldSkipJsf(loader, name) || shouldSkipSlf4j(loader, name);
+        if (shouldSkipJsf(loader, name)) return true;
+        return false;
     }
 
     private Class<?> loadFromParent(final String name, final boolean resolve) {
@@ -594,27 +595,6 @@ public class URLClassLoaderFirst extends URLClassLoader {
         // currently bean validation, Slf4j, myfaces (because of enrichment)
         return name != null
             && (FILTERABLE_RESOURCES.contains(name) || name.startsWith("META-INF/services/org.apache.myfaces.spi"));
-    }
-
-    public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {
-        if (name == null || !name.startsWith("org.slf4j.")) {
-            return false;
-        }
-
-        try { // using getResource here just returns randomly the container one so we need getResources
-            final Enumeration<URL> resources = loader.getResources(SLF4J_BINDER_CLASS);
-            while (resources.hasMoreElements()) {
-                final URL resource = resources.nextElement();
-                if (!resource.equals(SLF4J_CONTAINER)) {
-                    // applicative slf4j
-                    return false;
-                }
-            }
-        } catch (final Throwable e) {
-            // no-op
-        }
-
-        return true;
     }
 
     // useful method for SPI
