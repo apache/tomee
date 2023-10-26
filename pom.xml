@@ -213,7 +213,7 @@
 
     <!-- Other API and Impl. not in Jakarta EE -->
     <version.woodstox>6.4.0</version.woodstox>
-    <version.xmlsec>2.3.2</version.xmlsec>
+    <version.xmlsec>2.3.4</version.xmlsec>
     <version.wss4j>2.4.1</version.wss4j>
     <version.ehcache>2.10.6</version.ehcache>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
