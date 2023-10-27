@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.16-SNAPSHOT</version>
+    <version>8.0.16</version>
   </parent>
 
   <artifactId>server</artifactId>

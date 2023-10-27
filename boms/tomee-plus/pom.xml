@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>8.0.16-SNAPSHOT</version>
+    <version>8.0.16</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>8.0.16-SNAPSHOT</version>
+      <version>8.0.16</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -279,7 +279,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
-      <version>5.16.7</version>
+      <version>5.16.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -290,7 +290,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
-      <version>5.16.7</version>
+      <version>5.16.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -301,7 +301,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
-      <version>5.16.7</version>
+      <version>5.16.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -312,7 +312,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
-      <version>5.16.7</version>
+      <version>5.16.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -323,7 +323,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-openwire-legacy</artifactId>
-      <version>5.16.7</version>
+      <version>5.16.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -334,7 +334,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
-      <version>5.16.7</version>
+      <version>5.16.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -994,7 +994,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>cxf-shade</artifactId>
-      <version>8.0.16-SNAPSHOT</version>
+      <version>8.0.16</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1236,7 +1236,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>servicemix-bcel-shade</artifactId>
-      <version>8.0.16-SNAPSHOT</version>
+      <version>8.0.16</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1247,7 +1247,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>8.0.16-SNAPSHOT</version>
+      <version>8.0.16</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
