@@ -20,7 +20,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.16</version>
+  <version>8.0.17-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in EAR</name>
 
   <properties>
