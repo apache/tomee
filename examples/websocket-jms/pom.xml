@@ -22,12 +22,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>websocket-jms</artifactId>
   <packaging>war</packaging>
-  <version>8.0.17-SNAPSHOT</version>
+  <version>8.0.16-SNAPSHOT</version>
   <name>TomEE :: Examples :: Websocket JMS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.arquillian>1.1.13.Final</version.arquillian>
-    <tomee.version>8.0.17-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.16-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <finalName>websocket-jms</finalName>

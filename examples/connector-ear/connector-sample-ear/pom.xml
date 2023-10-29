@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>connector-ear</artifactId>
-    <version>8.0.17-SNAPSHOT</version>
+    <version>8.0.16-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>

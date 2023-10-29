@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-mdb</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.17-SNAPSHOT</version>
+  <version>8.0.16-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple MDB Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,7 +54,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>8.0.17-SNAPSHOT</version>
+      <version>8.0.16-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>8.0.17-SNAPSHOT</version>
+      <version>8.0.16-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
