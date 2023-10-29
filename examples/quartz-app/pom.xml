@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz.quartz</groupId>
   <artifactId>quartz-app</artifactId>
-  <version>8.0.16</version>
+  <version>8.0.17-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TomEE :: Examples :: Quartz</name>
 
@@ -83,13 +83,13 @@
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-plus</artifactId>
-        <version>8.0.16</version>
+        <version>8.0.17-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-plus-api</artifactId>
-        <version>8.0.16</version>
+        <version>8.0.17-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

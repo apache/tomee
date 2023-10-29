@@ -15,7 +15,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-session-scope</artifactId>
   <name>TomEE :: Examples :: CDI Session Scope</name>
-  <version>8.0.16</version>
+  <version>8.0.17-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <properties>
@@ -45,7 +45,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.16</version>
+        <version>8.0.17-SNAPSHOT</version>
         <configuration>
           <context>${project.artifactId}</context>
         </configuration>
