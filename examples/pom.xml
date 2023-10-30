@@ -33,8 +33,7 @@
     <module>access-timeout</module>
     <module>alternate-descriptors</module>
     <module>application-composer</module>
-    <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
-<!--    <module>applicationcomposer-jaxws-cdi</module>-->
+    <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
     <module>arquillian-jpa</module>
     <module>async-methods</module>
@@ -53,8 +52,7 @@
     <module>cdi-realm</module>
     <module>cdi-request-scope</module>
     <module>cdi-session-scope</module>
-    <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
-<!--    <module>change-jaxws-url</module>-->
+    <module>change-jaxws-url</module>
     <module>component-interfaces</module>
     <module>client-resource-lookup-preview</module>
     <module>connector-ear</module>
@@ -123,8 +121,6 @@
     <module>mp-rest-jwt-public-key</module>
     <module>mp-rest-client</module>
     <module>mp-custom-healthcheck</module>
-    <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
-<!--    <module>mtom</module>-->
     <module>mp-openapi-reader</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
