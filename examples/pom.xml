@@ -129,6 +129,7 @@
     <module>mp-rest-jwt-public-key</module>
     <module>mp-rest-client</module>
     <module>mp-custom-healthcheck</module>
+    <module>mp-openapi-reader</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
