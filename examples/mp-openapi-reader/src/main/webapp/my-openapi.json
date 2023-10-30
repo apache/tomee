@@ -1,0 +1,25 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "title" : "Generated API",
+    "version" : "1.0"
+  },
+  "paths" : {
+    "/rest/weather/day/status" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

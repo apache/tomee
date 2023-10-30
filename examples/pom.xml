@@ -125,6 +125,8 @@
     <module>mp-custom-healthcheck</module>
     <!-- FIXME: CXF4 does not support it yet. JAX-B references removed jakarta.xml.bind.Validator -->
 <!--    <module>mtom</module>-->
+    <module>mp-openapi-reader</module>
+    <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
