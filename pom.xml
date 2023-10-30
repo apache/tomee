@@ -868,6 +868,8 @@
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.json</exclude>
                 <exclude>**/*.jwk</exclude>
+                <exclude>**/*.yml</exclude>
+                <exclude>**/*.yaml</exclude>
                 <exclude>**/src/main/resources/META-INF/**/*.xsd</exclude>
                 <exclude>**/src/main/xsdlist/xsdlist.txt</exclude>
                 <exclude>**/META-INF/services/**</exclude>
