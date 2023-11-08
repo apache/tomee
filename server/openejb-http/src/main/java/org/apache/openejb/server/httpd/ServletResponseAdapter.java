@@ -47,11 +47,6 @@ public class ServletResponseAdapter implements HttpResponse {
     }
 
     @Override
-    public void setStatus(int i, String s) {
-        response.setStatus(i, s);
-    }
-
-    @Override
     public void addCookie(Cookie cookie) {
         response.addCookie(cookie);
     }
@@ -84,16 +79,6 @@ public class ServletResponseAdapter implements HttpResponse {
     @Override
     public String encodeRedirectURL(String s) {
         return response.encodeRedirectURL(s);
-    }
-
-    @Override
-    public String encodeUrl(String s) {
-        return response.encodeUrl(s);
-    }
-
-    @Override
-    public String encodeRedirectUrl(String s) {
-        return response.encodeRedirectUrl(s);
     }
 
     public String getHeader(String name) {
@@ -203,7 +188,7 @@ public class ServletResponseAdapter implements HttpResponse {
 
     @SuppressWarnings({"deprecation"})
     public void setStatusMessage(String responseString) {
-        response.setStatus(getStatus(), responseString);
+        response.setStatus(getStatus());
     }
 
     public void flushBuffer() throws IOException {

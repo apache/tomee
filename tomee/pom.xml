@@ -25,7 +25,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee</artifactId>
@@ -143,7 +143,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.eclipse.jdt.core.compiler</groupId>
+        <groupId>org.eclipse.jdt</groupId>
         <artifactId>ecj</artifactId>
         <version>${version.ecj}</version>
       </dependency>
@@ -203,7 +203,7 @@
         <version>${tomcat.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <groupId>org.eclipse.jdt</groupId>
             <artifactId>ecj</artifactId>
           </exclusion>
         </exclusions>
@@ -212,7 +212,6 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>

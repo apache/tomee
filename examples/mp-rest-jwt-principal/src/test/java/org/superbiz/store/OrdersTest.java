@@ -16,10 +16,10 @@
  */
 package org.superbiz.store;
 
+import jakarta.ws.rs.WebApplicationException;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.spi.ArquillianProxyException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -124,9 +124,18 @@ public class OrdersTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), statusCode);
     }
 
-    @Test(expected = ArquillianProxyException.class)
+    @Test
     public void shouldNotHaveAccess() throws Exception {
-        orderRestClient.deleteOrder("Bearer " + createJwtToken(false), 1).getStatus();
+        try {
+            orderRestClient.deleteOrder("Bearer " + createJwtToken(false), 1).getStatus();
+        } catch (Exception e) {
+            if (e instanceof WebApplicationException) {
+                final WebApplicationException w = (WebApplicationException) e;
+                assertEquals(403, w.getResponse().getStatus());
+            } else {
+                throw e;
+            }
+        }
     }
 
     public String createJwtToken(boolean john) throws Exception {

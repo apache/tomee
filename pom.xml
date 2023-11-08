@@ -31,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -98,7 +98,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>9.1.1</version.jakartaee-api>
+    <version.jakartaee-api>10.0-M2</version.jakartaee-api>
     <version.tomee-patch-plugin>0.10</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
@@ -127,9 +127,9 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- arquillian related -->
-    <version.arquillian>1.7.0.Final</version.arquillian>
-    <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
-    <version.arquillian-protocol-servlet-jakarta>1.7.0.Final</version.arquillian-protocol-servlet-jakarta>
+    <version.arquillian>1.7.1.Final</version.arquillian>
+    <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
+    <version.arquillian-protocol-servlet-jakarta>1.7.1.Final</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
@@ -138,7 +138,8 @@
     <version.axiom>1.3.0</version.axiom>
     <version.xbean>4.23</version.xbean>
     <version.groovy>2.4.12</version.groovy>
-    <version.ecj>4.6.1</version.ecj>
+    <!-- Starting from 3.34.0 it requires J17+ -->
+    <version.ecj>3.33.0</version.ecj>
     <version.jetty>11.0.8</version.jetty>
     <version.ehcache>3.10.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
@@ -148,7 +149,7 @@
     <version.xalan>2.7.2</version.xalan>
 
     <!-- Logging frameworks -->
-    <version.slf4j>1.7.36</version.slf4j>
+    <version.slf4j>2.0.9</version.slf4j>
     <version.log4j>1.2.17</version.log4j>
     <version.log4j2>2.20.0</version.log4j2>
     <version.commons-logging>1.2</version.commons-logging>
@@ -196,39 +197,39 @@
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.15.2</version.jackson>
-    <version.snakeyaml>2.0</version.snakeyaml>
+    <version.snakeyaml>2.2</version.snakeyaml>
 
     <!-- Jakarta EE API -->
     <!-- we currently rely on Mail API from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_spec>1.0.0-M1</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>10.0.27</tomcat.version>
+    <tomcat.version>10.1.15</tomcat.version>
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>5.18.1</version.activemq>
-    <version.batchee>1.0.2</version.batchee>
-    <version.bval>2.0.6</version.bval>
+    <version.activemq>5.18.3</version.activemq>
+    <version.batchee>2.0.0-SNAPSHOT</version.batchee>
+    <version.bval>3.0.0</version.bval>
     <version.cxf>4.0.3</version.cxf>
-    <version.geronimo.components>3.1.5</version.geronimo.components>
+    <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
-    <version.johnzon>1.2.21</version.johnzon>
-    <version.myfaces>3.0.2</version.myfaces>
-    <version.openjpa>3.2.2</version.openjpa>
-    <version.openwebbeans>2.0.27</version.openwebbeans>
+    <version.johnzon>2.0.0</version.johnzon>
+    <version.myfaces>4.0.1</version.myfaces>
+    <version.openjpa>4.0.0-SNAPSHOT</version.openjpa>
+    <version.openwebbeans>4.0.0</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
-    <version.mojarra>3.0.2</version.mojarra>
+    <version.mojarra>4.0.1</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
+    <version.hibernate.orm>6.3.1.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
-    <version.wss4j>3.0.0</version.wss4j>
-    <version.xmlsec>3.0.1</version.xmlsec>
+    <version.wss4j>3.0.1</version.wss4j>
+    <version.xmlsec>3.0.3</version.xmlsec>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
     <version.deltaspike>1.9.6</version.deltaspike>
@@ -868,6 +869,8 @@
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.json</exclude>
                 <exclude>**/*.jwk</exclude>
+                <exclude>**/*.yml</exclude>
+                <exclude>**/*.yaml</exclude>
                 <exclude>**/src/main/resources/META-INF/**/*.xsd</exclude>
                 <exclude>**/src/main/xsdlist/xsdlist.txt</exclude>
                 <exclude>**/META-INF/services/**</exclude>
@@ -1020,6 +1023,7 @@
         <enabled>true</enabled>
       </releases>
     </repository>
+
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -1184,7 +1188,6 @@
       <dependency>
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.bval}</version>
       </dependency>
       <dependency>
@@ -1478,12 +1481,7 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
         <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.components</groupId>
-            <artifactId>geronimo-transaction</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>*</artifactId>
@@ -1498,7 +1496,6 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
         <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1535,13 +1532,6 @@
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${version.openjpa}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
@@ -1785,12 +1775,7 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
@@ -1801,26 +1786,14 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
         <version>${version.openwebbeans}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
@@ -1828,14 +1801,8 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
         <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>*</artifactId>
@@ -1845,14 +1812,8 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
           <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-el_2.2_spec</artifactId>
@@ -1866,14 +1827,8 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
         <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
@@ -1883,26 +1838,13 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-el22</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
-        <classifier>jakarta</classifier>
         <version>${version.openwebbeans}</version>
         <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
@@ -1918,63 +1860,22 @@
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-core</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-mapper</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jaxrs</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonb</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
-      <dependency>
-        <groupId>org.apache.johnzon</groupId>
-        <artifactId>johnzon-jsonp-strict</artifactId>
-        <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
@@ -2087,11 +1988,6 @@
         <groupId>org.eclipse.persistence</groupId>
         <artifactId>eclipselink</artifactId>
         <version>${version.eclipselink}</version>
-      </dependency>
-      <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
-        <groupId>com.sun.activation</groupId>
-        <artifactId>jakarta.activation</artifactId>
-        <version>1.2.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
