@@ -22,7 +22,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee-myfaces</artifactId>
@@ -69,7 +69,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <classifier>jakarta</classifier>
     </dependency>
   </dependencies>
 </project>

@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>alternate-descriptors</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <name>TomEE :: Examples :: Alternate Descriptors</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -61,32 +61,14 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1.1</version>
+      <version>10.0-M2</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.serp</groupId>
-      <artifactId>serp</artifactId>
-      <version>1.15.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>3.2.2</version>
+      <version>4.0.0-SNAPSHOT</version>
       <scope>provided</scope>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -101,7 +83,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

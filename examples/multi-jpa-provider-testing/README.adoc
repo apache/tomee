@@ -137,7 +137,7 @@ INFO - *************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Wed Dec 26 17:55:31 CET 2018
 INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
-INFO - Version: 10.0.0-SNAPSHOT
+INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20181226
 INFO - Build time: 02:26
 INFO - ********************************************************************************
@@ -213,7 +213,7 @@ INFO - *************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Wed Dec 26 17:55:35 CET 2018
 INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
-INFO - Version: 10.0.0-SNAPSHOT
+INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20181226
 INFO - Build time: 02:26
 INFO - ********************************************************************************
@@ -274,7 +274,7 @@ From the log you can see that both implementations are used: INFO - Using 'jakar
 
 If we look at the jar built by maven, we'll see the application itself is quite small:
 
- jar tvf multi-jpa-provider-testing-10.0.0-SNAPSHOT.jar
+ jar tvf multi-jpa-provider-testing-10.0.0-M1-SNAPSHOT.jar
      0 Wed Dec 26 17:55:40 CET 2018 META-INF/
  134 Wed Dec 26 17:55:38 CET 2018 META-INF/MANIFEST.MF
      0 Wed Dec 26 17:55:30 CET 2018 org/

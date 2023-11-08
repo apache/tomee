@@ -153,6 +153,21 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
         excluded.add(permission);
     }
 
+    @Override
+    public Map<String, PermissionCollection> getPerRolePermissions() {
+        return rolePermissionsMap;
+    }
+
+    @Override
+    public PermissionCollection getUncheckedPermissions() {
+        return unchecked;
+    }
+
+    @Override
+    public PermissionCollection getExcludedPermissions() {
+        return excluded;
+    }
+
     public void removeRole(final String roleName) throws PolicyContextException {
         if (state != OPEN) {
             throw new UnsupportedOperationException("Not in an open state");

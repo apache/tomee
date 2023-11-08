@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -101,20 +101,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.sun.activation</groupId>
-      <artifactId>jakarta.activation</artifactId>
-      <version>1.2.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.sun.istack</groupId>
       <artifactId>istack-commons-runtime</artifactId>
-      <version>4.0.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -181,17 +170,6 @@
       <groupId>commons-daemon</groupId>
       <artifactId>commons-daemon</artifactId>
       <version>1.1.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -508,21 +486,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.serp</groupId>
-      <artifactId>serp</artifactId>
-      <version>1.15.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
-      <version>2.0.6</version>
-      <classifier>jakarta</classifier>
+      <version>3.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -775,8 +741,7 @@
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
-      <version>3.1.5</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -787,8 +752,7 @@
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
-      <version>3.1.5</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -821,8 +785,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.21</version>
-      <classifier>jakarta</classifier>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -833,8 +796,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.21</version>
-      <classifier>jakarta</classifier>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -845,20 +807,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.21</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.21</version>
-      <classifier>jakarta</classifier>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -869,8 +818,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.21</version>
-      <classifier>jakarta</classifier>
+      <version>2.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -881,7 +829,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -892,7 +840,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -925,8 +873,7 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>3.2.2</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -937,8 +884,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -949,8 +895,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -961,8 +906,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -973,8 +917,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -985,8 +928,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -997,8 +939,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1009,8 +950,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1021,8 +961,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
+      <version>4.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1033,7 +972,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1252,6 +1191,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-websocket-client-api</artifactId>
+      <version>${tomcat.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-websocket</artifactId>
       <version>${tomcat.version}</version>
       <exclusions>
@@ -1264,7 +1214,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>commons-dbcp2-shade</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1275,7 +1225,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1.1</version>
+      <version>10.0-M2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1506,7 +1456,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>servicemix-bcel-shade</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1517,7 +1467,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>sxc-shade</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1528,7 +1478,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>10.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1922,9 +1872,20 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.angus</groupId>
+      <artifactId>angus-activation</artifactId>
+      <version>2.0.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>ecj</artifactId>
-      <version>3.22.0</version>
+      <version>3.33.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2023,7 +1984,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-core</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2034,7 +1995,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2045,7 +2006,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>txw2</artifactId>
-      <version>3.0.2</version>
+      <version>4.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

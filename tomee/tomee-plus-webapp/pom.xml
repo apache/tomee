@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -349,11 +349,10 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${version.batchee}</version>
       <scope>runtime</scope>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.batchee</groupId>
-          <artifactId>*</artifactId>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -372,7 +371,6 @@
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -387,8 +385,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jsonp-strict</artifactId>
-      <classifier>jakarta</classifier>
+      <artifactId>johnzon-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
@@ -423,7 +420,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -434,7 +430,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -445,7 +440,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -456,7 +450,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -467,7 +460,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -478,7 +470,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -489,7 +480,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -500,7 +490,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.openwebbeans</groupId>
@@ -560,14 +549,6 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>${version.openjpa}</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.shade</groupId>
