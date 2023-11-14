@@ -228,7 +228,7 @@
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
-    <version.wss4j>3.0.1</version.wss4j>
+    <version.wss4j>3.0.2</version.wss4j>
     <version.xmlsec>3.0.3</version.xmlsec>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
