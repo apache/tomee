@@ -20,21 +20,21 @@
   <groupId>org.superbiz</groupId>
   <artifactId>async-servlet</artifactId>
   <packaging>war</packaging>
-  <version>9.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Async Servlet</name>
+  <version>10.0.0-M1-SNAPSHOT</version>
+  <name>TomEE :: Examples :: Async Servlet</name>
   <url>http://maven.apache.org</url>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <version.arquillian>1.7.0.Alpha10</version.arquillian>
+    <version.arquillian>1.7.0.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
-    <tomee.version>9.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
+      <version>10.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <!--  tests  -->
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -98,7 +98,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>9.0.0-SNAPSHOT</version>
+        <version>10.0.0-M1-SNAPSHOT</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
         </configuration>

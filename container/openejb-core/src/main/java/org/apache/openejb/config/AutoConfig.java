@@ -1131,7 +1131,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return String.format("jdbc:mysql://%s:%s/%s", serverName, port, databaseName);
         }
 
-        if (driver.equals("com.postgresql.jdbc.Driver")) {
+        if (driver.startsWith("com.postgresql")
+                || driver.startsWith("org.postgresql")) {
             return String.format("jdbc:postgresql://%s:%s/%s", serverName, port, databaseName);
         }
 

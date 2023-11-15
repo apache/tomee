@@ -190,7 +190,7 @@ When run you should see output similar to the following.
 
 [source,java]
 ----
-26-Dec-2018 21:20:55.667 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version:        Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+26-Dec-2018 21:20:55.667 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version:        Apache Tomcat (TomEE)/9.0.12 (10.0.0-M1-SNAPSHOT)
 26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          Sep 4 2018 22:13:41 UTC
 26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server number:         9.0.12.0
 26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Name:               Linux
@@ -227,7 +227,7 @@ When run you should see output similar to the following.
 26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Wed Dec 26 21:20:56 CET 2018
 26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
-26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.0-SNAPSHOT
+26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-M1-SNAPSHOT
 26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20181226
 26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 02:24
 26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
@@ -252,7 +252,7 @@ When run you should see output similar to the following.
 26-Dec-2018 21:20:56.806 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
 26-Dec-2018 21:20:56.807 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
 26-Dec-2018 21:20:56.822 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting service [Catalina]
-26-Dec-2018 21:20:56.822 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet Engine: Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+26-Dec-2018 21:20:56.822 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet Engine: Apache Tomcat (TomEE)/9.0.12 (10.0.0-M1-SNAPSHOT)
 26-Dec-2018 21:20:56.839 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Deploying web application archive [/tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice.war]
 26-Dec-2018 21:20:56.846 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /pojo-webservice
 26-Dec-2018 21:20:56.847 INFO [main] org.apache.openejb.util.JarExtractor.extract Extracting jar: /tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice.war

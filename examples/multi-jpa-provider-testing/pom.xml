@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multi-jpa-provider-testing</artifactId>
   <packaging>jar</packaging>
-  <version>9.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <name>TomEE :: Examples :: Multiple JPA providers</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -93,7 +93,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
+      <version>10.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -138,15 +138,8 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>3.2.2</version>
+      <version>4.0.0-SNAPSHOT</version>
       <scope>test</scope>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <!-- just a facade pom which will bring hibernate for us -->

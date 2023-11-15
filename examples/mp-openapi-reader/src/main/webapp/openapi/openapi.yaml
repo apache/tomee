@@ -1,0 +1,135 @@
+---
+openapi: 3.0.3
+info:
+  title: Generated API
+  version: "1.0"
+paths:
+  /rest/load:
+    post:
+      responses:
+        "201":
+          description: Created
+  /rest/movies:
+    get:
+      parameters:
+        - name: field
+          in: query
+          schema:
+            type: string
+        - name: first
+          in: query
+          schema:
+            format: int32
+            type: integer
+        - name: max
+          in: query
+          schema:
+            format: int32
+            type: integer
+        - name: searchTerm
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+  /rest/movies/count:
+    get:
+      parameters:
+        - name: field
+          in: query
+          schema:
+            type: string
+        - name: searchTerm
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                format: int32
+                type: integer
+  /rest/movies/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+    delete:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "204":
+          description: No Content
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        director:
+          type: string
+        title:
+          type: string
+        year:
+          format: int32
+          type: integer
+        genre:
+          type: string
+        rating:
+          format: int32
+          type: integer
+      xml:
+        name: movie

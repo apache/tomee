@@ -269,7 +269,7 @@ INFO - *************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Thu May 10 01:28:19 CDT 2012
 INFO - Copyright 1999-2012 (C) Apache OpenEJB Project, All Rights Reserved.
-INFO - Version: 7.0.0-SNAPSHOT
+INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20120510
 INFO - Build time: 04:06
 INFO - ********************************************************************************
