@@ -43,6 +43,7 @@
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-application-scope</module>
     <module>cdi-basic</module>
+    <module>cdi-dynamic-inject</module>
     <module>cdi-ejbcontext-jaas</module>
     <module>cdi-events</module>
     <module>cdi-interceptors</module>
