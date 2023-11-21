@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -74,57 +74,61 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <id>copy-tck-cdi-api-signature-file</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>jakarta.enterprise</groupId>
-                  <artifactId>cdi-tck-core-impl</artifactId>
+  <profiles>
+    <profile>
+      <id>tck-cdi</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <id>copy-tck-cdi-api-signature-file</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>jakarta.enterprise</groupId>
+                      <artifactId>cdi-tck-core-impl</artifactId>
                   <classifier>sigtest-jdk11</classifier>
                   <type>sig</type>
-                  <version>${cdi-tck.version}</version>
-                  <overWrite>true</overWrite>
+                      <version>${cdi-tck.version}</version>
+                      <overWrite>true</overWrite>
                 </artifactItem>
               </artifactItems>
-              <outputDirectory>${project.build.directory}/api-signature</outputDirectory>
+                  <outputDirectory>${project.build.directory}/api-signature</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.netbeans.tools</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sigtest</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-${cdi-tck.version}-sigtest-jdk11.sig
+              </sigfile>
+              <packages>jakarta.decorator,jakarta.enterprise,jakarta.interceptor</packages>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
+          </plugin>
 
-      <plugin>
-        <groupId>org.netbeans.tools</groupId>
-        <artifactId>sigtest-maven-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <id>sigtest</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-4.0.7-sigtest-jdk11.sig</sigfile>
-          <packages>jakarta.decorator,jakarta.enterprise,jakarta.interceptor</packages>
-        </configuration>
-      </plugin>
-
-    </plugins>
-  </build>
-
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

@@ -20,14 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-rest-jwt-principal</artifactId>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MP REST JWT PRINCIPAL</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-SNAPSHOT</tomee.version>
-    <junit.version>4.23</junit.version>
-    <arquillian-bom.version>1.7.0.Alpha10</arquillian-bom.version>
+    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
+    <arquillian-bom.version>1.7.1.Final</arquillian-bom.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -36,7 +35,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.18.1</version>
+        <version>3.1.2</version>
         <configuration>
           <reuseForks>false</reuseForks>
         </configuration>
@@ -93,7 +92,7 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>${junit.version}</version>
+      <version>4.23</version>
       <scope>test</scope>
     </dependency>
     <dependency>

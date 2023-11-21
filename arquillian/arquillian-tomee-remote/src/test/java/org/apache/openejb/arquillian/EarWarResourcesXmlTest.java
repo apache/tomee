@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.arquillian;
 
+import org.apache.derby.iapi.jdbc.JDBCBoot;
 import org.apache.derby.jdbc.EmbeddedDriver;
+import org.apache.derby.shared.common.security.SystemPermission;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -43,6 +45,8 @@ public class EarWarResourcesXmlTest {
                 .addAsModule(ShrinkWrap.create(WebArchive.class, "web.war")
                         .addClass(EarWarResourcesXmlTest.class)
                         .addAsLibraries(jarLocation(EmbeddedDriver.class))
+                        .addAsLibraries(jarLocation(JDBCBoot.class))
+                        .addAsLibraries(jarLocation(SystemPermission.class))
                         .addAsWebInfResource(new StringAsset("<resources>\n" +
                                 "  <Resource id=\"derby\" type=\"DataSource\">\n" +
                                 "    JdbcDriver = org.apache.derby.jdbc.EmbeddedDriver\n" +

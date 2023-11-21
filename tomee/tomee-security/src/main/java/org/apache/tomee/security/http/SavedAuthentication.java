@@ -22,7 +22,10 @@ import java.util.Set;
 
 import static java.util.Collections.unmodifiableSet;
 
-public final class SavedAuthentication {
+import java.io.Serializable;
+
+public final class SavedAuthentication implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final Principal principal;
     private final Set<String> groups;
 
