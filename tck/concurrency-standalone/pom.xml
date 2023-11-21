@@ -37,7 +37,6 @@
     <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
     <testng.version>7.5</testng.version>
     <sigtest.version>1.6</sigtest.version>
-    <derby.version>10.15.2.0</derby.version>
     <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
     <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
     <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
@@ -132,13 +131,13 @@
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
-      <version>10.16.1.1</version>
+      <version>${version.derby}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbytools</artifactId>
-      <version>10.16.1.1</version>
+      <version>${version.derby}</version>
       <scope>provided</scope>
     </dependency>
 

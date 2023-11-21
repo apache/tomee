@@ -27,13 +27,13 @@
             <property name="ajpPort">-1</property>
             <property name="stopPort">-1</property>
             <property name="classifier">microprofile</property>
-            <property name="debug">true</property>
+            <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
             <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
-                mvn:org.apache.derby:derby:10.16.1.1
-                mvn:org.apache.derby:derbytools:10.16.1.1
-                mvn:org.testng:testng:6.14.3
+                mvn:org.apache.derby:derby:10.15.2.0
+                mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
             <property name="properties">
@@ -51,9 +51,9 @@
             <property name="conf">src/test/conf</property>
             <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
-                mvn:org.apache.derby:derby:10.16.1.1
-                mvn:org.apache.derby:derbytools:10.16.1.1
-                mvn:org.testng:testng:6.14.3
+                mvn:org.apache.derby:derby:10.15.2.0
+                mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
             <property name="properties">
@@ -71,9 +71,9 @@
             <property name="conf">src/test/conf</property>
             <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
-                mvn:org.apache.derby:derby:10.16.1.1
-                mvn:org.apache.derby:derbytools:10.16.1.1
-                mvn:org.testng:testng:6.14.3
+                mvn:org.apache.derby:derby:10.15.2.0
+                mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
             <property name="properties">
@@ -91,9 +91,9 @@
             <property name="conf">src/test/conf</property>
             <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
-                mvn:org.apache.derby:derby:10.16.1.1
-                mvn:org.apache.derby:derbytools:10.16.1.1
-                mvn:org.testng:testng:6.14.3
+                mvn:org.apache.derby:derby:10.15.2.0
+                mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
             <property name="properties">
