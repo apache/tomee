@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -36,57 +36,24 @@
     <dependency>
       <groupId>jakarta.json</groupId>
       <artifactId>jakarta.json-tck-tests</artifactId>
-      <version>2.1.1</version>
+      <version>${jsonp-tck.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-se</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.27</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.netbeans.tools</groupId>
+      <artifactId>sigtest-maven-plugin</artifactId>
+      <version>1.6</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -98,6 +65,11 @@
       </testResource>
     </testResources>
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -105,6 +77,10 @@
         <configuration>
           <reuseForks>false</reuseForks>
           <forkCount>1</forkCount>
+          <systemProperties>
+            <jimage.dir>${project.build.directory}/jimage</jimage.dir>
+            <signature.sigTestClasspath>${project.build.directory}/signaturedirectory/jakarta.json-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming</signature.sigTestClasspath>
+          </systemProperties>
           <dependenciesToScan>
             <dependency>jakarta.json:jakarta.json-tck-tests</dependency>
           </dependenciesToScan>
@@ -112,6 +88,7 @@
             <include>**/JSONPSigTest</include>
           </includes>
         </configuration>
+
       </plugin>
     </plugins>
   </build>
