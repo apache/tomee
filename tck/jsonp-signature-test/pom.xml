@@ -65,10 +65,32 @@
       </testResource>
     </testResources>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.tomee</groupId>
+                  <artifactId>jakartaee-api</artifactId>
+                  <version>${version.jakartaee-api}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/signaturedirectory</outputDirectory>
+                  <destFileName>jakartaee-api.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
