@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tck</artifactId>
@@ -27,9 +27,9 @@
   <name>TomEE :: TCK</name>
 
   <properties>
-    <cdi-tck.version>3.0.3</cdi-tck.version>
+    <cdi-tck.version>4.0.11</cdi-tck.version>
+    <bval-tck.version>3.0.1</bval-tck.version>
 
-    <bval-tck.version>3.0.0</bval-tck.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
   </properties>
 
@@ -61,23 +61,5 @@
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Maven Repository Group</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-      </snapshots>
-    </repository>
-  </repositories>
 
 </project>

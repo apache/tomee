@@ -21,6 +21,9 @@ import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 import jakarta.enterprise.concurrent.LastExecution;
 import jakarta.enterprise.concurrent.SkippedException;
 import jakarta.enterprise.concurrent.Trigger;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -152,13 +155,28 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         }
 
         @Override
+        public ZonedDateTime getScheduledStart(final ZoneId zone) {
+            return getScheduledStart().toInstant().atZone(zone);
+        }
+
+        @Override
         public Date getRunStart() {
             return runStart;
         }
 
         @Override
+        public ZonedDateTime getRunStart(final ZoneId zone) {
+            return getRunStart().toInstant().atZone(zone);
+        }
+
+        @Override
         public Date getRunEnd() {
             return runEnd;
+        }
+
+        @Override
+        public ZonedDateTime getRunEnd(final ZoneId zone) {
+            return getRunEnd().toInstant().atZone(zone);
         }
 
         @Override

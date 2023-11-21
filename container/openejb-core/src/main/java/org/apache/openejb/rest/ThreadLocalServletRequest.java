@@ -21,9 +21,11 @@ import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletConnection;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -76,6 +78,21 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     @Override
     public DispatcherType getDispatcherType() {
         return get().getDispatcherType();
+    }
+
+    @Override
+    public String getRequestId() {
+        return get().getRequestId();
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        return get().getProtocolRequestId();
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
+        return get().getServletConnection();
     }
 
     @Override
@@ -136,11 +153,6 @@ public class ThreadLocalServletRequest extends AbstractRestThreadLocalProxy<Serv
     @Override
     public BufferedReader getReader() throws IOException {
         return get().getReader();
-    }
-
-    @Override
-    public String getRealPath(final String string) {
-        return get().getRealPath(string);
     }
 
     @Override

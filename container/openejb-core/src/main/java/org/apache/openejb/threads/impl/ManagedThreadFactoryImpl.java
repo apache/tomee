@@ -18,6 +18,10 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ManageableThread;
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import org.apache.openejb.threads.task.CURunnable;
+
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
@@ -35,11 +39,17 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
 
     @Override
     public Thread newThread(final Runnable r) {
-        final Thread thread = new ManagedThread(r);
+        final CURunnable wrapper = new CURunnable(r);
+        final Thread thread = new ManagedThread(wrapper);
         thread.setDaemon(true);
         thread.setName(prefix + ID.incrementAndGet());
         thread.setContextClassLoader(ManagedThreadFactoryImpl.class.getClassLoader()); // ensure we use container loader as main context classloader to avoid leaks
         return thread;
+    }
+
+    @Override
+    public ForkJoinWorkerThread newThread(final ForkJoinPool pool) {
+        return new ManagedForkJoinWorkerThread(pool);
     }
 
     public static class ManagedThread extends Thread implements ManageableThread {
@@ -50,6 +60,19 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
         @Override
         public boolean isShutdown() {
             return !isAlive();
+        }
+    }
+
+    public static class ManagedForkJoinWorkerThread extends ForkJoinWorkerThread {
+
+        /**
+         * Creates a ForkJoinWorkerThread operating in the given pool.
+         *
+         * @param pool the pool this thread works in
+         * @throws NullPointerException if pool is null
+         */
+        protected ManagedForkJoinWorkerThread(ForkJoinPool pool) {
+            super(pool);
         }
     }
 }

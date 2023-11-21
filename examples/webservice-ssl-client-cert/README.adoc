@@ -257,11 +257,11 @@ Running org.superbiz.calculator.CalculatorTest
 mai 22, 2019 11:28:28 AM org.apache.openejb.arquillian.common.Setup findHome
 INFOS: Unable to find home in: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee
 mai 22, 2019 11:28:28 AM org.apache.openejb.arquillian.common.MavenCache getArtifact
-INFOS: Downloading org.apache.tomee:apache-tomee:10.0.0-SNAPSHOT:zip:plus please wait...
+INFOS: Downloading org.apache.tomee:apache-tomee:10.0.0-M1-SNAPSHOT:zip:plus please wait...
 mai 22, 2019 11:28:28 AM org.apache.openejb.arquillian.common.Zips unzip
-INFOS: Extracting '/Users/jlmonteiro/.m2/repository/org/apache/tomee/apache-tomee/10.0.0-SNAPSHOT/apache-tomee-10.0.0-SNAPSHOT-plus.zip' to '/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee'
+INFOS: Extracting '/Users/jlmonteiro/.m2/repository/org/apache/tomee/apache-tomee/10.0.0-M1-SNAPSHOT/apache-tomee-10.0.0-M1-SNAPSHOT-plus.zip' to '/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee'
 mai 22, 2019 11:28:29 AM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
-INFOS: Downloaded container to: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT
+INFOS: Downloaded container to: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT
 22-May-2019 11:28:30.050 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke La librairie Apache Tomcat Native basée sur APR qui permet des performances optimales dans les environnements de production n'a pas été trouvée sur le java.library.path: [/Users/jlmonteiro/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
 22-May-2019 11:28:30.373 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Initialisation du gestionnaire de protocole ["http-nio-64661"]
 22-May-2019 11:28:30.408 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Initialisation du gestionnaire de protocole ["https-jsse-nio-8443"]
@@ -273,15 +273,15 @@ INFOS: RemoteInitialContextCreated{providerUri=http://localhost:64661/tomee/ejb}
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Wed May 22 11:28:30 CEST 2019
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
-22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-SNAPSHOT
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-M1-SNAPSHOT
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20190522
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 09:42
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
-22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT
-22-May-2019 11:28:30.858 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT
+22-May-2019 11:28:30.858 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT
 22-May-2019 11:28:30.860 INFOS [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@1c1bbc4e
 22-May-2019 11:28:30.863 INFOS [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
-22-May-2019 11:28:30.897 INFOS [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT/conf/tomee.xml'
+22-May-2019 11:28:30.897 INFOS [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT/conf/tomee.xml'
 22-May-2019 11:28:30.933 INFOS [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
 22-May-2019 11:28:30.935 INFOS [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 22-May-2019 11:28:30.937 INFOS [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=true'
@@ -314,7 +314,7 @@ INFOS: RemoteInitialContextCreated{providerUri=http://localhost:64661/tomee/ejb}
 22-May-2019 11:28:31.322 INFOS [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
 22-May-2019 11:28:31.322 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke L'initialisation du serveur a pris [1 451] millisecondes
 22-May-2019 11:28:31.330 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Démarrage du service [Catalina]
-22-May-2019 11:28:31.330 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Démarrage du moteur de Servlets: [Apache Tomcat (TomEE)/9.0.20 (10.0.0-SNAPSHOT)]
+22-May-2019 11:28:31.330 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Démarrage du moteur de Servlets: [Apache Tomcat (TomEE)/9.0.20 (10.0.0-M1-SNAPSHOT)]
 22-May-2019 11:28:31.375 INFOS [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Impossible de fixer la propriété [clearReferencesRmiTargets] du chargeur de classes de l'application web à [true] car cette propriété n'existe pas
 22-May-2019 11:28:31.375 INFOS [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Impossible de fixer la propriété [clearReferencesObjectStreamClassCaches] du chargeur de classes de l'application web à [true] car cette propriété n'existe pas
 22-May-2019 11:28:31.375 INFOS [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Impossible de fixer la propriété [clearReferencesObjectStreamClassCaches] du chargeur de classes de l'application web à [true] car cette propriété n'existe pas
@@ -335,7 +335,7 @@ INFOS: RemoteInitialContextCreated{providerUri=http://localhost:64661/tomee/ejb}
 22-May-2019 11:28:31.840 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 22-May-2019 11:28:31.841 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean app.Comp168386325: Container(type=MANAGED, id=Default Managed Container)
 22-May-2019 11:28:31.841 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
-22-May-2019 11:28:31.848 INFOS [http-nio-64661-exec-3] org.apache.openejb.core.managed.SimplePassivater.init Using directory /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT/temp for stateful session passivation
+22-May-2019 11:28:31.848 INFOS [http-nio-64661-exec-3] org.apache.openejb.core.managed.SimplePassivater.init Using directory /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT/temp for stateful session passivation
 22-May-2019 11:28:31.876 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app" loaded.
 22-May-2019 11:28:31.876 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app
 22-May-2019 11:28:31.892 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=CalculatorImplLocal) --> Ejb(deployment-id=CalculatorImpl)
@@ -356,10 +356,10 @@ INFOS: RemoteInitialContextCreated{providerUri=http://localhost:64661/tomee/ejb}
 22-May-2019 11:28:33.252 INFOS [http-nio-64661-exec-3] org.apache.jasper.servlet.TldScanner.scanJars Au moins un fichier JAR a été analysé pour trouver des TLDs mais il n'en contenait pas, le mode "debug" du journal peut être activé pour obtenir une liste complète de JAR scannés sans succès; éviter d'analyser des JARs inutilement peut améliorer sensiblement le temps de démarrage et le temps de compilation des JSPs
 22-May-2019 11:28:33.258 INFOS [http-nio-64661-exec-3] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
 22-May-2019 11:28:33.316 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getStandardFacesConfig Reading standard config META-INF/standard-faces-config.xml
-22-May-2019 11:28:33.527 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT/lib/openwebbeans-el22-2.0.9.jar!/META-INF/faces-config.xml
-22-May-2019 11:28:33.528 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT/lib/openwebbeans-jsf-2.0.9.jar!/META-INF/faces-config.xml
-22-May-2019 11:28:33.656 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.3' from path 'file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT/lib/myfaces-api-2.3.3.jar'
-22-May-2019 11:28:33.656 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.3' from path 'file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-SNAPSHOT/lib/myfaces-impl-2.3.3.jar'
+22-May-2019 11:28:33.527 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT/lib/openwebbeans-el22-2.0.9.jar!/META-INF/faces-config.xml
+22-May-2019 11:28:33.528 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT/lib/openwebbeans-jsf-2.0.9.jar!/META-INF/faces-config.xml
+22-May-2019 11:28:33.656 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.3' from path 'file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT/lib/myfaces-api-2.3.3.jar'
+22-May-2019 11:28:33.656 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.3' from path 'file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-10.0.0-M1-SNAPSHOT/lib/myfaces-impl-2.3.3.jar'
 22-May-2019 11:28:33.666 INFOS [http-nio-64661-exec-3] org.apache.myfaces.util.ExternalSpecifications.isCDIAvailable MyFaces CDI support enabled
 22-May-2019 11:28:33.667 INFOS [http-nio-64661-exec-3] org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory.getInjectionProvider Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
 22-May-2019 11:28:33.711 INFOS [http-nio-64661-exec-3] org.apache.myfaces.util.ExternalSpecifications.isBeanValidationAvailable MyFaces Bean Validation support enabled
