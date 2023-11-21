@@ -66,16 +66,6 @@ public class ThreadLocalHttpServletResponse extends AbstractRestThreadLocalProxy
     }
 
     @Override
-    public String encodeUrl(final String url) {
-        return get().encodeUrl(url);
-    }
-
-    @Override
-    public String encodeRedirectUrl(final String url) {
-        return get().encodeRedirectUrl(url);
-    }
-
-    @Override
     public String getHeader(final String name) {
         return get().getHeader(name);
     }
@@ -128,11 +118,6 @@ public class ThreadLocalHttpServletResponse extends AbstractRestThreadLocalProxy
     @Override
     public void setStatus(final int sc) {
         get().setStatus(sc);
-    }
-
-    @Override
-    public void setStatus(final int sc, final String sm) {
-        get().setStatus(sc, sm);
     }
 
     @Override

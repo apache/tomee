@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-health-tck</artifactId>
@@ -84,7 +84,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
-      <version>${microprofile.health.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.inject</groupId>
@@ -96,7 +95,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-tck</artifactId>
-      <version>${microprofile.health.tck.version}</version>
       <scope>test</scope>
     </dependency>
 

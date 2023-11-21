@@ -20,15 +20,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-rest-client</artifactId>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile REST Client</name>
   <properties>
-    <microprofile.rest-client.version>3.0</microprofile.rest-client.version>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
+    <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
+    <version.jakartaee-api>10.0-M2</version.jakartaee-api>
+    <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
-    <tomee.version>10.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <version>${microprofile.rest-client.version}</version>
+      <version>${version.microprofile.rest-client}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

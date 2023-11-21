@@ -60,10 +60,10 @@ public class OverloadedEjbObserverMethodsTest {
     @Test
     public void test() throws Exception {
         final Orange orange = new Orange();
-        beanManager.fireEvent(orange);
+        beanManager.getEvent().fire(orange);
 
         final Green green = new Green();
-        beanManager.fireEvent(green);
+        beanManager.getEvent().fire(green);
 
         Assert.assertEquals(2, painter.getObserved().size());
         Assert.assertSame(orange, painter.getObserved().get(0));

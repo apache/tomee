@@ -65,7 +65,7 @@ public class MPHealthCDIExtension implements Extension {
      * @param beanManager
      */
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(MicroProfileHealthReporterProducer.class));
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(MicroProfileHealthReporterProducer.class), "MicroProfileHealthReporterProducer");
     }
 
     /**

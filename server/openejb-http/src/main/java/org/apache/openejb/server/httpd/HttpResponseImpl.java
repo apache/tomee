@@ -127,12 +127,6 @@ public class HttpResponseImpl implements HttpResponse {
     }
 
     @Override
-    public void setStatus(final int i, final String s) {
-        setCode(i);
-        setStatusMessage(s);
-    }
-
-    @Override
     public void addCookie(final Cookie cookie) {
         setHeader(cookie.getName(), cookie.getValue());
     }
@@ -170,16 +164,6 @@ public class HttpResponseImpl implements HttpResponse {
     @Override
     public String encodeRedirectURL(final String s) {
         return toEncoded(s);
-    }
-
-    @Override
-    public String encodeUrl(final String s) {
-        return toEncoded(s);
-    }
-
-    @Override
-    public String encodeRedirectUrl(final String s) {
-        return encodeRedirectURL(s);
     }
 
     /**
