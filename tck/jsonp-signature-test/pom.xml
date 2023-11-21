@@ -101,7 +101,7 @@
           <forkCount>1</forkCount>
           <systemProperties>
             <jimage.dir>${project.build.directory}/jimage</jimage.dir>
-            <signature.sigTestClasspath>${project.build.directory}/signaturedirectory/jakarta.json-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming</signature.sigTestClasspath>
+            <signature.sigTestClasspath>${project.build.directory}/signaturedirectory/jakartaee-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming</signature.sigTestClasspath>
           </systemProperties>
           <dependenciesToScan>
             <dependency>jakarta.json:jakarta.json-tck-tests</dependency>
