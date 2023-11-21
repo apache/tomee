@@ -130,7 +130,7 @@ Na saida você pode ver que existem duas instâncias de `Soup` criadas - uma par
  T E S T S
 -------------------------------------------------------
 Running org.superbiz.cdi.requestscope.RestaurantTest
-Apache OpenEJB 10.0.0-SNAPSHOT    build: 20111224-11:09
+Apache OpenEJB 10.0.0-M1-SNAPSHOT    build: 20111224-11:09
 http://tomee.apache.org/
 INFO - openejb.home = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
 INFO - openejb.base = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope

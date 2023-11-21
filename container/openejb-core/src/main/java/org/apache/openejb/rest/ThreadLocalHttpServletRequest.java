@@ -21,6 +21,7 @@ import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletRequest;
@@ -88,6 +89,21 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     }
 
     @Override
+    public String getRequestId() {
+        return get().getRequestId();
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        return get().getProtocolRequestId();
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
+        return get().getServletConnection();
+    }
+
+    @Override
     public ServletInputStream getInputStream() throws IOException {
         return get().getInputStream();
     }
@@ -145,11 +161,6 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     @Override
     public BufferedReader getReader() throws IOException {
         return get().getReader();
-    }
-
-    @Override
-    public String getRealPath(final String string) {
-        return get().getRealPath(string);
     }
 
     @Override
@@ -360,11 +371,6 @@ public class ThreadLocalHttpServletRequest extends AbstractRestThreadLocalProxy<
     @Override
     public boolean isRequestedSessionIdFromCookie() {
         return get().isRequestedSessionIdFromCookie();
-    }
-
-    @Override
-    public boolean isRequestedSessionIdFromUrl() {
-        return get().isRequestedSessionIdFromUrl();
     }
 
     @Override

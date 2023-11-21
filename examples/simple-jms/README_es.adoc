@@ -202,14 +202,14 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO]
 [INFO] --- maven-war-plugin:2.4:war (default-war) @ simple-jms ---
 [INFO] Packaging webapp
-[INFO] Assembling webapp [simple-jms] in [/tomee/examples/simple-jms/target/simple-jms-10.0.0-SNAPSHOT]
+[INFO] Assembling webapp [simple-jms] in [/tomee/examples/simple-jms/target/simple-jms-10.0.0-M1-SNAPSHOT]
 [INFO] Processing war project
 [INFO] Webapp assembled in [2118 msecs]
-[INFO] Building war: /tomee/examples/simple-jms/target/simple-jms-10.0.0-SNAPSHOT.war
+[INFO] Building war: /tomee/examples/simple-jms/target/simple-jms-10.0.0-M1-SNAPSHOT.war
 [INFO]
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ simple-jms ---
-[INFO] Installing /tomee/examples/simple-jms/target/simple-jms-10.0.0-SNAPSHOT.war to /.m2/repository/org/superbiz/simple-jms/10.0.0-SNAPSHOT/simple-jms-10.0.0-SNAPSHOT.war
-[INFO] Installing /tomee/examples/simple-jms/pom.xml to /.m2/repository/org/superbiz/simple-jms/10.0.0-SNAPSHOT/simple-jms-10.0.0-SNAPSHOT.pom
+[INFO] Installing /tomee/examples/simple-jms/target/simple-jms-10.0.0-M1-SNAPSHOT.war to /.m2/repository/org/superbiz/simple-jms/10.0.0-M1-SNAPSHOT/simple-jms-10.0.0-M1-SNAPSHOT.war
+[INFO] Installing /tomee/examples/simple-jms/pom.xml to /.m2/repository/org/superbiz/simple-jms/10.0.0-M1-SNAPSHOT/simple-jms-10.0.0-M1-SNAPSHOT.pom
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
@@ -230,11 +230,11 @@ Esto creara una salida similiar a lo siguiente.
 
 [source,java]
 ----
-[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/simple-jms-10.0.0-SNAPSHOT/        -> org.apache.openejb.server.rest.InternalApplication@3b8b5b40
-[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/simple-jms-10.0.0-SNAPSHOT/message ->  EJB org.superbiz.jms.CustomJmsService
-[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/simple-jms-10.0.0-SNAPSHOT/message ->      String receiveMessage() throws JMSException
-[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/simple-jms-10.0.0-SNAPSHOT/message ->      void sendMessage(String)
-[main] sun.reflect.DelegatingMethodAccessorImpl.invoke Deployment of web application archive [\tomee\examples\simple-jms\target\apache-tomee\webapps\simple-jms-10.0.0-SNAPSHOT.war] has finished in [8,264] ms
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/simple-jms-10.0.0-M1-SNAPSHOT/        -> org.apache.openejb.server.rest.InternalApplication@3b8b5b40
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/simple-jms-10.0.0-M1-SNAPSHOT/message ->  EJB org.superbiz.jms.CustomJmsService
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/simple-jms-10.0.0-M1-SNAPSHOT/message ->      String receiveMessage() throws JMSException
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/simple-jms-10.0.0-M1-SNAPSHOT/message ->      void sendMessage(String)
+[main] sun.reflect.DelegatingMethodAccessorImpl.invoke Deployment of web application archive [\tomee\examples\simple-jms\target\apache-tomee\webapps\simple-jms-10.0.0-M1-SNAPSHOT.war] has finished in [8,264] ms
 [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
 [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
 [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.

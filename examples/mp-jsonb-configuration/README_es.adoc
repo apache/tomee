@@ -288,7 +288,7 @@ Si miramos el jar construido por maven, veremos que la aplicación en sí es bas
 
 [source,bash]
 ----
-$ jar tvf target/mp-jsonb-configuration-10.0.0-SNAPSHOT.war
+$ jar tvf target/mp-jsonb-configuration-10.0.0-M1-SNAPSHOT.war
      0 Fri Dec 28 19:36:10 CET 2018 META-INF/
    134 Fri Dec 28 19:36:08 CET 2018 META-INF/MANIFEST.MF
      0 Fri Dec 28 19:36:08 CET 2018 WEB-INF/
