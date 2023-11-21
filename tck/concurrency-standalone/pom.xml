@@ -33,9 +33,8 @@
     <maven.compiler.target>11</maven.compiler.target>
 
     <!-- Dependency and Plugin Versions -->
-    <jakarta.concurrent.version>3.0.0</jakarta.concurrent.version>
+    <jakarta.concurrent.version>3.0.3</jakarta.concurrent.version>
     <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-    <arquillian.version>1.7.0.Alpha10</arquillian.version>
     <testng.version>6.14.3</testng.version>
     <sigtest.version>1.6</sigtest.version>
     <derby.version>10.15.2.0</derby.version>
@@ -72,7 +71,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>${arquillian.version}</version>
+        <version>${version.arquillian.bom}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -97,7 +96,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.testng</groupId>
       <artifactId>arquillian-testng-container</artifactId>
-      <version>${arquillian.version}</version>
+      <version>${version.arquillian}</version>
     </dependency>
     <!-- Arquillian Deps for Apache TomEE -->
 
