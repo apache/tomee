@@ -53,6 +53,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-se</artifactId>
+      <version>${version.openwebbeans}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
     </dependency>
     <dependency>
@@ -71,6 +76,11 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
@@ -79,12 +89,26 @@
           <dependenciesToScan>
             <dependency>jakarta.json.bind:jakarta.json.bind-tck</dependency>
           </dependenciesToScan>
-          <includes>
-            <include>ee.jakarta.tck.json.bind.**</include>
-          </includes>
+
           <excludes>
+            <!-- https://github.com/jakartaee/jsonb-api/issues/344 -->
+            <exclude>**/SerializersCustomizationCDITest</exclude>
+
+            <!-- https://github.com/jakartaee/jsonb-api/issues/347 -->
+            <exclude>**/AnnotationTypeInfoTest</exclude>
+
             <exclude>**/JSONBSigTest</exclude>
           </excludes>
+
+          <systemProperties>
+            <!-- don't serialize BigDecimal/BigInteger as strings. Usually enabled by default in johnzon, see https://github.com/jakartaee/jsonb-api/issues/187 -->
+            <johnzon.use-bigdecimal-stringadapter>false</johnzon.use-bigdecimal-stringadapter>
+            <johnzon.use-biginteger-stringadapter>false</johnzon.use-biginteger-stringadapter>
+
+            <!-- needed to pass JSON-B 3 TCKs on jdk 13+, see https://github.com/jakartaee/jsonb-api/issues/272 -->
+            <java.locale.providers>COMPAT</java.locale.providers>
+          </systemProperties>
+          <argLine>-Duser.language=en -Duser.region=US</argLine>
         </configuration>
       </plugin>
     </plugins>
