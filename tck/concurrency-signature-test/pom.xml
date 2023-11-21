@@ -23,8 +23,8 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jsonb-signature-test</artifactId>
-  <name>TomEE :: TCK :: JSON-B Signature Tests</name>
+  <artifactId>concurrency-signature-test</artifactId>
+  <name>TomEE :: TCK :: Concurrency Signature Tests</name>
 
   <dependencies>
     <dependency>
