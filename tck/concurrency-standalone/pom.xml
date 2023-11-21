@@ -58,12 +58,6 @@
     <targetDirectory>${project.basedir}/target</targetDirectory>
   </properties>
 
-  <repositories>
-    <!-- TODO add private repo if your implementation is not public -->
-    <!-- TODO add staging repo if you want to use SNAPSHOT versions of the
-        API and TCK -->
-  </repositories>
-
   <!-- tag::testClientDep[] -->
   <!-- The Arquillian test framework -->
   <dependencyManagement>
@@ -122,12 +116,32 @@
       <artifactId>jakarta.servlet-api</artifactId>
       <version>${jakarta.servlet.version}</version>
     </dependency>
+    <!-- TestNG -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+    </dependency>
     <!-- Signature Test Plugin -->
     <dependency>
       <groupId>org.netbeans.tools</groupId>
       <artifactId>sigtest-maven-plugin</artifactId>
       <version>${sigtest.version}</version>
     </dependency>
+    <!-- To ensure its available for the TomEE lib directory -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.16.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>10.16.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
   <!-- end::testClientDep[] -->
 
