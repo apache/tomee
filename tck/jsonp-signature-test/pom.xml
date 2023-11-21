@@ -27,7 +27,6 @@
   <name>TomEE :: TCK :: JSON-P Signature Tests</name>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
@@ -41,9 +40,21 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-se</artifactId>
+      <version>${version.openwebbeans}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
