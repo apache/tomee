@@ -2251,11 +2251,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 } else {
                                     addRestClassesToScannedClasses(webModule, classes, classLoader);
                                 }
-                            } catch (final RuntimeException npe) {
-                                if (app == null) {
-                                    throw npe;
-                                }
-                                // if app depends on cdi no need to do it
+                            } catch (final NoClassDefFoundError e) {
+                                logger.debug("Could not load REST classes for application {1} for module {2} / {3}",
+                                             application, webModule.getJarLocation(), webModule.getFile().getName());
+                                throw new OpenEJBException("Unable to load REST classes for application: " + application, e);
                             }
                         } catch (final InstantiationException e) {
                             throw new OpenEJBException("Unable to instantiate Application class: " + application, e);
