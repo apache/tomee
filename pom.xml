@@ -204,7 +204,7 @@
     <version.geronimo-mail_2.1_spec>1.0.0-M1</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>10.1.15</tomcat.version>
+    <tomcat.version>10.1.16</tomcat.version>
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
@@ -218,7 +218,7 @@
     <version.johnzon>2.0.0</version.johnzon>
     <version.myfaces>4.0.1</version.myfaces>
     <version.openjpa>4.0.0-SNAPSHOT</version.openjpa>
-    <version.openwebbeans>4.0.0</version.openwebbeans>
+    <version.openwebbeans>4.0.1</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.3</version.eclipselink>
     <!-- org.glassfish -->
