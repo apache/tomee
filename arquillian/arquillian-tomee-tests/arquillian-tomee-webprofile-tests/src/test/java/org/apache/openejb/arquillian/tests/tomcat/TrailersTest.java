@@ -82,6 +82,12 @@ public class TrailersTest {
     }
 
     private void doTestTrailerHeaderNameNotToken(boolean swallowException) throws Exception {
+        final String launchProfile = System.getProperty("arquillian.launch");
+        if ("tomee-embedded".equals(launchProfile)) {
+            System.out.println("Skipping this test in TomEE embedded");
+            return;
+        }
+
         final String path = (swallowException) ? "/swallow" : "/noswallow";
 
         final String[] request = new String[]{
