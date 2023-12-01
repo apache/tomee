@@ -588,6 +588,11 @@
                   <bootstrap.jar>bootstrap.jar</bootstrap.jar>
                 </jars>
               </skips>
+              <add>
+                <resources>
+                  <tomcat-coyote.jar>.*BadRequestException.*</tomcat-coyote.jar>
+                </resources>
+              </add>
             </configuration>
             <executions>
               <execution>
