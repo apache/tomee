@@ -45,7 +45,7 @@ import org.junit.Test;
 
 
 public class AllowNoExpPropertyTest {
-   
+    
     @Test
     public void testNewPropertyOverridesOld1() throws Exception {
         final Tokens tokens = Tokens.rsa(2048, 256);

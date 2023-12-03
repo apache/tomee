@@ -121,14 +121,15 @@ public class JWTAuthConfigurationProperties {
     }
     
     private Boolean queryAllowExp(){
-        AtomicBoolean result = new AtomicBoolean(false);
-        config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).ifPresent(value -> {
-            result.set(value);
-            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp propert instead.");
-            });
-        return config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class).orElse(result.get());
+        return config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class)
+                .or(() -> config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class)
+                        .map(value -> {
+                            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp propert instead.");
+                            return value;
+                        }))
+                .orElse(false);
     }
-
+    
     enum Keys {
         VERIFY("mp.jwt.verify.publickey", "tomee.jwt.verify.publickey"),
         DECRYPT("mp.jwt.decrypt.key", "tomee.jwt.decrypt.key");
