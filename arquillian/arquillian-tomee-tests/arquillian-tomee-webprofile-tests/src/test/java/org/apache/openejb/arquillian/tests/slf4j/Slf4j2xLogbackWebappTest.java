@@ -89,6 +89,6 @@ public class Slf4j2xLogbackWebappTest {
         assertNotNull("Response shouldn't be null", output);
         assertTrue("Output should contain: " + "It works!" + "\n" + output, output.contains("It works!"));
         assertTrue("Output should contain: " + "Logger Factory: ch.qos.logback.classic.LoggerContext" + "\n" + output, output.contains("Logger Factory: ch.qos.logback.classic.LoggerContext"));
-        assertTrue("Output should contain: " + "logback-classic-1.4.11.jar" + "\n" + output, output.contains("logback-classic-1.4.11.jar"));
+        assertTrue("Output should contain: " + "logback-classic-1.3.14.jar" + "\n" + output, output.contains("logback-classic-1.3.14.jar"));
     }
 }

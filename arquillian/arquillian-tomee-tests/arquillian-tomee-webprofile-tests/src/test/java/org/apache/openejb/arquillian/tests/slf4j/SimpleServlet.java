@@ -35,16 +35,20 @@ public class SimpleServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        final ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
-        final String loggerFactoryName = iLoggerFactory.getClass().getName();
+        try {
+            final ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
+            final String loggerFactoryName = iLoggerFactory.getClass().getName();
 
-        LOGGER.info("Simple servlet called");
-        LOGGER.info("Logger Factory: " + loggerFactoryName);
+            LOGGER.info("Simple servlet called");
+            LOGGER.info("Logger Factory: " + loggerFactoryName);
 
-        final PrintWriter writer = resp.getWriter();
-        writer.println("It works!\n" +
-                "Logger Factory: " + loggerFactoryName + "\n" +
-                "Protection Domain: " + iLoggerFactory.getClass().getProtectionDomain().toString());
-        writer.flush();
+            final PrintWriter writer = resp.getWriter();
+            writer.println("It works!\n" +
+                    "Logger Factory: " + loggerFactoryName + "\n" +
+                    "Protection Domain: " + iLoggerFactory.getClass().getProtectionDomain().toString());
+            writer.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
