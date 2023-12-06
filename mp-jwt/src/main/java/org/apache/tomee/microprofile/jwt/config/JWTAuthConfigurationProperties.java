@@ -121,12 +121,15 @@ public class JWTAuthConfigurationProperties {
     }
     
     private Boolean queryAllowExp(){
-        return config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class)
-                .or(() -> config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class)
-                        .map(value -> {
-                            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp propert instead.");
-                            return value;
-                        }))
+        final Optional<Boolean> allowExp = config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class);
+        final Optional<Boolean> allowExpDeprecatedValue = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class);
+
+        if (allowExpDeprecatedValue.isPresent()) {
+            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp property instead.");
+        }
+
+        return allowExp
+                .or(() -> allowExpDeprecatedValue)
                 .orElse(false);
     }
     
