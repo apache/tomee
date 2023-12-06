@@ -81,7 +81,8 @@ In addition to the standard MicroProfile JWT configuration properties above, the
 | Property
 | Type
 | Description
-| `mp.jwt.tomee.allow.no-exp`
+| `mp.jwt.tomee.allow.no-exp` is deprecated please use `tomee.mp.jwt.allow.no-exp` property instead
+| `tomee.mp.jwt.allow.no-exp`
 | Boolean
 | Disables enforcing the `exp` time of the JWT.  Useful if JWTs are also verified by an API Gateway or proxy before reaching the server.  The default value is `false`
 | `tomee.jwt.verify.publickey.cache`
