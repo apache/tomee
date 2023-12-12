@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>security-tomcat-user-identitystore</artifactId>
-  <version>9.1.3-SNAPSHOT</version>
+  <version>9.1.2</version>
 
   <name>TomEE :: Examples :: Jakarta Security tomcat-user.xml Identity Store</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>9.1.3-SNAPSHOT</version.tomee>
+    <version.tomee>9.1.2</version.tomee>
   </properties>
   <dependencies>
     <dependency>

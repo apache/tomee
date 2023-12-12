@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>applicationexception</artifactId>
   <packaging>jar</packaging>
-  <version>9.1.3-SNAPSHOT</version>
+  <version>9.1.2</version>
   <name>TomEE :: Examples :: @ApplicationException inheritance</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.1.3-SNAPSHOT</version>
+      <version>9.1.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
