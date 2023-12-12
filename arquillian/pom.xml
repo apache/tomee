@@ -22,11 +22,11 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.1.2-SNAPSHOT</version>
+    <version>9.1.2</version>
   </parent>
 
   <artifactId>arquillian</artifactId>
-  <version>9.1.2-SNAPSHOT</version>
+  <version>9.1.2</version>
   <packaging>pom</packaging>
   <name>TomEE :: Arquillian Adaptors Parent</name>
 
