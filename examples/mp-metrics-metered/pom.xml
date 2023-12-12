@@ -18,7 +18,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
-  <version>9.1.3-SNAPSHOT</version>
+  <version>9.1.2-SNAPSHOT</version>
   <artifactId>mp-metrics-metered</artifactId>
   <name>TomEE :: Examples :: MicroProfile Metrics Metered</name>
   <packaging>war</packaging>
@@ -27,7 +27,7 @@
     <version.microprofile.metrics>4.0.1</version.microprofile.metrics>
     <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
-    <tomee.version>9.1.3-SNAPSHOT</tomee.version>
+    <tomee.version>9.1.2-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
