@@ -33,7 +33,7 @@
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.1.2-SNAPSHOT</tomee.version>
+    <tomee.version>9.1.3-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -69,7 +69,7 @@
             <systemProperties>
               <property>
                 <name>tomee.version</name>
-                <value>9.1.2-SNAPSHOT</value>
+                <value>9.1.3-SNAPSHOT</value>
               </property>
             </systemProperties>
           </configuration>
