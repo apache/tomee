@@ -221,6 +221,10 @@
       <artifactId>smallrye-fault-tolerance</artifactId>
       <exclusions>
         <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>*</groupId>
           <artifactId>microprofile-fault-tolerance-api</artifactId>
         </exclusion>
