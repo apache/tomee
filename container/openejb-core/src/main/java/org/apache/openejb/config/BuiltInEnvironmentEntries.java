@@ -91,25 +91,26 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionManager").type(TransactionManager.class));
         add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/TransactionSynchronizationRegistry").type(TransactionSynchronizationRegistry.class));
 
-        // From: https://jakarta.ee/specifications/concurrency/3.0/jakarta-concurrency-spec-3.0.pdf
-        // Jakarta Concurrency §3.1.4.3
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedExecutorService").type(ManagedExecutorService.class));
-
-        // Jakarta Concurrency §3.2.4.3
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedScheduledExecutorService").type(ManagedScheduledExecutorService.class));
-
-        // Jakarta Concurrency §3.4.4.3
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedThreadFactory").type(ManagedThreadFactory.class));
-
-        // Jakarta Concurrency §3.3.4.3
-        add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultContextService").type(ContextService.class));
-
         if (defaults) {
+            // From: https://jakarta.ee/specifications/concurrency/3.0/jakarta-concurrency-spec-3.0.pdf
+            // Jakarta Concurrency §3.1.4.3
+            add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedExecutorService").type(ManagedExecutorService.class));
+
+            // Jakarta Concurrency §3.2.4.3
+            add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedScheduledExecutorService").type(ManagedScheduledExecutorService.class));
+
+            // Jakarta Concurrency §3.4.4.3
+            add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultManagedThreadFactory").type(ManagedThreadFactory.class));
+
+            // Jakarta Concurrency §3.3.4.3
+            add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultContextService").type(ContextService.class));
+
+
             try {
                 final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                 contextClassLoader.loadClass("org.apache.activemq.ActiveMQSslConnectionFactory");
                 final ResourceEnvRef ref = new ResourceEnvRef().name("java:comp/DefaultJMSConnectionFactory")
-                    .type(contextClassLoader.loadClass("jakarta.jms.ConnectionFactory"));
+                        .type(contextClassLoader.loadClass("jakarta.jms.ConnectionFactory"));
                 add(jndi.getResourceEnvRefMap(), ref);
             } catch (final ClassNotFoundException | NoClassDefFoundError notThere) {
                 // no-op
