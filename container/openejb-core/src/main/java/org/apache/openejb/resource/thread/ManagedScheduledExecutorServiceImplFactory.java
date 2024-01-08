@@ -54,7 +54,7 @@ public class ManagedScheduledExecutorServiceImplFactory {
         try {
             final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             final Context context = containerSystem.getJNDIContext();
-            final Object obj = context.lookup("openejb/Resource/" + context);
+            final Object obj = context.lookup("openejb/Resource/" + this.context);
             if (!(obj instanceof ContextServiceImpl)) {
                 throw new IllegalArgumentException("Resource with id " + context
                         + " is not a ContextService, but is " + obj.getClass().getName());
