@@ -25,7 +25,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee</artifactId>
@@ -143,14 +143,14 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.eclipse.jdt.core.compiler</groupId>
+        <groupId>org.eclipse.jdt</groupId>
         <artifactId>ecj</artifactId>
         <version>${version.ecj}</version>
       </dependency>
       <dependency>
         <artifactId>commons-beanutils</artifactId>
         <groupId>commons-beanutils</groupId>
-        <version>${commons-beanutils.version}</version>
+        <version>${version.commons-beanutils}</version>
       </dependency>
       <dependency>
         <groupId>jakarta.servlet</groupId>
@@ -203,7 +203,7 @@
         <version>${tomcat.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <groupId>org.eclipse.jdt</groupId>
             <artifactId>ecj</artifactId>
           </exclusion>
         </exclusions>
@@ -211,12 +211,12 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-api</artifactId>
-        <version>${myfaces.version}</version>
+        <version>${version.myfaces}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -227,7 +227,7 @@
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-impl</artifactId>
-        <version>${myfaces.version}</version>
+        <version>${version.myfaces}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -307,7 +307,7 @@
       <dependency>
         <groupId>org.glassfish</groupId>
         <artifactId>jakarta.faces</artifactId>
-        <version>${mojarra.version}</version>
+        <version>${version.mojarra}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>

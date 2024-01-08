@@ -412,11 +412,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         return bean;
     }
 
-    @Override
-    public <T> Bean<T> defineNewSessionBean(Class<T> clazz) {
-        return null;
-    }
-
     private boolean isNewSessionBean(final WebBeansContext ctx, final Class<?> clazz) {
         if (ctx == null) {
             return false;
@@ -464,6 +459,11 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         }
 
         return null;
+    }
+
+    @Override
+    public <T> Bean<T> defineNewSessionBean(final Class<T> clazz) {
+        return findBeanContext(webBeansContext, clazz).get(CdiEjbBean.class);
     }
 
     private static Map<Class<?>, BeanContext> pluginBeans(final WebBeansContext ctx) {

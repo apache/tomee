@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+     Licensed to the Apache Software Foundation (ASF) under one or more
+     contributor license agreements.  See the NOTICE file distributed with
+     this work for additional information regarding copyright ownership.
+     The ASF licenses this file to You under the Apache License, Version 2.0
+     (the "License"); you may not use this file except in compliance with
+     the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+  -->
+
+<html>
+  <head>
+      <title>Fun with SSE and JMS</title>
+  </head>
+
+  <body>
+  <p>This example demonstrates how to send Server Side Events, and how to receive them, both using a JAX-RS client,
+  and also in Javascript in your web-browser.</p>
+  <p>You should be able to send messages to an ActiveMQ topic called 'EVENT' using the OpenWire port tcp/61616 on this machine.
+  Any messages sent to this topic will appear below.</p>
+
+  <div id="messages">
+
+  </div>
+
+  <script type="text/javascript">
+    var es = new EventSource('jms');
+    var messages = document.getElementById('messages');
+
+    es.onmessage = function(e) {
+      var newElement = document.createElement("p");
+
+      newElement.textContent = e.data;
+      messages.appendChild(newElement);
+    }
+  </script>
+  </body>
+</html>
+

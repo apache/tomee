@@ -16,12 +16,12 @@
  */
 package org.superbiz.moviefun;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Named;
 import org.superbiz.moviefun.util.JsfUtil;
 import org.superbiz.moviefun.util.PaginationHelper;
 
 import jakarta.ejb.EJB;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;

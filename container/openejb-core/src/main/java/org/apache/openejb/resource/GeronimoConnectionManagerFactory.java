@@ -70,6 +70,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.logging.Level;
 
 public class GeronimoConnectionManagerFactory {
     private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, GeronimoConnectionManagerFactory.class);
@@ -483,7 +484,7 @@ public class GeronimoConnectionManagerFactory {
             if (current instanceof AbstractSinglePoolConnectionInterceptor) {
                 foundPool = Reflections.get(current, "pool");
             } else if (current instanceof MultiPoolConnectionInterceptor) {
-                log.warn("validation on stack " + stack + " not supported");
+                log.log(Level.WARNING, "validation on stack " + stack + " not supported");
             }
             this.pool = foundPool;
 
@@ -562,11 +563,11 @@ public class GeronimoConnectionManagerFactory {
                                         stack.returnConnection(new ConnectionInfo(mci), ConnectionReturnAction.DESTROY);
                                         continue;
                                     }
-                                    log.error("Can't find " + invalid + " in " + pool);
+                                    log.log(Level.SEVERE, "Can't find " + invalid + " in " + pool);
                                 }
                             }
                         } catch (final ResourceException e) {
-                            log.error(e.getMessage(), e);
+                            log.log(Level.SEVERE, e.getMessage(), e);
                         }
                     } finally {
                         if (lock != null) {

@@ -1105,6 +1105,8 @@ public class ApplicationComposers {
             }
 
             OpenEJB.destroy();
+            SystemInstance.reset();
+
         } finally {
             runAll(afterRunnables);
             if (originalLoader != null) {
@@ -1151,6 +1153,15 @@ public class ApplicationComposers {
                 // no-op
             }
         }
+        
+        /*
+        * Clear additional references
+        */
+        if (appContext != null) {
+            appContext.getWebContexts().clear();
+            appContext.getInjections().clear();
+            appContext.getSystemInstance().removeComponent(TestInstance.class);
+        }        
     }
 
     private void runAll(final Collection<Runnable> runnables) {

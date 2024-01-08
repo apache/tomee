@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -139,7 +139,7 @@
     <dependency><!-- needed by myfaces -->
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>${commons-beanutils.version}</version>
+      <version>${version.commons-beanutils}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -207,10 +207,6 @@
           <groupId>${project.groupId}</groupId>
           <artifactId>jakartaee-api</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -222,10 +218,6 @@
         <exclusion>
           <groupId>${project.groupId}</groupId>
           <artifactId>jakartaee-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -412,13 +404,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jsonp-strict</artifactId>
-      <classifier>jakarta</classifier>
+      <artifactId>johnzon-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -429,7 +420,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.myfaces.core</groupId>
@@ -573,24 +564,14 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>${version.openjpa}</version>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
-      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
-      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb.shade</groupId>

@@ -494,8 +494,8 @@ public class JMS2CDIExtension implements Extension {
     }
 
     public void addContextProducer(@Observes final BeforeBeanDiscovery beforeBeanDiscovery, final BeanManager beanManager) {
-        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(ContextProducer.class), ContextProducer.class.getName());
-        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(RequestAutoContextDestruction.class), RequestAutoContextDestruction.class.getName());
-        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TransactionAutoContextDestruction.class), TransactionAutoContextDestruction.class.getName());
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(ContextProducer.class), ContextProducer.class.getSimpleName());
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(RequestAutoContextDestruction.class), RequestAutoContextDestruction.class.getSimpleName());
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TransactionAutoContextDestruction.class), TransactionAutoContextDestruction.class.getSimpleName());
     }
 }

@@ -16,12 +16,12 @@
  */
 package org.apache.tomee.security.servlet;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlPage;
 import org.junit.Test;
 
 import jakarta.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
