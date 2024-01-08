@@ -17,7 +17,6 @@
 
 package org.apache.openejb.cdi;
 
-import jakarta.xml.bind.annotation.XmlElement;
 import org.apache.openejb.Injection;
 import org.apache.openejb.jee.ContextService;
 import org.apache.openejb.jee.DataSource;
@@ -67,7 +66,6 @@ public class CdiBeanInfo implements JndiConsumer {
     private String beanName;
     private ClassLoader classLoader;
     private List<Injection> injections;
-    @XmlElement(name="context-service")
     private KeyedCollection<String, ContextService> contextService;
 
     public String getBeanName() {

@@ -103,7 +103,8 @@ import java.util.Map;
     "jmsConnectionFactories",
     "jmsDestinations",
     "securityRoleRef",
-    "securityIdentity"
+    "securityIdentity",
+    "contextService"
 })
 public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokable {
 

@@ -108,7 +108,8 @@ import java.util.Map;
     "jmsDestinations",
     "securityRoleRef",
     "securityIdentity",
-    "query"
+    "query",
+    "contextService"
 })
 public class EntityBean implements RemoteBean {
 

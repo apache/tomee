@@ -95,7 +95,8 @@ import java.util.Map;
     "dataSource",
     "jmsConnectionFactories",
     "jmsDestinations",
-    "name"
+    "name",
+    "contextService"
 
 })
 public class WebFragment implements WebCommon {

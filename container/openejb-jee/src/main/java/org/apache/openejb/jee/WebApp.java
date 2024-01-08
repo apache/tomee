@@ -98,7 +98,8 @@ import java.util.Map;
     "dataSource",
     "jmsConnectionFactories",
     "jmsDestinations",
-    "moduleName"
+    "moduleName",
+    "contextService"
 
 })
 public class WebApp implements WebCommon, Lifecycle, NamedModule {

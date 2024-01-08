@@ -89,7 +89,8 @@ import java.util.Map;
     "messageDestination",
     "dataSource",
     "jmsConnectionFactories",
-    "jmsDestinations"
+    "jmsDestinations",
+    "contextService"
 
 })
 public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {

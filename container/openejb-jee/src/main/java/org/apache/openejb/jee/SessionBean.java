@@ -143,7 +143,8 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "prePassivate",
     "securityRoleRef",
     "securityIdentity",
-    "passivationCapable"
+    "passivationCapable",
+    "contextService"
 })
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient

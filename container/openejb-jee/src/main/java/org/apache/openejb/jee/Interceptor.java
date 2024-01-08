@@ -84,7 +84,8 @@ import java.util.Map;
     "prePassivate",
     "afterBegin",
     "beforeCompletion",
-    "afterCompletion"
+    "afterCompletion",
+    "contextService"
 })
 public class Interceptor implements JndiConsumer, Session {
 
