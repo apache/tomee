@@ -148,12 +148,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -179,12 +173,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- Open Tracing API -->
@@ -236,8 +224,20 @@
       <artifactId>smallrye-health</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
-          <artifactId>microprofile-health-api</artifactId>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.json</groupId>
+          <artifactId>jakarta.json-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.glassfish</groupId>
+          <artifactId>jakarta.json</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.smallrye</groupId>
+          <artifactId>smallrye-health-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -314,20 +314,8 @@
           <artifactId>jaxb-xjc</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.json</groupId>
-          <artifactId>javax.json-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>javax.ws.rs-api</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>jakarta.ws.rs</groupId>
           <artifactId>jakarta.ws.rs-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.activation</groupId>
