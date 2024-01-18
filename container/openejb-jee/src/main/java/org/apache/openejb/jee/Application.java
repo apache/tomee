@@ -94,7 +94,8 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "messageDestination",
     "dataSource",
     "jmsConnectionFactories",
-    "jmsDestinations"
+    "jmsDestinations",
+    "contextService"
 })
 public class Application implements JndiConsumer, NamedModule {
 
