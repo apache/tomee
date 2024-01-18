@@ -172,6 +172,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         }
     }
 
+    //FIXME TOMEE-4159 Requires implementation
     @Override
     public <U> CompletableFuture<U> completedFuture(U u) {
         return null;
