@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object> {
-    private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
     // only updated in container startup phase, no concurrency possible, don't use it at runtime!
     private static volatile ContainerListener[] CONTAINER_LISTENERS = new ContainerListener[0];
