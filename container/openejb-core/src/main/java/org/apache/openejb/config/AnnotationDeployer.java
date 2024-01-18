@@ -32,8 +32,96 @@ import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.dyni.DynamicSubclass;
-import org.apache.openejb.jee.*;
-import org.apache.openejb.jee.jba.JndiName;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationSpec;
+import org.apache.openejb.jee.AdminObject;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.AroundInvoke;
+import org.apache.openejb.jee.AroundTimeout;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.AsyncMethod;
+import org.apache.openejb.jee.AuthenticationMechanism;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.ConcurrencyManagementType;
+import org.apache.openejb.jee.ConcurrentLockType;
+import org.apache.openejb.jee.ConcurrentMethod;
+import org.apache.openejb.jee.ConfigProperty;
+import org.apache.openejb.jee.ContainerConcurrency;
+import org.apache.openejb.jee.ContainerTransaction;
+import org.apache.openejb.jee.DataSource;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.EjbReference;
+import org.apache.openejb.jee.Empty;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.ExcludeList;
+import org.apache.openejb.jee.Filter;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.Icon;
+import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.InitMethod;
+import org.apache.openejb.jee.Injectable;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.Invokable;
+import org.apache.openejb.jee.IsolationLevel;
+import org.apache.openejb.jee.JMSConnectionFactory;
+import org.apache.openejb.jee.JMSDestination;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.License;
+import org.apache.openejb.jee.Lifecycle;
+import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.MessageAdapter;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MessageListener;
+import org.apache.openejb.jee.MethodAttribute;
+import org.apache.openejb.jee.MethodParams;
+import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.ParamValue;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextSynchronization;
+import org.apache.openejb.jee.PersistenceContextType;
+import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.Property;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.ResAuth;
+import org.apache.openejb.jee.ResSharingScope;
+import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SecurityIdentity;
+import org.apache.openejb.jee.SecurityRoleRef;
+import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.ServletMapping;
+import org.apache.openejb.jee.Session;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.Tag;
+import org.apache.openejb.jee.Text;
+import org.apache.openejb.jee.Timeout;
+import org.apache.openejb.jee.Timer;
+import org.apache.openejb.jee.TimerConsumer;
+import org.apache.openejb.jee.TimerSchedule;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.TransAttribute;
+import org.apache.openejb.jee.TransactionSupportType;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.SystemInstance;
@@ -199,15 +287,6 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static final String[] JSF_CLASSES = new String[]{
         "jakarta.faces.application.ResourceDependencies",
         "jakarta.faces.application.ResourceDependency",
-        "jakarta.faces.bean.ApplicationScoped",
-        "jakarta.faces.bean.CustomScoped",
-        "jakarta.faces.bean.ManagedBean",
-        "jakarta.faces.bean.ManagedProperty",
-        "jakarta.faces.bean.NoneScoped",
-        "jakarta.faces.bean.ReferencedBean",
-        "jakarta.faces.bean.RequestScoped",
-        "jakarta.faces.bean.SessionScoped",
-        "jakarta.faces.bean.ViewScoped",
         "jakarta.faces.component.FacesComponent",
         "jakarta.faces.component.UIComponent",
         "jakarta.faces.convert.Converter",
@@ -2338,25 +2417,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            }
-
-            /*
-             * JSF ManagedBean classes are scanned
-             */
-            for (final FacesConfig facesConfig : webModule.getFacesConfigs()) {
-                for (final FacesManagedBean bean : facesConfig.getManagedBean()) {
-                    final String managedBeanClass = realClassName(bean.getManagedBeanClass().trim());
-                    if (managedBeanClass != null) {
-                        try {
-                            final Class clazz = classLoader.loadClass(managedBeanClass);
-                            classes.add(clazz);
-                        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-                            logger.debug("Could not load Faces managed bean class {1} for web module {2} / {3}",
-                                         managedBeanClass, webModule.getJarLocation(), webModule.getFile().getName());
-                            logger.error("Unable to load JSF managed bean class: " + managedBeanClass);
                         }
                     }
                 }
