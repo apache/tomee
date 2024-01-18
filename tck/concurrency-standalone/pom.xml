@@ -15,213 +15,220 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>tck</artifactId>
-    <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M1-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>tck</artifactId>
+        <groupId>org.apache.tomee</groupId>
+        <version>10.0.0-M1-SNAPSHOT</version>
+    </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>concurrency-standalone</artifactId>
-  <name>TomEE :: TCK :: Concurrency Standalone</name>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>concurrency-standalone</artifactId>
+    <name>TomEE :: TCK :: Concurrency Standalone</name>
 
-  <properties>
-    <!-- General properties -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <properties>
+        <!-- General properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
 
-    <!-- Dependency and Plugin Versions -->
-    <jakarta.concurrent.version>3.0.3</jakarta.concurrent.version>
-    <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-    <testng.version>7.5</testng.version>
-    <sigtest.version>1.6</sigtest.version>
-    <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
-    <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
-    <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+        <!-- Dependency and Plugin Versions -->
+        <jakarta.concurrent.version>3.0.3</jakarta.concurrent.version>
+        <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+        <testng.version>7.5</testng.version>
+        <sigtest.version>1.6</sigtest.version>
+        <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
+        <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
+        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 
-    <!-- Location to put test application dependencies -->
-<!--    <application.server.lib>[path/to/appserver/lib]</application.server.lib>-->
+        <!-- Location to put test application dependencies -->
+        <!--    <application.server.lib>[path/to/appserver/lib]</application.server.lib>-->
 
-    <!-- Pointer to suite.xml file that has the TestNG configuration.
-         Use suite.xml to test the full profile
-         Use suite-web.xml to test the web profile
-     -->
-    <suiteXmlFile>suite.xml</suiteXmlFile>
+        <!-- Pointer to suite.xml file that has the TestNG configuration.
+             Use suite.xml to test the full profile
+             Use suite-web.xml to test the web profile
+         -->
+        <suiteXmlFile>suite.xml</suiteXmlFile>
 
-    <!-- Pointer to logging.properties file that has the java.util.logging configuration -->
-    <logging.config>logging.properties</logging.config>
+        <!-- Pointer to logging.properties file that has the java.util.logging configuration -->
+        <logging.config>logging.properties</logging.config>
 
-    <!-- Output directory -->
-    <targetDirectory>${project.basedir}/target</targetDirectory>
-  </properties>
+        <!-- Output directory -->
+        <targetDirectory>${project.basedir}/target</targetDirectory>
+    </properties>
 
-  <!-- tag::testClientDep[] -->
-  <!-- The Arquillian test framework -->
-  <dependencyManagement>
+    <!-- tag::testClientDep[] -->
+    <!-- The Arquillian test framework -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${version.arquillian.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Client Dependencies -->
     <dependencies>
-      <dependency>
-        <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-bom</artifactId>
-        <version>${version.arquillian.bom}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+        <!-- The TCK -->
+        <dependency>
+            <groupId>jakarta.enterprise.concurrent</groupId>
+            <artifactId>jakarta.enterprise.concurrent-tck</artifactId>
+            <version>${jakarta.concurrent.version}</version>
+        </dependency>
+        <!-- The API -->
+        <dependency>
+            <groupId>jakarta.enterprise.concurrent</groupId>
+            <artifactId>jakarta.enterprise.concurrent-api</artifactId>
+            <version>${jakarta.concurrent.version}</version>
+        </dependency>
+        <!-- Arquillian Implementation for TestNG -->
+        <dependency>
+            <groupId>org.jboss.arquillian.testng</groupId>
+            <artifactId>arquillian-testng-container</artifactId>
+            <version>${version.arquillian}</version>
+        </dependency>
+        <!-- Arquillian Deps for Apache TomEE -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apache-tomee</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>plus</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>arquillian-tomee-remote</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- End of deps for Apache TomEE -->
+
+        <!-- Arquillian transitive dependency on Servlet -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta.servlet.version}</version>
+        </dependency>
+        <!-- TestNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+        <!-- Signature Test Plugin -->
+        <dependency>
+            <groupId>org.netbeans.tools</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>${sigtest.version}</version>
+        </dependency>
+        <!-- To ensure its available for the TomEE lib directory -->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>${version.derby}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>${version.derby}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
-  </dependencyManagement>
+    <!-- end::testClientDep[] -->
 
-  <!-- Client Dependencies -->
-  <dependencies>
-    <!-- The TCK -->
-    <dependency>
-      <groupId>jakarta.enterprise.concurrent</groupId>
-      <artifactId>jakarta.enterprise.concurrent-tck</artifactId>
-      <version>${jakarta.concurrent.version}</version>
-    </dependency>
-    <!-- The API -->
-    <dependency>
-      <groupId>jakarta.enterprise.concurrent</groupId>
-      <artifactId>jakarta.enterprise.concurrent-api</artifactId>
-      <version>${jakarta.concurrent.version}</version>
-    </dependency>
-    <!-- Arquillian Implementation for TestNG -->
-    <dependency>
-      <groupId>org.jboss.arquillian.testng</groupId>
-      <artifactId>arquillian-testng-container</artifactId>
-      <version>${version.arquillian}</version>
-    </dependency>
-    <!-- Arquillian Deps for Apache TomEE -->
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>apache-tomee</artifactId>
-      <version>${project.version}</version>
-      <type>zip</type>
-      <classifier>plus</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>arquillian-tomee-remote</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- End of deps for Apache TomEE -->
-
-    <!-- Arquillian transitive dependency on Servlet -->
-    <dependency>
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-      <version>${jakarta.servlet.version}</version>
-    </dependency>
-    <!-- TestNG -->
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${testng.version}</version>
-    </dependency>
-    <!-- Signature Test Plugin -->
-    <dependency>
-      <groupId>org.netbeans.tools</groupId>
-      <artifactId>sigtest-maven-plugin</artifactId>
-      <version>${sigtest.version}</version>
-    </dependency>
-    <!-- To ensure its available for the TomEE lib directory -->
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>${version.derby}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbytools</artifactId>
-      <version>${version.derby}</version>
-      <scope>provided</scope>
-    </dependency>
-
-  </dependencies>
-  <!-- end::testClientDep[] -->
-
-  <build>
-    <directory>${targetDirectory}</directory>
-    <defaultGoal>clean test</defaultGoal>
-    <plugins>
-      <!-- tag::testServerDep[] -->
-      <!-- Test Server Dependencies -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>${maven.dep.plugin.version}</version>
-        <configuration>
-          <artifactItems>
-            <artifactItem>
-              <groupId>org.testng</groupId>
-              <artifactId>testng</artifactId>
-              <version>${testng.version}</version>
-            </artifactItem>
-            <artifactItem>
-              <groupId>org.apache.derby</groupId>
-              <artifactId>derby</artifactId>
-              <version>${derby.version}</version>
-            </artifactItem>
-            <artifactItem>
-              <groupId>org.netbeans.tools</groupId>
-              <artifactId>sigtest-maven-plugin</artifactId>
-              <version>${sigtest.version}</version>
-            </artifactItem>
-          </artifactItems>
-<!--          <outputDirectory>${application.server.lib}</outputDirectory>-->
-        </configuration>
-      </plugin>
-      <!-- end::testServerDep[] -->
-      <!-- Compile plugin for any supplemental class files -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.comp.plugin.version}</version>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
-      <!-- tag::configTestNG[] -->
-      <!-- Surefire plugin - Entrypoint for TestNG -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven.surefire.plugin.version}</version>
-        <configuration>
-          <!-- tag::logging[] -->
-          <systemProperties>
-            <property>
-              <name>java.util.logging.config.file</name>
-              <value>${logging.config}</value>
-            </property>
-          </systemProperties>
-          <!-- end::logging[] -->
-          <!-- tag::ignore[] -->
-          <systemPropertyVariables>
-            <!-- Properties shared with Arquillian -->
-<!--            <tck_server>[TODO]</tck_server>-->
-<!--            <tck_hostname>[TODO]</tck_hostname>-->
-<!--            <tck_username>[TODO]</tck_username>-->
-<!--            <tck_password>[TODO]</tck_password>-->
-<!--            <tck_port>[TODO]</tck_port>-->
-<!--            <tck_port>[TODO]</tck_port>-->
-          </systemPropertyVariables>
-          <!-- end::ignore[] -->
-          <suiteXmlFiles>
-            <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
-          </suiteXmlFiles>
-          <!-- Ensure surfire plugin looks under src/main/java instead of src/test/java -->
-          <testSourceDirectory>${basedir}${file.separarator}src${file.separarator}main${file.separarator}java${file.separarator}</testSourceDirectory>
-        </configuration>
-      </plugin>
-      <!-- end::configTestNG[] -->
-      <!-- TODO: you can include a plugin to start your application server here -->
-    </plugins>
-  </build>
-
+    <profiles>
+        <profile>
+            <id>tck-concurrency</id>
+            <build>
+                <directory>${targetDirectory}</directory>
+                <defaultGoal>clean test</defaultGoal>
+                <plugins>
+                    <!-- tag::testServerDep[] -->
+                    <!-- Test Server Dependencies -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${maven.dep.plugin.version}</version>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.testng</groupId>
+                                    <artifactId>testng</artifactId>
+                                    <version>${testng.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.derby</groupId>
+                                    <artifactId>derby</artifactId>
+                                    <version>${derby.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.netbeans.tools</groupId>
+                                    <artifactId>sigtest-maven-plugin</artifactId>
+                                    <version>${sigtest.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <!--          <outputDirectory>${application.server.lib}</outputDirectory>-->
+                        </configuration>
+                    </plugin>
+                    <!-- end::testServerDep[] -->
+                    <!-- Compile plugin for any supplemental class files -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${maven.comp.plugin.version}</version>
+                        <configuration>
+                            <source>${maven.compiler.source}</source>
+                            <target>${maven.compiler.target}</target>
+                        </configuration>
+                    </plugin>
+                    <!-- tag::configTestNG[] -->
+                    <!-- Surefire plugin - Entrypoint for TestNG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven.surefire.plugin.version}</version>
+                        <configuration>
+                            <!-- tag::logging[] -->
+                            <systemProperties>
+                                <property>
+                                    <name>java.util.logging.config.file</name>
+                                    <value>${logging.config}</value>
+                                </property>
+                            </systemProperties>
+                            <!-- end::logging[] -->
+                            <!-- tag::ignore[] -->
+                            <systemPropertyVariables>
+                                <!-- Properties shared with Arquillian -->
+                                <!--            <tck_server>[TODO]</tck_server>-->
+                                <!--            <tck_hostname>[TODO]</tck_hostname>-->
+                                <!--            <tck_username>[TODO]</tck_username>-->
+                                <!--            <tck_password>[TODO]</tck_password>-->
+                                <!--            <tck_port>[TODO]</tck_port>-->
+                                <!--            <tck_port>[TODO]</tck_port>-->
+                            </systemPropertyVariables>
+                            <!-- end::ignore[] -->
+                            <suiteXmlFiles>
+                                <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <!-- Ensure surfire plugin looks under src/main/java instead of src/test/java -->
+                            <testSourceDirectory>
+                                ${basedir}${file.separarator}src${file.separarator}main${file.separarator}java${file.separarator}
+                            </testSourceDirectory>
+                        </configuration>
+                    </plugin>
+                    <!-- end::configTestNG[] -->
+                    <!-- TODO: you can include a plugin to start your application server here -->
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
