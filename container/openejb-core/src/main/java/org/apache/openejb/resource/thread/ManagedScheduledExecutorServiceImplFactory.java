@@ -43,25 +43,38 @@ public class ManagedScheduledExecutorServiceImplFactory {
         return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), contextService);
     }
     public ManagedScheduledExecutorServiceImpl create() {
-        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), findContextService());
-    }
-
-    private ContextServiceImpl findContextService() {
-        if (context == null || context.trim().isEmpty()) {
-            throw new IllegalArgumentException("Please specify a context service to be used with the managed executor");
+        String context;
+        if (this.context == null || this.context.isBlank()) {
+            context = "java:comp/DefaultContextService";
+        }
+        else {
+            context = "openejb/Resource/" + this.context;
         }
 
+        ContextServiceImpl contextService = findContextService(context);
+        if (contextService == null) {
+            contextService = ContextServiceImplFactory.newPropagateEverythingContextService();
+        }
+
+        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), contextService);
+    }
+
+    private ContextServiceImpl findContextService(String contextName) {
         try {
             final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            // happens at least in unittests
+            if (containerSystem == null) {
+                return null;
+            }
             final Context context = containerSystem.getJNDIContext();
-            final Object obj = context.lookup("openejb/Resource/" + this.context);
+            final Object obj = context.lookup(contextName);
             if (!(obj instanceof ContextServiceImpl)) {
                 throw new IllegalArgumentException("Resource with id " + context
                         + " is not a ContextService, but is " + obj.getClass().getName());
             }
             return (ContextServiceImpl) obj;
         } catch (final NamingException e) {
-            throw new IllegalArgumentException("Unknown context service " + context);
+            throw new IllegalArgumentException("Unknown context service " + contextName);
         }
     }
 
