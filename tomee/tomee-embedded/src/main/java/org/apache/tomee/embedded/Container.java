@@ -615,6 +615,9 @@ public class Container implements AutoCloseable {
                 connector.addUpgradeProtocol(new Http2Protocol());
             }
 
+            if ("true".equals(System.getProperty("tomee.embedded.tck.enable_tracing", "false"))) {
+                connector.setAllowTrace(true);
+            }
             tomcat.getService().addConnector(connector);
             tomcat.setConnector(connector);
         }
