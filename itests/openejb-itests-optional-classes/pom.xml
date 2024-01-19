@@ -20,52 +20,42 @@
 <!-- $Rev$ $Date$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
+    <artifactId>itests</artifactId>
     <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>itests</artifactId>
+  <groupId>org.apache.tomee.itests</groupId>
+  <artifactId>openejb-itests-optional-classes</artifactId>
+
   <packaging>pom</packaging>
-  <name>TomEE :: iTests</name>
+  <name>TomEE :: iTests :: Optional Classes</name>
+
+  <properties>
+    <tomee.build.name>${project.groupId}.itests.optional</tomee.build.name>
+  </properties>
 
   <modules>
-    <module>tomee-server-composer</module>
-    <module>tomee-server-version</module>
-    <module>microprofile-jwt-itests</module>
-    <module>failover</module>
-    <module>failover-ejb</module>
-    <module>legacy-client</module>
-    <module>legacy-server</module>
-    <module>openejb-itests-app</module>
-    <module>openejb-itests-beans</module>
-    <module>openejb-itests-client</module>
-    <module>openejb-itests-interceptor-beans</module>
-    <module>openejb-itests-servlets</module>
-    <module>openejb-itests-web</module>
-    <module>jaxrs</module>
-    <module>ejb</module>
-    <module>itest-common</module>
-    <module>itest-util</module>
-    <module>tomee-security-itests</module>
-    <module>tomee-microprofile-itests</module>
-    <module>openejb-itests-optional-classes</module>
+    <module>3rdpartydep</module>
+    <module>lib_with_optional_dep</module>
+    <module>app</module>
   </modules>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${version.plugin.javadoc}</version>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>jakartaee-api</artifactId>
+      <version>${version.jakartaee-api}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
 </project>
 
