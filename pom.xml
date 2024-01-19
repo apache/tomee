@@ -204,7 +204,7 @@
     <version.geronimo-mail_2.1_spec>1.0.0-M1</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>10.1.15</tomcat.version>
+    <tomcat.version>10.1.16</tomcat.version>
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
@@ -216,15 +216,15 @@
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.0</version.johnzon>
-    <version.myfaces>4.0.1</version.myfaces>
+    <version.myfaces>4.0.2-SNAPSHOT</version.myfaces>
     <version.openjpa>4.0.0-SNAPSHOT</version.openjpa>
-    <version.openwebbeans>4.0.0</version.openwebbeans>
+    <version.openwebbeans>4.0.2-SNAPSHOT</version.openwebbeans>
     <!-- org.eclipse -->
-    <version.eclipselink>3.0.3</version.eclipselink>
+    <version.eclipselink>3.0.4</version.eclipselink>
     <!-- org.glassfish -->
     <version.mojarra>4.0.1</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate.orm>6.3.1.Final</version.hibernate.orm>
+    <version.hibernate.orm>6.4.1.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
@@ -1455,6 +1455,10 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -1483,8 +1487,12 @@
         <version>${version.geronimo.components}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
@@ -1498,8 +1506,12 @@
         <version>${version.geronimo.components}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
@@ -1532,6 +1544,24 @@
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${version.openjpa}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -1780,6 +1810,14 @@
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -1793,8 +1831,8 @@
         <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1803,24 +1841,29 @@
         <artifactId>openwebbeans-ejb</artifactId>
         <version>${version.openwebbeans}</version>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
+
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
         <version>${version.openwebbeans}</version>
-          <exclusions>
+        <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-el_2.2_spec</artifactId>
+            <groupId>jakarta.el</groupId>
+            <artifactId>jakarta.el-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1833,12 +1876,30 @@
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-el22</artifactId>
         <version>${version.openwebbeans}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
@@ -1846,12 +1907,12 @@
         <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

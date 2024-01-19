@@ -76,23 +76,9 @@ public class MoviesHtmlUnitTest {
     }
 
     @Test
-    @Ignore("This test fails due to a change in OWB-4 to pass the TCK related to dotted EL names: " +
-        "https://github.com/apache/openwebbeans/commit/4e4962a69064585d146c71bb387a8395455e88b5" +
-        "Until this is fixed, we disable this test. Related stacktrace is added below.")
-    /*
-     jakarta.el.PropertyNotFoundException: The class 'org.apache.webbeans.el22.WrappedValueExpressionNode' does not have the property 'title'.
-	    at jakarta.el.BeanELResolver.getBeanProperty(BeanELResolver.java:626)
-	    at jakarta.el.BeanELResolver.getValue(BeanELResolver.java:338)
-	    at org.apache.jasper.el.JasperELResolver.getValue(JasperELResolver.java:129)
-	    at org.apache.el.parser.AstValue.getValue(AstValue.java:169)
-    	at org.apache.el.ValueExpressionImpl.getValue(ValueExpressionImpl.java:190)
-    	at org.apache.jasper.runtime.PageContextImpl.proprietaryEvaluate(PageContextImpl.java:701)
-    	at org.apache.jsp.WEB_002dINF.setup_jsp._jspx_meth_c_005fout_005f0(setup_jsp.java:247)
-    	at org.apache.jsp.WEB_002dINF.setup_jsp._jspx_meth_c_005fforEach_005f0(setup_jsp.java:198)
-    	at org.apache.jsp.WEB_002dINF.setup_jsp._jspService(setup_jsp.java:150)
-     */
     public void testShouldMakeSureWebappIsWorking() throws Exception {
         WebClient webClient = new WebClient();
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         HtmlPage page = webClient.getPage("http://localhost:9999/moviefun/setup");
 
         assertMoviesPresent(page);
@@ -105,11 +91,11 @@ public class MoviesHtmlUnitTest {
         }
 
         assertMoviesPresent(page);
-        webClient.closeAllWindows();
+        webClient.close();
     }
 
     private void assertMoviesPresent(HtmlPage page) {
-        String pageAsText = page.asText();
+        String pageAsText = page.asNormalizedText();
         assertTrue(pageAsText.contains("Wedding Crashers"));
         assertTrue(pageAsText.contains("Starsky & Hutch"));
         assertTrue(pageAsText.contains("Shanghai Knights"));

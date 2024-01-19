@@ -56,8 +56,6 @@ import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.ExcludeList;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.FacesManagedBean;
 import org.apache.openejb.jee.Filter;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.HandlerChains;
@@ -288,15 +286,6 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static final String[] JSF_CLASSES = new String[]{
         "jakarta.faces.application.ResourceDependencies",
         "jakarta.faces.application.ResourceDependency",
-        "jakarta.faces.bean.ApplicationScoped",
-        "jakarta.faces.bean.CustomScoped",
-        "jakarta.faces.bean.ManagedBean",
-        "jakarta.faces.bean.ManagedProperty",
-        "jakarta.faces.bean.NoneScoped",
-        "jakarta.faces.bean.ReferencedBean",
-        "jakarta.faces.bean.RequestScoped",
-        "jakarta.faces.bean.SessionScoped",
-        "jakarta.faces.bean.ViewScoped",
         "jakarta.faces.component.FacesComponent",
         "jakarta.faces.component.UIComponent",
         "jakarta.faces.convert.Converter",
@@ -2427,25 +2416,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            }
-
-            /*
-             * JSF ManagedBean classes are scanned
-             */
-            for (final FacesConfig facesConfig : webModule.getFacesConfigs()) {
-                for (final FacesManagedBean bean : facesConfig.getManagedBean()) {
-                    final String managedBeanClass = realClassName(bean.getManagedBeanClass().trim());
-                    if (managedBeanClass != null) {
-                        try {
-                            final Class clazz = classLoader.loadClass(managedBeanClass);
-                            classes.add(clazz);
-                        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-                            logger.debug("Could not load Faces managed bean class {1} for web module {2} / {3}",
-                                         managedBeanClass, webModule.getJarLocation(), webModule.getFile().getName());
-                            logger.error("Unable to load JSF managed bean class: " + managedBeanClass);
                         }
                     }
                 }
