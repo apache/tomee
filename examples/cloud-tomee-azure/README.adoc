@@ -91,7 +91,7 @@ The azure-webapp is explicitly invoked because it relies on you Azure account. T
 
 The end URL will look like:
 
-`https://<your-sub-domain>.azurewebsites.net/cloud-tomee-azure-10.0.0-SNAPSHOT/echo/send-this-back`
+`https://<your-sub-domain>.azurewebsites.net/cloud-tomee-azure-10.0.0-M1-SNAPSHOT/echo/send-this-back`
 
 ==== Notes
 
@@ -103,7 +103,7 @@ To deploy the echo app locally you can execute:
 
 `mvn tomee:run`
 
-You can test the app by calling `http://localhost/cloud-tomee-azure-10.0.0-SNAPSHOT/echo/send-this-back`
+You can test the app by calling `http://localhost/cloud-tomee-azure-10.0.0-M1-SNAPSHOT/echo/send-this-back`
 
 It will return send-this-back.
 

@@ -24,7 +24,7 @@
   <artifactId>hibernate-deps</artifactId>
 
   <properties>
-    <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
+    <version.hibernate.orm>6.1.7.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
   </properties>
   <dependencies>

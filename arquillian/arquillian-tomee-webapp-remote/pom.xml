@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>arquillian-tomee-webapp-remote</artifactId>
@@ -84,7 +84,7 @@
       <version>${tomcat.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <groupId>org.eclipse.jdt</groupId>
           <artifactId>ecj</artifactId>
         </exclusion>
       </exclusions>
@@ -128,7 +128,6 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

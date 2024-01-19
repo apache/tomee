@@ -21,6 +21,8 @@ import org.apache.openejb.spi.ContainerSystem;
 
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import javax.naming.NamingException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.ThreadFactory;
 
 final class ThreadFactories {
@@ -52,6 +54,11 @@ final class ThreadFactories {
         @Override
         public Thread newThread(final Runnable r) {
             return delegate.newThread(r);
+        }
+
+        @Override
+        public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+            return null;
         }
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf;
 
+import jakarta.ejb.Singleton;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
@@ -45,7 +46,7 @@ import static org.junit.Assert.assertThat;
 public class SoapBinding12ClientTest {
     @Module
     public WebApp module() {
-        return new WebApp().contextRoot("/test").addServlet("ws", MockWebService12.class.getName(), "MyWebservice12");
+        return new WebApp().contextRoot("/test").addServlet("ws", MyWebservice12.class.getName(), "MyWebservice12");
     }
 
     @WebServiceRef(wsdlLocation = "http://127.0.0.1:4204/test/MyWebservice12?wsdl")
@@ -63,96 +64,13 @@ public class SoapBinding12ClientTest {
         Output test(Input input);
     }
 
-    /**
-     * We mock the following WebService (to avoid colocalized issue/luck):
-     *
-     * @WebService
-     * @Singleton
-     * @BindingType(SOAPBinding.SOAP12HTTP_BINDING) public static class MyWebservice12 implements MyWsApi {
-     * @Override public Output test(final Input in) {
-     * return new Output(in.getAttribute());
-     * }
-     * }
-     */
-    public static class MockWebService12 extends HttpServlet {
-        @Override
-        protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            if ("GET".equals(req.getMethod())) {
-                resp.getWriter().write("<?xml version='1.0' encoding='UTF-8'?>" +
-                    "<wsdl:definitions xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" xmlns:tns=\"http://cxf.server.openejb.apache.org/\" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:ns1=\"http://schemas.xmlsoap.org/soap/http\" name=\"MyWebservice12Service\" targetNamespace=\"http://cxf.server.openejb.apache.org/\">\n" +
-                    "  <wsdl:types>\n" +
-                    "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:tns=\"http://cxf.server.openejb.apache.org/\" elementFormDefault=\"unqualified\" targetNamespace=\"http://cxf.server.openejb.apache.org/\" version=\"1.0\">\n" +
-                    "<xs:element name=\"input\" type=\"tns:input\"/>\n" +
-                    "<xs:element name=\"output\" type=\"tns:output\"/>\n" +
-                    "<xs:element name=\"test\" type=\"tns:test\"/>\n" +
-                    "<xs:element name=\"testResponse\" type=\"tns:testResponse\"/>\n" +
-                    "<xs:complexType name=\"test\">\n" +
-                    "<xs:sequence>\n" +
-                    "<xs:element minOccurs=\"0\" name=\"arg0\" type=\"tns:input\"/>\n" +
-                    "</xs:sequence>\n" +
-                    "</xs:complexType>\n" +
-                    "<xs:complexType name=\"input\">\n" +
-                    "<xs:sequence>\n" +
-                    "<xs:element minOccurs=\"0\" name=\"attribute\" type=\"xs:string\"/>\n" +
-                    "</xs:sequence>\n" +
-                    "</xs:complexType>\n" +
-                    "<xs:complexType name=\"testResponse\">\n" +
-                    "<xs:sequence>\n" +
-                    "<xs:element minOccurs=\"0\" name=\"return\" type=\"tns:output\"/>\n" +
-                    "</xs:sequence>\n" +
-                    "</xs:complexType>\n" +
-                    "<xs:complexType name=\"output\">\n" +
-                    "<xs:sequence>\n" +
-                    "<xs:element minOccurs=\"0\" name=\"attribute\" type=\"xs:string\"/>\n" +
-                    "</xs:sequence>\n" +
-                    "</xs:complexType>\n" +
-                    "</xs:schema>\n" +
-                    "  </wsdl:types>\n" +
-                    "  <wsdl:message name=\"testResponse\">\n" +
-                    "    <wsdl:part element=\"tns:testResponse\" name=\"parameters\">\n" +
-                    "    </wsdl:part>\n" +
-                    "  </wsdl:message>\n" +
-                    "  <wsdl:message name=\"test\">\n" +
-                    "    <wsdl:part element=\"tns:test\" name=\"parameters\">\n" +
-                    "    </wsdl:part>\n" +
-                    "  </wsdl:message>\n" +
-                    "  <wsdl:portType name=\"MyWsApi\">\n" +
-                    "    <wsdl:operation name=\"test\">\n" +
-                    "      <wsdl:input message=\"tns:test\" name=\"test\">\n" +
-                    "    </wsdl:input>\n" +
-                    "      <wsdl:output message=\"tns:testResponse\" name=\"testResponse\">\n" +
-                    "    </wsdl:output>\n" +
-                    "    </wsdl:operation>\n" +
-                    "  </wsdl:portType>\n" +
-                    "  <wsdl:binding name=\"MyWebservice12ServiceSoapBinding\" type=\"tns:MyWsApi\">\n" +
-                    "    <soap12:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>\n" +
-                    "    <wsdl:operation name=\"test\">\n" +
-                    "      <soap12:operation soapAction=\"\" style=\"document\"/>\n" +
-                    "      <wsdl:input name=\"test\">\n" +
-                    "        <soap12:body use=\"literal\"/>\n" +
-                    "      </wsdl:input>\n" +
-                    "      <wsdl:output name=\"testResponse\">\n" +
-                    "        <soap12:body use=\"literal\"/>\n" +
-                    "      </wsdl:output>\n" +
-                    "    </wsdl:operation>\n" +
-                    "  </wsdl:binding>\n" +
-                    "  <wsdl:service name=\"MyWebservice12Service\">\n" +
-                    "    <wsdl:port binding=\"tns:MyWebservice12ServiceSoapBinding\" name=\"MyWebservice12Port\">\n" +
-                    "      <soap:address location=\"http://127.0.0.1:4204/test/MyWebservice12\"/>\n" +
-                    "    </wsdl:port>\n" +
-                    "  </wsdl:service>\n" +
-                    "</wsdl:definitions>");
-            } else {
-                resp.getWriter().write("" +
-                    "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">" +
-                    "  <soap:Body>" +
-                    "    <ns2:testResponse xmlns:ns2=\"http://cxf.server.openejb.apache.org/\">" +
-                    "      <return><attribute>ok</attribute></return>" +
-                    "    </ns2:testResponse>" +
-                    "  </soap:Body>" +
-                    "</soap:Envelope>");
-            }
-            resp.setContentType("application/soap+xml");
+    @WebService
+    @Singleton
+    @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
+    public static class MyWebservice12 implements MyWsApi {
+
+        public Output test(final Input in) {
+            return new Output(in.getAttribute());
         }
     }
 
