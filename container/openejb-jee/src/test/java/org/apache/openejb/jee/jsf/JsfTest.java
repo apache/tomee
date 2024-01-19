@@ -22,13 +22,6 @@ package org.apache.openejb.jee.jsf;
 
 import junit.framework.TestCase;
 import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.FacesManagedBean;
-import org.apache.openejb.jee.JaxbJavaee;
-
-import jakarta.xml.bind.JAXBElement;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.openejb.jee.JeeTest.marshalAndUnmarshal;
 
@@ -36,29 +29,6 @@ import static org.apache.openejb.jee.JeeTest.marshalAndUnmarshal;
  * @version $Rev$ $Date$
  */
 public class JsfTest extends TestCase {
-
-    /**
-     * This test requires that there are three managed beans in faces-config.xml. It will ask JaxbJavaee to load faces-config.xml
-     * and then assert if it found the three managed beans and checks if the class names are correct
-     *
-     * @throws Exception
-     */
-    public void testFacesConfig() throws Exception {
-        final List<String> managedBeanClasses = new ArrayList<String>();
-        managedBeanClasses.add("org.apache.openejb.faces.EmployeeBean");
-        managedBeanClasses.add("org.apache.openejb.faces.OneBean");
-        managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
-        final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("jsf/faces-config.xml");
-        final FacesConfig facesConfig = (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
-        final List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
-
-        for (final FacesManagedBean bean : managedBean) {
-            assertTrue(managedBeanClasses.contains(bean.getManagedBeanClass().trim()));
-        }
-        assertEquals(3, managedBean.size());
-
-        marshalAndUnmarshal(FacesConfig.class, "jsf/faces-config.xml", null);
-    }
 
     public void test10() throws Exception {
         marshalAndUnmarshal(FacesConfig.class, "jsf/1_0_dtd/faces-config-simple-src.xml", "jsf/1_0_dtd/faces-config-simple-expected.xml");

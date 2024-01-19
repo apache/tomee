@@ -31,6 +31,7 @@
     <bval-tck.version>3.0.1</bval-tck.version>
     <jsonb-tck.version>3.0.0</jsonb-tck.version>
 
+    <jsonp-tck.version>2.1.1</jsonp-tck.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
   </properties>
 
@@ -42,6 +43,8 @@
     <module>bval-embedded</module>
     <module>bval-tomee</module>
     <module>bval-signature-test</module>
+    <module>jsonp-standalone</module>
+    <module>jsonp-signature-test</module>
     <module>jsonb-standalone</module>
     <module>jsonb-signature-test</module>
     <module>microprofile-tck</module>
