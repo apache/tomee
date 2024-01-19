@@ -40,8 +40,6 @@ public class WebAppInjectionResolver extends InjectionResolver {
 
     private final boolean cacheResolutionFailure = Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cache.cdi-type-resolution-failure", "false"));
 
-    private final boolean cacheResolutionFailure = Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.cache.cdi-type-resolution-failure", "false"));
-
     private boolean startup;
 
     private final Set<BeanCacheKey> resolutionFailures = ConcurrentHashMap.newKeySet();
