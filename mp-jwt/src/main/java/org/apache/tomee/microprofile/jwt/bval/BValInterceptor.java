@@ -110,7 +110,7 @@ public class BValInterceptor implements Serializable {
     private transient volatile ConcurrentMap<Class<?>, Class<?>> classMapping;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    @AroundConstruct // TODO: see previous one
+    @AroundConstruct
     public Object construct(final InvocationContext context) throws Exception {
 
         final Constructor ctor = context.getConstructor();

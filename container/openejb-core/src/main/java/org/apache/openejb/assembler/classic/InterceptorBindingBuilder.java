@@ -80,6 +80,7 @@ public class InterceptorBindingBuilder {
             toMethods(clazz, info.aroundInvoke, interceptor.getAroundInvoke());
             toMethods(clazz, info.postActivate, interceptor.getPostActivate());
             toMethods(clazz, info.prePassivate, interceptor.getPrePassivate());
+            toMethods(clazz, info.aroundConstruct, interceptor.getAroundConstruct());
             toMethods(clazz, info.postConstruct, interceptor.getPostConstruct());
             toMethods(clazz, info.preDestroy, interceptor.getPreDestroy());
             toMethods(clazz, info.afterBegin, interceptor.getAfterBegin());
@@ -272,6 +273,7 @@ public class InterceptorBindingBuilder {
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
      *
+     * - @AroundConstruct <any-scope> void <method-name>(InvocationContext)
      * - @PostConstruct <any-scope> void <method-name>(InvocationContext)
      * - @PreDestroy <any-scope> void <method-name>(InvocationContext)
      * - @PrePassivate <any-scope> void <method-name>(InvocationContext)
@@ -329,6 +331,7 @@ public class InterceptorBindingBuilder {
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
      *
+     * - @AroundConstruct <any-scope> void <method-name>()
      * - @PostConstruct <any-scope> void <method-name>()
      * - @PreDestroy <any-scope> void <method-name>()
      * - @PrePassivate <any-scope> void <method-name>()

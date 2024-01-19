@@ -220,6 +220,7 @@ public class GenerateBoms {
                     .or(startsWith("jakarta.").and(endsWith("-api")))
                     .or(startsWith("microprofile-").and(endsWith("-api")))
                     .or(startsWith("microprofile-").and(endsWith("-api-shade")))
+                    .or(startsWith("websocket-").and(endsWith("-api"))) // websocket-client-api.jar in Tomcat 10.1+
                     .or(startsWith("tomcat-").and(endsWith("-api")));
 
             final List<Artifact> apiArtifacts = distribution.getArtifacts().stream()
@@ -431,7 +432,7 @@ public class GenerateBoms {
          * exist in Maven Central.  For Tomcat, all the `catalina-foo.jar` files tend
          * to map to `tomcat-foo-1.2.3.jar` files in Maven Central.
          *
-         * There is another known limitation that the Eclipse Compiler jar (ecj-4.12.jar)
+         * There is another known limitation that the Eclipse Compiler jar (ecj-4.27.jar)
          * found in the Tomcat distribution is not available in Maven Central.  The Tomcat
          * build will download it directly from the Eclipse website.  Very strangely, the
          * Eclipse Compiler team does publish jars to Maven Central, but only for version 3.x
@@ -487,6 +488,9 @@ public class GenerateBoms {
             if (jar.getName().equals("websocket-api.jar")) {
                 return new Artifact("org.apache.tomcat", "tomcat-websocket-api", "${tomcat.version}", null);
             }
+            if (jar.getName().equals("websocket-client-api.jar")) {
+                return new Artifact("org.apache.tomcat", "tomcat-websocket-client-api", "${tomcat.version}", null);
+            }
             if (jar.getName().equals("tomcat-coyote.jar")) {
                 return new Artifact("org.apache.tomcat", "tomcat-coyote", "${tomcat.version}", null);
             }
@@ -516,7 +520,7 @@ public class GenerateBoms {
             }
 
             if (jar.getName().startsWith("ecj-")) {
-                return new Artifact("org.eclipse.jdt", "ecj", "3.22.0", null);
+                return new Artifact("org.eclipse.jdt", "ecj", "3.33.0", null);
             }
 
             if (jar.getName().equals("openejb-javaagent.jar")) {
@@ -528,7 +532,7 @@ public class GenerateBoms {
                     jar.getName().startsWith("mp-common-") ||
                     jar.getName().startsWith("mp-jwt-") ||
                     jar.getName().startsWith("mbean-annotation-")) {
-                final String artifact = jar.getName().replaceAll("-9.0.*", "");
+                final String artifact = jar.getName().replaceAll("-\\d\\d?.0.*", "");
                 return new Artifact("org.apache.tomee", artifact, "${project.version}", null);
             }
 

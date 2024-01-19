@@ -20,8 +20,8 @@ import org.superbiz.moviefun.util.JsfUtil;
 import org.superbiz.moviefun.util.PaginationHelper;
 
 import jakarta.ejb.EJB;
-import jakarta.faces.bean.ManagedBean;
-import jakarta.faces.bean.SessionScoped;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
@@ -32,7 +32,7 @@ import jakarta.faces.model.SelectItem;
 import java.io.Serializable;
 import java.util.ResourceBundle;
 
-@ManagedBean(name = "movieController")
+@Named("movieController")
 @SessionScoped
 public class MovieController implements Serializable {
 

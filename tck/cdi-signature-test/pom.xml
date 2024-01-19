@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -35,7 +35,7 @@
     </dependency>
     <dependency>
       <groupId>jakarta.enterprise</groupId>
-      <artifactId>cdi-tck-impl</artifactId>
+      <artifactId>cdi-tck-core-impl</artifactId>
       <version>${cdi-tck.version}</version>
       <exclusions>
         <exclusion>
@@ -74,56 +74,61 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
+  <profiles>
+    <profile>
+      <id>tck-cdi</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <id>copy-tck-cdi-api-signature-file</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>jakarta.enterprise</groupId>
+                      <artifactId>cdi-tck-core-impl</artifactId>
+                      <classifier>sigtest-jdk11</classifier>
+                      <type>sig</type>
+                      <version>${cdi-tck.version}</version>
+                      <overWrite>true</overWrite>
+                    </artifactItem>
+                  </artifactItems>
+                  <outputDirectory>${project.build.directory}/api-signature</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <id>copy-tck-cdi-api-signature-file</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
+          <plugin>
+            <groupId>org.netbeans.tools</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sigtest</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
             <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>jakarta.enterprise</groupId>
-                  <artifactId>cdi-tck-impl</artifactId>
-                  <version>${cdi-tck.version}</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                </artifactItem>
-              </artifactItems>
-              <!-- We just need the signature file and nothing else -->
-              <includes>**/*.sig</includes>
-              <outputDirectory>${project.build.directory}/api-signature</outputDirectory>
+              <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-${cdi-tck.version}-sigtest-jdk11.sig
+              </sigfile>
+              <packages>jakarta.decorator,jakarta.enterprise,jakarta.interceptor</packages>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
+          </plugin>
 
-      <plugin>
-        <groupId>org.netbeans.tools</groupId>
-        <artifactId>sigtest-maven-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <packages>jakarta.inject,jakarta.decorator</packages>
-          <sigfile>${project.build.directory}/api-signature/cdi-api-jdk8.sig</sigfile>
-        </configuration>
-      </plugin>
-
-    </plugins>
-  </build>
-
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

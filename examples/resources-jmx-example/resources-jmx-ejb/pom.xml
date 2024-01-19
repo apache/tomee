@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>resources-jmx</artifactId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>resources-jmx-ejb</artifactId>
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.7.0.Alpha10</version>
+      <version>1.7.0.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -18,7 +18,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c' %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<c:set var="language" value="${pageContext.request.locale}"/>
+<c:set var="language" value="en"/>
+<%--<c:set var="language" value="${pageContext.request.locale}"/>--%> <!-- TODO: This does not work in EE10 / OWB4 anymore -->
 <fmt:setLocale value="${language}"/>
 
 <!DOCTYPE html>

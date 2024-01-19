@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -353,7 +353,7 @@
               <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-asm9-shaded</artifactId>
-                <version>${xbeanVersion}</version>
+                <version>${version.xbean}</version>
               </dependency>
               <dependency>
                 <groupId>org.codehaus.groovy</groupId>
@@ -383,7 +383,7 @@
                   <properties>
                     <tomee.workdir>${webprofile.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                     <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
@@ -401,7 +401,7 @@
                   <properties>
                     <tomee.workdir>${plus.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plus-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                     <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
@@ -419,7 +419,7 @@
                   <properties>
                     <tomee.workdir>${plume.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plume-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                     <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
@@ -437,7 +437,7 @@
                   <properties>
                     <tomee.workdir>${microprofile.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-microprofile-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                     <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
@@ -516,31 +516,6 @@
           </plugin>
 
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <target>
-                    <tstamp>
-                      <format property="today" pattern="MMM d yyyy" locale="en" timezone="UTC" />
-                      <format property="tstamp" pattern="HH:mm:ss" locale="en" timezone="UTC" />
-                    </tstamp>
-                    <copy file="src/template/patch/java/org/apache/catalina/util/ServerInfo.properties" tofile="target/classes/ServerInfo.properties" />
-                    <replace file="target/classes/ServerInfo.properties" token="@TOMCAT-VERSION-REPLACED-BY-MAVEN@" value="${tomcat.version}" />
-                    <replace file="target/classes/ServerInfo.properties" token="@TOMEE-VERSION-REPLACED-BY-MAVEN@" value="${tomee.version}" />
-                    <replace file="target/classes/ServerInfo.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${today} ${tstamp} UTC" />
-                  </target>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
             <executions>
@@ -604,11 +579,13 @@
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
               <createTarGz>true</createTarGz>
-              <replace>
-                <resources>
-                  <ServerInfo.properties>${project.build.outputDirectory}/ServerInfo.properties</ServerInfo.properties>
-                </resources>
-              </replace>
+              <skips>
+                <jars>
+                  <bcpkix-jdk15to18-1.76.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.76</bcpkix-jdk15to18-1.76.jar>
+                  <bcprov-jdk15to18-1.76.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.76</bcprov-jdk15to18-1.76.jar>
+                  <bcutil-jdk15to18-1.76.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.76</bcutil-jdk15to18-1.76.jar>
+                </jars>
+              </skips>
             </configuration>
             <executions>
               <execution>
@@ -739,7 +716,7 @@
               <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-asm9-shaded</artifactId>
-                <version>${xbeanVersion}</version>
+                <version>${version.xbean}</version>
               </dependency>
               <dependency>
                 <groupId>org.codehaus.groovy</groupId>
@@ -769,7 +746,7 @@
                   <properties>
                     <tomee.workdir>${plume.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plume-webapp</tomee.webapp>
-                    <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <remove.datestamp>${tomee.version}, ${project.version}, ${version.cxf}</remove.datestamp>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -835,11 +812,13 @@
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
               <createTarGz>true</createTarGz>
-              <replace>
-                <resources>
-                  <ServerInfo.properties>${project.build.sourceDirectory}/ServerInfo.properties</ServerInfo.properties>
-                </resources>
-              </replace>
+              <skips>
+                <jars>
+                  <bcpkix-jdk15to18-1.76.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.76</bcpkix-jdk15to18-1.76.jar>
+                  <bcprov-jdk15to18-1.76.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.76</bcprov-jdk15to18-1.76.jar>
+                  <bcutil-jdk15to18-1.76.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.76</bcutil-jdk15to18-1.76.jar>
+                </jars>
+              </skips>
             </configuration>
             <executions>
               <execution>

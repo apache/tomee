@@ -20,7 +20,7 @@
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -30,7 +30,6 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.util.log4j2</tomee.build.name>
-    <log4j2.version>2.3</log4j2.version>
     <log4j.groupId>org.apache.logging.log4j</log4j.groupId>
   </properties>
 
@@ -38,13 +37,13 @@
     <dependency>
       <groupId>${log4j.groupId}</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>${log4j2.version}</version>
+      <version>${version.log4j2}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${log4j.groupId}</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>${log4j2.version}</version>
+      <version>${version.log4j2}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

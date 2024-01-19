@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>${myfaces.version}</version>
+      <version>${version.myfaces}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -82,8 +82,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
-      <version>${openwebbeans.version}</version>
-      <classifier>jakarta</classifier>
+      <version>${version.openwebbeans}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -91,19 +90,7 @@
           <artifactId>openejb-core</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.apache.tomcat</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.cdi.tck</groupId>
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
@@ -122,7 +109,46 @@
     </dependency>
     <dependency>
       <groupId>jakarta.enterprise</groupId>
-      <artifactId>cdi-tck-impl</artifactId>
+      <artifactId>cdi-tck-core-impl</artifactId>
+      <version>${cdi-tck.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.xml.soap</groupId>
+          <artifactId>jakarta.xml.soap-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>jakarta.inject</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.faces</groupId>
+          <artifactId>jsf-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.servlet</groupId>
+          <artifactId>jakarta.servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.servlet.jsp</groupId>
+          <artifactId>jsp-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>cdi-tck-web-impl</artifactId>
       <version>${cdi-tck.version}</version>
       <exclusions>
         <exclusion>
@@ -164,13 +190,13 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>${geronimo-jcache_1.0_spec.version}</version>
+      <version>${version.geronimo-jcache_1.0_spec}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-jcs-jcache</artifactId>
-      <version>${jcs.version}</version>
+      <version>${version.commons-jcs-cache}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -217,56 +243,68 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
-      </testResource>
-    </testResources>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.3.2</version>
-        <executions>
-          <execution>
-            <id>dump-porting</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
+  <profiles>
+    <profile>
+      <id>tck-cdi</id>
+      <build>
+        <testResources>
+          <testResource>
+            <directory>src/test/resources</directory>
+            <filtering>true</filtering>
+          </testResource>
+        </testResources>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.3.2</version>
+            <executions>
+              <execution>
+                <id>dump-porting</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.apache.openejb.tck.cdi.tomee.EnrichmentDumper</mainClass>
+                  <classpathScope>test</classpathScope>
+                  <arguments>
+                    <argument>${project.build.directory}/dependency/lib/</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${surefire.version}</version>
             <configuration>
-              <mainClass>org.apache.openejb.tck.cdi.tomee.EnrichmentDumper</mainClass>
-              <classpathScope>test</classpathScope>
-              <arguments>
-                <argument>${project.build.directory}/dependency/lib/</argument>
-              </arguments>
+              <reuseForks>false</reuseForks>
+              <forkCount>1</forkCount>
+              <useFile>false</useFile>
+              <disableXmlReport>false</disableXmlReport>
+              <excludedGroups>javaee-full,se</excludedGroups>
+              <dependenciesToScan>
+                <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
+                <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
+              </dependenciesToScan>
+              <!-- easier for debugging
+              <suiteXmlFiles>
+                <suiteXmlFile>src/test/resources/${suite.name}.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              -->
+              <properties>
+                <property>
+                  <name>usedefaultlisteners</name>
+                  <value>false</value>
+                </property>
+              </properties>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
-        <configuration>
-          <reuseForks>false</reuseForks>
-          <forkCount>1</forkCount>
-          <useFile>false</useFile>
-          <disableXmlReport>false</disableXmlReport>
-          <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/${suite.name}.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <properties>
-            <property>
-              <name>usedefaultlisteners</name>
-              <value>false</value>
-            </property>
-          </properties>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

@@ -20,7 +20,7 @@
 
   <test name="microprofile-rest-client TCK">
     <classes>
-      <class name="org.eclipse.microprofile.rest.client.tck.ClientHeaderParamTest"></class>
+      <class name="org.eclipse.microprofile.rest.client.tck.jsonb.InvokeWithJsonBProviderTest"></class>
     </classes>
   </test>
 

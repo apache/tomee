@@ -110,11 +110,6 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     }
 
     @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
     public void destroy(final T instance, final CreationalContext<T> context) {
         logger.finest("Destroying CDI Bean for type " + types.iterator().next());
     }

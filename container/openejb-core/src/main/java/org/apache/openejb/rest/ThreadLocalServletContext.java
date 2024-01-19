@@ -91,28 +91,8 @@ public class ThreadLocalServletContext extends AbstractRestThreadLocalProxy<Serv
     }
 
     @Override
-    public Servlet getServlet(final String name) throws ServletException {
-        return get().getServlet(name);
-    }
-
-    @Override
-    public Enumeration<Servlet> getServlets() {
-        return get().getServlets();
-    }
-
-    @Override
-    public Enumeration<String> getServletNames() {
-        return get().getServletNames();
-    }
-
-    @Override
     public void log(final String msg) {
         get().log(msg);
-    }
-
-    @Override
-    public void log(final Exception exception, final String msg) {
-        get().log(exception, msg);
     }
 
     @Override
@@ -169,8 +149,6 @@ public class ThreadLocalServletContext extends AbstractRestThreadLocalProxy<Serv
     public String getServletContextName() {
         return get().getServletContextName();
     }
-
-
 
     @Override
     public ServletRegistration.Dynamic addServlet(final String servletName, final String className) throws IllegalArgumentException, IllegalStateException {

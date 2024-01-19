@@ -17,6 +17,31 @@
 
 package org.apache.openejb;
 
+import jakarta.ejb.ApplicationException;
+import jakarta.ejb.EJBHome;
+import jakarta.ejb.EJBLocalHome;
+import jakarta.ejb.EJBLocalObject;
+import jakarta.ejb.EJBObject;
+import jakarta.ejb.EntityBean;
+import jakarta.ejb.Handle;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.MessageDrivenBean;
+import jakarta.ejb.SessionBean;
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
+import jakarta.enterprise.context.ConversationScoped;
+import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.AnnotatedMethod;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.Decorator;
+import jakarta.enterprise.inject.spi.InterceptionType;
+import jakarta.enterprise.inject.spi.Interceptor;
+import jakarta.interceptor.InvocationContext;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SynchronizationType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
@@ -29,6 +54,7 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.interceptor.ReflectionInvocationContext;
 import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -58,34 +84,11 @@ import org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory;
 import org.apache.webbeans.util.AnnotationUtil;
 import org.apache.xbean.recipe.ConstructionException;
 
-import jakarta.ejb.ApplicationException;
-import jakarta.ejb.EJBHome;
-import jakarta.ejb.EJBLocalHome;
-import jakarta.ejb.EJBLocalObject;
-import jakarta.ejb.EJBObject;
-import jakarta.ejb.EntityBean;
-import jakarta.ejb.Handle;
-import jakarta.ejb.Lock;
-import jakarta.ejb.LockType;
-import jakarta.ejb.MessageDrivenBean;
-import jakarta.ejb.SessionBean;
-import jakarta.ejb.TimedObject;
-import jakarta.ejb.Timer;
-import jakarta.enterprise.context.ConversationScoped;
-import jakarta.enterprise.context.spi.Contextual;
-import jakarta.enterprise.context.spi.CreationalContext;
-import jakarta.enterprise.inject.spi.AnnotatedMethod;
-import jakarta.enterprise.inject.spi.AnnotatedType;
-import jakarta.enterprise.inject.spi.Bean;
-import jakarta.enterprise.inject.spi.Decorator;
-import jakarta.enterprise.inject.spi.InterceptionType;
-import jakarta.enterprise.inject.spi.Interceptor;
 import javax.naming.Context;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.SynchronizationType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -102,6 +105,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Collections.emptyList;
 
@@ -143,8 +147,21 @@ public class BeanContext extends DeploymentContext {
             return;
         }
 
+        final Collection<Interceptor<?>> aroundConstructInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "aroundConstructInterceptors"));
         final Collection<Interceptor<?>> postConstructInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "postConstructInterceptors"));
         final Collection<Interceptor<?>> preDestroyInterceptors = Collection.class.cast(Reflections.get(injectionTarget, "preDestroyInterceptors"));
+
+        if (aroundConstructInterceptors != null) {
+            for (final Interceptor<?> pc : aroundConstructInterceptors) {
+                if (isEjbInterceptor(pc)) {
+                    continue;
+                }
+
+                final InterceptorData interceptorData = createInterceptorData(pc);
+                instanceScopedInterceptors.add(interceptorData);
+                cdiInterceptors.add(interceptorData);
+            }
+        }
         if (postConstructInterceptors != null) {
             for (final Interceptor<?> pc : postConstructInterceptors) {
                 if (isEjbInterceptor(pc)) {
@@ -1584,41 +1601,6 @@ public class BeanContext extends DeploymentContext {
                 }
             }
 
-            final Object rootInstance;
-            if (cdiEjbBean != null && !dynamicallyImplemented && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
-                rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget()).createNewPojo(creationalContext);
-            } else { // not a cdi bean
-                rootInstance = getManagedClass().newInstance();
-            }
-
-            // Create bean instance
-            Object beanInstance;
-
-            final InjectionProcessor injectionProcessor;
-            if (!dynamicallyImplemented) {
-                injectionProcessor = new InjectionProcessor(rootInstance, getInjections(), InjectionProcessor.unwrap(ctx));
-                beanInstance = injectionProcessor.createInstance();
-                inject(beanInstance, creationalContext);
-            } else {
-                // update target
-                final List<Injection> newInjections = new ArrayList<>();
-                for (final Injection injection : getInjections()) {
-                    if (beanClass.equals(injection.getTarget())) {
-                        final Injection updated = new Injection(injection.getJndiName(), injection.getName(), proxyClass);
-                        newInjections.add(updated);
-                    } else {
-                        newInjections.add(injection);
-                    }
-                }
-                injections.clear();
-                injections.addAll(newInjections);
-
-                injectionProcessor = new InjectionProcessor(rootInstance, injections, InjectionProcessor.unwrap(ctx));
-                final InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
-                beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
-                inject(handler, creationalContext);
-            }
-
             // Create interceptors
             final Map<String, Object> interceptorInstances = new LinkedHashMap<>();
 
@@ -1661,19 +1643,19 @@ public class BeanContext extends DeploymentContext {
                             }
                         }
                         CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
-                        Object oldDelegate = cc.putDelegate(beanInstance);
+                        // Object oldDelegate = cc.putDelegate(beanInstance);
                         Bean<?> oldBean = cc.putBean(cdiEjbBean);
                         Contextual<?> oldContextual = cc.putContextual(interceptorData.getCdiInterceptorBean() != null
-                                ? interceptorData.getCdiInterceptorBean()
-                                : interceptorConstructor); // otherwise BeanMetaData is broken
+                                                                       ? interceptorData.getCdiInterceptorBean()
+                                                                       : interceptorConstructor); // otherwise BeanMetaData is broken
 
                         try {
                             iInstance = interceptorConstructor.create(creationalContext);
-                        }
-                        finally {
+
+                        } finally {
                             cc.putBean(oldBean);
                             cc.putContextual(oldContextual);
-                            cc.putDelegate(oldDelegate);
+                            // cc.putDelegate(oldDelegate);
                         }
 
                     }
@@ -1697,6 +1679,85 @@ public class BeanContext extends DeploymentContext {
                 } catch (final ConstructionException e) {
                     throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
                 }
+            }
+
+            final Object rootInstance;
+            if (cdiEjbBean != null && !dynamicallyImplemented && CdiEjbBean.EjbInjectionTargetImpl.class.isInstance(cdiEjbBean.getInjectionTarget())) {
+                rootInstance = CdiEjbBean.EjbInjectionTargetImpl.class.cast(cdiEjbBean.getInjectionTarget())
+                                                                      .createNewPojo(creationalContext);
+
+            } else if (dynamicallyImplemented) { // todo why this needs to be separated from else?
+                rootInstance = getManagedClass().newInstance();
+
+            } else { // not a cdi bean
+                final AtomicReference<Object> rootInstanceRef = new AtomicReference<>();
+                final InterceptorStack aroundConstruct = new InterceptorStack(null, null,
+                                                                              getManagedClass().getDeclaredConstructor(),
+                                                                              Operation.AROUND_CONSTRUCT, callbackInterceptors, interceptorInstances) {
+                    @Override
+                    public InvocationContext createInvocationContext(final Object... parameters) {
+                        return new ReflectionInvocationContext(operation, interceptors, beanInstance, targetMethod, constructor, parameters) {
+
+                            /*
+                            This is a copy of the default implementation in ReflectionInvocationContext, but it
+                            captures the instance created because per spec proceed() mais not return it with @AroundConstruct
+                             */
+
+                            @Override
+                            public Object proceed() throws Exception {
+                                try {
+                                    final Invocation next = super.next();
+                                    final Object result = next.invoke();
+                                    if (next instanceof ConstructorInvocation) {
+                                        rootInstanceRef.set(result);
+                                    }
+                                    return result;
+                                } catch (final InvocationTargetException e) {
+                                    throw unwrapInvocationTargetException(e);
+                                }
+                            }
+
+                            @Override
+                            public Object getTarget() {
+                                return rootInstanceRef.get();
+                            }
+                        };
+                    }
+                };
+
+                // create the root instance
+                aroundConstruct.invoke();
+
+                // get the
+                rootInstance = rootInstanceRef.get();
+            }
+
+            // Create bean instance
+            Object beanInstance;
+
+            final InjectionProcessor injectionProcessor;
+            if (!dynamicallyImplemented) {
+                injectionProcessor = new InjectionProcessor(rootInstance, getInjections(), InjectionProcessor.unwrap(ctx));
+                beanInstance = injectionProcessor.createInstance();
+                inject(beanInstance, creationalContext);
+            } else {
+                // update target
+                final List<Injection> newInjections = new ArrayList<>();
+                for (final Injection injection : getInjections()) {
+                    if (beanClass.equals(injection.getTarget())) {
+                        final Injection updated = new Injection(injection.getJndiName(), injection.getName(), proxyClass);
+                        newInjections.add(updated);
+                    } else {
+                        newInjections.add(injection);
+                    }
+                }
+                injections.clear();
+                injections.addAll(newInjections);
+
+                injectionProcessor = new InjectionProcessor(rootInstance, injections, InjectionProcessor.unwrap(ctx));
+                final InvocationHandler handler = (InvocationHandler) injectionProcessor.createInstance();
+                beanInstance = DynamicProxyImplFactory.newProxy(this, handler);
+                inject(handler, creationalContext);
             }
 
             interceptorInstances.put(beanClass.getName(), beanInstance);

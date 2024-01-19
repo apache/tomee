@@ -111,7 +111,7 @@ repositories {
 
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.16.10'
-    compile 'org.apache.tomee:tomee-embedded:7.0.2-SNAPSHOT'
+    compile 'org.apache.tomee:tomee-embedded:10.0.0-M1-SNAPSHOT'
 }
 
 // customize exclusions depending your app

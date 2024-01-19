@@ -116,7 +116,7 @@ todos os qualificadores em seus testes.
 
 ----
  Running org.superbiz.cdi.stereotype.StereotypeTest
- Apache OpenEJB 7.0.0-SNAPSHOT    build: 20111030-07:54
+ Apache OpenEJB 10.0.0-M1-SNAPSHOT    build: 20111030-07:54
  http://tomee.apache.org/
  INFO - openejb.home = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
  INFO - openejb.base = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes

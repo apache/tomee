@@ -364,8 +364,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 .filter(Objects::nonNull)
                 .anyMatch(aClass -> aClass.getDeclaredMethods().length > 0);
 
-        // if (useDiscoveredProviders(appInfo, !hasExplicitlyDefinedApplication)) {
-        if (useDiscoveredProviders(appInfo)) {
+        if (useDiscoveredProviders(appInfo, !hasExplicitlyDefinedApplication)) {
+        // if (useDiscoveredProviders(appInfo)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
             additionalProviders.addAll(appProviders(jaxRsProviders, classLoader));
