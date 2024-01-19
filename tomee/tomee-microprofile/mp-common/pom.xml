@@ -20,7 +20,7 @@
   <parent>
     <artifactId>tomee-microprofile</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -149,10 +149,7 @@
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
       <exclusions>
-        <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
-        </exclusion>
+
       </exclusions>
     </dependency>
 
@@ -180,10 +177,7 @@
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
       <exclusions>
-        <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
-        </exclusion>
+
       </exclusions>
     </dependency>
 
@@ -221,6 +215,10 @@
       <artifactId>smallrye-fault-tolerance</artifactId>
       <exclusions>
         <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>*</groupId>
           <artifactId>microprofile-fault-tolerance-api</artifactId>
         </exclusion>
@@ -231,6 +229,14 @@
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-health</artifactId>
       <exclusions>
+        <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.json</groupId>
+          <artifactId>jakarta.json-api</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>*</groupId>
           <artifactId>microprofile-health-api</artifactId>
@@ -291,7 +297,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mp-jwt</artifactId>
-      <version>${project.version}</version>
+      <version>${tomee.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -301,14 +307,29 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cxf-rt-rs-mp-client-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
+      <version>${version.cxf}</version>
       <exclusions>
-        <!-- exclude in favor of cxf-shade -->
         <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>*</artifactId>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.json.bind</groupId>
+          <artifactId>jakarta.json.bind-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.json</groupId>
+          <artifactId>jakarta.json-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

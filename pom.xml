@@ -31,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -86,7 +86,7 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
     <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
-    <tag>tomee-project-9.0.0-M8</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
@@ -98,8 +98,8 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <version.tomee-patch-plugin>0.9</version.tomee-patch-plugin>
+    <version.jakartaee-api>10.0-M2</version.jakartaee-api>
+    <version.tomee-patch-plugin>0.10</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -127,46 +127,47 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- arquillian related -->
-    <version.arquillian>1.7.0.Alpha10</version.arquillian>
-    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <version.arquillian-protocol-servlet-jakarta>1.7.0.Alpha10</version.arquillian-protocol-servlet-jakarta>
+    <version.arquillian>1.7.1.Final</version.arquillian>
+    <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
+    <version.arquillian-protocol-servlet-jakarta>1.7.1.Final</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
     <version.quartz-openejb-shade>2.2.4</version.quartz-openejb-shade>
     <version.axiom>1.3.0</version.axiom>
-    <xbeanVersion>4.22</xbeanVersion>
+    <version.xbean>4.23</version.xbean>
     <version.groovy>2.4.12</version.groovy>
-    <version.ecj>4.6.1</version.ecj>
-    <jetty.version>11.0.8</jetty.version>
-    <ehcache.version>3.10.0</ehcache.version>
+    <!-- Starting from 3.34.0 it requires J17+ -->
+    <version.ecj>3.33.0</version.ecj>
+    <version.jetty>11.0.8</version.jetty>
+    <version.ehcache>3.10.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
-    <junit.jupiter.version>5.8.2</junit.jupiter.version>
+    <junit.jupiter.version>5.9.3</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
-    <aether.version>1.13.1</aether.version>
+    <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.2</version.xalan>
 
     <!-- Logging frameworks -->
-    <slf4j.version>1.7.36</slf4j.version>
-    <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.19.0</log4j2.version>
-    <commons-logging.version>1.2</commons-logging.version>
+    <version.slf4j>2.0.9</version.slf4j>
+    <version.log4j>1.2.17</version.log4j>
+    <version.log4j2>2.21.1</version.log4j2>
+    <version.commons-logging>1.2</version.commons-logging>
     <version.commons-logging-api>1.1</version.commons-logging-api>
 
     <!-- Apache Commons -->
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <version.commons-cli>1.5.0</version.commons-cli>
-    <commons-codec.version>1.15</commons-codec.version>
+    <version.commons-beanutils>1.9.4</version.commons-beanutils>
+    <version.commons-cli>1.6.0</version.commons-cli>
+    <version.commons-codec>1.16.0</version.commons-codec>
     <version.commons-collections>3.2.2</version.commons-collections>
-    <version.commons-dbcp2>2.9.0</version.commons-dbcp2>
+    <version.commons-dbcp2>2.11.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
-    <version.commons-fileupload>1.4</version.commons-fileupload>
-    <commons-io.version>2.11.0</commons-io.version>
-    <jcs.version>2.1</jcs.version>
-    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <version.commons-fileupload>1.5</version.commons-fileupload>
+    <version.commons-io>2.15.0</version.commons-io>
+    <version.commons-jcs-cache>2.1</version.commons-jcs-cache>
+    <version.commons-lang3>3.13.0</version.commons-lang3>
     <version.commons-net>3.8.0</version.commons-net>
-    <commons-pool.version>2.11.1</commons-pool.version>
+    <version.commons-pool>2.12.0</version.commons-pool>
 
     <!-- Java SE version -->
     <maven.compiler.source>11</maven.compiler.source>
@@ -175,7 +176,7 @@
 
     <!-- Micro Profile API -->
     <version.microprofile>5.0</version.microprofile>
-    <version.microprofile.config>3.0.2</version.microprofile.config>
+    <version.microprofile.config>3.0.3</version.microprofile.config>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.health>4.0.1</version.microprofile.health>
     <version.microprofile.jwt>2.0</version.microprofile.jwt>
@@ -188,54 +189,54 @@
 
     <!-- Micro Profile Impl. -->
     <version.microprofile.impl.config>3.0.0</version.microprofile.impl.config>
-    <version.microprofile.impl.fault-tolerance>6.0.0</version.microprofile.impl.fault-tolerance>
-    <version.microprofile.impl.health>4.0.0</version.microprofile.impl.health>
+    <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
+    <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>4.0.0</version.microprofile.impl.metrics>
-    <version.microprofile.impl.openapi>3.0.0</version.microprofile.impl.openapi>
-    <version.microprofile.impl.opentracing>3.0.0</version.microprofile.impl.opentracing>
+    <version.microprofile.impl.openapi>3.0.1</version.microprofile.impl.openapi>
+    <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
-    <version.jackson>2.14.1</version.jackson>
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <version.jackson>2.15.3</version.jackson>
+    <version.snakeyaml>2.2</version.snakeyaml>
 
     <!-- Jakarta EE API -->
     <!-- we currently rely on Mail API from Geronimo, this might change in the future -->
-    <geronimo-mail_2.1_spec.version>1.0.0-M1</geronimo-mail_2.1_spec.version>
+    <version.geronimo-mail_2.1_spec>1.0.0-M1</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>10.0.27</tomcat.version>
+    <tomcat.version>10.1.16</tomcat.version>
     <!-- com.sun -->
-    <saaj-impl.version>2.0.1</saaj-impl.version>
+    <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <org.apache.activemq.version>5.16.5</org.apache.activemq.version>
-    <batchee.version>1.0.2</batchee.version>
-    <version.bval>2.0.6</version.bval>
-    <cxf.version>3.5.5</cxf.version>
-    <version.geronimo.components>3.1.5</version.geronimo.components>
+    <version.activemq>5.18.3</version.activemq>
+    <version.batchee>2.0.0-SNAPSHOT</version.batchee>
+    <version.bval>3.0.0</version.bval>
+    <version.cxf>4.0.3</version.cxf>
+    <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
-    <version.johnzon>1.2.19</version.johnzon>
-    <myfaces.version>3.0.2</myfaces.version>
-    <version.openjpa>3.2.2</version.openjpa>
-    <openwebbeans.version>2.0.27</openwebbeans.version>
-    <wss4j.version>3.0.0</wss4j.version>
-    <santuario-xmlsec.version>3.0.1</santuario-xmlsec.version>
+    <version.johnzon>2.0.0</version.johnzon>
+    <version.myfaces>4.0.2-SNAPSHOT</version.myfaces>
+    <version.openjpa>4.0.0-SNAPSHOT</version.openjpa>
+    <version.openwebbeans>4.0.2-SNAPSHOT</version.openwebbeans>
     <!-- org.eclipse -->
-    <version.eclipselink>3.0.3</version.eclipselink>
+    <version.eclipselink>3.0.4</version.eclipselink>
     <!-- org.glassfish -->
-    <mojarra.version>3.0.2</mojarra.version>
+    <version.mojarra>4.0.1</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate.orm>6.1.4.Final</version.hibernate.orm>
+    <version.hibernate.orm>6.4.1.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
-    <geronimo-jcache_1.0_spec.version>1.0-alpha-1</geronimo-jcache_1.0_spec.version>
+    <version.wss4j>3.0.2</version.wss4j>
+    <version.xmlsec>3.0.3</version.xmlsec>
+    <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
     <version.deltaspike>1.9.6</version.deltaspike>
 
     <!-- JDBC Drivers -->
-    <version.derby>10.14.2.0</version.derby>
-    <version.hsqldb>2.7.1</version.hsqldb>
+    <version.derby>10.15.2.0</version.derby>
+    <version.hsqldb>2.7.2</version.hsqldb>
 
     <!-- unused properties -->
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
@@ -868,6 +869,8 @@
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.json</exclude>
                 <exclude>**/*.jwk</exclude>
+                <exclude>**/*.yml</exclude>
+                <exclude>**/*.yaml</exclude>
                 <exclude>**/src/main/resources/META-INF/**/*.xsd</exclude>
                 <exclude>**/src/main/xsdlist/xsdlist.txt</exclude>
                 <exclude>**/META-INF/services/**</exclude>
@@ -1020,6 +1023,7 @@
         <enabled>true</enabled>
       </releases>
     </repository>
+
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -1134,58 +1138,196 @@
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-server</artifactId>
-        <version>${jetty.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-continuation</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-jsp-2.1</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-plus</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-jndi</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-webapp</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-io</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-http</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-security</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-util</artifactId>
-        <version>${jetty.version}</version>
+        <version>${version.jetty}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
-        <classifier>jakarta</classifier>
         <version>${version.bval}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-core</artifactId>
+        <version>${version.cxf}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-http</artifactId>
+        <version>${version.cxf}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-client</artifactId>
+        <version>${version.cxf}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        <version>${version.cxf}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.jws</groupId>
+            <artifactId>jakarta.jws-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        <version>${version.cxf}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.jws</groupId>
+            <artifactId>jakarta.jws-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-security</artifactId>
+        <version>${version.cxf}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-sse</artifactId>
+        <version>${version.cxf}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-management</artifactId>
+        <version>${version.cxf}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-service-description</artifactId>
+        <version>${version.cxf}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-extension-providers</artifactId>
+        <version>${version.cxf}</version>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
@@ -1200,7 +1342,7 @@
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>${commons-logging.version}</version>
+        <version>${version.commons-logging}</version>
         <exclusions>
           <exclusion>
             <groupId>jakarta.servlet</groupId>
@@ -1259,7 +1401,7 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-jdbc-store</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <version>${version.activemq}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.derby</groupId>
@@ -1284,15 +1426,9 @@
         <version>${version.commons-net}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-client-shade</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-client-jakarta</artifactId>
+        <version>${version.activemq}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
@@ -1314,12 +1450,16 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-openwire-legacy</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <version>${version.activemq}</version>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
@@ -1340,15 +1480,14 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
         <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.components</groupId>
-            <artifactId>geronimo-transaction</artifactId>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
@@ -1360,11 +1499,14 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
         <version>${version.geronimo.components}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
@@ -1380,7 +1522,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-mail_2.1_spec</artifactId>
-        <version>${geronimo-mail_2.1_spec.version}</version>
+        <version>${version.geronimo-mail_2.1_spec}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.mail</groupId>
@@ -1397,11 +1539,22 @@
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${version.openjpa}</version>
-        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1409,12 +1562,12 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-finder-shaded</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>${version.xbean}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-asm9-shaded</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>${version.xbean}</version>
         <exclusions>
           <exclusion>
             <groupId>org.ow2.asm</groupId>
@@ -1429,12 +1582,12 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-naming</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>${version.xbean}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-bundleutils</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>${version.xbean}</version>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
@@ -1445,12 +1598,12 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-spring</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>${version.xbean}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>${version.xbean}</version>
         <exclusions>
           <exclusion>
             <groupId>mx4j</groupId>
@@ -1482,12 +1635,12 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-pool2</artifactId>
-        <version>${commons-pool.version}</version>
+        <version>${version.commons-pool}</version>
       </dependency>
       <dependency>
         <artifactId>xmlsec</artifactId>
         <groupId>org.apache.santuario</groupId>
-        <version>${santuario-xmlsec.version}</version>
+        <version>${version.xmlsec}</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
@@ -1599,12 +1752,12 @@
       <dependency>
         <artifactId>slf4j-api</artifactId>
         <groupId>org.slf4j</groupId>
-        <version>${slf4j.version}</version>
+        <version>${version.slf4j}</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-jdk14</artifactId>
-        <version>${slf4j.version}</version>
+        <version>${version.slf4j}</version>
         <exclusions>
           <exclusion>
             <artifactId>slf4j-api</artifactId>
@@ -1615,7 +1768,7 @@
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
+        <version>${version.log4j}</version>
       </dependency>
       <dependency>
         <artifactId>commons-collections</artifactId>
@@ -1625,7 +1778,7 @@
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
-        <version>${commons-codec.version}</version>
+        <version>${version.commons-codec}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
@@ -1646,132 +1799,115 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
-        <version>${openwebbeans.version}</version>
-        <classifier>jakarta</classifier>
+        <version>${version.openwebbeans}</version>
         <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
-        <version>${openwebbeans.version}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
+        <version>${version.openwebbeans}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
-        <version>${openwebbeans.version}</version>
-        <classifier>jakarta</classifier>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <classifier>jakarta</classifier>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
+
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <classifier>jakarta</classifier>
-        <version>${openwebbeans.version}</version>
-          <exclusions>
+        <version>${version.openwebbeans}</version>
+        <exclusions>
           <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.el</groupId>
+            <artifactId>jakarta.el-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-el_2.2_spec</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <classifier>jakarta</classifier>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-el22</artifactId>
-        <classifier>jakarta</classifier>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
-        <classifier>jakarta</classifier>
-        <version>${openwebbeans.version}</version>
+        <version>${version.openwebbeans}</version>
         <exclusions>
           <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>*</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1780,63 +1916,22 @@
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-core</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-mapper</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jaxrs</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonb</artifactId>
         <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
-      <dependency>
-        <groupId>org.apache.johnzon</groupId>
-        <artifactId>johnzon-jsonp-strict</artifactId>
-        <version>${version.johnzon}</version>
-        <classifier>jakarta</classifier>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
@@ -1856,7 +1951,7 @@
       <dependency>
         <artifactId>commons-lang3</artifactId>
         <groupId>org.apache.commons</groupId>
-        <version>${commons-lang3.version}</version>
+        <version>${version.commons-lang3}</version>
       </dependency>
       <dependency>
         <artifactId>commons-lang</artifactId>
@@ -1866,7 +1961,7 @@
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
+        <version>${version.commons-io}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ws.commons.schema</groupId>
@@ -1876,7 +1971,7 @@
       <dependency>
         <groupId>org.ehcache</groupId>
         <artifactId>ehcache</artifactId>
-        <version>${ehcache.version}</version>
+        <version>${version.ehcache}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
@@ -1950,11 +2045,6 @@
         <artifactId>eclipselink</artifactId>
         <version>${version.eclipselink}</version>
       </dependency>
-      <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
-        <groupId>com.sun.activation</groupId>
-        <artifactId>jakarta.activation</artifactId>
-        <version>1.2.1</version>
-      </dependency>
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>jaxb-runtime</artifactId>
@@ -1993,7 +2083,7 @@
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>${snakeyaml.version}</version>
+        <version>${version.snakeyaml}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

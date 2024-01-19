@@ -22,14 +22,14 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-rest-client-tck</artifactId>
   <name>TomEE :: TCK :: MicroProfile Rest Client TCK</name>
 
   <properties>
-    <!--<jetty-tck.version>${jetty.version}</jetty-tck.version>-->
+    <!--<jetty-tck.version>${version.jetty}</jetty-tck.version>-->
     <jetty-tck.version>9.2.28.v20190418</jetty-tck.version>
   </properties>
 
@@ -63,22 +63,34 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M6</version>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>tck-suite.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <!--
-          <dependenciesToScan>
-            <dependency>org.eclipse.microprofile.rest.client:microprofile-rest-client-tck</dependency>
-          </dependenciesToScan>
-          -->
-          <excludes>
-            <!-- TODO - Remove once issue https://github.com/eclipse/microprofile-rest-client/issues/166 is solved  -->
-            <exclude>org.eclipse.microprofile.rest.client.tck.InvokeWithJsonBProviderTest</exclude>
-          </excludes>
-        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>tck-suite.xml</suiteXmlFile>
+              </suiteXmlFiles>
+            </configuration>
+          </execution>
+          <execution>
+            <id>mp-clienb-jsonb-solo</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>tck-suite-jsonb-solo.xml</suiteXmlFile>
+              </suiteXmlFiles>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -217,36 +229,39 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cxf-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
+      <version>${version.cxf}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.ws.rs</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.annotation</groupId>
-          <artifactId>jakarta.annotation-api</artifactId>
+          <artifactId>jaxb-xjc</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.json</groupId>
           <artifactId>jakarta.json-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>jakarta.json.bind</groupId>
+          <artifactId>jakarta.json.bind-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
+
 
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>
 

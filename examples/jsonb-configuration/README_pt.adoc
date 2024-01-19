@@ -277,7 +277,7 @@ Se olharmos para o jar construído por maven, veremos que o aplicativo em si é 
 
 [source,java]
 ----
-$ jar tvf target/jsonb-configuration-10.0.0-SNAPSHOT.war
+$ jar tvf target/jsonb-configuration-10.0.0-M1-SNAPSHOT.war
      0 Fri Dec 28 19:36:10 CET 2018 META-INF/
    134 Fri Dec 28 19:36:08 CET 2018 META-INF/MANIFEST.MF
      0 Fri Dec 28 19:36:08 CET 2018 WEB-INF/

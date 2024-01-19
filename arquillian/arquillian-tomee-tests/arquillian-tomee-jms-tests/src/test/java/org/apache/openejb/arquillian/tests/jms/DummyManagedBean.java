@@ -17,12 +17,12 @@
 package org.apache.openejb.arquillian.tests.jms;
 
 import jakarta.annotation.Resource;
-import jakarta.faces.bean.ManagedBean;
+import jakarta.enterprise.context.Dependent;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
 import jakarta.jms.Topic;
 
-@ManagedBean
+@Dependent
 public class DummyManagedBean {
     @Resource
     private Queue queue;

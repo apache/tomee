@@ -24,6 +24,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
+import org.apache.openejb.config.event.DataSourceDefinitionUrlBuild;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -55,8 +56,6 @@ import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.ExcludeList;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.FacesManagedBean;
 import org.apache.openejb.jee.Filter;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.HandlerChains;
@@ -287,15 +286,6 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static final String[] JSF_CLASSES = new String[]{
         "jakarta.faces.application.ResourceDependencies",
         "jakarta.faces.application.ResourceDependency",
-        "jakarta.faces.bean.ApplicationScoped",
-        "jakarta.faces.bean.CustomScoped",
-        "jakarta.faces.bean.ManagedBean",
-        "jakarta.faces.bean.ManagedProperty",
-        "jakarta.faces.bean.NoneScoped",
-        "jakarta.faces.bean.ReferencedBean",
-        "jakarta.faces.bean.RequestScoped",
-        "jakarta.faces.bean.SessionScoped",
-        "jakarta.faces.bean.ViewScoped",
         "jakarta.faces.component.FacesComponent",
         "jakarta.faces.component.UIComponent",
         "jakarta.faces.convert.Converter",
@@ -2058,8 +2048,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final AnnotationFinder annotationFinder = createFinder(clazz);
 
                     buildAnnotatedRefs(client, annotationFinder, classLoader);
-                } catch (final ClassNotFoundException e) {
-                    /**
+                } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+
+                    logger.debug("Could not load main class {1} for client module {2} / {3}",
+                                 className, clientModule.getJarLocation(), clientModule.getFile().getName());
+
+                    /*
                      * Some ClientModule are discovered only because the jar uses a Main-Class
                      * entry in the MANIFEST.MF file.  Lots of jars do this that are not used as
                      * java ee application clients, so lets not make this a failure unless it
@@ -2080,7 +2074,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     clazz = classLoader.loadClass(className);
                     remoteClients.add(clazz);
-                } catch (final ClassNotFoundException e) {
+                } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                    logger.debug("Could not load RemoteClient class {1} for client module {2} / {3}",
+                                 className, clientModule.getJarLocation(), clientModule.getFile().getName());
+
                     throw new OpenEJBException("Unable to load RemoteClient class: " + className, e);
                 }
 
@@ -2094,7 +2091,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final Class clazz;
                 try {
                     clazz = classLoader.loadClass(className);
-                } catch (final ClassNotFoundException e) {
+                } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                    logger.debug("Could not load LocalClient class {1} for client module {2} / {3}",
+                                 className, clientModule.getJarLocation(), clientModule.getFile().getName());
                     throw new OpenEJBException("Unable to load LocalClient class: " + className, e);
                 }
 
@@ -2223,7 +2222,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         try {
                             clazz = classLoader.loadClass(application);
                             classes.add(clazz);
-                        } catch (final ClassNotFoundException e) {
+                        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                            logger.debug("Could not load rest Application class {1} for module {2} / {3}",
+                                         application, webModule.getJarLocation(), webModule.getFile().getName());
                             throw new OpenEJBException("Unable to load Application class: " + application, e);
                         }
                         if (Modifier.isAbstract(clazz.getModifiers())) {
@@ -2295,7 +2296,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                             if (servlet.getServletClass() == null) {
                                 servlet.setServletClass(servletClass);
                             }
-                        } catch (final ClassNotFoundException e) {
+                        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                            logger.debug("Could not load Servlet class {1} for web module {2} / {3}",
+                                         servletClass, webModule.getJarLocation(), webModule.getFile().getName());
                             if (servlet.getServletClass() != null) {
                                 throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
                             } else {
@@ -2324,7 +2327,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     try {
                         final Class clazz = classLoader.loadClass(filterClass);
                         classes.add(clazz);
-                    } catch (final ClassNotFoundException e) {
+                    } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                        logger.debug("Could not load Servlet Filter class {1} for web module {2} / {3}",
+                                     filterClass, webModule.getJarLocation(), webModule.getFile().getName());
                         throw new OpenEJBException("Unable to load servlet filter class: " + filterClass, e);
                     }
                 }
@@ -2339,7 +2344,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     try {
                         final Class clazz = classLoader.loadClass(listenerClass);
                         classes.add(clazz);
-                    } catch (final ClassNotFoundException e) {
+                    } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                        logger.debug("Could not load Servlet listener class {1} for web module {2} / {3}",
+                                     listenerClass, webModule.getJarLocation(), webModule.getFile().getName());
                         throw new OpenEJBException("Unable to load servlet listener class: " + listenerClass, e);
                     }
                 }
@@ -2355,7 +2362,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         try {
                             final Class clazz = classLoader.loadClass(listenerClass);
                             classes.add(clazz);
-                        } catch (final ClassNotFoundException e) {
+                        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                            logger.debug("Could not load TagLib listener class {1} for web module {2} / {3}",
+                                         listenerClass, webModule.getJarLocation(), webModule.getFile().getName());
                             logger.error("Unable to load tag library servlet listener class: " + listenerClass);
                         }
                     }
@@ -2370,7 +2379,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         try {
                             final Class clazz = classLoader.loadClass(tagClass);
                             classes.add(clazz);
-                        } catch (final ClassNotFoundException e) {
+                        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                            logger.debug("Could not load tag class {1} for web module {2} / {3}",
+                                         tagClass, webModule.getJarLocation(), webModule.getFile().getName());
                             logger.error("Unable to load tag library tag class: " + tagClass);
                         }
                     }
@@ -2398,28 +2409,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                                     try {
                                         final Class clazz = classLoader.loadClass(handlerClass);
                                         classes.add(clazz);
-                                    } catch (final ClassNotFoundException e) {
+                                    } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                                        logger.debug("Could not load web service handler class {1} for web module {2} / {3}",
+                                                     handlerClass, webModule.getJarLocation(), webModule.getFile().getName());
                                         throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            }
-
-            /*
-             * JSF ManagedBean classes are scanned
-             */
-            for (final FacesConfig facesConfig : webModule.getFacesConfigs()) {
-                for (final FacesManagedBean bean : facesConfig.getManagedBean()) {
-                    final String managedBeanClass = realClassName(bean.getManagedBeanClass().trim());
-                    if (managedBeanClass != null) {
-                        try {
-                            final Class clazz = classLoader.loadClass(managedBeanClass);
-                            classes.add(clazz);
-                        } catch (final ClassNotFoundException e) {
-                            logger.error("Unable to load JSF managed bean class: " + managedBeanClass);
                         }
                     }
                 }
@@ -2968,6 +2964,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     clazz = classLoader.loadClass(realClassName(interceptor.getInterceptorClass()));
                 } catch (final ClassNotFoundException e) {
+                    logger.debug("Could not load interceptor class {1} for enterprise beans module {2} / {3}",
+                                 interceptor.getInterceptorClass(), ejbModule.getJarLocation(), ejbModule.getFile().getName());
+
                     throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass(), e);
                 }
 
@@ -3011,7 +3010,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 processWebServiceClientHandlers(interceptor, annotationFinder, classLoader);
 
-                /**
+                /*
                  * Interceptors do not have their own section in ejb-jar.xml for resource references
                  * so we add them to the references of each ejb.  A bit backwards but more or less
                  * mandated by the design of the spec.
@@ -3115,7 +3114,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 sessionBean.setLocalBean(new Empty());
             }
 
-            /**
+            /*
              * Anything declared as both <business-local> and <business-remote> is invalid in strict mode
              */
             if (strict) {
@@ -3126,7 +3125,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            /**
+            /*
              * Merge the xml declared business interfaces into the complete set
              */
             final BusinessInterfaces all = new BusinessInterfaces();
@@ -3194,15 +3193,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                /**
-                 * Anything discovered and delcared in a previous loop
+                /*
+                 * Anything discovered and declared in a previous loop
                  * or at the beginning in the deployment descriptor is
-                 * not eligable to be redefined.
+                 * not eligible to be redefined.
                  */
                 interfaces.removeAll(all.local);
                 interfaces.removeAll(all.remote);
 
-                /**
+                /*
                  * OK, now start checking the class metadata
                  */
                 final Local local = clazz.getAnnotation(Local.class);
@@ -3211,7 +3210,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final boolean impliedLocal = local != null && local.value().length == 0;
                 final boolean impliedRemote = remote != null && remote.value().length == 0;
 
-                /**
+                /*
                  * This set holds the values of @Local and @Remote
                  * when applied to the bean class itself
                  *
@@ -3234,7 +3233,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                /**
+                /*
                  * Anything listed explicitly via @Local or @Remote
                  * on the bean class does not need to be investigated.
                  * We do not need to check these interfaces for @Local or @Remote
@@ -3244,7 +3243,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (impliedLocal || impliedRemote) {
                     if (interfaces.size() != 1) {
-                        /**
+                        /*
                          * Cannot imply either @Local or @Remote and list multiple interfaces
                          */
                         // Need to extract the class names and append .class to them to show proper validation level 3 message
@@ -3260,21 +3259,21 @@ public class AnnotationDeployer implements DynamicDeployer {
                             // we don't go out to let be deployed
                         } else if (impliedLocal) {
                             validation.fail(ejbName, "ann.local.noAttributes", Join.join(", ", interfaceNames));
-                            /**
+                            /*
                              * This bean is invalid, so do not bother looking at the other interfaces or the superclass
                              */
                             return;
                         }
                         if (impliedRemote) {
                             validation.fail(ejbName, "ann.remote.noAttributes", Join.join(", ", interfaceNames));
-                            /**
+                            /*
                              * This bean is invalid, so do not bother looking at the other interfaces or the superclass
                              */
                             return;
                         }
                     } else if (strict && impliedLocal && impliedRemote) {
                         final Class<?> interfce = interfaces.remove(0);
-                        /**
+                        /*
                          * Cannot imply @Local and @Remote at the same time with strict mode on
                          */
                         validation.fail(ejbName, "ann.localRemote.ambiguous", interfce.getName());
@@ -4119,7 +4118,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // TODO: Looks like we aren't looking for an existing ejb-ref or ejb-local-ref
             // we need to do this to support overriding.
 
-            /**
+            /*
              * Was @EJB used at a class level witout specifying the 'name' or 'beanInterface' attributes?
              */
             final String name = consumer.getJndiConsumerName();
@@ -4341,7 +4340,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          */
         private void buildResource(final JndiConsumer consumer, final Resource resource, final Member member) {
 
-            /**
+            /*
              * Was @Resource used at a class level without specifying the 'name' or 'beanInterface' attributes?
              */
             if (member == null) {
@@ -4362,7 +4361,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             JndiReference reference = consumer.getEnvEntryMap().get(refName);
             if (reference == null) {
 
-                /**
+                /*
                  * Was @Resource mistakenly used when either @PersistenceContext or @PersistenceUnit should have been used?
                  */
                 if (member != null) { // Little quick validation for common mistake
@@ -4656,7 +4655,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             String refName = persistenceContext.name();
 
             if (refName.length() == 0) {
-                /**
+                /*
                  * Was @PersistenceContext used at a class level without specifying the 'name' attribute?
                  */
                 if (member == null) {
@@ -4725,14 +4724,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (EntityManagerFactory.class.isAssignableFrom(type)) {
                     failIfCdiProducer(member, "EntityManager");
 
-                    /**
+                    /*
                      * Was @PersistenceContext mistakenly used when @PersistenceUnit should have been used?
                      */
                     fail(consumer.getJndiConsumerName(), "persistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
                 } else if (!EntityManager.class.isAssignableFrom(type)) {
                     failIfCdiProducer(member, "EntityManager");
 
-                    /**
+                    /*
                      * Was @PersistenceContext mistakenly used for something that isn't an EntityManager?
                      */
                     fail(consumer.getJndiConsumerName(), "persistenceContextAnnotation.onNonEntityManager", persistenceContextRef.getName());
@@ -4891,6 +4890,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             consumer.getDataSource().add(dataSource);
+            SystemInstance.get().fireEvent(new DataSourceDefinitionUrlBuild(dataSource));
         }
 
 
@@ -5543,6 +5543,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     clazz = classLoader.loadClass(className);
                     classes.add(clazz);
                 } catch (final ClassNotFoundException e) {
+                    logger.debug("Could not load REST class {1} for web module {2} / {3}",
+                                 className, webModule.getJarLocation(), webModule.getFile().getName());
+
                     throw new OpenEJBException("Unable to load REST class: " + className, e);
                 }
             }

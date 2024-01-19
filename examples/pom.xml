@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <artifactId>examples</artifactId>
   <packaging>pom</packaging>
@@ -43,6 +43,7 @@
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-application-scope</module>
     <module>cdi-basic</module>
+    <module>cdi-dynamic-inject</module>
     <module>cdi-ejbcontext-jaas</module>
     <module>cdi-events</module>
     <module>cdi-interceptors</module>
@@ -121,6 +122,7 @@
     <module>mp-rest-jwt-public-key</module>
     <module>mp-rest-client</module>
     <module>mp-custom-healthcheck</module>
+    <module>mp-openapi-reader</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -203,6 +205,7 @@
     <module>cloud-tomee-azure</module>
     <module>xa-datasource</module>
     <module>websocket-jms</module>
+    <module>activemq-multiple-brokers</module>
 
     <!-- Jakarta Security Examples -->
     <module>security-tomcat-user-identitystore</module>

@@ -70,6 +70,9 @@ public class BasicJaccProvider extends JaccProvider {
     }
 
     public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {
+        if (contextID == null) {
+            throw new IllegalArgumentException("contextID can't be null;");
+        }
         BasicPolicyConfiguration configuration = configurations.get(contextID);
 
         if (configuration == null) {
@@ -80,6 +83,21 @@ public class BasicJaccProvider extends JaccProvider {
         }
 
         return configuration;
+    }
+
+    public PolicyConfiguration getPolicyConfiguration(final String contextID) {
+        if (contextID == null) {
+            throw new IllegalArgumentException("contextID can't be null;");
+        }
+        return configurations.get(contextID);
+    }
+
+    public PolicyConfiguration getPolicyConfiguration() {
+        final String contextID = PolicyContext.getContextID();
+        if (contextID == null) {
+            return null;
+        }
+        return getPolicyConfiguration(contextID);
     }
 
     protected BasicPolicyConfiguration createPolicyConfiguration(final String contextID) {

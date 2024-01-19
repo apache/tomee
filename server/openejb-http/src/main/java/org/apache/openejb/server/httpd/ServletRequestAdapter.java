@@ -17,14 +17,7 @@
  */
 package org.apache.openejb.server.httpd;
 
-import jakarta.servlet.AsyncContext;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -72,11 +65,6 @@ public class ServletRequestAdapter implements HttpRequest {
     @Override
     public boolean isRequestedSessionIdFromCookie() {
         return request.isRequestedSessionIdFromCookie();
-    }
-
-    @Override
-    public boolean isRequestedSessionIdFromUrl() {
-        return request.isRequestedSessionIdFromUrl();
     }
 
     @Override
@@ -161,6 +149,21 @@ public class ServletRequestAdapter implements HttpRequest {
     @Override
     public DispatcherType getDispatcherType() {
         return request.getDispatcherType();
+    }
+
+    @Override
+    public String getRequestId() {
+        return request.getRequestId();
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        return request.getProtocolRequestId();
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
+        return request.getServletConnection();
     }
 
     @Override
@@ -302,11 +305,6 @@ public class ServletRequestAdapter implements HttpRequest {
     @Override
     public BufferedReader getReader() throws IOException {
         return request.getReader();
-    }
-
-    @Override
-    public String getRealPath(String s) {
-        return request.getRealPath(s);
     }
 
     public Map getParameters() {

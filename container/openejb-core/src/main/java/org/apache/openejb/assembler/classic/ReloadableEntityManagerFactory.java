@@ -162,6 +162,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         try {
             em = delegate().createEntityManager();
         } catch (final LinkageError le) {
+            if (delegate == null) {
+                LOGGER.error("Could not initialize EntityManagerFactory delegate", le);
+                throw le; // it's already a OpenEJBRuntimeException
+            }
             em = delegate.createEntityManager();
         }
 

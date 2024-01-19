@@ -19,16 +19,16 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-faulttolerance-timeout</artifactId>
-  <version>10.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Fault Tolerance :: Timeout</name>
   <properties>
-    <version.microprofile.fault-tolerance-api>1.0</version.microprofile.fault-tolerance-api>
-    <arquillian-junit-container.version>1.7.0.Alpha10</arquillian-junit-container.version>
+    <version.microprofile.fault-tolerance-api>4.0.2</version.microprofile.fault-tolerance-api>
+    <arquillian-junit-container.version>1.7.0.Final</arquillian-junit-container.version>
     <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-war-plugin.version>3.1.0</maven-war-plugin.version>
-    <tomee.version>10.0.0-SNAPSHOT</tomee.version>
-    <jakartaee-api.version>9.1-M2</jakartaee-api.version>
+    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
+    <jakartaee-api.version>10.0-M2</jakartaee-api.version>
     <junit.version>4.13.2</junit.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>

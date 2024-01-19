@@ -45,7 +45,7 @@ public class BasicObserverTest {
         assertNotNull(beanManager);
 
         final Catastrophy catastrophy = new Catastrophy();
-        beanManager.fireEvent(catastrophy);
+        beanManager.getEvent().fire(catastrophy);;
 
         assertEquals(1, catastrophy.getClasses().size());
         assertEquals(SuperHero.class, catastrophy.getClasses().get(0));

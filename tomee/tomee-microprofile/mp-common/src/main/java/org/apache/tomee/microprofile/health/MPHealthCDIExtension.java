@@ -65,7 +65,7 @@ public class MPHealthCDIExtension implements Extension {
      * @param beanManager
      */
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(MicroProfileHealthReporterProducer.class));
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(MicroProfileHealthReporterProducer.class), "MicroProfileHealthReporterProducer");
     }
 
     /**
@@ -121,6 +121,11 @@ public class MPHealthCDIExtension implements Extension {
      * Remove all the instances of {@link HealthCheck} from the {@link MicroProfileHealthReporter}.
      */
     public void beforeShutdown(@Observes final BeforeShutdown bs) {
+        // in case when CDI startup failed
+        if (reporter == null)
+        {
+            return;
+        }
         removeHealthCheck(livenessChecks, reporter::removeLivenessCheck);
         removeHealthCheck(readinessChecks, reporter::removeReadinessCheck);
         removeHealthCheck(startupChecks, reporter::removeStartupCheck);
