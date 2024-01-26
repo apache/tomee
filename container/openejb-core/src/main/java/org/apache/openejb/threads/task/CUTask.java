@@ -17,8 +17,6 @@
 package org.apache.openejb.threads.task;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -44,13 +42,14 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     private final ContextServiceImpl contextService;
     private final ContextServiceImpl.Snapshot snapshot;
     private final Object[] containerListenerStates;
+    private final Context initialContext;
 
     public CUTask(final Object task, final ContextServiceImpl contextService) {
         super(task);
         this.contextService = contextService;
 
         snapshot = contextService.snapshot(null);
-
+        initialContext = new Context();
         if (CONTAINER_LISTENERS.length > 0) {
             containerListenerStates = new Object[CONTAINER_LISTENERS.length];
             for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
@@ -62,6 +61,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     }
 
     protected T invoke(final Callable<T> call) throws Exception {
+        initialContext.enter();
         final Object[] oldStates;
         if (CONTAINER_LISTENERS.length > 0) {
             oldStates = new Object[CONTAINER_LISTENERS.length];
@@ -99,6 +99,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
                 if (contextService != null && state != null) {
                     contextService.exit(state);
                 }
+                initialContext.exit();
             }
         }
     }
@@ -137,7 +138,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             Collection<RuntimeException> errors = null;
 
             // exit tasks are designed to be in execution added post tasks so execution them before next ones
-            // ie inversed ordered compared to init phase
+            // ie inverse order compared to init phase
             if (exitTasks != null) {
                 for (final Runnable r : exitTasks) {
                     try {
