@@ -15,148 +15,160 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>tck</artifactId>
-    <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M1-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>tck</artifactId>
+        <groupId>org.apache.tomee</groupId>
+        <version>10.0.0-M1-SNAPSHOT</version>
+    </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>jsonp-signature-test</artifactId>
-  <name>TomEE :: TCK :: JSON-P Signature Tests</name>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>jsonp-signature-test</artifactId>
+    <name>TomEE :: TCK :: JSON-P Signature Tests</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>jakartaee-api</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>jakarta.json</groupId>
-      <artifactId>jakarta.json-tck-tests</artifactId>
-      <version>${jsonp-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-tck-tests</artifactId>
+            <version>${jsonp-tck.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-core</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.johnzon</groupId>
+            <artifactId>johnzon-core</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-se</artifactId>
-      <version>${version.openwebbeans}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-se</artifactId>
+            <version>${version.openwebbeans}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-impl</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-impl</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-spi</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-spi</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.netbeans.tools</groupId>
-      <artifactId>sigtest-maven-plugin</artifactId>
-      <version>1.6</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.netbeans.tools</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
-      </testResource>
-    </testResources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
+    <profiles>
+        <profile>
+            <id>tck-jsonp</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
 
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.tomee</groupId>
-                  <artifactId>jakartaee-api</artifactId>
-                  <version>${version.jakartaee-api}</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${project.build.directory}/signaturedirectory</outputDirectory>
-                  <destFileName>jakartaee-api.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>setup-project</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target name="remove-jakarta-json-bind">
-                <echo>Removing jakarta.json.bind classes from the jakartaee-api.jar (we cannot exclude that package them from the sigtests).</echo>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.tomee</groupId>
+                                            <artifactId>jakartaee-api</artifactId>
+                                            <version>${version.jakartaee-api}</version>
+                                            <type>jar</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/signaturedirectory
+                                            </outputDirectory>
+                                            <destFileName>jakartaee-api.jar</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>setup-project</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target name="remove-jakarta-json-bind">
+                                        <echo>Removing jakarta.json.bind classes from the jakartaee-api.jar (we cannot
+                                            exclude that package them from the sigtests).
+                                        </echo>
 
-                <property name="library.dir" value="signaturedirectory" />
-                <property name="library.file" value="jakartaee-api.jar" />
-                <property name="library.path" value="${project.build.directory}/${library.dir}/${library.file}" />
-                <property name="library.path.new" value="${project.build.directory}/${library.dir}/new-${library.file}" />
+                                        <property name="library.dir" value="signaturedirectory"/>
+                                        <property name="library.file" value="jakartaee-api.jar"/>
+                                        <property name="library.path"
+                                                  value="${project.build.directory}/${library.dir}/${library.file}"/>
+                                        <property name="library.path.new"
+                                                  value="${project.build.directory}/${library.dir}/new-${library.file}"/>
 
-                <jar destfile="${library.path.new}">
-                  <zipfileset src="${library.path}" excludes="jakarta/json/bind/**" />
-                </jar>
+                                        <jar destfile="${library.path.new}">
+                                            <zipfileset src="${library.path}" excludes="jakarta/json/bind/**"/>
+                                        </jar>
 
-                <delete file="${library.path}" />
-                <move file="${library.path.new}" tofile="${library.path}" />
+                                        <delete file="${library.path}"/>
+                                        <move file="${library.path.new}" tofile="${library.path}"/>
 
-              </target>
-            </configuration>
-          </execution>
-        </executions>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
 
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
-        <configuration>
-          <reuseForks>false</reuseForks>
-          <forkCount>1</forkCount>
-          <systemProperties>
-            <jimage.dir>${project.build.directory}/jimage</jimage.dir>
-            <signature.sigTestClasspath>${project.build.directory}/signaturedirectory/jakartaee-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming</signature.sigTestClasspath>
-          </systemProperties>
-          <dependenciesToScan>
-            <dependency>jakarta.json:jakarta.json-tck-tests</dependency>
-          </dependenciesToScan>
-          <includes>
-            <include>**/JSONPSigTest</include>
-          </includes>
-        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                            <systemProperties>
+                                <jimage.dir>${project.build.directory}/jimage</jimage.dir>
+                                <signature.sigTestClasspath>
+                                    ${project.build.directory}/signaturedirectory/jakartaee-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming
+                                </signature.sigTestClasspath>
+                            </systemProperties>
+                            <dependenciesToScan>
+                                <dependency>jakarta.json:jakarta.json-tck-tests</dependency>
+                            </dependenciesToScan>
+                            <includes>
+                                <include>**/JSONPSigTest</include>
+                            </includes>
+                        </configuration>
 
-      </plugin>
-    </plugins>
-  </build>
-
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
