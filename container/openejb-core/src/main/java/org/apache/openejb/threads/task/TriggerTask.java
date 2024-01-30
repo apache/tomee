@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.threads.task;
 
+import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 
 import jakarta.enterprise.concurrent.LastExecution;
@@ -47,9 +48,9 @@ public abstract class TriggerTask<T> extends CUTask<T> {
     private final AtomicBoolean running = new AtomicBoolean(true);
     private volatile T result;
 
-    protected TriggerTask(final Object original, final ManagedScheduledExecutorServiceImpl es, final Trigger trigger,
+    protected TriggerTask(final Object original, final ContextServiceImpl contextService, final ManagedScheduledExecutorServiceImpl es, final Trigger trigger,
                           final Date taskScheduledTime, final String id, final AtomicReference<Future<T>> ref) {
-        super(original);
+        super(original, contextService);
         this.executorService = es;
         this.trigger = trigger;
         this.scheduledTime = taskScheduledTime;

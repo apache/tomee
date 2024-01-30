@@ -52,6 +52,7 @@
     <module>itest-util</module>
     <module>tomee-security-itests</module>
     <module>tomee-microprofile-itests</module>
+    <module>openejb-itests-optional-classes</module>
   </modules>
 
   <build>

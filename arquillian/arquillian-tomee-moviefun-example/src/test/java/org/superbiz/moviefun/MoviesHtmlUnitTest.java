@@ -78,6 +78,7 @@ public class MoviesHtmlUnitTest {
     @Test
     public void testShouldMakeSureWebappIsWorking() throws Exception {
         WebClient webClient = new WebClient();
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         HtmlPage page = webClient.getPage("http://localhost:9999/moviefun/setup");
 
         assertMoviesPresent(page);
@@ -90,11 +91,11 @@ public class MoviesHtmlUnitTest {
         }
 
         assertMoviesPresent(page);
-        webClient.closeAllWindows();
+        webClient.close();
     }
 
     private void assertMoviesPresent(HtmlPage page) {
-        String pageAsText = page.asText();
+        String pageAsText = page.asNormalizedText();
         assertTrue(pageAsText.contains("Wedding Crashers"));
         assertTrue(pageAsText.contains("Starsky & Hutch"));
         assertTrue(pageAsText.contains("Shanghai Knights"));

@@ -2209,6 +2209,14 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
         }
 
+        final String contextId = resourceInfo.properties.getProperty("Context");
+        if (contextId != null && contextId.length() > 0) {
+            final String newResourceId = getResourceId(beanName, contextId, null, null);
+            if (!contextId.equals(newResourceId)) {
+                resourceInfo.properties.setProperty("Context", newResourceId);
+            }
+        }
+
         configFactory.install(resourceInfo);
         return resourceInfo.id;
     }

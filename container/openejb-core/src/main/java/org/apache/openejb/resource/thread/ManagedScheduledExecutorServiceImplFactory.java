@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.resource.thread;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.threads.impl.ContextServiceImpl;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.threads.reject.CURejectHandler;
@@ -23,6 +27,9 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -30,8 +37,45 @@ public class ManagedScheduledExecutorServiceImplFactory {
     private int core = 5;
     private String threadFactory = ManagedThreadFactoryImpl.class.getName();
 
+    private String context;
+
+    public ManagedScheduledExecutorServiceImpl create(final ContextServiceImpl contextService) {
+        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), contextService);
+    }
     public ManagedScheduledExecutorServiceImpl create() {
-        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService());
+        String context;
+        if (this.context == null || this.context.isBlank()) {
+            context = "java:comp/DefaultContextService";
+        }
+        else {
+            context = "openejb/Resource/" + this.context;
+        }
+
+        ContextServiceImpl contextService = findContextService(context);
+        if (contextService == null) {
+            contextService = ContextServiceImplFactory.newPropagateEverythingContextService();
+        }
+
+        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), contextService);
+    }
+
+    private ContextServiceImpl findContextService(String contextName) {
+        try {
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            // happens at least in unittests
+            if (containerSystem == null) {
+                return null;
+            }
+            final Context context = containerSystem.getJNDIContext();
+            final Object obj = context.lookup(contextName);
+            if (!(obj instanceof ContextServiceImpl)) {
+                throw new IllegalArgumentException("Resource with id " + context
+                        + " is not a ContextService, but is " + obj.getClass().getName());
+            }
+            return (ContextServiceImpl) obj;
+        } catch (final NamingException e) {
+            throw new IllegalArgumentException("Unknown context service " + contextName);
+        }
     }
 
     private ScheduledExecutorService createScheduledExecutorService() {
@@ -52,5 +96,13 @@ public class ManagedScheduledExecutorServiceImplFactory {
 
     public void setThreadFactory(final String threadFactory) {
         this.threadFactory = threadFactory;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 }

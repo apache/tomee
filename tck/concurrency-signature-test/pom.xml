@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>tck</artifactId>
+        <groupId>org.apache.tomee</groupId>
+        <version>10.0.0-M1-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>concurrency-signature-test</artifactId>
+    <name>TomEE :: TCK :: Concurrency Signature Tests</name>
+
+    <properties>
+        <jakarta.concurrent.version>3.0.3</jakarta.concurrent.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.enterprise.concurrent</groupId>
+            <artifactId>jakarta.enterprise.concurrent-tck</artifactId>
+            <version>${jakarta.concurrent.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.tools</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Arquillian Implementation for TestNG -->
+        <dependency>
+            <groupId>org.jboss.arquillian.testng</groupId>
+            <artifactId>arquillian-testng-container</artifactId>
+            <version>${version.arquillian}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Arquillian Deps for Apache TomEE -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apache-tomee</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>plus</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>arquillian-tomee-remote</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>tck-concurrency</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.tomee</groupId>
+                                            <artifactId>jakartaee-api</artifactId>
+                                            <version>${version.jakartaee-api}</version>
+                                            <type>jar</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/signaturedirectory
+                                            </outputDirectory>
+                                            <destFileName>jakartaee-api.jar</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                            <dependenciesToScan>
+                                <dependency>jakarta.enterprise.concurrent:jakarta.enterprise.concurrent-tck</dependency>
+                            </dependenciesToScan>
+                            <includes>
+                                <include>**/signature/**</include>
+                            </includes>
+                            <systemProperties>
+                                <java.util.logging.config.file>logging.properties</java.util.logging.config.file>
+                                <jimage.dir>${project.build.directory}/jimage</jimage.dir>
+                                <signature.sigTestClasspath>
+                                    ${project.build.directory}/signaturedirectory/jakartaee-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming
+                                </signature.sigTestClasspath>
+                            </systemProperties>
+                            <argLine>${surefire.argline} --add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED
+                                --add-opens java.base/jdk.internal.vm.annotation=ALL-UNNAMED
+                            </argLine>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-test-report</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report-only</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/surefire-reports</outputDirectory>
+                            <outputName>test-report</outputName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

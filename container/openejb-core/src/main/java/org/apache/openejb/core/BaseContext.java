@@ -74,8 +74,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     private boolean isAsyncOperation(final ThreadContext threadContext) {
-        if (threadContext.getCurrentOperation() == null
-            && threadContext.get(CUTask.Context.class) != null) {
+        if (threadContext.getCurrentOperation() == null) {
             return true;
         }
         return false;

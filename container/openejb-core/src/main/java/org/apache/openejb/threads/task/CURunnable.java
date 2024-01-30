@@ -16,13 +16,20 @@
  */
 package org.apache.openejb.threads.task;
 
+import org.apache.openejb.threads.impl.ContextServiceImpl;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
+
 import java.util.concurrent.Callable;
 
 public class CURunnable extends CUTask<Void> implements Runnable {
     private final Runnable delegate;
 
     public CURunnable(final Runnable task) {
-        super(task);
+        super(task, ContextServiceImplFactory.newPropagateEverythingContextService());
+        delegate = task;
+    }
+    public CURunnable(final Runnable task, final ContextServiceImpl contextService) {
+        super(task, contextService);
         delegate = task;
     }
 
