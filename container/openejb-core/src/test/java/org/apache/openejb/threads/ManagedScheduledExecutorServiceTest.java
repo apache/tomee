@@ -20,6 +20,8 @@ import org.apache.openejb.resource.thread.ManagedScheduledExecutorServiceImplFac
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.ri.sp.PseudoSecurityService;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.threads.impl.ContextServiceImpl;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +53,8 @@ public class ManagedScheduledExecutorServiceTest {
 
     @Test
     public void triggerCallableSchedule() throws Exception {
-        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create();
+        final ContextServiceImpl contextService = ContextServiceImplFactory.newDefaultContextService();
+        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create(contextService);
         final CountDownLatch counter = new CountDownLatch(5);
         final FutureAwareCallable callable = new FutureAwareCallable(counter);
 
@@ -90,7 +93,8 @@ public class ManagedScheduledExecutorServiceTest {
 
     @Test
     public void triggerRunnableSchedule() throws Exception {
-        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create();
+        final ContextServiceImpl contextService = ContextServiceImplFactory.newDefaultContextService();
+        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create(contextService);
         final CountDownLatch counter = new CountDownLatch(5);
         final FutureAwareCallable callable = new FutureAwareCallable(counter);
 
@@ -128,7 +132,8 @@ public class ManagedScheduledExecutorServiceTest {
 
     @Test
     public void simpleSchedule() throws Exception {
-        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create();
+        final ContextServiceImpl contextService = ContextServiceImplFactory.newDefaultContextService();
+        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create(contextService);
         final long start = System.currentTimeMillis();
         final ScheduledFuture<Long> future = es.schedule(new Callable<Long>() {
             @Override

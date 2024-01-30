@@ -26,6 +26,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.event.ComponentAdded;
 import org.apache.openejb.loader.event.ComponentRemoved;
 import org.apache.openejb.observer.Observes;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.util.AppFinder;
@@ -178,7 +179,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                                                 .size(3)
                                                 .threadFactory(new ManagedThreadFactoryImpl(appContext.getId() + "-cdi-fireasync-"))
                                                 .prefix("CDIAsyncPool")
-                                                .build(appContext.getOptions()));
+                                                .build(appContext.getOptions()), ContextServiceImplFactory.newPropagateEverythingContextService());
                                 delegate.compareAndSet(null, executor);
                             } else {
                                 executor = alreadyUpdated;

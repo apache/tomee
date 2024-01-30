@@ -22,8 +22,6 @@ import jakarta.el.ELException;
 import jakarta.el.ELResolver;
 import jakarta.el.PropertyNotFoundException;
 import jakarta.el.PropertyNotWritableException;
-import java.beans.FeatureDescriptor;
-import java.util.Iterator;
 
 public class WebAppElResolver extends ELResolver {
     private final ELResolver parent;
@@ -63,12 +61,7 @@ public class WebAppElResolver extends ELResolver {
     }
 
     @Override
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(final ELContext context, final Object base) {
-        return null;
-    }
-
-    @Override
-    public Class<?> getCommonPropertyType(final ELContext context, final Object base) {
+    public Class<?> getCommonPropertyType(ELContext context, Object base) {
         return null;
     }
 }

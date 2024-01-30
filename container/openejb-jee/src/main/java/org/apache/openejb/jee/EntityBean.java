@@ -108,7 +108,8 @@ import java.util.Map;
     "jmsDestinations",
     "securityRoleRef",
     "securityIdentity",
-    "query"
+    "query",
+    "contextService"
 })
 public class EntityBean implements RemoteBean {
 
@@ -183,6 +184,8 @@ public class EntityBean implements RemoteBean {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     public EntityBean() {
         final Set<String> publicIds = JaxbJavaee.currentPublicId.get();
@@ -625,5 +628,13 @@ public class EntityBean implements RemoteBean {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

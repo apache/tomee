@@ -28,7 +28,7 @@
 
   <artifactId>tomee-server-version</artifactId>
   <packaging>jar</packaging>
-  <name>TomEE :: iTests :: Server Composer</name>
+  <name>TomEE :: iTests :: Server Version</name>
 
   <build>
     <plugins>
@@ -44,7 +44,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>templating-maven-plugin</artifactId>
-        <version>1.0-alpha-3</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>filter-src</id>

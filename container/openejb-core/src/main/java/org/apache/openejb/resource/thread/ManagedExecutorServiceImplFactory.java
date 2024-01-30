@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.resource.thread;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.threads.reject.CURejectHandler;
@@ -24,6 +27,10 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -37,8 +44,10 @@ public class ManagedExecutorServiceImplFactory {
     private int queue = 15;
     private String threadFactory;
 
+    private String context;
+
     public ManagedExecutorServiceImpl create() {
-        return new ManagedExecutorServiceImpl(createExecutorService());
+        return new ManagedExecutorServiceImpl(createExecutorService(), findContextService());
     }
 
     private ExecutorService createExecutorService() {
@@ -62,6 +71,25 @@ public class ManagedExecutorServiceImplFactory {
         return new ThreadPoolExecutor(core, max, keepAlive.getTime(), keepAlive.getUnit(), blockingQueue, managedThreadFactory, CURejectHandler.INSTANCE);
     }
 
+    private ContextServiceImpl findContextService() {
+        if (context == null || context.trim().isEmpty()) {
+            throw new IllegalArgumentException("Please specify a context service to be used with the managed executor");
+        }
+
+        try {
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final Context context = containerSystem.getJNDIContext();
+            final Object obj = context.lookup("openejb/Resource/" + this.context);
+            if (!(obj instanceof ContextServiceImpl)) {
+                throw new IllegalArgumentException("Resource with id " + context
+                        + " is not a ContextService, but is " + obj.getClass().getName());
+            }
+            return (ContextServiceImpl) obj;
+        } catch (final NamingException e) {
+            throw new IllegalArgumentException("Unknown context service " + context);
+        }
+    }
+
     public void setCore(final int core) {
         this.core = core;
     }
@@ -80,5 +108,13 @@ public class ManagedExecutorServiceImplFactory {
 
     public void setThreadFactory(final String threadFactory) {
         this.threadFactory = threadFactory;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(final String context) {
+        this.context = context;
     }
 }

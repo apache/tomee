@@ -48,6 +48,8 @@
     <module>jsonp-signature-test</module>
     <module>jsonb-standalone</module>
     <module>jsonb-signature-test</module>
+    <module>concurrency-standalone</module>
+    <module>concurrency-signature-test</module>
     <module>microprofile-tck</module>
   </modules>
 

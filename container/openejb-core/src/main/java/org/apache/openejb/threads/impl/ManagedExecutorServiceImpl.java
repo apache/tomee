@@ -18,6 +18,7 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ContextService;
 import org.apache.openejb.api.resource.DestroyableResource;
+import org.apache.openejb.threads.future.CUCompletableFuture;
 import org.apache.openejb.threads.future.CUFuture;
 import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.threads.task.CURunnable;
@@ -33,9 +34,11 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImpl.class);
 
     private final ExecutorService delegate;
+    private final ContextServiceImpl contextService;
 
-    public ManagedExecutorServiceImpl(final ExecutorService delegate) {
+    public ManagedExecutorServiceImpl(final ExecutorService delegate, final ContextServiceImpl contextService) {
         this.delegate = delegate;
+        this.contextService = contextService;
     }
 
     @Override
@@ -121,7 +124,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <T> Future<T> submit(final Callable<T> task) {
-        final CUCallable<T> wrapper = new CUCallable<>(task);
+        final CUCallable<T> wrapper = new CUCallable<>(task, contextService);
         final Future<T> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
         return new CUFuture<>(future, wrapper);
@@ -129,7 +132,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <T> Future<T> submit(final Runnable task, final T result) {
-        final CURunnable wrapper = new CURunnable(task);
+        final CURunnable wrapper = new CURunnable(task, contextService);
         final Future<T> future = delegate.submit(wrapper, result);
         wrapper.taskSubmitted(future, this, task);
         return new CUFuture<>(future, wrapper);
@@ -137,7 +140,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public Future<?> submit(final Runnable task) {
-        final CURunnable wrapper = new CURunnable(task);
+        final CURunnable wrapper = new CURunnable(task, contextService);
         final Future<?> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
         return new CUFuture<>(Future.class.cast(future), wrapper);
@@ -145,7 +148,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public void execute(final Runnable command) {
-        final CURunnable wrapper = new CURunnable(command);
+        final CURunnable wrapper = new CURunnable(command, contextService);
         delegate.execute(wrapper);
         wrapper.taskSubmitted(null, this, command);
     }
@@ -157,7 +160,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     @Override
     public void destroyResource() {
         final List<Runnable> runnables = delegate.shutdownNow();
-        if (runnables.size() > 0) {
+        if (!runnables.isEmpty()) {
             LOGGER.warning(runnables.size() + " tasks to execute");
             for (final Runnable runnable : runnables) {
                 try {
@@ -171,52 +174,80 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     }
 
     @Override
-    public <U> CompletableFuture<U> completedFuture(U u) {
-        return null;
+    public <U> CompletableFuture<U> completedFuture(U value) {
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        future.complete(value);
+        return future;
     }
 
     @Override
-    public <U> CompletionStage<U> completedStage(U u) {
-        return null;
+    public <U> CompletionStage<U> completedStage(U value) {
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        future.complete(value);
+        return future;
     }
 
     @Override
-    public <T> CompletableFuture<T> copy(CompletableFuture<T> completableFuture) {
-        return null;
+    public <T> CompletableFuture<T> copy(CompletableFuture<T> stage) {
+        return copyInternal(stage);
     }
 
     @Override
-    public <T> CompletionStage<T> copy(CompletionStage<T> completionStage) {
-        return null;
+    public <T> CompletionStage<T> copy(CompletionStage<T> stage) {
+        return copyInternal(stage);
     }
 
     @Override
-    public <U> CompletableFuture<U> failedFuture(Throwable throwable) {
-        return null;
+    public <U> CompletableFuture<U> failedFuture(Throwable ex) {
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        future.completeExceptionally(ex);
+        return future;
     }
 
     @Override
-    public <U> CompletionStage<U> failedStage(Throwable throwable) {
-        return null;
+    public <U> CompletionStage<U> failedStage(Throwable ex) {
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        future.completeExceptionally(ex);
+        return future.minimalCompletionStage();
     }
 
     @Override
     public ContextService getContextService() {
-        return null;
+        return contextService;
     }
 
     @Override
     public <U> CompletableFuture<U> newIncompleteFuture() {
-        return null;
+        return new CUCompletableFuture<>(this);
     }
 
     @Override
     public CompletableFuture<Void> runAsync(Runnable runnable) {
-        return null;
+        return CUCompletableFuture.runAsync(runnable, this);
     }
 
     @Override
     public <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) {
-        return null;
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this);
+        this.execute(() -> {
+            try {
+                managedFuture.complete(supplier.get());
+            } catch (Exception e) {
+                managedFuture.completeExceptionally(e);
+            }
+        });
+        return managedFuture;
+    }
+
+    private <U> CompletableFuture<U> copyInternal(CompletionStage<U> future) {
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this);
+        future.whenComplete((result, exception) -> {
+            if (exception == null) {
+                managedFuture.complete(result);
+            } else {
+                managedFuture.completeExceptionally(exception);
+            }
+        });
+        return managedFuture;
     }
 }

@@ -98,7 +98,8 @@ import java.util.Map;
     "dataSource",
     "jmsConnectionFactories",
     "jmsDestinations",
-    "moduleName"
+    "moduleName",
+    "contextService"
 
 })
 public class WebApp implements WebCommon, Lifecycle, NamedModule {
@@ -193,6 +194,8 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version = "3.0";
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     @Override
     public String getJndiConsumerName() {
@@ -817,5 +820,13 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

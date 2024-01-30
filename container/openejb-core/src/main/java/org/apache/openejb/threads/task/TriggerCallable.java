@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.threads.task;
 
+import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 
 import jakarta.enterprise.concurrent.Trigger;
@@ -28,10 +29,11 @@ public class TriggerCallable<V> extends TriggerTask<V> implements Callable<V> {
     private final Callable<V> delegate;
 
     public TriggerCallable(final ManagedScheduledExecutorServiceImpl es,
+                           final ContextServiceImpl contextService,
                            final Callable<V> original, final Callable<V> wrap,
                            final Trigger trigger, final Date taskScheduledTime, final String id,
                            final AtomicReference<Future<V>> ref) {
-        super(original, es, trigger, taskScheduledTime, id, ref);
+        super(original, contextService, es, trigger, taskScheduledTime, id, ref);
         this.delegate = wrap;
     }
 
