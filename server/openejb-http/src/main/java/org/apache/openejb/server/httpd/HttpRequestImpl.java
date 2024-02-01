@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.httpd;
 
+import jakarta.servlet.*;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -55,16 +56,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.security.auth.login.LoginException;
-import jakarta.servlet.AsyncContext;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletRequestEvent;
-import jakarta.servlet.ServletRequestListener;
-import jakarta.servlet.ServletResponse;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -349,6 +341,25 @@ public class HttpRequestImpl implements HttpRequest {
         return DispatcherType.REQUEST;
     }
 
+    @Override
+    public String getRequestId() {
+        //TODO implement
+        return null;
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        //TODO implement
+        return null;
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
+        //TODO implement
+        return null;
+    }
+
+    @Override
     public ServletInputStream getInputStream() throws IOException {
         return this.in;
     }
@@ -939,11 +950,6 @@ public class HttpRequestImpl implements HttpRequest {
     }
 
     @Override
-    public boolean isRequestedSessionIdFromUrl() {
-        return false;
-    }
-
-    @Override
     public boolean isRequestedSessionIdFromURL() {
         return false;
     }
@@ -1081,11 +1087,6 @@ public class HttpRequestImpl implements HttpRequest {
     @Override
     public BufferedReader getReader() throws IOException {
         return null;
-    }
-
-    @Override
-    public String getRealPath(String s) {
-        return path;
     }
 
     @Deprecated // TODO should be dropped, do we drop axis module as well?

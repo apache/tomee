@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>moviefun-ear-parent</artifactId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>moviefun-functional-test</artifactId>
@@ -49,7 +49,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.7.0.Alpha10</version>
+        <version>1.7.0.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -81,13 +81,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <!--<classifier>uber</classifier> -->
       <scope>test</scope>
     </dependency>
@@ -111,7 +111,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.7.0.Alpha10</version>
+      <version>1.7.0.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -129,7 +129,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

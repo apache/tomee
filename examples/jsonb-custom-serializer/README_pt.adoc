@@ -469,7 +469,7 @@ Se olharmos para o jar construído pelo maven, veremos que a aplicação:
 
 [source,java]
 ----
-$ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war 
+$ jar tvf target/jsonb-custom-serializer-10.0.0-M1-SNAPSHOT.war
      0 Sat Dec 29 19:10:44 CET 2018 META-INF/
    134 Sat Dec 29 19:10:42 CET 2018 META-INF/MANIFEST.MF
      0 Sat Dec 29 19:10:42 CET 2018 WEB-INF/

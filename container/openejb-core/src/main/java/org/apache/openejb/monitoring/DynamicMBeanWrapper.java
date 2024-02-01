@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -243,12 +244,12 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     private static MBeanParameterInfo[] methodSignature(final MBeanOperationInfo jvmInfo, final Method method) {
         final Class<?>[] classes = method.getParameterTypes();
         final Annotation[][] annots = method.getParameterAnnotations();
-        return parameters(jvmInfo, classes, annots);
+        return parameters(jvmInfo, classes, annots, method.getParameters());
     }
 
     static MBeanParameterInfo[] parameters(final MBeanOperationInfo jvmInfo,
                                            final Class<?>[] classes,
-                                           final Annotation[][] annots) {
+                                           final Annotation[][] annots, Parameter[] parameters) {
         final MBeanParameterInfo[] params =
             new MBeanParameterInfo[classes.length];
         assert classes.length == annots.length;
@@ -256,7 +257,7 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
         String desc = "";
         for (int i = 0; i < classes.length; i++) {
             final Descriptor d = jvmInfo.getSignature()[i].getDescriptor();
-            final String pn = "arg" + i;
+            final String pn =  parameters[i].getName();
             for (final Annotation a : annots[i]) {
                 final Class<? extends Annotation> type = a.annotationType();
                 if (type.equals(Description.class) || type.equals(OPENEJB_API_TO_JAVAX.get(Description.class))) {

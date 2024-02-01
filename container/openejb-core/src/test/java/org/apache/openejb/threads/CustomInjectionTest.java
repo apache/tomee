@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.threads;
 
+import jakarta.enterprise.concurrent.ContextService;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
@@ -78,6 +79,9 @@ public class CustomInjectionTest {
 
     @Resource(name = "concurrent/tf")
     private ManagedThreadFactory tf;
+
+    @Resource
+    private ContextService ces;
 
     @EJB
     private CustomCUBean bean;

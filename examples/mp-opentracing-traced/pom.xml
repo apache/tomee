@@ -19,14 +19,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
-  <artifactId>mp-opentracing.traced</artifactId>
+  <artifactId>mp-opentracing-traced</artifactId>
   <name>TomEE :: Examples :: MicroProfile OpenTracing Traced</name>
-  <version>9.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <packaging>war</packaging>
   <properties>
-    <version.jakartaee-api>9.1-M2</version.jakartaee-api>
-    <tomee.version>9.0.0-SNAPSHOT</tomee.version>
-    <version.arquillian.bom>1.7.0.Alpha10</version.arquillian.bom>
+    <version.jakartaee-api>10.0-M2</version.jakartaee-api>
+    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
+    <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
   </properties>
   <dependencies>
     <dependency>

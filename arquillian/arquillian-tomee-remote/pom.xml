@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-remote</artifactId>
   <packaging>jar</packaging>
@@ -95,7 +95,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <classifier>webprofile</classifier>
       <scope>provided</scope>
     </dependency>
@@ -124,7 +124,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -151,14 +151,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>10.0.0-M1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <classifier>jakarta</classifier>
-      <version>${openwebbeans.version}</version>
+      <version>${version.openwebbeans}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -183,6 +182,12 @@
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
+      <version>${version.derby}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
       <version>${version.derby}</version>
       <scope>test</scope>
     </dependency>

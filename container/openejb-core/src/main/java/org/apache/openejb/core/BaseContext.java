@@ -46,11 +46,9 @@ import jakarta.transaction.SystemException;
 import jakarta.transaction.UserTransaction;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.security.Identity;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 
 
 /**
@@ -76,8 +74,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     private boolean isAsyncOperation(final ThreadContext threadContext) {
-        if (threadContext.getCurrentOperation() == null
-            && threadContext.get(CUTask.Context.class) != null) {
+        if (threadContext.getCurrentOperation() == null) {
             return true;
         }
         return false;
@@ -89,6 +86,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return new IllegalStateException(call + " cannot be called in " + operation);
     }
 
+    @Override
     public Map<String, Object> getContextData() {
         doCheck(Call.getContextData);
         return ThreadContext.getThreadContext().get(InvocationContext.class).getContextData();
@@ -101,6 +99,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         }
     }
 
+    @Override
     public EJBHome getEJBHome() {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
@@ -108,6 +107,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return di.getEJBHome();
     }
 
+    @Override
     public EJBLocalHome getEJBLocalHome() {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext di = threadContext.getBeanContext();
@@ -115,6 +115,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return di.getEJBLocalHome();
     }
 
+    @Override
     public Principal getCallerPrincipal() {
         doCheck(Call.getCallerPrincipal);
         Principal callerPrincipal = getCallerPrincipal(securityService);
@@ -239,19 +240,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         return di.isBeanManagedTransaction();
     }
 
-
-    public final Properties getEnvironment() {
-        throw new UnsupportedOperationException();
-    }
-
-    public final Identity getCallerIdentity() {
-        throw new UnsupportedOperationException();
-    }
-
-    public final boolean isCallerInRole(final Identity identity) {
-        throw new UnsupportedOperationException();
-    }
-
+    @Override
     public Object lookup(final String name) {
         final ThreadContext threadContext = ThreadContext.getThreadContext();
         final BeanContext beanContext = threadContext.getBeanContext();

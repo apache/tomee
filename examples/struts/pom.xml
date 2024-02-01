@@ -19,7 +19,7 @@
   <groupId>org.superbiz.struts</groupId>
   <artifactId>struts</artifactId>
   <packaging>war</packaging>
-  <version>9.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Struts</name>
   <url>http://tomee.apache.org</url>
   <properties>
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
+      <version>10.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -24,15 +24,23 @@ import jakarta.enterprise.inject.spi.Extension;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class MPMetricsCDIExtension implements Extension {
 
-    private void afterDeploymentValidation(@Observes final AfterDeploymentValidation avd, BeanManager bm) {
-        try {
-            final JmxRegistrar registrar = new JmxRegistrar();
-            registrar.init();
+    private static final AtomicBoolean INIT = new AtomicBoolean(false);
 
-        } catch (final Exception e) {
-            Logger.getInstance(LogCategory.OPENEJB, MPMetricsCDIExtension.class).error("Can't initialize Metrics Registrar: " + e.getMessage());
+    private void afterDeploymentValidation(@Observes final AfterDeploymentValidation avd, BeanManager bm) {
+
+        if (INIT.compareAndSet(false, true)) {
+            try {
+                final JmxRegistrar registrar = new JmxRegistrar();
+                registrar.init();
+
+            } catch (final IOException e) {
+                Logger.getInstance(LogCategory.OPENEJB, MPMetricsCDIExtension.class).error("Can't initialize Metrics Registrar: " + e.getMessage());
+            }
         }
     }
 

@@ -30,7 +30,7 @@ public class MPOpenTracingCDIExtension implements Extension {
      * @param beanManager the BeanManager reference
      */
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(TracerProducer.class));
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(TracerProducer.class), "TracerProducer");
     }
 
 }

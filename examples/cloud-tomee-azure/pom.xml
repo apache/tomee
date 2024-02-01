@@ -21,11 +21,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>cloud-tomee-azure</artifactId>
-  <version>9.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Azure deployment example</name>
   <properties>
-    <jakartaee-api.version>9.1-M2</jakartaee-api.version>
+    <jakartaee-api.version>10.0-M2</jakartaee-api.version>
   </properties>
   <dependencies>
     <dependency>

@@ -19,12 +19,12 @@ Licensed to the Apache Software Foundation (ASF) under one or more
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.tomee.maven</groupId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jarstxt-maven-plugin</artifactId>
-  <version>9.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>TomEE :: Maven Plugins :: jars.txt Maven Plugin</name>
 
@@ -50,7 +50,7 @@ Licensed to the Apache Software Foundation (ASF) under one or more
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang3.version}</version>
+      <version>${version.commons-lang3}</version>
     </dependency>
   </dependencies>
 

@@ -15,11 +15,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>moviefun-rest</artifactId>
   <packaging>war</packaging>
-  <version>9.0.0-SNAPSHOT</version>
+  <version>10.0.0-M1-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Moviefun Rest</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>9.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
   <repositories>
@@ -124,7 +124,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.7.0.Alpha10</version>
+        <version>1.7.0.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -134,7 +134,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.1-M2</version>
+      <version>10.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
