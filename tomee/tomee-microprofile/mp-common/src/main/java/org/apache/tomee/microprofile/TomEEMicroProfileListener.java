@@ -60,7 +60,7 @@ public class TomEEMicroProfileListener {
         "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
         "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
         "io.smallrye.config.inject.ConfigExtension",
-        "io.smallrye.metrics.setup.MetricCdiInjectionExtension",
+        "io.smallrye.metrics.legacyapi.LegacyMetricsExtension",
         "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
         "io.smallrye.opentracing.contrib.interceptor.OpenTracingInterceptor",
         "io.smallrye.faulttolerance.FaultToleranceExtension",

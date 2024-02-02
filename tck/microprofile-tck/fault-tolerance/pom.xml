@@ -114,7 +114,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-metrics</artifactId>
-      <version>${microprofile.metrics.impl.version}</version>
+      <version>${version.microprofile.impl.metrics}</version>
       <scope>provided</scope>
     </dependency>
 

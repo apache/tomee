@@ -174,14 +174,14 @@
     <maven.compiler.target>11</maven.compiler.target>
 
     <maven.compiler.release>11</maven.compiler.release>
-    <version.micrometer>1.9.3</version.micrometer>
+    <version.micrometer>1.12.2</version.micrometer>
     <!-- Micro Profile API -->
     <version.microprofile>5.0</version.microprofile>
     <version.microprofile.config>3.0.3</version.microprofile.config>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.health>4.0.1</version.microprofile.health>
     <version.microprofile.jwt>2.0</version.microprofile.jwt>
-    <version.microprofile.metrics>4.0.1</version.microprofile.metrics>
+    <version.microprofile.metrics>5.0.2</version.microprofile.metrics>
     <version.microprofile.openapi>3.0</version.microprofile.openapi>
     <version.microprofile.opentracing>3.0</version.microprofile.opentracing>
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
@@ -192,7 +192,7 @@
     <version.microprofile.impl.config>3.0.0</version.microprofile.impl.config>
     <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
-    <version.microprofile.impl.metrics>5.0.2</version.microprofile.impl.metrics>
+    <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
     <version.microprofile.impl.openapi>3.0.1</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
 
