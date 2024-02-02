@@ -47,6 +47,8 @@ import static org.eclipse.microprofile.jwt.config.Names.TOKEN_COOKIE;
 import static org.eclipse.microprofile.jwt.config.Names.TOKEN_HEADER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
+import static org.eclipse.microprofile.jwt.config.Names.TOKEN_AGE;
+import static org.eclipse.microprofile.jwt.config.Names.CLOCK_SKEW;
 
 /**
  * The purpose of this class is to create an instance of JWTAuthConfiguration using
@@ -117,7 +119,9 @@ public class JWTAuthConfigurationProperties {
                 config.getOptionalValue(TOKEN_HEADER, String.class).map(String::toLowerCase).orElse("authorization"),
                 config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"),
                 config.getOptionalValue("mp.jwt.decrypt.key.algorithm", String.class).orElse(null),
-                config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse(null));
+                config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse(null),
+                config.getOptionalValue(TOKEN_AGE, Integer.class).orElse(null),
+                config.getOptionalValue(CLOCK_SKEW, Integer.class).orElse(0));
     }
     
     private Boolean queryAllowExp(){
