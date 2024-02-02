@@ -96,7 +96,6 @@
         <exclude>org.eclipse.microprofile.rest.client:*</exclude>
         <exclude>org.reactivestreams:*</exclude>
         <exclude>org.opensaml:*</exclude>
-        <exclude>org.apache.wss4j:*</exclude>
 
         <!-- wars and pom -->
         <exclude>*:war</exclude>
@@ -116,7 +115,6 @@
         <exclude>org.apache.activemq:activemq-ra</exclude>
         <exclude>org.apache.commons.dbcp2:*</exclude>
         <exclude>commons-fileupload:*</exclude>
-        <exclude>org.apache.cxf:*</exclude>
         <exclude>org.metatype.sxc:*</exclude>
         <exclude>org.apache.taglibs:*</exclude>
 

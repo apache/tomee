@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-metrics-tck</artifactId>
@@ -98,14 +98,12 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
-      <version>${microprofile.metrics.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api-tck</artifactId>
-      <version>${microprofile.metrics.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.jboss.arquillian.container</groupId>
@@ -118,7 +116,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-rest-tck</artifactId>
-      <version>${microprofile.metrics.tck.version}</version>
       <scope>test</scope>
     </dependency>
 

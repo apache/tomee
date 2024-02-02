@@ -33,12 +33,12 @@ public class Mvn {
     /**
      * Expected format
      *
-     * org.apache.tomee:apache-tomee:zip:plus:8.0.0-SNAPSHOT
+     * org.apache.tomee:apache-tomee:zip:plus:10.0.0-M1-SNAPSHOT
      */
     public static File mvn(final String coordinates) {
         final String[] parts = coordinates.split(":");
         if (parts.length != 5) {
-            throw new IllegalArgumentException("Expected format with 5 parts such as 'org.apache.tomee:apache-tomee:zip:plus:8.0.0-SNAPSHOT'.  Found " + coordinates);
+            throw new IllegalArgumentException("Expected format with 5 parts such as 'org.apache.tomee:apache-tomee:zip:plus:10.0.0-M1-SNAPSHOT'.  Found " + coordinates);
         }
 
         final String group = parts[0];

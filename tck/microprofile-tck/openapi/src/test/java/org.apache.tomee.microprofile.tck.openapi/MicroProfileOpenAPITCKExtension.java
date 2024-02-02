@@ -26,7 +26,6 @@ public class MicroProfileOpenAPITCKExtension implements LoadableExtension {
     public void register(final ExtensionBuilder extensionBuilder) {
         extensionBuilder
                 .override(Protocol.class, ServletProtocol.class, MicroProfileOpenAPITCKProtocol.class)
-                .service(ApplicationArchiveProcessor.class, MicroProfileOpenApiDeploymentProcessor.class)
                 .observer(MicroProfileOpenAPITCKObserver.class)
         ;
     }

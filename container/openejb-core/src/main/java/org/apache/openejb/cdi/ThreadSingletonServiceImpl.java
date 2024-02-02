@@ -26,6 +26,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.event.ComponentAdded;
 import org.apache.openejb.loader.event.ComponentRemoved;
 import org.apache.openejb.observer.Observes;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.util.AppFinder;
@@ -178,7 +179,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                                                 .size(3)
                                                 .threadFactory(new ManagedThreadFactoryImpl(appContext.getId() + "-cdi-fireasync-"))
                                                 .prefix("CDIAsyncPool")
-                                                .build(appContext.getOptions()));
+                                                .build(appContext.getOptions()), ContextServiceImplFactory.newPropagateEverythingContextService());
                                 delegate.compareAndSet(null, executor);
                             } else {
                                 executor = alreadyUpdated;
@@ -235,7 +236,15 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         Object old = null;
         try {
             if (startupObject.getWebContext() == null) {
-                webBeansContext = new WebBeansContext(services, properties);
+                final boolean cacheResolutionFailure = Boolean.parseBoolean(
+                        SystemInstance.get().getProperty("openejb.cache.cdi-type-resolution-failure", "false"));
+
+                if (cacheResolutionFailure) {
+                    webBeansContext = new AppWebBeansContext(services, properties);
+                } else {
+                    webBeansContext = new WebBeansContext(services, properties);
+                }
+
                 appContext.set(WebBeansContext.class, webBeansContext);
             } else {
                 webBeansContext = new WebappWebBeansContext(services, properties, appContext.getWebBeansContext());

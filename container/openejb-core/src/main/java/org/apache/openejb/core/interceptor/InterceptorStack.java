@@ -22,6 +22,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +33,20 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class InterceptorStack {
-    private final Object beanInstance;
-    private final List<Interceptor> interceptors;
-    private final Method targetMethod;
-    private final Operation operation;
+    protected final Object beanInstance;
+    protected final List<Interceptor> interceptors;
+    protected final Method targetMethod;
+    protected final Constructor constructor;
+    protected final Operation operation;
+    private final Map<String, Object> interceptorInstances;
 
     public InterceptorStack(final Object beanInstance, final Method targetMethod, final Operation operation, final List<InterceptorData> interceptorData, final Map<String, Object> interceptorInstances) {
+        this(beanInstance, targetMethod, null, operation, interceptorData, interceptorInstances);
+    }
+
+    public InterceptorStack(final Object beanInstance, final Method targetMethod, final Constructor constructor,
+                            final Operation operation, final List<InterceptorData> interceptorData, final Map<String, Object> interceptorInstances) {
+        this.interceptorInstances = interceptorInstances;
         if (interceptorData == null) {
             throw new NullPointerException("interceptorData is null");
         }
@@ -46,6 +55,7 @@ public class InterceptorStack {
         }
         this.beanInstance = beanInstance;
         this.targetMethod = targetMethod;
+        this.constructor = constructor;
         this.operation = operation;
 
         interceptors = new ArrayList<>(interceptorData.size());
@@ -73,7 +83,7 @@ public class InterceptorStack {
     }
 
     public InvocationContext createInvocationContext(final Object... parameters) {
-        return new ReflectionInvocationContext(operation, interceptors, beanInstance, targetMethod, parameters);
+        return new ReflectionInvocationContext(operation, interceptors, beanInstance, targetMethod, constructor, parameters);
     }
 
     public Object invoke(final Object... parameters) throws Exception {

@@ -24,7 +24,7 @@ import org.apache.tomee.microprofile.jwt.bval.ValidationInterceptorsFeature;
 /**
  * OpenEJB/TomEE hack to register a new provider on the fly
  * Could be package in tomee only or done in another way
- *
+ * <p>
  * As soon as Roberto is done with the packaging, we can remove all this and providers are going to be scanned automatically
  */
 public class MPJWPProviderRegistration {

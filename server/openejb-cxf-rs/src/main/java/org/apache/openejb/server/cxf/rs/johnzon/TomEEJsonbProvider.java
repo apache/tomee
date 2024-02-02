@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.server.cxf.rs.johnzon;
 
-import org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider;
-import org.apache.johnzon.mapper.access.AccessMode;
-
 import jakarta.activation.DataSource;
 import jakarta.annotation.Priority;
 import jakarta.json.bind.JsonbConfig;
@@ -26,6 +23,9 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.ext.Provider;
+import org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider;
+import org.apache.johnzon.mapper.access.AccessMode;
+
 import java.io.File;
 import java.io.Reader;
 import java.lang.annotation.Annotation;
@@ -38,6 +38,7 @@ import java.util.Locale;
 @Consumes({"application/json", "application/*+json"})
 @Priority(value = 5000)
 public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
+
     public TomEEJsonbProvider() {
         config.withPropertyVisibilityStrategy(new TomEEJsonbPropertyVisibilityStrategy());
         setThrowNoContentExceptionOnEmptyStreams(true); // this is to make TCK tests happy
@@ -46,6 +47,8 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        if (!isJson(mediaType)) return false;
+
         // let the CXF built-in writer handle this one
         // TODO: add a setting?
         if (DataSource.class.isAssignableFrom(type)) return false;
@@ -58,6 +61,8 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        if (!isJson(mediaType)) return false;
+
         // let the CXF built-in writer handle this one
         // TODO: add a setting?
         if (DataSource.class.isAssignableFrom(type)) return false;
@@ -66,6 +71,13 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
         if (Reader.class.isAssignableFrom(type)) return false;
 
         return super.isReadable(type, genericType, annotations, mediaType);
+    }
+
+    public static boolean isJson(final MediaType mediaType) {
+        if (!mediaType.getType().equals("application")) return false;
+        if (mediaType.getSubtype().equals("json")) return true;
+        if (mediaType.getSubtype().endsWith("+json")) return true;
+        return false;
     }
 
     public void setDateFormat(String dateFormat) {

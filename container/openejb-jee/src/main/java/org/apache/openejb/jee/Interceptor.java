@@ -48,6 +48,7 @@ import java.util.Map;
  *         &lt;element name="interceptor-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
  *         &lt;element name="around-invoke" type="{http://java.sun.com/xml/ns/javaee}around-invokeType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="around-timeout" type="{http://java.sun.com/xml/ns/javaee}around-timeoutType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="around-construct" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}jndiEnvironmentRefsGroup"/&gt;
  *         &lt;element name="post-activate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="pre-passivate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
@@ -73,6 +74,7 @@ import java.util.Map;
     "messageDestinationRef",
     "persistenceContextRef",
     "persistenceUnitRef",
+    "aroundConstruct",
     "postConstruct",
     "preDestroy",
     "dataSource",
@@ -82,7 +84,8 @@ import java.util.Map;
     "prePassivate",
     "afterBegin",
     "beforeCompletion",
-    "afterCompletion"
+    "afterCompletion",
+    "contextService"
 })
 public class Interceptor implements JndiConsumer, Session {
 
@@ -118,6 +121,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "jms-destination")
     protected KeyedCollection<String, JMSDestination> jmsDestinations;
+    @XmlElement(name = "around-construct", required = true)
+    protected List<LifecycleCallback> aroundConstruct;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -136,6 +141,8 @@ public class Interceptor implements JndiConsumer, Session {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
     public Interceptor() {
     }
@@ -337,6 +344,13 @@ public class Interceptor implements JndiConsumer, Session {
         return this.dataSource.toMap();
     }
 
+    public List<LifecycleCallback> getAroundConstruct() {
+        if (aroundConstruct == null) {
+            aroundConstruct = new ArrayList<LifecycleCallback>();
+        }
+        return this.aroundConstruct;
+    }
+
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
             postConstruct = new ArrayList<LifecycleCallback>();
@@ -460,5 +474,13 @@ public class Interceptor implements JndiConsumer, Session {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

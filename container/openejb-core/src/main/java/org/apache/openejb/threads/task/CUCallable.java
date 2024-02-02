@@ -16,13 +16,21 @@
  */
 package org.apache.openejb.threads.task;
 
+import org.apache.openejb.threads.impl.ContextServiceImpl;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
+
 import java.util.concurrent.Callable;
 
 public class CUCallable<T> extends CUTask<T> implements Callable<T> {
     private final Callable<? extends T> delegate;
 
     public CUCallable(final Callable<? extends T> task) {
-        super(task);
+        super(task, ContextServiceImplFactory.newDefaultContextService());
+        delegate = task;
+    }
+
+    public CUCallable(final Callable<? extends T> task, final ContextServiceImpl contextService) {
+        super(task, contextService);
         delegate = task;
     }
 

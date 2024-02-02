@@ -1131,7 +1131,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return String.format("jdbc:mysql://%s:%s/%s", serverName, port, databaseName);
         }
 
-        if (driver.equals("com.postgresql.jdbc.Driver")) {
+        if (driver.startsWith("com.postgresql")
+                || driver.startsWith("org.postgresql")) {
             return String.format("jdbc:postgresql://%s:%s/%s", serverName, port, databaseName);
         }
 
@@ -2205,6 +2206,14 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             final String newResourceId = getResourceId(beanName, dataSourceId, null, null);
             if (!dataSourceId.equals(newResourceId)) {
                 resourceInfo.properties.setProperty("DataSource", newResourceId);
+            }
+        }
+
+        final String contextId = resourceInfo.properties.getProperty("Context");
+        if (contextId != null && contextId.length() > 0) {
+            final String newResourceId = getResourceId(beanName, contextId, null, null);
+            if (!contextId.equals(newResourceId)) {
+                resourceInfo.properties.setProperty("Context", newResourceId);
             }
         }
 

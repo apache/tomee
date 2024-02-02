@@ -124,6 +124,7 @@ import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.DaemonThreadFactory;
@@ -1285,9 +1286,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     final AnnotationFinder finder = Proxy.isProxyClass(clazz) ?
                             null : new AnnotationFinder(new ClassesArchive(ancestors(clazz)));
                     final List<Method> postConstructs = finder == null ?
-                            Collections.<Method>emptyList() : finder.findAnnotatedMethods(PostConstruct.class);
+                            Collections.emptyList() : finder.findAnnotatedMethods(PostConstruct.class);
                     final List<Method> preDestroys = finder == null ?
-                            Collections.<Method>emptyList() : finder.findAnnotatedMethods(PreDestroy.class);
+                            Collections.emptyList() : finder.findAnnotatedMethods(PreDestroy.class);
 
                     resourceInfo.postConstructMethods = new ArrayList<>();
                     resourceInfo.preDestroyMethods = new ArrayList<>();
@@ -1783,7 +1784,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Map<Class<?>, Object> services = new HashMap<>();
 
-            services.put(Executor.class, new ManagedExecutorServiceImpl(ForkJoinPool.commonPool()));
+            services.put(Executor.class, new ManagedExecutorServiceImpl(ForkJoinPool.commonPool(), ContextServiceImplFactory.newPropagateEverythingContextService()));
             services.put(JNDIService.class, new OpenEJBJndiService());
             services.put(AppContext.class, appContext);
             services.put(ScannerService.class, new CdiScanner());

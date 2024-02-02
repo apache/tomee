@@ -115,20 +115,24 @@ public class ResourceEventsTest {
         private static final List<ResourceEvent> EVENTS = new ArrayList<>();
 
         public void onCreated(@Observes final ResourceCreated created) {
-            EVENTS.add(created);
-            if (created.is(Base.class) && "base".equals(created.getName())) {
-                created.replaceBy(new Child(created.getResource()));
+            if (created.resource instanceof Base) {
+                EVENTS.add(created);
+                if (created.is(Base.class) && "base".equals(created.getName())) {
+                    created.replaceBy(new Child(created.getResource()));
+                }
             }
         }
 
         public void onDestroyed(@Observes final ResourceBeforeDestroyed destroyed) {
-            EVENTS.add(destroyed);
-            if (destroyed.is(Base.class) && destroyed.is(Child.class) && "base".equals(destroyed.getName())) {
-                final Object parent = Child.class.cast(destroyed.getResource()).parent;
-                try {
-                    destroyed.replaceBy(new Assembler.ResourceInstance("base", parent, singleton(Base.class.getMethod("stop")), null));
-                } catch (final NoSuchMethodException e) {
-                    fail(e.getMessage());
+            if (destroyed.name.equals("base") || destroyed.name.equals("base2")) {
+                EVENTS.add(destroyed);
+                if (destroyed.is(Base.class) && destroyed.is(Child.class) && "base".equals(destroyed.getName())) {
+                    final Object parent = Child.class.cast(destroyed.getResource()).parent;
+                    try {
+                        destroyed.replaceBy(new Assembler.ResourceInstance("base", parent, singleton(Base.class.getMethod("stop")), null));
+                    } catch (final NoSuchMethodException e) {
+                        fail(e.getMessage());
+                    }
                 }
             }
         }

@@ -20,7 +20,7 @@
   <parent>
     <artifactId>polling-parent</artifactId>
     <groupId>jug</groupId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>10.0.0-M1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -78,7 +78,7 @@
           <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>jakartaee-api</artifactId>
-            <version>9.1-M2</version>
+            <version>10.0-M2</version>
           </dependency>
           <dependency>
             <groupId>net.sourceforge.serp</groupId>
@@ -94,14 +94,7 @@
           <dependency> <!-- because entities was enhanced -->
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
-            <version>3.2.2</version>
-            <classifier>jakarta</classifier>
-            <exclusions>
-              <exclusion>
-                <groupId>*</groupId>
-                <artifactId>*</artifactId>
-              </exclusion>
-            </exclusions>
+            <version>4.0.0-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>

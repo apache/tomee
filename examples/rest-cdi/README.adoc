@@ -209,7 +209,7 @@ INFO - Enterprise application "/home/daniel/git/apache/tomee/examples/rest-cdi/G
 INFO - Creating dedicated application classloader for GreetingServiceTest
 INFO - Assembling app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
 WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by org.apache.openejb.util.proxy.LocalBeanProxyFactory$Unsafe (file:/home/daniel/.m2/repository/org/apache/tomee/openejb-core/8.0.5-SNAPSHOT/openejb-core-8.0.5-SNAPSHOT.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
+WARNING: Illegal reflective access by org.apache.openejb.util.proxy.LocalBeanProxyFactory$Unsafe (file:/home/daniel/.m2/repository/org/apache/tomee/openejb-core/10.0.0-M1-SNAPSHOT/openejb-core-10.0.0-M1-SNAPSHOT.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
 WARNING: Please consider reporting this to the maintainers of org.apache.openejb.util.proxy.LocalBeanProxyFactory$Unsafe
 WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
 WARNING: All illegal access operations will be denied in a future release
@@ -267,7 +267,7 @@ Pragma=[no-cache]
 **********************************************
 
 FINE - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 97
 Date: Sun, 15 Nov 2020 20:48:49 GMT
@@ -361,7 +361,7 @@ Content-Type=[application/xml]
 **********************************************
 
 FINE - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 97
 Date: Sun, 15 Nov 2020 20:48:50 GMT
@@ -454,7 +454,7 @@ Pragma=[no-cache]
 **********************************************
 
 FINE - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 22
 Date: Sun, 15 Nov 2020 20:48:51 GMT
@@ -549,7 +549,7 @@ Content-Type=[application/json]
 **********************************************
 
 FINE - HTTP/1.1 200 OK
-Server: OpenEJB/8.0.5-SNAPSHOT Linux/5.0.0-23-generic (amd64)
+Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
 Connection: close
 Content-Length: 22
 Date: Sun, 15 Nov 2020 20:48:51 GMT
