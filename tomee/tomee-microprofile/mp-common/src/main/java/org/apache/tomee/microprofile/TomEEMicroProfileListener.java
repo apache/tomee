@@ -30,7 +30,6 @@ import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
-import org.apache.tomee.installer.Paths;
 import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
 import org.apache.tomee.microprofile.openapi.MicroProfileOpenApiRegistration;
 import org.apache.tomee.microprofile.opentracing.MicroProfileOpenTracingExceptionMapper;
@@ -42,7 +41,6 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.Collection;
@@ -57,10 +55,6 @@ import java.util.stream.Stream;
 public class TomEEMicroProfileListener {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), TomEEMicroProfileListener.class);
-
-    private static final String[] MICROPROFILE_LIBS_IMPLS_PREFIXES = new String[]{
-        "mp-common"
-    };
 
     private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
         "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
@@ -98,17 +92,8 @@ public class TomEEMicroProfileListener {
             }
         }
 
-        final Paths paths = new Paths(new File(System.getProperty("openejb.home")));
-        for (final String prefix : MICROPROFILE_LIBS_IMPLS_PREFIXES) {
-            final File file = paths.findTomEELibJar(prefix);
-            if (file != null) {
-                try {
-                    containerUrls.add(file.toURI().toURL());
-                } catch (final MalformedURLException e) {
-                    // ignored
-                }
-            }
-        }
+        // Add mp-common jar so classes like MicroProfileHealthChecksEndpoint are scanned as well
+        containerUrls.add(getClass().getProtectionDomain().getCodeSource().getLocation());
 
         SystemInstance.get().setProperty("openejb.cxf-rs.cache-application", "false");
     }
