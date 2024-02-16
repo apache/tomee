@@ -217,8 +217,8 @@
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.0</version.johnzon>
     <version.myfaces>4.0.2</version.myfaces>
-    <version.openjpa>4.0.0-SNAPSHOT</version.openjpa>
-    <version.openwebbeans>4.0.2-SNAPSHOT</version.openwebbeans>
+    <version.openjpa>4.0.0</version.openjpa>
+    <version.openwebbeans>4.0.2</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.4</version.eclipselink>
     <!-- org.glassfish -->
@@ -232,7 +232,6 @@
     <version.xmlsec>3.0.3</version.xmlsec>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
-    <version.deltaspike>1.9.6</version.deltaspike>
 
     <!-- JDBC Drivers -->
     <version.derby>10.15.2.0</version.derby>
