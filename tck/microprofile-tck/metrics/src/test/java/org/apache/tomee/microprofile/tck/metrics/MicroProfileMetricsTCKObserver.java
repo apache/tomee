@@ -17,9 +17,16 @@
 package org.apache.tomee.microprofile.tck.metrics;
 
 import io.restassured.RestAssured;
+import io.restassured.filter.Filter;
+import io.restassured.filter.FilterContext;
+import io.restassured.response.Response;
+import io.restassured.specification.FilterableRequestSpecification;
+import io.restassured.specification.FilterableResponseSpecification;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.core.api.annotation.Observes;
+
+import java.util.Arrays;
 
 /**
  * Metrics TCK expect the deployed test archives to be in the root context. In here, we just set the RestAssured path
@@ -30,9 +37,31 @@ public class MicroProfileMetricsTCKObserver {
 
 
     public void AfterDeploy(@Observes final AfterDeploy afterDeploy) {
+        RestAssured.filters(Arrays.asList(new SingleRequestFilter()));
         final int httpPort = ((TomEEContainer<?>) afterDeploy.getDeployableContainer()).getConfiguration().getHttpPort();
         final String targetUrl = "http://localhost:" + httpPort;
         System.setProperty("test.url", targetUrl);
         RestAssured.basePath = "microprofile-metrics";
+        System.setProperty("context.root", "");
+    }
+
+    /*
+     * This forces a very short wait before calls to the /metrics endpoint. The Tomcat response is sent to the client
+     * ever-so-slightly before the metrics valve finishes completing. This ensures that the metrics are updated before
+     * the prometheus scrape takes place.
+     */
+    private static class SingleRequestFilter implements Filter {
+        @Override
+        public Response filter(final FilterableRequestSpecification filterableRequestSpecification, final FilterableResponseSpecification filterableResponseSpecification, final FilterContext filterContext) {
+            try {
+                if (filterableRequestSpecification.getURI().contains("/microprofile-metrics/metrics")) {
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            return filterContext.next(filterableRequestSpecification, filterableResponseSpecification);
+        }
     }
 }

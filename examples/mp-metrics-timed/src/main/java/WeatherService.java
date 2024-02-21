@@ -32,8 +32,8 @@ public class WeatherService {
 
     @Path("/day/status")
     @Timed(name = "weather_day_status", absolute = true,
-            displayName = "Weather Day Status",
-            description = "This metric shows the weather status of the day.")
+            description = "This metric shows the weather status of the day.",
+            scope = "weather")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String dayStatus() {

@@ -16,26 +16,16 @@
  */
 package org.apache.tomee.microprofile.metrics;
 
-import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.Extension;
+import io.smallrye.metrics.jaxrs.JaxRsMetricsFilter;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.Provider;
 
-public class MPMetricsCDIExtension implements Extension {
-
-//    private static final AtomicBoolean INIT = new AtomicBoolean(false);
-
-    private void afterDeploymentValidation(@Observes final AfterDeploymentValidation avd, BeanManager bm) {
-
-//        if (INIT.compareAndSet(false, true)) {
-//            try {
-//                final JmxRegistrar registrar = new JmxRegistrar();
-//                registrar.init();
-//
-//            } catch (final IOException e) {
-//                Logger.getInstance(LogCategory.OPENEJB, MPMetricsCDIExtension.class).error("Can't initialize Metrics Registrar: " + e.getMessage());
-//            }
-//        }
+@Provider
+public class MetricsFilterRegistration implements DynamicFeature {
+    @Override
+    public void configure(ResourceInfo resourceInfo, FeatureContext context) {
+        context.register(JaxRsMetricsFilter.class);
     }
-
 }
