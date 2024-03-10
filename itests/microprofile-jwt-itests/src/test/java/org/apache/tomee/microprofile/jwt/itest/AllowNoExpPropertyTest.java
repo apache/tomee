@@ -42,14 +42,11 @@ import org.eclipse.microprofile.auth.LoginConfig;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 
 public class AllowNoExpPropertyTest {
 
-    //FIXME TOMEE-4297
-    @Ignore(value = "TOMEE-4297")
     @Test
     public void testNewPropertyOverridesOld1() throws Exception {
         final Tokens tokens = Tokens.rsa(2048, 256);
@@ -92,8 +89,6 @@ public class AllowNoExpPropertyTest {
         assertNotPresent(output, "\tat org."); // no stack traces
     }
 
-    //FIXME TOMEE-4297
-    @Ignore(value = "TOMEE-4297")
     @Test
     public void testNewPropertyOverridesOld2() throws Exception {
         final Tokens tokens = Tokens.rsa(2048, 256);
