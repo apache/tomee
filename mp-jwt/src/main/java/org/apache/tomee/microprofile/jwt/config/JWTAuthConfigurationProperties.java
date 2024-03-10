@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import static org.eclipse.microprofile.jwt.config.Names.AUDIENCES;
@@ -123,14 +122,17 @@ public class JWTAuthConfigurationProperties {
                 config.getOptionalValue(TOKEN_AGE, Integer.class).orElse(null),
                 config.getOptionalValue(CLOCK_SKEW, Integer.class).orElse(0));
     }
-    
+  
     private Boolean queryAllowExp(){
-        return config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class)
-                .or(() -> config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class)
-                        .map(value -> {
-                            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp propert instead.");
-                            return value;
-                        }))
+        final Optional<Boolean> allowExp = config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class);
+        final Optional<Boolean> allowExpDeprecatedValue = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class);
+
+        if (allowExpDeprecatedValue.isPresent()) {
+            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp property instead.");
+        }
+
+        return allowExp
+                .or(() -> allowExpDeprecatedValue)
                 .orElse(false);
     }
     
