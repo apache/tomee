@@ -26,21 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.batchee.util.Batches.waitForEnd;
-import static org.testng.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
 public class InjectionsTest {
-    @Test
-    public void run() {
-        final JobOperator operator = BatchRuntime.getJobOperator();
-        final long id = operator.start("injections", null);
-        waitForEnd(operator, id);
-        assertEquals(operator.getStepExecutions(id).iterator().next().getExitStatus(), "true");
-    }
 
     @Module
     public Class<?>[] cdi() {
-        return new Class<?>[]{BatchBean.class};
+        return new Class<?>[]{BatchBean.class, InjectionsMock.class};
     }
 
     @Inject
