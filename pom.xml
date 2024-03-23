@@ -210,7 +210,7 @@
     <!-- org.apache -->
     <version.activemq>5.18.3</version.activemq>
     <!-- downgrade to avoid a henn egg issue with batchee -->
-    <version.batchee>1.0.3</version.batchee>
+    <version.batchee>1.0.4</version.batchee>
     <version.bval>3.0.0</version.bval>
     <version.cxf>4.0.4</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
