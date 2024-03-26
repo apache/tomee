@@ -706,10 +706,15 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${version.batchee}</version>
       <scope>provided</scope>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
-          <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-runtime</artifactId>
+          <groupId>org.apache.batchee</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
