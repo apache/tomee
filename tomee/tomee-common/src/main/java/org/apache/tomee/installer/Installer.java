@@ -555,13 +555,13 @@ public class Installer implements InstallerInterface {
                     "<Connector port=\"8080\"",
                     "<Connector port=\"8080\"",
                     "/>",
-                    " maxParameterCount=\"1000\" xpoweredBy=\"false\" server=\"Apache TomEE\" />");
+                    "xpoweredBy=\"false\" server=\"Apache TomEE\" />");
 
             newServerXml = Installers.replace(newServerXml,
                     "<Connector port=\"8443\"",
                     "<Connector port=\"8443\"",
                     ">",
-                    " maxParameterCount=\"1000\" xpoweredBy=\"false\" server=\"Apache TomEE\" >");
+                    " xpoweredBy=\"false\" server=\"Apache TomEE\" >");
         } catch (final IOException e) {
             alerts.addError("Error adding server attribute to server.xml file", e);
         }
