@@ -146,17 +146,6 @@
       <scope>runtime</scope>
     </dependency>
 
-
-
-
-    <!-- needed to compile in intellij for tomcat patches -->
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- needed for BOM generation -->
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -573,37 +562,6 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.apache.tomee.patch</groupId>
-            <artifactId>tomee-patch-plugin</artifactId>
-            <configuration>
-              <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
-              <skipTransform>true</skipTransform>
-              <createTarGz>true</createTarGz>
-              <skips>
-                <jars>
-                  <bcpkix-jdk15to18-1.76.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.76</bcpkix-jdk15to18-1.76.jar>
-                  <bcprov-jdk15to18-1.76.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.76</bcprov-jdk15to18-1.76.jar>
-                  <bcutil-jdk15to18-1.76.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.76</bcutil-jdk15to18-1.76.jar>
-                  <!-- Don't modify bootstrap.jar. Current patch plugin 0.10 has an ambiguity adding classes in more than one target jar if the packages are matching -->
-                  <bootstrap.jar>bootstrap.jar</bootstrap.jar>
-                </jars>
-              </skips>
-              <add>
-                <resources>
-                  <tomcat-coyote.jar>.*BadRequestException.*</tomcat-coyote.jar>
-                </resources>
-              </add>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <phase>package</phase>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.0.0</version>
@@ -809,32 +767,6 @@
                     </artifact>
                   </artifacts>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.tomee.patch</groupId>
-            <artifactId>tomee-patch-plugin</artifactId>
-            <configuration>
-              <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
-              <skipTransform>true</skipTransform>
-              <createTarGz>true</createTarGz>
-              <skips>
-                <jars>
-                  <bcpkix-jdk15to18-1.76.jar>org.bouncycastle:bcpkix-jdk15to18:jar:1.76</bcpkix-jdk15to18-1.76.jar>
-                  <bcprov-jdk15to18-1.76.jar>org.bouncycastle:bcprov-jdk15to18:jar:1.76</bcprov-jdk15to18-1.76.jar>
-                  <bcutil-jdk15to18-1.76.jar>org.bouncycastle:bcutil-jdk15to18:jar:1.76</bcutil-jdk15to18-1.76.jar>
-                  <!-- Don't modify bootstrap.jar. Current patch plugin 0.10 has an ambiguity adding classes in more than one target jar if the packages are matching -->
-                  <bootstrap.jar>bootstrap.jar</bootstrap.jar>
-                </jars>
-              </skips>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <phase>package</phase>
               </execution>
             </executions>
           </plugin>
