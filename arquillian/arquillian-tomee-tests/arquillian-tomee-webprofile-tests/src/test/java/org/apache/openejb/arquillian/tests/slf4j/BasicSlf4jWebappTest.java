@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -66,10 +67,10 @@ public class BasicSlf4jWebappTest {
         is.close();
         os.close();
 
-        final String output = new String(os.toByteArray(), "UTF-8");
+        final String output = os.toString(StandardCharsets.UTF_8);
         assertNotNull("Response shouldn't be null", output);
         assertTrue("Output should contain: " + "It works!" + "\n" + output, output.contains("It works!"));
         assertTrue("Output should contain: " + "Logger Factory: org.slf4j.jul.JDK14LoggerFactory" + "\n" + output, output.contains("Logger Factory: org.slf4j.jul.JDK14LoggerFactory"));
-        assertTrue("Output should contain: " + "slf4j-jdk14-2.0.9.jar" + "\n" + output, output.contains("slf4j-jdk14-2.0.9.jar"));
+        assertTrue("Output should contain: " + "slf4j-jdk14-2.0.12.jar" + "\n" + output, output.contains("slf4j-jdk14-2.0.12.jar"));
     }
 }
