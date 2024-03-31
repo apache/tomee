@@ -189,17 +189,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>3.9.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>io.churchkey</groupId>
       <artifactId>churchkey</artifactId>
       <version>1.22</version>
@@ -486,28 +475,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>javax.activation-api</artifactId>
-      <version>1.2.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.3.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>net.shibboleth.utilities</groupId>
       <artifactId>java-support</artifactId>
       <version>8.4.0</version>
@@ -519,31 +486,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq.protobuf</groupId>
-      <artifactId>activemq-protobuf</artifactId>
-      <version>1.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-client-jakarta</artifactId>
-      <version>5.18.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
-      <version>5.18.3</version>
+      <version>6.1.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1324,39 +1269,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>activemq-broker-shade</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>activemq-kahadb-store-shade</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>activemq-ra-shade</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>commons-dbcp2-shade</artifactId>
       <version>10.0.0-M2-SNAPSHOT</version>
       <exclusions>
@@ -2118,17 +2030,6 @@
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
       <version>3.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.hawtbuf</groupId>
-      <artifactId>hawtbuf</artifactId>
-      <version>1.11</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

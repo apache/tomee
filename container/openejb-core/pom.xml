@@ -512,13 +512,13 @@
 
     <!-- ActiveMQ -->
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-ra-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-ra</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-broker-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
