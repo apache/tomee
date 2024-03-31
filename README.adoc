@@ -103,6 +103,16 @@ execute:
 mvn clean install -pl maven/tomee-embedded-maven-plugin -am -Dmaven.test.skip=true
 ....
 
+=== Build with Docker
+
+There is also a `docker-compose.yml` available to build TomEE with several profiles. For a quick build without tests, you can run
+
+```
+docker compose --profile build-quick up
+```
+
+on the project root. There are additional profiles available, e.g. for attaching with a debugger or running a full build.
+
 === Contributing
 
 The http://tomee.apache.org/community/index.html[community] section from
