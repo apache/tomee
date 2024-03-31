@@ -126,7 +126,7 @@ test.war:
 02-Oct-2019 21:14:39.745 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
 02-Oct-2019 21:14:39.750 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 02-Oct-2019 21:14:39.752 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Wed Oct 02 21:14:39 BRT 2019
-02-Oct-2019 21:14:39.753 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+02-Oct-2019 21:14:39.753 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 02-Oct-2019 21:14:39.753 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-M1-SNAPSHOT
 02-Oct-2019 21:14:39.756 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20191002
 02-Oct-2019 21:14:39.757 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 09:00

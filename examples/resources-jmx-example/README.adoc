@@ -518,7 +518,7 @@ INFO: OpenEJB http://tomee.apache.org/
 Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
 INFO: Startup: Wed Apr 15 12:40:16 BST 2015
 Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
-INFO: Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO: Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>
 INFO: Version: 10.0.0-M1-SNAPSHOT
 Apr 15, 2015 12:40:16 PM org.apache.openejb.OpenEJB$Instance <init>

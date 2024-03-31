@@ -269,7 +269,7 @@ INFOS: RemoteInitialContextCreated{providerUri=http://localhost:64661/tomee/ejb}
 22-May-2019 11:28:30.856 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Wed May 22 11:28:30 CEST 2019
-22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-M1-SNAPSHOT
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20190522
 22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 09:42

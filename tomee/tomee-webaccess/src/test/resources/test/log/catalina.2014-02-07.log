@@ -17,7 +17,7 @@ INFO: OpenEJB http://tomee.apache.org/
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
 INFO: Startup: Fri Feb 07 22:40:05 EST 2014
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
-INFO: Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO: Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>
 INFO: Version: 4.6.1-SNAPSHOT
 Feb 07, 2014 10:40:05 PM org.apache.openejb.OpenEJB$Instance <init>

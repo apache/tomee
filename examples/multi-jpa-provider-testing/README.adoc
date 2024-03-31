@@ -136,7 +136,7 @@ Running org.superbiz.JPATest
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Wed Dec 26 17:55:31 CET 2018
-INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20181226
 INFO - Build time: 02:26
@@ -212,7 +212,7 @@ Running org.superbiz.JPATest
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Wed Dec 26 17:55:35 CET 2018
-INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20181226
 INFO - Build time: 02:26

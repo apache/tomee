@@ -284,7 +284,7 @@ INFORMAÇÕES: Downloaded container to: /home/daniel/git/apache/tomee/examples/m
 28-May-2020 22:16:46.616 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
 28-May-2020 22:16:46.617 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 28-May-2020 22:16:46.620 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Thu May 28 22:16:46 BRT 2020
-28-May-2020 22:16:46.621 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+28-May-2020 22:16:46.621 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 28-May-2020 22:16:46.622 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-M1-SNAPSHOT
 28-May-2020 22:16:46.622 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20200513
 28-May-2020 22:16:46.624 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 04:10

@@ -300,7 +300,7 @@ Running org.superbiz.registry.ComponentRegistryTest
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Sun Jun 09 03:46:51 IDT 2013
-INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20130608
 INFO - Build time: 04:07
@@ -351,7 +351,7 @@ Running org.superbiz.registry.PropertiesRegistryTest
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Sun Jun 09 03:46:52 IDT 2013
-INFO - Copyright 1999-2013 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20130608
 INFO - Build time: 04:07

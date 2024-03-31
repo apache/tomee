@@ -129,7 +129,7 @@ Running org.superbiz.async.JobProcessorTest
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Wed Feb 27 12:46:11 BRT 2019
-INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20190227
 INFO - Build time: 04:12
