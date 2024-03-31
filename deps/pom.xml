@@ -34,7 +34,6 @@
     <module>activemq-kahadb-store-shade</module>
     <module>activemq-ra-shade</module>
     <module>commons-dbcp2-shade</module>
-    <module>commons-fileupload-shade</module>
     <module>servicemix-bcel-shade</module>
   </modules>
   <build>
