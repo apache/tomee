@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>dynamic-dao-implementation</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-M1-SNAPSHOT</version>
+  <version>10.0.0-M1</version>
   <name>TomEE :: Examples :: Dynamic DAO Implementation</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>10.0.0-M1-SNAPSHOT</version>
+    <version>10.0.0-M1</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -1303,7 +1303,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-broker-shade</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1314,7 +1314,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-kahadb-store-shade</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1325,7 +1325,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>activemq-ra-shade</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1336,7 +1336,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>commons-dbcp2-shade</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1589,7 +1589,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>servicemix-bcel-shade</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1600,7 +1600,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>sxc-shade</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1611,7 +1611,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <version>10.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
