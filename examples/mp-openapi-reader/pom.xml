@@ -19,14 +19,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-openapi-reader</artifactId>
-  <version>10.0.0-M1-SNAPSHOT</version>
+  <version>10.0.0-M1</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile OpenAPI Reader</name>
   <properties>
     <version.jakartaee-api>10.0-M2</version.jakartaee-api>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
-    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M1</tomee.version>
     <version.microprofile.impl.openapi>3.0.1</version.microprofile.impl.openapi>
     <version.openapi-api>3.1.1</version.openapi-api>
   </properties>
