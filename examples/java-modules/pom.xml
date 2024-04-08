@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>java-modules</artifactId>
   <packaging>war</packaging>
-  <version>9.1.3</version>
+  <version>9.1.4-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Java Modules (Simple REST resource)</name>
   <properties>
     <arquillian.version>1.7.0.Final</arquillian.version>
-    <tomee.version>9.1.3</tomee.version>
+    <tomee.version>9.1.4-SNAPSHOT</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <repositories>
