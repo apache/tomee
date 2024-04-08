@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>groovy-spock</artifactId>
   <packaging>jar</packaging>
-  <version>9.1.3-SNAPSHOT</version>
+  <version>9.1.3</version>
   <name>TomEE :: Examples :: Groovy Spock</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>9.1.3-SNAPSHOT</version>
+      <version>9.1.3</version>
       <type>pom</type>
     </dependency>
     <dependency>
@@ -100,7 +100,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>9.1.3-SNAPSHOT</version>
+      <version>9.1.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -112,7 +112,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>9.1.3-SNAPSHOT</version>
+      <version>9.1.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
