@@ -207,7 +207,7 @@
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
     <version.activemq>5.18.3</version.activemq>
-    <version.batchee>1.0.2</version.batchee>
+    <version.batchee>1.0.4</version.batchee>
     <version.bval>2.0.6</version.bval>
     <version.cxf>4.0.4</version.cxf>
     <version.geronimo.components>3.1.5</version.geronimo.components>
