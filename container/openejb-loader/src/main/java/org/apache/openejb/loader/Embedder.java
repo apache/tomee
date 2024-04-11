@@ -105,6 +105,7 @@ public class Embedder {
             }
             classPath.addJarsToPath(libsDir);
         } catch (final Exception e2) {
+            e2.printStackTrace();
             throw new Exception("Could not load OpenEJB libraries. Exception: " + e2.getClass().getName() + " " + e2.getMessage());
         }
 

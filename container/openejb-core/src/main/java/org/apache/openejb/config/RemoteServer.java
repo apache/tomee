@@ -343,6 +343,15 @@ public class RemoteServer {
                         argsList.add("-ea");
                     }
 
+                    // Add the JAVA 11+ specific start-up parameters required by TomEE
+                    argsList.add("--add-opens=java.base/java.lang=ALL-UNNAMED");
+                    argsList.add("--add-opens=java.base/java.io=ALL-UNNAMED");
+                    argsList.add("--add-opens=java.base/java.util=ALL-UNNAMED");
+                    argsList.add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
+                    argsList.add("--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED");
+                    argsList.add("--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED");
+                    argsList.add("--add-opens=java.base/java.net=ALL-UNNAMED");
+
                     argsList.add("-classpath");
 
                     final StringBuilder cp = new StringBuilder(bootstrapJar.getAbsolutePath()).append(ps).append(juliJar.getAbsolutePath());

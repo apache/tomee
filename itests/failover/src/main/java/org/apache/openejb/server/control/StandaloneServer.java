@@ -89,6 +89,7 @@ public class StandaloneServer {
         jvmOpts.add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
         jvmOpts.add("--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED");
         jvmOpts.add("--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED");
+        jvmOpts.add("--add-opens=java.base/java.net=ALL-UNNAMED");
 
     }
 
