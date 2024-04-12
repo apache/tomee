@@ -30,6 +30,6 @@ public class BValTCKArchiveProcessor implements ApplicationArchiveProcessor {
             WebArchive.class.cast(archive).addAsLibrary(jarLocation(PlatformUtil.class));
         }
         */
-        System.out.println(archive.toString(true));
+        //System.out.println(archive.toString(true));
     }
 }
