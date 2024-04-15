@@ -1,5 +1,8 @@
-:index-group: Web Services :jbake-type: page :jbake-status:
-status=published = Webservice SSL Client Certificate
+:index-group: Web Services
+:jbake-type: page
+:jbake-status: published
+
+= Webservice SSL Client Certificate
 
 _Help us document this example! Click the blue pencil icon in the upper
 right to edit this page._

@@ -1,6 +1,7 @@
 :index-group: Meta-Annotations
 :jbake-type: page
-:jbake-status:status=published
+:jbake-status: published
+
 = Testing Security Meta
 
 _Help us document this example! Click the blue pencil icon in the upper

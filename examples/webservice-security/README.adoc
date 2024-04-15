@@ -1,5 +1,7 @@
-:index-group: Web Services :jbake-type: page :jbake-status:
-status=published = Webservice Security
+:index-group: Web Services
+:jbake-type: page
+:jbake-status: published
+= Webservice Security
 
 _Help us document this example! Click the blue pencil icon in the upper
 right to edit this page._
