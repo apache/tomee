@@ -1,5 +1,7 @@
-:index-group: Web Services :jbake-type: page :jbake-status:
-status=published = Webservice SSL Client Certificate
+:index-group: Web Services
+:jbake-type: page
+:jbake-status: published
+= Webservice SSL Client Certificate
 
 Este exemplo destina-se a mostrar como configurar o TomEE com HTTPS com o cliente SSL necessário.
 É muito comum usar HTTPS no lado do servidor para autenticar o servidor.
