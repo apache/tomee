@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.logging.MemoryHandler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,12 @@ public class TomEEELInvocationHandler implements InvocationHandler {
         // so we can evaluate the EL and return the evaluated value
         if (method.getName().endsWith("Expression") && method.getReturnType().equals(String.class)) {
             return method.invoke(annotation, args);
+        }
+
+        // Nested annotation with possible EL attributes (e.g. OpenIdAuthenticationMechanismDefinition -> LogoutDefinition)
+        if (method.getReturnType().isAnnotation())
+        {
+            return of(((Class<Annotation>) method.getReturnType()), (Annotation) method.invoke(annotation, args), processor);
         }
 
         // If return value is not a String or an array of string, there is another method with "Expression" at the end and a return type String

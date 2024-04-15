@@ -22,6 +22,8 @@ import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Named;
+import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
+import jakarta.security.enterprise.authentication.mechanism.http.openid.LogoutDefinition;
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.PasswordHash;
@@ -78,6 +80,24 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         System.out.println(parametersMap);
     }
 
+    @Test
+    public void testNestedAnnotationUsesInvocationHandler()
+    {
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+        final ELResolver elResolver = bm().getELResolver();
+        elProcessor.getELManager().addELResolver(elResolver);
+
+        // small trick because of the @Vetoed bellow - OWB won't pick it up
+        // so we will register one ourselves into the processor so it is resolved
+        elProcessor.defineBean("vehicle", new Vehicle());
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+        Assert.assertTrue(proxiedAnnotation.logout().notifyProvider());
+    }
+
     private BeanManager bm() {
         return CDI.current().getBeanManager();
     }
@@ -102,6 +122,16 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
 
         public String[] getDyna() {
             return new String[]{"Pbkdf2PasswordHash.Algorithm=PBKDF2WithHmacSHA512", "Pbkdf2PasswordHash.SaltSizeBytes=64"};
+        }
+    }
+
+    @OpenIdAuthenticationMechanismDefinition(logout = @LogoutDefinition(notifyProviderExpression = "#{vehicle.notifyProvider}"))
+    @Vetoed // so we don't break the other tests with this
+    @Named // see expression language
+    public static class Vehicle {
+        public boolean isNotifyProvider()
+        {
+            return true;
         }
     }
 
