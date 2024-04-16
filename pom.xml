@@ -33,9 +33,9 @@
   <packaging>pom</packaging>
   <version>10.0.0-M2-SNAPSHOT</version>
 
-  <name>Apache OpenEJB</name>
-  <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
-  <url>http://tomee.apache.org</url>
+  <name>Apache TomEE</name>
+  <description>Apache TomEE is a JakartaEE 10 Web Profile stack for Apache Tomcat</description>
+  <url>https://tomee.apache.org</url>
   <inceptionYear>1999</inceptionYear>
 
   <prerequisites>
@@ -44,7 +44,7 @@
 
   <issueManagement>
     <system>jira</system>
-    <url>http://issues.apache.org/jira/browse/TOMEE</url>
+    <url>https://issues.apache.org/jira/browse/TOMEE</url>
   </issueManagement>
 
   <mailingLists>
@@ -147,6 +147,7 @@
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.2</version.xalan>
+    <version.nashorn>15.4</version.nashorn>
 
     <!-- Logging frameworks -->
     <version.slf4j>2.0.12</version.slf4j>
@@ -172,9 +173,9 @@
 
 
     <!-- Java SE version -->
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
 
     <!-- Micro Profile API -->
     <version.microprofile>5.0</version.microprofile>
@@ -210,7 +211,7 @@
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>5.18.3</version.activemq>
+    <version.activemq>6.1.0</version.activemq>
     <!-- downgrade to avoid a henn egg issue with batchee -->
     <version.batchee>1.0.4</version.batchee>
     <version.bval>3.0.0</version.bval>
@@ -482,7 +483,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <release>11</release>
+          <release>17</release>
           <!--
           <verbose>true</verbose>
           <fork>true</fork>
@@ -1395,6 +1396,12 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.openjdk.nashorn</groupId>
+        <artifactId>nashorn-core</artifactId>
+        <version>${version.nashorn}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>com.agical.rmock</groupId>
         <artifactId>rmock</artifactId>
         <version>2.0.2</version>
@@ -1412,15 +1419,9 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-ra-shade</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-ra</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-ra</artifactId>
+        <version>${version.activemq}</version>
       </dependency>
       <dependency>
         <groupId>commons-net</groupId>
@@ -1429,34 +1430,13 @@
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-client-jakarta</artifactId>
+        <artifactId>activemq-client</artifactId>
         <version>${version.activemq}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-kahadb-store-shade</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-broker-shade</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>jakarta.jms</groupId>
-            <artifactId>jakarta.jms-api</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-broker</artifactId>
+        <version>${version.activemq}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>

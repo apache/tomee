@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-version: '2'
+version: '3'
 volumes:
         m2:
 services:
@@ -43,7 +43,7 @@ services:
             - volume_perms
     # Build+test. Does not stop on test failures
     build-all:
-        image: "maven:3-eclipse-temurin-11"
+        image: "maven:3-eclipse-temurin-17"
         profiles: ["build-all"]
         command: ["--fail-at-end", "-Duser.home=/var/maven", "-Pall-adapters", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "clean", "install"]
         entrypoint: "mvn"
@@ -61,7 +61,7 @@ services:
             - volume_perms
         # Just build (no tests)
     build-quick:
-        image: "maven:3-eclipse-temurin-11"
+        image: "maven:3-eclipse-temurin-17"
         profiles: ["build-quick"]
         command: ["-Duser.home=/var/maven", "-Pquick", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "-DuniqueVersion=false", "-ff", "-Dassemble", "-DskipTests", "-DfailIfNoTests=false", "clean", "install"]
         entrypoint: "mvn"
@@ -77,7 +77,7 @@ services:
             - volume_perms
     # Build+test. Waits for debugger on port 5005. Stops on first test failure
     debug:
-        image: "maven:3-eclipse-temurin-11"
+        image: "maven:3-eclipse-temurin-17"
         profiles: ["build-debug"]
         command: ["-Duser.home=/var/maven", "-Pall-adapters", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "-Dopenejb.server.debug", "-Dmaven.surefire.debug", "-Dopenejb.arquillian.debug=true", "clean", "install"]
         entrypoint: "mvn"

@@ -67,9 +67,9 @@
       <version>10.0.0-M2-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>activemq-broker-shade</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <version>6.1.0</version>
       <scope>runtime</scope>
     </dependency>
     <!-- test deps -->

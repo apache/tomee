@@ -327,8 +327,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-broker-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -341,8 +341,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-ra-shade</artifactId>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-ra</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.batchee</groupId>

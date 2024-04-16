@@ -89,6 +89,7 @@
           <argLine>"-javaagent:${project.build.directory}/openejb-javaagent-${project.version}.jar=foo=bar"
             -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api.
             -Dopenejb.classloader.forced-load=org.apache.openejb
+            --add-opens=java.base/java.lang=ALL-UNNAMED
           </argLine>
           <systemPropertyVariables>
             <!--
@@ -174,7 +175,7 @@
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
-      <version>3.2.5</version>
+      <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

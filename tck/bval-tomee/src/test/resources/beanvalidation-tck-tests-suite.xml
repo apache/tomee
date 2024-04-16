@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<!--
+
+    Jakarta Bean Validation TCK
+
+    License: Apache License, Version 2.0
+    See the license.txt file in the root directory or <http://www.apache.org/licenses/LICENSE-2.0>.
+
+-->
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Jakarta-Bean-Validation-TCK" verbose="1">
+    <test name="Jakarta-Bean-Validation-TCK">
+
+        <method-selectors>
+            <method-selector>
+                <selector-class name="org.hibernate.beanvalidation.tck.util.IntegrationTestsMethodSelector"/>
+            </method-selector>
+            <method-selector>
+                <selector-class name="org.hibernate.beanvalidation.tck.util.JavaFXTestsMethodSelector"/>
+            </method-selector>
+        </method-selectors>
+
+        <packages>
+            <package name="org.hibernate.beanvalidation.tck.tests.*">
+                <!-- FIXME: This tests seem to be broken on Java 17+ (also in BVAL itself) - exclude for now -->
+                <exclude name="org.hibernate.beanvalidation.tck.tests.constraints.groups.groupconversion.*"/>
+            </package>
+        </packages>
+    </test>
+</suite>

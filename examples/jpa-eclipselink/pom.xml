@@ -115,7 +115,7 @@
         <jdk>[9,</jdk>
       </activation>
       <properties>
-        <surefire.argline>--add-opens java.base/jdk.internal.loader=ALL-UNNAMED -Djdk.attach.allowAttachSelf</surefire.argline>
+        <surefire.argline>--add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/jdk.internal.loader=ALL-UNNAMED -Djdk.attach.allowAttachSelf</surefire.argline>
       </properties>
     </profile>
   </profiles>

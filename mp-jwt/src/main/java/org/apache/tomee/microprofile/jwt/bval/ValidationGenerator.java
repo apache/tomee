@@ -153,7 +153,7 @@ public abstract class ValidationGenerator implements Opcodes {
 
         final String generatedClassName = getName().replace('.', '/');
 
-        cw.visit(V11, ACC_PUBLIC + ACC_SUPER, generatedClassName, null, "java/lang/Object", null);
+        cw.visit(V17, ACC_PUBLIC + ACC_SUPER, generatedClassName, null, "java/lang/Object", null);
 
         { // public constructor
             final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
