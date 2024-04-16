@@ -1,10 +1,13 @@
 package org.apache.tomee.security.cdi.oidc;
 
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata;
 
 import java.lang.annotation.Annotation;
+import java.util.stream.Collectors;
 
 public class JsonBasedProviderMetadata implements OpenIdProviderMetadata {
     private final JsonObject document;
@@ -45,21 +48,29 @@ public class JsonBasedProviderMetadata implements OpenIdProviderMetadata {
 
     @Override
     public String subjectTypeSupported() {
-        return document.getString(OpenIdConstant.SUBJECT_TYPES_SUPPORTED);
+        return joinWithCommas(document.getJsonArray(OpenIdConstant.SUBJECT_TYPES_SUPPORTED));
     }
 
     @Override
     public String idTokenSigningAlgorithmsSupported() {
-        return document.getString(OpenIdConstant.ID_TOKEN_SIGNING_ALG_VALUES_SUPPORTED);
+        return joinWithCommas(document.getJsonArray(OpenIdConstant.ID_TOKEN_SIGNING_ALG_VALUES_SUPPORTED));
     }
 
     @Override
     public String responseTypeSupported() {
-        return document.getString(OpenIdConstant.RESPONSE_TYPES_SUPPORTED);
+        return joinWithCommas(document.getJsonArray(OpenIdConstant.RESPONSE_TYPES_SUPPORTED));
     }
 
     @Override
     public Class<? extends Annotation> annotationType() {
         return OpenIdProviderMetadata.class;
+    }
+
+    protected String joinWithCommas(JsonArray jsonValues)
+    {
+        return jsonValues.stream()
+                .map(JsonString.class::cast)
+                .map(JsonString::getString)
+                .collect(Collectors.joining(","));
     }
 }
