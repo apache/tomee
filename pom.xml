@@ -215,7 +215,7 @@
     <!-- downgrade to avoid a henn egg issue with batchee -->
     <version.batchee>1.0.4</version.batchee>
     <version.bval>3.0.0</version.bval>
-    <version.cxf>4.0.4</version.cxf>
+    <version.cxf>4.1.0-SNAPSHOT</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
@@ -232,8 +232,8 @@
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
-    <version.wss4j>3.0.2</version.wss4j>
-    <version.xmlsec>3.0.3</version.xmlsec>
+    <version.wss4j>3.0.3</version.wss4j>
+    <version.xmlsec>3.0.4</version.xmlsec>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
 
