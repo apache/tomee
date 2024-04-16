@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M1-SNAPSHOT</version>
+    <version>10.0.0-M2-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -349,10 +349,15 @@
       <artifactId>batchee-jbatch</artifactId>
       <version>${version.batchee}</version>
       <scope>runtime</scope>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
-          <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-runtime</artifactId>
+          <groupId>org.apache.batchee</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -601,4 +606,3 @@
     </plugins>
   </build>
 </project>
-

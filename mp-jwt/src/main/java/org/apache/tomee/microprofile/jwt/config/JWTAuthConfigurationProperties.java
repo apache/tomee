@@ -46,6 +46,8 @@ import static org.eclipse.microprofile.jwt.config.Names.TOKEN_COOKIE;
 import static org.eclipse.microprofile.jwt.config.Names.TOKEN_HEADER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
+import static org.eclipse.microprofile.jwt.config.Names.TOKEN_AGE;
+import static org.eclipse.microprofile.jwt.config.Names.CLOCK_SKEW;
 
 /**
  * The purpose of this class is to create an instance of JWTAuthConfiguration using
@@ -59,6 +61,7 @@ import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCA
 public class JWTAuthConfigurationProperties {
     public static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
     public static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
+    private static final Logger CONFIGURATION = Logger.getInstance(JWTLogCategories.CONFIG, JWTAuthConfigurationProperties.class);
 
     private Config config;
     private JWTAuthConfiguration jwtAuthConfiguration;
@@ -104,8 +107,8 @@ public class JWTAuthConfigurationProperties {
         final Supplier<Map<String, Key>> publicKeys = Keys.VERIFY.configure(config);
         final Supplier<Map<String, Key>> decryptKeys = Keys.DECRYPT.configure(config);
 
-        final Boolean allowNoExp = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class).orElse(false);
-
+        final Boolean allowNoExp = queryAllowExp();
+        
         return new JWTAuthConfiguration(
                 publicKeys,
                 getIssuer().orElse(null),
@@ -115,9 +118,24 @@ public class JWTAuthConfigurationProperties {
                 config.getOptionalValue(TOKEN_HEADER, String.class).map(String::toLowerCase).orElse("authorization"),
                 config.getOptionalValue(TOKEN_COOKIE, String.class).map(String::toLowerCase).orElse("bearer"),
                 config.getOptionalValue("mp.jwt.decrypt.key.algorithm", String.class).orElse(null),
-                config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse(null));
+                config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse(null),
+                config.getOptionalValue(TOKEN_AGE, Integer.class).orElse(null),
+                config.getOptionalValue(CLOCK_SKEW, Integer.class).orElse(0));
     }
+  
+    private Boolean queryAllowExp(){
+        final Optional<Boolean> allowExp = config.getOptionalValue("tomee.mp.jwt.allow.no-exp", Boolean.class);
+        final Optional<Boolean> allowExpDeprecatedValue = config.getOptionalValue("mp.jwt.tomee.allow.no-exp", Boolean.class);
 
+        if (allowExpDeprecatedValue.isPresent()) {
+            CONFIGURATION.warning("mp.jwt.tomee.allow.no-exp property is deprecated, use tomee.mp.jwt.allow.no-exp property instead.");
+        }
+
+        return allowExp
+                .or(() -> allowExpDeprecatedValue)
+                .orElse(false);
+    }
+    
     enum Keys {
         VERIFY("mp.jwt.verify.publickey", "tomee.jwt.verify.publickey"),
         DECRYPT("mp.jwt.decrypt.key", "tomee.jwt.decrypt.key");

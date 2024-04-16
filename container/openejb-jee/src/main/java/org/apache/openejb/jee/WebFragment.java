@@ -95,7 +95,8 @@ import java.util.Map;
     "dataSource",
     "jmsConnectionFactories",
     "jmsDestinations",
-    "name"
+    "name",
+    "contextService"
 
 })
 public class WebFragment implements WebCommon {
@@ -188,6 +189,8 @@ public class WebFragment implements WebCommon {
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
+    @XmlElement(name="context-service")
+    private KeyedCollection<String, ContextService> contextService;
 
 
     @Override
@@ -634,5 +637,13 @@ public class WebFragment implements WebCommon {
     @Override
     public Map<String, JMSDestination> getJMSDestinationMap() {
         return KeyedCollection.class.cast(getJMSDestination()).toMap();
+    }
+
+    @Override
+    public Map<String, ContextService> getContextServiceMap() {
+        if (contextService == null) {
+            contextService = new KeyedCollection<String, ContextService>();
+        }
+        return this.contextService.toMap();
     }
 }

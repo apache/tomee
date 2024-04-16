@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-rest-jwt-principal</artifactId>
-  <version>10.0.0-M1-SNAPSHOT</version>
+  <version>10.0.0-M2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MP REST JWT PRINCIPAL</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
     <arquillian-bom.version>1.7.1.Final</arquillian-bom.version>
   </properties>
   <build>
@@ -43,7 +43,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.0</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>

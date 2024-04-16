@@ -78,4 +78,5 @@ public interface JndiConsumer {
     Collection<JMSDestination> getJMSDestination();
 
     Map<String, JMSDestination> getJMSDestinationMap();
+    Map<String, ContextService> getContextServiceMap();
 }

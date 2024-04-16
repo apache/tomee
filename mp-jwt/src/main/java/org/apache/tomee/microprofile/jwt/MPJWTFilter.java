@@ -425,8 +425,8 @@ public class MPJWTFilter implements Filter {
                 if (authContextInfo.getIssuer() != null) {
                     builder.setExpectedIssuer(authContextInfo.getIssuer());
                 }
-                if (authContextInfo.getExpGracePeriodSecs() > 0) {
-                    builder.setAllowedClockSkewInSeconds(authContextInfo.getExpGracePeriodSecs());
+                if (authContextInfo.getClockSkew()>= 0) {
+                    builder.setAllowedClockSkewInSeconds(authContextInfo.getClockSkew());
                 } else {
                     builder.setEvaluationTime(NumericDate.fromSeconds(0));
                 }
@@ -460,7 +460,11 @@ public class MPJWTFilter implements Filter {
                     builder.setEnableRequireEncryption();
                 }
 
-
+                if (authContextInfo.getTokenAge() != null){
+                    builder.setRequireIssuedAt();
+                    builder.setIssuedAtRestrictions(authContextInfo.getTokenAge(), authContextInfo.getTokenAge());
+                }
+                
                 final JwtConsumer jwtConsumer = builder.build();
                 final JwtContext jwtContext = jwtConsumer.process(token);
                 final String type = jwtContext.getJoseObjects().get(0).getHeader("typ");
@@ -478,7 +482,6 @@ public class MPJWTFilter implements Filter {
                 }
                 claimsSet.setClaim(Claims.raw_token.name(), token);
                 principal = new JWTCallerPrincipal(token, type, claimsSet, principalName);
-
             } catch (final InvalidJwtException e) {
                 VALIDATION.warning(e.getMessage());
                 throw new ParseException("Failed to verify token", e);

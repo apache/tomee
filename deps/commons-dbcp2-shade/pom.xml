@@ -20,7 +20,7 @@
   <parent>
     <artifactId>deps</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M1-SNAPSHOT</version>
+    <version>10.0.0-M2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -73,6 +73,42 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <!--
+        Purpose of build-helper-maven-plugin is to ensure that IntelliJ sees shaded classes.
+        When navigating over to java classes in importing modules, the shaded imported classes will
+        show as resolved instead of unknown.
+        The artifact specified below is created when this module is built but is also used to resolve classes in IntelliJ.
+        "phase" is set to "none" - with this setting, the artifact jar will not be uploaded to repo
+        when running standalone "mvn install" command.
+
+        build-helper-maven-plugin can be removed completely with no effect on the "mvn clean" and "mvn install",
+        which is handled by maven-shade-plugin.
+        -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.4.0</version>
+        <executions>
+          <execution>
+            <id>workaround-makeItVisibleOnIntellij</id>
+            <phase>none</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>${project.build.directory}/commons-dbcp2-shade-10.0.0-M2-SNAPSHOT.jar</file>
+                  <type>jar</type>
+                  <classifier>optional</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
+
+
   </build>
 </project>

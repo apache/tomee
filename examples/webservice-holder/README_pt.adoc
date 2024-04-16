@@ -1,5 +1,7 @@
-:index-group: Web Services :jbake-type: page :jbake-status:
-status=published = parâmetros @WebService OUT via jakarta.xml.ws.Holder
+:index-group: Web Services
+:jbake-type: page
+:jbake-status: published
+= parâmetros @WebService OUT via jakarta.xml.ws.Holder
 
 Com SOAP é possivel retornar multiplos valores em uma única requisição.
 Isto é impossível em Java pois um método pode retornar somente um objeto.

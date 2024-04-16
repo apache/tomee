@@ -363,7 +363,8 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
             this.classTransformer = classTransformer;
         }
 
-        public byte[] transform(final ClassLoader classLoader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
+        public byte[] transform(final ClassLoader classLoader, final String className, final Class<?> classBeingRedefined,
+                                final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
             // Example code to easily debug transformation of a specific class
             // if ("org/apache/openejb/test/entity/cmp/BasicCmpBean".equals(className) ||
             //        "org/apache/openejb/test/entity/cmp/BasicCmp2Bean_BasicCmp2Bean".equals(className)) {

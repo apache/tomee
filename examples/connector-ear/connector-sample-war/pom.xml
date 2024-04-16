@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>connector-ear</artifactId>
-    <version>10.0.0-M1-SNAPSHOT</version>
+    <version>10.0.0-M2-SNAPSHOT</version>
   </parent>
   <artifactId>connector-sample-war</artifactId>
   <packaging>war</packaging>
@@ -51,7 +51,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.0</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <attachClasses>true</attachClasses>

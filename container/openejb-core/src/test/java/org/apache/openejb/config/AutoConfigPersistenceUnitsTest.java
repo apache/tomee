@@ -361,13 +361,23 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assembler.createApplication(appInfo);
 
         // Check results
-        final ResourceInfo generated = resources.get(1);
-        assertEquals(supplied.id + "NonJta", generated.id);
+        final ResourceInfo generated = findResource(supplied.id + "NonJta");
+        assertNotNull(generated);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
         assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
         assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
         assertEquals("false", generated.properties.get("JtaManaged"));
+    }
+
+    private ResourceInfo findResource(final String search) {
+        for (final ResourceInfo resource : resources) {
+            if (resource.id.equals(search)) {
+                return resource;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -402,8 +412,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assembler.createApplication(appInfo);
 
         // Check results
-        final ResourceInfo generated = resources.get(1);
-        assertEquals(supplied.id + "Jta", generated.id);
+        final ResourceInfo generated = findResource(supplied.id + "Jta");
+        assertNotNull(generated);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
         assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
@@ -480,8 +490,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assembler.createApplication(appInfo);
 
         // Check results
-        final ResourceInfo generated = resources.get(1);
-        assertEquals(supplied.id + "NonJta", generated.id);
+        final ResourceInfo generated = findResource(supplied.id + "NonJta");
+        assertNotNull(generated);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
         assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
@@ -521,8 +531,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assembler.createApplication(appInfo);
 
         // Check results
-        final ResourceInfo generated = resources.get(1);
-        assertEquals(supplied.id + "Jta", generated.id);
+        final ResourceInfo generated = findResource(supplied.id + "Jta");
+        assertNotNull(generated);
         assertEquals(supplied.service, generated.service);
         assertEquals(supplied.className, generated.className);
         assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
