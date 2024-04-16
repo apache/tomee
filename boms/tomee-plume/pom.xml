@@ -92,7 +92,7 @@
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
       <artifactId>woodstox-core</artifactId>
-      <version>6.4.0</version>
+      <version>6.6.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -632,7 +632,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -643,7 +643,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -654,7 +654,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -665,7 +665,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -676,7 +676,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -687,7 +687,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -698,7 +698,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -709,7 +709,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -720,7 +720,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -731,7 +731,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -742,7 +742,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -753,7 +753,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -764,7 +764,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -775,7 +775,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -786,7 +786,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -797,7 +797,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -808,7 +808,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -819,7 +819,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -830,7 +830,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -841,7 +841,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
-      <version>4.0.4</version>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1072,7 +1072,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1732,7 +1732,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-bindings</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1743,7 +1743,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1754,7 +1754,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-common</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1765,7 +1765,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1776,7 +1776,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1787,7 +1787,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2359,7 +2359,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.6</version>
+      <version>9.7</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
