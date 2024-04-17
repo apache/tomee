@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.security.cdi;
 
+import jakarta.el.ELProcessor;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import org.apache.tomee.security.TomEEELInvocationHandler;
 import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
@@ -341,7 +342,6 @@ public class TomEESecurityExtension implements Extension {
         return basicMechanism.get() != null || formMechanism.get() != null || customMechanism.get() != null || oidcMechanism.get() != null || applicationAuthenticationMechanisms;
     }
 
-    // TODO(jungm) remove
     private Supplier<LoginToContinue> createFormLoginToContinueSupplier(final BeanManager beanManager) {
         return () -> {
             final LoginToContinue loginToContinue = formMechanism.get()
@@ -360,7 +360,6 @@ public class TomEESecurityExtension implements Extension {
         };
     }
 
-    // TODO(jungm) remove
     private Supplier<LoginToContinue> createCustomFormLoginToContinueSupplier(final BeanManager beanManager) {
         return () -> {
             final LoginToContinue annotation = customMechanism.get()
@@ -398,9 +397,8 @@ public class TomEESecurityExtension implements Extension {
             final OpenIdAuthenticationMechanismDefinition annotation = basicMechanism.get()
                     .getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
 
-            return TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class,
-                    new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(annotation),
-                    beanManager);
+            return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(
+                    TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, beanManager));
         };
     }
 }

@@ -194,7 +194,8 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
 
             // Try to fetch from remote
             if (cached == null) {
-                JsonObject response = JsonProvider.provider().createObjectBuilder().build(); // TODO
+                // TODO actually fetch and store in OpenIdContext
+                JsonObject response = JsonProvider.provider().createObjectBuilder().build();
 
                 cached = new JsonBasedProviderMetadata(response);
             }
