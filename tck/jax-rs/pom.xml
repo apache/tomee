@@ -55,6 +55,17 @@
                         <include>**/*.java</include>
                     </includes>
 
+                    <excludes>
+                        <!--
+                        SeBootstrap is stated as an optional component for containers.
+                        It is also only listed as a Java-SE Publication Mechanism in the Specification (2.3.1.2).
+                        Therefore, we exclude its IT.
+                        -->
+                        <exclude>**/SeBootstrapIT.java</exclude>
+                        <!-- We have an own module for signature-Tests-->
+                        <exclude>**/JAXRSSigTestIT.java</exclude>
+                    </excludes>
+
                     <dependenciesToScan>
                         <dependency>jakarta.ws.rs:jakarta-restful-ws-tck</dependency>
                     </dependenciesToScan>
@@ -65,7 +76,8 @@
                         <webServerPort>8080</webServerPort>
                         <porting.ts.url.class.1>ee.jakarta.tck.ws.rs.lib.implementation.sun.common.SunRIURL
                         </porting.ts.url.class.1>
-                        <org.apache.cxf.transport.http.forceURLConnection>true</org.apache.cxf.transport.http.forceURLConnection>
+                        <org.apache.cxf.transport.http.forceURLConnection>true
+                        </org.apache.cxf.transport.http.forceURLConnection>
                         <openejb.jaxrs.fail-on-constrainedto>false</openejb.jaxrs.fail-on-constrainedto>
                         <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
                         <user>j2ee</user>
