@@ -30,7 +30,7 @@ import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.UriBuilder;
-import org.apache.tomee.security.cdi.oidc.OpenIdStorageHandler;
+import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -100,15 +100,15 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             uriBuilder.queryParam(OpenIdConstant.NONCE, storageHandler.createNewNonce(request, response));
         }
 
-        if (definition.get().responseMode() != null) {
+        if (!definition.get().responseMode().isEmpty()) {
             uriBuilder.queryParam(OpenIdConstant.RESPONSE_MODE, definition.get().responseMode());
         }
 
         if (definition.get().display() != null) {
-            uriBuilder.queryParam(OpenIdConstant.DISPLAY, definition.get().display());
+            uriBuilder.queryParam(OpenIdConstant.DISPLAY, definition.get().display().name().toLowerCase());
         }
 
-        if (definition.get().prompt() != null) {
+        if (definition.get().prompt().length > 0) {
             String stringifiedPrompt = Arrays.stream(definition.get().prompt())
                     .map(Enum::toString).map(String::toLowerCase)
                     .collect(Collectors.joining(" "));
@@ -116,16 +116,14 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             uriBuilder.queryParam(OpenIdConstant.PROMPT, stringifiedPrompt);
         }
 
-        if (definition.get().extraParameters() != null) {
-            for (String extraParam : definition.get().extraParameters()) {
-                String[] paramParts = extraParam.split("=");
+        for (String extraParam : definition.get().extraParameters()) {
+            String[] paramParts = extraParam.split("=");
 
-                if (paramParts.length != 2) {
-                    throw new IllegalStateException("extra parameter in invalid format, expected \"key=value\": " + extraParam);
-                }
-
-                uriBuilder.queryParam(paramParts[0], paramParts[1]);
+            if (paramParts.length != 2) {
+                throw new IllegalStateException("extra parameter in invalid format, expected \"key=value\": " + extraParam);
             }
+
+            uriBuilder.queryParam(paramParts[0], paramParts[1]);
         }
 
         return uriBuilder.build();

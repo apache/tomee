@@ -14,18 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.security.cdi.oidc;
+package org.apache.tomee.security.http.openid;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Objects;
 
 public abstract class OpenIdStorageHandler {
     public static final String STATE_KEY = "STATE";
     public static final String NONCE_KEY = "NONCE";
 
     public abstract String get(HttpServletRequest request, HttpServletResponse response, String key);
-    public abstract void set(HttpServletRequest request, HttpServletResponse response, String key, Object value);
+
+    public abstract void set(HttpServletRequest request, HttpServletResponse response, String key, String value);
 
     public String getStoredState(HttpServletRequest request, HttpServletResponse response) {
         return get(request, response, STATE_KEY);
@@ -54,30 +59,40 @@ public abstract class OpenIdStorageHandler {
     }
 
     private static class SessionBased extends OpenIdStorageHandler {
+        private static final String PREFIX = OpenIdStorageHandler.class.getName() + ".";
+
         @Override
         public String get(HttpServletRequest request, HttpServletResponse response, String key) {
-            return (String) request.getSession().getAttribute(translateKey(key));
+            return (String) request.getSession().getAttribute(PREFIX + key);
         }
 
         @Override
-        public void set(HttpServletRequest request, HttpServletResponse response, String key, Object value) {
-            request.getSession().setAttribute(translateKey(key), value);
-        }
-
-        private String translateKey(final String key) {
-            return OpenIdStorageHandler.class.getName() + "." + key;
+        public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
+            request.getSession().setAttribute(PREFIX + key, value);
         }
     }
 
     private static class CookieBased extends OpenIdStorageHandler {
+        private static final String PREFIX = "openid.";
+
         @Override
         public String get(HttpServletRequest request, HttpServletResponse response, String key) {
-            throw new UnsupportedOperationException(); // TODO
+            for (Cookie cookie : request.getCookies()) {
+                if (Objects.equals(cookie.getName(), PREFIX + key)) {
+                    return cookie.getValue();
+                }
+            }
+
+            return null;
         }
 
         @Override
-        public void set(HttpServletRequest request, HttpServletResponse response, String key, Object value) {
-            throw new UnsupportedOperationException(); // TODO
+        public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
+            Cookie cookie = new Cookie(PREFIX + key, value);
+            cookie.setSecure(true);
+            cookie.setHttpOnly(true);
+
+            response.addCookie(cookie);
         }
     }
 }

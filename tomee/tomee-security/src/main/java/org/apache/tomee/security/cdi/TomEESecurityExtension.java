@@ -21,6 +21,7 @@ import org.apache.tomee.security.TomEEELInvocationHandler;
 import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
+import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
@@ -81,6 +82,8 @@ public class TomEESecurityExtension implements Extension {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(LoginToContinueInterceptor.class), "LoginToContinueInterceptor");
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class), "TomEESecurityContext");
+
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEOpenIdContext.class), "TomEEOpenIdContext");
     }
 
     // using CDI Observes with WithAnnotations seems to trigger loading of the ProcessAnnotatedType
@@ -332,7 +335,6 @@ public class TomEESecurityExtension implements Extension {
                                         beanManager.getInjectionTargetFactory(annotatedType))
                                 .create(creationalContext);
                     });
-
         }
 
     }
