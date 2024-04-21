@@ -16,6 +16,9 @@
  */
 package org.apache.tomee.security.cdi;
 
+import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
+import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -29,9 +32,12 @@ import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriBuilder;
-import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
-
 import java.net.URI;
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -75,13 +81,20 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             // Callback is okay, continue with (4)
             storageHandler.set(request, response, OpenIdStorageHandler.STATE_KEY, null);
 
-            URI tokenUri = UriBuilder.fromUri(definition.get().providerMetadata().tokenEndpoint())
-                    .queryParam(OpenIdConstant.CLIENT_ID, definition.get().clientId())
-                    .queryParam(OpenIdConstant.CLIENT_SECRET, definition.get().clientSecret())
-                    .queryParam(OpenIdConstant.GRANT_TYPE, "authorization_code")
-                    .queryParam(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI())
-                    .queryParam(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE))
-                    .build();
+            try (Client client = ClientBuilder.newClient()) {
+                Form form = new Form()
+                        .param(OpenIdConstant.CLIENT_ID, definition.get().clientId())
+                        .param(OpenIdConstant.CLIENT_SECRET, definition.get().clientSecret())
+                        .param(OpenIdConstant.GRANT_TYPE, "authorization_code")
+                        .param(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI())
+                        .param(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE));
+
+                TomEEOpenIdCredential credential = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
+                        .accept(MediaType.APPLICATION_JSON)
+                        .post(Entity.form(form), TomEEOpenIdCredential.class);
+
+
+            }
         }
 
 

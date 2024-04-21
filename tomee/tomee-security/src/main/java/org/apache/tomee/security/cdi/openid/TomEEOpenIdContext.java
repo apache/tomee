@@ -43,12 +43,13 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     @Override
     public String getSubject() {
-        throw new UnsupportedOperationException();
+        return getIdentityToken().getJwtClaims().getSubject()
+                .orElseThrow(() -> new IllegalStateException("No subject received from openid provider in id_token"));
     }
 
     @Override
     public String getTokenType() {
-        throw new UnsupportedOperationException();
+        return getAccessToken().getType().name();
     }
 
     @Override
