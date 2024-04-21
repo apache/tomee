@@ -1,13 +1,15 @@
-package org.apache.tomee.security.cdi.oidc;
+package org.apache.tomee.security.http.openid;
 
 import jakarta.json.JsonObject;
-import jakarta.json.spi.JsonProvider;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.ClaimsDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.DisplayType;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.LogoutDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.PromptType;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.MediaType;
 
 import java.lang.annotation.Annotation;
 
@@ -187,17 +189,22 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
 
         @Override
         public OpenIdProviderMetadata providerMetadata() {
-            OpenIdProviderMetadata originalResult = super.providerMetadata();
-            if (originalResult != null) {
-                return originalResult;
+            if (cached != null) {
+                return cached;
             }
 
-            // Try to fetch from remote
-            if (cached == null) {
-                // TODO actually fetch and store in OpenIdContext
-                JsonObject response = JsonProvider.provider().createObjectBuilder().build();
+            if (providerURI().isEmpty()) {
+                cached = super.providerMetadata();
+                return cached;
+            }
 
-                cached = new JsonBasedProviderMetadata(response);
+            // Try to fetch from remote and build a merged view of OP response + @OpenIdProviderMetadata
+            try (Client client = ClientBuilder.newClient()) {
+                JsonObject response = client.target(providerURI())
+                        .request(MediaType.APPLICATION_JSON_TYPE)
+                        .get(JsonObject.class);
+
+                cached = new CompositeOpenIdProviderMetadata(response, super.providerMetadata());
             }
 
             return cached;
