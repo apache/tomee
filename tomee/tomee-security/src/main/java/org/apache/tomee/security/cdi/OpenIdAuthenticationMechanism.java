@@ -16,8 +16,17 @@
  */
 package org.apache.tomee.security.cdi;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
+import org.jose4j.http.Get;
+import org.jose4j.jwk.HttpsJwks;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.jwt.consumer.JwtContext;
+import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -49,6 +58,9 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanism {
+    private static final Logger LOGGER = Logger.getInstance(
+            LogCategory.TOMEE_SECURITY, OpenIdAuthenticationMechanism.class);
+
     @Inject private Supplier<OpenIdAuthenticationMechanismDefinition> definition;
 
     @Inject private Instance<IdentityStoreHandler> identityStoreHandler;
@@ -93,7 +105,10 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                         .accept(MediaType.APPLICATION_JSON)
                         .post(Entity.form(form), TomEEOpenIdCredential.class);
 
+                JwtContext jwtContextIdToken = buildJwtConsumer().process(credential.getIdToken());
 
+            } catch (InvalidJwtException e) {
+                LOGGER.info("Could not validate JWT token", e);
             }
         }
 
@@ -140,5 +155,20 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
 
         return uriBuilder.build();
+    }
+
+    // Probably more config needed?
+    protected JwtConsumer buildJwtConsumer() {
+        HttpsJwks jwks = new HttpsJwks(definition.get().providerMetadata().jwksURI());
+        Get get = new Get();
+        get.setConnectTimeout(definition.get().jwksConnectTimeout());
+        get.setReadTimeout(definition.get().jwksReadTimeout());
+
+        HttpsJwksVerificationKeyResolver keyResolver = new HttpsJwksVerificationKeyResolver(jwks);
+
+        return new JwtConsumerBuilder()
+                .setVerificationKeyResolver(keyResolver)
+                .setExpectedIssuer(definition.get().providerMetadata().issuer())
+                .build();
     }
 }

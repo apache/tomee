@@ -94,6 +94,12 @@
       <artifactId>bval-jsr</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.bitbucket.b_c</groupId>
+      <artifactId>jose4j</artifactId>
+      <version>0.9.6</version>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>${project.groupId}</groupId>

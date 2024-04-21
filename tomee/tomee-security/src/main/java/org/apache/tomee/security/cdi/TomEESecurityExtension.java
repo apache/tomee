@@ -395,7 +395,7 @@ public class TomEESecurityExtension implements Extension {
 
     private Supplier<OpenIdAuthenticationMechanismDefinition> createOpenidAuthenticationMechanismDefinitionSupplier(final BeanManager beanManager) {
         return () -> {
-            final OpenIdAuthenticationMechanismDefinition annotation = basicMechanism.get()
+            final OpenIdAuthenticationMechanismDefinition annotation = oidcMechanism.get()
                     .getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
 
             return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(

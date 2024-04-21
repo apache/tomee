@@ -1410,6 +1410,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.bitbucket.b_c</groupId>
+      <artifactId>jose4j</artifactId>
+      <version>0.9.6</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
       <version>1.78.1</version>

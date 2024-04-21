@@ -217,7 +217,7 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
             // Try to fetch from remote and build a merged view of OP response + @OpenIdProviderMetadata
             try (Client client = ClientBuilder.newClient()) {
                 JsonObject response = client.target(providerURI())
-                        .request(MediaType.APPLICATION_JSON_TYPE)
+                        .request(MediaType.APPLICATION_JSON)
                         .get(JsonObject.class);
 
                 cached = new CompositeOpenIdProviderMetadata(response, super.providerMetadata());
