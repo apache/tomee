@@ -30,6 +30,7 @@
     <name>TomEE :: TCK :: JAX-RS TCK</name>
     <modules>
         <module>jax-rs-tests</module>
+        <module>jax-rs-tests-embedded</module>
         <module>jax-rs-signature-test</module>
     </modules>
 

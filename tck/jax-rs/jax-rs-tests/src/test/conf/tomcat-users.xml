@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -15,15 +15,15 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
-<arquillian xmlns="http://jboss.org/schema/arquillian"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="
-              http://jboss.org/schema/arquillian
-              http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-    <container qualifier="tomee-plus" default="true">
-        <configuration>
-            <property name="conf">src/test/conf</property>
-        </configuration>
-    </container>
-</arquillian>
+<tomcat-users>
+  <user name="admin" password="admin" roles="manager"/>
+  <user name="jave_vi" password="javaee_vi" roles="staff"/>
+  <user name="javee_vi" password="javaee_vi" roles="staff"/>
+  <user name="javajoe" password="javajoe" roles="Manager,Employee,guest,OTHERROLE"/>
+  <user name="javaee" password="javaee" roles="Administrator,Employee,mgr,asadmin"/>
+  <user name="j2ee" password="j2ee" roles="Administrator,Employee,mgr,asadmin,staff,DIRECTOR"/>
+
+  <user name="CN=CTS, OU=Java Software, O=Sun Microsystems Inc., L=Burlington, ST=MA, C=US" roles="Administrator"/>
+</tomcat-users>

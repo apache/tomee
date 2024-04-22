@@ -21,9 +21,18 @@
             xsi:schemaLocation="
               http://jboss.org/schema/arquillian
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-    <container qualifier="tomee-plus" default="true">
+    <container qualifier="tomee-embedded" default="true">
         <configuration>
-            <property name="conf">src/test/conf</property>
+            <!--Defines the users with their passwords. Syntax: <username>=<password>-->
+            <property name="users">
+                javajoe=javajoe
+                j2ee=j2ee
+            </property>
+            <!--Assigns roles to users, multiple definitions per user are allowed and compounded. Syntax: <username>=<role>-->
+            <property name="roles">
+                javajoe=OTHERROLE
+                j2ee=DIRECTOR
+            </property>
         </configuration>
     </container>
 </arquillian>

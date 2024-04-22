@@ -25,9 +25,10 @@
         <version>10.0.0-M2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jax-rs-tests</artifactId>
+    <artifactId>jax-rs-tests-embedded</artifactId>
     <packaging>jar</packaging>
-    <name>TomEE :: TCK :: JAX-RS TCK :: Tests</name>
+    <name>TomEE :: TCK :: JAX-RS TCK :: Tests Embedded</name>
+
 
     <dependencies>
         <dependency>
@@ -55,17 +56,17 @@
             <version>2.2</version>
             <scope>test</scope>
         </dependency>
+        <!--Tomee-Deps:-->
+        <!-- https://mvnrepository.com/artifact/org.apache.tomee/arquillian-tomee-remote -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>arquillian-tomee-embedded</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>apache-tomee</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>plus</classifier>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -77,24 +78,6 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>tomee-jaxrs</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
-            <version>${version.shrinkwrap.descriptor}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.testng</groupId>
-            <artifactId>arquillian-testng-container</artifactId>
-            <version>${version.arquillian}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>arquillian-tomee-remote</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -157,6 +140,7 @@
                         <org.apache.cxf.transport.http.forceURLConnection>true
                         </org.apache.cxf.transport.http.forceURLConnection>
                         <openejb.jaxrs.fail-on-constrainedto>false</openejb.jaxrs.fail-on-constrainedto>
+                        <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
                         <user>j2ee</user>
                         <password>j2ee</password>
                         <authuser>javajoe</authuser>
@@ -166,6 +150,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
