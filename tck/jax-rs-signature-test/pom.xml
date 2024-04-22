@@ -28,53 +28,103 @@
     <artifactId>jax-rs-signature-test</artifactId>
     <name>TomEE :: TCK :: JAX-RS Signature Test</name>
 
-    <properties>
-        <jaxrs.tck.version>3.1.3-1</jaxrs.tck.version>
-    </properties>
-
-    <!--Hint: Breaks build...-->
-    <!--build>
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta-restful-ws-tck</artifactId>
+            <version>${jaxrs.tck.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.tools</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
-                <groupId>org.netbeans.tools</groupId>
-                <artifactId>sigtest-maven-plugin</artifactId>
-                <version>1.4</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>copy</id>
+                        <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>copy</goal>
                         </goals>
+
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.tomee</groupId>
+                                    <artifactId>jakartaee-api</artifactId>
+                                    <version>${version.jakartaee-api}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/signaturedirectory
+                                    </outputDirectory>
+                                    <destFileName>jakartaee-api.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <FileName>${project.build.directory}/jakarta.ws.rs.sig_${project.parent.version}</FileName>
-                    <packages>
-                        jakarta.ws.rs,jakarta.ws.rs.client,jakarta.ws.rs.core,jakarta.ws.rs.container,jakarta.ws.rs.ext,jakarta.ws.rs.sse
-                    </packages>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.io=ALL-UNNAMED
+                        --add-opens java.base/java.net=ALL-UNNAMED
+                        --add-opens java.base/javax.net.ssl=ALL-UNNAMED
+                        --add-opens java.xml/javax.xml.namespace=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.security=ALL-UNNAMED
+                        --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+                    </argLine>
+                    <reuseForks>false</reuseForks>
+                    <forkCount>1</forkCount>
+                    <systemProperties>
+                        <jimage.dir>${project.build.directory}/jimage</jimage.dir>
+                        <signature.sigTestClasspath>
+                            ${project.build.directory}/signaturedirectory/jakartaee-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming
+                        </signature.sigTestClasspath>
+                    </systemProperties>
+                    <dependenciesToScan>
+                        <dependency>jakarta.ws.rs:jakarta-restful-ws-tck</dependency>
+                    </dependenciesToScan>
+                    <includes>
+                        <include>**/JAXRSSigTestIT</include>
+                    </includes>
+                    <!--
+                       For some odd reason, the signature test will fail in reflection mode run under J17 with the following error report.
+                       However, the fields are present.
+
+                       Note: It also fails with the original 3.1.0 artifact, so most likely a deeper issue to follow up.
+
+                       Missing Fields
+                        jakarta.ws.rs.core.Cookie:              field public final static int jakarta.ws.rs.core.Cookie.DEFAULT_VERSION = 1
+                           affected jakarta.ws.rs.core.NewCookie
+                        jakarta.ws.rs.core.NewCookie:           field public final static int jakarta.ws.rs.core.NewCookie.DEFAULT_MAX_AGE = -1
+                        Added Fields
+                        jakarta.ws.rs.core.Cookie:              field public final static int jakarta.ws.rs.core.Cookie.DEFAULT_VERSION
+                           affected jakarta.ws.rs.core.NewCookie
+                        jakarta.ws.rs.core.NewCookie:           field public final static int jakarta.ws.rs.core.NewCookie.DEFAULT_MAX_AGE
+                        duplicate messages suppressed: 2
+
+                    -->
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
-    </build-->
-
-    <dependencies>
-        <dependency>
-            <artifactId>jakarta-restful-ws-tck</artifactId>
-            <groupId>jakarta.ws.rs</groupId>
-            <version>${jaxrs.tck.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>tomee-webservices</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>tomee-jaxrs</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
+    </build>
 </project>
