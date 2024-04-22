@@ -148,9 +148,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
-      <exclusions>
-
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -176,9 +173,6 @@
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>
       <artifactId>microprofile-rest-client-api</artifactId>
-      <exclusions>
-
-      </exclusions>
     </dependency>
 
     <!-- Open Tracing API -->
@@ -244,10 +238,6 @@
         <exclusion>
           <groupId>io.smallrye</groupId>
           <artifactId>smallrye-health-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>microprofile-health-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
