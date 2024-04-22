@@ -25,6 +25,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdPr
 import jakarta.security.enterprise.authentication.mechanism.http.openid.PromptType;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 
 import java.lang.annotation.Annotation;
@@ -216,7 +217,7 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
 
             // Try to fetch from remote and build a merged view of OP response + @OpenIdProviderMetadata
             try (Client client = ClientBuilder.newClient()) {
-                JsonObject response = client.target(providerURI())
+                JsonObject response = client.target(providerURI()).path(".well-known/openid-configuration")
                         .request(MediaType.APPLICATION_JSON)
                         .get(JsonObject.class);
 

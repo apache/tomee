@@ -72,13 +72,12 @@ public class OpenIdAuthenticationMechanismDefinitionDelegateTest extends Abstrac
     @Vetoed // to not break other tests
     @OpenIdAuthenticationMechanismDefinition(
             providerURI = "#{providerUri}",
-            providerMetadata = @OpenIdProviderMetadata(issuer = "https://override.example.com")
-    )
+            providerMetadata = @OpenIdProviderMetadata(issuer = "https://override.example.com"))
     private static class AnnotationHolderProviderUri {}
 
     @Path("openidtest1")
     public static class OpenidProvider {
-        @GET @Path("providerinfo")
+        @GET @Path("providerinfo/.well-known/openid-configuration")
         public String providerInfo() {
             return """
                     {
