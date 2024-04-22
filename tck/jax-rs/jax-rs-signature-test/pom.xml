@@ -21,12 +21,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tck</artifactId>
+        <artifactId>jax-rs</artifactId>
         <version>10.0.0-M2-SNAPSHOT</version>
     </parent>
 
     <artifactId>jax-rs-signature-test</artifactId>
-    <name>TomEE :: TCK :: JAX-RS Signature Test</name>
+    <name>TomEE :: TCK :: JAX-RS TCK :: Signature Test</name>
 
     <dependencies>
         <dependency>
@@ -49,6 +49,13 @@
             </testResource>
         </testResources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -122,7 +129,7 @@
                         duplicate messages suppressed: 2
 
                     -->
-                    <skipTests>true</skipTests>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

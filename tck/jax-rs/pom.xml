@@ -26,122 +26,39 @@
     </parent>
 
     <artifactId>jax-rs</artifactId>
+    <packaging>pom</packaging>
     <name>TomEE :: TCK :: JAX-RS TCK</name>
-
+    <modules>
+        <module>jax-rs-tests</module>
+        <module>jax-rs-signature-test</module>
+    </modules>
 
     <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <reuseForks>false</reuseForks>
-                    <forkCount>1</forkCount>
-                    <useFile>false</useFile>
-                    <disableXmlReport>false</disableXmlReport>
-
-                    <!--Hint: Default naming of surefire is not followed.-->
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
-
-                    <excludes>
-                        <!--
-                        SeBootstrap is stated as an optional component for containers.
-                        It is also only listed as a Java-SE Publication Mechanism in the Specification (2.3.1.2).
-                        Therefore, we exclude its IT.
-                        -->
-                        <exclude>**/SeBootstrapIT.java</exclude>
-                        <!-- We have an own module for signature-Tests-->
-                        <exclude>**/JAXRSSigTestIT.java</exclude>
-                    </excludes>
-
-                    <dependenciesToScan>
-                        <dependency>jakarta.ws.rs:jakarta-restful-ws-tck</dependency>
-                    </dependenciesToScan>
-
-                    <systemPropertyVariables>
-                        <servlet_adaptor>org.apache.openejb.server.rest.OpenEJBRestServlet</servlet_adaptor>
-                        <webServerHost>localhost</webServerHost>
-                        <webServerPort>8080</webServerPort>
-                        <porting.ts.url.class.1>ee.jakarta.tck.ws.rs.lib.implementation.sun.common.SunRIURL
-                        </porting.ts.url.class.1>
-                        <org.apache.cxf.transport.http.forceURLConnection>true
-                        </org.apache.cxf.transport.http.forceURLConnection>
-                        <openejb.jaxrs.fail-on-constrainedto>false</openejb.jaxrs.fail-on-constrainedto>
-                        <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
-                        <user>j2ee</user>
-                        <password>j2ee</password>
-                        <authuser>javajoe</authuser>
-                        <authpassword>javajoe</authpassword>
-                    </systemPropertyVariables>
-                </configuration>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- If you use proxy you need to set it as a system properties -->
+                                <get skipexisting="true" src="https://download.eclipse.org/ee4j/jakartaee-tck/jakartaee10/staged/eftl/jakarta-restful-ws-tck-${jaxrs.tck.version}.zip" dest="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip"/>
+                                <unzip src="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip" dest="./target"/>
+                                <chmod file="install-tck-artifact.sh" perm="+x"/>
+                                <exec executable="sh">
+                                    <arg line="install-tck-artifact.sh ${jaxrs.tck.version}"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta-restful-ws-tck</artifactId>
-            <version>${jaxrs.tck.version}</version>
-        </dependency>
-
-        <!-- Added for test-->
-        <dependency>
-            <groupId>org.junit</groupId>
-            <artifactId>junit-bom</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-
-        <!-- Needed by some TCK tests:
-            JsonbContextProviderIT.shouldUseApplicationProvidedJsonbInstance
-            UriBuilderIT.shouldBuildValidInstanceFromScratch
-        -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
-        </dependency>
-        <!--Tomee-Deps:-->
-        <!-- https://mvnrepository.com/artifact/org.apache.tomee/arquillian-tomee-remote -->
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>arquillian-tomee-embedded</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>tomee-webservices</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>tomee-jaxrs</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
 
 </project>

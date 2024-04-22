@@ -28,7 +28,7 @@
 
   <properties>
     <cdi-tck.version>4.0.11</cdi-tck.version>
-    <jaxrs.tck.version>3.1.4</jaxrs.tck.version>
+    <jaxrs.tck.version>3.1.5</jaxrs.tck.version>
     <bval-tck.version>3.0.1</bval-tck.version>
     <jsonb-tck.version>3.0.0</jsonb-tck.version>
     <jsonp-tck.version>2.1.1</jsonp-tck.version>
@@ -51,7 +51,6 @@
     <module>concurrency-signature-test</module>
     <module>microprofile-tck</module>
     <module>jax-rs</module>
-    <module>jax-rs-signature-test</module>
   </modules>
 
   <build>
