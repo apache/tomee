@@ -16,11 +16,13 @@
  */
 package org.apache.tomee.security.cdi;
 
+import jakarta.el.ELProcessor;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import org.apache.tomee.security.TomEEELInvocationHandler;
 import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
+import org.apache.tomee.security.cdi.openid.OpenIdValidationHandler;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
@@ -84,6 +86,7 @@ public class TomEESecurityExtension implements Extension {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class), "TomEESecurityContext");
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEOpenIdContext.class), "TomEEOpenIdContext");
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenIdValidationHandler.class), "TomEEOpenIdValidationHandler");
     }
 
     // using CDI Observes with WithAnnotations seems to trigger loading of the ProcessAnnotatedType

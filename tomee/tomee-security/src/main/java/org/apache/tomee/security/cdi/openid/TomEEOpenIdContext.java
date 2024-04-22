@@ -27,6 +27,8 @@ import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthentic
 import jakarta.security.enterprise.identitystore.openid.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.tomee.security.http.openid.model.TomEEOpenIdClaims;
+
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -34,10 +36,17 @@ import java.util.function.Supplier;
 public class TomEEOpenIdContext implements OpenIdContext {
     @Inject private Instance<Supplier<OpenIdAuthenticationMechanismDefinition>> definition;
 
+    private JsonObject userInfoClaims;
+    private String tokenType;
+
+    private AccessToken accessToken;
+    private IdentityToken identityToken;
+    private Long expiresIn;
+
     @PostConstruct
     public void init() {
         if (definition.isUnsatisfied()) {
-            throw new IllegalStateException("OpenIdCContext is not available if no @OpenIdAuthenticationMechanismDefinition is defined");
+            throw new IllegalStateException("OpenIdContext is not available if no @OpenIdAuthenticationMechanismDefinition is defined");
         }
     }
 
@@ -49,17 +58,17 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     @Override
     public String getTokenType() {
-        return getAccessToken().getType().name();
+        return tokenType;
     }
 
     @Override
     public AccessToken getAccessToken() {
-        throw new UnsupportedOperationException();
+        return accessToken;
     }
 
     @Override
     public IdentityToken getIdentityToken() {
-        throw new UnsupportedOperationException();
+        return identityToken;
     }
 
     @Override
@@ -69,17 +78,17 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     @Override
     public Optional<Long> getExpiresIn() {
-        throw new UnsupportedOperationException();
+        return Optional.ofNullable(expiresIn);
     }
 
     @Override
     public JsonObject getClaimsJson() {
-        throw new UnsupportedOperationException();
+        return userInfoClaims;
     }
 
     @Override
     public OpenIdClaims getClaims() {
-        throw new UnsupportedOperationException();
+        return new TomEEOpenIdClaims(getClaimsJson());
     }
 
     @Override
@@ -91,5 +100,25 @@ public class TomEEOpenIdContext implements OpenIdContext {
     public <T> Optional<T> getStoredValue(HttpServletRequest request, HttpServletResponse response, String key) {
         return Optional.ofNullable((T) OpenIdStorageHandler.get(
                 definition.get().get().useSession()).get(request, response, key));
+    }
+
+    public void setUserInfoClaims(JsonObject userInfoClaims) {
+        this.userInfoClaims = userInfoClaims;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
+    public void setAccessToken(AccessToken accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void setIdentityToken(IdentityToken identityToken) {
+        this.identityToken = identityToken;
+    }
+
+    public void setExpiresIn(Long expiresIn) {
+        this.expiresIn = expiresIn;
     }
 }

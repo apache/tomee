@@ -16,9 +16,25 @@
  */
 package org.apache.tomee.security.http.openid.model;
 
+import jakarta.json.bind.adapter.JsonbAdapter;
 import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbTypeAdapter;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.serializer.DeserializationContext;
+import jakarta.json.bind.serializer.JsonbDeserializer;
+import jakarta.json.bind.serializer.JsonbSerializer;
+import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.stream.JsonGenerator;
+import jakarta.json.stream.JsonParser;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.credential.Credential;
+import jakarta.security.enterprise.identitystore.openid.Scope;
+import org.jose4j.jwt.consumer.JwtContext;
+
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class TomEEOpenIdCredential implements Credential {
     @JsonbProperty(OpenIdConstant.TOKEN_TYPE)
@@ -26,11 +42,19 @@ public class TomEEOpenIdCredential implements Credential {
 
     @JsonbProperty(OpenIdConstant.ACCESS_TOKEN)
     private String accesToken;
+    @JsonbTransient
+    private JwtContext accesTokenJwt;
     @JsonbProperty(OpenIdConstant.IDENTITY_TOKEN)
     private String idToken;
+    @JsonbTransient
+    private JwtContext idTokenJwt;
 
     @JsonbProperty(OpenIdConstant.EXPIRES_IN)
     private long expiresIn;
+
+    @JsonbProperty(OpenIdConstant.SCOPE)
+    @JsonbTypeAdapter(JsonbScopeAdapter.class)
+    private Scope scope;
 
     public String getTokenType() {
         return tokenType;
@@ -40,11 +64,43 @@ public class TomEEOpenIdCredential implements Credential {
         return accesToken;
     }
 
+    public void setAccesTokenJwt(JwtContext accesTokenJwt) {
+        this.accesTokenJwt = accesTokenJwt;
+    }
+
+    public JwtContext getAccesTokenJwt() {
+        return accesTokenJwt;
+    }
+
     public String getIdToken() {
         return idToken;
     }
 
+    public JwtContext getIdTokenJwt() {
+        return idTokenJwt;
+    }
+
+    public void setIdTokenJwt(JwtContext idTokenJwt) {
+        this.idTokenJwt = idTokenJwt;
+    }
+
     public long getExpiresIn() {
         return expiresIn;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public static class JsonbScopeAdapter implements JsonbAdapter<Scope, String> {
+        @Override
+        public String adaptToJson(Scope obj) throws Exception {
+            return obj == null ? null : obj.toString();
+        }
+
+        @Override
+        public Scope adaptFromJson(String obj) throws Exception {
+            return Scope.parse(obj);
+        }
     }
 }

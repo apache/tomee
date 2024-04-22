@@ -16,10 +16,10 @@ public class TomEEAccesToken implements AccessToken {
     private final Scope scope;
     private final Long expiresIn;
 
-    public TomEEAccesToken(String token, Type type, String rawScope, Long expiresIn) {
+    public TomEEAccesToken(String token, Type type, Scope scope, Long expiresIn) {
         this.token = token;
         this.type = type;
-        this.scope = Scope.parse(rawScope);
+        this.scope = scope;
         this.expiresIn = expiresIn;
     }
 
@@ -51,7 +51,7 @@ public class TomEEAccesToken implements AccessToken {
         }
 
         try (Jsonb jsonb = JsonbBuilder.create()) {
-            return jsonb.fromJson(jsonb.toJson(getJwtClaims()), Map.class);
+            return jsonb.fromJson(token, Map.class);
         } catch (Exception e) {
             return null;
         }

@@ -16,20 +16,7 @@
  */
 package org.apache.tomee.security.cdi;
 
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
-import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
-import org.jose4j.http.Get;
-import org.jose4j.jwk.HttpsJwks;
-import org.jose4j.jwt.consumer.InvalidJwtException;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.jwt.consumer.JwtContext;
-import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
-
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.AuthenticationException;
 import jakarta.security.enterprise.AuthenticationStatus;
@@ -39,6 +26,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthentic
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
+import jakarta.security.enterprise.identitystore.openid.AccessToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.client.Client;
@@ -47,10 +35,26 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriBuilder;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
+import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
+import org.apache.tomee.security.http.openid.model.TomEEAccesToken;
+import org.apache.tomee.security.http.openid.model.TomEEIdentityToken;
+import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
+import org.jose4j.http.Get;
+import org.jose4j.jwk.HttpsJwks;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 
 /**
  * see <a href="https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth">OIDC</a>
@@ -63,19 +67,20 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     @Inject private Supplier<OpenIdAuthenticationMechanismDefinition> definition;
 
-    @Inject private Instance<IdentityStoreHandler> identityStoreHandler;
+    @Inject private IdentityStoreHandler identityStoreHandler;
+
+    @Inject private TomEEOpenIdContext openIdContext;
 
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
         OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.get().useSession());
-        if (request.getUserPrincipal() == null && httpMessageContext.isProtected()) {
-            String state = request.getParameter(OpenIdConstant.STATE);
-            if (state == null) {
-                return httpMessageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
-            }
 
-            // state != null -> callback from openid provider (3)
+        String state = request.getParameter(OpenIdConstant.STATE);
+        if (state == null && request.getUserPrincipal() == null && httpMessageContext.isProtected()) {
+            return httpMessageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
+        }
 
+        if (state != null) { // -> callback from openid provider (3)
             // TODO validate url matches redirectURI/original URL
 
             if (storageHandler.getStoredState(request, response) == null) {
@@ -105,24 +110,60 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                         .accept(MediaType.APPLICATION_JSON)
                         .post(Entity.form(form), TomEEOpenIdCredential.class);
 
-                JwtContext jwtContextIdToken = buildJwtConsumer().process(credential.getIdToken());
+                // Move JWT consumption to IdentityHandler? Probably makes more sense there
+                AccessToken.Type tokenType = credential.getTokenType().equalsIgnoreCase(AccessToken.Type.BEARER.name())
+                        ? AccessToken.Type.BEARER : AccessToken.Type.MAC;
+                if (tokenType == AccessToken.Type.BEARER) {
+                    JwtConsumer jwtConsumer = buildJwtConsumer();
 
+                    credential.setAccesTokenJwt(jwtConsumer.process(credential.getAccesToken()));
+                    credential.setIdTokenJwt(jwtConsumer.process(credential.getIdToken()));
+
+                    // TODO verify nonce in tokens
+                }
+
+                // TODO fetch userinfo and inject into OpenIdContext
+                openIdContext.setAccessToken(new TomEEAccesToken(
+                        credential.getAccesToken(), tokenType, credential.getScope(), credential.getExpiresIn()));
+
+                openIdContext.setIdentityToken(new TomEEIdentityToken(credential.getIdToken()));
+
+                openIdContext.setExpiresIn(credential.getExpiresIn());
+                openIdContext.setTokenType(credential.getTokenType());
+
+                CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
+                if (validationResult.getStatus() == CredentialValidationResult.Status.VALID) {
+                    httpMessageContext.setRegisterSession(
+                            validationResult.getCallerPrincipal().getName(),
+                            validationResult.getCallerGroups());
+
+                    return httpMessageContext.notifyContainerAboutLogin(validationResult);
+                } else if (validationResult.getStatus() == CredentialValidationResult.Status.INVALID) {
+                    return httpMessageContext.notifyContainerAboutLogin(INVALID_RESULT);
+                }
             } catch (InvalidJwtException e) {
-                LOGGER.info("Could not validate JWT token", e);
+                LOGGER.warning("Could not validate JWT token", e);
+
+                return httpMessageContext.notifyContainerAboutLogin(INVALID_RESULT);
             }
         }
 
 
-        return httpMessageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
+        return httpMessageContext.doNothing();
     }
 
     protected URI buildAuthorizationUri(OpenIdStorageHandler storageHandler, HttpServletRequest request, HttpServletResponse response) {
+        // TODO should happen in EL handler probably,
+        //  need to figure out how to bind baseURL in a convenient way
+        String redirectUri = definition.get().redirectURI().replace("${baseURL}",
+                request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length()) + request.getContextPath());
+
         UriBuilder uriBuilder = UriBuilder.fromUri(definition.get().providerMetadata().authorizationEndpoint())
                 .queryParam(OpenIdConstant.CLIENT_ID, definition.get().clientId())
                 .queryParam(OpenIdConstant.SCOPE, String.join(",", definition.get().scope()))
                 .queryParam(OpenIdConstant.RESPONSE_TYPE, definition.get().responseType())
                 .queryParam(OpenIdConstant.STATE, storageHandler.createNewState(request, response))
-                .queryParam(OpenIdConstant.REDIRECT_URI, request.getRequestURI());
+                .queryParam(OpenIdConstant.REDIRECT_URI, redirectUri);
 
         if (definition.get().useNonce()) {
             uriBuilder.queryParam(OpenIdConstant.NONCE, storageHandler.createNewNonce(request, response));
@@ -163,6 +204,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         Get get = new Get();
         get.setConnectTimeout(definition.get().jwksConnectTimeout());
         get.setReadTimeout(definition.get().jwksReadTimeout());
+        jwks.setSimpleHttpGet(get);
 
         HttpsJwksVerificationKeyResolver keyResolver = new HttpsJwksVerificationKeyResolver(jwks);
 
