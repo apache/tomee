@@ -238,6 +238,14 @@
           <artifactId>jakarta.json-api</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.glassfish</groupId>
+          <artifactId>jakarta.json</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.smallrye</groupId>
+          <artifactId>smallrye-health-api</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>*</groupId>
           <artifactId>microprofile-health-api</artifactId>
         </exclusion>
