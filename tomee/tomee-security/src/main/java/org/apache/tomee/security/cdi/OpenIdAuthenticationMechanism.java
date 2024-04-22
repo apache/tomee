@@ -16,25 +16,6 @@
  */
 package org.apache.tomee.security.cdi;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.security.enterprise.AuthenticationException;
-import jakarta.security.enterprise.AuthenticationStatus;
-import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
-import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
-import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
-import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
-import jakarta.security.enterprise.identitystore.CredentialValidationResult;
-import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
-import jakarta.security.enterprise.identitystore.openid.AccessToken;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.Form;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.UriBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
@@ -49,6 +30,28 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
+import jakarta.security.enterprise.AuthenticationException;
+import jakarta.security.enterprise.AuthenticationStatus;
+import jakarta.security.enterprise.authentication.mechanism.http.AutoApplySession;
+import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
+import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
+import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
+import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
+import jakarta.security.enterprise.identitystore.CredentialValidationResult;
+import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
+import jakarta.security.enterprise.identitystore.openid.AccessToken;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -61,15 +64,19 @@ import static jakarta.security.enterprise.identitystore.CredentialValidationResu
  * and <a href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth 2.0</a>
  */
 @ApplicationScoped
+@AutoApplySession // TODO probably interferes with token auto refreshing
 public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanism {
     private static final Logger LOGGER = Logger.getInstance(
             LogCategory.TOMEE_SECURITY, OpenIdAuthenticationMechanism.class);
 
-    @Inject private Supplier<OpenIdAuthenticationMechanismDefinition> definition;
+    @Inject
+    private Supplier<OpenIdAuthenticationMechanismDefinition> definition;
 
-    @Inject private IdentityStoreHandler identityStoreHandler;
+    @Inject
+    private IdentityStoreHandler identityStoreHandler;
 
-    @Inject private TomEEOpenIdContext openIdContext;
+    @Inject
+    private TomEEOpenIdContext openIdContext;
 
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
@@ -124,7 +131,11 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                     }
                 }
 
-                // TODO fetch userinfo and inject into OpenIdContext
+                openIdContext.setUserInfoClaims(client.target(definition.get().providerMetadata().userinfoEndpoint())
+                        .request(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + credential.getAccesToken())
+                        .get(JsonObject.class));
+
                 openIdContext.setAccessToken(new TomEEAccesToken(credential.getAccesTokenJwt() != null,
                         credential.getAccesToken(), tokenType, credential.getScope(), credential.getExpiresIn()));
 
@@ -134,15 +145,9 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                 openIdContext.setTokenType(credential.getTokenType());
 
                 CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
-                if (validationResult.getStatus() == CredentialValidationResult.Status.VALID) {
-                    httpMessageContext.setRegisterSession(
-                            validationResult.getCallerPrincipal().getName(),
-                            validationResult.getCallerGroups());
+                httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
 
-                    return httpMessageContext.notifyContainerAboutLogin(validationResult);
-                } else if (validationResult.getStatus() == CredentialValidationResult.Status.INVALID) {
-                    return httpMessageContext.notifyContainerAboutLogin(INVALID_RESULT);
-                }
+                return httpMessageContext.notifyContainerAboutLogin(validationResult);
             } catch (InvalidJwtException e) {
                 LOGGER.warning("Could not validate JWT token", e);
 

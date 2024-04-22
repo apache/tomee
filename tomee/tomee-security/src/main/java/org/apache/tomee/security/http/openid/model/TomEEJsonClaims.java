@@ -19,8 +19,8 @@ package org.apache.tomee.security.http.openid.model;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.security.enterprise.identitystore.openid.Claims;
-import jakarta.security.enterprise.identitystore.openid.JwtClaims;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -36,6 +36,10 @@ public class TomEEJsonClaims implements Claims {
 
     @Override
     public Optional<String> getStringClaim(String name) {
+        if (claims == null) {
+            return Optional.empty();
+        }
+
         return Optional.ofNullable(claims.getString(name, null));
     }
 
@@ -51,6 +55,10 @@ public class TomEEJsonClaims implements Claims {
 
     @Override
     public List<String> getArrayStringClaim(String name) {
+        if (claims == null) {
+            return Collections.emptyList();
+        }
+
         return claims.getJsonArray(name).stream()
                 .map(JsonString.class::cast)
                 .map(JsonString::getString)
@@ -59,7 +67,7 @@ public class TomEEJsonClaims implements Claims {
 
     @Override
     public OptionalInt getIntClaim(String name) {
-        if (!claims.containsKey(name)) {
+        if (claims == null || !claims.containsKey(name)) {
             return OptionalInt.empty();
         }
 
@@ -68,7 +76,7 @@ public class TomEEJsonClaims implements Claims {
 
     @Override
     public OptionalLong getLongClaim(String name) {
-        if (!claims.containsKey(name)) {
+        if (claims == null || !claims.containsKey(name)) {
             return OptionalLong.empty();
         }
 
@@ -77,7 +85,7 @@ public class TomEEJsonClaims implements Claims {
 
     @Override
     public OptionalDouble getDoubleClaim(String name) {
-        if (!claims.containsKey(name)) {
+        if (claims == null || !claims.containsKey(name)) {
             return OptionalDouble.empty();
         }
 
@@ -86,7 +94,7 @@ public class TomEEJsonClaims implements Claims {
 
     @Override
     public Optional<Claims> getNested(String name) {
-        if (!claims.containsKey(name)) {
+        if (claims == null || !claims.containsKey(name)) {
             return Optional.empty();
         }
 

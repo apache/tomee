@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.security.cdi.openid;
 
+import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -24,8 +26,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthentic
 import jakarta.security.enterprise.credential.Credential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
-import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
-
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class OpenIdValidationHandler implements IdentityStore {
         String groupsClaim = definition.get().get().claimsDefinition().callerGroupsClaim();
 
         String callerName = null;
-        List<String> groups = null;
+        List<String> groups = Collections.emptyList();
 
         if (openIdContext.getAccessToken().isJWT()) {
             callerName = openIdContext.getAccessToken().getJwtClaims().getStringClaim(callerNameClaim).orElse(null);
@@ -64,7 +65,7 @@ public class OpenIdValidationHandler implements IdentityStore {
             callerName = openIdContext.getIdentityToken().getJwtClaims().getStringClaim(callerNameClaim).orElse(null);
         }
 
-        if (groups == null) {
+        if (groups.isEmpty()) {
             groups = openIdContext.getIdentityToken().getJwtClaims().getArrayStringClaim(groupsClaim);
         }
 
@@ -72,8 +73,12 @@ public class OpenIdValidationHandler implements IdentityStore {
             callerName = openIdContext.getClaims().getStringClaim(callerNameClaim).orElse(null);
         }
 
-        if (groups == null) {
+        if (groups.isEmpty()) {
             groups = openIdContext.getClaims().getArrayStringClaim(groupsClaim);
+        }
+
+        if (callerName == null) {
+            callerName = openIdContext.getSubject();
         }
 
         return new CredentialValidationResult(callerName, new HashSet<>(groups));
