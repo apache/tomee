@@ -8,15 +8,18 @@ import jakarta.security.enterprise.identitystore.openid.AccessToken;
 import jakarta.security.enterprise.identitystore.openid.JwtClaims;
 import jakarta.security.enterprise.identitystore.openid.Scope;
 import java.io.StringReader;
+import java.util.Base64;
 import java.util.Map;
 
 public class TomEEAccesToken implements AccessToken {
+    private final boolean jwt;
     private final String token;
     private final Type type;
     private final Scope scope;
     private final Long expiresIn;
 
-    public TomEEAccesToken(String token, Type type, Scope scope, Long expiresIn) {
+    public TomEEAccesToken(boolean jwt, String token, Type type, Scope scope, Long expiresIn) {
+        this.jwt = jwt;
         this.token = token;
         this.type = type;
         this.scope = scope;
@@ -30,7 +33,7 @@ public class TomEEAccesToken implements AccessToken {
 
     @Override
     public boolean isJWT() {
-        return getType() == Type.BEARER;
+        return jwt;
     }
 
     @Override
@@ -39,7 +42,8 @@ public class TomEEAccesToken implements AccessToken {
             return null;
         }
 
-        try (JsonReader reader = Json.createReader(new StringReader(token))) {
+        String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
+        try (JsonReader reader = Json.createReader(new StringReader(json))) {
             return new TomEEJwtClaims(reader.readObject());
         }
     }
@@ -50,8 +54,9 @@ public class TomEEAccesToken implements AccessToken {
             return null;
         }
 
+        String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
         try (Jsonb jsonb = JsonbBuilder.create()) {
-            return jsonb.fromJson(token, Map.class);
+            return jsonb.fromJson(json, Map.class);
         } catch (Exception e) {
             return null;
         }

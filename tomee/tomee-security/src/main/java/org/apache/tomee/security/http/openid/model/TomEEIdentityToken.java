@@ -24,6 +24,7 @@ import jakarta.security.enterprise.identitystore.openid.IdentityToken;
 import jakarta.security.enterprise.identitystore.openid.JwtClaims;
 
 import java.io.StringReader;
+import java.util.Base64;
 import java.util.Map;
 
 public class TomEEIdentityToken implements IdentityToken {
@@ -40,7 +41,8 @@ public class TomEEIdentityToken implements IdentityToken {
 
     @Override
     public JwtClaims getJwtClaims() {
-        try (JsonReader reader = Json.createReader(new StringReader(token))) {
+        String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
+        try (JsonReader reader = Json.createReader(new StringReader(json))) {
             return new TomEEJwtClaims(reader.readObject());
         }
     }
@@ -52,8 +54,9 @@ public class TomEEIdentityToken implements IdentityToken {
 
     @Override
     public Map<String, Object> getClaims() {
+        String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
         try (Jsonb jsonb = JsonbBuilder.create()) {
-            return jsonb.fromJson(token, Map.class);
+            return jsonb.fromJson(json, Map.class);
         } catch (Exception e) {
             return null;
         }

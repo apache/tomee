@@ -110,20 +110,22 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                         .accept(MediaType.APPLICATION_JSON)
                         .post(Entity.form(form), TomEEOpenIdCredential.class);
 
-                // Move JWT consumption to IdentityHandler? Probably makes more sense there
+                JwtConsumer jwtConsumer = buildJwtConsumer();
+                credential.setIdTokenJwt(jwtConsumer.process(credential.getIdToken()));
+
+                // TODO Move JWT consumption to IdentityHandler
                 AccessToken.Type tokenType = credential.getTokenType().equalsIgnoreCase(AccessToken.Type.BEARER.name())
                         ? AccessToken.Type.BEARER : AccessToken.Type.MAC;
                 if (tokenType == AccessToken.Type.BEARER) {
-                    JwtConsumer jwtConsumer = buildJwtConsumer();
-
-                    credential.setAccesTokenJwt(jwtConsumer.process(credential.getAccesToken()));
-                    credential.setIdTokenJwt(jwtConsumer.process(credential.getIdToken()));
-
-                    // TODO verify nonce in tokens
+                    try {
+                        credential.setAccesTokenJwt(jwtConsumer.process(credential.getAccesToken()));
+                    } catch (InvalidJwtException e) {
+                        // ignored
+                    }
                 }
 
                 // TODO fetch userinfo and inject into OpenIdContext
-                openIdContext.setAccessToken(new TomEEAccesToken(
+                openIdContext.setAccessToken(new TomEEAccesToken(credential.getAccesTokenJwt() != null,
                         credential.getAccesToken(), tokenType, credential.getScope(), credential.getExpiresIn()));
 
                 openIdContext.setIdentityToken(new TomEEIdentityToken(credential.getIdToken()));
@@ -211,6 +213,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         return new JwtConsumerBuilder()
                 .setVerificationKeyResolver(keyResolver)
                 .setExpectedIssuer(definition.get().providerMetadata().issuer())
+                .setExpectedAudience(definition.get().clientId())
                 .build();
     }
 }
