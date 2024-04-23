@@ -75,11 +75,10 @@ public class WeatherServiceTest {
                 .path("/weather/day/status")
                 .request().buildGet().invoke();
 
-//        final String metricPath = "/metrics/application/weather_day_status";
         final String metricPath = "/metrics";
         assertPrometheusFormat(metricPath);
 
-        //assertJsonFormat(metricPath); // TODO: fix JSON export
+       // assertJsonFormat(metricPath);
     }
 
     private void assertPrometheusFormat(final String metricPath) {
@@ -92,8 +91,6 @@ public class WeatherServiceTest {
                 .buildGet()
                 .invoke()
                 .readEntity(String.class);
-
-        System.out.println("Received: " + metric);
 
         String[] expected = {
             "# TYPE weather_day_status_seconds summary",
@@ -115,93 +112,4 @@ public class WeatherServiceTest {
                 .forEach(text -> assertTrue("Expected: " + text + " to be present in " + metric, metric.contains(text)));
     }
 
-    private void assertJsonFormat(final String metricPath) {
-        WebTarget webTarget = client.target(base.toExternalForm());
-
-        String metric = webTarget
-                .path(metricPath)
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .buildGet()
-                .invoke()
-                .readEntity(String.class);
-
-        JsonObject expectedJson = Json.createReader(new StringReader(metric)).readObject();
-
-        String[] expected = {
-                "count",
-                "meanRate",
-                "fifteenMinRate",
-                "fiveMinRate",
-                "oneMinRate",
-                "min",
-                "max",
-                "mean",
-                "stddev",
-                "p50",
-                "p75",
-                "p95",
-                "p98",
-                "p99",
-                "p999"
-        };
-
-        Stream.of(expected)
-                .forEach(text ->
-                        assertTrue(
-                                "Expected: " + text + " to be present in " + metric,
-                                expectedJson.getJsonObject("weather_day_status").get(text) != null));
-    }
-
-    @Test
-    @Ignore
-    // TODO: fix JSON export
-    public void testTimedMetricMetadata() {
-
-        WebTarget webTarget = client.target(base.toExternalForm());
-
-//        Response response = webTarget.path("/metrics/application/weather_day_status")
-        Response response = webTarget.path("/metrics")
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .build("OPTIONS")
-                .invoke();
-
-        final String metaData = response.readEntity(String.class);
-
-        System.out.println("Received: " + metaData);
-
-        JsonObject metadataJson = Json.createReader(new StringReader(metaData)).readObject();
-
-        final String expected = "{\n" +
-                "  \"weather_day_status\": {\n" +
-                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "    \"name\": \"weather_day_status\",\n" +
-                "    \"reusable\": false,\n" +
-                "    \"tags\": \"\",\n" +
-                "    \"type\": \"timer\",\n" +
-                "    \"typeRaw\": \"TIMER\",\n" +
-                "    \"unit\": \"nanoseconds\"\n" +
-                "  }\n" +
-                "}";
-
-        JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
-        assertEquals(expectedJson.keySet().size(), metadataJson.keySet().size());
-
-        String[] expectedKeys = {
-                "description",
-                "name",
-                "reusable",
-                "tags",
-                "type",
-                "typeRaw",
-                "unit",
-        };
-
-        Stream.of(expectedKeys)
-                .forEach(text ->
-                        assertTrue(
-                                "Expected: " + text + " to be present in " + expected,
-                                expectedJson.getJsonObject("weather_day_status").get(text) != null));
-    }
 }
