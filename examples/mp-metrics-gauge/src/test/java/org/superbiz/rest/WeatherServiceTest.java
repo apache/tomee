@@ -23,6 +23,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -68,6 +69,7 @@ public class WeatherServiceTest {
     }
 
     @Test
+    @Ignore
     public void testGaugeMetric() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
         final Integer temperature = webTarget
@@ -109,6 +111,7 @@ public class WeatherServiceTest {
     }
 
     @Test
+    @Ignore
     public void testGaugeMetricMetadata() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
 

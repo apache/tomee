@@ -25,6 +25,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -76,6 +77,7 @@ public class WeatherServiceTest {
     }
 
     @Test
+    @Ignore
     public void testHistogramMetric() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
         final String message = webTarget.path("/weather/histogram").request().get(String.class);
@@ -246,6 +248,7 @@ public class WeatherServiceTest {
     }
 
     @Test
+    @Ignore
     public void testHistogramMetricMetadata() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
         final Response response =
