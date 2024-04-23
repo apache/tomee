@@ -35,7 +35,6 @@ public class WeatherService {
 
     @Path("/day/status")
     @Counted(name = "weather_day_status", absolute = true,
-            displayName = "Weather Day Status",
             description = "This metric shows the weather status of the day.",
             tags = {"weather=day"})
     @GET

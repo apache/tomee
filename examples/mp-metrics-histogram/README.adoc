@@ -55,8 +55,7 @@ data to the histogram as shown below.
 private MetricRegistry registry;
 
 @Inject
-@Metric(name = "temperatures", description = "A histogram metrics example.",
-    displayName = "Histogram of Recent New York Temperatures")
+@Metric(name = "temperatures", description = "A histogram metrics example.")
 private Histogram histogram;
 
 @Path("/histogram")
