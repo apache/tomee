@@ -31,11 +31,11 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>10.0.0-M1-SNAPSHOT</version>
+  <version>10.0.0-M2-SNAPSHOT</version>
 
-  <name>Apache OpenEJB</name>
-  <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
-  <url>http://tomee.apache.org</url>
+  <name>Apache TomEE</name>
+  <description>Apache TomEE is a JakartaEE 10 Web Profile stack for Apache Tomcat</description>
+  <url>https://tomee.apache.org</url>
   <inceptionYear>1999</inceptionYear>
 
   <prerequisites>
@@ -44,7 +44,7 @@
 
   <issueManagement>
     <system>jira</system>
-    <url>http://issues.apache.org/jira/browse/TOMEE</url>
+    <url>https://issues.apache.org/jira/browse/TOMEE</url>
   </issueManagement>
 
   <mailingLists>
@@ -136,7 +136,7 @@
 
     <version.quartz-openejb-shade>2.2.4</version.quartz-openejb-shade>
     <version.axiom>1.3.0</version.axiom>
-    <version.xbean>4.23</version.xbean>
+    <version.xbean>4.25</version.xbean>
     <version.groovy>2.4.12</version.groovy>
     <!-- Starting from 3.34.0 it requires J17+ -->
     <version.ecj>3.33.0</version.ecj>
@@ -147,11 +147,12 @@
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.2</version.xalan>
+    <version.nashorn>15.4</version.nashorn>
 
     <!-- Logging frameworks -->
-    <version.slf4j>2.0.9</version.slf4j>
+    <version.slf4j>2.0.12</version.slf4j>
     <version.log4j>1.2.17</version.log4j>
-    <version.log4j2>2.21.1</version.log4j2>
+    <version.log4j2>2.23.1</version.log4j2>
     <version.commons-logging>1.2</version.commons-logging>
     <version.commons-logging-api>1.1</version.commons-logging-api>
 
@@ -162,18 +163,20 @@
     <version.commons-collections>3.2.2</version.commons-collections>
     <version.commons-dbcp2>2.11.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
-    <version.commons-fileupload>1.5</version.commons-fileupload>
     <version.commons-io>2.15.0</version.commons-io>
     <version.commons-jcs-cache>2.1</version.commons-jcs-cache>
     <version.commons-lang3>3.13.0</version.commons-lang3>
-    <version.commons-net>3.8.0</version.commons-net>
+    <version.commons-net>3.9.0</version.commons-net>
     <version.commons-pool>2.12.0</version.commons-pool>
+    <version.commons-fileupload>2.0.0-M2</version.commons-fileupload>
+    <version.commons-fileupload-servlet>2.0.0-M1</version.commons-fileupload-servlet>
+
 
     <!-- Java SE version -->
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
 
-    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.release>17</maven.compiler.release>
     <version.micrometer>1.12.2</version.micrometer>
     <!-- Micro Profile API -->
     <version.microprofile>5.0</version.microprofile>
@@ -197,7 +200,7 @@
     <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
-    <version.jackson>2.15.3</version.jackson>
+    <version.jackson>2.16.2</version.jackson>
     <version.snakeyaml>2.2</version.snakeyaml>
 
     <!-- Jakarta EE API -->
@@ -205,35 +208,35 @@
     <version.geronimo-mail_2.1_spec>1.0.0-M1</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>10.1.16</tomcat.version>
+    <tomcat.version>10.1.20</tomcat.version>
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>5.18.3</version.activemq>
-    <version.batchee>2.0.0-SNAPSHOT</version.batchee>
+    <version.activemq>6.1.0</version.activemq>
+    <!-- downgrade to avoid a henn egg issue with batchee -->
+    <version.batchee>1.0.4</version.batchee>
     <version.bval>3.0.0</version.bval>
-    <version.cxf>4.0.3</version.cxf>
+    <version.cxf>4.1.0-SNAPSHOT</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
-    <version.johnzon>2.0.0</version.johnzon>
-    <version.myfaces>4.0.2-SNAPSHOT</version.myfaces>
-    <version.openjpa>4.0.0-SNAPSHOT</version.openjpa>
-    <version.openwebbeans>4.0.2-SNAPSHOT</version.openwebbeans>
+    <version.johnzon>2.0.1</version.johnzon>
+    <version.myfaces>4.0.2</version.myfaces>
+    <version.openjpa>4.0.0</version.openjpa>
+    <version.openwebbeans>4.0.2</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>3.0.4</version.eclipselink>
     <!-- org.glassfish -->
     <version.mojarra>4.0.1</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate.orm>6.4.1.Final</version.hibernate.orm>
+    <version.hibernate.orm>6.4.3.Final</version.hibernate.orm>
     <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
-    <version.wss4j>3.0.2</version.wss4j>
-    <version.xmlsec>3.0.3</version.xmlsec>
+    <version.wss4j>3.0.3</version.wss4j>
+    <version.xmlsec>3.0.4</version.xmlsec>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
-    <version.deltaspike>1.9.6</version.deltaspike>
 
     <!-- JDBC Drivers -->
     <version.derby>10.15.2.0</version.derby>
@@ -481,7 +484,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <release>11</release>
+          <release>17</release>
           <!--
           <verbose>true</verbose>
           <fork>true</fork>
@@ -1394,6 +1397,12 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.openjdk.nashorn</groupId>
+        <artifactId>nashorn-core</artifactId>
+        <version>${version.nashorn}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>com.agical.rmock</groupId>
         <artifactId>rmock</artifactId>
         <version>2.0.2</version>
@@ -1411,15 +1420,9 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-ra-shade</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-ra</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-ra</artifactId>
+        <version>${version.activemq}</version>
       </dependency>
       <dependency>
         <groupId>commons-net</groupId>
@@ -1428,34 +1431,13 @@
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-client-jakarta</artifactId>
+        <artifactId>activemq-client</artifactId>
         <version>${version.activemq}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-kahadb-store-shade</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-broker-shade</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>jakarta.jms</groupId>
-            <artifactId>jakarta.jms-api</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-broker</artifactId>
+        <version>${version.activemq}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
@@ -1782,9 +1764,14 @@
         <version>${version.commons-codec}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>commons-fileupload-shade</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-fileupload2-jakarta</artifactId>
+        <version>${version.commons-fileupload-servlet}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-fileupload2-core</artifactId>
+        <version>${version.commons-fileupload}</version>
       </dependency>
       <dependency>
         <groupId>regexp</groupId>

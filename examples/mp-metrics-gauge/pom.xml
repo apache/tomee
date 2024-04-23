@@ -18,7 +18,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee</groupId>
-  <version>10.0.0-M1-SNAPSHOT</version>
+  <version>10.0.0-M2-SNAPSHOT</version>
   <artifactId>mp-metrics-gauge</artifactId>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile Metrics Gauge</name>
@@ -27,7 +27,7 @@
     <version.microprofile.metrics>4.0.1</version.microprofile.metrics>
     <version.arquillian.bom>1.7.0.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
-    <tomee.version>10.0.0-M1-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
@@ -89,7 +89,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.4.0</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>

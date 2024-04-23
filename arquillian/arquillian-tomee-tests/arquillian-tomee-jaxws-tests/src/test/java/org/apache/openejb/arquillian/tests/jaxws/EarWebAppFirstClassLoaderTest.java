@@ -48,7 +48,7 @@ public class EarWebAppFirstClassLoaderTest {
         final File[] joda = Maven.configureResolver()
                 .workOffline()
                 .withClassPathResolution(true)
-                .resolve("joda-time:joda-time:2.5")
+                .resolve("joda-time:joda-time:2.10.10")
                 .using(new AcceptScopesStrategy(ScopeType.COMPILE, ScopeType.RUNTIME))
                 .asFile();
         return ShrinkWrap.create(EnterpriseArchive.class, "broken.ear")
@@ -70,7 +70,7 @@ public class EarWebAppFirstClassLoaderTest {
     public void checkIfWasCorretlyLoaded() throws IOException {
         assumeFalse(System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
         final String slurp = IO.slurp(new URL(url.toExternalForm() + (url.getPath().isEmpty() ? "/broken-web/" : "") + "joda"));
-        assertTrue(slurp.endsWith("broken-web/WEB-INF/lib/joda-time-2.5.jar"));
-        assertFalse(slurp.endsWith("broken/lib/joda-time-2.5.jar")); // useless cause of the previous but to make it obvious
+        assertTrue(slurp.endsWith("broken-web/WEB-INF/lib/joda-time-2.10.10.jar"));
+        assertFalse(slurp.endsWith("broken/lib/joda-time-2.10.10.jar")); // useless cause of the previous but to make it obvious
     }
 }

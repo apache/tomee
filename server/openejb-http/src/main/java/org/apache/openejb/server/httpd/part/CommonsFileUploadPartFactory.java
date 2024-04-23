@@ -16,18 +16,18 @@
  */
 package org.apache.openejb.server.httpd.part;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileUploadException;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
+import org.apache.commons.fileupload2.jakarta.JakartaServletRequestContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpRequestImpl;
 
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -62,15 +62,14 @@ public final class CommonsFileUploadPartFactory {
 
     public static Collection<Part> read(final HttpRequestImpl request) { // mainly for testing
         // Create a new file upload handler
-        final DiskFileItemFactory factory = new DiskFileItemFactory();
-        factory.setRepository(REPO);
+        final DiskFileItemFactory factory = DiskFileItemFactory.builder().setPath(REPO.toPath()).get();
 
-        final ServletFileUpload upload = new ServletFileUpload();
+        final JakartaServletFileUpload upload = new JakartaServletFileUpload();
         upload.setFileItemFactory(factory);
 
         final List<Part> parts = new ArrayList<>();
         try {
-            final List<FileItem> items = upload.parseRequest(new ServletRequestContext(request));
+            final List<FileItem> items = upload.parseRequest(new JakartaServletRequestContext(request));
             final String enc = request.getCharacterEncoding();
             for (final FileItem item : items) {
                 final CommonsFileUploadPart part = new CommonsFileUploadPart(item, null);
@@ -88,10 +87,10 @@ public final class CommonsFileUploadPartFactory {
                             }
                         }
                         value = part.getString(encoding);
-                    } catch (final UnsupportedEncodingException uee) {
+                    } catch (final IOException uee) {
                         try {
-                            value = part.getString("UTF-8");
-                        } catch (final UnsupportedEncodingException e) {
+                            value = part.getString(String.valueOf(StandardCharsets.UTF_8));
+                        } catch (final IOException e) {
                             // not possible
                         }
                     }

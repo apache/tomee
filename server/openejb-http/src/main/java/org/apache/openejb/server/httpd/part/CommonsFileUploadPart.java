@@ -16,14 +16,16 @@
 */
 package org.apache.openejb.server.httpd.part;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 
 import jakarta.servlet.http.Part;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.DiskFileItem;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -100,14 +102,14 @@ public class CommonsFileUploadPart implements Part {
             file = new File(location, fileName);
         }
         try {
-            fileItem.write(file);
+            fileItem.write(file.toPath());
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
-    public String getString(final String encoding) throws UnsupportedEncodingException {
-        return fileItem.getString(encoding);
+    public String getString(final String encoding) throws IOException {
+        return fileItem.getString(Charset.forName(encoding));
     }
 
     @Override

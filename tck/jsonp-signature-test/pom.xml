@@ -15,12 +15,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>tck</artifactId>
         <groupId>org.apache.tomee</groupId>
-        <version>10.0.0-M1-SNAPSHOT</version>
+        <version>10.0.0-M2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -125,19 +124,17 @@
                                             exclude that package them from the sigtests).
                                         </echo>
 
-                                        <property name="library.dir" value="signaturedirectory"/>
-                                        <property name="library.file" value="jakartaee-api.jar"/>
-                                        <property name="library.path"
-                                                  value="${project.build.directory}/${library.dir}/${library.file}"/>
-                                        <property name="library.path.new"
-                                                  value="${project.build.directory}/${library.dir}/new-${library.file}"/>
+                                        <property name="library.dir" value="signaturedirectory" />
+                                        <property name="library.file" value="jakartaee-api.jar" />
+                                        <property name="library.path" value="${project.build.directory}/${library.dir}/${library.file}" />
+                                        <property name="library.path.new" value="${project.build.directory}/${library.dir}/new-${library.file}" />
 
                                         <jar destfile="${library.path.new}">
-                                            <zipfileset src="${library.path}" excludes="jakarta/json/bind/**"/>
+                                            <zipfileset src="${library.path}" excludes="jakarta/json/bind/**" />
                                         </jar>
 
-                                        <delete file="${library.path}"/>
-                                        <move file="${library.path.new}" tofile="${library.path}"/>
+                                        <delete file="${library.path}" />
+                                        <move file="${library.path.new}" tofile="${library.path}" />
 
                                     </target>
                                 </configuration>

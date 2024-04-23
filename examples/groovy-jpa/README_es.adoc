@@ -53,7 +53,7 @@ Lo que debería crear un resultado como el siguiente:
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
 INFO - Startup: Sat Sep 07 18:29:58 ECT 2019
-INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 INFO - Version: 10.0.0-M1-SNAPSHOT
 INFO - Build date: 20190907
 INFO - Build time: 04:10

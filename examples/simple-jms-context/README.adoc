@@ -195,7 +195,7 @@ Running org.superbiz.jms.CustomJmsServiceTest
 31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
 31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Tue Mar 31 20:38:08 BST 2020
-31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-M1-SNAPSHOT
 31-Mar-2020 20:38:08.306 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20200331
 31-Mar-2020 20:38:08.306 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 02:19

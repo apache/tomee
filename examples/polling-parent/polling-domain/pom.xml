@@ -20,7 +20,7 @@
   <parent>
     <artifactId>polling-parent</artifactId>
     <groupId>jug</groupId>
-    <version>10.0.0-M1-SNAPSHOT</version>
+    <version>10.0.0-M2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -39,7 +39,7 @@
       <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.0.0</version>
         <configuration>
           <includes>jug/domain/*.class</includes>
           <addDefaultConstructor>true</addDefaultConstructor>
@@ -63,7 +63,7 @@
           <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
-            <version>4.0.0-SNAPSHOT</version>
+            <version>4.0.0</version>
           </dependency>
         </dependencies>
       </plugin>

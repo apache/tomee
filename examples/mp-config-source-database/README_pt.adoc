@@ -159,7 +159,7 @@ Running org.superbiz.microprofile.config.source.database.DatabaseConfigSourceTes
 23-May-2020 00:34:52.556 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
 23-May-2020 00:34:52.558 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
 23-May-2020 00:34:52.561 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Sat May 23 00:34:52 BRT 2020
-23-May-2020 00:34:52.561 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+23-May-2020 00:34:52.561 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
 23-May-2020 00:34:52.563 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 10.0.0-M1-SNAPSHOT
 23-May-2020 00:34:52.564 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20200513
 23-May-2020 00:34:52.567 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 04:10

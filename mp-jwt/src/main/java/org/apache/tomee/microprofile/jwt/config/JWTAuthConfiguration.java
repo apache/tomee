@@ -17,7 +17,6 @@
 package org.apache.tomee.microprofile.jwt.config;
 
 import java.security.Key;
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
 

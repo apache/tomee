@@ -119,15 +119,15 @@ public class ManagedScheduledExecutorServiceTest {
         assertFalse(future.isCancelled());
 
         //Should easily get 5 invocations within 1 second
-        counter.await(3, TimeUnit.SECONDS);
+        counter.await(5, TimeUnit.SECONDS);
 
         future.cancel(true);
         assertEquals("Counter did not count down in time", 0L, counter.getCount());
 
         final boolean done = future.isDone();
-        assertTrue(done);
+        assertTrue("Future should be done", done);
         final boolean cancelled = future.isCancelled();
-        assertTrue(cancelled);
+        assertTrue("Future should be cancelled", cancelled);
     }
 
     @Test
