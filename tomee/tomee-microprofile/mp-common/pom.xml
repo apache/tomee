@@ -259,6 +259,11 @@
       <version>${version.micrometer}</version>
     </dependency>
 
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <version>${version.micrometer}</version>
+    </dependency>
 
     <dependency>
       <groupId>io.smallrye</groupId>
