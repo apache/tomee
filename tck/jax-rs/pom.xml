@@ -34,32 +34,39 @@
         <module>jax-rs-signature-test</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <!-- If you use proxy you need to set it as a system properties -->
-                                <get skipexisting="true" src="https://download.eclipse.org/ee4j/jakartaee-tck/jakartaee10/staged/eftl/jakarta-restful-ws-tck-${jaxrs.tck.version}.zip" dest="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip"/>
-                                <unzip src="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip" dest="./target"/>
-                                <chmod file="install-tck-artifact.sh" perm="+x"/>
-                                <exec executable="sh">
-                                    <arg line="install-tck-artifact.sh ${jaxrs.tck.version}"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>tck-jax-rs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!-- If you use proxy you need to set it as a system properties -->
+                                        <get skipexisting="true"
+                                             src="https://download.eclipse.org/ee4j/jakartaee-tck/jakartaee10/staged/eftl/jakarta-restful-ws-tck-${jaxrs.tck.version}.zip"
+                                             dest="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip"/>
+                                        <unzip src="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip" dest="./target"/>
+                                        <chmod file="install-tck-artifact.sh" perm="+x"/>
+                                        <exec executable="sh">
+                                            <arg line="install-tck-artifact.sh ${jaxrs.tck.version}"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

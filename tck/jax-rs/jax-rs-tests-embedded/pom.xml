@@ -83,79 +83,84 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <reuseForks>false</reuseForks>
-                    <forkCount>1</forkCount>
-                    <useFile>false</useFile>
-                    <disableXmlReport>false</disableXmlReport>
+    <profiles>
+        <profile>
+            <id>tck-jax-rs</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                            <useFile>false</useFile>
+                            <disableXmlReport>false</disableXmlReport>
 
-                    <!--Hint: Default naming of surefire is not followed.-->
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
+                            <!--Hint: Default naming of surefire is not followed.-->
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
 
-                    <excludes>
-                        <!--
-                        SeBootstrap is stated as an optional component for containers.
-                        It is also only listed as a Java-SE Publication Mechanism in the Specification (2.3.1.2).
-                        Therefore, we exclude its IT.
-                        -->
-                        <exclude>**/SeBootstrapIT.java</exclude>
-                        <!-- We have an own module for signature-Tests-->
-                        <exclude>**/JAXRSSigTestIT.java</exclude>
+                            <excludes>
+                                <!--
+                                SeBootstrap is stated as an optional component for containers.
+                                It is also only listed as a Java-SE Publication Mechanism in the Specification (2.3.1.2).
+                                Therefore, we exclude its IT.
+                                -->
+                                <exclude>**/SeBootstrapIT.java</exclude>
+                                <!-- We have an own module for signature-Tests-->
+                                <exclude>**/JAXRSSigTestIT.java</exclude>
 
-                        <!-- TODO: TOMEE-4321 / CXF-9005
-                         ee.jakarta.tck.ws.rs.jaxrs31.spec.extensions.JAXRSClientIT#featureIsRegisteredTest
-                         ee.jakarta.tck.ws.rs.jaxrs31.spec.extensions.JAXRSClientIT#dynamicFeatureIsRegisteredTest
-                         ee.jakarta.tck.ws.rs.spec.contextprovider.JsonbContextProviderIT#shouldUseApplicationProvidedJsonbInstance
-                         -->
-                        <exclude>**/JAXRSClientIT.java</exclude>
-                        <exclude>**/JsonbContextProviderIT.java</exclude>
-                    </excludes>
+                                <!-- TODO: TOMEE-4321 / CXF-9005
+                                 ee.jakarta.tck.ws.rs.jaxrs31.spec.extensions.JAXRSClientIT#featureIsRegisteredTest
+                                 ee.jakarta.tck.ws.rs.jaxrs31.spec.extensions.JAXRSClientIT#dynamicFeatureIsRegisteredTest
+                                 ee.jakarta.tck.ws.rs.spec.contextprovider.JsonbContextProviderIT#shouldUseApplicationProvidedJsonbInstance
+                                 -->
+                                <exclude>**/JAXRSClientIT.java</exclude>
+                                <exclude>**/JsonbContextProviderIT.java</exclude>
+                            </excludes>
 
-                    <dependenciesToScan>
-                        <dependency>jakarta.ws.rs:jakarta-restful-ws-tck</dependency>
-                    </dependenciesToScan>
+                            <dependenciesToScan>
+                                <dependency>jakarta.ws.rs:jakarta-restful-ws-tck</dependency>
+                            </dependenciesToScan>
 
-                    <systemPropertyVariables>
-                        <servlet_adaptor>org.apache.openejb.server.rest.OpenEJBRestServlet</servlet_adaptor>
-                        <webServerHost>localhost</webServerHost>
-                        <webServerPort>8080</webServerPort>
-                        <porting.ts.url.class.1>ee.jakarta.tck.ws.rs.lib.implementation.sun.common.SunRIURL
-                        </porting.ts.url.class.1>
-                        <org.apache.cxf.transport.http.forceURLConnection>true
-                        </org.apache.cxf.transport.http.forceURLConnection>
-                        <openejb.jaxrs.fail-on-constrainedto>false</openejb.jaxrs.fail-on-constrainedto>
-                        <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
-                        <user>j2ee</user>
-                        <password>j2ee</password>
-                        <authuser>javajoe</authuser>
-                        <authpassword>javajoe</authpassword>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+                            <systemPropertyVariables>
+                                <servlet_adaptor>org.apache.openejb.server.rest.OpenEJBRestServlet</servlet_adaptor>
+                                <webServerHost>localhost</webServerHost>
+                                <webServerPort>8080</webServerPort>
+                                <porting.ts.url.class.1>ee.jakarta.tck.ws.rs.lib.implementation.sun.common.SunRIURL
+                                </porting.ts.url.class.1>
+                                <org.apache.cxf.transport.http.forceURLConnection>true
+                                </org.apache.cxf.transport.http.forceURLConnection>
+                                <openejb.jaxrs.fail-on-constrainedto>false</openejb.jaxrs.fail-on-constrainedto>
+                                <tomee.embedded.tck.enable_tracing>true</tomee.embedded.tck.enable_tracing>
+                                <user>j2ee</user>
+                                <password>j2ee</password>
+                                <authuser>javajoe</authuser>
+                                <authpassword>javajoe</authpassword>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
