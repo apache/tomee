@@ -142,6 +142,14 @@
                         <exclude>**/SeBootstrapIT.java</exclude>
                         <!-- We have an own module for signature-Tests-->
                         <exclude>**/JAXRSSigTestIT.java</exclude>
+
+                        <!-- TODO: TOMEE-4321 / CXF-9005
+                         ee.jakarta.tck.ws.rs.jaxrs31.spec.extensions.JAXRSClientIT#featureIsRegisteredTest
+                         ee.jakarta.tck.ws.rs.jaxrs31.spec.extensions.JAXRSClientIT#dynamicFeatureIsRegisteredTest
+                         ee.jakarta.tck.ws.rs.spec.contextprovider.JsonbContextProviderIT#shouldUseApplicationProvidedJsonbInstance
+                        -->
+                        <exclude>**/jaxrs31/spec/extensions/JAXRSClientIT.java</exclude>
+                        <exclude>**/spec/contextprovider/JsonbContextProviderIT.java</exclude>
                     </excludes>
 
                     <dependenciesToScan>
