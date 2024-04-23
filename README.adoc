@@ -6,10 +6,10 @@ stars]]
 
 == Apache TomEE
 
-Apache TomEE is a lightweight, yet powerful, JavaEE Application server
+Apache TomEE is a lightweight, yet powerful, JakartaEE Application server
 with feature rich tooling.
 
-It is the Java Enterprise Edition of Apache Tomcat (Tomcat + Java EE =
+It is the Java Enterprise Edition of Apache Tomcat (Tomcat + JakartaEE =
 TomEE) and currently is a JakartaEE (formerly JavaEE) and Microprofile
 compliant application server.
 
@@ -48,7 +48,7 @@ project.
 
 TomEE is open source and you can help in its creation.
 
-Apache TomEE is built with Apache Maven >= 3.6.3 and Java 11. The
+Apache TomEE is built with Apache Maven >= 3.6.3 and Java 17. The
 http://tomee.apache.org/community/sources.html[Contribute to TomEE]
 section from the official website for a complete Git, Github, Build,
 Test, and Continuous Integration details.
@@ -107,9 +107,9 @@ mvn clean install -pl maven/tomee-embedded-maven-plugin -am -Dmaven.test.skip=tr
 
 There is also a `docker-compose.yml` available to build TomEE with several profiles. For a quick build without tests, you can run
 
-```
+....
 docker compose --profile build-quick up
-```
+....
 
 on the project root. There are additional profiles available, e.g. for attaching with a debugger or running a full build.
 
@@ -125,7 +125,7 @@ List of
 https://issues.apache.org/jira/projects/TOMEE?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=released[Jira
 Releases] (*)
 
-(*) You need to login or sign up with a free Apache Jira Account
+(*) You need to log in or sign up with a free Apache Jira Account
 
 === License
 
