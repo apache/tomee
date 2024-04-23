@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.tomee</groupId>
+        <artifactId>tck</artifactId>
+        <version>10.0.0-M2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jax-rs</artifactId>
+    <packaging>pom</packaging>
+    <name>TomEE :: TCK :: JAX-RS TCK</name>
+    <modules>
+        <module>jax-rs-tests</module>
+        <module>jax-rs-tests-embedded</module>
+        <module>jax-rs-signature-test</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- If you use proxy you need to set it as a system properties -->
+                                <get skipexisting="true" src="https://download.eclipse.org/ee4j/jakartaee-tck/jakartaee10/staged/eftl/jakarta-restful-ws-tck-${jaxrs.tck.version}.zip" dest="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip"/>
+                                <unzip src="jakarta-restful-ws-tck-${jaxrs.tck.version}.zip" dest="./target"/>
+                                <chmod file="install-tck-artifact.sh" perm="+x"/>
+                                <exec executable="sh">
+                                    <arg line="install-tck-artifact.sh ${jaxrs.tck.version}"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
