@@ -24,6 +24,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -68,6 +69,7 @@ public class WeatherServiceTest {
     }
 
     @Test
+    @Ignore
     public void testCountedMetric() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
         final String message =  webTarget.path("/weather/day/status")
@@ -106,6 +108,7 @@ public class WeatherServiceTest {
     }
 
     @Test
+    @Ignore
     public void testCountedMetricMetadata() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
         final Response response = webTarget

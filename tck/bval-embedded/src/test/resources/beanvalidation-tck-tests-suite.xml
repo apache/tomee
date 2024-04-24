@@ -39,7 +39,7 @@
 
         <packages>
             <package name="org.hibernate.beanvalidation.tck.tests.*">
-                <!-- FIXME: This tests seem to be broken on Java 17+ (also in BVAL itself) - exclude for now -->
+                <!-- FIXME: TOMEE-4327 This tests seem to be broken on Java 17+ (also in BVAL itself) - exclude for now -->
                 <exclude name="org.hibernate.beanvalidation.tck.tests.constraints.groups.groupconversion.*"/>
             </package>
         </packages>
