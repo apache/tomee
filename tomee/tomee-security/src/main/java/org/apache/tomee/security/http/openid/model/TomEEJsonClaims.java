@@ -55,7 +55,7 @@ public class TomEEJsonClaims implements Claims {
 
     @Override
     public List<String> getArrayStringClaim(String name) {
-        if (claims == null) {
+        if (claims == null || !claims.containsKey(name)) {
             return Collections.emptyList();
         }
 
