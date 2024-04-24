@@ -127,7 +127,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                     try {
                         credential.setAccesTokenJwt(jwtConsumer.process(credential.getAccesToken()));
                     } catch (InvalidJwtException e) {
-                        // ignored
+                        LOGGER.warning("Could not validate access_token even though token_type is 'Bearer'", e);
                     }
                 }
 

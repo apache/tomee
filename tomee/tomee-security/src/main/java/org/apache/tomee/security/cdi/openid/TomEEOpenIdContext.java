@@ -19,7 +19,7 @@ package org.apache.tomee.security.cdi.openid;
 import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -32,7 +32,7 @@ import org.apache.tomee.security.http.openid.model.TomEEOpenIdClaims;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@RequestScoped
+@SessionScoped
 public class TomEEOpenIdContext implements OpenIdContext {
     @Inject private Instance<Supplier<OpenIdAuthenticationMechanismDefinition>> definition;
 

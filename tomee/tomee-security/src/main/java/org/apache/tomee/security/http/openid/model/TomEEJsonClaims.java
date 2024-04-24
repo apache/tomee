@@ -16,8 +16,10 @@
  */
 package org.apache.tomee.security.http.openid.model;
 
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 import jakarta.security.enterprise.identitystore.openid.Claims;
 import java.time.Instant;
 import java.util.Collections;
@@ -59,10 +61,19 @@ public class TomEEJsonClaims implements Claims {
             return Collections.emptyList();
         }
 
-        return claims.getJsonArray(name).stream()
-                .map(JsonString.class::cast)
-                .map(JsonString::getString)
-                .toList();
+        JsonValue claimValue = claims.get(name);
+        if (claimValue instanceof JsonArray jsonArray) {
+            return jsonArray.stream()
+                    .map(JsonString.class::cast)
+                    .map(JsonString::getString)
+                    .toList();
+        }
+
+        if (claimValue instanceof JsonString jsonString) {
+            return List.of(jsonString.getString());
+        }
+
+        throw new IllegalArgumentException("Claim " + name + " is of type " + claimValue.getValueType() + ", expected either " + JsonValue.ValueType.STRING + " or " + JsonValue.ValueType.ARRAY);
     }
 
     @Override
