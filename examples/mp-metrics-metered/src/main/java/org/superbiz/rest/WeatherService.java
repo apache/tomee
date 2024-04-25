@@ -19,13 +19,14 @@
 package org.superbiz.rest;
 
 import org.eclipse.microprofile.metrics.MetricUnits;
-import org.eclipse.microprofile.metrics.annotation.Metered;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 
 @Path("/weather")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,7 +35,7 @@ import jakarta.ws.rs.core.MediaType;
 public class WeatherService {
     @Path("/day/status")
 
-    @Metered(name = "dailyStatus", unit = MetricUnits.MINUTES, description = "Metrics to daily weather status method", absolute = true)
+    @Timed(name = "dailyStatus", unit = MetricUnits.MINUTES, description = "Metrics to daily weather status method", absolute = true)
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String dayStatus() {
@@ -42,7 +43,7 @@ public class WeatherService {
     }
 
     @Path("/week/status")
-    @Metered(name = "weeklyStatus", unit = MetricUnits.MINUTES, description = "Metrics to weekly weather status method", absolute = true)
+    @Timed(name = "weeklyStatus", unit = MetricUnits.MINUTES, description = "Metrics to weekly weather status method", absolute = true)
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String weekStatus() {

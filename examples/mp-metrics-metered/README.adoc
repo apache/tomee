@@ -45,7 +45,7 @@ To use this feature you need to annotate the JAX-RS resource method with
 public class WeatherService {
 
     @Path("/day/status")
-    @Metered(name = "dailyStatus",
+    @Timed(name = "dailyStatus",
              unit = MetricUnits.MINUTES,
              description = "Metrics to daily weather status method",
              absolute = true)

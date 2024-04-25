@@ -14,32 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.tomee.microprofile.metrics;
 
+import io.smallrye.metrics.jaxrs.JaxRsMetricsFilter;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.Provider;
 
-package org.superbiz.rest;
-
-import org.eclipse.microprofile.metrics.annotation.Gauge;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-
-@Path("/weather")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-@ApplicationScoped
-public class WeatherService {
-
-    @Path("/day/temperature")
-    @Gauge(name = "weather_day_temperature", absolute = true, unit = "celsius",
-            description = "This metric shows the day temperature.",
-            tags = {"weather=temperature"})
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public Integer dayTemperature() {
-        return 30;
+@Provider
+public class MetricsFilterRegistration implements DynamicFeature {
+    @Override
+    public void configure(ResourceInfo resourceInfo, FeatureContext context) {
+        context.register(JaxRsMetricsFilter.class);
     }
 }

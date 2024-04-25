@@ -23,6 +23,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -74,9 +75,10 @@ public class WeatherServiceTest {
                 .path("/weather/day/status")
                 .request().buildGet().invoke();
 
-        final String metricPath = "/metrics/application/weather_day_status";
+        final String metricPath = "/metrics";
         assertPrometheusFormat(metricPath);
-        assertJsonFormat(metricPath);
+
+       // assertJsonFormat(metricPath);
     }
 
     private void assertPrometheusFormat(final String metricPath) {
@@ -91,121 +93,23 @@ public class WeatherServiceTest {
                 .readEntity(String.class);
 
         String[] expected = {
-                "# TYPE application_weather_day_status_rate_per_second gauge",
-                "application_weather_day_status_rate_per_second",
-                "# TYPE application_weather_day_status_one_min_rate_per_second gauge",
-                "application_weather_day_status_one_min_rate_per_second",
-                "# TYPE application_weather_day_status_five_min_rate_per_second gauge",
-                "application_weather_day_status_five_min_rate_per_second",
-                "# TYPE application_weather_day_status_fifteen_min_rate_per_second gauge",
-                "application_weather_day_status_fifteen_min_rate_per_second",
-                "# TYPE application_weather_day_status_min_seconds gauge",
-                "application_weather_day_status_min_seconds",
-                "# TYPE application_weather_day_status_max_seconds gauge",
-                "application_weather_day_status_max_seconds",
-                "# TYPE application_weather_day_status_mean_seconds gauge",
-                "application_weather_day_status_mean_seconds",
-                "# TYPE application_weather_day_status_stddev_seconds gauge",
-                "application_weather_day_status_stddev_seconds",
-                "# HELP application_weather_day_status_seconds This metric shows the weather status of the day.",
-                "# TYPE application_weather_day_status_seconds summary",
-                "application_weather_day_status_seconds_count",
-                "application_weather_day_status_seconds_sum",
-                "application_weather_day_status_seconds{quantile=\"0.5\"}",
-                "application_weather_day_status_seconds{quantile=\"0.75\"}",
-                "application_weather_day_status_seconds{quantile=\"0.95\"}",
-                "application_weather_day_status_seconds{quantile=\"0.98\"}",
-                "application_weather_day_status_seconds{quantile=\"0.99\"}",
-                "application_weather_day_status_seconds{quantile=\"0.999\"}"
+            "# TYPE weather_day_status_seconds summary",
+            "# HELP weather_day_status_seconds This metric shows the weather status of the day.",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.5\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.75\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.95\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.98\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.99\",}",
+            "weather_day_status_seconds{mp_scope=\"weather\",quantile=\"0.999\",}",
+            "weather_day_status_seconds_count{mp_scope=\"weather\",}",
+            "weather_day_status_seconds_sum{mp_scope=\"weather\",}",
+            "# TYPE weather_day_status_seconds_max gauge",
+            "# HELP weather_day_status_seconds_max This metric shows the weather status of the day.",
+            "weather_day_status_seconds_max{mp_scope=\"weather\",}"
         };
 
         Stream.of(expected)
                 .forEach(text -> assertTrue("Expected: " + text + " to be present in " + metric, metric.contains(text)));
     }
 
-    private void assertJsonFormat(final String metricPath) {
-        WebTarget webTarget = client.target(base.toExternalForm());
-
-        String metric = webTarget
-                .path(metricPath)
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .buildGet()
-                .invoke()
-                .readEntity(String.class);
-
-        JsonObject expectedJson = Json.createReader(new StringReader(metric)).readObject();
-
-        String[] expected = {
-                "count",
-                "meanRate",
-                "fifteenMinRate",
-                "fiveMinRate",
-                "oneMinRate",
-                "min",
-                "max",
-                "mean",
-                "stddev",
-                "p50",
-                "p75",
-                "p95",
-                "p98",
-                "p99",
-                "p999"
-        };
-
-        Stream.of(expected)
-                .forEach(text ->
-                        assertTrue(
-                                "Expected: " + text + " to be present in " + metric,
-                                expectedJson.getJsonObject("weather_day_status").get(text) != null));
-    }
-
-    @Test
-    public void testTimedMetricMetadata() {
-
-        WebTarget webTarget = client.target(base.toExternalForm());
-
-        Response response = webTarget.path("/metrics/application/weather_day_status")
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .build("OPTIONS")
-                .invoke();
-
-        final String metaData = response.readEntity(String.class);
-        JsonObject metadataJson = Json.createReader(new StringReader(metaData)).readObject();
-
-        final String expected = "{\n" +
-                "  \"weather_day_status\": {\n" +
-                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "    \"displayName\": \"Weather Day Status\",\n" +
-                "    \"name\": \"weather_day_status\",\n" +
-                "    \"reusable\": false,\n" +
-                "    \"tags\": \"\",\n" +
-                "    \"type\": \"timer\",\n" +
-                "    \"typeRaw\": \"TIMER\",\n" +
-                "    \"unit\": \"nanoseconds\"\n" +
-                "  }\n" +
-                "}";
-
-        JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
-        assertEquals(expectedJson.keySet().size(), metadataJson.keySet().size());
-
-        String[] expectedKeys = {
-                "description",
-                "displayName",
-                "name",
-                "reusable",
-                "tags",
-                "type",
-                "typeRaw",
-                "unit",
-        };
-
-        Stream.of(expectedKeys)
-                .forEach(text ->
-                        assertTrue(
-                                "Expected: " + text + " to be present in " + expected,
-                                expectedJson.getJsonObject("weather_day_status").get(text) != null));
-    }
 }

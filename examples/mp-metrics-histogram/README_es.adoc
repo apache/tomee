@@ -53,8 +53,7 @@ Para utilizar esta función, injecta un objeto `MetricRegistry`, registra el His
 private MetricRegistry registry;
 
 @Inject
-@Metric(name = "temperatures", description = "A histogram metrics example.",
-    displayName = "Histogram of Recent New York Temperatures")
+@Metric(name = "temperatures", description = "A histogram metrics example.")
 private Histogram histogram;
 
 @Path("/histogram")

@@ -49,7 +49,7 @@ public class MicroProfileMetricsEndpoint extends HttpServlet {
         final String method = request.getMethod();
         final Stream<String> acceptHeaders = Collections.list(request.getHeaders("Accept")).stream();
 
-        metricsHandler.handleRequest(requestPath, method, acceptHeaders, (status, message, headers) -> {
+        metricsHandler.handleRequest(requestPath, method, acceptHeaders, request.getParameterMap(), (status, message, headers) -> {
             headers.forEach(response::addHeader);
             response.setStatus(status);
             response.getWriter().write(message);

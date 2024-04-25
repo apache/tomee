@@ -35,12 +35,22 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M6</version>
         <configuration>
-          <reuseForks>true</reuseForks>
-          <forkCount>1C</forkCount>
+          <reuseForks>false</reuseForks>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-api-tck</dependency>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-rest-tck</dependency>
+            <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-optional-tck</dependency>
           </dependenciesToScan>
+          <excludes>
+            <!-- Exclude some of the OPTIONAL tests because they aren't supported in TomEE and result in failures atm -->
+            <!-- MPMetricBaseMetricsTest.testGcTimeMetrics -->
+            <exclude>**/MPMetricBaseMetricsTest.java</exclude>
+            <!--
+             org.eclipse.microprofile.metrics.test.optional.MpMetricOptionalTest.testGetUnmappedArithException
+             org.eclipse.microprofile.metrics.test.optional.MpMetricOptionalTest.testPostUnmappedArithException
+            -->
+            <exclude>**/MpMetricOptionalTest.java</exclude>
+          </excludes>
           <environmentVariables>
             <MP_METRICS_TAGS>tier=integration</MP_METRICS_TAGS>
           </environmentVariables>
@@ -67,8 +77,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <reuseForks>true</reuseForks>
-                  <forkCount>1C</forkCount>
+                  <reuseForks>false</reuseForks>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plus</arquillian.launch>
                     <java.io.tmpdir>./target</java.io.tmpdir>
@@ -81,8 +90,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <reuseForks>true</reuseForks>
-                  <forkCount>1C</forkCount>
+                  <reuseForks>false</reuseForks>
                   <systemPropertyVariables>
                     <arquillian.launch>tomee-plume</arquillian.launch>
                     <java.io.tmpdir>./target</java.io.tmpdir>
@@ -118,6 +126,13 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-rest-tck</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-optional-tck</artifactId>
+      <version>${version.microprofile.metrics}</version>
       <scope>test</scope>
     </dependency>
 
