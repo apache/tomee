@@ -20,18 +20,36 @@ import jakarta.json.Json;
 import jakarta.json.JsonReader;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
+import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.identitystore.openid.IdentityToken;
 import jakarta.security.enterprise.identitystore.openid.JwtClaims;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.io.StringReader;
 import java.util.Base64;
 import java.util.Map;
 
 public class TomEEIdentityToken implements IdentityToken {
-    private final String token;
+    private final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEIdentityToken.class);
 
-    public TomEEIdentityToken(String token) {
+    private final String token;
+    private final long minValidity;
+
+    private JwtClaims jwtClaims;
+    private Map<String, Object> rawClaims;
+
+    public TomEEIdentityToken(String token, long minValidity) {
         this.token = token;
+        this.minValidity = minValidity;
+
+        String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
+        try (JsonReader reader = Json.createReader(new StringReader(json)); Jsonb jsonb = JsonbBuilder.create()) {
+            jwtClaims = new TomEEJwtClaims(reader.readObject());
+            rawClaims = jsonb.fromJson(json, Map.class);
+        } catch (Exception e) {
+            LOGGER.error("Could not parse idToken claims", e);
+        }
     }
 
     @Override
@@ -41,24 +59,18 @@ public class TomEEIdentityToken implements IdentityToken {
 
     @Override
     public JwtClaims getJwtClaims() {
-        String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
-        try (JsonReader reader = Json.createReader(new StringReader(json))) {
-            return new TomEEJwtClaims(reader.readObject());
-        }
+        return jwtClaims;
     }
 
     @Override
     public boolean isExpired() {
-        return false; // TODO
+        return jwtClaims.getExpirationTime()
+                .map(it -> System.currentTimeMillis() + minValidity > it.toEpochMilli())
+                .orElseThrow(() -> new IllegalStateException("No " + OpenIdConstant.EXPIRATION_IDENTIFIER + " claim in identity token found"));
     }
 
     @Override
     public Map<String, Object> getClaims() {
-        String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
-        try (Jsonb jsonb = JsonbBuilder.create()) {
-            return jsonb.fromJson(json, Map.class);
-        } catch (Exception e) {
-            return null;
-        }
+        return rawClaims;
     }
 }
