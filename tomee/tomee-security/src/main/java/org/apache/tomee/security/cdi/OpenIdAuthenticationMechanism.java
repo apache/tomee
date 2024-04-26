@@ -160,17 +160,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected URI buildAuthorizationUri(OpenIdStorageHandler storageHandler, HttpServletRequest request, HttpServletResponse response) {
-        // TODO should happen in EL handler probably,
-        //  need to figure out how to bind baseURL in a convenient way
-        String redirectUri = definition.get().redirectURI().replace("${baseURL}",
-                request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length()) + request.getContextPath());
-
         UriBuilder uriBuilder = UriBuilder.fromUri(definition.get().providerMetadata().authorizationEndpoint())
                 .queryParam(OpenIdConstant.CLIENT_ID, definition.get().clientId())
                 .queryParam(OpenIdConstant.SCOPE, String.join(",", definition.get().scope()))
                 .queryParam(OpenIdConstant.RESPONSE_TYPE, definition.get().responseType())
                 .queryParam(OpenIdConstant.STATE, storageHandler.createNewState(request, response))
-                .queryParam(OpenIdConstant.REDIRECT_URI, redirectUri);
+                .queryParam(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI());
 
         if (definition.get().useNonce()) {
             uriBuilder.queryParam(OpenIdConstant.NONCE, storageHandler.createNewNonce(request, response));
