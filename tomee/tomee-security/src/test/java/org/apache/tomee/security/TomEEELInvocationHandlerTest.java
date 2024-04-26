@@ -98,6 +98,26 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         Assert.assertTrue(proxiedAnnotation.logout().notifyProvider());
     }
 
+    @Test
+    public void testPartialEl()
+    {
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+        final ELResolver elResolver = bm().getELResolver();
+        elProcessor.getELManager().addELResolver(elResolver);
+
+        // small trick because of the @Vetoed bellow - OWB won't pick it up
+        // so we will register one ourselves into the processor so it is resolved
+        elProcessor.defineBean("vehicle", new Vehicle());
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+
+        Assert.assertEquals("https://server.example.com/auth/openid/.well-known/openid-configuration",
+                proxiedAnnotation.providerURI());
+    }
+
     private BeanManager bm() {
         return CDI.current().getBeanManager();
     }
@@ -125,10 +145,20 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         }
     }
 
-    @OpenIdAuthenticationMechanismDefinition(logout = @LogoutDefinition(notifyProviderExpression = "#{vehicle.notifyProvider}"))
+    @OpenIdAuthenticationMechanismDefinition(
+            providerURI = "#{vehicle.server}/#{vehicle.path}/.well-known/openid-configuration",
+            logout = @LogoutDefinition(notifyProviderExpression = "#{vehicle.notifyProvider}"))
     @Vetoed // so we don't break the other tests with this
     @Named // see expression language
     public static class Vehicle {
+        public String getServer() {
+            return "https://server.example.com";
+        }
+
+        public String getPath() {
+            return "auth/openid";
+        }
+
         public boolean isNotifyProvider()
         {
             return true;

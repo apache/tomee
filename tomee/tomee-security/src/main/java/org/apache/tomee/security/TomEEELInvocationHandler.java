@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 public class TomEEELInvocationHandler implements InvocationHandler {
 
-    private static final Pattern EL_EXPRESSION_PATTERN = Pattern.compile("^[#$]\\{(.+)}$");
+    private static final Pattern EL_EXPRESSION_PATTERN = Pattern.compile("[#$]\\{([^{}]+)}");
 
     private final Annotation annotation;
     private final ELProcessor processor;
@@ -92,11 +92,8 @@ public class TomEEELInvocationHandler implements InvocationHandler {
         // if the return type is a String, we may always get an expression to evaluate.
         // check if it's something we can evaluate
         final String value = (String) method.invoke(annotation, args);
-        if (value != null && value.length() > 3) {
-            final String sanitizedExpression = sanitizeExpression(value);
-            if (!value.equals(sanitizedExpression)) {
-                return eval(processor, sanitizedExpression, method.getReturnType());
-            }
+        if (value != null && value.length() > 3 && containsExpression(value)) {
+            return EL_EXPRESSION_PATTERN.matcher(value).replaceAll(matchResult -> eval(processor, matchResult.group(1), String.class));
         }
 
         return value;
@@ -104,9 +101,20 @@ public class TomEEELInvocationHandler implements InvocationHandler {
 
     // following should be abstracted into a wrapper of the ELProcessor utility class
 
+    /**
+     * @param rawExpression possible expression to test
+     * @return true if the _whole_ given rawExpression is an EL expression
+     */
     public static boolean isExpression(final String rawExpression) {
-        final Matcher matcher = EL_EXPRESSION_PATTERN.matcher(rawExpression);
-        return matcher.matches();
+        return EL_EXPRESSION_PATTERN.matcher(rawExpression).matches();
+    }
+
+    /**
+     * @param rawExpression possible expression to test
+     * @return true if one part (or multiple) of the given rawExpression is an EL expression
+     */
+    public static boolean containsExpression(final String rawExpression) {
+        return EL_EXPRESSION_PATTERN.matcher(rawExpression).find();
     }
 
     public static String sanitizeExpression(final String rawExpression) {
@@ -116,10 +124,10 @@ public class TomEEELInvocationHandler implements InvocationHandler {
             return rawExpression;
         }
 
-        return matcher.replaceAll("$1");
+        return matcher.group(1);
     }
 
-    public static Object eval(final ELProcessor processor, final String sanitizedExpression, final Class<?> expectedType) {
+    public static <T> T eval(final ELProcessor processor, final String sanitizedExpression, final Class<T> expectedType) {
         // ELProcessor does not do a good job with enums, so try to be a bit better (not sure)
         // otherwise, let the EL processor do its best to convert into the expected value
         if (!isEnumOrArrayOfEnums(expectedType)) {
@@ -143,13 +151,13 @@ public class TomEEELInvocationHandler implements InvocationHandler {
                 final Enum<?>[] outcomeArray = (Enum<?>[]) Array.newInstance(enumType, 1);
                 outcomeArray[0] = enumConstant;
 
-                return outcomeArray;
+                return (T) outcomeArray;
             }
 
             // else not sure what else we can do but let the Object go
         }
 
-        return value;
+        return (T) value;
     }
 
     private static boolean isEnumOrArrayOfEnums(final Class type) {
