@@ -18,7 +18,9 @@ package org.apache.tomee.security.http.openid.model;
 
 import jakarta.json.bind.adapter.JsonbAdapter;
 import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.annotation.JsonbTypeAdapter;
+import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.credential.Credential;
 import jakarta.security.enterprise.identitystore.openid.Scope;
@@ -39,6 +41,9 @@ public class TomEEOpenIdCredential implements Credential {
     @JsonbTypeAdapter(JsonbScopeAdapter.class)
     private Scope scope;
 
+    @JsonbTransient
+    private HttpMessageContext messageContext;
+
     public String getTokenType() {
         return tokenType;
     }
@@ -57,6 +62,14 @@ public class TomEEOpenIdCredential implements Credential {
 
     public Scope getScope() {
         return scope;
+    }
+
+    public HttpMessageContext getMessageContext() {
+        return messageContext;
+    }
+
+    public void setMessageContext(HttpMessageContext messageContext) {
+        this.messageContext = messageContext;
     }
 
     public static class JsonbScopeAdapter implements JsonbAdapter<Scope, String> {

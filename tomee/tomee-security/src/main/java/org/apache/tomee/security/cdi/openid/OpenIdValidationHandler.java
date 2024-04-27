@@ -23,6 +23,7 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
+import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.credential.Credential;
@@ -30,6 +31,8 @@ import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.openid.AccessToken;
 import jakarta.security.enterprise.identitystore.openid.IdentityToken;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -37,13 +40,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.security.http.openid.JwtValidators;
+import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.model.TomEEAccesToken;
 import org.apache.tomee.security.http.openid.model.TomEEIdentityToken;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 import org.jose4j.http.Get;
 import org.jose4j.jwk.HttpsJwks;
-import org.jose4j.jwt.consumer.ErrorCodeValidator;
-import org.jose4j.jwt.consumer.ErrorCodes;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -55,16 +58,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @ApplicationScoped
 public class OpenIdValidationHandler implements IdentityStore {
     private final static Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdValidationHandler.class);
 
-    @Inject
-    private Instance<Supplier<OpenIdAuthenticationMechanismDefinition>> definition;
-    @Inject
-    private TomEEOpenIdContext openIdContext;
+    @Inject private Instance<Supplier<OpenIdAuthenticationMechanismDefinition>> definition;
+    @Inject private TomEEOpenIdContext openIdContext;
 
     @PostConstruct
     public void init() {
@@ -79,14 +81,26 @@ public class OpenIdValidationHandler implements IdentityStore {
             return CredentialValidationResult.NOT_VALIDATED_RESULT;
         }
 
-        JwtConsumer jwtConsumer = buildJwtConsumer();
-        openIdContext.setAccessToken(createAccessToken(jwtConsumer, openIdCredential));
-        openIdContext.setIdentityToken(createIdentityToken(jwtConsumer, openIdCredential));
+        JwtConsumer defaultJwtConsumer = buildJwtConsumer(null);
+        JwtConsumer idTokenJwtConsumer = buildJwtConsumer(builder -> {
+            if (!definition.get().get().useNonce()) {
+                return;
+            }
+
+            HttpMessageContext msgContext = openIdCredential.getMessageContext();
+            String expectedNonce = OpenIdStorageHandler.get(definition.get().get().useSession())
+                            .getStoredNonce(msgContext.getRequest(), msgContext.getResponse());
+
+            builder.registerValidator(JwtValidators.nonce(expectedNonce));
+        });
+
+        openIdContext.setAccessToken(createAccessToken(defaultJwtConsumer, openIdCredential));
+        openIdContext.setIdentityToken(createIdentityToken(idTokenJwtConsumer, openIdCredential));
         if (openIdContext.getIdentityToken() == null) {
             return CredentialValidationResult.INVALID_RESULT;
         }
 
-        openIdContext.setUserInfoClaims(fetchUserinfoClaims(jwtConsumer, openIdContext.getAccessToken().getToken()));
+        openIdContext.setUserInfoClaims(fetchUserinfoClaims(defaultJwtConsumer, openIdContext.getAccessToken().getToken()));
 
         String callerNameClaim = definition.get().get().claimsDefinition().callerNameClaim();
         String groupsClaim = definition.get().get().claimsDefinition().callerGroupsClaim();
@@ -158,7 +172,7 @@ public class OpenIdValidationHandler implements IdentityStore {
     private JsonObject fetchUserinfoClaims(JwtConsumer jwtConsumer, String accessToken) {
         try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(definition.get().get().providerMetadata().userinfoEndpoint())
-                    .request(MediaType.APPLICATION_JSON)
+                    .request(MediaType.APPLICATION_JSON, "application/jwt")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).get();
 
             if (response.getStatus() != Response.Status.OK.getStatusCode()) {
@@ -191,7 +205,7 @@ public class OpenIdValidationHandler implements IdentityStore {
         }
     }
 
-    protected JwtConsumer buildJwtConsumer() {
+    protected JwtConsumer buildJwtConsumer(Consumer<JwtConsumerBuilder> enhancer) {
         HttpsJwks jwks = new HttpsJwks(definition.get().get().providerMetadata().jwksURI());
         Get get = new Get();
         get.setConnectTimeout(definition.get().get().jwksConnectTimeout());
@@ -199,24 +213,6 @@ public class OpenIdValidationHandler implements IdentityStore {
         jwks.setSimpleHttpGet(get);
 
         HttpsJwksVerificationKeyResolver keyResolver = new HttpsJwksVerificationKeyResolver(jwks);
-
-        ErrorCodeValidator azpValidator = context -> {
-            List<String> aud = context.getJwtClaims().getAudience();
-            if (aud.size() > 1) {
-                String azp = context.getJwtClaims().getStringClaimValue("azp");
-                if (azp == null) {
-                    return new ErrorCodeValidator.Error(ErrorCodes.MISCELLANEOUS, OpenIdConstant.AUDIENCE + " has " + aud.size() + " entries (" + String.join(", " + aud) + ") but no " + OpenIdConstant.AUTHORIZED_PARTY + " claim is present");
-                }
-
-                String clientId = definition.get().get().clientId();
-                if (!clientId.equals(azp)) {
-                    return new ErrorCodeValidator.Error(ErrorCodes.MISCELLANEOUS, OpenIdConstant.AUTHORIZED_PARTY + " is not equal to configured clientId (got " + azp + " but expected " + clientId + ")");
-                }
-            }
-
-            return null;
-        };
-
         JwtConsumerBuilder builder = new JwtConsumerBuilder()
                 .setRequireSubject()
                 .setRequireIssuedAt()
@@ -224,7 +220,14 @@ public class OpenIdValidationHandler implements IdentityStore {
                 .setVerificationKeyResolver(keyResolver)
                 .setExpectedIssuer(definition.get().get().providerMetadata().issuer())
                 .setExpectedAudience(definition.get().get().clientId())
-                .registerValidator(azpValidator);
+                .registerValidator(JwtValidators.azp(definition.get().get().clientId()))
+                .registerValidator(JwtValidators.EXPIRATION)
+                .registerValidator(JwtValidators.ISSUED_AT)
+                .registerValidator(JwtValidators.NOT_BEOFRE);
+
+        if (enhancer != null) {
+            enhancer.accept(builder);
+        }
 
         return builder.build();
     }

@@ -107,6 +107,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                 openIdContext.setExpiresIn(credential.getExpiresIn());
                 openIdContext.setTokenType(credential.getTokenType());
 
+                credential.setMessageContext(httpMessageContext);
                 CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
                 httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
 

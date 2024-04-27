@@ -85,6 +85,10 @@ public class TomEEAccesToken implements AccessToken {
 
     @Override
     public boolean isExpired() {
+        if (!isJWT()) {
+
+        }
+
         return jwtClaims.getExpirationTime()
                 .map(it -> System.currentTimeMillis() + minValidity > it.toEpochMilli())
                 .orElseThrow(() -> new IllegalStateException("No " + OpenIdConstant.EXPIRATION_IDENTIFIER + " claim in identity token found"));
