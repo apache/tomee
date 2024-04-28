@@ -16,9 +16,7 @@
  */
 package org.apache.tomee.security.cdi.openid;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -31,8 +29,6 @@ import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.openid.AccessToken;
 import jakarta.security.enterprise.identitystore.openid.IdentityToken;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -62,18 +58,12 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @ApplicationScoped
-public class OpenIdValidationHandler implements IdentityStore {
-    private final static Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdValidationHandler.class);
+public class OpenIdIdentityStore implements IdentityStore {
+    private final static Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdIdentityStore.class);
 
-    @Inject private Instance<Supplier<OpenIdAuthenticationMechanismDefinition>> definition;
+    @Inject private Supplier<OpenIdAuthenticationMechanismDefinition> definition;
     @Inject private TomEEOpenIdContext openIdContext;
-
-    @PostConstruct
-    public void init() {
-        if (definition.isUnsatisfied()) {
-            throw new IllegalStateException("OpenIdContext is not available if no @OpenIdAuthenticationMechanismDefinition is defined");
-        }
-    }
+    
 
     @Override
     public CredentialValidationResult validate(Credential credential) {
@@ -83,12 +73,12 @@ public class OpenIdValidationHandler implements IdentityStore {
 
         JwtConsumer defaultJwtConsumer = buildJwtConsumer(null);
         JwtConsumer idTokenJwtConsumer = buildJwtConsumer(builder -> {
-            if (!definition.get().get().useNonce()) {
+            if (!definition.get().useNonce()) {
                 return;
             }
 
             HttpMessageContext msgContext = openIdCredential.getMessageContext();
-            String expectedNonce = OpenIdStorageHandler.get(definition.get().get().useSession())
+            String expectedNonce = OpenIdStorageHandler.get(definition.get().useSession())
                             .getStoredNonce(msgContext.getRequest(), msgContext.getResponse());
 
             builder.registerValidator(JwtValidators.nonce(expectedNonce));
@@ -102,8 +92,8 @@ public class OpenIdValidationHandler implements IdentityStore {
 
         openIdContext.setUserInfoClaims(fetchUserinfoClaims(defaultJwtConsumer, openIdContext.getAccessToken().getToken()));
 
-        String callerNameClaim = definition.get().get().claimsDefinition().callerNameClaim();
-        String groupsClaim = definition.get().get().claimsDefinition().callerGroupsClaim();
+        String callerNameClaim = definition.get().claimsDefinition().callerNameClaim();
+        String groupsClaim = definition.get().claimsDefinition().callerGroupsClaim();
 
         String callerName = null;
         List<String> groups = Collections.emptyList();
@@ -155,13 +145,13 @@ public class OpenIdValidationHandler implements IdentityStore {
                 "Bearer".equals(credential.getTokenType()) ? AccessToken.Type.BEARER : AccessToken.Type.MAC,
                 credential.getScope(),
                 credential.getExpiresIn(),
-                definition.get().get().tokenMinValidity());
+                definition.get().tokenMinValidity());
     }
 
     private IdentityToken createIdentityToken(JwtConsumer jwtConsumer, TomEEOpenIdCredential credential) {
         try {
             JwtContext idToken = jwtConsumer.process(credential.getIdToken());
-            return new TomEEIdentityToken(idToken.getJwt(), definition.get().get().tokenMinValidity());
+            return new TomEEIdentityToken(idToken.getJwt(), definition.get().tokenMinValidity());
         } catch (InvalidJwtException e) {
             LOGGER.warning(OpenIdConstant.IDENTITY_TOKEN + " is invalid", e);
 
@@ -171,7 +161,7 @@ public class OpenIdValidationHandler implements IdentityStore {
 
     private JsonObject fetchUserinfoClaims(JwtConsumer jwtConsumer, String accessToken) {
         try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(definition.get().get().providerMetadata().userinfoEndpoint())
+            Response response = client.target(definition.get().providerMetadata().userinfoEndpoint())
                     .request(MediaType.APPLICATION_JSON, "application/jwt")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).get();
 
@@ -206,10 +196,10 @@ public class OpenIdValidationHandler implements IdentityStore {
     }
 
     protected JwtConsumer buildJwtConsumer(Consumer<JwtConsumerBuilder> enhancer) {
-        HttpsJwks jwks = new HttpsJwks(definition.get().get().providerMetadata().jwksURI());
+        HttpsJwks jwks = new HttpsJwks(definition.get().providerMetadata().jwksURI());
         Get get = new Get();
-        get.setConnectTimeout(definition.get().get().jwksConnectTimeout());
-        get.setReadTimeout(definition.get().get().jwksReadTimeout());
+        get.setConnectTimeout(definition.get().jwksConnectTimeout());
+        get.setReadTimeout(definition.get().jwksReadTimeout());
         jwks.setSimpleHttpGet(get);
 
         HttpsJwksVerificationKeyResolver keyResolver = new HttpsJwksVerificationKeyResolver(jwks);
@@ -218,9 +208,9 @@ public class OpenIdValidationHandler implements IdentityStore {
                 .setRequireIssuedAt()
                 .setRequireExpirationTime()
                 .setVerificationKeyResolver(keyResolver)
-                .setExpectedIssuer(definition.get().get().providerMetadata().issuer())
-                .setExpectedAudience(definition.get().get().clientId())
-                .registerValidator(JwtValidators.azp(definition.get().get().clientId()))
+                .setExpectedIssuer(definition.get().providerMetadata().issuer())
+                .setExpectedAudience(definition.get().clientId())
+                .registerValidator(JwtValidators.azp(definition.get().clientId()))
                 .registerValidator(JwtValidators.EXPIRATION)
                 .registerValidator(JwtValidators.ISSUED_AT)
                 .registerValidator(JwtValidators.NOT_BEOFRE);

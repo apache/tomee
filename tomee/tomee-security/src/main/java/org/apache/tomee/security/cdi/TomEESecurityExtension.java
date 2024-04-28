@@ -25,7 +25,7 @@ import org.apache.tomee.security.TomEEELInvocationHandler;
 import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
-import org.apache.tomee.security.cdi.openid.OpenIdValidationHandler;
+import org.apache.tomee.security.cdi.openid.OpenIdIdentityStore;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
@@ -56,7 +56,6 @@ import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -90,7 +89,6 @@ public class TomEESecurityExtension implements Extension {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class), "TomEESecurityContext");
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEOpenIdContext.class), "TomEEOpenIdContext");
-        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenIdValidationHandler.class), "TomEEOpenIdValidationHandler");
     }
 
     // using CDI Observes with WithAnnotations seems to trigger loading of the ProcessAnnotatedType
@@ -342,6 +340,8 @@ public class TomEESecurityExtension implements Extension {
                                         beanManager.getInjectionTargetFactory(annotatedType))
                                 .create(creationalContext);
                     });
+
+            afterBeanDiscovery.addBean(createBean(OpenIdIdentityStore.class, beanManager));
         }
 
     }
@@ -416,5 +416,13 @@ public class TomEESecurityExtension implements Extension {
             return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(
                     TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor));
         };
+    }
+
+    private <T> Bean<T> createBean(final Class<T> beanType, BeanManager bm) {
+        AnnotatedType<T> annotatedType = bm.createAnnotatedType(beanType);
+        return bm.createBean(
+                bm.createBeanAttributes(annotatedType),
+                beanType,
+                bm.getInjectionTargetFactory(annotatedType));
     }
 }
