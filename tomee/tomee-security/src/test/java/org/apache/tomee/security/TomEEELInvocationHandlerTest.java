@@ -118,6 +118,38 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
                 proxiedAnnotation.providerURI());
     }
 
+    @Test
+    public void testElResolvesToEl() {
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+
+        elProcessor.defineBean("vehicle", new Vehicle());
+        elProcessor.setValue("baseURL", "http://localhost:8080/tomee-openid");
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+
+        Assert.assertEquals("http://localhost:8080/tomee-openid/Callback", proxiedAnnotation.redirectURI());
+    }
+
+    @Test
+    public void infiniteLoop() {
+
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+
+        elProcessor.defineBean("vehicle", new Vehicle());
+        elProcessor.setValue("baseURL", "http://localhost:8080/tomee-openid");
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+
+        // This has to trigger an exception
+        Assert.assertThrows(IllegalArgumentException.class, () -> proxiedAnnotation.clientSecret());
+    }
+
     private BeanManager bm() {
         return CDI.current().getBeanManager();
     }
@@ -146,11 +178,17 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
     }
 
     @OpenIdAuthenticationMechanismDefinition(
+            redirectURI = "#{vehicle.redirectUri}",
             providerURI = "#{vehicle.server}/#{vehicle.path}/.well-known/openid-configuration",
-            logout = @LogoutDefinition(notifyProviderExpression = "#{vehicle.notifyProvider}"))
+            logout = @LogoutDefinition(notifyProviderExpression = "#{vehicle.notifyProvider}"),
+            clientSecret = "#{vehicle.clientSecret}")
     @Vetoed // so we don't break the other tests with this
     @Named // see expression language
     public static class Vehicle {
+        public String getRedirectUri() {
+            return "${baseURL}/Callback";
+        }
+
         public String getServer() {
             return "https://server.example.com";
         }
@@ -162,6 +200,10 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         public boolean isNotifyProvider()
         {
             return true;
+        }
+
+        public String getClientSecret() {
+            return "#{vehicle.clientSecret}";
         }
     }
 

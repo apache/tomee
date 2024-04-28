@@ -24,6 +24,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,9 +93,22 @@ public class TomEEELInvocationHandler implements InvocationHandler {
 
         // if the return type is a String, we may always get an expression to evaluate.
         // check if it's something we can evaluate
-        final String value = (String) method.invoke(annotation, args);
-        if (value != null && value.length() > 3 && containsExpression(value)) {
-            return EL_EXPRESSION_PATTERN.matcher(value).replaceAll(matchResult -> eval(processor, matchResult.group(1), String.class));
+        // done in a loop to cover the following case from TCK: redirectURI = "${openIdConfig.redirectURI}"
+        // -> resolves to ${baseURL}/Callback which needs to be fed through EL again to make sense
+        String value = (String) method.invoke(annotation, args);
+        Set<String> previousValues = new HashSet<>();
+        while (value != null && value.length() > 3 && containsExpression(value)) {
+            if (previousValues.contains(value)) {
+                throw new IllegalArgumentException("EL in " + method.getName() + " can not be evaluated");
+            }
+
+            previousValues.add(value);
+            value = EL_EXPRESSION_PATTERN.matcher(value).replaceAll(matchResult -> {
+                String evaluated = eval(processor, matchResult.group(1), String.class);
+
+                // replace $ with \$ to avoid regex group lookups
+                return evaluated.replace("$", "\\$");
+            });
         }
 
         return value;
