@@ -16,12 +16,13 @@
  */
 package org.apache.openejb.server.ssh;
 
-import org.apache.sshd.common.Factory;
+import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.shell.ShellFactory;
 
-public class OpenEJBShellFactory implements Factory<Command> {
-    private String bind;
-    private int port;
+public class OpenEJBShellFactory implements ShellFactory {
+    private final String bind;
+    private final int port;
 
     public OpenEJBShellFactory(String bind, int port) {
         this.bind = bind;
@@ -29,7 +30,7 @@ public class OpenEJBShellFactory implements Factory<Command> {
     }
 
     @Override
-    public Command create() {
+    public Command createShell(ChannelSession channelSession) {
         return new OpenEJBCommands(bind, port);
     }
 }

@@ -67,7 +67,7 @@ public class SSHServerTest {
         try {
             final ClientSession session = client.connect("jonathan", "localhost", 4222).verify().getSession();
             session.addPasswordIdentity("secret");
-            session.auth().verify(FactoryManager.DEFAULT_AUTH_TIMEOUT);
+            session.auth().verify();
 
             final ClientChannel channel = session.createChannel("shell");
             ByteArrayOutputStream sent = new ByteArrayOutputStream();
