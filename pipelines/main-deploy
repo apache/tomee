@@ -32,7 +32,7 @@ pipeline {
         stage('Build without tests') {
             tools {
                  maven 'maven_3_latest'
-                  jdk 'jdk_11_latest'
+                  jdk 'jdk_17_latest'
             }
             steps {
                 timeout(time: 180, unit: 'MINUTES') {
@@ -43,7 +43,7 @@ pipeline {
         stage('Deploy') {
             tools {
                  maven 'maven_3_latest'
-                  jdk 'jdk_11_latest'
+                  jdk 'jdk_17_latest'
             }
             steps {
                 timeout(time: 180, unit: 'MINUTES') {
