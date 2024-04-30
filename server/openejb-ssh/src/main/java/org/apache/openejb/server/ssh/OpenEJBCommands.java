@@ -19,9 +19,10 @@ package org.apache.openejb.server.ssh;
 import org.apache.openejb.server.cli.CliRunnable;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
-import org.apache.sshd.server.SessionAware;
+import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.server.session.ServerSessionAware;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -31,7 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.PrivilegedAction;
 
-public class OpenEJBCommands extends CliRunnable implements Command, Runnable, SessionAware {
+public class OpenEJBCommands extends CliRunnable implements Command, Runnable, ServerSessionAware {
     private ExitCallback cbk;
     private LoginContext loginContext;
 
@@ -62,11 +63,6 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable, S
     @Override
     public void setExitCallback(ExitCallback callback) {
         cbk = callback;
-    }
-
-    @Override
-    public void start(Environment env) throws IOException {
-        start();
     }
 
     @Override
@@ -101,6 +97,16 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable, S
 
         setUsername(username);
         loginContext = session.getAttribute(OpenEJBJaasPasswordAuthenticator.LOGIN_CONTEXT_KEY);
+    }
+
+    @Override
+    public void start(ChannelSession channelSession, Environment environment) throws IOException {
+        start();
+    }
+
+    @Override
+    public void destroy(ChannelSession channelSession) throws Exception {
+        destroy();
     }
 }
 
