@@ -1944,6 +1944,11 @@
         <version>1.16</version>
       </dependency>
       <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.2.4</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>taglibs-shade</artifactId>
 	      <version>${project.version}</version>
