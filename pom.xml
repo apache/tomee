@@ -212,7 +212,7 @@
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>6.1.0</version.activemq>
+    <version.activemq>6.1.2</version.activemq>
     <!-- downgrade to avoid a henn egg issue with batchee -->
     <version.batchee>1.0.4</version.batchee>
     <version.bval>3.0.0</version.bval>
