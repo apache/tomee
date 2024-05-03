@@ -30,6 +30,7 @@ import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
 import jakarta.security.enterprise.identitystore.openid.RefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -68,52 +69,50 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     private TomEEOpenIdContext openIdContext;
 
     @Override
+    public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        if (definition.get().logout().notifyProvider()) {
+            if (!definition.get().providerMetadata().endSessionEndpoint().isEmpty()) {
+                UriBuilder endSession = UriBuilder.fromUri(definition.get().providerMetadata().endSessionEndpoint())
+                        .queryParam(OpenIdConstant.ID_TOKEN_HINT, openIdContext.getIdentityToken().getToken());
+
+                if (!definition.get().logout().redirectURI().isEmpty()) {
+                    endSession.queryParam(OpenIdConstant.POST_LOGOUT_REDIRECT_URI, definition.get().logout().redirectURI());
+                }
+
+                httpMessageContext.redirect(endSession.toString());
+                return;
+            }
+        } else {
+            if (!definition.get().logout().redirectURI().isEmpty()) {
+                httpMessageContext.redirect(definition.get().logout().redirectURI());
+                return;
+            }
+        }
+
+        performAuthentication(request, response, httpMessageContext);
+    }
+
+    @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
-        OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.get().useSession());
-
-        String state = request.getParameter(OpenIdConstant.STATE);
-        if (state == null && request.getUserPrincipal() == null && httpMessageContext.isProtected()) {
-            // unauthenticated user tries to access protected resource, begin authorization dialog
-            return httpMessageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
+        AuthenticationStatus result = performAuthentication(request, response, httpMessageContext);
+        if (result != null) {
+            return result;
         }
 
-        if (state != null) {
-            // callback from openid provider (3)
-            if (!request.getRequestURL().toString().equals(definition.get().redirectURI())) {
-                return httpMessageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
-            }
-
-            if (storageHandler.getStoredState(request, response) == null) {
-                return httpMessageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
-            }
-
-            if (!state.equals(storageHandler.getStoredState(request, response))) {
-                return httpMessageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
-            }
-
-            if (request.getParameter(OpenIdConstant.ERROR_PARAM) != null) {
-                return httpMessageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
-            }
-
-            // Callback is okay, continue with (4)
-            storageHandler.set(request, response, OpenIdStorageHandler.STATE_KEY, null);
-
-            try (Client client = ClientBuilder.newClient()) {
-                Form form = new Form()
-                        .param(OpenIdConstant.CLIENT_ID, definition.get().clientId())
-                        .param(OpenIdConstant.CLIENT_SECRET, definition.get().clientSecret())
-                        .param(OpenIdConstant.GRANT_TYPE, "authorization_code")
-                        .param(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI())
-                        .param(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE));
-
-                TokenResponse tokenResponse = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
-                        .accept(MediaType.APPLICATION_JSON)
-                        .post(Entity.form(form), TokenResponse.class);
-
-                return handleTokenResponse(tokenResponse, httpMessageContext);
-            }
+        result = handleExpiredTokens(request, response, httpMessageContext);
+        if (result != null) {
+            return result;
         }
 
+        return httpMessageContext.doNothing();
+    }
+
+    protected AuthenticationStatus handleExpiredTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
         if (openIdContext.getAccessToken().isExpired()) {
             LOGGER.debug("access token did expire");
 
@@ -143,7 +142,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
         }
 
-        return httpMessageContext.doNothing();
+        return null;
     }
 
     protected AuthenticationStatus refreshTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
@@ -168,6 +167,55 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
             throw e;
         }
+    }
+
+    protected AuthenticationStatus performAuthentication(HttpServletRequest request, HttpServletResponse response, HttpMessageContext messageContext) {
+        OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.get().useSession());
+
+        String state = request.getParameter(OpenIdConstant.STATE);
+        if (state == null && request.getUserPrincipal() == null && messageContext.isProtected()) {
+            // unauthenticated user tries to access protected resource, begin authorization dialog
+            return messageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
+        }
+
+        if (state != null) {
+            // callback from openid provider (3)
+            if (!request.getRequestURL().toString().equals(definition.get().redirectURI())) {
+                return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
+            }
+
+            if (storageHandler.getStoredState(request, response) == null) {
+                return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
+            }
+
+            if (!state.equals(storageHandler.getStoredState(request, response))) {
+                return messageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
+            }
+
+            if (request.getParameter(OpenIdConstant.ERROR_PARAM) != null) {
+                return messageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
+            }
+
+            // Callback is okay, continue with (4)
+            storageHandler.set(request, response, OpenIdStorageHandler.STATE_KEY, null);
+
+            try (Client client = ClientBuilder.newClient()) {
+                Form form = new Form()
+                        .param(OpenIdConstant.CLIENT_ID, definition.get().clientId())
+                        .param(OpenIdConstant.CLIENT_SECRET, definition.get().clientSecret())
+                        .param(OpenIdConstant.GRANT_TYPE, "authorization_code")
+                        .param(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI())
+                        .param(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE));
+
+                TokenResponse tokenResponse = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
+                        .accept(MediaType.APPLICATION_JSON)
+                        .post(Entity.form(form), TokenResponse.class);
+
+                return handleTokenResponse(tokenResponse, messageContext);
+            }
+        }
+
+        return null;
     }
 
     protected AuthenticationStatus handleTokenResponse(TokenResponse tokenResponse, HttpMessageContext httpMessageContext) {
