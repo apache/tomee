@@ -38,9 +38,11 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.http.openid.JwtValidators;
 import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
+import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEAccesToken;
 import org.apache.tomee.security.http.openid.model.TomEEIdentityToken;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
+import org.apache.tomee.security.http.openid.model.TomEERefreshToken;
 import org.jose4j.http.Get;
 import org.jose4j.jwk.HttpsJwks;
 import org.jose4j.jwt.consumer.InvalidJwtException;
@@ -84,8 +86,10 @@ public class OpenIdIdentityStore implements IdentityStore {
             builder.registerValidator(JwtValidators.nonce(expectedNonce));
         });
 
-        openIdContext.setAccessToken(createAccessToken(defaultJwtConsumer, openIdCredential));
-        openIdContext.setIdentityToken(createIdentityToken(idTokenJwtConsumer, openIdCredential));
+
+        openIdContext.setAccessToken(createAccessToken(defaultJwtConsumer, openIdCredential.getTokenResponse()));
+        openIdContext.setIdentityToken(createIdentityToken(idTokenJwtConsumer, openIdCredential.getTokenResponse()));
+        openIdContext.setRefreshToken(openIdCredential.getTokenResponse().getRefreshToken().map(TomEERefreshToken::new));
         if (openIdContext.getIdentityToken() == null) {
             return CredentialValidationResult.INVALID_RESULT;
         }
@@ -131,26 +135,26 @@ public class OpenIdIdentityStore implements IdentityStore {
         return validationResult.getCallerGroups();
     }
 
-    private AccessToken createAccessToken(JwtConsumer jwtConsumer, TomEEOpenIdCredential credential) {
+    private AccessToken createAccessToken(JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
         boolean valitJwt = false;
         try {
-            jwtConsumer.process(credential.getAccesToken());
+            jwtConsumer.process(tokenResponse.getAccesToken());
             valitJwt = true;
         } catch (InvalidJwtException e) {
             LOGGER.warning("Could not decode " + OpenIdConstant.ACCESS_TOKEN, e);
         }
 
         return new TomEEAccesToken(
-                valitJwt, credential.getAccesToken(),
-                "Bearer".equals(credential.getTokenType()) ? AccessToken.Type.BEARER : AccessToken.Type.MAC,
-                credential.getScope(),
-                credential.getExpiresIn(),
+                valitJwt, tokenResponse.getAccesToken(),
+                "Bearer".equals(tokenResponse.getTokenType()) ? AccessToken.Type.BEARER : AccessToken.Type.MAC,
+                tokenResponse.getScope(),
+                tokenResponse.getExpiresIn(),
                 definition.get().tokenMinValidity());
     }
 
-    private IdentityToken createIdentityToken(JwtConsumer jwtConsumer, TomEEOpenIdCredential credential) {
+    private IdentityToken createIdentityToken(JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
         try {
-            JwtContext idToken = jwtConsumer.process(credential.getIdToken());
+            JwtContext idToken = jwtConsumer.process(tokenResponse.getIdToken());
             return new TomEEIdentityToken(idToken.getJwt(), definition.get().tokenMinValidity());
         } catch (InvalidJwtException e) {
             LOGGER.warning(OpenIdConstant.IDENTITY_TOKEN + " is invalid", e);

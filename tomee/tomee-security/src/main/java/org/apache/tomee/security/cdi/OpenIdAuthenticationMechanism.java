@@ -27,6 +27,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthentic
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
+import jakarta.security.enterprise.identitystore.openid.RefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.client.Client;
@@ -39,6 +40,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
+import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
 import java.net.URI;
@@ -104,18 +106,11 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                         .param(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI())
                         .param(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE));
 
-                TomEEOpenIdCredential credential = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
+                TokenResponse tokenResponse = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
                         .accept(MediaType.APPLICATION_JSON)
-                        .post(Entity.form(form), TomEEOpenIdCredential.class);
+                        .post(Entity.form(form), TokenResponse.class);
 
-                openIdContext.setExpiresIn(credential.getExpiresIn());
-                openIdContext.setTokenType(credential.getTokenType());
-
-                credential.setMessageContext(httpMessageContext);
-                CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
-                httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
-
-                return httpMessageContext.notifyContainerAboutLogin(validationResult);
+                return handleTokenResponse(tokenResponse, httpMessageContext);
             }
         }
 
@@ -124,7 +119,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
             if (definition.get().tokenAutoRefresh()) {
                 LOGGER.debug("Attempting to refresh tokens after access token expiry");
-                refreshTokens();
+                return refreshTokens(request, response, httpMessageContext);
             }
 
             if (definition.get().logout().accessTokenExpiry()) {
@@ -138,7 +133,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             LOGGER.debug("identity token did expire");
             if (definition.get().tokenAutoRefresh()) {
                 LOGGER.debug("Attempting to refresh tokens after identity token expiry");
-                refreshTokens();
+                return refreshTokens(request, response, httpMessageContext);
             }
 
             if (definition.get().logout().identityTokenExpiry()) {
@@ -151,7 +146,39 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         return httpMessageContext.doNothing();
     }
 
-    protected void refreshTokens() {
+    protected AuthenticationStatus refreshTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
+        try (Client client = ClientBuilder.newClient()){
+            RefreshToken refreshToken = openIdContext.getRefreshToken()
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot refresh tokens, no refresh_token received"));
+
+            Form form = new Form()
+                    .param(OpenIdConstant.CLIENT_ID, definition.get().clientId())
+                    .param(OpenIdConstant.CLIENT_SECRET, definition.get().clientSecret())
+                    .param(OpenIdConstant.GRANT_TYPE, OpenIdConstant.REFRESH_TOKEN)
+                    .param(OpenIdConstant.REFRESH_TOKEN, refreshToken.getToken());
+
+            TokenResponse tokenResponse = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
+                    .accept(MediaType.APPLICATION_JSON)
+                    .post(Entity.form(form), TokenResponse.class);
+
+            return handleTokenResponse(tokenResponse, httpMessageContext);
+
+        } catch (Exception e) {
+            cleanSubject(request, response, httpMessageContext);
+
+            throw e;
+        }
+    }
+
+    protected AuthenticationStatus handleTokenResponse(TokenResponse tokenResponse, HttpMessageContext httpMessageContext) {
+        openIdContext.setExpiresIn(tokenResponse.getExpiresIn());
+        openIdContext.setTokenType(tokenResponse.getTokenType());
+
+        TomEEOpenIdCredential credential = new TomEEOpenIdCredential(tokenResponse, httpMessageContext);
+        CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
+        httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
+
+        return httpMessageContext.notifyContainerAboutLogin(validationResult);
     }
 
     protected URI buildAuthorizationUri(OpenIdStorageHandler storageHandler, HttpServletRequest request, HttpServletResponse response) {

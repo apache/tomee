@@ -41,6 +41,7 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     private AccessToken accessToken;
     private IdentityToken identityToken;
+    private Optional<RefreshToken> refreshToken;
     private Long expiresIn;
 
     @PostConstruct
@@ -73,7 +74,7 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     @Override
     public Optional<RefreshToken> getRefreshToken() {
-        throw new UnsupportedOperationException();
+        return refreshToken;
     }
 
     @Override
@@ -116,6 +117,10 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     public void setIdentityToken(IdentityToken identityToken) {
         this.identityToken = identityToken;
+    }
+
+    public void setRefreshToken(Optional<RefreshToken> refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public void setExpiresIn(Long expiresIn) {

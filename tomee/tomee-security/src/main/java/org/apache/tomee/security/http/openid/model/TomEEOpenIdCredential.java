@@ -16,71 +16,23 @@
  */
 package org.apache.tomee.security.http.openid.model;
 
-import jakarta.json.bind.adapter.JsonbAdapter;
-import jakarta.json.bind.annotation.JsonbProperty;
-import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
-import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
 import jakarta.security.enterprise.credential.Credential;
-import jakarta.security.enterprise.identitystore.openid.Scope;
 
 public class TomEEOpenIdCredential implements Credential {
-    @JsonbProperty(OpenIdConstant.TOKEN_TYPE)
-    private String tokenType;
+    private final TokenResponse tokenResponse;
+    private final HttpMessageContext messageContext;
 
-    @JsonbProperty(OpenIdConstant.ACCESS_TOKEN)
-    private String accesToken;
-    @JsonbProperty(OpenIdConstant.IDENTITY_TOKEN)
-    private String idToken;
-
-    @JsonbProperty(OpenIdConstant.EXPIRES_IN)
-    private long expiresIn;
-
-    @JsonbProperty(OpenIdConstant.SCOPE)
-    @JsonbTypeAdapter(JsonbScopeAdapter.class)
-    private Scope scope;
-
-    @JsonbTransient
-    private HttpMessageContext messageContext;
-
-    public String getTokenType() {
-        return tokenType;
+    public TomEEOpenIdCredential(TokenResponse tokenResponse, HttpMessageContext messageContext) {
+        this.tokenResponse = tokenResponse;
+        this.messageContext = messageContext;
     }
 
-    public String getAccesToken() {
-        return accesToken;
-    }
-
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public long getExpiresIn() {
-        return expiresIn;
-    }
-
-    public Scope getScope() {
-        return scope;
+    public TokenResponse getTokenResponse() {
+        return tokenResponse;
     }
 
     public HttpMessageContext getMessageContext() {
         return messageContext;
-    }
-
-    public void setMessageContext(HttpMessageContext messageContext) {
-        this.messageContext = messageContext;
-    }
-
-    public static class JsonbScopeAdapter implements JsonbAdapter<Scope, String> {
-        @Override
-        public String adaptToJson(Scope obj) throws Exception {
-            return obj == null ? null : obj.toString();
-        }
-
-        @Override
-        public Scope adaptFromJson(String obj) throws Exception {
-            return Scope.parse(obj);
-        }
     }
 }
