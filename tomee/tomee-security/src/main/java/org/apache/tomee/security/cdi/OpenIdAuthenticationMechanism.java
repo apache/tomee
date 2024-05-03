@@ -71,11 +71,15 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
         String state = request.getParameter(OpenIdConstant.STATE);
         if (state == null && request.getUserPrincipal() == null && httpMessageContext.isProtected()) {
+            // unauthenticated user tries to access protected resource, begin authorization dialog
             return httpMessageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
         }
 
-        if (state != null) { // -> callback from openid provider (3)
-            // TODO validate url matches redirectURI/original URL
+        if (state != null) {
+            // callback from openid provider (3)
+            if (!request.getRequestURL().toString().equals(definition.get().redirectURI())) {
+                return httpMessageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
+            }
 
             if (storageHandler.getStoredState(request, response) == null) {
                 return httpMessageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
@@ -115,8 +119,39 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
         }
 
+        if (openIdContext.getAccessToken().isExpired()) {
+            LOGGER.debug("access token did expire");
+
+            if (definition.get().tokenAutoRefresh()) {
+                LOGGER.debug("Attempting to refresh tokens after access token expiry");
+                refreshTokens();
+            }
+
+            if (definition.get().logout().accessTokenExpiry()) {
+                LOGGER.debug("access token expired and accessTokenExpiry=true, performing logout");
+                cleanSubject(request, response, httpMessageContext);
+                return AuthenticationStatus.SEND_FAILURE;
+            }
+        }
+
+        if (openIdContext.getIdentityToken().isExpired()) {
+            LOGGER.debug("identity token did expire");
+            if (definition.get().tokenAutoRefresh()) {
+                LOGGER.debug("Attempting to refresh tokens after identity token expiry");
+                refreshTokens();
+            }
+
+            if (definition.get().logout().identityTokenExpiry()) {
+                LOGGER.debug("identity token expired and identityTokenExpiry=true, performing logout");
+                cleanSubject(request, response, httpMessageContext);
+                return AuthenticationStatus.SEND_FAILURE;
+            }
+        }
 
         return httpMessageContext.doNothing();
+    }
+
+    protected void refreshTokens() {
     }
 
     protected URI buildAuthorizationUri(OpenIdStorageHandler storageHandler, HttpServletRequest request, HttpServletResponse response) {
