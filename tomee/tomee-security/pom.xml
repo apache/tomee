@@ -108,6 +108,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-mockito</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
       <version>3.5.0</version>
