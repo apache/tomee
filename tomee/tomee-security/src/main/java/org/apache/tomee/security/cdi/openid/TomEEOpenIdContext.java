@@ -30,11 +30,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdClaims;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 @SessionScoped
 public class TomEEOpenIdContext implements OpenIdContext {
-    @Inject private Instance<Supplier<OpenIdAuthenticationMechanismDefinition>> definition;
+    @Inject private Instance<OpenIdAuthenticationMechanismDefinition> definition;
 
     private JsonObject userInfoClaims;
     private String tokenType;
@@ -100,7 +99,7 @@ public class TomEEOpenIdContext implements OpenIdContext {
     @Override
     public <T> Optional<T> getStoredValue(HttpServletRequest request, HttpServletResponse response, String key) {
         return Optional.ofNullable((T) OpenIdStorageHandler.get(
-                definition.get().get().useSession()).get(request, response, key));
+                definition.get().useSession()).get(request, response, key));
     }
 
     public void setUserInfoClaims(JsonObject userInfoClaims) {

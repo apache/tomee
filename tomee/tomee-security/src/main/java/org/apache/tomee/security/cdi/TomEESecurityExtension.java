@@ -316,12 +316,11 @@ public class TomEESecurityExtension implements Extension {
             afterBeanDiscovery
                     .addBean()
                     .id(OpenIdAuthenticationMechanism.class.getName() + "#" + OpenIdAuthenticationMechanismDefinition.class.getName())
-                    .beanClass(Supplier.class)
+                    .beanClass(OpenIdAuthenticationMechanism.class)
                     .addType(Object.class)
-                    .addType(new TypeLiteral<Supplier<OpenIdAuthenticationMechanismDefinition>>() {})
                     .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
                     .scope(RequestScoped.class)
-                    .createWith(creationalContext -> createOpenidAuthenticationMechanismDefinitionSupplier(beanManager));
+                    .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
 
 
             afterBeanDiscovery
@@ -400,22 +399,21 @@ public class TomEESecurityExtension implements Extension {
         };
     }
 
-    private Supplier<OpenIdAuthenticationMechanismDefinition> createOpenidAuthenticationMechanismDefinitionSupplier(final BeanManager bm) {
-        return () -> {
-            final OpenIdAuthenticationMechanismDefinition annotation = oidcMechanism.get()
-                    .getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+    private OpenIdAuthenticationMechanismDefinition createOpenIdAuthenticationMechanismDefinition(final BeanManager bm) {
+        final OpenIdAuthenticationMechanismDefinition annotation = oidcMechanism.get()
+                .getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
 
-            Bean<HttpServletRequest> requestBean = (Bean<HttpServletRequest>) bm.resolve(bm.getBeans(HttpServletRequest.class));
-            HttpServletRequest request = (HttpServletRequest) bm.getReference(
-                    requestBean, HttpServletRequest.class, bm.createCreationalContext(requestBean));
+        Bean<HttpServletRequest> requestBean = (Bean<HttpServletRequest>) bm.resolve(bm.getBeans(HttpServletRequest.class));
+        HttpServletRequest request = (HttpServletRequest) bm.getReference(
+                requestBean, HttpServletRequest.class, bm.createCreationalContext(requestBean));
 
-            ELProcessor elProcessor = new ELProcessor();
-            elProcessor.getELManager().addELResolver(bm.getELResolver());
-            elProcessor.setValue("baseURL", request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length()) + request.getContextPath());
+        ELProcessor elProcessor = new ELProcessor();
+        elProcessor.getELManager().addELResolver(bm.getELResolver());
+        elProcessor.setValue("baseURL", request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length()) + request.getContextPath());
 
-            return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(
-                    TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor));
-        };
+        return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(
+                TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor));
+
     }
 
     private <T> Bean<T> createBean(final Class<T> beanType, BeanManager bm) {

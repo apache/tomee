@@ -46,7 +46,6 @@ import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -59,8 +58,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     private static final Logger LOGGER = Logger.getInstance(
             LogCategory.TOMEE_SECURITY, OpenIdAuthenticationMechanism.class);
 
-    @Inject
-    private Supplier<OpenIdAuthenticationMechanismDefinition> definition;
+    @Inject private OpenIdAuthenticationMechanismDefinition definition;
 
     @Inject
     private IdentityStoreHandler identityStoreHandler;
@@ -75,21 +73,21 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             session.invalidate();
         }
 
-        if (definition.get().logout().notifyProvider()) {
-            if (!definition.get().providerMetadata().endSessionEndpoint().isEmpty()) {
-                UriBuilder endSession = UriBuilder.fromUri(definition.get().providerMetadata().endSessionEndpoint())
+        if (definition.logout().notifyProvider()) {
+            if (!definition.providerMetadata().endSessionEndpoint().isEmpty()) {
+                UriBuilder endSession = UriBuilder.fromUri(definition.providerMetadata().endSessionEndpoint())
                         .queryParam(OpenIdConstant.ID_TOKEN_HINT, openIdContext.getIdentityToken().getToken());
 
-                if (!definition.get().logout().redirectURI().isEmpty()) {
-                    endSession.queryParam(OpenIdConstant.POST_LOGOUT_REDIRECT_URI, definition.get().logout().redirectURI());
+                if (!definition.logout().redirectURI().isEmpty()) {
+                    endSession.queryParam(OpenIdConstant.POST_LOGOUT_REDIRECT_URI, definition.logout().redirectURI());
                 }
 
                 httpMessageContext.redirect(endSession.toString());
                 return;
             }
         } else {
-            if (!definition.get().logout().redirectURI().isEmpty()) {
-                httpMessageContext.redirect(definition.get().logout().redirectURI());
+            if (!definition.logout().redirectURI().isEmpty()) {
+                httpMessageContext.redirect(definition.logout().redirectURI());
                 return;
             }
         }
@@ -116,12 +114,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         if (openIdContext.getAccessToken().isExpired()) {
             LOGGER.debug("access token did expire");
 
-            if (definition.get().tokenAutoRefresh()) {
+            if (definition.tokenAutoRefresh()) {
                 LOGGER.debug("Attempting to refresh tokens after access token expiry");
                 return refreshTokens(request, response, httpMessageContext);
             }
 
-            if (definition.get().logout().accessTokenExpiry()) {
+            if (definition.logout().accessTokenExpiry()) {
                 LOGGER.debug("access token expired and accessTokenExpiry=true, performing logout");
                 cleanSubject(request, response, httpMessageContext);
                 return AuthenticationStatus.SEND_FAILURE;
@@ -130,12 +128,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
         if (openIdContext.getIdentityToken().isExpired()) {
             LOGGER.debug("identity token did expire");
-            if (definition.get().tokenAutoRefresh()) {
+            if (definition.tokenAutoRefresh()) {
                 LOGGER.debug("Attempting to refresh tokens after identity token expiry");
                 return refreshTokens(request, response, httpMessageContext);
             }
 
-            if (definition.get().logout().identityTokenExpiry()) {
+            if (definition.logout().identityTokenExpiry()) {
                 LOGGER.debug("identity token expired and identityTokenExpiry=true, performing logout");
                 cleanSubject(request, response, httpMessageContext);
                 return AuthenticationStatus.SEND_FAILURE;
@@ -151,12 +149,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                     .orElseThrow(() -> new IllegalArgumentException("Cannot refresh tokens, no refresh_token received"));
 
             Form form = new Form()
-                    .param(OpenIdConstant.CLIENT_ID, definition.get().clientId())
-                    .param(OpenIdConstant.CLIENT_SECRET, definition.get().clientSecret())
+                    .param(OpenIdConstant.CLIENT_ID, definition.clientId())
+                    .param(OpenIdConstant.CLIENT_SECRET, definition.clientSecret())
                     .param(OpenIdConstant.GRANT_TYPE, OpenIdConstant.REFRESH_TOKEN)
                     .param(OpenIdConstant.REFRESH_TOKEN, refreshToken.getToken());
 
-            TokenResponse tokenResponse = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
+            TokenResponse tokenResponse = client.target(definition.providerMetadata().tokenEndpoint()).request()
                     .accept(MediaType.APPLICATION_JSON)
                     .post(Entity.form(form), TokenResponse.class);
 
@@ -170,7 +168,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected AuthenticationStatus performAuthentication(HttpServletRequest request, HttpServletResponse response, HttpMessageContext messageContext) {
-        OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.get().useSession());
+        OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.useSession());
 
         String state = request.getParameter(OpenIdConstant.STATE);
         if (state == null && request.getUserPrincipal() == null && messageContext.isProtected()) {
@@ -180,7 +178,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
         if (state != null) {
             // callback from openid provider (3)
-            if (!request.getRequestURL().toString().equals(definition.get().redirectURI())) {
+            if (!request.getRequestURL().toString().equals(definition.redirectURI())) {
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
             }
 
@@ -201,13 +199,13 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
             try (Client client = ClientBuilder.newClient()) {
                 Form form = new Form()
-                        .param(OpenIdConstant.CLIENT_ID, definition.get().clientId())
-                        .param(OpenIdConstant.CLIENT_SECRET, definition.get().clientSecret())
+                        .param(OpenIdConstant.CLIENT_ID, definition.clientId())
+                        .param(OpenIdConstant.CLIENT_SECRET, definition.clientSecret())
                         .param(OpenIdConstant.GRANT_TYPE, "authorization_code")
-                        .param(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI())
+                        .param(OpenIdConstant.REDIRECT_URI, definition.redirectURI())
                         .param(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE));
 
-                TokenResponse tokenResponse = client.target(definition.get().providerMetadata().tokenEndpoint()).request()
+                TokenResponse tokenResponse = client.target(definition.providerMetadata().tokenEndpoint()).request()
                         .accept(MediaType.APPLICATION_JSON)
                         .post(Entity.form(form), TokenResponse.class);
 
@@ -230,38 +228,38 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected URI buildAuthorizationUri(OpenIdStorageHandler storageHandler, HttpServletRequest request, HttpServletResponse response) {
-        UriBuilder uriBuilder = UriBuilder.fromUri(definition.get().providerMetadata().authorizationEndpoint())
-                .queryParam(OpenIdConstant.CLIENT_ID, definition.get().clientId())
-                .queryParam(OpenIdConstant.SCOPE, String.join(",", definition.get().scope()))
-                .queryParam(OpenIdConstant.RESPONSE_TYPE, definition.get().responseType())
+        UriBuilder uriBuilder = UriBuilder.fromUri(definition.providerMetadata().authorizationEndpoint())
+                .queryParam(OpenIdConstant.CLIENT_ID, definition.clientId())
+                .queryParam(OpenIdConstant.SCOPE, String.join(",", definition.scope()))
+                .queryParam(OpenIdConstant.RESPONSE_TYPE, definition.responseType())
                 .queryParam(OpenIdConstant.STATE, storageHandler.createNewState(request, response))
-                .queryParam(OpenIdConstant.REDIRECT_URI, definition.get().redirectURI());
+                .queryParam(OpenIdConstant.REDIRECT_URI, definition.redirectURI());
 
-        if (definition.get().useNonce()) {
+        if (definition.useNonce()) {
             uriBuilder.queryParam(OpenIdConstant.NONCE, storageHandler.createNewNonce(request, response));
         }
 
-        if (!definition.get().responseMode().isEmpty()) {
-            uriBuilder.queryParam(OpenIdConstant.RESPONSE_MODE, definition.get().responseMode());
+        if (!definition.responseMode().isEmpty()) {
+            uriBuilder.queryParam(OpenIdConstant.RESPONSE_MODE, definition.responseMode());
         }
 
-        if (definition.get().display() != null) {
-            uriBuilder.queryParam(OpenIdConstant.DISPLAY, definition.get().display().name().toLowerCase());
+        if (definition.display() != null) {
+            uriBuilder.queryParam(OpenIdConstant.DISPLAY, definition.display().name().toLowerCase());
         }
 
-        if (definition.get().prompt().length > 0) {
-            String stringifiedPrompt = Arrays.stream(definition.get().prompt())
+        if (definition.prompt().length > 0) {
+            String stringifiedPrompt = Arrays.stream(definition.prompt())
                     .map(Enum::toString).map(String::toLowerCase)
                     .collect(Collectors.joining(" "));
 
             uriBuilder.queryParam(OpenIdConstant.PROMPT, stringifiedPrompt);
         }
 
-        for (String extraParam : definition.get().extraParameters()) {
+        for (String extraParam : definition.extraParameters()) {
             String[] paramParts = extraParam.split("=");
 
             if (paramParts.length != 2) {
-                throw new IllegalStateException("extra parameter in invalid format, expected \"key=value\": " + extraParam);
+                throw new IllegalArgumentException("extra parameter in invalid format, expected \"key=value\": " + extraParam);
             }
 
             uriBuilder.queryParam(paramParts[0], paramParts[1]);

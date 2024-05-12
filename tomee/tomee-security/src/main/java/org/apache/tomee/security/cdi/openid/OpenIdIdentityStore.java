@@ -63,7 +63,7 @@ import java.util.function.Supplier;
 public class OpenIdIdentityStore implements IdentityStore {
     private final static Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdIdentityStore.class);
 
-    @Inject private Supplier<OpenIdAuthenticationMechanismDefinition> definition;
+    @Inject private OpenIdAuthenticationMechanismDefinition definition;
     @Inject private TomEEOpenIdContext openIdContext;
     
 
@@ -75,12 +75,12 @@ public class OpenIdIdentityStore implements IdentityStore {
 
         JwtConsumer defaultJwtConsumer = buildJwtConsumer(null);
         JwtConsumer idTokenJwtConsumer = buildJwtConsumer(builder -> {
-            if (!definition.get().useNonce()) {
+            if (!definition.useNonce()) {
                 return;
             }
 
             HttpMessageContext msgContext = openIdCredential.getMessageContext();
-            String expectedNonce = OpenIdStorageHandler.get(definition.get().useSession())
+            String expectedNonce = OpenIdStorageHandler.get(definition.useSession())
                             .getStoredNonce(msgContext.getRequest(), msgContext.getResponse());
 
             builder.registerValidator(JwtValidators.nonce(expectedNonce));
@@ -96,8 +96,8 @@ public class OpenIdIdentityStore implements IdentityStore {
 
         openIdContext.setUserInfoClaims(fetchUserinfoClaims(defaultJwtConsumer, openIdContext.getAccessToken().getToken()));
 
-        String callerNameClaim = definition.get().claimsDefinition().callerNameClaim();
-        String groupsClaim = definition.get().claimsDefinition().callerGroupsClaim();
+        String callerNameClaim = definition.claimsDefinition().callerNameClaim();
+        String groupsClaim = definition.claimsDefinition().callerGroupsClaim();
 
         String callerName = null;
         List<String> groups = Collections.emptyList();
@@ -149,13 +149,13 @@ public class OpenIdIdentityStore implements IdentityStore {
                 "Bearer".equals(tokenResponse.getTokenType()) ? AccessToken.Type.BEARER : AccessToken.Type.MAC,
                 tokenResponse.getScope(),
                 tokenResponse.getExpiresIn(),
-                definition.get().tokenMinValidity());
+                definition.tokenMinValidity());
     }
 
     private IdentityToken createIdentityToken(JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
         try {
             JwtContext idToken = jwtConsumer.process(tokenResponse.getIdToken());
-            return new TomEEIdentityToken(idToken.getJwt(), definition.get().tokenMinValidity());
+            return new TomEEIdentityToken(idToken.getJwt(), definition.tokenMinValidity());
         } catch (InvalidJwtException e) {
             LOGGER.warning(OpenIdConstant.IDENTITY_TOKEN + " is invalid", e);
 
@@ -165,7 +165,7 @@ public class OpenIdIdentityStore implements IdentityStore {
 
     private JsonObject fetchUserinfoClaims(JwtConsumer jwtConsumer, String accessToken) {
         try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(definition.get().providerMetadata().userinfoEndpoint())
+            Response response = client.target(definition.providerMetadata().userinfoEndpoint())
                     .request(MediaType.APPLICATION_JSON, "application/jwt")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).get();
 
@@ -200,10 +200,10 @@ public class OpenIdIdentityStore implements IdentityStore {
     }
 
     protected JwtConsumer buildJwtConsumer(Consumer<JwtConsumerBuilder> enhancer) {
-        HttpsJwks jwks = new HttpsJwks(definition.get().providerMetadata().jwksURI());
+        HttpsJwks jwks = new HttpsJwks(definition.providerMetadata().jwksURI());
         Get get = new Get();
-        get.setConnectTimeout(definition.get().jwksConnectTimeout());
-        get.setReadTimeout(definition.get().jwksReadTimeout());
+        get.setConnectTimeout(definition.jwksConnectTimeout());
+        get.setReadTimeout(definition.jwksReadTimeout());
         jwks.setSimpleHttpGet(get);
 
         HttpsJwksVerificationKeyResolver keyResolver = new HttpsJwksVerificationKeyResolver(jwks);
@@ -212,9 +212,9 @@ public class OpenIdIdentityStore implements IdentityStore {
                 .setRequireIssuedAt()
                 .setRequireExpirationTime()
                 .setVerificationKeyResolver(keyResolver)
-                .setExpectedIssuer(definition.get().providerMetadata().issuer())
-                .setExpectedAudience(definition.get().clientId())
-                .registerValidator(JwtValidators.azp(definition.get().clientId()))
+                .setExpectedIssuer(definition.providerMetadata().issuer())
+                .setExpectedAudience(definition.clientId())
+                .registerValidator(JwtValidators.azp(definition.clientId()))
                 .registerValidator(JwtValidators.EXPIRATION)
                 .registerValidator(JwtValidators.ISSUED_AT)
                 .registerValidator(JwtValidators.NOT_BEOFRE);
