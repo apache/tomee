@@ -146,7 +146,7 @@
     <junit.jupiter.version>5.9.3</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
-    <version.xalan>2.7.2</version.xalan>
+    <version.xalan>2.7.3</version.xalan>
     <version.nashorn>15.4</version.nashorn>
 
     <!-- Logging frameworks -->
