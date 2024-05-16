@@ -39,6 +39,7 @@ github:
     tomee-7.0.x: {}
     tomee-7.1.x: {}
     tomee-8.x: {}
+    tomee-9.x: {}
   custom_subjects:
     new_pr: "[PR] {title} ({repository})"
     close_pr: "Re: [PR] {title} ({repository})"
@@ -57,8 +58,8 @@ github:
     new_comment_discussion: "Re: [D] {title} ({repository})"
     edit_comment_discussion: "Re: [D] {title} ({repository})"
     delete_comment_discussion: "Re: [D] {title} ({repository})"
-  dependabot_alerts: false
-  dependabot_updates: false
+  dependabot_alerts: true
+  dependabot_updates: true
 
 notifications:
   commits:      commits@tomee.apache.org
