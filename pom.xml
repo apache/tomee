@@ -140,7 +140,7 @@
     <version.groovy>2.4.12</version.groovy>
     <!-- Starting from 3.34.0 it requires J17+ -->
     <version.ecj>3.33.0</version.ecj>
-    <version.jetty>11.0.8</version.jetty>
+    <version.jetty>9.4.51.v20230217</version.jetty>
     <version.ehcache>3.10.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.9.3</junit.jupiter.version>
