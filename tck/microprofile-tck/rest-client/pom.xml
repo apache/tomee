@@ -29,7 +29,7 @@
   <name>TomEE :: TCK :: MicroProfile Rest Client TCK</name>
 
   <properties>
-    <!--<jetty-tck.version>${version.jetty}</jetty-tck.version>-->
+    <!-- Note: This old version is needed for the MP Rest Client TCK-->
     <jetty-tck.version>9.2.28.v20190418</jetty-tck.version>
   </properties>
 
