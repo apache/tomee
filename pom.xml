@@ -656,15 +656,6 @@
       </repositories>
     </profile>
     <profile>
-      <id>java11tests</id>
-      <modules>
-        <module>examples</module>
-        <module>itests/microprofile-jwt-itests</module>
-        <module>arquillian/arquillian-tomee-tests</module>
-        <module>tck</module>
-      </modules>
-    </profile>
-    <profile>
       <id>no-examples</id>
       <modules>
         <module>deps</module>

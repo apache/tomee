@@ -757,9 +757,9 @@
       </build>
     </profile>
     <profile>
-      <id>java11plus</id>
+      <id>java17plus</id>
       <activation>
-        <jdk>[11,)</jdk>
+        <jdk>[17,)</jdk>
       </activation>
       <dependencies>
         <dependency>

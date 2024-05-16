@@ -110,9 +110,9 @@
   </distributionManagement>
   <profiles>
     <profile>
-      <id>active-on-jdk-11</id>
+      <id>java17plus</id>
       <activation>
-        <jdk>[9,</jdk>
+        <jdk>[17,</jdk>
       </activation>
       <properties>
         <surefire.argline>--add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/jdk.internal.loader=ALL-UNNAMED -Djdk.attach.allowAttachSelf</surefire.argline>
