@@ -12,19 +12,6 @@ Este é um exemplo sobre como utilizar as métricas de MicroProfile no Tomee. O 
 $ mvn clean install tomee:run
 ----
 
-NOTE: Como alternativa, compile e execute o aplicativo através do Docker
-(observe o uso do perfil docker):
-
-[source,bash]
-----
-$ mvn -Pdocker docker:build
-----
-
-[source,bash]
-----
-$ docker run -it --rm -p 8080:8080 --name=tomee-mp-metrics-counted tomee/mp-metrics-counted
-----
-
 Dentro do aplicativo, há um endpoint que fornecerá o estado do tempo para o dia e a semana.
 
 == Veja o clima da semana:

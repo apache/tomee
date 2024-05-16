@@ -13,18 +13,6 @@ includes a docker profile which can be used to create a Docker image.
 $ mvn clean install tomee:run
 ----
 
-NOTE: Alternatively, build and run the application via Docker (note the use of the docker profile):
-
-[source,bash]
-----
-$ mvn -Pdocker docker:build
-----
-
-[source,bash]
-----
-$ docker run -it --rm -p 8080:8080 --name=tomee-mp-metrics-counted tomee/mp-metrics-counted
-----
-
 Within the application, there is an endpoint that will give you weather
 status for the day and week.
 

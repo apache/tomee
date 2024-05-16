@@ -14,19 +14,6 @@ Docker.
 $ mvn clean install tomee:run
 ----
 
-NOTE: Alternativamente, compile y ejecute la aplicación a través de Docker
-(tenga en cuenta el uso del perfil de docker):
-
-[source,bash]
-----
-$ mvn -Pdocker docker:build
-----
-
-[source,bash]
-----
-$ docker run -it --rm -p 8080:8080 --name=tomee-mp-metrics-counted tomee/mp-metrics-counted
-----
-
 Dentro de la aplicación, hay un endpoint que te dará el estado del clima para
 el día y la semana.
 

@@ -101,52 +101,6 @@
 
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>docker</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-            <version>0.28.0</version>
-            <executions>
-              <execution>
-                <id>start</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>build</goal>
-                  <goal>start</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>stop</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <pushRegistry>somename</pushRegistry>
-              <images>
-                <image>
-                  <name>${docker.image.name}</name>
-                  <build>
-                    <tags>
-                      <tag>${project.version}</tag>
-                      <tag>latest</tag>
-                    </tags>
-                    <dockerFile>${project.basedir}/${docker.file.name}</dockerFile>
-                  </build>
-                </image>
-              </images>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
   <!-- This section allows you to configure where to publish libraries for
   sharing. It is not required and may be deleted. For more information see:
   http://maven.apache.org/plugins/maven-deploy-plugin/ -->
