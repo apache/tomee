@@ -30,7 +30,7 @@
 
   <properties>
     <!--<jetty-tck.version>${version.jetty}</jetty-tck.version>-->
-    <jetty-tck.version>9.2.28.v20190418</jetty-tck.version>
+    <jetty-tck.version>9.4.53.v20231009</jetty-tck.version>
   </properties>
 
   <build>
