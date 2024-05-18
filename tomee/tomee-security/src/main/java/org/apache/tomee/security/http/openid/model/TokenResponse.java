@@ -28,7 +28,7 @@ public class TokenResponse {
 
     @JsonbProperty(OpenIdConstant.ACCESS_TOKEN) private String accesToken;
     @JsonbProperty(OpenIdConstant.IDENTITY_TOKEN) private String idToken;
-    @JsonbProperty(OpenIdConstant.REFRESH_TOKEN) private Optional<String> refreshToken;
+    @JsonbProperty(OpenIdConstant.REFRESH_TOKEN) private Optional<String> refreshToken = Optional.empty();
 
     @JsonbProperty(OpenIdConstant.EXPIRES_IN) private long expiresIn;
 
