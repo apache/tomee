@@ -111,7 +111,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected AuthenticationStatus handleExpiredTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
-        if (openIdContext.getAccessToken().isExpired()) {
+        if (openIdContext.getAccessToken() != null && openIdContext.getAccessToken().isExpired()) {
             LOGGER.debug("access token did expire");
 
             if (definition.tokenAutoRefresh()) {
@@ -126,7 +126,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
         }
 
-        if (openIdContext.getIdentityToken().isExpired()) {
+        if (openIdContext.getIdentityToken() != null && openIdContext.getIdentityToken().isExpired()) {
             LOGGER.debug("identity token did expire");
             if (definition.tokenAutoRefresh()) {
                 LOGGER.debug("Attempting to refresh tokens after identity token expiry");
