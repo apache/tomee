@@ -26,6 +26,7 @@ import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.cdi.openid.OpenIdIdentityStore;
+import org.apache.tomee.security.cdi.openid.OpenIdProviderMetadataHolder;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
@@ -322,27 +323,10 @@ public class TomEESecurityExtension implements Extension {
                     .scope(RequestScoped.class)
                     .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
 
-
-            afterBeanDiscovery
-                    .addBean()
-                    .id(OpenIdAuthenticationMechanism.class.getName())
-                    .beanClass(OpenIdAuthenticationMechanism.class)
-                    .types(Object.class, HttpAuthenticationMechanism.class, OpenIdAuthenticationMechanism.class)
-                    .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-                    .scope(ApplicationScoped.class)
-                    .createWith((CreationalContext<OpenIdAuthenticationMechanism> creationalContext) -> {
-                        final AnnotatedType<OpenIdAuthenticationMechanism> annotatedType =
-                                beanManager.createAnnotatedType(OpenIdAuthenticationMechanism.class);
-                        final BeanAttributes<OpenIdAuthenticationMechanism> beanAttributes =
-                                beanManager.createBeanAttributes(annotatedType);
-                        return beanManager.createBean(beanAttributes, OpenIdAuthenticationMechanism.class,
-                                        beanManager.getInjectionTargetFactory(annotatedType))
-                                .create(creationalContext);
-                    });
-
+            afterBeanDiscovery.addBean(createBean(OpenIdAuthenticationMechanism.class, beanManager));
             afterBeanDiscovery.addBean(createBean(OpenIdIdentityStore.class, beanManager));
+            afterBeanDiscovery.addBean(createBean(OpenIdProviderMetadataHolder.class, beanManager));
         }
-
     }
 
     public boolean hasAuthenticationMechanisms() {
