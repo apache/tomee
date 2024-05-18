@@ -316,8 +316,8 @@ public class TomEESecurityExtension implements Extension {
             afterBeanDiscovery
                     .addBean()
                     .id(OpenIdAuthenticationMechanism.class.getName() + "#" + OpenIdAuthenticationMechanismDefinition.class.getName())
-                    .beanClass(OpenIdAuthenticationMechanism.class)
-                    .addType(Object.class)
+                    .beanClass(OpenIdAuthenticationMechanismDefinition.class)
+                    .types(Object.class, OpenIdAuthenticationMechanismDefinition.class)
                     .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
                     .scope(RequestScoped.class)
                     .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
