@@ -230,7 +230,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     protected URI buildAuthorizationUri(OpenIdStorageHandler storageHandler, HttpServletRequest request, HttpServletResponse response) {
         UriBuilder uriBuilder = UriBuilder.fromUri(definition.providerMetadata().authorizationEndpoint())
                 .queryParam(OpenIdConstant.CLIENT_ID, definition.clientId())
-                .queryParam(OpenIdConstant.SCOPE, String.join(",", definition.scope()))
+                .queryParam(OpenIdConstant.SCOPE, String.join(" ", definition.scope()))
                 .queryParam(OpenIdConstant.RESPONSE_TYPE, definition.responseType())
                 .queryParam(OpenIdConstant.STATE, storageHandler.createNewState(request, response))
                 .queryParam(OpenIdConstant.REDIRECT_URI, definition.redirectURI());
