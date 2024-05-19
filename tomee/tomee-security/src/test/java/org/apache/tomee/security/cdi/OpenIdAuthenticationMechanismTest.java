@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 
+import jakarta.enterprise.inject.Vetoed;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.DisplayType;
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+@Vetoed
 @RunWith(ApplicationComposer.class)
 @Classes(cdi = true, value = {OpenIdAuthenticationMechanism.class})
 public class OpenIdAuthenticationMechanismTest {
@@ -63,7 +65,7 @@ public class OpenIdAuthenticationMechanismTest {
         // Parameters are defined in configureMockedDefinition
         assertEquals("https://openid.example.com/authorize"
                      + "?client_id=tomee-testing"
-                     + "&scope=openid,tomee"
+                     + "&scope=openid+tomee"
                      + "&response_type=code"
                      + "&state=STATE"
                      + "&redirect_uri=https%3A//example.com/redirect", authorizationUrl);
