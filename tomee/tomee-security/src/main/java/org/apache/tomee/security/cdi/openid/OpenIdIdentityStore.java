@@ -176,11 +176,11 @@ public class OpenIdIdentityStore implements IdentityStore {
             }
 
             String contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
-            if (contentType == null || contentType.equals(MediaType.APPLICATION_JSON)) {
+            if (contentType == null || contentType.startsWith(MediaType.APPLICATION_JSON)) {
                 return response.readEntity(JsonObject.class);
             }
 
-            if ("application/jwt".equals(contentType)) {
+            if ("application/jwt".startsWith(contentType)) {
                 try {
                     JwtContext context = jwtConsumer.process(response.readEntity(String.class));
 
