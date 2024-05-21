@@ -238,7 +238,7 @@
     <version.krazo>2.0.2</version.krazo>
 
     <!-- JDBC Drivers -->
-    <version.derby>10.15.2.0</version.derby>
+    <version.derby>10.17.1.0</version.derby>
     <version.hsqldb>2.7.2</version.hsqldb>
 
     <!-- unused properties -->
