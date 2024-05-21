@@ -53,6 +53,6 @@ public class KeyGeneratorUtil {
                 .keyID(UUID.randomUUID().toString())
                 .build();
 
-        System.out.println(jwk.toJSONObject().toJSONString());
+        System.out.println(jwk.toJSONObject());
     }
 }
