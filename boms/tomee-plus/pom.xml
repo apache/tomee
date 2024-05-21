@@ -2325,7 +2325,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-api</artifactId>
-      <version>4.3.0</version>
+      <version>5.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
