@@ -37,7 +37,7 @@ jobs:
       run: find ./boms -type f -exec sed -i -e 's/\r$//' {} \;
 
     - name: Create Pull Request after BOM Regeneration
-      uses: peter-evans/create-pull-request@v3
+      uses: peter-evans/create-pull-request@v6
       with:
         base: main
         token: ${{ secrets.GITHUB_TOKEN }}
