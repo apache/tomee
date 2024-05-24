@@ -50,6 +50,24 @@ public class OpenIdAuthenticationMechanismDefinitionDelegateTest extends Abstrac
         assertEquals("https://server.example.com/authorize", annotation.providerMetadata().authorizationEndpoint());
     }
 
+    @Test
+    public void withProviderUriTrailingSlash() {
+        OpenIdAuthenticationMechanismDefinition annotation = getAnnotation(AnnotationHolderProviderUri.class,
+                Map.of("providerUri", getAppUrl() + "/openidtest1/providerinfo/"));
+
+        assertEquals("https://override.example.com", annotation.providerMetadata().issuer());
+        assertEquals("https://server.example.com/authorize", annotation.providerMetadata().authorizationEndpoint());
+    }
+
+    @Test
+    public void withFullProviderUri() {
+        OpenIdAuthenticationMechanismDefinition annotation = getAnnotation(AnnotationHolderProviderUri.class,
+                Map.of("providerUri", getAppUrl() + "/openidtest1/providerinfo/.well-known/openid-configuration"));
+
+        assertEquals("https://override.example.com", annotation.providerMetadata().issuer());
+        assertEquals("https://server.example.com/authorize", annotation.providerMetadata().authorizationEndpoint());
+    }
+
     private OpenIdAuthenticationMechanismDefinition getAnnotation(Class<?> annotationHolder, Map<String, Object> elProperties) {
         ELProcessor elProcessor = new ELProcessor();
         for (Map.Entry<String, Object> elProperty : elProperties.entrySet()) {
