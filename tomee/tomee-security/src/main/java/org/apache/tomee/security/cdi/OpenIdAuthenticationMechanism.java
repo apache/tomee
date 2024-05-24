@@ -92,7 +92,9 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
         }
 
-        performAuthentication(request, response, httpMessageContext);
+        // Restart authorization by redirecting to openid provider
+        OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.useSession());
+        httpMessageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
     }
 
     @Override
