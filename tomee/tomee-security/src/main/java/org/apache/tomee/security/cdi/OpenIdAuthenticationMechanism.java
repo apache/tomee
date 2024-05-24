@@ -82,7 +82,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                     endSession.queryParam(OpenIdConstant.POST_LOGOUT_REDIRECT_URI, definition.logout().redirectURI());
                 }
 
-                httpMessageContext.redirect(endSession.toString());
+                httpMessageContext.redirect(endSession.build().toString());
                 return;
             }
         } else {
