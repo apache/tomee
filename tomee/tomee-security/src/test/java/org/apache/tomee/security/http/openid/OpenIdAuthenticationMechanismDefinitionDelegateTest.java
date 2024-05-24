@@ -18,11 +18,9 @@ package org.apache.tomee.security.http.openid;
 
 import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.apache.tomee.security.TomEEELInvocationHandler;
-import org.apache.tomee.security.cdi.openid.OpenIdProviderMetadataHolder;
 import org.junit.Test;
 
 import jakarta.el.ELProcessor;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Vetoed;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata;
@@ -89,9 +87,4 @@ public class OpenIdAuthenticationMechanismDefinitionDelegateTest extends Abstrac
                     """;
         }
     }
-
-    // make OpenIdProviderMetadataHolder available for tests,
-    // it isn't scanned by CDI by default but required by AutoResolvingProviderMetadata as a cache
-    @ApplicationScoped
-    public static class OpenIdProviderMetadataHolderTest extends OpenIdProviderMetadataHolder { }
 }

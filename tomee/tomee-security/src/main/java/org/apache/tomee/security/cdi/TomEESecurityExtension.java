@@ -16,17 +16,14 @@
  */
 package org.apache.tomee.security.cdi;
 
-import jakarta.el.ELProcessor;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomee.security.TomEEELInvocationHandler;
 import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
+import org.apache.tomee.security.cdi.openid.BaseUrlProducer;
 import org.apache.tomee.security.cdi.openid.OpenIdIdentityStore;
-import org.apache.tomee.security.cdi.openid.OpenIdProviderMetadataHolder;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
@@ -90,6 +87,7 @@ public class TomEESecurityExtension implements Extension {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class), "TomEESecurityContext");
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEOpenIdContext.class), "TomEEOpenIdContext");
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(BaseUrlProducer.class), "TomEEBaseUrlProducer");
     }
 
     // using CDI Observes with WithAnnotations seems to trigger loading of the ProcessAnnotatedType
@@ -320,12 +318,11 @@ public class TomEESecurityExtension implements Extension {
                     .beanClass(OpenIdAuthenticationMechanismDefinition.class)
                     .types(Object.class, OpenIdAuthenticationMechanismDefinition.class)
                     .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-                    .scope(RequestScoped.class)
+                    .scope(ApplicationScoped.class)
                     .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
 
             afterBeanDiscovery.addBean(createBean(OpenIdAuthenticationMechanism.class, beanManager));
             afterBeanDiscovery.addBean(createBean(OpenIdIdentityStore.class, beanManager));
-            afterBeanDiscovery.addBean(createBean(OpenIdProviderMetadataHolder.class, beanManager));
         }
     }
 
@@ -387,17 +384,8 @@ public class TomEESecurityExtension implements Extension {
         final OpenIdAuthenticationMechanismDefinition annotation = oidcMechanism.get()
                 .getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
 
-        Bean<HttpServletRequest> requestBean = (Bean<HttpServletRequest>) bm.resolve(bm.getBeans(HttpServletRequest.class));
-        HttpServletRequest request = (HttpServletRequest) bm.getReference(
-                requestBean, HttpServletRequest.class, bm.createCreationalContext(requestBean));
-
-        ELProcessor elProcessor = new ELProcessor();
-        elProcessor.getELManager().addELResolver(bm.getELResolver());
-        elProcessor.setValue("baseURL", request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length()) + request.getContextPath());
-
         return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(
-                TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor));
-
+                TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, bm));
     }
 
     private <T> Bean<T> createBean(final Class<T> beanType, BeanManager bm) {

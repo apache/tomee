@@ -17,9 +17,7 @@
 package org.apache.tomee.security.http.openid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomee.security.cdi.openid.OpenIdProviderMetadataHolder;
 
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.json.JsonObject;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.ClaimsDefinition;
@@ -29,7 +27,6 @@ import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdPr
 import jakarta.security.enterprise.authentication.mechanism.http.openid.PromptType;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 
 import java.lang.annotation.Annotation;
@@ -202,36 +199,38 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
     }
 
     public static class AutoResolvingProviderMetadata extends OpenIdAuthenticationMechanismDefinitionDelegate {
+        private OpenIdProviderMetadata cached = null;
+
         public AutoResolvingProviderMetadata(OpenIdAuthenticationMechanismDefinition delegate) {
             super(delegate);
         }
 
         @Override
         public OpenIdProviderMetadata providerMetadata() {
+            if (cached != null) {
+                return cached;
+            }
+
             if (providerURI().isEmpty()) {
-                return super.providerMetadata();
+                cached = super.providerMetadata();
+                return cached;
             }
 
-            // Cache provider response externally as @OpenIdAuthenticationMechanismDefinition is @RequestScoped to allow usage of ${baseURL} EL
-            OpenIdProviderMetadataHolder providerMetadataHolder = CDI.current().select(OpenIdProviderMetadataHolder.class).get();
-            if (providerMetadataHolder.getProviderMetadataResponse() == null) {
-                // Try to fetch from remote and build a merged view of OP response + @OpenIdProviderMetadata
-                try (Client client = ClientBuilder.newClient()) {
-                    String providerUri = StringUtils.removeEnd(providerURI(), "/");
-                    if (!providerUri.endsWith("/.well-known/openid-configuration")) {
-                        providerUri += "/.well-known/openid-configuration";
-                    }
-
-                    JsonObject response = client.target(providerUri)
-                            .request(MediaType.APPLICATION_JSON)
-                            .get(JsonObject.class);
-
-                    providerMetadataHolder.setProviderMetadataResponse(response);
+            // Try to fetch from remote and build a merged view of OP response + @OpenIdProviderMetadata
+            try (Client client = ClientBuilder.newClient()) {
+                String providerUri = StringUtils.removeEnd(providerURI(), "/");
+                if (!providerUri.endsWith("/.well-known/openid-configuration")) {
+                    providerUri += "/.well-known/openid-configuration";
                 }
+
+                JsonObject response = client.target(providerUri)
+                        .request(MediaType.APPLICATION_JSON)
+                        .get(JsonObject.class);
+
+                cached = new CompositeOpenIdProviderMetadata(response, super.providerMetadata());
             }
 
-            return new CompositeOpenIdProviderMetadata(
-                    providerMetadataHolder.getProviderMetadataResponse(), super.providerMetadata());
+            return cached;
         }
     }
 }
