@@ -87,6 +87,7 @@
                             <excludes>
                                 <exclude>org/apache/openejb/junit5/SingleAppComposerTest</exclude>
                                 <exclude>org/apache/openejb/junit5/SingleAppComposerJVMTest</exclude>
+                                <exclude>org/apache/openejb/junit5/SingleAppComposerResourceInjectionTest</exclude>
                             </excludes>
                         </configuration>
                     </execution>
@@ -108,6 +109,25 @@
                                 -enableassertions
                                 -Djunit.jupiter.testclass.order.default=org.apache.openejb.junit5.order.AppComposerTestClassOrderer
                                 -Dtomee.application-composer.application=org.apache.openejb.junit5.app.MyApp
+                            </argLine>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>per-jvm-with-resource-tests</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <includes>
+                                <include>org/apache/openejb/junit5/SingleAppComposerResourceInjectionTest</include>
+                            </includes>
+                            <argLine>
+                                ${jacocoArgLine}
+                                -enableassertions
+                                -Dtomee.application-composer.application=org.apache.openejb.junit5.app.MyResourceApp
                             </argLine>
                         </configuration>
                     </execution>
