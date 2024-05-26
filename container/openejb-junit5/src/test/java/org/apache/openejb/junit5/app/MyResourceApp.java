@@ -18,6 +18,7 @@ package org.apache.openejb.junit5.app;
 
 import jakarta.annotation.Resource;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.junit5.SingleAppComposerResourceInjectionTest;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
@@ -28,8 +29,9 @@ import java.util.Properties;
 @Application
 public class MyResourceApp {
 
+    // Note: Adding the test is required for PER_JVM mode, if you want @Resource injections inside of test classes.
     @Module
-    @Classes(cdi = true, value = {MyResourceApp.class, MyService.class})
+    @Classes(cdi = true, value = {SingleAppComposerResourceInjectionTest.class, MyResourceApp.class, MyService.class})
     public EjbJar modules() {
         return new EjbJar();
     }

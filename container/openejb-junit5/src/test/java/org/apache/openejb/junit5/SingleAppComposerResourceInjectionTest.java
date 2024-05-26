@@ -17,6 +17,7 @@
 package org.apache.openejb.junit5;
 
 import jakarta.annotation.Resource;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import org.apache.openejb.junit5.app.MyResourceApp;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+// -Dtomee.application-composer.application=org.apache.openejb.junit5.app.MyResourceApp
 @RunWithApplicationComposer(mode = ExtensionMode.PER_JVM)
 public class SingleAppComposerResourceInjectionTest {
 

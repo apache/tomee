@@ -16,17 +16,13 @@
  */
 package org.apache.openejb.testing;
 
-import jakarta.annotation.Resource;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.FileArchive;
 
-import javax.naming.Context;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
@@ -149,48 +145,12 @@ public class SingleApplicationComposerBase {
                     f.setAccessible(true);
                 }
                 f.set(target, app);
-            } else if (f.isAnnotationPresent(Resource.class)) {
-                //TOMEE-4342
-                try {
-                    if (!f.isAccessible()) {
-                        f.setAccessible(true);
-                    }
-
-                    final Resource r = f.getAnnotation(Resource.class);
-                    final Context jndiContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-                    String jndiRef = r.lookup();
-                    if (jndiRef.isEmpty()) {
-                        jndiRef = getJndiRef(r.name());
-                        if(jndiRef.isEmpty()){
-                            // last resort: field name
-                            jndiRef = getJndiRef(f.getName());
-                        }
-                    }
-
-                    final Object o = jndiContext.lookup(jndiRef);
-                    if(o != null && f.getType().isAssignableFrom(o.getClass())) {
-                        f.set(target, o);
-                    }
-                } catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
             }
         }
         final Class<?> superclass = aClass.getSuperclass();
         if (superclass != Object.class) {
             composerInject(superclass);
         }
-    }
-
-    private String getJndiRef(String name) {
-        if (!name.isEmpty()) {
-            if (name.startsWith("java:") || name.startsWith("comp/env")) {
-                return name;
-            } else {
-                return "java:comp/env/" + name;
-            }
-        }
-        return name;
     }
 
     public boolean isStarted() {
