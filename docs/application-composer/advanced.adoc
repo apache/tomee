@@ -112,3 +112,14 @@ an instance (or Class) implementing `FallbackPropertyInjector`.
 == @WebResource
 
 Allow for web application to add folders containing web resources.
+
+== Limitations for Single Instance Application Composer
+
+For a single instance in test suites, test classes must be scanned for
+injections to be prepared as any bean.
+
+Therefore, test classes need to be either added in the `@Classes`
+annotation or marked as a CDI bean (`@Dependent`) annotation.
+
+You can find an example in `SingleAppComposerResourceInjectionTest`
+in `openejb-junit5`.
