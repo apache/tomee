@@ -27,7 +27,7 @@
   <name>TomEE :: TCK</name>
 
   <properties>
-    <cdi-tck.version>4.0.11</cdi-tck.version>
+    <cdi-tck.version>4.0.13</cdi-tck.version>
     <jaxrs.tck.version>3.1.5</jaxrs.tck.version>
     <bval-tck.version>3.0.1</bval-tck.version>
     <jsonb-tck.version>3.0.0</jsonb-tck.version>
