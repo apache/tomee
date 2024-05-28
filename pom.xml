@@ -184,7 +184,7 @@
     <version.microprofile.health>4.0.1</version.microprofile.health>
     <version.microprofile.jwt>2.1</version.microprofile.jwt>
     <version.microprofile.metrics>5.0.2</version.microprofile.metrics>
-    <version.microprofile.openapi>3.0</version.microprofile.openapi>
+    <version.microprofile.openapi>3.1.1</version.microprofile.openapi>
     <version.microprofile.opentracing>3.0</version.microprofile.opentracing>
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
 
@@ -195,7 +195,7 @@
     <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
-    <version.microprofile.impl.openapi>3.0.1</version.microprofile.impl.openapi>
+    <version.microprofile.impl.openapi>3.10.0</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->

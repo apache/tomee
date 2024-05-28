@@ -22,6 +22,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 
 public class MicroProfileOpenAPITCKObserver {
     public void AfterDeploy(@Observes final AfterDeploy afterDeploy) {
-        RestAssured.basePath = "microprofile-openapi";
+        RestAssured.basePath = afterDeploy.getDeployment().getArchive().getName().replace(".war","");
     }
 }
