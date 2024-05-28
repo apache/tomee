@@ -33,7 +33,6 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
-        geronimo.openapi.application.append-context-path = false
       </property>
     </configuration>
   </container>
@@ -49,7 +48,6 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all
-        geronimo.openapi.application.append-context-path = false
       </property>
     </configuration>
   </container>
@@ -65,7 +63,6 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         tomee.mp.scan = all
-        geronimo.openapi.application.append-context-path = false
       </property>
     </configuration>
   </container>

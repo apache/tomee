@@ -16,9 +16,11 @@
  */
 package org.apache.tomee.microprofile.openapi;
 
+import io.smallrye.config.EnvConfigSource;
 import io.smallrye.config.PropertiesConfigSource;
 import io.smallrye.config.SmallRyeConfig;
 import io.smallrye.config.SmallRyeConfigBuilder;
+import io.smallrye.config.SysPropConfigSource;
 import io.smallrye.openapi.api.OpenApiConfig;
 import io.smallrye.openapi.api.OpenApiConfigImpl;
 import io.smallrye.openapi.api.OpenApiDocument;
@@ -39,6 +41,9 @@ import org.jboss.jandex.IndexView;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.PrivilegedAction;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -51,6 +56,8 @@ import static io.smallrye.openapi.runtime.OpenApiProcessor.modelFromReader;
 import static io.smallrye.openapi.runtime.io.Format.JSON;
 import static io.smallrye.openapi.runtime.io.Format.YAML;
 import static java.lang.Thread.currentThread;
+import static java.security.AccessController.doPrivileged;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -66,14 +73,14 @@ import static java.util.Optional.ofNullable;
 public class MicroProfileOpenApiRegistration implements ServletContainerInitializer {
 
     private static final Logger LOGGER =
-        Logger.getInstance(LogCategory.MICROPROFILE, MicroProfileOpenApiRegistration.class);
+            Logger.getInstance(LogCategory.MICROPROFILE, MicroProfileOpenApiRegistration.class);
 
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext servletContext) throws ServletException {
         LOGGER.info("Registering OpenAPI servlet on /openapi for application " + servletContext.getContextPath());
 
         final ServletRegistration.Dynamic servletRegistration =
-            servletContext.addServlet("mp-openapi-servlet", MicroProfileOpenApiEndpoint.class);
+                servletContext.addServlet("mp-openapi-servlet", MicroProfileOpenApiEndpoint.class);
         servletRegistration.addMapping("/openapi/*");
     }
 
@@ -97,7 +104,7 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
         Optional<OpenAPI> readerModel = ofNullable(modelFromReader(openApiConfig, contextClassLoader));
         Optional<OpenAPI> staticFileModel = openApiFromStaticFile(servletContext);
         Optional<OpenAPI> annotationModel =
-            ofNullable(modelFromAnnotations(openApiConfig, contextClassLoader, filteredIndexView));
+                ofNullable(modelFromAnnotations(openApiConfig, contextClassLoader, filteredIndexView));
 
         final OpenApiDocument document = OpenApiDocument.INSTANCE;
         try {
@@ -122,28 +129,29 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
     private static OpenApiConfig config(final ServletContext servletContext) {
         try {
             final Optional<URL> microprofileConfig =
-                Stream.of(ofNullable(servletContext.getResource("/META-INF/microprofile-config.properties")),
-                          ofNullable(
-                              servletContext.getResource("/WEB-INF/classes/META-INF/microprofile-config.properties")))
-                      .filter(Optional::isPresent)
-                      .findFirst()
-                      .flatMap(url -> url);
+                    Stream.of(ofNullable(servletContext.getResource("/META-INF/microprofile-config.properties")),
+                                    ofNullable(
+                                            servletContext.getResource("/WEB-INF/classes/META-INF/microprofile-config.properties")))
+                            .filter(Optional::isPresent)
+                            .findFirst()
+                            .flatMap(url -> url);
 
             if (microprofileConfig.isEmpty()) {
                 LOGGER.debug(
-                    "Could not find OpenAPI config from MicroProfile Config files. Using default configuration.");
+                        "Could not find OpenAPI config from MicroProfile Config files. Using default configuration.");
                 return new OpenApiConfigImpl(ConfigProvider.getConfig());
             }
 
             LOGGER.debug(
-                "Building OpenAPI config from MicroProfile Config file " + microprofileConfig.get().toExternalForm());
+                    "Building OpenAPI config from MicroProfile Config file " + microprofileConfig.get().toExternalForm());
             final Properties properties = IO.readProperties(microprofileConfig.get());
 
             final SmallRyeConfig config = new SmallRyeConfigBuilder()
-                .addDefaultSources()
-                .addDefaultInterceptors()
-                .withSources(new PropertiesConfigSource(properties, "microprofile-config.properties"))
-                .build();
+                    .withSources(new EnvConfigSource(getEnvProperties(), 300))
+                    .withSources(new SysPropConfigSource())
+                    .withSources(new PropertiesConfigSource(properties, "microprofile-config.properties"))
+                    .addDefaultInterceptors()
+                    .build();
 
             return new OpenApiConfigImpl(config);
 
@@ -158,16 +166,16 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
 
             // look for static files already provided by the application
             final Optional<OpenAPI> staticOpenApi = Stream
-                .of(readOpenApiFile(servletContext, "/META-INF/openapi.json", JSON),
-                    readOpenApiFile(servletContext, "/META-INF/openapi.yaml", YAML),
-                    readOpenApiFile(servletContext, "/META-INF/openapi.yml", YAML))
-                .filter(Optional::isPresent)
-                .findFirst()
-                .flatMap(file -> file);
+                    .of(readOpenApiFile(servletContext, "/META-INF/openapi.json", JSON),
+                            readOpenApiFile(servletContext, "/META-INF/openapi.yaml", YAML),
+                            readOpenApiFile(servletContext, "/META-INF/openapi.yml", YAML))
+                    .filter(Optional::isPresent)
+                    .findFirst()
+                    .flatMap(file -> file);
 
             if (staticOpenApi.isEmpty()) {
                 LOGGER.debug(
-                    "Could not find any static OpenAPI file in application " + servletContext.getContextPath());
+                        "Could not find any static OpenAPI file in application " + servletContext.getContextPath());
             }
 
             return staticOpenApi;
@@ -180,8 +188,8 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
 
 
     private static Optional<OpenAPI> readOpenApiFile(
-        final ServletContext servletContext, final String location,
-        final Format format) throws Exception {
+            final ServletContext servletContext, final String location,
+            final Format format) throws Exception {
 
         final URL resource = servletContext.getResource(location);
         if (resource == null) {
@@ -207,6 +215,10 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
     public static OpenAPI getOpenApi(final ServletContext servletContext) {
         Objects.requireNonNull(servletContext);
         return (OpenAPI) servletContext.getAttribute(MicroProfileOpenApiRegistration.class.getName() + ".OpenAPI");
+    }
+
+    private static Map<String, String> getEnvProperties() {
+        return unmodifiableMap(doPrivileged((PrivilegedAction<Map<String, String>>) () -> new HashMap<>(System.getenv())));
     }
 
 }
