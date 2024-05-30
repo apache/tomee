@@ -183,6 +183,7 @@
     <version.microprofile.metrics>5.0.2</version.microprofile.metrics>
     <version.microprofile.openapi>3.1.1</version.microprofile.openapi>
     <version.microprofile.opentracing>3.0</version.microprofile.opentracing>
+    <version.microprofile.opentelemetry>1.0</version.microprofile.opentelemetry>
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
 
     <version.io.opentracing>0.33.0</version.io.opentracing>
@@ -194,6 +195,7 @@
     <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
     <version.microprofile.impl.openapi>3.13.0</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
+    <version.microprofile.impl.opentelemetry>2.6.0</version.microprofile.impl.opentelemetry>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.18.0</version.jackson>
@@ -1040,7 +1042,7 @@
         <version>${version.io.opentracing}</version>
       </dependency>
       <!-- Following dependencies remain to be cleaned up -->
-      <dependency>
+<dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>
         <version>3.6.1.Final</version>
