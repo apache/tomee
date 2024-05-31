@@ -861,6 +861,17 @@
     </dependency>
     <dependency>
       <groupId>io.smallrye.opentelemetry</groupId>
+      <artifactId>smallrye-opentelemetry-config</artifactId>
+      <version>2.6.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.smallrye.opentelemetry</groupId>
       <artifactId>smallrye-opentelemetry-rest</artifactId>
       <version>2.6.0</version>
       <exclusions>

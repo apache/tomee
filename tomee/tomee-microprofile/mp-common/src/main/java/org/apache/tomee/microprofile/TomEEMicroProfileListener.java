@@ -69,7 +69,6 @@ public class TomEEMicroProfileListener {
         "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
         "io.smallrye.opentracing.contrib.interceptor.OpenTracingInterceptor",
         "io.smallrye.faulttolerance.FaultToleranceExtension",
-        "io.smallrye.opentelemetry.implementation.cdi.OpenTelemetryExtension",
         };
 
     private final Map<AppInfo, Index> indexCache = new ConcurrentHashMap<>();
