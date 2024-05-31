@@ -811,6 +811,41 @@
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
+      "protocolMappers": [
+        {
+          "id": "1292beb6-73c3-4075-8e4d-8403163c5027",
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "multivalued": "true",
+            "userinfo.token.claim": "false",
+            "user.attribute": "foo",
+            "id.token.claim": "false",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "groups",
+            "jsonType.label": "String",
+            "usermodel.clientRoleMapping.clientId": "tomee"
+          }
+        },
+        {
+          "id": "253f5cb8-0ac4-419d-bd33-603c39fcf25b",
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "tomee",
+            "id.token.claim": "false",
+            "lightweight.claim": "false",
+            "introspection.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ],
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "web-origins",

@@ -22,10 +22,10 @@ public class SecuredServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/plain");
-        resp.getWriter().println("Hello, " + req.getUserPrincipal().getName());
+        resp.getWriter().print("Hello, " + req.getUserPrincipal().getName());
 
         if (req.isUserInRole("admin")) {
-            resp.getWriter().println("You're an admin!");
+            resp.getWriter().print("\nYou're an admin!");
         }
     }
 }

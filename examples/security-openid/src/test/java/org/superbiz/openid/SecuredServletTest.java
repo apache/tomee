@@ -12,7 +12,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.junit.jupiter.Container;
@@ -30,7 +29,7 @@ public class SecuredServletTest {
     private static final KeycloakContainer KEYCLOAK_CONTAINER = new KeycloakContainer()
             .withRealmImportFile("keycloak-realm.json");
 
-    @Deployment
+    @Deployment(testable = false)
     public static WebArchive createDeployment() {
         String mpConfig = "openid.provider-uri = " + KEYCLOAK_CONTAINER.getAuthServerUrl() + "/realms/tomee" + "\n"
                 + "openid.client-id = tomee\n"
@@ -47,7 +46,6 @@ public class SecuredServletTest {
 
     @Test
     @RunAsClient
-    @Disabled("FIXME")
     public void test() throws Exception {
         try (WebClient webClient = new WebClient()) {
             HtmlPage htmlPage = webClient.getPage(url + "/secured");
@@ -59,6 +57,22 @@ public class SecuredServletTest {
             TextPage securedServletPage = loginForm.getInputByName("login").click();
 
             assertEquals("Hello, tomee-user", securedServletPage.getContent());
+        }
+    }
+
+    @Test
+    @RunAsClient
+    public void adminRoleMapped() throws Exception {
+        try (WebClient webClient = new WebClient()) {
+            HtmlPage htmlPage = webClient.getPage(url + "/secured");
+            assertTrue(htmlPage.getUrl().toString().startsWith(KEYCLOAK_CONTAINER.getAuthServerUrl() + "/realms/tomee/protocol/openid-connect/auth"));
+
+            HtmlForm loginForm = htmlPage.getForms().get(0);
+            loginForm.getInputByName("username").setValue("tomee-admin");
+            loginForm.getInputByName("password").setValue("tomee");
+            TextPage securedServletPage = loginForm.getInputByName("login").click();
+
+            assertEquals("Hello, tomee-admin\nYou're an admin!", securedServletPage.getContent());
         }
     }
 }
