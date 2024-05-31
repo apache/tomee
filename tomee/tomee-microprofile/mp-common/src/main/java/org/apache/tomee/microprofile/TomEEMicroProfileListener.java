@@ -64,7 +64,6 @@ public class TomEEMicroProfileListener {
         "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
         "io.smallrye.opentracing.contrib.interceptor.OpenTracingInterceptor",
         "io.smallrye.faulttolerance.FaultToleranceExtension",
-        "io.smallrye.opentelemetry.implementation.cdi.OpenTelemetryExtension",
         };
 
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {

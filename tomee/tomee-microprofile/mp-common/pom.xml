@@ -327,6 +327,22 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>io.smallrye.opentelemetry</groupId>
+      <artifactId>smallrye-opentelemetry-config</artifactId>
+      <version>${version.microprofile.impl.opentelemetry}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
