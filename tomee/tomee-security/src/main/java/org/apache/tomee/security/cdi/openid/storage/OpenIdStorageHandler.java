@@ -24,6 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public abstract class OpenIdStorageHandler {
     protected static final String PREFIX = "openid.";
 
+    public static final String REQUEST_KEY = "REQUEST";
     public static final String STATE_KEY = "STATE";
     public static final String NONCE_KEY = "NONCE";
 

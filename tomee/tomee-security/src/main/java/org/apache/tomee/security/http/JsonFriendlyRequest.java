@@ -17,10 +17,12 @@
 
 package org.apache.tomee.security.http;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.annotation.JsonbTypeDeserializer;
-import jakarta.json.bind.annotation.JsonbTypeSerializer;
+import jakarta.json.bind.JsonbConfig;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.bind.serializer.JsonbSerializer;
@@ -39,25 +41,48 @@ import java.util.Map;
 
 // JSON-B friendly class that stores the request data required for #
 // both @LoginToContinue and @OpenIdAuthenticationMechanismDefinition(redirectToOriginalResource=true)
+
 public class JsonFriendlyRequest {
-    @JsonbTypeDeserializer(CookieDeSerializer.class)
-    @JsonbTypeSerializer(CookieDeSerializer.class)
-    private final Cookie[] cookies;
-    private final Map<String, List<String>> headers = new HashMap<>();
-    private final String method;
-    private final String queryString;
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, JsonFriendlyRequest.class);
 
-    public JsonFriendlyRequest(HttpServletRequest request) {
-        this.cookies = request.getCookies();
+    private static final CookieDeSerializer COOKIE_DE_SERIALIZER = new CookieDeSerializer();
+    private static final JsonbConfig jsonbConfig = new JsonbConfig()
+            .withSerializers(COOKIE_DE_SERIALIZER)
+            .withDeserializers(COOKIE_DE_SERIALIZER);
 
+    private Cookie[] cookies;
+    private Map<String, List<String>> headers;
+    private String method;
+    private String queryString;
+
+    public static JsonFriendlyRequest fromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        Map<String, List<String>> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
             headers.put(name, Collections.list(request.getHeaders(name)));
         }
 
-        this.method = request.getMethod();
-        this.queryString = request.getQueryString();
+        String method = request.getMethod();
+        String queryString = request.getQueryString();
+
+        JsonFriendlyRequest result = new JsonFriendlyRequest();
+        result.setCookies(cookies);
+        result.setHeaders(headers);
+        result.setMethod(method);
+        result.setQueryString(queryString);
+
+        return result;
+    }
+
+    public static JsonFriendlyRequest fromJson(String json) {
+        try (Jsonb jsonb = JsonbBuilder.create(jsonbConfig)) {
+            return jsonb.fromJson(json, JsonFriendlyRequest.class);
+        } catch (Exception e) {
+            LOGGER.error("Could not restore request from JSON", e);
+            return null;
+        }
     }
 
     public HttpServletRequest mask(HttpServletRequest masked) {
@@ -94,16 +119,45 @@ public class JsonFriendlyRequest {
         };
     }
 
-    public String toJson() throws Exception {
-        try (Jsonb jsonb = JsonbBuilder.create()) {
+    public String toJson() {
+        try (Jsonb jsonb = JsonbBuilder.create(jsonbConfig)) {
             return jsonb.toJson(this);
+        } catch (Exception e) {
+            LOGGER.error("Could not store request in JSON", e);
+            return null;
         }
     }
 
-    public static JsonFriendlyRequest fromJson(String json) throws Exception {
-        try (Jsonb jsonb = JsonbBuilder.create()) {
-            return jsonb.fromJson(json, JsonFriendlyRequest.class);
-        }
+    public Cookie[] getCookies() {
+        return cookies;
+    }
+
+    public void setCookies(Cookie[] cookies) {
+        this.cookies = cookies;
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
     }
 
     public static class CookieDeSerializer implements JsonbSerializer<Cookie>, JsonbDeserializer<Cookie> {

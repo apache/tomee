@@ -37,10 +37,12 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriBuilder;
+
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
+import org.apache.tomee.security.http.JsonFriendlyRequest;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
@@ -60,7 +62,8 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     private static final Logger LOGGER = Logger.getInstance(
             LogCategory.TOMEE_SECURITY, OpenIdAuthenticationMechanism.class);
 
-    @Inject private OpenIdAuthenticationMechanismDefinition definition;
+    @Inject
+    private OpenIdAuthenticationMechanismDefinition definition;
 
     @Inject
     private IdentityStoreHandler identityStoreHandler;
@@ -98,7 +101,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
 
         // Restart authorization by redirecting to openid provider
-        httpMessageContext.redirect(buildAuthorizationUri(request, response).toString());
+        redirectToAuthorization(request, response, httpMessageContext);
     }
 
     @Override
@@ -112,7 +115,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             final CallerPrincipalCallback callerPrincipalCallback = new CallerPrincipalCallback(
                     httpMessageContext.getClientSubject(), request.getUserPrincipal());
             try {
-                httpMessageContext.getHandler().handle(new Callback[] {callerPrincipalCallback});
+                httpMessageContext.getHandler().handle(new Callback[]{callerPrincipalCallback});
             } catch (IOException | UnsupportedCallbackException e) {
                 LOGGER.error("Could not handle CallerPrincipalCallback", e);
             }
@@ -162,7 +165,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected AuthenticationStatus refreshTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
-        try (Client client = ClientBuilder.newClient()){
+        try (Client client = ClientBuilder.newClient()) {
             RefreshToken refreshToken = openIdContext.getRefreshToken()
                     .orElseThrow(() -> new IllegalArgumentException("Cannot refresh tokens, no refresh_token received"));
 
@@ -185,16 +188,31 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
     }
 
+    protected AuthenticationStatus redirectToAuthorization(HttpServletRequest request, HttpServletResponse response, HttpMessageContext messageContext) {
+        String fullRequestUrl = request.getRequestURL().toString();
+        if (request.getQueryString() != null) {
+            fullRequestUrl += "?" + request.getQueryString();
+        }
+
+        storageHandler.set(request, response, OpenIdConstant.ORIGINAL_REQUEST, fullRequestUrl);
+        storageHandler.set(request, response, OpenIdStorageHandler.REQUEST_KEY, JsonFriendlyRequest.fromRequest(request).toJson());
+
+        return messageContext.redirect(buildAuthorizationUri(request, response).toString());
+    }
+
     protected AuthenticationStatus performAuthentication(HttpServletRequest request, HttpServletResponse response, HttpMessageContext messageContext) {
         String state = request.getParameter(OpenIdConstant.STATE);
         if (state == null && request.getUserPrincipal() == null && messageContext.isProtected()) {
             // unauthenticated user tries to access protected resource, begin authorization dialog
-            return messageContext.redirect(buildAuthorizationUri(request, response).toString());
+            return redirectToAuthorization(request, response, messageContext);
         }
 
         if (state != null) {
+            String originalRequest = storageHandler.get(request, response, OpenIdConstant.ORIGINAL_REQUEST);
+            boolean matchesOriginalRequest = originalRequest.startsWith(request.getRequestURL().toString());
+
             // callback from openid provider (3)
-            if (!request.getRequestURL().toString().equals(definition.redirectURI())) {
+            if (!request.getRequestURL().toString().equals(definition.redirectURI()) && definition.redirectToOriginalResource() && !matchesOriginalRequest) {
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
             }
 
@@ -208,6 +226,10 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
             if (request.getParameter(OpenIdConstant.ERROR_PARAM) != null) {
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
+            }
+
+            if (definition.redirectToOriginalResource() && !matchesOriginalRequest) {
+                return messageContext.redirect(appendQueryString(originalRequest, request.getQueryString()));
             }
 
             // Callback is okay, continue with (4)
@@ -240,6 +262,17 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
 
         httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
+
+        if (definition.redirectToOriginalResource()) {
+            String originalRequestJson = storageHandler.get(
+                    httpMessageContext.getRequest(),
+                    httpMessageContext.getResponse(),
+                    OpenIdStorageHandler.REQUEST_KEY);
+
+            httpMessageContext.withRequest(
+                    JsonFriendlyRequest.fromJson(originalRequestJson).mask(httpMessageContext.getRequest()));
+        }
+
         return httpMessageContext.notifyContainerAboutLogin(validationResult);
     }
 
@@ -282,5 +315,13 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
 
         return uriBuilder.build();
+    }
+
+    protected String appendQueryString(String url, String query) {
+        if (url.contains("?")) {
+            return url + "&" + query;
+        }
+
+        return url + "?" + query;
     }
 }

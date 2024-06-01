@@ -23,10 +23,44 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
 import jakarta.servlet.http.Cookie;
+import java.util.LinkedHashMap;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class JsonFriendlyRequestTest {
+
+    @Test
+    public void serialization() throws Exception {
+        JsonFriendlyRequest request = new JsonFriendlyRequest();
+        request.setCookies(new Cookie[] {new Cookie("first", "val1"), new Cookie("second", "val2")});
+        request.setHeaders(new LinkedHashMap<>());
+        request.getHeaders().put("header1", List.of("h1val1", "h1val2"));
+        request.getHeaders().put("header2", List.of("h2val1"));
+        request.setMethod("PATCH");
+        request.setQueryString("foo=bar");
+
+        assertEquals("{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\"}", request.toJson());
+    }
+
+    @Test
+    public void deserialization() throws Exception {
+        String json = "{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\"}";
+        JsonFriendlyRequest request = JsonFriendlyRequest.fromJson(json);
+
+        assertNotNull(request);
+        assertEquals(2, request.getCookies().length);
+        assertEquals("first", request.getCookies()[0].getName());
+        assertEquals("val1", request.getCookies()[0].getValue());
+        assertEquals("second", request.getCookies()[1].getName());
+        assertEquals("val2", request.getCookies()[1].getValue());
+        assertEquals(2, request.getHeaders().size());
+        assertEquals(List.of("h1val1", "h1val2"), request.getHeaders().get("header1"));
+        assertEquals(List.of("h2val1"), request.getHeaders().get("header2"));
+        assertEquals("PATCH", request.getMethod());
+        assertEquals("foo=bar", request.getQueryString());
+    }
 
     @Test
     public void cookieSerialization() throws Exception {
