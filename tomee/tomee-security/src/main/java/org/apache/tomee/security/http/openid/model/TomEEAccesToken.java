@@ -40,6 +40,7 @@ public class TomEEAccesToken implements AccessToken {
     private final Scope scope;
     private final Long expiresIn;
     private final long minValidity;
+    private final long creationTime;
 
 
     private JwtClaims jwtClaims;
@@ -53,6 +54,7 @@ public class TomEEAccesToken implements AccessToken {
         this.scope = scope;
         this.expiresIn = expiresIn;
         this.minValidity = minValidity;
+        this.creationTime = System.currentTimeMillis() / 1000;
 
         if (jwt) {
             String json = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]));
@@ -101,13 +103,16 @@ public class TomEEAccesToken implements AccessToken {
 
     @Override
     public boolean isExpired() {
+        long expirationTimeSeconds;
         if (!isJWT()) {
-
+            expirationTimeSeconds = creationTime + expiresIn;
+        } else {
+            expirationTimeSeconds = jwtClaims.getExpirationTime()
+                    .map(it -> it.toEpochMilli() / 1000)
+                    .orElseThrow(() -> new IllegalStateException("No " + OpenIdConstant.EXPIRATION_IDENTIFIER + " claim in identity token found"));
         }
 
-        return jwtClaims.getExpirationTime()
-                .map(it -> System.currentTimeMillis() + minValidity > it.toEpochMilli())
-                .orElseThrow(() -> new IllegalStateException("No " + OpenIdConstant.EXPIRATION_IDENTIFIER + " claim in identity token found"));
+        return System.currentTimeMillis() + minValidity > expirationTimeSeconds * 1000;
     }
 
     @Override
