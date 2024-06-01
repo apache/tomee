@@ -18,9 +18,9 @@ package org.apache.tomee.security.cdi;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.security.auth.message.callback.CallerPrincipalCallback;
 import jakarta.security.enterprise.AuthenticationException;
 import jakarta.security.enterprise.AuthenticationStatus;
-import jakarta.security.enterprise.authentication.mechanism.http.AutoApplySession;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
@@ -44,6 +44,9 @@ import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -53,7 +56,6 @@ import java.util.stream.Collectors;
  * and <a href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth 2.0</a>
  */
 @ApplicationScoped
-@AutoApplySession // TODO probably interferes with token auto refreshing
 public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanism {
     private static final Logger LOGGER = Logger.getInstance(
             LogCategory.TOMEE_SECURITY, OpenIdAuthenticationMechanism.class);
@@ -101,12 +103,24 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
-        AuthenticationStatus result = performAuthentication(request, response, httpMessageContext);
-        if (result != null) {
-            return result;
+        if (request.getUserPrincipal() != null) {
+            AuthenticationStatus result = handleExpiredTokens(request, response, httpMessageContext);
+            if (result != null) {
+                return result;
+            }
+
+            final CallerPrincipalCallback callerPrincipalCallback = new CallerPrincipalCallback(
+                    httpMessageContext.getClientSubject(), request.getUserPrincipal());
+            try {
+                httpMessageContext.getHandler().handle(new Callback[] {callerPrincipalCallback});
+            } catch (IOException | UnsupportedCallbackException e) {
+                LOGGER.error("Could not handle CallerPrincipalCallback", e);
+            }
+
+            return AuthenticationStatus.SUCCESS;
         }
 
-        result = handleExpiredTokens(request, response, httpMessageContext);
+        AuthenticationStatus result = performAuthentication(request, response, httpMessageContext);
         if (result != null) {
             return result;
         }
@@ -224,8 +238,8 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
         TomEEOpenIdCredential credential = new TomEEOpenIdCredential(tokenResponse, httpMessageContext);
         CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
-        httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
 
+        httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
         return httpMessageContext.notifyContainerAboutLogin(validationResult);
     }
 
