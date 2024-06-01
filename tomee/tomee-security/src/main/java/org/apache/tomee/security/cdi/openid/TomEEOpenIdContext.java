@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.security.cdi.openid;
 
-import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.Instance;
@@ -27,6 +25,8 @@ import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthentic
 import jakarta.security.enterprise.identitystore.openid.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdClaims;
 
 import java.util.Optional;
@@ -34,6 +34,7 @@ import java.util.Optional;
 @SessionScoped
 public class TomEEOpenIdContext implements OpenIdContext {
     @Inject private Instance<OpenIdAuthenticationMechanismDefinition> definition;
+    @Inject private OpenIdStorageHandler storageHandler;
 
     private JsonObject userInfoClaims;
     private String tokenType;
@@ -98,8 +99,7 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     @Override
     public <T> Optional<T> getStoredValue(HttpServletRequest request, HttpServletResponse response, String key) {
-        return Optional.ofNullable((T) OpenIdStorageHandler.get(
-                definition.get().useSession()).get(request, response, key));
+        return Optional.ofNullable((T) storageHandler.get(request, response, key));
     }
 
     public void setUserInfoClaims(JsonObject userInfoClaims) {

@@ -20,13 +20,15 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.mockito.MockitoInjector;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.MockInjector;
-import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
+import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
+import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Vetoed;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
@@ -42,9 +44,8 @@ import static org.mockito.Mockito.when;
 
 @Vetoed
 @RunWith(ApplicationComposer.class)
-@Classes(cdi = true, value = {OpenIdAuthenticationMechanism.class})
+@Classes(cdi = true, value = {OpenIdAuthenticationMechanism.class, TomEEOpenIdContext.class, OpenIdAuthenticationMechanismTest.SimpleStorageHandler.class})
 public class OpenIdAuthenticationMechanismTest {
-    private final OpenIdStorageHandler STORAGE_HANDLER = new SimpleStorageHandler();
 
     @Inject
     private OpenIdAuthenticationMechanism authenticationMechanism;
@@ -75,8 +76,7 @@ public class OpenIdAuthenticationMechanismTest {
 
     @Test
     public void unconditionalAuthorizationParameters() {
-        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(
-                STORAGE_HANDLER, null, null).toString();
+        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(null, null).toString();
 
         // Parameters are defined in configureMockedDefinition
         assertEquals("https://openid.example.com/authorize"
@@ -91,8 +91,7 @@ public class OpenIdAuthenticationMechanismTest {
     public void authorizationNonce() {
         when(definition.useNonce()).thenReturn(true);
 
-        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(
-                STORAGE_HANDLER, null, null).toString();
+        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(null, null).toString();
 
         assertTrue(authorizationUrl.contains("&nonce=NONCE"));
     }
@@ -101,8 +100,7 @@ public class OpenIdAuthenticationMechanismTest {
     public void authorizationResponseMode() {
         when(definition.responseMode()).thenReturn("special");
 
-        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(
-                STORAGE_HANDLER, null, null).toString();
+        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(null, null).toString();
 
         assertTrue(authorizationUrl.contains("&response_mode=special"));
     }
@@ -111,8 +109,7 @@ public class OpenIdAuthenticationMechanismTest {
     public void authorizationDisplay() {
         when(definition.display()).thenReturn(DisplayType.POPUP);
 
-        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(
-                STORAGE_HANDLER, null, null).toString();
+        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(null, null).toString();
 
         assertTrue(authorizationUrl.contains("&display=popup"));
     }
@@ -121,8 +118,7 @@ public class OpenIdAuthenticationMechanismTest {
     public void authorizationPrompt() {
         when(definition.prompt()).thenReturn(new PromptType[]{PromptType.LOGIN, PromptType.SELECT_ACCOUNT});
 
-        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(
-                STORAGE_HANDLER, null, null).toString();
+        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(null, null).toString();
 
         assertTrue(authorizationUrl.contains("&prompt=login+select_account"));
     }
@@ -131,8 +127,7 @@ public class OpenIdAuthenticationMechanismTest {
     public void authorizationExtraParameters() {
         when(definition.extraParameters()).thenReturn(new String[]{"foo=bar", "bar=baz"});
 
-        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(
-                STORAGE_HANDLER, null, null).toString();
+        String authorizationUrl = authenticationMechanism.buildAuthorizationUri(null, null).toString();
 
         assertTrue(authorizationUrl.contains("&foo=bar&bar=baz"));
     }
@@ -142,10 +137,10 @@ public class OpenIdAuthenticationMechanismTest {
     public void authorizationExtraParametersMalformed() {
         when(definition.extraParameters()).thenReturn(new String[]{"foobar"});
 
-        assertThrows(IllegalArgumentException.class, () -> authenticationMechanism.buildAuthorizationUri(
-                STORAGE_HANDLER, null, null));
+        assertThrows(IllegalArgumentException.class, () -> authenticationMechanism.buildAuthorizationUri(null, null));
     }
 
+    @ApplicationScoped
     protected static class SimpleStorageHandler extends OpenIdStorageHandler {
 
         @Override

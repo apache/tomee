@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.security.http.openid;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+package org.apache.tomee.security.cdi.openid.storage;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.Objects;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public abstract class OpenIdStorageHandler {
+    protected static final String PREFIX = "openid.";
+
     public static final String STATE_KEY = "STATE";
     public static final String NONCE_KEY = "NONCE";
 
@@ -52,47 +51,5 @@ public abstract class OpenIdStorageHandler {
         set(request, response, NONCE_KEY, nonce);
 
         return nonce;
-    }
-
-    public static OpenIdStorageHandler get(boolean useSession) {
-        return useSession ? new SessionBased() : new CookieBased();
-    }
-
-    private static class SessionBased extends OpenIdStorageHandler {
-        private static final String PREFIX = OpenIdStorageHandler.class.getName() + ".";
-
-        @Override
-        public String get(HttpServletRequest request, HttpServletResponse response, String key) {
-            return (String) request.getSession().getAttribute(PREFIX + key);
-        }
-
-        @Override
-        public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
-            request.getSession().setAttribute(PREFIX + key, value);
-        }
-    }
-
-    private static class CookieBased extends OpenIdStorageHandler {
-        private static final String PREFIX = "openid.";
-
-        @Override
-        public String get(HttpServletRequest request, HttpServletResponse response, String key) {
-            for (Cookie cookie : request.getCookies()) {
-                if (Objects.equals(cookie.getName(), PREFIX + key)) {
-                    return cookie.getValue();
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
-            Cookie cookie = new Cookie(PREFIX + key, value);
-            cookie.setSecure(true);
-            cookie.setHttpOnly(true);
-
-            response.addCookie(cookie);
-        }
     }
 }

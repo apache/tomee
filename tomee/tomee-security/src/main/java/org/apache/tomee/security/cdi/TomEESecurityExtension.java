@@ -25,6 +25,9 @@ import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.cdi.openid.BaseUrlProducer;
 import org.apache.tomee.security.cdi.openid.OpenIdIdentityStore;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
+import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
+import org.apache.tomee.security.cdi.openid.storage.impl.CookieBasedOpenIdStorageHandler;
+import org.apache.tomee.security.cdi.openid.storage.impl.SessionBasedOpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
@@ -86,7 +89,6 @@ public class TomEESecurityExtension implements Extension {
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class), "TomEESecurityContext");
 
-        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEOpenIdContext.class), "TomEEOpenIdContext");
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(BaseUrlProducer.class), "TomEEBaseUrlProducer");
     }
 
@@ -321,8 +323,27 @@ public class TomEESecurityExtension implements Extension {
                     .scope(ApplicationScoped.class)
                     .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
 
-            afterBeanDiscovery.addBean(createBean(OpenIdAuthenticationMechanism.class, beanManager));
+            afterBeanDiscovery.addBean()
+                    .id(OpenIdStorageHandler.class.getName())
+                    .beanClass(OpenIdStorageHandler.class)
+                    .types(Object.class, OpenIdStorageHandler.class)
+                    .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                    .scope(ApplicationScoped.class)
+                    .createWith(creationalContext -> {
+                        Bean<OpenIdAuthenticationMechanismDefinition> definitionBean = (Bean<OpenIdAuthenticationMechanismDefinition>)
+                                beanManager.resolve(beanManager.getBeans(OpenIdAuthenticationMechanismDefinition.class));
+
+                        OpenIdAuthenticationMechanismDefinition definition = (OpenIdAuthenticationMechanismDefinition)
+                                beanManager.getReference(definitionBean, OpenIdAuthenticationMechanismDefinition.class, creationalContext);
+
+                        return definition.useSession()
+                                ? new SessionBasedOpenIdStorageHandler()
+                                : new CookieBasedOpenIdStorageHandler();
+                    });
+
+            afterBeanDiscovery.addBean(createBean(TomEEOpenIdContext.class, beanManager));
             afterBeanDiscovery.addBean(createBean(OpenIdIdentityStore.class, beanManager));
+            afterBeanDiscovery.addBean(createBean(OpenIdAuthenticationMechanism.class, beanManager));
         }
     }
 

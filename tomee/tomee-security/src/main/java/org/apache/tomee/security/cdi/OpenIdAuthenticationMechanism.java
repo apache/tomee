@@ -40,7 +40,7 @@ import jakarta.ws.rs.core.UriBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
-import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
+import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
@@ -65,6 +65,9 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     @Inject
     private TomEEOpenIdContext openIdContext;
+
+    @Inject
+    private OpenIdStorageHandler storageHandler;
 
     @Override
     public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
@@ -93,8 +96,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
 
         // Restart authorization by redirecting to openid provider
-        OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.useSession());
-        httpMessageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
+        httpMessageContext.redirect(buildAuthorizationUri(request, response).toString());
     }
 
     @Override
@@ -170,12 +172,10 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected AuthenticationStatus performAuthentication(HttpServletRequest request, HttpServletResponse response, HttpMessageContext messageContext) {
-        OpenIdStorageHandler storageHandler = OpenIdStorageHandler.get(definition.useSession());
-
         String state = request.getParameter(OpenIdConstant.STATE);
         if (state == null && request.getUserPrincipal() == null && messageContext.isProtected()) {
             // unauthenticated user tries to access protected resource, begin authorization dialog
-            return messageContext.redirect(buildAuthorizationUri(storageHandler, request, response).toString());
+            return messageContext.redirect(buildAuthorizationUri(request, response).toString());
         }
 
         if (state != null) {
@@ -229,7 +229,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         return httpMessageContext.notifyContainerAboutLogin(validationResult);
     }
 
-    protected URI buildAuthorizationUri(OpenIdStorageHandler storageHandler, HttpServletRequest request, HttpServletResponse response) {
+    protected URI buildAuthorizationUri(HttpServletRequest request, HttpServletResponse response) {
         UriBuilder uriBuilder = UriBuilder.fromUri(definition.providerMetadata().authorizationEndpoint())
                 .queryParam(OpenIdConstant.CLIENT_ID, definition.clientId())
                 .queryParam(OpenIdConstant.SCOPE, String.join(" ", definition.scope()))

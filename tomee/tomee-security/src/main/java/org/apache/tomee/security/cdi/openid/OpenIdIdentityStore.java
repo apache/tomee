@@ -36,8 +36,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.JwtValidators;
-import org.apache.tomee.security.http.openid.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEAccesToken;
 import org.apache.tomee.security.http.openid.model.TomEEIdentityToken;
@@ -57,14 +57,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @ApplicationScoped
 public class OpenIdIdentityStore implements IdentityStore {
     private final static Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdIdentityStore.class);
 
-    @Inject private OpenIdAuthenticationMechanismDefinition definition;
-    @Inject private TomEEOpenIdContext openIdContext;
+    @Inject
+    private OpenIdAuthenticationMechanismDefinition definition;
+
+    @Inject
+    private TomEEOpenIdContext openIdContext;
+
+    @Inject
+    private OpenIdStorageHandler storageHandler;
     
 
     @Override
@@ -80,8 +85,7 @@ public class OpenIdIdentityStore implements IdentityStore {
             }
 
             HttpMessageContext msgContext = openIdCredential.getMessageContext();
-            String expectedNonce = OpenIdStorageHandler.get(definition.useSession())
-                            .getStoredNonce(msgContext.getRequest(), msgContext.getResponse());
+            String expectedNonce = storageHandler.getStoredNonce(msgContext.getRequest(), msgContext.getResponse());
 
             builder.registerValidator(JwtValidators.nonce(expectedNonce));
         });
