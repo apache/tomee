@@ -140,16 +140,16 @@ public class OpenIdIdentityStore implements IdentityStore {
     }
 
     private AccessToken createAccessToken(JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
-        boolean valitJwt = false;
+        boolean validJwt = false;
         try {
             jwtConsumer.process(tokenResponse.getAccesToken());
-            valitJwt = true;
+            validJwt = true;
         } catch (InvalidJwtException e) {
             LOGGER.warning("Could not decode " + OpenIdConstant.ACCESS_TOKEN, e);
         }
 
         return new TomEEAccesToken(
-                valitJwt, tokenResponse.getAccesToken(),
+                validJwt, tokenResponse.getAccesToken(),
                 "Bearer".equals(tokenResponse.getTokenType()) ? AccessToken.Type.BEARER : AccessToken.Type.MAC,
                 tokenResponse.getScope(),
                 tokenResponse.getExpiresIn(),
