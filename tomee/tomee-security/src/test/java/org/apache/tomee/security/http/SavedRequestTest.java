@@ -31,18 +31,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class JsonFriendlyRequestTest {
+public class SavedRequestTest {
 
     @Test
     public void testSerializable() {
-        JsonFriendlyRequest request = new JsonFriendlyRequest();
+        SavedRequest request = new SavedRequest();
         assertTrue("must implement Serializable, since it will be set as a session attribute",
                 request instanceof Serializable);
     }
 
     @Test
     public void serialization() throws Exception {
-        JsonFriendlyRequest request = new JsonFriendlyRequest();
+        SavedRequest request = new SavedRequest();
         request.setCookies(new Cookie[] {new Cookie("first", "val1"), new Cookie("second", "val2")});
         request.setHeaders(new LinkedHashMap<>());
         request.getHeaders().put("header1", List.of("h1val1", "h1val2"));
@@ -57,7 +57,7 @@ public class JsonFriendlyRequestTest {
     @Test
     public void deserialization() throws Exception {
         String json = "{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\",\"url\":\"http://example.com/foo\"}";
-        JsonFriendlyRequest request = JsonFriendlyRequest.fromJson(json);
+        SavedRequest request = SavedRequest.fromJson(json);
 
         assertNotNull(request);
         assertEquals(2, request.getCookies().length);
@@ -76,7 +76,7 @@ public class JsonFriendlyRequestTest {
     @Test
     public void cookieSerialization() throws Exception {
         JsonbConfig config = new JsonbConfig()
-                    .withSerializers(new JsonFriendlyRequest.CookieDeSerializer());
+                    .withSerializers(new SavedRequest.CookieDeSerializer());
 
         try (Jsonb jsonb = JsonbBuilder.create(config)){
             Cookie cookie = new Cookie("name", "value");
@@ -91,7 +91,7 @@ public class JsonFriendlyRequestTest {
     @Test
     public void cookieDeserialization() throws Exception {
         JsonbConfig config = new JsonbConfig()
-                .withDeserializers(new JsonFriendlyRequest.CookieDeSerializer());
+                .withDeserializers(new SavedRequest.CookieDeSerializer());
 
         try (Jsonb jsonb = JsonbBuilder.create(config)){
             String json = "{\"name\":\"name\",\"value\":\"value\",\"attributes\":{\"Domain\":\"example.com\",\"Max-Age\":\"123\",\"Path\":\"/aaa\"}}";

@@ -16,17 +16,11 @@
  */
 package org.apache.tomee.security.http;
 
-import org.apache.tomcat.util.buf.ByteChunk;
-
 import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
-import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Set;
 
 public interface LoginToContinueMechanism {
@@ -40,7 +34,7 @@ public interface LoginToContinueMechanism {
 
     static void saveRequest(final HttpServletRequest request) throws IOException {
         // Stash the SavedRequest in our session for later use
-        request.getSession().setAttribute(ORIGINAL_REQUEST, JsonFriendlyRequest.fromRequest(request));
+        request.getSession().setAttribute(ORIGINAL_REQUEST, SavedRequest.fromRequest(request));
     }
 
     static boolean matchRequest(final HttpServletRequest request) {
@@ -51,7 +45,7 @@ public interface LoginToContinueMechanism {
         }
 
         // Is there a saved request?
-        JsonFriendlyRequest originalRequest = (JsonFriendlyRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
+        SavedRequest originalRequest = (SavedRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
         if (originalRequest == null) {
             return false;
         }
@@ -72,8 +66,8 @@ public interface LoginToContinueMechanism {
         return request.getSession().getAttribute(ORIGINAL_REQUEST) != null;
     }
 
-    static JsonFriendlyRequest getRequest(final HttpServletRequest request) {
-        return (JsonFriendlyRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
+    static SavedRequest getRequest(final HttpServletRequest request) {
+        return (SavedRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
     }
 
     static void saveAuthentication(final HttpServletRequest request,

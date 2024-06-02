@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.security.cdi;
 
-import org.apache.tomee.security.http.JsonFriendlyRequest;
+import org.apache.tomee.security.http.SavedRequest;
 import org.apache.tomee.security.http.LoginToContinueMechanism;
 import org.apache.tomee.security.http.SavedAuthentication;
 
@@ -154,7 +154,7 @@ public class LoginToContinueInterceptor {
                                    httpMessageContext.getCallerPrincipal(),
                                    httpMessageContext.getGroups());
 
-                final JsonFriendlyRequest savedRequest = getRequest(httpMessageContext.getRequest());
+                final SavedRequest savedRequest = getRequest(httpMessageContext.getRequest());
                 return httpMessageContext.redirect(savedRequest.getUrlWithQueryString());
 
             } else if (authenticationStatus.equals(SEND_FAILURE)) {
@@ -172,7 +172,7 @@ public class LoginToContinueInterceptor {
         }
 
         if (isOnOriginalURLAfterAuthenticate(httpMessageContext)) {
-            final JsonFriendlyRequest savedRequest = getRequest(httpMessageContext.getRequest());
+            final SavedRequest savedRequest = getRequest(httpMessageContext.getRequest());
             final SavedAuthentication savedAuthentication = getAuthentication(httpMessageContext.getRequest());
 
             clearRequestAndAuthentication(httpMessageContext.getRequest());

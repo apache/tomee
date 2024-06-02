@@ -43,8 +43,8 @@ import java.util.Map;
 
 // JSON-B friendly class that stores the request data required for #
 // both @LoginToContinue and @OpenIdAuthenticationMechanismDefinition(redirectToOriginalResource=true)
-public class JsonFriendlyRequest implements Serializable {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, JsonFriendlyRequest.class);
+public class SavedRequest implements Serializable {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, SavedRequest.class);
 
     private static final CookieDeSerializer COOKIE_DE_SERIALIZER = new CookieDeSerializer();
     private static final JsonbConfig jsonbConfig = new JsonbConfig()
@@ -57,7 +57,7 @@ public class JsonFriendlyRequest implements Serializable {
     private String url;
     private String queryString;
 
-    public static JsonFriendlyRequest fromRequest(HttpServletRequest request) {
+    public static SavedRequest fromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         Map<String, List<String>> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -69,7 +69,7 @@ public class JsonFriendlyRequest implements Serializable {
         String method = request.getMethod();
         String queryString = request.getQueryString();
 
-        JsonFriendlyRequest result = new JsonFriendlyRequest();
+        SavedRequest result = new SavedRequest();
         result.setCookies(cookies);
         result.setHeaders(headers);
         result.setMethod(method);
@@ -79,9 +79,9 @@ public class JsonFriendlyRequest implements Serializable {
         return result;
     }
 
-    public static JsonFriendlyRequest fromJson(String json) {
+    public static SavedRequest fromJson(String json) {
         try (Jsonb jsonb = JsonbBuilder.create(jsonbConfig)) {
-            return jsonb.fromJson(json, JsonFriendlyRequest.class);
+            return jsonb.fromJson(json, SavedRequest.class);
         } catch (Exception e) {
             LOGGER.error("Could not restore request from JSON", e);
             return null;

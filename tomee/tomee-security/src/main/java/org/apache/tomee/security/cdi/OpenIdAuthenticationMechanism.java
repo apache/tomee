@@ -42,7 +42,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
-import org.apache.tomee.security.http.JsonFriendlyRequest;
+import org.apache.tomee.security.http.SavedRequest;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
@@ -195,7 +195,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
 
         storageHandler.set(request, response, OpenIdConstant.ORIGINAL_REQUEST, fullRequestUrl);
-        storageHandler.set(request, response, OpenIdStorageHandler.REQUEST_KEY, JsonFriendlyRequest.fromRequest(request).toJson());
+        storageHandler.set(request, response, OpenIdStorageHandler.REQUEST_KEY, SavedRequest.fromRequest(request).toJson());
 
         return messageContext.redirect(buildAuthorizationUri(request, response).toString());
     }
@@ -270,7 +270,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                     OpenIdStorageHandler.REQUEST_KEY);
 
             httpMessageContext.withRequest(
-                    JsonFriendlyRequest.fromJson(originalRequestJson).mask(httpMessageContext.getRequest()));
+                    SavedRequest.fromJson(originalRequestJson).mask(httpMessageContext.getRequest()));
         }
 
         return httpMessageContext.notifyContainerAboutLogin(validationResult);
