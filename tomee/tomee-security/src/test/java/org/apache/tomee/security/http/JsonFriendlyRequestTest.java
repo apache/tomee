@@ -23,13 +23,22 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
 import jakarta.servlet.http.Cookie;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class JsonFriendlyRequestTest {
+
+    @Test
+    public void testSerializable() {
+        JsonFriendlyRequest request = new JsonFriendlyRequest();
+        assertTrue("must implement Serializable, since it will be set as a session attribute",
+                request instanceof Serializable);
+    }
 
     @Test
     public void serialization() throws Exception {
@@ -40,13 +49,14 @@ public class JsonFriendlyRequestTest {
         request.getHeaders().put("header2", List.of("h2val1"));
         request.setMethod("PATCH");
         request.setQueryString("foo=bar");
+        request.setUrl("http://example.com/foo");
 
-        assertEquals("{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\"}", request.toJson());
+        assertEquals("{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\",\"url\":\"http://example.com/foo\"}", request.toJson());
     }
 
     @Test
     public void deserialization() throws Exception {
-        String json = "{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\"}";
+        String json = "{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\",\"url\":\"http://example.com/foo\"}";
         JsonFriendlyRequest request = JsonFriendlyRequest.fromJson(json);
 
         assertNotNull(request);
@@ -60,6 +70,7 @@ public class JsonFriendlyRequestTest {
         assertEquals(List.of("h2val1"), request.getHeaders().get("header2"));
         assertEquals("PATCH", request.getMethod());
         assertEquals("foo=bar", request.getQueryString());
+        assertEquals("http://example.com/foo", request.getUrl());
     }
 
     @Test

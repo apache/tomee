@@ -23,6 +23,7 @@ import org.apache.openejb.util.Logger;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.bind.serializer.JsonbSerializer;
@@ -32,6 +33,7 @@ import jakarta.json.stream.JsonParser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -41,8 +43,7 @@ import java.util.Map;
 
 // JSON-B friendly class that stores the request data required for #
 // both @LoginToContinue and @OpenIdAuthenticationMechanismDefinition(redirectToOriginalResource=true)
-
-public class JsonFriendlyRequest {
+public class JsonFriendlyRequest implements Serializable {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, JsonFriendlyRequest.class);
 
     private static final CookieDeSerializer COOKIE_DE_SERIALIZER = new CookieDeSerializer();
@@ -53,6 +54,7 @@ public class JsonFriendlyRequest {
     private Cookie[] cookies;
     private Map<String, List<String>> headers;
     private String method;
+    private String url;
     private String queryString;
 
     public static JsonFriendlyRequest fromRequest(HttpServletRequest request) {
@@ -71,6 +73,7 @@ public class JsonFriendlyRequest {
         result.setCookies(cookies);
         result.setHeaders(headers);
         result.setMethod(method);
+        result.setUrl(request.getRequestURL().toString());
         result.setQueryString(queryString);
 
         return result;
@@ -113,6 +116,11 @@ public class JsonFriendlyRequest {
             }
 
             @Override
+            public StringBuffer getRequestURL() {
+                return new StringBuffer(url);
+            }
+
+            @Override
             public String getQueryString() {
                 return queryString;
             }
@@ -152,12 +160,25 @@ public class JsonFriendlyRequest {
         this.method = method;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getQueryString() {
         return queryString;
     }
 
     public void setQueryString(String queryString) {
         this.queryString = queryString;
+    }
+
+    @JsonbTransient
+    public String getUrlWithQueryString() {
+        return queryString == null ? url : url + "?" + queryString;
     }
 
     public static class CookieDeSerializer implements JsonbSerializer<Cookie>, JsonbDeserializer<Cookie> {
