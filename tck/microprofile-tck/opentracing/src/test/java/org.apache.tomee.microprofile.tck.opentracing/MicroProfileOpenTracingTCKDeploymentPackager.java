@@ -51,9 +51,8 @@ public class MicroProfileOpenTracingTCKDeploymentPackager extends ServletProtoco
         webArchive.addAsLibrary(jarLocation(ThreadLocalScopeManager.class));
         webArchive.addAsWebInfResource("META-INF/beans.xml");
         webArchive.addClass(MicroProfileOpenTracingTCKTracer.class);
-        ;
 
-        System.out.println(webArchive.toString(true));
+        //System.out.println(webArchive.toString(true));
 
         return super.generateDeployment(
                 new TestDeployment(null, webArchive, testDeployment.getAuxiliaryArchives()), processors);

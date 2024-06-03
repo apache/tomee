@@ -98,6 +98,6 @@ public class MicroProfileJWTTCKArchiveProcessor extends BaseWarArchiveProcessor 
             });
         }
 
-        System.out.println(war.toString(true));
+        //System.out.println(war.toString(true));
     }
 }

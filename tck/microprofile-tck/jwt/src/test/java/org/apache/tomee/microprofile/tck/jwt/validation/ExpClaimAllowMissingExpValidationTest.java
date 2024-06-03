@@ -101,7 +101,7 @@ public class ExpClaimAllowMissingExpValidationTest extends Arquillian {
                 .addClass(SimpleTokenUtils.class)
                 .addAsWebInfResource("beans.xml", "beans.xml")
                 .addAsManifestResource(configAsset, "microprofile-config.properties");
-        System.out.printf("WebArchive: %s\n", webArchive.toString(true));
+        //System.out.printf("WebArchive: %s\n", webArchive.toString(true));
         return webArchive;
     }
 
