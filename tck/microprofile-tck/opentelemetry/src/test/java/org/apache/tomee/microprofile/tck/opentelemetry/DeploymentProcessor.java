@@ -16,13 +16,18 @@
  */
 package org.apache.tomee.microprofile.tck.opentelemetry;
 
+import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-public class ArquillianExtension implements LoadableExtension {
+public class DeploymentProcessor implements ApplicationArchiveProcessor {
     @Override
-    public void register(ExtensionBuilder extensionBuilder) {
-        extensionBuilder.service(ApplicationArchiveProcessor.class, DeploymentProcessor.class);
-        extensionBuilder.observer(ArquillianLifecycle.class);
+    public void process(Archive<?> archive, TestClass testClass) {
+        if (archive instanceof WebArchive war) {
+            war.addAsServiceProvider(ConfigSource.class, TestConfigSource.class);
+            war.addClass(TestConfigSource.class);
+        }
     }
 }
