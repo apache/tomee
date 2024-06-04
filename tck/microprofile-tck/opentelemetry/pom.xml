@@ -19,6 +19,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M6</version>
                 <configuration>
+                    <reuseForks>false</reuseForks>
                     <dependenciesToScan>
                         <dependency>org.eclipse.microprofile.telemetry.tracing:microprofile-telemetry-tracing-tck</dependency>
                     </dependenciesToScan>
