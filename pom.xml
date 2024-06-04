@@ -110,7 +110,7 @@
     <version.plugin.bundle>3.3.0</version.plugin.bundle>
     <version.plugin.javadoc>3.3.2</version.plugin.javadoc>
     <asciidoclet.version>1.5.0</asciidoclet.version>
-    <surefire.version>3.0.0-M7</surefire.version>
+    <surefire.version>3.2.5</surefire.version>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
@@ -127,7 +127,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- arquillian related -->
-    <version.arquillian>1.7.1.Final</version.arquillian>
+    <version.arquillian>1.8.0.Final</version.arquillian>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <version.arquillian-protocol-servlet-jakarta>1.7.1.Final</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
@@ -139,7 +139,7 @@
     <version.xbean>4.25</version.xbean>
     <version.groovy>2.4.12</version.groovy>
     <!-- Starting from 3.34.0 it requires J17+ -->
-    <version.ecj>3.33.0</version.ecj>
+    <version.ecj>3.37.0</version.ecj>
     <version.jetty>11.0.20</version.jetty>
     <version.ehcache>3.10.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
@@ -192,7 +192,7 @@
     <version.io.opentracing>0.33.0</version.io.opentracing>
 
     <!-- Micro Profile Impl. -->
-    <version.microprofile.impl.config>3.0.0</version.microprofile.impl.config>
+    <version.microprofile.impl.config>3.8.2</version.microprofile.impl.config>
     <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
@@ -276,7 +276,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>2.3</version>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -395,7 +395,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
+          <version>3.1.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

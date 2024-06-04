@@ -97,9 +97,9 @@ public class PublicKeyAsJWKLocationURLTest extends Arquillian {
         // Read in the base URL of deployment since it cannot be injected for use by this method
         String jwksBaseURL = System.getProperty("mp.jwt.tck.jwks.baseURL", "http://localhost:8080/");
         // Location points to the JWKS endpoint of the deployment
-        System.out.printf("baseURL=%s\n", jwksBaseURL);
+        //System.out.printf("baseURL=%s\n", jwksBaseURL);
         URL jwksURL = new URL(new URL(jwksBaseURL), "key/endp/publicKey4kAsJWKS?kid=publicKey4k");
-        System.out.printf("jwksURL=%s\n", jwksURL);
+        //System.out.printf("jwksURL=%s\n", jwksURL);
         configProps.setProperty(Names.VERIFIER_PUBLIC_KEY_LOCATION, jwksURL.toExternalForm());
         configProps.setProperty(Names.ISSUER, TCKConstants.TEST_ISSUER);
         StringWriter configSW = new StringWriter();
@@ -116,7 +116,7 @@ public class PublicKeyAsJWKLocationURLTest extends Arquillian {
             .addAsWebInfResource("beans.xml", "beans.xml")
             .addAsManifestResource(configAsset, "microprofile-config.properties")
             ;
-        System.out.printf("WebArchive: %s\n", webArchive.toString(true));
+        //System.out.printf("WebArchive: %s\n", webArchive.toString(true));
         return webArchive;
     }
 
