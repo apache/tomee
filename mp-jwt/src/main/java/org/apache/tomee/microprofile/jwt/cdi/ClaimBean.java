@@ -67,6 +67,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     }
 
     @Inject
+    @TomeeMpJwt
     private Jsonb jsonb;
 
     private final BeanManager bm;
