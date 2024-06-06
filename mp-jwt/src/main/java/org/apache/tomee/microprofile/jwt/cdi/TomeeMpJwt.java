@@ -16,31 +16,15 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Disposes;
-import jakarta.enterprise.inject.Produces;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.spi.JsonbProvider;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import jakarta.inject.Qualifier;
 
-@ApplicationScoped
-public class JsonbProducer {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private static final Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());
-
-    @Produces
-    @TomeeMpJwt
-    public Jsonb create() {
-        return JsonbProvider.provider().create().build();
-    }
-
-    public void close(@Disposes final Jsonb jsonb) {
-        try {
-            jsonb.close();
-
-        } catch (final Exception e) {
-            log.log(Level.WARNING, e.getMessage(), e);
-        }
-    }
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
+public @interface TomeeMpJwt {
 }
