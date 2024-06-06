@@ -235,6 +235,7 @@
     <version.xmlsec>3.0.4</version.xmlsec>
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
+    <version.jose4j>0.9.6</version.jose4j>
 
     <!-- JDBC Drivers -->
     <version.derby>10.15.2.0</version.derby>
