@@ -145,7 +145,7 @@ public class OpenIdIdentityStore implements IdentityStore {
             jwtConsumer.process(tokenResponse.getAccesToken());
             validJwt = true;
         } catch (InvalidJwtException e) {
-            LOGGER.warning("Could not decode " + OpenIdConstant.ACCESS_TOKEN, e);
+            LOGGER.warning(OpenIdConstant.ACCESS_TOKEN + " is invalid: " + e.getMessage());
         }
 
         return new TomEEAccesToken(
@@ -161,7 +161,7 @@ public class OpenIdIdentityStore implements IdentityStore {
             JwtContext idToken = jwtConsumer.process(tokenResponse.getIdToken());
             return new TomEEIdentityToken(idToken.getJwt(), definition.tokenMinValidity());
         } catch (InvalidJwtException e) {
-            LOGGER.warning(OpenIdConstant.IDENTITY_TOKEN + " is invalid", e);
+            LOGGER.warning(OpenIdConstant.IDENTITY_TOKEN + " is invalid: " + e.getMessage());
 
             return null;
         }
