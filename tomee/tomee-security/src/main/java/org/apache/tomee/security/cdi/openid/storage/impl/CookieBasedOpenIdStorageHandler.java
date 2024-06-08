@@ -38,8 +38,16 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
     @Override
     public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
         Cookie cookie = new Cookie(PREFIX + key, value);
-        cookie.setSecure(true);
+        cookie.setSecure(request.isSecure());
         cookie.setHttpOnly(true);
+
+        response.addCookie(cookie);
+    }
+
+    @Override
+    public void delete(HttpServletRequest request, HttpServletResponse response, String key) {
+        Cookie cookie = new Cookie(PREFIX + key, null);
+        cookie.setMaxAge(0);
 
         response.addCookie(cookie);
     }

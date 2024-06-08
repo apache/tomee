@@ -233,7 +233,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
 
             // Callback is okay, continue with (4)
-            storageHandler.set(request, response, OpenIdStorageHandler.STATE_KEY, null);
+            storageHandler.delete(request, response, OpenIdStorageHandler.STATE_KEY);
 
             try (Client client = ClientBuilder.newClient()) {
                 Form form = new Form()
@@ -252,7 +252,13 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                     messageContext.withRequest(SavedRequest.fromJson(originalRequestJson).mask(request));
                 }
 
-                return handleTokenResponse(tokenResponse, messageContext);
+                AuthenticationStatus result = handleTokenResponse(tokenResponse, messageContext);
+
+                storageHandler.delete(request, response, OpenIdStorageHandler.NONCE_KEY);
+                storageHandler.delete(request, response, OpenIdStorageHandler.REQUEST_KEY);
+                storageHandler.delete(request, response, OpenIdConstant.ORIGINAL_REQUEST);
+
+                return result;
             }
         }
 

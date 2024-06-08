@@ -31,4 +31,9 @@ public class SessionBasedOpenIdStorageHandler extends OpenIdStorageHandler {
     public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
         request.getSession().setAttribute(PREFIX + key, value);
     }
+
+    @Override
+    public void delete(HttpServletRequest request, HttpServletResponse response, String key) {
+        request.getSession().removeAttribute(PREFIX + key);
+    }
 }

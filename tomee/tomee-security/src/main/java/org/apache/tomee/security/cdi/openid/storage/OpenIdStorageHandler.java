@@ -32,6 +32,8 @@ public abstract class OpenIdStorageHandler {
 
     public abstract void set(HttpServletRequest request, HttpServletResponse response, String key, String value);
 
+    public abstract void delete(HttpServletRequest request, HttpServletResponse response, String key);
+
     public String getStoredState(HttpServletRequest request, HttpServletResponse response) {
         return get(request, response, STATE_KEY);
     }

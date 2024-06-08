@@ -154,7 +154,7 @@ public class OpenIdAuthenticationMechanismTest {
         }
 
 
-        // get/set is a noop here
+        // data operations are a noop here
         @Override
         public String get(HttpServletRequest request, HttpServletResponse response, String key) {
             return null;
@@ -162,6 +162,12 @@ public class OpenIdAuthenticationMechanismTest {
 
         @Override
         public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
+
+        }
+
+        @Override
+        public void delete(HttpServletRequest request, HttpServletResponse response, String key) {
+
         }
     }
 }
