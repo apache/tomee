@@ -69,8 +69,6 @@ public class JwtValidators {
         return null;
     };
 
-    private JwtValidators() {}
-
     // When nonce usage is configured, verify if the nonce value within the Identity Token is identical to the one that was specified in the authentication request.
     public static Validator nonce(String nonce) {
         return context -> {
