@@ -21,6 +21,7 @@ import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Base64;
 import java.util.Objects;
 
 public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
@@ -28,7 +29,7 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
     public String get(HttpServletRequest request, HttpServletResponse response, String key) {
         for (Cookie cookie : request.getCookies()) {
             if (Objects.equals(cookie.getName(), PREFIX + key)) {
-                return cookie.getValue();
+                return new String(Base64.getDecoder().decode(cookie.getValue()));
             }
         }
 
@@ -37,7 +38,7 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
 
     @Override
     public void set(HttpServletRequest request, HttpServletResponse response, String key, String value) {
-        Cookie cookie = new Cookie(PREFIX + key, value);
+        Cookie cookie = new Cookie(PREFIX + key, Base64.getEncoder().encodeToString(value.getBytes()));
         cookie.setSecure(request.isSecure());
         cookie.setHttpOnly(true);
 

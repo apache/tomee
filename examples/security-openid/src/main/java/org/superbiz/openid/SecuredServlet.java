@@ -31,6 +31,7 @@ import java.io.IOException;
         providerURI = "#{openIdConfig.providerUri}",
         clientId = "#{openIdConfig.clientId}",
         clientSecret = "#{openIdConfig.clientSecret}",
+        useSession = false,
         redirectToOriginalResource = true)
 @ServletSecurity(@HttpConstraint(rolesAllowed = "user"))
 @WebServlet(name = "Secured Servlet", urlPatterns = "/secured")

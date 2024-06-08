@@ -247,12 +247,13 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                         .accept(MediaType.APPLICATION_JSON)
                         .post(Entity.form(form), TokenResponse.class);
 
+                AuthenticationStatus result = handleTokenResponse(tokenResponse, messageContext);
+
+                // We're finished, restore original request now and clean up
                 if (definition.redirectToOriginalResource()) {
                     String originalRequestJson = storageHandler.get(request, response, OpenIdStorageHandler.REQUEST_KEY);
                     messageContext.withRequest(SavedRequest.fromJson(originalRequestJson).mask(request));
                 }
-
-                AuthenticationStatus result = handleTokenResponse(tokenResponse, messageContext);
 
                 storageHandler.delete(request, response, OpenIdStorageHandler.NONCE_KEY);
                 storageHandler.delete(request, response, OpenIdStorageHandler.REQUEST_KEY);
