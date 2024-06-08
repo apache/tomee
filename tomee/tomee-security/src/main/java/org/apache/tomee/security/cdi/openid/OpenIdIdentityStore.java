@@ -60,7 +60,7 @@ import java.util.function.Consumer;
 
 @ApplicationScoped
 public class OpenIdIdentityStore implements IdentityStore {
-    private final static Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdIdentityStore.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdIdentityStore.class);
 
     @Inject
     private OpenIdAuthenticationMechanismDefinition definition;

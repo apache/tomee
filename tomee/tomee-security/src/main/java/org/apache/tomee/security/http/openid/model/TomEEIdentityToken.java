@@ -31,7 +31,7 @@ import java.util.Base64;
 import java.util.Map;
 
 public class TomEEIdentityToken implements IdentityToken {
-    private final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEIdentityToken.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEIdentityToken.class);
 
     private final String token;
     private final long minValidity;

@@ -32,7 +32,7 @@ import java.util.Base64;
 import java.util.Map;
 
 public class TomEEAccesToken implements AccessToken {
-    private final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEAccesToken.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEAccesToken.class);
 
     private final boolean jwt;
     private final String token;

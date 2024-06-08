@@ -17,6 +17,8 @@
 package org.apache.tomee.security.http.openid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import jakarta.json.JsonObject;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
@@ -28,7 +30,6 @@ import jakarta.security.enterprise.authentication.mechanism.http.openid.PromptTy
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
-
 import java.lang.annotation.Annotation;
 
 public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAuthenticationMechanismDefinition {
@@ -199,6 +200,8 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
     }
 
     public static class AutoResolvingProviderMetadata extends OpenIdAuthenticationMechanismDefinitionDelegate {
+        private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, AutoResolvingProviderMetadata.class);
+
         private OpenIdProviderMetadata cached = null;
 
         public AutoResolvingProviderMetadata(OpenIdAuthenticationMechanismDefinition delegate) {
@@ -223,9 +226,15 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
                     providerUri += "/.well-known/openid-configuration";
                 }
 
+                LOGGER.debug("Fetching provider metadata from " + providerUri);
+
                 JsonObject response = client.target(providerUri)
                         .request(MediaType.APPLICATION_JSON)
                         .get(JsonObject.class);
+
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Fetched provider metadata from " + providerUri + ": " + response.toString());
+                }
 
                 cached = new CompositeOpenIdProviderMetadata(response, super.providerMetadata());
             }
