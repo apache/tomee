@@ -247,6 +247,11 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                         .accept(MediaType.APPLICATION_JSON)
                         .post(Entity.form(form), TokenResponse.class);
 
+                if (definition.redirectToOriginalResource()) {
+                    String originalRequestJson = storageHandler.get(request, response, OpenIdStorageHandler.REQUEST_KEY);
+                    messageContext.withRequest(SavedRequest.fromJson(originalRequestJson).mask(request));
+                }
+
                 return handleTokenResponse(tokenResponse, messageContext);
             }
         }
@@ -262,16 +267,6 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         CredentialValidationResult validationResult = identityStoreHandler.validate(credential);
 
         httpMessageContext.setRegisterSession(validationResult.getCallerPrincipal().getName(), validationResult.getCallerGroups());
-
-        if (definition.redirectToOriginalResource()) {
-            String originalRequestJson = storageHandler.get(
-                    httpMessageContext.getRequest(),
-                    httpMessageContext.getResponse(),
-                    OpenIdStorageHandler.REQUEST_KEY);
-
-            httpMessageContext.withRequest(
-                    SavedRequest.fromJson(originalRequestJson).mask(httpMessageContext.getRequest()));
-        }
 
         return httpMessageContext.notifyContainerAboutLogin(validationResult);
     }
