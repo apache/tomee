@@ -61,9 +61,8 @@ public class JwtValidators {
         }
 
         long now = Instant.now().getEpochSecond();
-
         if (nbf > now) {
-            return "iat is in the future (nbf=" + nbf + ", current time is " + now + ")";
+            return "nbf is in the future (nbf=" + nbf + ", current time is " + now + ")";
         }
 
         return null;
@@ -74,7 +73,7 @@ public class JwtValidators {
         return context -> {
             String nonceClaim = context.getJwtClaims().getStringClaimValue("nonce");
             if (!nonce.equals(nonceClaim)) {
-                return "Nonce value does not match the stored value (expected " + nonce + " but got " + nonceClaim + ")";
+                return "nonce value does not match the stored value (expected " + nonce + " but got " + nonceClaim + ")";
             }
 
             return null;
@@ -86,15 +85,13 @@ public class JwtValidators {
     public static Validator azp(String clientId) {
         return context -> {
             List<String> aud = context.getJwtClaims().getAudience();
-            if (aud.size() > 1) {
-                String azp = context.getJwtClaims().getStringClaimValue("azp");
-                if (azp == null) {
-                    return OpenIdConstant.AUDIENCE + " has " + aud.size() + " entries (" + String.join(", " + aud) + ") but no " + OpenIdConstant.AUTHORIZED_PARTY + " claim is present";
-                }
+            String azp = context.getJwtClaims().getStringClaimValue("azp");
+            if (aud.size() > 1 && azp == null) {
+                return OpenIdConstant.AUDIENCE + " has " + aud.size() + " entries (" + String.join(", ", aud) + ") but no " + OpenIdConstant.AUTHORIZED_PARTY + " claim is present";
+            }
 
-                if (!clientId.equals(azp)) {
-                    return OpenIdConstant.AUTHORIZED_PARTY + " is not equal to configured clientId (got " + azp + " but expected " + clientId + ")";
-                }
+            if (azp != null && !clientId.equals(azp)) {
+                return OpenIdConstant.AUTHORIZED_PARTY + " is not equal to configured clientId (got " + azp + " but expected " + clientId + ")";
             }
 
             return null;
