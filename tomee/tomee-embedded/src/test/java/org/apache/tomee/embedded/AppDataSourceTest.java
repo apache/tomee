@@ -19,6 +19,7 @@ package org.apache.tomee.embedded;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.Jdk14Logger;
+import org.apache.commons.logging.impl.LogFactoryImpl;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.IO;
 import org.junit.Test;
@@ -48,6 +49,8 @@ public class AppDataSourceTest {
                 "</resources>\n");
         final Collection<LogRecord> records = new ArrayList<>();
         try (final Container c = new Container(new Configuration().randomHttpPort())) {
+            System.setProperty(LogFactory.FACTORY_PROPERTY, LogFactoryImpl.class.getName());
+
             Jdk14Logger.class.cast(LogFactory.getLog(BasicDataSource.class)).getLogger().addHandler(new Handler() {
                 @Override
                 public void publish(final LogRecord record) {
