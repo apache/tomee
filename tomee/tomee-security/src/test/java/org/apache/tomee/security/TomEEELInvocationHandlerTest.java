@@ -22,6 +22,8 @@ import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Named;
+import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
+import jakarta.security.enterprise.authentication.mechanism.http.openid.LogoutDefinition;
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.PasswordHash;
@@ -78,6 +80,76 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         System.out.println(parametersMap);
     }
 
+    @Test
+    public void testNestedAnnotationUsesInvocationHandler()
+    {
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+        final ELResolver elResolver = bm().getELResolver();
+        elProcessor.getELManager().addELResolver(elResolver);
+
+        // small trick because of the @Vetoed bellow - OWB won't pick it up
+        // so we will register one ourselves into the processor so it is resolved
+        elProcessor.defineBean("vehicle", new Vehicle());
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+        Assert.assertTrue(proxiedAnnotation.logout().notifyProvider());
+    }
+
+    @Test
+    public void testPartialEl()
+    {
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+        final ELResolver elResolver = bm().getELResolver();
+        elProcessor.getELManager().addELResolver(elResolver);
+
+        // small trick because of the @Vetoed bellow - OWB won't pick it up
+        // so we will register one ourselves into the processor so it is resolved
+        elProcessor.defineBean("vehicle", new Vehicle());
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+
+        Assert.assertEquals("https://server.example.com/auth/openid/.well-known/openid-configuration",
+                proxiedAnnotation.providerURI());
+    }
+
+    @Test
+    public void testElResolvesToEl() {
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+
+        elProcessor.defineBean("vehicle", new Vehicle());
+        elProcessor.setValue("baseURL", "http://localhost:8080/tomee-openid");
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+
+        Assert.assertEquals("http://localhost:8080/tomee-openid/Callback", proxiedAnnotation.redirectURI());
+    }
+
+    @Test
+    public void infiniteLoop() {
+
+        final OpenIdAuthenticationMechanismDefinition annotation = Vehicle.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        final ELProcessor elProcessor = new ELProcessor();
+
+        elProcessor.defineBean("vehicle", new Vehicle());
+        elProcessor.setValue("baseURL", "http://localhost:8080/tomee-openid");
+
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, elProcessor);
+
+        // This has to trigger an exception
+        Assert.assertThrows(IllegalArgumentException.class, () -> proxiedAnnotation.clientSecret());
+    }
+
     private BeanManager bm() {
         return CDI.current().getBeanManager();
     }
@@ -102,6 +174,36 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
 
         public String[] getDyna() {
             return new String[]{"Pbkdf2PasswordHash.Algorithm=PBKDF2WithHmacSHA512", "Pbkdf2PasswordHash.SaltSizeBytes=64"};
+        }
+    }
+
+    @OpenIdAuthenticationMechanismDefinition(
+            redirectURI = "#{vehicle.redirectUri}",
+            providerURI = "#{vehicle.server}/#{vehicle.path}/.well-known/openid-configuration",
+            logout = @LogoutDefinition(notifyProviderExpression = "#{vehicle.notifyProvider}"),
+            clientSecret = "#{vehicle.clientSecret}")
+    @Vetoed // so we don't break the other tests with this
+    @Named // see expression language
+    public static class Vehicle {
+        public String getRedirectUri() {
+            return "${baseURL}/Callback";
+        }
+
+        public String getServer() {
+            return "https://server.example.com";
+        }
+
+        public String getPath() {
+            return "auth/openid";
+        }
+
+        public boolean isNotifyProvider()
+        {
+            return true;
+        }
+
+        public String getClientSecret() {
+            return "#{vehicle.clientSecret}";
         }
     }
 

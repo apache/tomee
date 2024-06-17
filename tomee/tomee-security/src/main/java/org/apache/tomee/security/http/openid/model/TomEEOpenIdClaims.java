@@ -14,21 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.security.http;
+package org.apache.tomee.security.http.openid.model;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.json.JsonObject;
+import jakarta.security.enterprise.identitystore.openid.OpenIdClaims;
 
-public class SavedHttpServletRequest extends HttpServletRequestWrapper {
-    private final SavedRequest savedRequest;
-
-    public SavedHttpServletRequest(final HttpServletRequest request, final SavedRequest savedRequest) {
-        super(request);
-        this.savedRequest = savedRequest;
-    }
-
-    @Override
-    public String getMethod() {
-        return savedRequest.getMethod();
+public class TomEEOpenIdClaims extends TomEEJsonClaims implements OpenIdClaims {
+    public TomEEOpenIdClaims(JsonObject claims) {
+        super(claims);
     }
 }

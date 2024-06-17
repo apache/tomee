@@ -16,17 +16,11 @@
  */
 package org.apache.tomee.security.http;
 
-import org.apache.tomcat.util.buf.ByteChunk;
-
 import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
-import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Set;
 
 public interface LoginToContinueMechanism {
@@ -39,55 +33,8 @@ public interface LoginToContinueMechanism {
     LoginToContinue getLoginToContinue();
 
     static void saveRequest(final HttpServletRequest request) throws IOException {
-        SavedRequest saved = new SavedRequest();
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (int i = 0; i < cookies.length; i++) {
-                saved.addCookie(cookies[i]);
-            }
-        }
-        Enumeration<String> names = request.getHeaderNames();
-        while (names.hasMoreElements()) {
-            String name = names.nextElement();
-            Enumeration<String> values = request.getHeaders(name);
-            while (values.hasMoreElements()) {
-                String value = values.nextElement();
-                saved.addHeader(name, value);
-            }
-        }
-        Enumeration<Locale> locales = request.getLocales();
-        while (locales.hasMoreElements()) {
-            Locale locale = locales.nextElement();
-            saved.addLocale(locale);
-        }
-
-        int maxSavePostSize = MAX_SAVE_POST_SIZE;
-        if (maxSavePostSize != 0) {
-            ByteChunk body = new ByteChunk();
-            body.setLimit(maxSavePostSize);
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            InputStream is = request.getInputStream();
-
-            while ( (bytesRead = is.read(buffer) ) >= 0) {
-                body.append(buffer, 0, bytesRead);
-            }
-
-            // Only save the request body if there is something to save
-            if (body.getLength() > 0) {
-                saved.setContentType(request.getContentType());
-                saved.setBody(body);
-            }
-        }
-
-        saved.setMethod(request.getMethod());
-        saved.setQueryString(request.getQueryString());
-        saved.setRequestURI(request.getRequestURI());
-        saved.setRequestURL(request.getRequestURL().toString());
-
         // Stash the SavedRequest in our session for later use
-        request.getSession().setAttribute(ORIGINAL_REQUEST, saved);
+        request.getSession().setAttribute(ORIGINAL_REQUEST, SavedRequest.fromRequest(request));
     }
 
     static boolean matchRequest(final HttpServletRequest request) {
@@ -112,7 +59,7 @@ public interface LoginToContinueMechanism {
 
         // Does the request URI match?
         String requestURI = request.getRequestURI();
-        return requestURI != null && requestURI.equals(originalRequest.getRequestURI());
+        return requestURI != null && requestURI.equals(originalRequest.getUrlWithQueryString());
     }
 
     static boolean hasRequest(final HttpServletRequest request) {

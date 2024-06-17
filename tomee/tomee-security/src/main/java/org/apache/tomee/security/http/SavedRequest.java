@@ -14,168 +14,214 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.tomee.security.http;
 
-import org.apache.tomcat.util.buf.ByteChunk;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.serializer.DeserializationContext;
+import jakarta.json.bind.serializer.JsonbDeserializer;
+import jakarta.json.bind.serializer.JsonbSerializer;
+import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.stream.JsonGenerator;
+import jakarta.json.stream.JsonParser;
 import jakarta.servlet.http.Cookie;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-/**
- * Mostly copied from org.apache.catalina.authenticator.SavedRequest.
- */
-public final class SavedRequest implements Serializable {
-    private static final long serialVersionUID = 1L;
+// JSON-B friendly class that stores the request data required for #
+// both @LoginToContinue and @OpenIdAuthenticationMechanismDefinition(redirectToOriginalResource=true)
+public class SavedRequest implements Serializable {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, SavedRequest.class);
 
-    SavedRequest() {
-    }
+    private static final CookieDeSerializer COOKIE_DE_SERIALIZER = new CookieDeSerializer();
+    private static final JsonbConfig jsonbConfig = new JsonbConfig()
+            .withSerializers(COOKIE_DE_SERIALIZER)
+            .withDeserializers(COOKIE_DE_SERIALIZER);
 
-    /**
-     * The set of Cookies associated with this Request.
-     */
-    private final List<Cookie> cookies = new ArrayList<>();
+    private Cookie[] cookies;
+    private Map<String, List<String>> headers;
+    private String method;
+    private String url;
+    private String queryString;
 
-    public void addCookie(Cookie cookie) {
-        cookies.add(cookie);
-    }
-
-    public Iterator<Cookie> getCookies() {
-        return cookies.iterator();
-    }
-
-
-    /**
-     * The set of Headers associated with this Request.  Each key is a header
-     * name, while the value is a List containing one or more actual
-     * values for this header.  The values are returned as an Iterator when
-     * you ask for them.
-     */
-    private final Map<String, List<String>> headers = new HashMap<>();
-
-    public void addHeader(String name, String value) {
-        List<String> values = headers.get(name);
-        if (values == null) {
-            values = new ArrayList<>();
-            headers.put(name, values);
+    public static SavedRequest fromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        Map<String, List<String>> headers = new HashMap<>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            headers.put(name, Collections.list(request.getHeaders(name)));
         }
-        values.add(value);
+
+        String method = request.getMethod();
+        String queryString = request.getQueryString();
+
+        SavedRequest result = new SavedRequest();
+        result.setCookies(cookies);
+        result.setHeaders(headers);
+        result.setMethod(method);
+        result.setUrl(request.getRequestURL().toString());
+        result.setQueryString(queryString);
+
+        return result;
     }
 
-    public Iterator<String> getHeaderNames() {
-        return headers.keySet().iterator();
+    public static SavedRequest fromJson(String json) {
+        try (Jsonb jsonb = JsonbBuilder.create(jsonbConfig)) {
+            return jsonb.fromJson(json, SavedRequest.class);
+        } catch (Exception e) {
+            LOGGER.error("Could not restore request from JSON", e);
+            return null;
+        }
     }
 
-    public Iterator<String> getHeaderValues(String name) {
-        List<String> values = headers.get(name);
-        if (values == null) { return Collections.emptyIterator(); } else { return values.iterator(); }
+    public HttpServletRequest mask(HttpServletRequest masked) {
+        return new HttpServletRequestWrapper(masked) {
+            @Override
+            public Cookie[] getCookies() {
+                return cookies;
+            }
+
+            @Override
+            public Enumeration<String> getHeaderNames() {
+                return Collections.enumeration(headers.keySet());
+            }
+
+            @Override
+            public Enumeration<String> getHeaders(String name) {
+                return Collections.enumeration(headers.get(name));
+            }
+
+            @Override
+            public String getHeader(String name) {
+                return headers.get(name).get(0);
+            }
+
+            @Override
+            public String getMethod() {
+                return method;
+            }
+
+            @Override
+            public StringBuffer getRequestURL() {
+                return new StringBuffer(url);
+            }
+
+            @Override
+            public String getQueryString() {
+                return queryString;
+            }
+        };
     }
 
-
-    /**
-     * The set of Locales associated with this Request.
-     */
-    private final List<Locale> locales = new ArrayList<>();
-
-    public void addLocale(Locale locale) {
-        locales.add(locale);
+    public String toJson() {
+        try (Jsonb jsonb = JsonbBuilder.create(jsonbConfig)) {
+            return jsonb.toJson(this);
+        } catch (Exception e) {
+            LOGGER.error("Could not store request in JSON", e);
+            return null;
+        }
     }
 
-    public Iterator<Locale> getLocales() {
-        return locales.iterator();
+    public Cookie[] getCookies() {
+        return cookies;
     }
 
+    public void setCookies(Cookie[] cookies) {
+        this.cookies = cookies;
+    }
 
-    /**
-     * The request method used on this Request.
-     */
-    private String method = null;
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
+    }
 
     public String getMethod() {
-        return this.method;
+        return method;
     }
 
     public void setMethod(String method) {
         this.method = method;
     }
 
+    public String getUrl() {
+        return url;
+    }
 
-    /**
-     * The query string associated with this Request.
-     */
-    private String queryString = null;
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getQueryString() {
-        return this.queryString;
+        return queryString;
     }
 
     public void setQueryString(String queryString) {
         this.queryString = queryString;
     }
 
-
-    /**
-     * The request URI associated with this Request. See jakarta.servlet.http.HttpServletRequest#getRequestURI().
-     */
-    private String requestURI = null;
-
-    public String getRequestURI() {
-        return this.requestURI;
+    @JsonbTransient
+    public String getUrlWithQueryString() {
+        return queryString == null ? url : url + "?" + queryString;
     }
 
-    public void setRequestURI(String requestURI) {
-        this.requestURI = requestURI;
-    }
+    public static class CookieDeSerializer implements JsonbSerializer<Cookie>, JsonbDeserializer<Cookie> {
+        @Override
+        public Cookie deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
+            String name = null;
+            String value = null;
+            Map<String, String> attributes = null;
 
+            while (parser.hasNext()) {
+                JsonParser.Event current = parser.next();
 
-    /**
-     * The decode request URL associated with this Request. See jakarta.servlet.http.HttpServletRequest#getRequestURL().
-     */
-    private String requestURL = null;
+                if (current == JsonParser.Event.KEY_NAME) {
+                    String key = parser.getString();
 
-    public String getRequestURL() {
-        return this.requestURL;
-    }
+                    // move forward to value
+                    parser.next();
 
-    public void setRequestURL(String requestURL) {
-        this.requestURL = requestURL;
-    }
+                    if ("name".equals(key)) {
+                        name = parser.getString();
+                    } else if ("value".equals(key)) {
+                        value = parser.getString();
+                    } else if ("attributes".equals(key)) {
+                        attributes = ctx.deserialize(Map.class, parser);
+                    }
+                }
+            }
 
+            Cookie cookie = new Cookie(name, value);
+            if (attributes != null) {
+                for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                    cookie.setAttribute(entry.getKey(), entry.getValue());
+                }
+            }
 
-    /**
-     * The body of this request.
-     */
-    private ByteChunk body = null;
+            return cookie;
+        }
 
-    public ByteChunk getBody() {
-        return this.body;
-    }
-
-    public void setBody(ByteChunk body) {
-        this.body = body;
-    }
-
-    /**
-     * The content type of the request, used if this is a POST.
-     */
-    private String contentType = null;
-
-    public String getContentType() {
-        return this.contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public String getRequestURLWithQueryString() {
-        return queryString == null || queryString.isEmpty() ? requestURL : requestURL + "?" + queryString;
+        @Override
+        public void serialize(Cookie obj, JsonGenerator generator, SerializationContext ctx) {
+            generator.write("name", obj.getName());
+            generator.write("value", obj.getValue());
+            ctx.serialize("attributes", obj.getAttributes(), generator);
+        }
     }
 }

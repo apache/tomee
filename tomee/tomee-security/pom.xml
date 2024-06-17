@@ -94,10 +94,22 @@
       <artifactId>bval-jsr</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.bitbucket.b_c</groupId>
+      <artifactId>jose4j</artifactId>
+      <version>${version.jose4j}</version>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-embedded</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-mockito</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

@@ -1,0 +1,104 @@
+{
+  "realm": "tomee",
+  "enabled": true,
+  "roles": {
+    "client": {
+      "tomee": [
+        {
+          "name": "user"
+        },
+        {
+          "name": "admin"
+        }
+      ]
+    }
+  },
+  "clients": [
+    {
+      "clientId": "tomee",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "tomee-client-secret",
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "+"
+      ],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "multivalued": "true",
+            "userinfo.token.claim": "false",
+            "user.attribute": "foo",
+            "id.token.claim": "false",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "claim.name": "groups",
+            "jsonType.label": "String",
+            "usermodel.clientRoleMapping.clientId": "tomee"
+          }
+        },
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "tomee",
+            "id.token.claim": "false",
+            "lightweight.claim": "false",
+            "introspection.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "tomee-user",
+      "email": "tomee-user@example.org",
+      "firstName": "tomee",
+      "lastName": "user",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "tomee"
+        }
+      ],
+      "clientRoles": {
+        "tomee": [
+          "user"
+        ]
+      }
+    },
+    {
+      "username": "tomee-admin",
+      "email": "tomee-admin@example.org",
+      "firstName": "tomee",
+      "lastName": "admin",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "tomee"
+        }
+      ],
+      "clientRoles": {
+        "tomee": [
+          "user",
+          "admin"
+        ]
+      }
+    }
+  ]
+}
