@@ -27,7 +27,7 @@
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.myfaces-api>3.0.1</version.myfaces-api>
+    <version.myfaces-api>4.0.2</version.myfaces-api>
   </properties>
   <build>
     <finalName>jsf-managedBean-and-ejb</finalName>
