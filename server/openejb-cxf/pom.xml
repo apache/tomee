@@ -51,15 +51,15 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>com.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>com.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>com.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
     </dependency>
     <dependency>

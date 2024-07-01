@@ -113,16 +113,16 @@
                   <exclude>org.cryptacular:cryptacular</exclude>
                   <exclude>org.bouncycastle:bcprov-jdk15to18</exclude>
                   <exclude>org.apache.neethi:neethi</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-bindings-soap</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-bindings-xml</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-frontend-simple</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-wsdl</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-databinding-jaxb</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-ws-addr</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-ws-security</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-ws-policy</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-security-saml</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-bindings-soap</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-bindings-xml</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-frontend-simple</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-wsdl</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-databinding-jaxb</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-ws-addr</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-ws-security</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-ws-policy</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-security-saml</exclude>
                   <exclude>org.apache.ws.xmlschema:xmlschema-core</exclude>
                   <exclude>xml-resolver:xml-resolver</exclude>
                   <exclude>com.sun.xml.messaging.saaj:saaj-impl</exclude>
@@ -155,16 +155,16 @@
                   <exclude>${project.groupId}:tomee-jaxrs</exclude>
                   <exclude>${project.groupId}:openejb-rest</exclude>
                   <exclude>${project.groupId}:openejb-cxf-rs</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-service-description</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-client</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxrs</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-extension-search</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-json-basic</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-cors</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-oauth2</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose-jaxrs</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-extension-providers</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-service-description</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-client</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-frontend-jaxrs</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-extension-search</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-json-basic</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-security-cors</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-security-oauth2</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-security-jose-jaxrs</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-security-jose</exclude>
+                  <exclude>com.github.rzo1.org.apache.cxf:cxf-rt-rs-extension-providers</exclude>
                   <exclude>org.apache.johnzon:johnzon-jaxrs</exclude>
                   <exclude>org.apache.johnzon:johnzon-mapper</exclude>
                 </excludes>
