@@ -179,7 +179,7 @@
     <version.micrometer>1.12.5</version.micrometer>
     <!-- Micro Profile API -->
     <version.microprofile>5.0</version.microprofile>
-    <version.microprofile.config>3.0.3</version.microprofile.config>
+    <version.microprofile.config>3.1</version.microprofile.config>
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.health>4.0.1</version.microprofile.health>
     <version.microprofile.jwt>2.1</version.microprofile.jwt>
