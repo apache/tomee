@@ -86,7 +86,7 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
     <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
-    <tag>tomee-project-10.0.0-M3-SNAPSHOT</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
@@ -211,7 +211,7 @@
     <version.activemq>6.1.3</version.activemq>
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
-    <version.cxf>4.1.0-SNAPSHOT</version.cxf>
+    <version.cxf>4.1.0-tomee-M2</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
@@ -958,7 +958,6 @@
         <enabled>true</enabled>
       </releases>
     </repository>
-
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -1121,7 +1120,7 @@
         <version>${version.bval}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1144,12 +1143,12 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1172,7 +1171,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1199,7 +1198,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1234,7 +1233,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1245,22 +1244,22 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-sse</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-extension-providers</artifactId>
         <version>${version.cxf}</version>
       </dependency>
