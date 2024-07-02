@@ -41,10 +41,16 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -64,7 +70,7 @@ public class TomEEMicroProfileListener {
         "io.smallrye.faulttolerance.FaultToleranceExtension",
         };
 
-    private static final Map<AppInfo, Index> indexCache = new HashMap<>();
+    private final Map<AppInfo, Index> indexCache = new HashMap<>();
 
     @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
@@ -122,16 +128,17 @@ public class TomEEMicroProfileListener {
         // index only once and pass it everywhere it's needed. Also in order to build the index, we need the entire
         // application so doing it here from the AppInfo is way simpler
         try {
-            final Index index;
-            if(indexCache.containsKey(afterApplicationCreated.getEvent().getApp())) {
-                index = indexCache.get(afterApplicationCreated.getEvent().getApp());
-            } else {
-                index = of(afterApplicationCreated.getEvent().getApp().libs);
-                indexCache.put(afterApplicationCreated.getEvent().getApp(), index);
-            }
+            final AppInfo app = afterApplicationCreated.getEvent().getApp();
+            final Index index = indexCache.computeIfAbsent(app, k -> {
+                try {
+                    return of(app.libs);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
             MicroProfileOpenApiRegistration.registerOpenApiServlet(context, index);
 
-        } catch (final IOException e) {
+        } catch (final UncheckedIOException e) {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
 
