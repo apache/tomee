@@ -19,7 +19,9 @@ package org.apache.tomee.microprofile;
 import io.smallrye.opentracing.SmallRyeTracingDynamicFeature;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.Files;
@@ -40,6 +42,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
@@ -47,6 +50,8 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -66,6 +71,9 @@ public class TomEEMicroProfileListener {
         "io.smallrye.faulttolerance.FaultToleranceExtension",
         };
 
+    private final Map<AppInfo, Index> indexCache = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
 
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
@@ -97,6 +105,11 @@ public class TomEEMicroProfileListener {
         SystemInstance.get().setProperty("openejb.cxf-rs.cache-application", "false");
     }
 
+    public void afterApplicationDeployed(@Observes final BeforeEvent<AssemblerBeforeApplicationDestroyed> event) {
+        //Just in case, remove the index from the cache if it still exits
+        indexCache.remove(event.getEvent().getApp());
+    }
+
     public void processApplication(@Observes final BeforeEvent<AfterApplicationCreated> afterApplicationCreated) {
         final ServletContext context = afterApplicationCreated.getEvent().getContext();
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
@@ -121,10 +134,22 @@ public class TomEEMicroProfileListener {
         // index only once and pass it everywhere it's needed. Also in order to build the index, we need the entire
         // application so doing it here from the AppInfo is way simpler
         try {
-            final Index index = of(afterApplicationCreated.getEvent().getApp().libs);
+            final AppInfo app = afterApplicationCreated.getEvent().getApp();
+            final Index index = indexCache.computeIfAbsent(app, k -> {
+                try {
+                    return of(app.libs);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
             MicroProfileOpenApiRegistration.registerOpenApiServlet(context, index);
 
-        } catch (final IOException e) {
+            //Check if this was the last webapp to be processed and if so, remove it from the cache
+            int lastIndex = app.webApps.size() - 1;
+            if(app.webApps.indexOf(afterApplicationCreated.getEvent().getWeb()) == lastIndex) {
+                indexCache.remove(app);
+            }
+        } catch (final UncheckedIOException e) {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
 
