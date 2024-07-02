@@ -18,8 +18,8 @@
 */
 package org.superbiz.jsf;
 
+import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJB;
-import jakarta.faces.bean.ManagedBean;
 
 @ManagedBean
 public class CalculatorBean {
