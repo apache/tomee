@@ -19,6 +19,7 @@ package org.apache.tomee.microprofile;
 import io.smallrye.opentracing.SmallRyeTracingDynamicFeature;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
@@ -43,10 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -65,6 +63,8 @@ public class TomEEMicroProfileListener {
         "io.smallrye.opentracing.contrib.interceptor.OpenTracingInterceptor",
         "io.smallrye.faulttolerance.FaultToleranceExtension",
         };
+
+    private static final Map<AppInfo, Index> indexCache = new HashMap<>();
 
     @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
@@ -122,7 +122,13 @@ public class TomEEMicroProfileListener {
         // index only once and pass it everywhere it's needed. Also in order to build the index, we need the entire
         // application so doing it here from the AppInfo is way simpler
         try {
-            final Index index = of(afterApplicationCreated.getEvent().getApp().libs);
+            final Index index;
+            if(indexCache.containsKey(afterApplicationCreated.getEvent().getApp())) {
+                index = indexCache.get(afterApplicationCreated.getEvent().getApp());
+            } else {
+                index = of(afterApplicationCreated.getEvent().getApp().libs);
+                indexCache.put(afterApplicationCreated.getEvent().getApp(), index);
+            }
             MicroProfileOpenApiRegistration.registerOpenApiServlet(context, index);
 
         } catch (final IOException e) {
