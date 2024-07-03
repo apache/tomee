@@ -51,7 +51,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -71,7 +71,7 @@ public class TomEEMicroProfileListener {
         "io.smallrye.faulttolerance.FaultToleranceExtension",
         };
 
-    private final Map<AppInfo, Index> indexCache = new HashMap<>();
+    private final Map<AppInfo, Index> indexCache = new ConcurrentHashMap<>();
 
     @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
