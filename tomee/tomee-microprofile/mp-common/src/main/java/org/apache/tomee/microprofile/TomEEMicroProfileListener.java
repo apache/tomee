@@ -21,6 +21,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.Files;
@@ -104,6 +105,11 @@ public class TomEEMicroProfileListener {
         SystemInstance.get().setProperty("openejb.cxf-rs.cache-application", "false");
     }
 
+    public void afterApplicationDeployed(@Observes final BeforeEvent<AssemblerBeforeApplicationDestroyed> event) {
+        //Just in case, remove the index from the cache if it still exits
+        indexCache.remove(event.getEvent().getApp());
+    }
+
     public void processApplication(@Observes final BeforeEvent<AfterApplicationCreated> afterApplicationCreated) {
         final ServletContext context = afterApplicationCreated.getEvent().getContext();
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
@@ -138,6 +144,11 @@ public class TomEEMicroProfileListener {
             });
             MicroProfileOpenApiRegistration.registerOpenApiServlet(context, index);
 
+            //Check if this was the last webapp to be processed and if so, remove it from the cache
+            int lastIndex = app.webApps.size() - 1;
+            if(app.webApps.indexOf(afterApplicationCreated.getEvent().getWeb()) == lastIndex) {
+                indexCache.remove(app);
+            }
         } catch (final UncheckedIOException e) {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
