@@ -34,8 +34,6 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 public class ContextServiceImplFactory {
-
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ContextServiceImplFactory.class);
     private static ContextServiceImpl defaultSingleton;
 
     private final List<String> propagated = new ArrayList<>();
@@ -87,6 +85,9 @@ public class ContextServiceImplFactory {
 
 
     public static ContextServiceImpl getOrCreateDefaultSingleton() {
+        // Synchronization is left out here,
+        // it's rather expensive and there is no issue with multiple ContextServiceImpl being created in rare cases
+        // as there's no need to close/dispose it in a special manner
         if (defaultSingleton == null) {
             defaultSingleton = newDefaultContextService();
         }
@@ -94,9 +95,23 @@ public class ContextServiceImplFactory {
         return defaultSingleton;
     }
 
+    /**
+     * Looks up a ContextServiceImpl using the specified name.
+     * <code>[implicit]</code> is a special name that skips any JNDI lookups
+     * and immediately returns {@link ContextServiceImplFactory#getOrCreateDefaultSingleton()}.
+     * If the lookup fails (no name given or ContextService not bound) a warning is logged
+     * to inform the user about a misconfiguration,
+     * {@link ContextServiceImplFactory#getOrCreateDefaultSingleton()} is returned as a graceful fallback.
+     */
     public static ContextServiceImpl lookupOrDefault(String name) {
+        if ("[automatic]".equals(name)) {
+            return getOrCreateDefaultSingleton();
+        }
+
         if (name == null || name.trim().isEmpty()) {
-            LOGGER.info("ContextService name is unspecified, using default ContextService");
+            Logger.getInstance(LogCategory.OPENEJB, ContextServiceImplFactory.class)
+                    .warning("ContextService name is unspecified, falling back to default ContextService");
+
             return ContextServiceImplFactory.getOrCreateDefaultSingleton();
         }
 
@@ -110,7 +125,8 @@ public class ContextServiceImplFactory {
             }
             return (ContextServiceImpl) obj;
         } catch (final NamingException e) {
-            LOGGER.info("Can't look up ContextService \"" + name + "\", using default ContextService");
+            Logger.getInstance(LogCategory.OPENEJB, ContextServiceImplFactory.class)
+                    .warning("Can't look up ContextService \"" + name + "\", falling back to default ContextService");
 
             return ContextServiceImplFactory.getOrCreateDefaultSingleton();
         }

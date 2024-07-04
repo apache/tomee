@@ -808,7 +808,7 @@
     KeepAlive = 5 s
     Queue = 15
     ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
-    Context = Default Context Service
+    Context = [automatic]
     Lazy = true
   </ServiceProvider>
   <ServiceProvider id="Default Scheduled Executor Service"
@@ -818,7 +818,7 @@
                    class-name="org.apache.openejb.resource.thread.ManagedScheduledExecutorServiceImplFactory">
     Core = 5
     ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
-    Context = Default Context Service
+    Context = [automatic]
     Lazy = true
     SkipImplicitAttributes = true
   </ServiceProvider>

@@ -105,6 +105,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
             // Jakarta Concurrency §3.3.4.3
             add(jndi.getResourceEnvRefMap(), new ResourceEnvRef().name("java:comp/DefaultContextService").type(ContextService.class));
 
+
             try {
                 final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                 contextClassLoader.loadClass("org.apache.activemq.ActiveMQSslConnectionFactory");
