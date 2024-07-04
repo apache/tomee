@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.resource.PropertiesResourceProvider;
-import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -66,7 +65,6 @@ public class ConfigurationFactoryTest {
 
         SystemInstance.get().setProperty(ConfigurationFactory.VALIDATION_SKIP_PROPERTY, "false");
         SystemInstance.get().setProperty(DeploymentsResolver.SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY, "false");
-        SystemInstance.get().setComponent(Assembler.class, new Assembler());
         final ConfigurationFactory factory = new ConfigurationFactory();
         final WebApp webApp = new WebApp();
         // no real classes engaged so disable metadata (annotation) processing
@@ -75,7 +73,6 @@ public class ConfigurationFactoryTest {
         final WebAppInfo info = factory.configureApplication(webModule);
         assertEquals(moduleId, info.moduleId);
         SystemInstance.get().getProperties().remove("openejb.environment.default");
-        SystemInstance.get().removeComponent(Assembler.class);
     }
 
     @Test

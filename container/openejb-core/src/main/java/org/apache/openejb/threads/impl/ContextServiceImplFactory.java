@@ -18,8 +18,14 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +34,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 public class ContextServiceImplFactory {
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ContextServiceImplFactory.class);
+    private static ContextServiceImpl defaultSingleton;
 
     private final List<String> propagated = new ArrayList<>();
     private final List<String> cleared = new ArrayList<>();
@@ -76,6 +85,36 @@ public class ContextServiceImplFactory {
         return factory.create();
     }
 
+
+    public static ContextServiceImpl getOrCreateDefaultSingleton() {
+        if (defaultSingleton == null) {
+            defaultSingleton = newDefaultContextService();
+        }
+
+        return defaultSingleton;
+    }
+
+    public static ContextServiceImpl lookupOrDefault(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            LOGGER.info("ContextService name is unspecified, using default ContextService");
+            return ContextServiceImplFactory.getOrCreateDefaultSingleton();
+        }
+
+        try {
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final Context context = containerSystem.getJNDIContext();
+            final Object obj = context.lookup("openejb/Resource/" + name);
+            if (!(obj instanceof ContextServiceImpl)) {
+                throw new IllegalArgumentException("Resource with id " + context
+                        + " is not a ContextService, but is " + obj.getClass().getName());
+            }
+            return (ContextServiceImpl) obj;
+        } catch (final NamingException e) {
+            LOGGER.info("Can't look up ContextService \"" + name + "\", using default ContextService");
+
+            return ContextServiceImplFactory.getOrCreateDefaultSingleton();
+        }
+    }
 
     public ContextServiceImpl create() {
         // some complication around this is ContextServiceDefinition.ALL_REMAINING, which looks like it
