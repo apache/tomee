@@ -47,7 +47,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <version>3.8.2-brew</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends

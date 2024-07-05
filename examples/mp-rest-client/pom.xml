@@ -27,7 +27,7 @@
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
     <version.jakartaee-api>10.0-M2</version.jakartaee-api>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
-    <junit.version>4.13.2</junit.version>
+    <junit.version>3.8.2-brew</junit.version>
     <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>

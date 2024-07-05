@@ -29,7 +29,7 @@
     <maven-war-plugin.version>3.1.0</maven-war-plugin.version>
     <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
     <jakartaee-api.version>10.0-M2</jakartaee-api.version>
-    <junit.version>4.13.2</junit.version>
+    <junit.version>3.8.2-brew</junit.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
