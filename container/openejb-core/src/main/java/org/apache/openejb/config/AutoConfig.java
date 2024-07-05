@@ -55,6 +55,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LinkResolver;
@@ -2202,7 +2203,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
         }
         final String dataSourceId = resourceInfo.properties.getProperty("DataSource");
-        if (dataSourceId != null && dataSourceId.length() > 0) {
+        if (dataSourceId != null && !dataSourceId.isEmpty()) {
             final String newResourceId = getResourceId(beanName, dataSourceId, null, null);
             if (!dataSourceId.equals(newResourceId)) {
                 resourceInfo.properties.setProperty("DataSource", newResourceId);
@@ -2210,7 +2211,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         final String contextId = resourceInfo.properties.getProperty("Context");
-        if (contextId != null && contextId.length() > 0) {
+        if (contextId != null && !contextId.isEmpty() && !ContextServiceImplFactory.AUTOMATIC_SINGLETON.equals(contextId)) {
             final String newResourceId = getResourceId(beanName, contextId, null, null);
             if (!contextId.equals(newResourceId)) {
                 resourceInfo.properties.setProperty("Context", newResourceId);

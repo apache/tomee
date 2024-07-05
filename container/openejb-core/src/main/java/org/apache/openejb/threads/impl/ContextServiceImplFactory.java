@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 public class ContextServiceImplFactory {
+    public static final String AUTOMATIC_SINGLETON = "[automatic]";
+
     private static ContextServiceImpl defaultSingleton;
 
     private final List<String> propagated = new ArrayList<>();
@@ -104,7 +106,7 @@ public class ContextServiceImplFactory {
      * {@link ContextServiceImplFactory#getOrCreateDefaultSingleton()} is returned as a graceful fallback.
      */
     public static ContextServiceImpl lookupOrDefault(String name) {
-        if ("[automatic]".equals(name)) {
+        if (AUTOMATIC_SINGLETON.equals(name)) {
             return getOrCreateDefaultSingleton();
         }
 
