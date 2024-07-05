@@ -77,7 +77,7 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.juli</tomee.build.name>
-    <jmh.version>1.18</jmh.version>
+    <jmh.version>1.37</jmh.version>
   </properties>
 
   <build>
