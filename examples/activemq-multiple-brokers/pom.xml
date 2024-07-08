@@ -122,7 +122,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.8.0.Final</version>
+      <version>1.8.1.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
