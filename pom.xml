@@ -162,7 +162,7 @@
     <version.commons-collections>3.2.2</version.commons-collections>
     <version.commons-dbcp2>2.11.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
-    <version.commons-io>2.15.0</version.commons-io>
+    <version.commons-io>2.16.1</version.commons-io>
     <version.commons-jcs-cache>2.1</version.commons-jcs-cache>
     <version.commons-lang3>3.14.0</version.commons-lang3>
     <version.commons-net>3.9.0</version.commons-net>
