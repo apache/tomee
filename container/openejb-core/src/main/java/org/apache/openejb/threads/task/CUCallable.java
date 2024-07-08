@@ -25,7 +25,7 @@ public class CUCallable<T> extends CUTask<T> implements Callable<T> {
     private final Callable<? extends T> delegate;
 
     public CUCallable(final Callable<? extends T> task) {
-        super(task, ContextServiceImplFactory.newDefaultContextService());
+        super(task, ContextServiceImplFactory.getOrCreateDefaultSingleton());
         delegate = task;
     }
 
