@@ -433,7 +433,7 @@
       <id>glassfish-embedded</id>
       <properties>
         <version.glassfish>3.1.2.2</version.glassfish>
-        <version.arquillian.glassfish.embedded>1.0.0.CR4</version.arquillian.glassfish.embedded>
+        <version.arquillian.glassfish.embedded>1.0.2</version.arquillian.glassfish.embedded>
         <version.mockito>1.9.0</version.mockito>
         <version.maven.embedded.glassfish.plugin>3.1.1</version.maven.embedded.glassfish.plugin>
         <version.maven.war.plugin>2.1.1</version.maven.war.plugin>
