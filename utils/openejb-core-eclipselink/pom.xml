@@ -64,6 +64,14 @@
           <groupId>org.glassfish</groupId>
           <artifactId>jakarta.json</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-core</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
