@@ -103,7 +103,7 @@
     <dependency>
       <groupId>com.sun.istack</groupId>
       <artifactId>istack-commons-runtime</artifactId>
-      <version>4.1.2</version>
+      <version>4.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
