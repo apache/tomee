@@ -27,7 +27,7 @@
     <name>TomEE :: TCK :: Concurrency Signature Tests</name>
 
     <properties>
-        <jakarta.concurrent.version>3.0.3</jakarta.concurrent.version>
+        <jakarta.concurrent.version>3.1.1</jakarta.concurrent.version>
     </properties>
 
     <dependencies>
