@@ -66,13 +66,6 @@ public class MPFaultToleranceCDIExtension implements Extension {
      */
     <X> void addFaultToleranceInterceptorBinding(@Observes final ProcessAnnotatedType<X> pat, final BeanManager bm) {
 
-        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
-
-        if (mpScan.equals("none")) {
-            SystemInstance.get().setProperty(MPFaultToleranceCDIExtension.class.getName() + ".active", "false");
-            return;
-        }
-
         // check fault tolerance annotations on classes
         if (hasFaultToleranceAnnotations(pat.getAnnotatedType())) {
             pat.configureAnnotatedType().add(FaultToleranceBinding.Literal.INSTANCE);
