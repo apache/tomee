@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -47,7 +48,9 @@ public class OptimizedLoaderService implements LoaderService {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), OptimizedLoaderService.class);
 
-    public static final ThreadLocal<Collection<String>> ADDITIONAL_EXTENSIONS = new ThreadLocal<Collection<String>>();
+    public static final ThreadLocal<Map<String, String>> EXTENSION_REPLACEMENTS = new ThreadLocal<>();
+
+    public static final ThreadLocal<Collection<String>> ADDITIONAL_EXTENSIONS = new ThreadLocal<>();
 
     private final LoaderService loaderService;
     private final Properties config;
@@ -85,7 +88,17 @@ public class OptimizedLoaderService implements LoaderService {
 
     protected List<? extends Extension> loadExtensions(final ClassLoader classLoader) {
         final List<Extension> list = loaderService.load(Extension.class, classLoader);
-        final Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
+        Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
+
+        Map<String, String> replacements = EXTENSION_REPLACEMENTS.get();
+        if (replacements != null) {
+            if (additional == null) {
+                additional = new ArrayList<>();
+            }
+
+            applyExtensionReplacements(replacements, list, additional);
+        }
+
         if (additional != null) {
             for (final String name : additional) {
                 try {
@@ -192,6 +205,22 @@ public class OptimizedLoaderService implements LoaderService {
             default:
         }
         return false;
+    }
+
+    private void applyExtensionReplacements(Map<String, String> replacements, List<Extension> extensions, Collection<String> additional) {
+        Iterator<Extension> iterator = extensions.iterator();
+        while (iterator.hasNext()) {
+            Extension current = iterator.next();
+
+            String currentName = current.getClass().getName();
+            String replacementName = replacements.get(current.getClass().getName());
+            if (replacementName != null) {
+                log.info("Replacing portable CDI Extension " + currentName + " with " + replacementName);
+
+                iterator.remove();
+                additional.add(replacementName);
+            }
+        }
     }
 
     private List<? extends OpenWebBeansPlugin> loadWebBeansPlugins(final ClassLoader loader) {
