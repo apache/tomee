@@ -228,7 +228,7 @@
     <version.mojarra>4.0.0</version.mojarra> <!-- Downgrade on purpose, see TOMEE-4355: https://github.com/eclipse-ee4j/mojarra/issues/5457 -->
     <!-- org.hibernate -->
     <version.hibernate.orm>6.4.3.Final</version.hibernate.orm>
-    <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
+    <version.hibernate.validator>8.0.1.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
     <version.wss4j>3.0.3</version.wss4j>
