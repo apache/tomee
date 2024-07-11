@@ -20,10 +20,15 @@ import com.sun.faces.cdi.CdiExtension;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.inject.spi.BeanManager;
+import org.apache.openejb.util.reflection.Reflections;
+import org.apache.webbeans.container.BeanManagerImpl;
 
 public class OwbCompatibleCdiExtension extends CdiExtension {
     @Override
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager beanManager) {
-        super.afterBeanDiscovery(new MojarraAfterBeanDiscoveryDecorator(afterBeanDiscovery), beanManager);
+        // BeanManager is of type InjectableBeanManager, it does not expose the BeanManagerImpl so just use reflection
+        BeanManagerImpl owbBeanManager = (BeanManagerImpl) Reflections.get(beanManager, "bm");
+
+        super.afterBeanDiscovery(new MojarraAfterBeanDiscoveryDecorator(afterBeanDiscovery, owbBeanManager.getWebBeansContext()), beanManager);
     }
 }

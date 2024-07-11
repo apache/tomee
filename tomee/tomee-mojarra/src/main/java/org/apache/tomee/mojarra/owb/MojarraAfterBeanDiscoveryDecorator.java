@@ -29,9 +29,9 @@ public class MojarraAfterBeanDiscoveryDecorator implements AfterBeanDiscovery {
     private final AfterBeanDiscovery delegate;
     private final WebBeansContext webBeansContext;
 
-    public MojarraAfterBeanDiscoveryDecorator(final AfterBeanDiscovery delegate) {
+    public MojarraAfterBeanDiscoveryDecorator(final AfterBeanDiscovery delegate, WebBeansContext webBeansContext) {
         this.delegate = delegate;
-        this.webBeansContext = WebBeansContext.currentInstance();
+        this.webBeansContext = webBeansContext;
     }
 
     @Override
