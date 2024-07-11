@@ -17,71 +17,13 @@
 package org.apache.tomee.mojarra.owb;
 
 import com.sun.faces.cdi.CdiExtension;
-import jakarta.enterprise.context.spi.Context;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
-import jakarta.enterprise.inject.spi.AnnotatedType;
-import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.ObserverMethod;
-import jakarta.enterprise.inject.spi.configurator.BeanConfigurator;
-import jakarta.enterprise.inject.spi.configurator.ObserverMethodConfigurator;
-import org.apache.webbeans.config.WebBeansContext;
 
 public class OwbCompatibleCdiExtension extends CdiExtension {
-
     @Override
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager beanManager) {
         super.afterBeanDiscovery(new MojarraAfterBeanDiscoveryDecorator(afterBeanDiscovery), beanManager);
-    }
-
-    public static class MojarraAfterBeanDiscoveryDecorator implements AfterBeanDiscovery {
-        private final AfterBeanDiscovery delegate;
-        private final WebBeansContext webBeansContext;
-
-        public MojarraAfterBeanDiscoveryDecorator(final AfterBeanDiscovery delegate) {
-            this.delegate = delegate;
-            this.webBeansContext = WebBeansContext.currentInstance();
-        }
-
-        @Override
-        public void addDefinitionError(Throwable t) {
-            delegate.addDefinitionError(t);
-        }
-
-        @Override
-        public void addBean(Bean<?> bean) {
-            delegate.addBean(new MojarraPassivationCapableThirdPartyBeanImpl<>(webBeansContext, bean));
-        }
-
-        @Override
-        public <T> BeanConfigurator<T> addBean() {
-            return delegate.addBean();
-        }
-
-        @Override
-        public void addObserverMethod(ObserverMethod<?> observerMethod) {
-            delegate.addObserverMethod(observerMethod);
-        }
-
-        @Override
-        public <T> ObserverMethodConfigurator<T> addObserverMethod() {
-            return delegate.addObserverMethod();
-        }
-
-        @Override
-        public void addContext(Context context) {
-            delegate.addContext(context);
-        }
-
-        @Override
-        public <T> AnnotatedType<T> getAnnotatedType(Class<T> type, String id) {
-            return delegate.getAnnotatedType(type, id);
-        }
-
-        @Override
-        public <T> Iterable<AnnotatedType<T>> getAnnotatedTypes(Class<T> type) {
-            return delegate.getAnnotatedTypes(type);
-        }
     }
 }
