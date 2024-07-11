@@ -19,14 +19,12 @@
 package org.apache.openejb.jee.oejb3;
 
 import org.apache.openejb.jee.NamedModule;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.EnterpriseBean;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;

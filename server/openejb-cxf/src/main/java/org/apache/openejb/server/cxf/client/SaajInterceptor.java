@@ -18,7 +18,6 @@
 package org.apache.openejb.server.cxf.client;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;

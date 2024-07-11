@@ -18,8 +18,6 @@ package org.apache.tomee.microprofile.tck.opentracing;
 
 import io.opentracing.mock.MockTracer;
 import io.opentracing.util.ThreadLocalScopeManager;
-import jakarta.ws.rs.ext.Providers;
-import org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocolDeploymentPackager;

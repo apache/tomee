@@ -26,8 +26,6 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * web-common_3_0.xsd

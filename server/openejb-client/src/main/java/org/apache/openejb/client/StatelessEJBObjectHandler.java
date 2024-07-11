@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class StatelessEJBObjectHandler extends EJBObjectHandler {

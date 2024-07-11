@@ -26,10 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.jws.WebService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.ws.BindingType;
 import jakarta.xml.ws.WebServiceRef;

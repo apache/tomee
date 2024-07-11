@@ -22,7 +22,6 @@ import org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;

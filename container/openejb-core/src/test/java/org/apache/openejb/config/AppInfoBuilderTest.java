@@ -22,7 +22,6 @@ import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.core.mdb.MdbContainer;
 import org.apache.openejb.core.mdb.MdbContainerFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SessionBean;

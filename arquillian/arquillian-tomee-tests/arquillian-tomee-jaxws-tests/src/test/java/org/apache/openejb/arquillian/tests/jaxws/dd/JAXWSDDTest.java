@@ -20,7 +20,6 @@ package org.apache.openejb.arquillian.tests.jaxws.dd;
 import org.apache.openejb.arquillian.tests.jaxws.Hello;
 import org.apache.openejb.arquillian.tests.jaxws.HelloWS;
 import org.apache.ziplock.IO;
-import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;

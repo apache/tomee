@@ -21,7 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
+
 import jakarta.transaction.TransactionSynchronizationRegistry;
 
 import java.util.concurrent.TimeUnit;

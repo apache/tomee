@@ -24,7 +24,6 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorChain;
-import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.interceptor.ServiceInvokerInterceptor;
 import org.apache.cxf.jaxws.handler.logical.LogicalHandlerInInterceptor;
 import org.apache.cxf.jaxws.handler.soap.SOAPHandlerInterceptor;

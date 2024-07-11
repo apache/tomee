@@ -34,7 +34,6 @@ import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.tomee.server.composer.Archive;
 import org.apache.tomee.server.composer.TomEE;
 import org.eclipse.microprofile.auth.LoginConfig;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;

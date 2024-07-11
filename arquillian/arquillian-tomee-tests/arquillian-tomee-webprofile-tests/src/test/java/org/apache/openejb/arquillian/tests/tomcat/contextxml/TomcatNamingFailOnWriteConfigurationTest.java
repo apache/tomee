@@ -18,8 +18,6 @@
 package org.apache.openejb.arquillian.tests.tomcat.contextxml;
 
 import org.apache.openejb.arquillian.tests.Runner;
-import org.apache.openejb.arquillian.tests.datasource.definition.DataSourceBean;
-import org.apache.openejb.arquillian.tests.datasource.definition.DataSourcePojo;
 import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;

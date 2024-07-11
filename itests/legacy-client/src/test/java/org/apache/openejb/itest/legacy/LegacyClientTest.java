@@ -31,11 +31,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import jakarta.ejb.EJBException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;

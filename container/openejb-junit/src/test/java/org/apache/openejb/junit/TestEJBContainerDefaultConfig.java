@@ -17,19 +17,13 @@
 package org.apache.openejb.junit;
 
 import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.junit.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit.jee.EJBContainerRule;
 import org.apache.openejb.junit.jee.config.Properties;
 import org.apache.openejb.junit.jee.config.Property;
 import org.junit.Rule;
 import org.junit.Test;
 
-import jakarta.ejb.EJB;
-import jakarta.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @Properties({
     @Property(key = DeploymentFilterable.CLASSPATH_EXCLUDE, value = "jar:.*"),

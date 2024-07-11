@@ -19,7 +19,6 @@ package org.apache.openejb.client;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 public class BlacklistClassResolverTest {
     @Test
     public void isBlacklisted() throws Exception {

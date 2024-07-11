@@ -28,7 +28,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.openejb.loader.IO;

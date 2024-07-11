@@ -21,7 +21,6 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

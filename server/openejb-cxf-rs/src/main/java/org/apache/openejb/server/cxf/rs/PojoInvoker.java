@@ -19,14 +19,8 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.InvalidateReferenceException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.logging.Level;
 
 public class PojoInvoker extends JAXRSInvoker {
     protected Object performInvocation(final Exchange exchange, final Object serviceObject,

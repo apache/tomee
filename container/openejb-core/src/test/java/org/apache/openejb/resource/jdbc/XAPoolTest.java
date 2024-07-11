@@ -25,14 +25,12 @@ import org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
-import org.hsqldb.jdbc.pool.JDBCXAConnectionWrapper;
 import org.hsqldb.jdbc.pool.JDBCXADataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.annotation.Resource;
 import javax.sql.DataSource;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;

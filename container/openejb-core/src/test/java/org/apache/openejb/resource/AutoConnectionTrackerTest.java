@@ -33,7 +33,6 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;

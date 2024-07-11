@@ -27,7 +27,6 @@ import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Properties;
 

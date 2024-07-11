@@ -26,9 +26,7 @@ import org.apache.openejb.testing.RandomPort;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.tomee.embedded.event.TomEEEmbeddedApplicationRunnerInjection;
 import org.apache.tomee.embedded.junit.jupiter.RunWithTomEEEmbedded;
-import org.apache.tomee.embedded.junit.jupiter.TomEEEmbeddedExtension;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.Closeable;
 import java.io.IOException;

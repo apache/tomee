@@ -18,8 +18,6 @@ package org.apache.openejb.sxc;
 
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Application$JAXB;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.WebApp$JAXB;
 import org.apache.openejb.loader.IO;
 
 import javax.xml.transform.stream.StreamResult;

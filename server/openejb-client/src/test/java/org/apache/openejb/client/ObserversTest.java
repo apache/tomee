@@ -19,7 +19,6 @@ package org.apache.openejb.client;
 import org.apache.openejb.client.event.Observes;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;

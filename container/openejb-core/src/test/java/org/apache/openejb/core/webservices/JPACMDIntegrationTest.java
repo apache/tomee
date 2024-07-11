@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.core.webservices;
 
-import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
-import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.ContainerTransaction;
@@ -36,13 +34,11 @@ import org.apache.openejb.jee.jpa.NamedQuery;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import jakarta.annotation.Resource;
 import jakarta.ejb.CreateException;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.EntityContext;
@@ -50,18 +46,13 @@ import jakarta.ejb.LocalHome;
 import jakarta.ejb.RemoteHome;
 import jakarta.ejb.RemoveException;
 import jakarta.ejb.SessionContext;
-import javax.naming.Context;
-import jakarta.persistence.Entity;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Properties;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
 public class JPACMDIntegrationTest {

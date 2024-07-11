@@ -20,8 +20,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.AnnotationUtils;
 
-import java.util.Optional;
-
 public abstract class ApplicationComposerExtensionBase {
 
     boolean isPerClassLifecycle(final ExtensionContext context) {

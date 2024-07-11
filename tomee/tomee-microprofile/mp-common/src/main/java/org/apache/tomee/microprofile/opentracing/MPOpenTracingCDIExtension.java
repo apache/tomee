@@ -21,7 +21,6 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
 import jakarta.enterprise.inject.spi.Extension;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.tomee.microprofile.faulttolerance.MPFaultToleranceCDIExtension;
 
 public class MPOpenTracingCDIExtension implements Extension {
 

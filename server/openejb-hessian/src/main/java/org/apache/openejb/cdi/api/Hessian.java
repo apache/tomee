@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.cdi.api;
 
-import com.caucho.hessian.io.SerializerFactory;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

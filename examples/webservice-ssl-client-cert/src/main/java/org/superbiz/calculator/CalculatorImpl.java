@@ -17,7 +17,6 @@
 package org.superbiz.calculator;
 
 import jakarta.annotation.security.DeclareRoles;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.jws.WebService;
 

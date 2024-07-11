@@ -49,9 +49,7 @@ import org.apache.openejb.server.cxf.transport.event.BusCreated;
 import org.apache.openejb.util.PropertiesHelper;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.intercept.DefaultInterceptorHandler;
-import org.apache.webbeans.proxy.InterceptorHandler;
 import org.apache.webbeans.proxy.OwbInterceptorProxy;
-import org.apache.webbeans.util.ExceptionUtil;
 
 import javax.management.MBeanServer;
 import java.lang.reflect.Field;

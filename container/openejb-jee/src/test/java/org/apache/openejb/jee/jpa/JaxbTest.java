@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 
-import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 
 /**

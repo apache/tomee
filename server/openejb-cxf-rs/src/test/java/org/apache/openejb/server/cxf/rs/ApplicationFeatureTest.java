@@ -33,7 +33,6 @@ import jakarta.ws.rs.core.Feature;
 import jakarta.ws.rs.core.FeatureContext;
 import jakarta.ws.rs.core.Response;
 
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.EnableServices;

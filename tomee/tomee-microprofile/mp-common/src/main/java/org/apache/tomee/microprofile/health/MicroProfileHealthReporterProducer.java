@@ -19,7 +19,6 @@ package org.apache.tomee.microprofile.health;
 import io.smallrye.health.ResponseProvider;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Produces;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.health.HealthCheckResponse;

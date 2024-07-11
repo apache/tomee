@@ -23,7 +23,6 @@ import org.apache.cxf.jaxws.context.WebServiceContextImpl;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.MessageContentsList;
-import org.apache.cxf.service.invoker.Factory;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;

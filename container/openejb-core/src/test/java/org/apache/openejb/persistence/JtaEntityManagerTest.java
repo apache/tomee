@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.persistence;
 
-import org.apache.openejb.assembler.classic.ComparableValidationConfig;
 import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.junit.Test;
@@ -25,7 +24,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.spi.PersistenceProvider;
 import jakarta.persistence.spi.PersistenceUnitInfo;
 import jakarta.persistence.spi.ProviderUtil;
-import jakarta.validation.ValidatorFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

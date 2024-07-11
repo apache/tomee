@@ -18,9 +18,6 @@ package org.apache.tomee.microprofile.tck.opentracing;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.spi.JsonbProvider;
-import org.apache.johnzon.core.JsonProviderImpl;
-import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.johnzon.mapper.Mapper;
 import org.apache.johnzon.mapper.MapperBuilder;
 import org.eclipse.microprofile.opentracing.tck.tracer.TestSpan;

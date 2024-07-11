@@ -27,7 +27,6 @@ import org.apache.openejb.core.transaction.EjbUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.threads.task.CUTask;
 
 import jakarta.ejb.EJBContext;
 import jakarta.ejb.EJBException;

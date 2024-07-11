@@ -16,10 +16,8 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -38,7 +36,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.SecurityContext;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;

@@ -24,7 +24,6 @@ import org.apache.openejb.itest.failover.ejb.Calculator;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Zips;
-import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.server.control.StandaloneServer;
 import org.junit.Assert;
 import org.junit.Test;

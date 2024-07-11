@@ -20,13 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import org.apache.openejb.arquillian.tests.TestRun;
-import org.apache.openejb.arquillian.tests.TestSetup;
-import org.apache.openejb.arquillian.tests.resenventry.Blue;
-import org.apache.openejb.arquillian.tests.resenventry.Green;
-import org.apache.openejb.arquillian.tests.resenventry.Orange;
-import org.apache.openejb.arquillian.tests.resenventry.Purple;
-import org.apache.openejb.arquillian.tests.resenventry.Red;
+
 import org.apache.ziplock.WebModule;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

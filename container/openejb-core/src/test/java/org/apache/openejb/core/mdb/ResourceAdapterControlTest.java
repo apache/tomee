@@ -20,8 +20,6 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Classes;

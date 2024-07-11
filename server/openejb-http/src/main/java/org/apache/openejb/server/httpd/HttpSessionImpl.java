@@ -22,14 +22,11 @@ import org.apache.openejb.server.httpd.session.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpSessionContext;
 import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
 

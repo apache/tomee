@@ -24,7 +24,6 @@ import jakarta.inject.Inject;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
 import jakarta.jms.Topic;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
 @Lock(LockType.READ)

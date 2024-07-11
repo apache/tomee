@@ -17,17 +17,12 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testing.RandomPort;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,7 +34,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 

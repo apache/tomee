@@ -23,7 +23,6 @@ import jakarta.enterprise.inject.spi.AnnotatedMethod;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
-import org.apache.openejb.loader.SystemInstance;
 import org.eclipse.microprofile.faulttolerance.Asynchronous;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
@@ -33,7 +32,6 @@ import org.eclipse.microprofile.faulttolerance.Timeout;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This class is more a hack than an actual peace of integration code for SmallRye Fault Tolerance. It addresses an issue

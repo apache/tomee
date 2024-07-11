@@ -21,7 +21,6 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.RandomPort;
 import org.apache.openejb.testing.SimpleLog;

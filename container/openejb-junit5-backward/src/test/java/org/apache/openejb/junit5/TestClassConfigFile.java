@@ -21,7 +21,6 @@ import org.apache.openejb.junit.ContextConfig;
 import org.apache.openejb.junit.TestResource;
 import org.apache.openejb.junit.TestResourceTypes;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Hashtable;
 

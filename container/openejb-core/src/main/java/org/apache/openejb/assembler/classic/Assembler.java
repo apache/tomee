@@ -154,7 +154,6 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.logger.JULLoggerFactory;
-import org.apache.webbeans.service.ClassLoaderProxyService;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;

@@ -19,7 +19,6 @@ package org.apache.openejb.server.cxf.config;
 import org.apache.xbean.recipe.ExecutionContext;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Recipe;
-import org.apache.xbean.recipe.RecipeHelper;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -18,7 +18,6 @@ package org.apache.tomee.microprofile.health;
 
 import io.smallrye.health.SmallRyeHealth;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;

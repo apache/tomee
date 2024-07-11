@@ -17,15 +17,10 @@
 package org.apache.openejb.server.discovery;
 
 import junit.framework.TestCase;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.server.DiscoveryRegistry;
 import org.apache.openejb.util.Join;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -34,7 +29,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.ErrorManager;
 import java.util.logging.Filter;
 import java.util.logging.Formatter;

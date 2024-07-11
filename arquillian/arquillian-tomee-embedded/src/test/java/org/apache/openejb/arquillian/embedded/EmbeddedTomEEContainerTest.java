@@ -19,7 +19,6 @@ package org.apache.openejb.arquillian.embedded;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.loader.SystemInstance;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -32,7 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.ejb.EJB;
-import javax.naming.OperationNotSupportedException;
 
 import java.net.URL;
 

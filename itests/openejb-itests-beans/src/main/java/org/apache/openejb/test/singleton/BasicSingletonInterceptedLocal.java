@@ -17,7 +17,6 @@
 package org.apache.openejb.test.singleton;
 
 import java.util.Map;
-import java.util.List;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
