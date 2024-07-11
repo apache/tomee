@@ -41,6 +41,8 @@ public class TomEEMojarraService implements Service {
             OptimizedLoaderService.EXTENSION_REPLACEMENTS.set(replacements);
         }
 
+        // Replace Mojarra's CDI extension because it registers beans OWB can't proxy since mojarra 4.0.1
+        // See https://github.com/eclipse-ee4j/mojarra/issues/5457
         replacements.put(CdiExtension.class.getName(), OwbCompatibleCdiExtension.class.getName());
     }
 }

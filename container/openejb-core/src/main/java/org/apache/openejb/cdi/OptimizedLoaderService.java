@@ -22,6 +22,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.activemq.jms2.cdi.JMS2CDIExtension;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.service.DefaultLoaderService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.plugins.OpenWebBeansPlugin;
@@ -54,6 +55,8 @@ public class OptimizedLoaderService implements LoaderService {
 
     private final LoaderService loaderService;
     private final Properties config;
+
+    private WebBeansContext webBeansContext;
 
     public OptimizedLoaderService(final Properties appConfig) {
         this(
@@ -102,7 +105,16 @@ public class OptimizedLoaderService implements LoaderService {
         if (additional != null) {
             for (final String name : additional) {
                 try {
-                    list.add(Extension.class.cast(classLoader.loadClass(name).newInstance()));
+                    Class<? extends Extension> extensionClazz = classLoader.loadClass(name).asSubclass(Extension.class);
+                    Extension instance;
+
+                    try {
+                        instance = extensionClazz.getConstructor(WebBeansContext.class).newInstance(webBeansContext);
+                    } catch (final Exception ignored) {
+                        instance = extensionClazz.getConstructor().newInstance();
+                    }
+
+                    list.add(instance);
                 } catch (final Exception ignored) {
                     // no-op
                 }
@@ -339,5 +351,9 @@ public class OptimizedLoaderService implements LoaderService {
                 foundServiceClasses.clear();
             }
         }
+    }
+
+    public void setWebBeansContext(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
     }
 }

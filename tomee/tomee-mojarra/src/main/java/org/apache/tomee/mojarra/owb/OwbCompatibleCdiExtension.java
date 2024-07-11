@@ -20,15 +20,19 @@ import com.sun.faces.cdi.CdiExtension;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.inject.spi.BeanManager;
-import org.apache.openejb.util.reflection.Reflections;
-import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.config.WebBeansContext;
 
 public class OwbCompatibleCdiExtension extends CdiExtension {
+    private final WebBeansContext webBeansContext;
+
+    // no-arg constructor is omitted on purpose, WebBeansContext is injected by OptimizedLoaderService
+    // when replacing the Mojarra Extension with this one
+    public OwbCompatibleCdiExtension(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
+    }
+
     @Override
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager beanManager) {
-        // BeanManager is of type InjectableBeanManager, it does not expose the BeanManagerImpl so just use reflection
-        BeanManagerImpl owbBeanManager = (BeanManagerImpl) Reflections.get(beanManager, "bm");
-
-        super.afterBeanDiscovery(new MojarraAfterBeanDiscoveryDecorator(afterBeanDiscovery, owbBeanManager.getWebBeansContext()), beanManager);
+        super.afterBeanDiscovery(new MojarraAfterBeanDiscoveryDecorator(afterBeanDiscovery, webBeansContext), beanManager);
     }
 }
