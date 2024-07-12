@@ -18,31 +18,18 @@ package org.apache.tomee.mojarra;
 
 import com.sun.faces.cdi.CdiExtension;
 import org.apache.openejb.cdi.OptimizedLoaderService;
-import org.apache.openejb.config.event.BeforeDeploymentEvent;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.observer.Observes;
 import org.apache.openejb.spi.Service;
 import org.apache.tomee.mojarra.owb.OwbCompatibleCdiExtension;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
+// This is just a workaround until we have a permanent solution
+// Remove this optional service in TomcatLoader again when deleting this service
 public class TomEEMojarraService implements Service {
     @Override
     public void init(Properties props) throws Exception {
-        SystemInstance.get().addObserver(this);
-    }
-
-    public void beforeDeployment(@Observes BeforeDeploymentEvent event) {
-        Map<String, String> replacements = OptimizedLoaderService.EXTENSION_REPLACEMENTS.get();
-        if (replacements == null) {
-            replacements = new HashMap<>();
-            OptimizedLoaderService.EXTENSION_REPLACEMENTS.set(replacements);
-        }
-
         // Replace Mojarra's CDI extension because it registers beans OWB can't proxy since mojarra 4.0.1
         // See https://github.com/eclipse-ee4j/mojarra/issues/5457
-        replacements.put(CdiExtension.class.getName(), OwbCompatibleCdiExtension.class.getName());
+        OptimizedLoaderService.EXTENSION_REPLACEMENTS.put(CdiExtension.class.getName(), OwbCompatibleCdiExtension.class.getName());
     }
 }

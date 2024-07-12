@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class OptimizedLoaderService implements LoaderService {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), OptimizedLoaderService.class);
 
-    public static final ThreadLocal<Map<String, String>> EXTENSION_REPLACEMENTS = new ThreadLocal<>();
+    public static final Map<String, String> EXTENSION_REPLACEMENTS = new HashMap<>();
 
     public static final ThreadLocal<Collection<String>> ADDITIONAL_EXTENSIONS = new ThreadLocal<>();
 
@@ -93,13 +94,12 @@ public class OptimizedLoaderService implements LoaderService {
         final List<Extension> list = loaderService.load(Extension.class, classLoader);
         Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
 
-        Map<String, String> replacements = EXTENSION_REPLACEMENTS.get();
-        if (replacements != null) {
+        if (!EXTENSION_REPLACEMENTS.isEmpty()) {
             if (additional == null) {
                 additional = new ArrayList<>();
             }
 
-            applyExtensionReplacements(replacements, list, additional);
+            applyExtensionReplacements(list, additional);
         }
 
         if (additional != null) {
@@ -219,13 +219,13 @@ public class OptimizedLoaderService implements LoaderService {
         return false;
     }
 
-    private void applyExtensionReplacements(Map<String, String> replacements, List<Extension> extensions, Collection<String> additional) {
+    private void applyExtensionReplacements(List<Extension> extensions, Collection<String> additional) {
         Iterator<Extension> iterator = extensions.iterator();
         while (iterator.hasNext()) {
             Extension current = iterator.next();
 
             String currentName = current.getClass().getName();
-            String replacementName = replacements.get(current.getClass().getName());
+            String replacementName = EXTENSION_REPLACEMENTS.get(current.getClass().getName());
             if (replacementName != null) {
                 log.info("Replacing portable CDI Extension " + currentName + " with " + replacementName);
 

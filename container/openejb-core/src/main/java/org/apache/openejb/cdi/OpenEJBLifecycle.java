@@ -236,7 +236,6 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             // cleanup threadlocal used to enrich cdi context manually
             OptimizedLoaderService.ADDITIONAL_EXTENSIONS.remove();
-            OptimizedLoaderService.EXTENSION_REPLACEMENTS.remove();
         }
 
         logger.info("OpenWebBeans Container has started, it took {0} ms.", Long.toString(System.currentTimeMillis() - begin));
