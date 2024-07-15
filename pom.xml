@@ -150,7 +150,7 @@
     <version.nashorn>15.4</version.nashorn>
 
     <!-- Logging frameworks -->
-    <version.slf4j>2.0.12</version.slf4j>
+    <version.slf4j>1.7.22.jbossorg-1</version.slf4j>
     <version.log4j>1.2.17</version.log4j>
     <version.log4j2>2.23.1</version.log4j2>
     <version.commons-logging>1.3.2</version.commons-logging>

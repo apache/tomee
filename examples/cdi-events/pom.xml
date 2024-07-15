@@ -76,13 +76,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.6</version>
+      <version>1.7.22.jbossorg-1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.6</version>
+      <version>1.7.22.jbossorg-1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

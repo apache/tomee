@@ -2336,7 +2336,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>2.0.12</version>
+      <version>1.7.22.jbossorg-1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2347,7 +2347,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
-      <version>2.0.12</version>
+      <version>1.7.22.jbossorg-1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
