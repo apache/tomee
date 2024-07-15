@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.mojarra;
 
-import com.sun.faces.cdi.CdiExtension;
 import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.spi.Service;
 import org.apache.tomee.mojarra.owb.OwbCompatibleCdiExtension;
@@ -28,8 +27,13 @@ import java.util.Properties;
 public class TomEEMojarraService implements Service {
     @Override
     public void init(Properties props) throws Exception {
-        // Replace Mojarra's CDI extension because it registers beans OWB can't proxy since mojarra 4.0.1
-        // See https://github.com/eclipse-ee4j/mojarra/issues/5457
-        OptimizedLoaderService.EXTENSION_REPLACEMENTS.put(CdiExtension.class.getName(), OwbCompatibleCdiExtension.class.getName());
+        try {
+            final Class<?> extension = Class.forName("com.sun.faces.cdi.CdiExtension");
+            // Replace Mojarra's CDI extension because it registers beans OWB can't proxy since mojarra 4.0.1
+            // See https://github.com/eclipse-ee4j/mojarra/issues/5457
+            OptimizedLoaderService.EXTENSION_REPLACEMENTS.put(extension.getName(), OwbCompatibleCdiExtension.class.getName());
+        } catch (ClassNotFoundException ignored) {
+
+        }
     }
 }
