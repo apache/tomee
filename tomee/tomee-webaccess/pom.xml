@@ -171,7 +171,7 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>underscore.string</artifactId>
-      <version>2.3.0</version>
+      <version>3.2.1-1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
