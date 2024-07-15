@@ -43,7 +43,7 @@ public final class PropertyPlaceHolderHelper {
     private static final StrSubstitutor VALUE_DELIMITER_SUBSTITUTOR = new StrSubstitutor(RESOLVER_TO_NULL_IF_MISSING);
 
     static {
-        VALUE_DELIMITER = JavaSecurityManagers.getSystemProperty("openejb.placehodler.delimiter", ":-"); // default one of [lang3]
+        VALUE_DELIMITER = JavaSecurityManagers.getSystemProperty("openejb.placeholder.delimiter", ":-"); // default one of [lang3]
 
         DEFAULT_SUBSTITUTOR.setEnableSubstitutionInVariables(true);
         DEFAULT_SUBSTITUTOR.setValueDelimiter(VALUE_DELIMITER);
