@@ -22,6 +22,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.activemq.jms2.cdi.JMS2CDIExtension;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.service.DefaultLoaderService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.plugins.OpenWebBeansPlugin;
@@ -36,8 +37,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -47,10 +50,14 @@ public class OptimizedLoaderService implements LoaderService {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), OptimizedLoaderService.class);
 
-    public static final ThreadLocal<Collection<String>> ADDITIONAL_EXTENSIONS = new ThreadLocal<Collection<String>>();
+    public static final Map<String, String> EXTENSION_REPLACEMENTS = new HashMap<>();
+
+    public static final ThreadLocal<Collection<String>> ADDITIONAL_EXTENSIONS = new ThreadLocal<>();
 
     private final LoaderService loaderService;
     private final Properties config;
+
+    private WebBeansContext webBeansContext;
 
     public OptimizedLoaderService(final Properties appConfig) {
         this(
@@ -85,11 +92,29 @@ public class OptimizedLoaderService implements LoaderService {
 
     protected List<? extends Extension> loadExtensions(final ClassLoader classLoader) {
         final List<Extension> list = loaderService.load(Extension.class, classLoader);
-        final Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
+        Collection<String> additional = ADDITIONAL_EXTENSIONS.get();
+
+        if (!EXTENSION_REPLACEMENTS.isEmpty()) {
+            if (additional == null) {
+                additional = new ArrayList<>();
+            }
+
+            applyExtensionReplacements(list, additional);
+        }
+
         if (additional != null) {
             for (final String name : additional) {
                 try {
-                    list.add(Extension.class.cast(classLoader.loadClass(name).newInstance()));
+                    Class<? extends Extension> extensionClazz = classLoader.loadClass(name).asSubclass(Extension.class);
+                    Extension instance;
+
+                    try {
+                        instance = extensionClazz.getConstructor(WebBeansContext.class).newInstance(webBeansContext);
+                    } catch (final Exception ignored) {
+                        instance = extensionClazz.getConstructor().newInstance();
+                    }
+
+                    list.add(instance);
                 } catch (final Exception ignored) {
                     // no-op
                 }
@@ -192,6 +217,22 @@ public class OptimizedLoaderService implements LoaderService {
             default:
         }
         return false;
+    }
+
+    private void applyExtensionReplacements(List<Extension> extensions, Collection<String> additional) {
+        Iterator<Extension> iterator = extensions.iterator();
+        while (iterator.hasNext()) {
+            Extension current = iterator.next();
+
+            String currentName = current.getClass().getName();
+            String replacementName = EXTENSION_REPLACEMENTS.get(current.getClass().getName());
+            if (replacementName != null) {
+                log.info("Replacing portable CDI Extension " + currentName + " with " + replacementName);
+
+                iterator.remove();
+                additional.add(replacementName);
+            }
+        }
     }
 
     private List<? extends OpenWebBeansPlugin> loadWebBeansPlugins(final ClassLoader loader) {
@@ -310,5 +351,9 @@ public class OptimizedLoaderService implements LoaderService {
                 foundServiceClasses.clear();
             }
         }
+    }
+
+    public void setWebBeansContext(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
     }
 }

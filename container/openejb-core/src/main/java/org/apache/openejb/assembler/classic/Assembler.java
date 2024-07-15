@@ -1789,7 +1789,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             services.put(ScannerService.class, new CdiScanner());
             services.put(BeanArchiveService.class, new OpenEJBBeanInfoService());
             services.put(ELAdaptor.class, new CustomELAdapter(appContext));
-            services.put(LoaderService.class, new OptimizedLoaderService(appContext.getProperties()));
+
+            OptimizedLoaderService loaderService = new OptimizedLoaderService(appContext.getProperties());
+            services.put(LoaderService.class, loaderService);
 
             final Properties properties = new Properties();
             properties.setProperty(org.apache.webbeans.spi.SecurityService.class.getName(), ManagedSecurityService.class.getName());
@@ -1805,6 +1807,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             webBeansContext = new WebBeansContext(services, properties);
+            loaderService.setWebBeansContext(webBeansContext);
 
             appContext.setCdiEnabled(false);
             appContext.set(WebBeansContext.class, webBeansContext);
