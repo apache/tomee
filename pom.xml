@@ -141,7 +141,7 @@
     <!-- Starting from 3.34.0 it requires J17+ -->
     <version.ecj>3.38.0</version.ecj>
     <version.jetty>11.0.20</version.jetty>
-    <version.ehcache>3.10.0</version.ehcache>
+    <version.ehcache>3.10.8</version.ehcache>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.10.3</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
