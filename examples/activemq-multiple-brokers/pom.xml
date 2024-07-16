@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multi-broker</artifactId>
   <packaging>war</packaging>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M2</version>
   <name>TomEE :: Web Examples :: Multi-Broker</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M2</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
   <build>
