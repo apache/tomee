@@ -457,8 +457,16 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${version.plugin.javadoc}</version>
         <configuration>
-          <source>8</source>
-          <release>8</release>
+          <failOnError>false</failOnError>
+          <encoding>utf-8</encoding>
+          <show>public</show>
+          <detectLinks>false</detectLinks>
+          <detectOfflineLinks>true</detectOfflineLinks>
+          <detectJavaApiLink>false</detectJavaApiLink>
+          <!-- Speeds up the build of the javadocs -->
+          <quiet>true</quiet>
+          <use>false</use>
+          <doclint>none</doclint>
         </configuration>
       </plugin>
 
