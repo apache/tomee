@@ -21,11 +21,11 @@
     <groupId>org.superbiz</groupId>
     <artifactId>junit5-multiple-tomee-arquillian</artifactId>
     <packaging>jar</packaging>
-    <version>10.0.0-M2</version>
+    <version>10.0.0-M3-SNAPSHOT</version>
     <name>TomEE :: Examples :: JUnit 5 :: Multiple TomEE with Arquillian</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tomee.version>10.0.0-M2</tomee.version>
+        <tomee.version>10.0.0-M3-SNAPSHOT</tomee.version>
         <junit.jupiter.version>5.10.3</junit.jupiter.version>
 
         <!-- 1.8.1.Final is broken, see https://github.com/arquillian/arquillian-core/pull/583 -->

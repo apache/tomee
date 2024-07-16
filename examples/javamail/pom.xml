@@ -20,11 +20,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>javamail</artifactId>
-  <version>10.0.0-M2</version>
+  <version>10.0.0-M3-SNAPSHOT</version>
   <name>TomEE :: Examples :: JakartaMail API</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-M2</tomee.version>
+    <tomee.version>10.0.0-M3-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
