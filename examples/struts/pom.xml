@@ -19,7 +19,7 @@
   <groupId>org.superbiz.struts</groupId>
   <artifactId>struts</artifactId>
   <packaging>war</packaging>
-  <version>10.0.0-M2</version>
+  <version>10.0.0-M3-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Struts</name>
   <url>http://tomee.apache.org</url>
   <properties>

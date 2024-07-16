@@ -25,7 +25,7 @@
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2</version>
+    <version>10.0.0-M3-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-itests-app</artifactId>

@@ -20,11 +20,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>bean-validation-design-by-contract</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-M2</version>
+  <version>10.0.0-M3-SNAPSHOT</version>
   <name>TomEE :: Examples :: Bean Validation Design By Contract</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-M2</tomee.version>
+    <tomee.version>10.0.0-M3-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -67,7 +67,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-M2</version>
+      <version>10.0.0-M3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
