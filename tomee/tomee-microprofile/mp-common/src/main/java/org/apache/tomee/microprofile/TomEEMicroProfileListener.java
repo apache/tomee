@@ -81,7 +81,6 @@ public class TomEEMicroProfileListener {
         if (mpScan.equals("none")) {
             Stream.of(MICROPROFILE_EXTENSIONS).forEach(
                 extension -> SystemInstance.get().setProperty(extension + ".active", "false"));
-
             return;
         }
 
@@ -111,6 +110,10 @@ public class TomEEMicroProfileListener {
     }
 
     public void processApplication(@Observes final BeforeEvent<AfterApplicationCreated> afterApplicationCreated) {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         final ServletContext context = afterApplicationCreated.getEvent().getContext();
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
 
@@ -118,16 +121,16 @@ public class TomEEMicroProfileListener {
         // that REST path has priority over servlet and there may override old applications that have servlets
         // with /* mapping.
         context.getServletRegistrations()
-               .values()
-               .stream()
-               .map(ServletRegistration::getMappings)
-               .flatMap(Collection::stream)
-               .filter(mapping -> mapping.equals("/*"))
-               .findFirst()
-               .ifPresent(mapping -> {
-                   webApp.restClass.removeIf(
-                       className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
-               });
+                .values()
+                .stream()
+                .map(ServletRegistration::getMappings)
+                .flatMap(Collection::stream)
+                .filter(mapping -> mapping.equals("/*"))
+                .findFirst()
+                .ifPresent(mapping -> {
+                    webApp.restClass.removeIf(
+                            className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
+                });
 
         // we need to register the OpenAPI servlet, but in order to generate the OpenAPI model, SmallRye uses Jandex,
         // a XBean Finder equivalent from JBoss. This seems to be a library used in many placed, so we want to build the
@@ -146,21 +149,25 @@ public class TomEEMicroProfileListener {
 
             //Check if this was the last webapp to be processed and if so, remove it from the cache
             int lastIndex = app.webApps.size() - 1;
-            if(app.webApps.indexOf(afterApplicationCreated.getEvent().getWeb()) == lastIndex) {
+            if (app.webApps.indexOf(afterApplicationCreated.getEvent().getWeb()) == lastIndex) {
                 indexCache.remove(app);
             }
         } catch (final UncheckedIOException e) {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
-
     }
 
     public void registerMicroProfileJaxRsProviders(@Observes final ExtensionProviderRegistration extensionProviderRegistration) {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         extensionProviderRegistration.getProviders().add(new SmallRyeTracingDynamicFeature());
 
         // The OpenTracing TCK tests that an exception is turned into a 500. JAX-RS 3.1 mandates a default mapper
         // which was not required on the current versions; see TOMEE-4133 for details.
         extensionProviderRegistration.getProviders().add(new MicroProfileOpenTracingExceptionMapper());
+
     }
 
     /**

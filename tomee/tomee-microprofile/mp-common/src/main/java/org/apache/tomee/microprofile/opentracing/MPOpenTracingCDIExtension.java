@@ -31,10 +31,7 @@ public class MPOpenTracingCDIExtension implements Extension {
      * @param beanManager the BeanManager reference
      */
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
-        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
-
-        if (mpScan.equals("none")) {
-            SystemInstance.get().setProperty(MPOpenTracingCDIExtension.class.getName() + ".active", "false");
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
             return;
         }
         bbd.addAnnotatedType(beanManager.createAnnotatedType(TracerProducer.class), "TracerProducer");

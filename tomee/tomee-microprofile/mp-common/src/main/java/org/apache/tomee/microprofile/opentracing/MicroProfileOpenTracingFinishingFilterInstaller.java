@@ -23,6 +23,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.util.EnumSet;
 
@@ -31,6 +32,10 @@ public class MicroProfileOpenTracingFinishingFilterInstaller implements ServletC
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         final ServletContext servletContext = servletContextEvent.getServletContext();
 
         // Span finishing filter

@@ -43,9 +43,7 @@ import java.util.function.Consumer;
 
 public class MPHealthCDIExtension implements Extension {
 
-    private final String MP_HEALTH_DISABLE_DEFAULT_PROCEDURES = "mp.health.disable-default-procedures";
-
-
+    private static final String MP_HEALTH_DISABLE_DEFAULT_PROCEDURES = "mp.health.disable-default-procedures";
 
     // Use a single Jakarta Contexts and Dependency Injection instance to select and destroy all HealthCheck probes instances
     private Instance<Object> instance;
@@ -66,7 +64,9 @@ public class MPHealthCDIExtension implements Extension {
      * @param beanManager
      */
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
-        if (isScanMP()) return;
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
 
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MicroProfileHealthReporterProducer.class), "MicroProfileHealthReporterProducer");
     }
@@ -76,7 +76,9 @@ public class MPHealthCDIExtension implements Extension {
      * add them to the {@link MicroProfileHealthReporter}.
      */
     private void afterDeploymentValidation(@Observes final AfterDeploymentValidation avd, BeanManager bm) {
-        if (isScanMP()) return;
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
 
         instance = bm.createInstance();
 
@@ -109,15 +111,6 @@ public class MPHealthCDIExtension implements Extension {
                 reporter.addStartupCheck(defaultStartupCheck, MPHealthCDIExtension.class.getClassLoader());
             }
         }
-    }
-
-    private boolean isScanMP() {
-        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
-        if (mpScan.equals("none")) {
-            SystemInstance.get().setProperty(MPHealthCDIExtension.class.getName() + ".active", "false");
-            return true;
-        }
-        return false;
     }
 
     private void addHealthChecks(

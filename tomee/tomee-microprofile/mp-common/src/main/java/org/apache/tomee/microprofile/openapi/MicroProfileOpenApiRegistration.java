@@ -33,6 +33,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -77,6 +78,10 @@ public class MicroProfileOpenApiRegistration implements ServletContainerInitiali
 
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext servletContext) throws ServletException {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         LOGGER.info("Registering OpenAPI servlet on /openapi for application " + servletContext.getContextPath());
 
         final ServletRegistration.Dynamic servletRegistration =
