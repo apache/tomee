@@ -28,8 +28,7 @@
 
   <properties>
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
-<!--    <suiteFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteFile>-->
-    <suiteFile>${project.build.directory}/test-classes/beanvalidation-tck-tests-suite.xml</suiteFile>
+    <suiteFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteFile>
   </properties>
 
   <dependencies>

@@ -148,8 +148,7 @@
         <configuration>
           <reuseForks>false</reuseForks>
           <suiteXmlFiles>
-            <suiteXmlFile>${project.build.directory}/test-classes/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
-<!--            <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>-->
+            <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
           </suiteXmlFiles>
           <systemPropertyVariables>
             <validation.provider>${validation.provider}</validation.provider>

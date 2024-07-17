@@ -213,7 +213,7 @@
     <!-- org.apache -->
     <version.activemq>6.1.2</version.activemq>
     <version.batchee>2.0.0</version.batchee>
-    <version.bval>3.0.0</version.bval>
+    <version.bval>3.0.1</version.bval>
     <version.cxf>4.1.0-tomee-M1</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
