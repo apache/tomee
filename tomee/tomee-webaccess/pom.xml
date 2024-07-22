@@ -165,7 +165,7 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>underscorejs</artifactId>
-      <version>1.5.2-2</version>
+      <version>1.13.0-2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
