@@ -411,7 +411,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-core</artifactId>
-      <version>3.8.2</version>
+      <version>3.9.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -422,7 +422,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config</artifactId>
-      <version>3.8.2</version>
+      <version>3.9.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
