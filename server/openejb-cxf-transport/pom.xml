@@ -37,15 +37,15 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
     </dependency>
   </dependencies>
