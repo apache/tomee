@@ -102,12 +102,20 @@ public class SavedRequest implements Serializable {
 
             @Override
             public Enumeration<String> getHeaders(String name) {
-                return Collections.enumeration(headers.get(name));
+                List<String> header = headers.get(name);
+                if (header == null) {
+                    header = Collections.emptyList();
+                }
+                return Collections.enumeration(header);
             }
 
             @Override
             public String getHeader(String name) {
-                return headers.get(name).get(0);
+                List<String> header = headers.get(name);
+                if (header == null || header.isEmpty()) {
+                    return null;
+                }
+                return header.get(0);
             }
 
             @Override
