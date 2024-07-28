@@ -102,7 +102,7 @@ public class SavedRequest implements Serializable {
 
             @Override
             public Enumeration<String> getHeaders(String name) {
-                List<String> header = headers.get(name);
+                List<String> header = headers != null ? headers.get(name) : null;
                 if (header == null) {
                     header = Collections.emptyList();
                 }
@@ -111,7 +111,7 @@ public class SavedRequest implements Serializable {
 
             @Override
             public String getHeader(String name) {
-                List<String> header = headers.get(name);
+                List<String> header = headers != null ? headers.get(name) : null;
                 if (header == null || header.isEmpty()) {
                     return null;
                 }
