@@ -165,7 +165,7 @@
     <version.commons-io>2.16.1</version.commons-io>
     <version.commons-jcs-cache>2.1</version.commons-jcs-cache>
     <version.commons-lang3>3.15.0</version.commons-lang3>
-    <version.commons-net>3.9.0</version.commons-net>
+    <version.commons-net>3.11.1</version.commons-net>
     <version.commons-pool>2.12.0</version.commons-pool>
     <version.commons-fileupload>2.0.0-M2</version.commons-fileupload>
     <version.commons-fileupload-servlet>2.0.0-M1</version.commons-fileupload-servlet>
