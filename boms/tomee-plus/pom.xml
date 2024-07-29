@@ -554,7 +554,7 @@
     <dependency>
       <groupId>net.shibboleth.utilities</groupId>
       <artifactId>java-support</artifactId>
-      <version>8.4.0</version>
+      <version>8.4.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
