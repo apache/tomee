@@ -211,7 +211,7 @@
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>6.1.2</version.activemq>
+    <version.activemq>6.1.3</version.activemq>
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
     <version.cxf>4.1.0-SNAPSHOT</version.cxf>
