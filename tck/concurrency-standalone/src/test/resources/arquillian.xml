@@ -33,6 +33,7 @@
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
@@ -53,6 +54,7 @@
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
@@ -73,6 +75,7 @@
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
@@ -93,6 +96,7 @@
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>

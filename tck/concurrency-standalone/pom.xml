@@ -123,6 +123,12 @@
             <version>${version.derby}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyshared</artifactId>
+            <version>${version.derby}</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
     <!-- end::testClientDep[] -->
