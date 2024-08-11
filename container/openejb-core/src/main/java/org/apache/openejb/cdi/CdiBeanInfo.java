@@ -28,6 +28,7 @@ import org.apache.openejb.jee.JMSDestination;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.ManagedExecutor;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceUnitRef;
@@ -67,6 +68,7 @@ public class CdiBeanInfo implements JndiConsumer {
     private ClassLoader classLoader;
     private List<Injection> injections;
     private KeyedCollection<String, ContextService> contextService;
+    private KeyedCollection<String, ManagedExecutor> managedExecutor;
 
     public String getBeanName() {
         return beanName;
@@ -323,11 +325,20 @@ public class CdiBeanInfo implements JndiConsumer {
     public Class<?> getBeanClass() {
         return this.beanClass;
     }
+
     @Override
     public Map<String, ContextService> getContextServiceMap() {
         if (contextService == null) {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection();
+        }
+        return this.managedExecutor.toMap();
     }
 }

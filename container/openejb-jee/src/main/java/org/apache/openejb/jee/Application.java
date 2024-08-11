@@ -141,6 +141,8 @@ public class Application implements JndiConsumer, NamedModule {
     protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "context-service")
     protected KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name = "managed-executor")
+    protected KeyedCollection<String, ManagedExecutor> managedExecutor;
     @XmlElement(name = "jms-connection-factory", required = true)
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
     @XmlElement(name = "jms-destination")
@@ -451,5 +453,14 @@ public class Application implements JndiConsumer, NamedModule {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedExecutor.toMap();
     }
 }

@@ -271,6 +271,8 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     private final Collection<String> parents = new ArrayList<String>(); // always needed so initialize it early
     @XmlElement(name="context-service")
     private KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    private KeyedCollection<String, ManagedExecutor> managedExecutor;
 
     public SessionBean() {
     }
@@ -963,5 +965,13 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection();
+        }
+        return this.managedExecutor.toMap();
     }
 }

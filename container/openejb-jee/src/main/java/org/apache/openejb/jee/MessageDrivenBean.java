@@ -176,6 +176,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     protected String id;
     @XmlElement(name="context-service")
     private KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    private KeyedCollection<String, ManagedExecutor> managedExecutor;
 
     public MessageDrivenBean() {
     }
@@ -653,5 +655,13 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection();
+        }
+        return this.managedExecutor.toMap();
     }
 }

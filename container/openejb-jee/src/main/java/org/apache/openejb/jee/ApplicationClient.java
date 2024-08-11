@@ -152,6 +152,8 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
     protected String mainClass;
     @XmlElement(name="context-service")
     private KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name = "managed-executor")
+    protected KeyedCollection<String, ManagedExecutor> managedExecutor;
 
     public ApplicationClient() {
     }
@@ -457,5 +459,14 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedExecutor.toMap();
     }
 }

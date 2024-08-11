@@ -191,6 +191,8 @@ public class WebFragment implements WebCommon {
     protected String version;
     @XmlElement(name="context-service")
     private KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    private KeyedCollection<String, ManagedExecutor> managedExecutor;
 
 
     @Override
@@ -645,5 +647,13 @@ public class WebFragment implements WebCommon {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection();
+        }
+        return this.managedExecutor.toMap();
     }
 }

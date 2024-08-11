@@ -186,6 +186,8 @@ public class EntityBean implements RemoteBean {
     protected String id;
     @XmlElement(name="context-service")
     private KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    private KeyedCollection<String, ManagedExecutor> managedExecutor;
 
     public EntityBean() {
         final Set<String> publicIds = JaxbJavaee.currentPublicId.get();
@@ -636,5 +638,13 @@ public class EntityBean implements RemoteBean {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection();
+        }
+        return this.managedExecutor.toMap();
     }
 }

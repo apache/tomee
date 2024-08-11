@@ -143,6 +143,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected String id;
     @XmlElement(name="context-service")
     private KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    private KeyedCollection<String, ManagedExecutor> managedExecutor;
 
     public Interceptor() {
     }
@@ -482,5 +484,13 @@ public class Interceptor implements JndiConsumer, Session {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection();
+        }
+        return this.managedExecutor.toMap();
     }
 }
