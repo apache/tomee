@@ -125,7 +125,7 @@
     <dependency>
       <groupId>commons-daemon</groupId>
       <artifactId>commons-daemon</artifactId>
-      <version>1.1.0</version>
+      <version>1.4.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
