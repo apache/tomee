@@ -67,7 +67,7 @@
                 <artifactItem>
                   <groupId>org.apache.derby</groupId>
                   <artifactId>derby</artifactId>
-                  <version>10.10.1.1</version>
+                  <version>10.17.1.0</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/drivers</outputDirectory>
@@ -76,7 +76,7 @@
                 <artifactItem>
                   <groupId>org.apache.derby</groupId>
                   <artifactId>derby</artifactId>
-                  <version>10.9.1.0</version>
+                  <version>10.17.1.0</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/drivers</outputDirectory>

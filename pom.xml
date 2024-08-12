@@ -238,7 +238,7 @@
     <version.jose4j>0.9.6</version.jose4j>
 
     <!-- JDBC Drivers -->
-    <version.derby>10.15.2.0</version.derby>
+    <version.derby>10.17.1.0</version.derby>
     <version.hsqldb>2.7.3</version.hsqldb>
 
   </properties>
