@@ -400,7 +400,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-common</artifactId>
-      <version>3.8.2</version>
+      <version>3.9.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
