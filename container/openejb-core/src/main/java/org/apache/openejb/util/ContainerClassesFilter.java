@@ -118,8 +118,8 @@ public class ContainerClassesFilter implements Filter {
         excluded.add("org.apache.xml.resolver");
         excluded.add("org.bouncycastle");
         excluded.add("org.codehaus.stax2");
-        excluded.add("org.codehaus.swizzle.Grep");
-        excluded.add("org.codehaus.swizzle.Lexer");
+        excluded.add("org.tomitribe.swizzle.Grep");
+        excluded.add("org.tomitribe.swizzle.Lexer");
         excluded.add("org.cryptacular");
         excluded.add("org.eclipse.jdt.core");
         excluded.add("org.eclipse.jdt.internal");

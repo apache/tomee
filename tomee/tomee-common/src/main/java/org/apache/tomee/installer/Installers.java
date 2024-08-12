@@ -17,8 +17,8 @@
 package org.apache.tomee.installer;
 
 import org.apache.openejb.loader.IO;
-import org.codehaus.swizzle.stream.DelimitedTokenReplacementInputStream;
-import org.codehaus.swizzle.stream.StringTokenHandler;
+import org.tomitribe.swizzle.stream.DelimitedTokenReplacementInputStream;
+import org.tomitribe.swizzle.stream.StringTokenHandler;
 
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;

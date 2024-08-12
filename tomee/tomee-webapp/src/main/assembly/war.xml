@@ -155,7 +155,7 @@
       <useTransitiveFiltering>true</useTransitiveFiltering>
       <includes>
         <include>org.apache.tomee:tomee-loader</include>
-        <include>org.codehaus.swizzle:swizzle-stream</include>
+        <include>org.tomitribe.swizzle:swizzle</include>
       </includes>
     </dependencySet>
     <dependencySet>

@@ -105,7 +105,7 @@ class SetupCommand {
         // we need the one without version
 
         deleteWithRetry(file: paths.findOpenEJBWebJar('tomee-loader'))
-        deleteWithRetry(file: paths.findOpenEJBWebJar('swizzle-stream'))
+        deleteWithRetry(file: paths.findOpenEJBWebJar('swizzle'))
         deleteWithRetry(file: paths.findTomEELibJar('jakarta.activation-api'))
 
         log.info('Assigning execute privileges to scripts in Tomcat bin directory')

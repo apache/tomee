@@ -34,7 +34,7 @@ public class ContainerClassesFilterTest {
         assertFalse(filter.accept("org.apache.openejb.Bar"));
         assertFalse(filter.accept("org.apache.openejb.foo.Bar"));
         assertFalse(filter.accept("org.jasypt.dfzg.Bar"));
-        assertFalse(filter.accept("org.codehaus.swizzle.Grep"));
-        assertTrue(filter.accept("org.codehaus.swizzle.Gre"));
+        assertFalse(filter.accept("org.tomitribe.swizzle.Grep"));
+        assertTrue(filter.accept("org.tomitribe.swizzle.Gre"));
     }
 }

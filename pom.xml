@@ -1513,9 +1513,9 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.codehaus.swizzle</groupId>
-        <artifactId>swizzle-stream</artifactId>
-        <version>1.6.2</version>
+        <groupId>org.tomitribe</groupId>
+        <artifactId>swizzle</artifactId>
+        <version>1.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
