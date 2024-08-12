@@ -30,7 +30,7 @@
         <version.tomee>10.0.0-M3-SNAPSHOT</version.tomee>
         <version.microprofile.config>3.0.2</version.microprofile.config>
         <junit.jupiter.version>5.10.3</junit.jupiter.version>
-        <arquillian.version>1.8.0.Final</arquillian.version>
+        <arquillian.version>1.9.1.Final</arquillian.version>
         <testcontainers-keycloak.version>3.4.0</testcontainers-keycloak.version>
     </properties>
     <dependencies>
