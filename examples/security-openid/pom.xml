@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <version>3.5.0</version>
+            <version>4.4.0</version>
             <scope>test</scope>
         </dependency>
 
