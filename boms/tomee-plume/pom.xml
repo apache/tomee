@@ -2314,7 +2314,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-core</artifactId>
-      <version>4.3.0</version>
+      <version>4.3.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
