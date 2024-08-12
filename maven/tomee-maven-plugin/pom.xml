@@ -91,7 +91,7 @@
     <dependency>
       <groupId>org.apache.sirona</groupId>
       <artifactId>sirona-javaagent</artifactId>
-      <version>0.2-incubating</version>
+      <version>0.3-incubating</version>
       <scope>test</scope>
       <classifier>shaded</classifier>
       <exclusions>
