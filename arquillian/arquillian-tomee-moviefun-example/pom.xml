@@ -24,7 +24,7 @@
   <name>TomEE :: Arquillian Adaptors Parent :: Sample :: Moviefun</name>
 
   <properties>
-    <version.selenium>2.53.1</version.selenium>
+    <version.selenium>3.141.59</version.selenium>
     <version.drone>1.3.1.Final</version.drone>
   </properties>
 
