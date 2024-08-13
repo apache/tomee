@@ -42,6 +42,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <!-- This version is needed for MP TCK to work -->
+        <version>7.5.1</version>
+        <scope>test</scope>
+      </dependency>
       <!-- Micro Profile TCK -->
       <dependency>
         <groupId>org.eclipse.microprofile.config</groupId>
