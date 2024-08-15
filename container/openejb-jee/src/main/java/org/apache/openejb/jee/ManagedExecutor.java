@@ -25,9 +25,9 @@ import org.apache.openejb.jee.jba.JndiName;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "managed-executorType", propOrder = {
         "name",
-        "context-service",
-        "long-hung-task-threshold",
-        "max-async"
+        "contextService",
+        "longHungTaskThreshold",
+        "maxAsync"
 })
 public class ManagedExecutor implements Keyable<String>{
 
@@ -77,4 +77,3 @@ public class ManagedExecutor implements Keyable<String>{
         return name.getvalue();
     }
 }
-
