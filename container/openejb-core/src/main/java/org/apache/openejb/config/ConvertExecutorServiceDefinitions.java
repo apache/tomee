@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
@@ -38,10 +54,10 @@ public class ConvertExecutorServiceDefinitions extends BaseConvertDefinitions {
             managedExecutors.addAll(consumer.getManagedExecutorServiceMap().values());
         }
 
-        final Map<String, ManagedExecutor> dataSourcesMap = managedExecutors.toMap();
-        for(ManagedExecutor ManagedExecutor : managedExecutorServicesFromCompManagedBeans){
+        final Map<String, ManagedExecutor> managedExecutorsMap = managedExecutors.toMap();
+        for (ManagedExecutor ManagedExecutor : managedExecutorServicesFromCompManagedBeans) {
             //Interested only in ManagedExecutorServices that come from non-JndiConsumers
-            if(!dataSourcesMap.containsKey(ManagedExecutor.getName().getvalue())){
+            if (!managedExecutorsMap.containsKey(ManagedExecutor.getName().getvalue())) {
                 managedExecutors.add(ManagedExecutor);
             }
         }
@@ -49,8 +65,8 @@ public class ConvertExecutorServiceDefinitions extends BaseConvertDefinitions {
         for (final ManagedExecutor dataSource : managedExecutors) {
             appModule.getResources().add(toResource(dataSource));
         }
-        return appModule;
 
+        return appModule;
     }
 
     private Resource toResource(final ManagedExecutor executorService) {
@@ -59,12 +75,11 @@ public class ConvertExecutorServiceDefinitions extends BaseConvertDefinitions {
         final Resource def = new Resource(name, jakarta.enterprise.concurrent.ManagedExecutorService.class.getName());
 
         def.setJndi(executorService.getName().getvalue().replaceFirst("java:", ""));
-        def.setType(jakarta.enterprise.concurrent.ManagedExecutorService.class.getName());
 
         final Properties p = def.getProperties();
-        put(p, "contextService", executorService.getContextService());
-        put(p, "longHungTaskThreshold", executorService.getLongHungTaskThreshold());
-        put(p, "maxAsync", executorService.getMaxAsync());
+        put(p, "ContextService", executorService.getContextService().getvalue());
+        put(p, "LongHungTaskThreshold", executorService.getLongHungTaskThreshold());
+        put(p, "MaxAsync", executorService.getMaxAsync());
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());
