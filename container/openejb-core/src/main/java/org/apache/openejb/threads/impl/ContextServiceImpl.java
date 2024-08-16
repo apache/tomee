@@ -117,6 +117,16 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public Object createContextualProxy(final Object instance, final Map<String, String> executionProperties, final Class<?>... interfaces) {
+        if (instance == null) {
+            throw new IllegalArgumentException("Cannot create contextual proxy, instance is null");
+        }
+
+        for (Class<?> intf : interfaces) {
+            if (!intf.isInstance(instance)) {
+                throw new IllegalArgumentException("Cannot create contextual proxy, instance is not an instance of " + intf.getName());
+            }
+        }
+
         return Proxy.newProxyInstance(instance.getClass().getClassLoader(), interfaces, new CUHandler(instance, executionProperties));
     }
 
