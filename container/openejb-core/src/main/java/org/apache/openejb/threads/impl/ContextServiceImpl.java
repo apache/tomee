@@ -127,7 +127,7 @@ public class ContextServiceImpl implements ContextService {
             }
         }
 
-        return Proxy.newProxyInstance(instance.getClass().getClassLoader(), interfaces, new CUHandler(instance, executionProperties));
+        return Proxy.newProxyInstance(instance.getClass().getClassLoader(), interfaces, new CUHandler(instance, executionProperties, this));
     }
 
     @Override
@@ -225,13 +225,13 @@ public class ContextServiceImpl implements ContextService {
         }
     }
 
-    private final class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
+    private final static class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
         private final Object instance;
         private final Map<String, String> properties;
         private final boolean suspendTx;
 
-        private CUHandler(final Object instance, final Map<String, String> props) {
-            super(instance, ContextServiceImpl.this);
+        private CUHandler(final Object instance, final Map<String, String> props, ContextServiceImpl contextService) {
+            super(instance, contextService);
             this.instance = instance;
             this.properties = props;
             this.suspendTx = ManagedTask.SUSPEND.equals(props.get(ManagedTask.TRANSACTION));
@@ -265,7 +265,7 @@ public class ContextServiceImpl implements ContextService {
         }
     }
 
-    public class State {
+    public static class State {
         private final List<ThreadContextRestorer> restorers;
 
         public State(final List<ThreadContextRestorer> restorers) {
@@ -276,7 +276,7 @@ public class ContextServiceImpl implements ContextService {
             return restorers;
         }
     }
-    public class Snapshot {
+    public static class Snapshot {
         private final List<ThreadContextSnapshot> snapshots;
 
         public Snapshot(final List<ThreadContextSnapshot> snapshots) {

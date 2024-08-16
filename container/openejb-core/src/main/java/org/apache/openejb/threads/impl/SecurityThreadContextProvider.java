@@ -80,7 +80,7 @@ public class SecurityThreadContextProvider implements ThreadContextProvider {
         return ContextServiceDefinition.SECURITY;
     }
 
-    public class SecurityThreadContextSnapshot implements ThreadContextSnapshot {
+    public static class SecurityThreadContextSnapshot implements ThreadContextSnapshot {
 
         private final boolean associate;
         private final Object securityServiceState;
@@ -124,7 +124,7 @@ public class SecurityThreadContextProvider implements ThreadContextProvider {
         }
     }
 
-    public class SecurityThreadContextRestorer implements ThreadContextRestorer {
+    public static class SecurityThreadContextRestorer implements ThreadContextRestorer {
 
         private final boolean associate;
         private final ThreadContext oldCtx;
