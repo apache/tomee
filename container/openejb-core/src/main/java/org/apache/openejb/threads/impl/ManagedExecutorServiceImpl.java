@@ -41,24 +41,34 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         this.contextService = contextService;
     }
 
+    // Forbidden lifecycle managing methods, see § 3.1.6.1
     @Override
     public void shutdown() {
-        throw new IllegalStateException("You can't call shutdown");
+        throw forbiddenMethod("shutdown");
     }
 
     @Override
     public List<Runnable> shutdownNow() {
-        throw new IllegalStateException("You can't call shutdownNow");
+        throw forbiddenMethod("shutdownNow");
     }
 
     @Override
     public boolean isShutdown() {
-        return delegate.isShutdown();
+        throw forbiddenMethod("isShutdown");
     }
 
     @Override
     public boolean isTerminated() {
-        return delegate.isTerminated();
+        throw forbiddenMethod("isTerminated");
+    }
+
+    @Override
+    public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
+        throw forbiddenMethod("awaitTermination");
+    }
+
+    protected IllegalStateException forbiddenMethod(String method) {
+        return new IllegalStateException("You can't call " + method);
     }
     
     public Integer getCorePoolSize() {
@@ -115,11 +125,6 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         } else {
             return null;
         }
-    }
-
-        @Override
-    public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
-        return delegate.awaitTermination(timeout, unit);
     }
 
     @Override
