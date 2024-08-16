@@ -22,15 +22,16 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.jba.JndiName;
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "managed-executorType", propOrder = {
+@XmlType(name = "managed-scheduled-executorType", propOrder = {
         "description",
         "name",
         "contextService",
         "longHungTaskThreshold",
         "maxAsync"
 })
-public class ManagedExecutor implements Keyable<String> {
+public class ManagedScheduledExecutor implements Keyable<String> {
     @XmlElement
     private Description description;
     @XmlElement

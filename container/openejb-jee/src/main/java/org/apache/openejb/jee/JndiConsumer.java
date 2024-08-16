@@ -79,5 +79,7 @@ public interface JndiConsumer {
 
     Map<String, JMSDestination> getJMSDestinationMap();
     Map<String, ContextService> getContextServiceMap();
-    Map<String, ManagedExecutor> getManagedExecutorServiceMap();
+    Map<String, ManagedExecutor> getManagedExecutorMap();
+    Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap();
+    Map<String, ManagedThreadFactory> getManagedThreadFactoryMap();
 }

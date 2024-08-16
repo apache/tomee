@@ -29,6 +29,8 @@ import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.ManagedExecutor;
+import org.apache.openejb.jee.ManagedScheduledExecutor;
+import org.apache.openejb.jee.ManagedThreadFactory;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceUnitRef;
@@ -69,6 +71,8 @@ public class CdiBeanInfo implements JndiConsumer {
     private List<Injection> injections;
     private KeyedCollection<String, ContextService> contextService;
     private KeyedCollection<String, ManagedExecutor> managedExecutor;
+    protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
+    protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
 
     public String getBeanName() {
         return beanName;
@@ -335,10 +339,28 @@ public class CdiBeanInfo implements JndiConsumer {
     }
 
     @Override
-    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+    public Map<String, ManagedExecutor> getManagedExecutorMap() {
         if (managedExecutor == null) {
-            managedExecutor = new KeyedCollection();
+            managedExecutor = new KeyedCollection<>();
         }
         return this.managedExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap() {
+        if (managedScheduledExecutor == null) {
+            managedScheduledExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedScheduledExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedThreadFactory> getManagedThreadFactoryMap() {
+        if (managedThreadFactory == null) {
+            managedThreadFactory = new KeyedCollection<>();
+        }
+
+        return this.managedThreadFactory.toMap();
     }
 }

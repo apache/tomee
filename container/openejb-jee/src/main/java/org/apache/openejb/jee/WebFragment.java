@@ -96,8 +96,10 @@ import java.util.Map;
     "jmsConnectionFactories",
     "jmsDestinations",
     "name",
-    "contextService"
-
+    "contextService",
+    "managedExecutor",
+    "managedScheduledExecutor",
+    "managedThreadFactory"
 })
 public class WebFragment implements WebCommon {
     @XmlTransient
@@ -193,7 +195,10 @@ public class WebFragment implements WebCommon {
     private KeyedCollection<String, ContextService> contextService;
     @XmlElement(name="managed-executor")
     private KeyedCollection<String, ManagedExecutor> managedExecutor;
-
+    @XmlElement(name = "managed-scheduled-executor")
+    protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
+    @XmlElement(name = "managed-thread-factory")
+    protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
 
     @Override
     public String getJndiConsumerName() {
@@ -650,10 +655,28 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+    public Map<String, ManagedExecutor> getManagedExecutorMap() {
         if (managedExecutor == null) {
-            managedExecutor = new KeyedCollection();
+            managedExecutor = new KeyedCollection<>();
         }
         return this.managedExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap() {
+        if (managedScheduledExecutor == null) {
+            managedScheduledExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedScheduledExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedThreadFactory> getManagedThreadFactoryMap() {
+        if (managedThreadFactory == null) {
+            managedThreadFactory = new KeyedCollection<>();
+        }
+
+        return this.managedThreadFactory.toMap();
     }
 }

@@ -85,7 +85,10 @@ import java.util.Map;
     "afterBegin",
     "beforeCompletion",
     "afterCompletion",
-    "contextService"
+    "contextService",
+    "managedExecutor",
+    "managedScheduledExecutor",
+    "managedThreadFactory"
 })
 public class Interceptor implements JndiConsumer, Session {
 
@@ -145,6 +148,10 @@ public class Interceptor implements JndiConsumer, Session {
     private KeyedCollection<String, ContextService> contextService;
     @XmlElement(name="managed-executor")
     private KeyedCollection<String, ManagedExecutor> managedExecutor;
+    @XmlElement(name = "managed-scheduled-executor")
+    protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
+    @XmlElement(name = "managed-thread-factory")
+    protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
 
     public Interceptor() {
     }
@@ -487,10 +494,28 @@ public class Interceptor implements JndiConsumer, Session {
     }
 
     @Override
-    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+    public Map<String, ManagedExecutor> getManagedExecutorMap() {
         if (managedExecutor == null) {
             managedExecutor = new KeyedCollection();
         }
         return this.managedExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap() {
+        if (managedScheduledExecutor == null) {
+            managedScheduledExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedScheduledExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedThreadFactory> getManagedThreadFactoryMap() {
+        if (managedThreadFactory == null) {
+            managedThreadFactory = new KeyedCollection<>();
+        }
+
+        return this.managedThreadFactory.toMap();
     }
 }

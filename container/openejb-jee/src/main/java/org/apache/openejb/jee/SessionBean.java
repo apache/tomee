@@ -144,7 +144,10 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "securityRoleRef",
     "securityIdentity",
     "passivationCapable",
-    "contextService"
+    "contextService",
+    "managedExecutor",
+    "managedScheduledExecutor",
+    "managedThreadFactory"
 })
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
@@ -273,6 +276,10 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     private KeyedCollection<String, ContextService> contextService;
     @XmlElement(name="managed-executor")
     private KeyedCollection<String, ManagedExecutor> managedExecutor;
+    @XmlElement(name = "managed-scheduled-executor")
+    protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
+    @XmlElement(name = "managed-thread-factory")
+    protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
 
     public SessionBean() {
     }
@@ -968,10 +975,28 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     @Override
-    public Map<String, ManagedExecutor> getManagedExecutorServiceMap() {
+    public Map<String, ManagedExecutor> getManagedExecutorMap() {
         if (managedExecutor == null) {
             managedExecutor = new KeyedCollection();
         }
         return this.managedExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap() {
+        if (managedScheduledExecutor == null) {
+            managedScheduledExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedScheduledExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedThreadFactory> getManagedThreadFactoryMap() {
+        if (managedThreadFactory == null) {
+            managedThreadFactory = new KeyedCollection<>();
+        }
+
+        return this.managedThreadFactory.toMap();
     }
 }

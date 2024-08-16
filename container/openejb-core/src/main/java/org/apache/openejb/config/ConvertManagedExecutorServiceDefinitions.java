@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class ConvertExecutorServiceDefinitions extends BaseConvertDefinitions {
+public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinitions {
     @Override
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         final List<JndiConsumer> jndiConsumers = collectConsumers(appModule);
 
         final KeyedCollection<String, ManagedExecutor> managedExecutors = new KeyedCollection<>();
-        final KeyedCollection<String, ManagedExecutor> managedExecutorServicesFromCompManagedBeans = new KeyedCollection<>();
+        final KeyedCollection<String, ManagedExecutor> managedExecutorsFromCompManagedBeans = new KeyedCollection<>();
 
         for (final JndiConsumer consumer : jndiConsumers) {
             if (consumer == null) {
@@ -48,38 +48,38 @@ public class ConvertExecutorServiceDefinitions extends BaseConvertDefinitions {
                  * decide which context services to transfer;
                  */
 
-                managedExecutorServicesFromCompManagedBeans.addAll(consumer.getManagedExecutorServiceMap().values());
+                managedExecutorsFromCompManagedBeans.addAll(consumer.getManagedExecutorMap().values());
                 continue;
             }
-            managedExecutors.addAll(consumer.getManagedExecutorServiceMap().values());
+            managedExecutors.addAll(consumer.getManagedExecutorMap().values());
         }
 
         final Map<String, ManagedExecutor> managedExecutorsMap = managedExecutors.toMap();
-        for (ManagedExecutor ManagedExecutor : managedExecutorServicesFromCompManagedBeans) {
+        for (ManagedExecutor managedExecutor : managedExecutorsFromCompManagedBeans) {
             //Interested only in ManagedExecutorServices that come from non-JndiConsumers
-            if (!managedExecutorsMap.containsKey(ManagedExecutor.getName().getvalue())) {
-                managedExecutors.add(ManagedExecutor);
+            if (!managedExecutorsMap.containsKey(managedExecutor.getName().getvalue())) {
+                managedExecutors.add(managedExecutor);
             }
         }
 
-        for (final ManagedExecutor dataSource : managedExecutors) {
-            appModule.getResources().add(toResource(dataSource));
+        for (final ManagedExecutor managedExecutor : managedExecutors) {
+            appModule.getResources().add(toResource(managedExecutor));
         }
 
         return appModule;
     }
 
-    private Resource toResource(final ManagedExecutor executorService) {
-        final String name = cleanUpName(executorService.getName().getvalue());
+    private Resource toResource(final ManagedExecutor managedExecutor) {
+        final String name = cleanUpName(managedExecutor.getName().getvalue());
 
         final Resource def = new Resource(name, jakarta.enterprise.concurrent.ManagedExecutorService.class.getName());
 
-        def.setJndi(executorService.getName().getvalue().replaceFirst("java:", ""));
+        def.setJndi(managedExecutor.getName().getvalue().replaceFirst("java:", ""));
 
         final Properties p = def.getProperties();
-        put(p, "ContextService", executorService.getContextService().getvalue());
-        put(p, "LongHungTaskThreshold", executorService.getLongHungTaskThreshold());
-        put(p, "MaxAsync", executorService.getMaxAsync());
+        put(p, "ContextService", managedExecutor.getContextService().getvalue());
+        put(p, "LongHungTaskThreshold", managedExecutor.getLongHungTaskThreshold());
+        put(p, "MaxAsync", managedExecutor.getMaxAsync());
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());
