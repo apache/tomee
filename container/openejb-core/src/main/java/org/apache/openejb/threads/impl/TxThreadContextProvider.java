@@ -20,18 +20,28 @@ import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBRuntimeException;
 
 import java.util.Map;
 
 public class TxThreadContextProvider implements ThreadContextProvider {
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
-        return new TxThreadContextSnapshot();
+        try {
+            return new TxThreadContextSnapshot(OpenEJB.getTransactionManager().getTransaction());
+        } catch (SystemException e) {
+            throw new OpenEJBRuntimeException(e);
+        }
     }
 
     @Override
     public ThreadContextSnapshot clearedContext(final Map<String, String> props) {
-        return new TxThreadContextSnapshot();
+        return new TxThreadContextSnapshot(null);
     }
 
     @Override
@@ -39,25 +49,41 @@ public class TxThreadContextProvider implements ThreadContextProvider {
         return ContextServiceDefinition.TRANSACTION;
     }
 
-    public class TxThreadContextSnapshot implements ThreadContextSnapshot {
+    public static class TxThreadContextSnapshot implements ThreadContextSnapshot {
+        private final Transaction transaction;
 
-
-        public TxThreadContextSnapshot() {
+        public TxThreadContextSnapshot(Transaction transaction) {
+            this.transaction = transaction;
         }
 
         @Override
         public ThreadContextRestorer begin() {
-            return new TxThreadContextRestorer();
+            TransactionManager transactionManager = OpenEJB.getTransactionManager();
+
+            try {
+                Transaction oldTransaction = transactionManager.suspend();
+                transactionManager.resume(transaction);
+                return new TxThreadContextRestorer(oldTransaction);
+            } catch (SystemException | InvalidTransactionException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
         }
     }
 
-    public class TxThreadContextRestorer implements ThreadContextRestorer {
+    public static class TxThreadContextRestorer implements ThreadContextRestorer {
+        private final Transaction transaction;
 
-        public TxThreadContextRestorer() {
+        public TxThreadContextRestorer(Transaction transaction) {
+            this.transaction = transaction;
         }
 
         @Override
         public void endContext() throws IllegalStateException {
+            try {
+                OpenEJB.getTransactionManager().resume(transaction);
+            } catch (SystemException | InvalidTransactionException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
         }
     }
 }
