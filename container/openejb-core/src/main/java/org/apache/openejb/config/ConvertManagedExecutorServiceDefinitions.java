@@ -77,7 +77,7 @@ public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinit
         def.setJndi(managedExecutor.getName().getvalue().replaceFirst("java:", ""));
 
         final Properties p = def.getProperties();
-        put(p, "ContextService", managedExecutor.getContextService().getvalue());
+        put(p, "Context", managedExecutor.getContextService().getvalue());
         put(p, "LongHungTaskThreshold", managedExecutor.getLongHungTaskThreshold());
         put(p, "MaxAsync", managedExecutor.getMaxAsync());
 

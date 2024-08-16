@@ -77,7 +77,7 @@ public class ConvertManagedScheduledExecutorServiceDefinitions extends BaseConve
         def.setJndi(managedScheduledExecutor.getName().getvalue().replaceFirst("java:", ""));
 
         final Properties p = def.getProperties();
-        put(p, "ContextService", managedScheduledExecutor.getContextService().getvalue());
+        put(p, "Context", managedScheduledExecutor.getContextService().getvalue());
         put(p, "LongHungTaskThreshold", managedScheduledExecutor.getLongHungTaskThreshold());
         put(p, "MaxAsync", managedScheduledExecutor.getMaxAsync());
 

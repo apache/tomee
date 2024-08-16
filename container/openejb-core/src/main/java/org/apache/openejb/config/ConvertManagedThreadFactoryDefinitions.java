@@ -78,7 +78,7 @@ public class ConvertManagedThreadFactoryDefinitions extends BaseConvertDefinitio
         def.setJndi(managedThreadFactory.getName().getvalue().replaceFirst("java:", ""));
 
         final Properties p = def.getProperties();
-        put(p, "ContextService", managedThreadFactory.getContextService().getvalue());
+        put(p, "Context", managedThreadFactory.getContextService().getvalue());
         put(p, "Priority", managedThreadFactory.getPriority());
 
         // to force it to be bound in JndiEncBuilder
