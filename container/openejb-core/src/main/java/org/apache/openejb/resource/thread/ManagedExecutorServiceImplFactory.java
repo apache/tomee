@@ -56,11 +56,11 @@ public class ManagedExecutorServiceImplFactory {
         ManagedThreadFactory managedThreadFactory;
         try {
             managedThreadFactory = "org.apache.openejb.threads.impl.ManagedThreadFactoryImpl".equals(threadFactory) ?
-                    new ManagedThreadFactoryImpl() :
+                    new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context)) :
                     ThreadFactories.findThreadFactory(threadFactory);
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImplFactory.class).warning("Can't create configured thread factory: " + threadFactory, e);
-            managedThreadFactory = new ManagedThreadFactoryImpl();
+            managedThreadFactory = new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context));
         }
 
         if (core > max) {

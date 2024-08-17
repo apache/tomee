@@ -828,6 +828,8 @@
                    factory-name="create"
                    class-name="org.apache.openejb.resource.thread.ManagedThreadFactoryImplFactory">
     Prefix = openejb-managed-thread-
+    Priority = 5
+    Context = [automatic]
     Lazy = true
     SkipImplicitAttributes = true
   </ServiceProvider>
