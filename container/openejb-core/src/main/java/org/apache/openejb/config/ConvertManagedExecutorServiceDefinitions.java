@@ -77,7 +77,15 @@ public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinit
         def.setJndi(managedExecutor.getName().getvalue().replaceFirst("java:", ""));
 
         final Properties p = def.getProperties();
-        put(p, "Context", managedExecutor.getContextService().getvalue());
+
+        String contextName = managedExecutor.getContextService().getvalue();
+        // Translate JNDI name to TomEE Resource ID, otherwise AutoConfig will fail to resolve it
+        // and try to fix it by rewriting this to an unwanted ContextService
+        if ("java:comp/DefaultContextService".equals(contextName)) {
+            contextName = "Default Context Service";
+        }
+
+        put(p, "Context", contextName);
         put(p, "HungTaskThreshold", managedExecutor.getHungTaskThreshold());
         put(p, "Max", managedExecutor.getMaxAsync());
 

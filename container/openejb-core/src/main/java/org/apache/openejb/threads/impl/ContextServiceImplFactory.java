@@ -76,7 +76,16 @@ public class ContextServiceImplFactory {
     }
 
     public static ContextServiceImpl newDefaultContextService() {
-        return new ContextServiceImplFactory().create();
+        ContextServiceImplFactory factory = new ContextServiceImplFactory();
+
+        // It's unclear what the default is, spec says (§ 3.3.4.3 Default Context Service):
+        //   The types of contexts to be propagated by this default ContextService from a contextualizing application component
+        //   must include naming context, class loader, and security information.
+        // But @ContextServiceDefinition defaults to propagated="Remaining", cleared="Transaction" unchanged=""
+        factory.setPropagated(ContextServiceDefinition.ALL_REMAINING);
+        factory.setCleared(ContextServiceDefinition.TRANSACTION);
+
+        return factory.create();
     }
 
     public static ContextServiceImpl newPropagateEverythingContextService() {

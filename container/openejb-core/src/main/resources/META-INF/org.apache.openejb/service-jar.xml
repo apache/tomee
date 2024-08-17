@@ -797,6 +797,9 @@
                    class-name="org.apache.openejb.threads.impl.ContextServiceImplFactory"
                    factory-name="create">
     SkipImplicitAttributes = true
+    Propagated = Remaining
+    Cleared = Transaction
+    Unchanged
   </ServiceProvider>
   <ServiceProvider id="Default Executor Service"
                    service="Resource"
