@@ -218,6 +218,8 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public ContextService getContextService() {
+        // TODO we need to do new ContextService here, copy all properties from the existing ContextService
+        //  and tell it that this is the ManagedExecutor it shall use for CompletableFuture/CompletableStage
         return contextService;
     }
 

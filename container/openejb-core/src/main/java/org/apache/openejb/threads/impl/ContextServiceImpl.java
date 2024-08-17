@@ -16,23 +16,28 @@
  */
 package org.apache.openejb.threads.impl;
 
+import jakarta.enterprise.concurrent.ContextService;
 import jakarta.enterprise.concurrent.ContextServiceDefinition;
+import jakarta.enterprise.concurrent.ManagedTask;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.threads.task.CUTask;
-
-import jakarta.enterprise.concurrent.ContextService;
-import jakarta.enterprise.concurrent.ManagedTask;
 import jakarta.transaction.Transaction;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.threads.task.CUBiConsumer;
+import org.apache.openejb.threads.task.CUBiFunction;
+import org.apache.openejb.threads.task.CUCallable;
+import org.apache.openejb.threads.task.CUConsumer;
+import org.apache.openejb.threads.task.CUFunction;
+import org.apache.openejb.threads.task.CURunnable;
+import org.apache.openejb.threads.task.CUSupplier;
+import org.apache.openejb.threads.task.CUTask;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -46,9 +51,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ContextServiceImpl implements ContextService {
-
-    private static final HashMap<String, String> EMPTY_PROPS = new HashMap<String, String>();
-
     private final List<ThreadContextProvider> propagated = new ArrayList<>();
     private final List<ThreadContextProvider> cleared = new ArrayList<>();
     private final List<ThreadContextProvider> unchanged = new ArrayList<>();
@@ -67,37 +69,37 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public <R> Callable<R> contextualCallable(final Callable<R> callable) {
-        return createContextualProxy(callable, Callable.class);
+        return new CUCallable<>(callable, this);
     }
 
     @Override
     public <T, U> BiConsumer<T, U> contextualConsumer(final BiConsumer<T, U> biConsumer) {
-        return createContextualProxy(biConsumer, BiConsumer.class);
+        return new CUBiConsumer<>(biConsumer, this);
     }
 
     @Override
     public <T> Consumer<T> contextualConsumer(final Consumer<T> consumer) {
-        return createContextualProxy(consumer, Consumer.class);
+        return new CUConsumer<>(consumer, this);
     }
 
     @Override
     public <T, U, R> BiFunction<T, U, R> contextualFunction(final BiFunction<T, U, R> biFunction) {
-        return createContextualProxy(biFunction, BiFunction.class);
+        return new CUBiFunction<>(biFunction, this);
     }
 
     @Override
     public <T, R> Function<T, R> contextualFunction(final Function<T, R> function) {
-        return createContextualProxy(function, Function.class);
+        return new CUFunction<>(function, this);
     }
 
     @Override
     public Runnable contextualRunnable(final Runnable runnable) {
-        return createContextualProxy(runnable, Runnable.class);
+        return new CURunnable(runnable, this);
     }
 
     @Override
     public <R> Supplier<R> contextualSupplier(final Supplier<R> supplier) {
-        return createContextualProxy(supplier, Supplier.class);
+        return new CUSupplier<>(supplier, this);
     }
 
     @Override
@@ -107,7 +109,7 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public Object createContextualProxy(final Object instance, final Class<?>... interfaces) {
-        return createContextualProxy(instance, EMPTY_PROPS, interfaces);
+        return createContextualProxy(instance, Map.of(), interfaces);
     }
 
     @Override
@@ -142,12 +144,12 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public <T> CompletableFuture<T> withContextCapture(final CompletableFuture<T> completableFuture) {
-        return createContextualProxy(completableFuture, CompletableFuture.class);
+        throw new IllegalStateException("not implemented yet"); // TODO implement this
     }
 
     @Override
     public <T> CompletionStage<T> withContextCapture(final CompletionStage<T> completionStage) {
-        return createContextualProxy(completionStage, CompletionStage.class);
+        throw new IllegalStateException("not implemented yet"); // TODO implement this
     }
 
     public Snapshot snapshot(final Map<String, String> props) {
@@ -205,7 +207,7 @@ public class ContextServiceImpl implements ContextService {
 
         final List<ThreadContextRestorer> restorers = new ArrayList<>();
 
-        for (ThreadContextSnapshot tcs : snapshot.getSnapshots()) {
+        for (ThreadContextSnapshot tcs : snapshot.snapshots()) {
             try {
                 restorers.add(0, tcs.begin());
             } catch (Throwable t) {
@@ -218,7 +220,7 @@ public class ContextServiceImpl implements ContextService {
 
     public void exit(final State state) {
         if (state != null) {
-            final List<ThreadContextRestorer> restorers = state.getRestorers();
+            final List<ThreadContextRestorer> restorers = state.restorers();
             for (ThreadContextRestorer restorer : restorers) {
                 restorer.endContext();
             }
@@ -251,12 +253,7 @@ public class ContextServiceImpl implements ContextService {
             }
 
             try {
-                return invoke(new Callable<Object>() {
-                    @Override
-                    public Object call() throws Exception {
-                        return method.invoke(instance, args);
-                    }
-                });
+                return invoke(() -> method.invoke(instance, args));
             } finally {
                 if (suspendedTx != null) {
                     OpenEJB.getTransactionManager().resume(suspendedTx);
@@ -265,26 +262,6 @@ public class ContextServiceImpl implements ContextService {
         }
     }
 
-    public static class State {
-        private final List<ThreadContextRestorer> restorers;
-
-        public State(final List<ThreadContextRestorer> restorers) {
-            this.restorers = restorers;
-        }
-
-        public List<ThreadContextRestorer> getRestorers() {
-            return restorers;
-        }
-    }
-    public static class Snapshot {
-        private final List<ThreadContextSnapshot> snapshots;
-
-        public Snapshot(final List<ThreadContextSnapshot> snapshots) {
-            this.snapshots = snapshots;
-        }
-
-        public List<ThreadContextSnapshot> getSnapshots() {
-            return snapshots;
-        }
-    }
+    public record State(List<ThreadContextRestorer> restorers) { }
+    public record Snapshot(List<ThreadContextSnapshot> snapshots) { }
 }
