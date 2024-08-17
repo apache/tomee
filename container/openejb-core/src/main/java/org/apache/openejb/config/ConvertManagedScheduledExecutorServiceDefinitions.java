@@ -78,8 +78,8 @@ public class ConvertManagedScheduledExecutorServiceDefinitions extends BaseConve
 
         final Properties p = def.getProperties();
         put(p, "Context", managedScheduledExecutor.getContextService().getvalue());
-        put(p, "LongHungTaskThreshold", managedScheduledExecutor.getHungTaskThreshold());
-        put(p, "MaxAsync", managedScheduledExecutor.getMaxAsync());
+        put(p, "HungTaskThreshold", managedScheduledExecutor.getHungTaskThreshold());
+        put(p, "Core", managedScheduledExecutor.getMaxAsync());
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());

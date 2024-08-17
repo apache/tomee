@@ -63,6 +63,13 @@ public class ManagedExecutorServiceImplFactory {
             managedThreadFactory = new ManagedThreadFactoryImpl();
         }
 
+        if (core > max) {
+            Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImplFactory.class)
+                    .warning("Core size (=" + core + ") is bigger than Max size (=" + max + "), lowering Core to Max");
+
+            core = max;
+        }
+
         return new ThreadPoolExecutor(core, max, keepAlive.getTime(), keepAlive.getUnit(), blockingQueue, managedThreadFactory, CURejectHandler.INSTANCE);
     }
 
