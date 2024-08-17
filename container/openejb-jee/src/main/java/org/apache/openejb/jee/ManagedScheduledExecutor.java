@@ -22,14 +22,17 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.jba.JndiName;
 
+import java.util.List;
+
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "managed-scheduled-executorType", propOrder = {
         "description",
         "name",
         "contextService",
-        "longHungTaskThreshold",
-        "maxAsync"
+        "hungTaskThreshold",
+        "maxAsync",
+        "properties"
 })
 public class ManagedScheduledExecutor implements Keyable<String> {
     @XmlElement
@@ -38,10 +41,12 @@ public class ManagedScheduledExecutor implements Keyable<String> {
     private JndiName name;
     @XmlElement(name = "context-service-ref")
     private JndiName contextService;
-    @XmlElement(name = "long-hung-task-threshold")
-    private Long longHungTaskThreshold;
+    @XmlElement(name = "hung-task-threshold")
+    private Long hungTaskThreshold;
     @XmlElement(name = "max-async")
     private Integer maxAsync;
+    @XmlElement(name = "property")
+    private List<Property> properties;
 
     public Description getDescription() {
         return description;
@@ -67,12 +72,12 @@ public class ManagedScheduledExecutor implements Keyable<String> {
         this.contextService = contextService;
     }
 
-    public Long getLongHungTaskThreshold() {
-        return longHungTaskThreshold;
+    public Long getHungTaskThreshold() {
+        return hungTaskThreshold;
     }
 
-    public void setLongHungTaskThreshold(Long longHungTaskThreshold) {
-        this.longHungTaskThreshold = longHungTaskThreshold;
+    public void setHungTaskThreshold(Long hungTaskThreshold) {
+        this.hungTaskThreshold = hungTaskThreshold;
     }
 
     public Integer getMaxAsync() {
@@ -81,6 +86,14 @@ public class ManagedScheduledExecutor implements Keyable<String> {
 
     public void setMaxAsync(Integer maxAsync) {
         this.maxAsync = maxAsync;
+    }
+
+    public List<Property> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
     }
 
     @Override

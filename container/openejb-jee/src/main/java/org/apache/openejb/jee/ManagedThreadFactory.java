@@ -6,12 +6,15 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.jba.JndiName;
 
+import java.util.List;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "managed-thread-factoryType", propOrder = {
         "description",
         "name",
         "contextService",
-        "priority"
+        "priority",
+        "properties"
 })
 public class ManagedThreadFactory implements Keyable<String> {
     @XmlElement
@@ -22,6 +25,8 @@ public class ManagedThreadFactory implements Keyable<String> {
     private JndiName contextService;
     @XmlElement
     private Integer priority;
+    @XmlElement(name = "property")
+    private List<Property> properties;
 
     public Description getDescription() {
         return description;
@@ -53,6 +58,14 @@ public class ManagedThreadFactory implements Keyable<String> {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public List<Property> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
     }
 
     @Override
