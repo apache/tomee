@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -118,9 +119,13 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     }
 
     private static String getTaskId(final Object runnable) {
-        if (ManagedTask.class.isInstance(runnable)) {
-            return ManagedTask.class.cast(runnable).getExecutionProperties().get(ManagedTask.IDENTITY_NAME);
+        if (runnable instanceof ManagedTask managedTask) {
+            Map<String, String> executionProps = managedTask.getExecutionProperties();
+            if (executionProps != null) {
+                return executionProps.get(ManagedTask.IDENTITY_NAME);
+            }
         }
+
         return null;
     }
 
