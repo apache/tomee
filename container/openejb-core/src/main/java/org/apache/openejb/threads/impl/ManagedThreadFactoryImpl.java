@@ -99,6 +99,8 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
         protected void onTermination(Throwable exception) {
             setPriority(initialPriority);
             contextService.exit(state);
+
+            super.onTermination(exception);
         }
     }
 }
