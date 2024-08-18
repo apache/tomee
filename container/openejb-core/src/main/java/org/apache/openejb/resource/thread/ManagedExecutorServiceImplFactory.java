@@ -46,7 +46,7 @@ public class ManagedExecutorServiceImplFactory {
 
     private String context;
 
-    public static ManagedExecutorService lookup(String name) throws NamingException {
+    public static ManagedExecutorServiceImpl lookup(String name) throws NamingException {
         Object obj;
         try {
             obj = InitialContext.doLookup(name);
@@ -60,7 +60,7 @@ public class ManagedExecutorServiceImplFactory {
             obj = ctx.lookup("openejb/Resource/" + name);
         }
 
-        if (!(obj instanceof ManagedExecutorService mes)) {
+        if (!(obj instanceof ManagedExecutorServiceImpl mes)) {
             throw new IllegalArgumentException("Resource with id " + name
                     + " is not a ManagedExecutorService, but is " + obj.getClass().getName());
         }

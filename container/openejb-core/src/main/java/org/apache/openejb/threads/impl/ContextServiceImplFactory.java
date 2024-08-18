@@ -217,12 +217,7 @@ public class ContextServiceImplFactory {
 //            suspendTx = true;
 //        }
 
-        final ContextServiceImpl contextService = new ContextServiceImpl();
-        contextService.getPropagated().addAll(resolvedPropagated);
-        contextService.getCleared().addAll(resolvedCleared);
-        contextService.getUnchanged().addAll(resolvedUnchanged);
-
-        return contextService;
+        return new ContextServiceImpl(resolvedPropagated, resolvedCleared, resolvedUnchanged);
     }
 
     protected List<ThreadContextProvider> getThreadContextProviders() {

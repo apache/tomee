@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.threads.future;
 
+import jakarta.enterprise.concurrent.ContextService;
 import jakarta.enterprise.concurrent.ManagedExecutorService;
 
 import java.util.concurrent.CompletableFuture;
@@ -28,9 +29,11 @@ import java.util.function.Function;
 public class CUCompletableFuture<T> extends CompletableFuture<T> {
 
     private final ManagedExecutorService executorService;
+    private final ContextService contextService;
 
-    public CUCompletableFuture(ManagedExecutorService executorService) {
+    public CUCompletableFuture(ManagedExecutorService executorService, ContextService contextService) {
         this.executorService = executorService;
+        this.contextService = contextService;
     }
 
     @Override
@@ -40,61 +43,61 @@ public class CUCompletableFuture<T> extends CompletableFuture<T> {
 
     @Override
     public <U> CompletableFuture<U> newIncompleteFuture() {
-        return new CUCompletableFuture<>(executorService);
+        return new CUCompletableFuture<>(executorService, contextService);
     }
 
     @Override
     public <U> CompletableFuture<U> thenApply(Function<? super T, ? extends U> fn) {
-        return super.thenApply(executorService.getContextService().contextualFunction(fn));
+        return super.thenApply(contextService.contextualFunction(fn));
     }
 
     @Override
     public <U> CompletableFuture<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
-        return super.thenApplyAsync(executorService.getContextService().contextualFunction(fn));
+        return super.thenApplyAsync(contextService.contextualFunction(fn));
     }
 
     @Override
     public <U> CompletableFuture<U> thenApplyAsync(Function<? super T, ? extends U> fn, Executor executor) {
-        return super.thenApplyAsync(executorService.getContextService().contextualFunction(fn), executor);
+        return super.thenApplyAsync(contextService.contextualFunction(fn), executor);
     }
 
     @Override
     public <U, V> CompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return super.thenCombineAsync(other, executorService.getContextService().contextualFunction(fn));
+        return super.thenCombineAsync(other, contextService.contextualFunction(fn));
     }
 
     @Override
     public <U, V> CompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
-        return super.thenCombineAsync(other, this.executorService.getContextService().contextualFunction(fn), executor);
+        return super.thenCombineAsync(other, this.contextService.contextualFunction(fn), executor);
     }
 
     @Override
     public <U> CompletableFuture<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
-        return super.handleAsync(executorService.getContextService().contextualFunction(fn));
+        return super.handleAsync(contextService.contextualFunction(fn));
     }
 
     @Override
     public <U, V> CompletableFuture<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        return super.thenCombine(other, executorService.getContextService().contextualFunction(fn));
+        return super.thenCombine(other, contextService.contextualFunction(fn));
     }
 
     @Override
     public <U> CompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn) {
-        return super.applyToEitherAsync(other, executorService.getContextService().contextualFunction(fn));
+        return super.applyToEitherAsync(other, contextService.contextualFunction(fn));
     }
 
     @Override
     public <U> CompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn, Executor executor) {
-        return super.applyToEitherAsync(other, executorService.getContextService().contextualFunction(fn), executor);
+        return super.applyToEitherAsync(other, contextService.contextualFunction(fn), executor);
     }
 
     @Override
     public <U> CompletableFuture<Void> thenAcceptBoth(CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        return super.thenAcceptBoth(other, executorService.getContextService().contextualConsumer(action));
+        return super.thenAcceptBoth(other, contextService.contextualConsumer(action));
     }
 
     @Override
     public CompletableFuture<T> exceptionally(Function<Throwable, ? extends T> fn) {
-        return super.exceptionally(this.executorService.getContextService().contextualFunction(fn));
+        return super.exceptionally(this.contextService.contextualFunction(fn));
     }
 }

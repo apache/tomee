@@ -38,7 +38,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     public ManagedExecutorServiceImpl(final ExecutorService delegate, final ContextServiceImpl contextService) {
         this.delegate = delegate;
-        this.contextService = contextService;
+        this.contextService = new ContextServiceImpl(contextService, this);
     }
 
     // Forbidden lifecycle managing methods, see § 3.1.6.1
@@ -180,14 +180,14 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <U> CompletableFuture<U> completedFuture(U value) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.complete(value);
         return future;
     }
 
     @Override
     public <U> CompletionStage<U> completedStage(U value) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.complete(value);
         return future;
     }
@@ -204,28 +204,26 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <U> CompletableFuture<U> failedFuture(Throwable ex) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.completeExceptionally(ex);
         return future;
     }
 
     @Override
     public <U> CompletionStage<U> failedStage(Throwable ex) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.completeExceptionally(ex);
         return future.minimalCompletionStage();
     }
 
     @Override
     public ContextService getContextService() {
-        // TODO we need to do new ContextService here, copy all properties from the existing ContextService
-        //  and tell it that this is the ManagedExecutor it shall use for CompletableFuture/CompletableStage
         return contextService;
     }
 
     @Override
     public <U> CompletableFuture<U> newIncompleteFuture() {
-        return new CUCompletableFuture<>(this);
+        return new CUCompletableFuture<>(this, contextService);
     }
 
     @Override
@@ -235,7 +233,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) {
-        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this, contextService);
         this.execute(() -> {
             try {
                 managedFuture.complete(supplier.get());
@@ -247,7 +245,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     }
 
     private <U> CompletableFuture<U> copyInternal(CompletionStage<U> future) {
-        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this, contextService);
         future.whenComplete((result, exception) -> {
             if (exception == null) {
                 managedFuture.complete(result);

@@ -18,12 +18,16 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ContextService;
 import jakarta.enterprise.concurrent.ContextServiceDefinition;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
 import jakarta.enterprise.concurrent.ManagedTask;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
 import jakarta.transaction.Transaction;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.resource.thread.ManagedExecutorServiceImplFactory;
+import org.apache.openejb.threads.future.CUCompletableFuture;
 import org.apache.openejb.threads.task.CUBiConsumer;
 import org.apache.openejb.threads.task.CUBiFunction;
 import org.apache.openejb.threads.task.CUCallable;
@@ -33,6 +37,7 @@ import org.apache.openejb.threads.task.CURunnable;
 import org.apache.openejb.threads.task.CUSupplier;
 import org.apache.openejb.threads.task.CUTask;
 
+import javax.naming.NamingException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -51,20 +56,21 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ContextServiceImpl implements ContextService {
-    private final List<ThreadContextProvider> propagated = new ArrayList<>();
-    private final List<ThreadContextProvider> cleared = new ArrayList<>();
-    private final List<ThreadContextProvider> unchanged = new ArrayList<>();
+    private final List<ThreadContextProvider> propagated;
+    private final List<ThreadContextProvider> cleared ;
+    private final List<ThreadContextProvider> unchanged;
 
-    public List<ThreadContextProvider> getPropagated() {
-        return propagated;
+    private ManagedExecutorService mes;
+
+    public ContextServiceImpl(List<ThreadContextProvider> propagated, List<ThreadContextProvider> cleared, List<ThreadContextProvider> unchanged) {
+        this.propagated = propagated;
+        this.cleared = cleared;
+        this.unchanged = unchanged;
     }
 
-    public List<ThreadContextProvider> getCleared() {
-        return cleared;
-    }
-
-    public List<ThreadContextProvider> getUnchanged() {
-        return unchanged;
+    public ContextServiceImpl(ContextServiceImpl other, ManagedExecutorService mes) {
+        this(other.propagated, other.cleared, other.unchanged);
+        this.mes = mes;
     }
 
     @Override
@@ -144,12 +150,12 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public <T> CompletableFuture<T> withContextCapture(final CompletableFuture<T> completableFuture) {
-        throw new IllegalStateException("not implemented yet"); // TODO implement this
+        return copyInternal(completableFuture);
     }
 
     @Override
     public <T> CompletionStage<T> withContextCapture(final CompletionStage<T> completionStage) {
-        throw new IllegalStateException("not implemented yet"); // TODO implement this
+        return copyInternal(completionStage);
     }
 
     public Snapshot snapshot(final Map<String, String> props) {
@@ -225,6 +231,31 @@ public class ContextServiceImpl implements ContextService {
                 restorer.endContext();
             }
         }
+    }
+
+    private <U> CompletableFuture<U> copyInternal(CompletionStage<U> future) {
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(getManagedExecutorService(), this);
+        future.whenComplete((result, exception) -> {
+            if (exception == null) {
+                managedFuture.complete(result);
+            } else {
+                managedFuture.completeExceptionally(exception);
+            }
+        });
+        return managedFuture;
+    }
+
+    protected ManagedExecutorService getManagedExecutorService() {
+        if (mes == null) {
+            try {
+                ManagedExecutorServiceImpl defaultMes = ManagedExecutorServiceImplFactory.lookup("java:comp/DefaultManagedExecutorService");
+                mes = new ManagedExecutorServiceImpl(defaultMes.getDelegate(), this);
+            } catch (NamingException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+        }
+
+        return mes;
     }
 
     private final static class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
