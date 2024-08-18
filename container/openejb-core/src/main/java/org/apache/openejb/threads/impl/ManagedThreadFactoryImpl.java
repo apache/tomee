@@ -63,7 +63,7 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
 
         @Override
         public boolean isShutdown() {
-            return !isAlive();
+            return getState() == State.TERMINATED;
         }
     }
 
