@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.resource.thread;
 
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
@@ -24,8 +28,9 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import jakarta.enterprise.concurrent.ManagedThreadFactory;
-
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -40,6 +45,28 @@ public class ManagedExecutorServiceImplFactory {
     private String threadFactory;
 
     private String context;
+
+    public static ManagedExecutorService lookup(String name) throws NamingException {
+        Object obj;
+        try {
+            obj = InitialContext.doLookup(name);
+        } catch (NamingException e) {
+            Context ctx = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+
+            if (name.equals("java:comp/DefaultManagedExecutorService")) {
+                name = "Default Managed Executor Service";
+            }
+
+            obj = ctx.lookup("openejb/Resource/" + name);
+        }
+
+        if (!(obj instanceof ManagedExecutorService mes)) {
+            throw new IllegalArgumentException("Resource with id " + name
+                    + " is not a ManagedExecutorService, but is " + obj.getClass().getName());
+        }
+
+        return mes;
+    }
 
     public ManagedExecutorServiceImpl create() {
         return new ManagedExecutorServiceImpl(createExecutorService(), ContextServiceImplFactory.lookupOrDefault(context));
