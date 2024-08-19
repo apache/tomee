@@ -63,7 +63,7 @@
       <plugin>
         <groupId>com.googlecode.t7mp</groupId>
         <artifactId>maven-t7-plugin</artifactId>
-        <version>0.9.7</version>
+        <version>0.9.18</version>
         <configuration>
           <tomcatHttpPort>1234</tomcatHttpPort>
           <tomcatShutdownPort>13245</tomcatShutdownPort>
