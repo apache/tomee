@@ -111,7 +111,7 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>2.0.0</version>
+      <version>3.3.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
