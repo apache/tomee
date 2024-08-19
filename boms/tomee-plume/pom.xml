@@ -510,7 +510,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-open-api-core</artifactId>
-      <version>3.10.0</version>
+      <version>3.12.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
