@@ -28,10 +28,10 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.security.auth.login.LoginException;
+import java.io.Serializable;
 import java.util.Map;
 
-public class SecurityThreadContextProvider implements ThreadContextProvider {
-
+public class SecurityThreadContextProvider implements ThreadContextProvider, Serializable {
     private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
     @Override
@@ -80,7 +80,7 @@ public class SecurityThreadContextProvider implements ThreadContextProvider {
         return ContextServiceDefinition.SECURITY;
     }
 
-    public static class SecurityThreadContextSnapshot implements ThreadContextSnapshot {
+    public static class SecurityThreadContextSnapshot implements ThreadContextSnapshot, Serializable {
 
         private final boolean associate;
         private final Object securityServiceState;

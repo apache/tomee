@@ -55,12 +55,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ContextServiceImpl implements ContextService {
+public class ContextServiceImpl implements ContextService, Serializable {
     private final List<ThreadContextProvider> propagated;
     private final List<ThreadContextProvider> cleared ;
     private final List<ThreadContextProvider> unchanged;
 
-    private ManagedExecutorService mes;
+    // TODO is lost after serialization, probably need to store some reference that can be resolved again after deserializing
+    private transient ManagedExecutorService mes;
 
     public ContextServiceImpl(List<ThreadContextProvider> propagated, List<ThreadContextProvider> cleared, List<ThreadContextProvider> unchanged) {
         this.propagated = propagated;
@@ -293,6 +294,8 @@ public class ContextServiceImpl implements ContextService {
         }
     }
 
+    // Not serializable by design because e.g. ApplicationThreadContextProvider holds
+    // a ClassLoader to restore which is not serializabel
     public record State(List<ThreadContextRestorer> restorers) { }
-    public record Snapshot(List<ThreadContextSnapshot> snapshots) { }
+    public record Snapshot(List<ThreadContextSnapshot> snapshots) implements Serializable { }
 }

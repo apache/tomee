@@ -21,11 +21,12 @@ import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object> {
+public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object>, Serializable {
 
     // only updated in container startup phase, no concurrency possible, don't use it at runtime!
     private static volatile ContainerListener[] CONTAINER_LISTENERS = new ContainerListener[0];
@@ -118,7 +119,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
      * this is really just something that the TomEERealm can push exit tasks to the currently
      * running Context.
      */
-    public static final class Context {
+    public static final class Context implements Serializable {
         public static final ThreadLocal<Context> CURRENT = new ThreadLocal<>();
 
         private Context previous = null;
@@ -171,7 +172,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
         return Comparable.class.isInstance(delegate) ? Comparable.class.cast(delegate).compareTo(o) : -1;
     }
 
-    public interface ContainerListener<T> {
+    public interface ContainerListener<T> extends Serializable {
         T onCreation();
         T onStart(T state);
         void onEnd(T oldState);

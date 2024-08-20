@@ -20,13 +20,23 @@ import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.AppFinder;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class ApplicationThreadContextProvider implements ThreadContextProvider {
+public class ApplicationThreadContextProvider implements ThreadContextProvider, Serializable {
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
-        return new ApplicationThreadContextSnapshot(Thread.currentThread().getContextClassLoader());
+        AppContext appContext = AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE);
+        if (appContext == null) {
+            return clearedContext(props);
+        }
+
+        return new ApplicationThreadContextSnapshot(appContext.getId());
     }
 
     @Override
@@ -39,24 +49,25 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider {
         return ContextServiceDefinition.APPLICATION;
     }
 
-    public static class ApplicationThreadContextSnapshot implements ThreadContextSnapshot {
+    public static class ApplicationThreadContextSnapshot implements ThreadContextSnapshot, Serializable {
         public static final ApplicationThreadContextSnapshot DO_NOTHING = new ApplicationThreadContextSnapshot(null);
 
-        private final ClassLoader classLoader;
+        private final Object appId;
 
-        public ApplicationThreadContextSnapshot(final ClassLoader classLoader) {
-            this.classLoader = classLoader;
+        public ApplicationThreadContextSnapshot(final Object appId) {
+            this.appId = appId;
         }
 
         @Override
         public ThreadContextRestorer begin() {
-            if (classLoader == null) {
+            if (appId == null) {
                 return ApplicationThreadContextRestorer.DO_NOTHING;
             }
 
-            final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
-            return new ApplicationThreadContextRestorer(oldClassLoader);
+            final AppContext appContext = SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appId);
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
+            return new ApplicationThreadContextRestorer(oldCl);
         }
     }
 

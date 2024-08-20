@@ -180,22 +180,7 @@ public class CxfRSService extends RESTService {
         SystemInstance.get().setComponent(RESTResourceFinder.class, new CxfRESTResourceFinder());
 
         try {
-            CUTask.addContainerListener(new CUTask.ContainerListener() {
-                @Override
-                public Object onCreation() {
-                    return Contexts.state();
-                }
-
-                @Override
-                public Object onStart(final Object state) {
-                    return Contexts.restore(state);
-                }
-
-                @Override
-                public void onEnd(final Object oldState) {
-                    Contexts.restore(oldState);
-                }
-            });
+            CUTask.addContainerListener(ContextContainerListener.INSTANCE);
         } catch(final Throwable th) {
             // unlikely but means the container core has been customized so just ignore it
         }
@@ -422,6 +407,25 @@ public class CxfRSService extends RESTService {
             } catch (final InvocationTargetException ite) {
                 throw ite.getCause();
             }
+        }
+    }
+
+    private static class ContextContainerListener implements CUTask.ContainerListener<Object> {
+        protected static ContextContainerListener INSTANCE = new ContextContainerListener();
+
+        @Override
+        public Object onCreation() {
+            return Contexts.state();
+        }
+
+        @Override
+        public Object onStart(final Object state) {
+            return Contexts.restore(state);
+        }
+
+        @Override
+        public void onEnd(final Object oldState) {
+            Contexts.restore(oldState);
         }
     }
 }

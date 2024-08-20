@@ -27,13 +27,14 @@ import jakarta.transaction.TransactionManager;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class TxThreadContextProvider implements ThreadContextProvider {
+public class TxThreadContextProvider implements ThreadContextProvider, Serializable {
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
         try {
-            return new TxThreadContextSnapshot(OpenEJB.getTransactionManager().getTransaction());
+            return new TxThreadContextRestoringSnapshot(OpenEJB.getTransactionManager().getTransaction());
         } catch (SystemException e) {
             throw new OpenEJBRuntimeException(e);
         }
@@ -41,7 +42,7 @@ public class TxThreadContextProvider implements ThreadContextProvider {
 
     @Override
     public ThreadContextSnapshot clearedContext(final Map<String, String> props) {
-        return new TxThreadContextSnapshot(null);
+        return TxThreadContextClearingSnapshot.INSTANCE;
     }
 
     @Override
@@ -49,10 +50,24 @@ public class TxThreadContextProvider implements ThreadContextProvider {
         return ContextServiceDefinition.TRANSACTION;
     }
 
-    public static class TxThreadContextSnapshot implements ThreadContextSnapshot {
+    // Basically TxThreadContextSnapshot but being serializable because it does not store a non-serializable transaction
+    public static class TxThreadContextClearingSnapshot implements ThreadContextSnapshot, Serializable {
+        public static final TxThreadContextClearingSnapshot INSTANCE = new TxThreadContextClearingSnapshot();
+
+        @Override
+        public ThreadContextRestorer begin() {
+            try {
+                return new TxThreadContextRestorer(OpenEJB.getTransactionManager().suspend());
+            } catch (SystemException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+        }
+    }
+
+    public static class TxThreadContextRestoringSnapshot implements ThreadContextSnapshot {
         private final Transaction transaction;
 
-        public TxThreadContextSnapshot(Transaction transaction) {
+        public TxThreadContextRestoringSnapshot(Transaction transaction) {
             this.transaction = transaction;
         }
 
