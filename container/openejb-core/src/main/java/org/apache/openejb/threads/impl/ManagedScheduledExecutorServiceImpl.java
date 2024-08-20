@@ -75,7 +75,13 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
                                                               final TriggerTask<V> wrapper, final ScheduledFuture<V> future) {
         futureHandle.set(future);
         wrapper.taskSubmitted(future, this, original);
-        return new CUScheduleFuture<>(ScheduledFutureFacade.newProxy(futureHandle), wrapper);
+
+        ScheduledFuture<V> proxy = (ScheduledFuture<V>) Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]{ScheduledFuture.class},
+                new TriggerBasedScheduledFutureFacade(futureHandle, wrapper));
+
+        return new CUScheduleFuture<>(proxy, wrapper);
     }
 
     @Override
@@ -129,24 +135,24 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         return null;
     }
 
-    private static final class ScheduledFutureFacade<V> implements InvocationHandler {
-        private final AtomicReference<ScheduledFuture<V>> delegate;
-
-        private ScheduledFutureFacade(final AtomicReference<ScheduledFuture<V>> delegate) {
-            this.delegate = delegate;
-        }
-
+    /**
+     * Automatically resolves an AtomicReference and delegates isDone calls to TriggerTask
+     * @param delegate
+     * @param wrapper
+     * @param <V>
+     */
+    private record TriggerBasedScheduledFutureFacade<V>(AtomicReference<ScheduledFuture<V>> delegate, TriggerTask<V> wrapper) implements InvocationHandler {
         @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            try {
-                return method.invoke(delegate.get(), args);
-            } catch (final InvocationTargetException ite) {
-                throw ite.getCause();
+            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                try {
+                    if (method.getName().equals("isDone")) {
+                        return wrapper.isDone();
+                    }
+
+                    return method.invoke(delegate.get(), args);
+                } catch (final InvocationTargetException ite) {
+                    throw ite.getCause();
+                }
             }
         }
-
-        private static <V> ScheduledFuture<V> newProxy(final AtomicReference<Future<V>> futureHandle) {
-            return ScheduledFuture.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ScheduledFuture.class}, new ScheduledFutureFacade(futureHandle)));
-        }
-    }
 }

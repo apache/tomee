@@ -47,6 +47,7 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
     private final AtomicBoolean running = new AtomicBoolean(true);
     private volatile T result;
+    private volatile Date nextRun;
 
     protected TriggerTask(final Object original, final ContextServiceImpl contextService, final ManagedScheduledExecutorServiceImpl es, final Trigger trigger,
                           final Date taskScheduledTime, final String id, final AtomicReference<Future<T>> ref) {
@@ -62,21 +63,20 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         return invoke(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                final long wait = nextDelay(trigger.getNextRunTime(lastExecution, scheduledTime));
+                final long wait = millisUntilNextRun();
                 if (wait > 0) {
                     Thread.sleep(wait);
-                } // else if wait < 0 then ??
+                }
 
                 final Date now = new Date();
                 try {
-                    final boolean skip = trigger.skipRun(lastExecution, now);
-                    if (!skip) {
+                    skipped = trigger.skipRun(lastExecution, now);
+                    if (!skipped) {
                         result = doInvoke();
                         taskDone(future, executor, delegate, null);
                         lastExecution = new LastExecutionImpl(id, result, scheduledTime, now, new Date());
                     } else {
                         result = null;
-                        skipped = true;
                         running.set(false);
                     }
                 } catch (final RuntimeException re) {
@@ -85,7 +85,13 @@ public abstract class TriggerTask<T> extends CUTask<T> {
                     throw skippedException;
                 }
 
-                final ScheduledFuture<T> future = executorService.schedule(this, trigger.getNextRunTime(lastExecution, scheduledTime).getTime() - ManagedScheduledExecutorServiceImpl.nowMs(), TimeUnit.MILLISECONDS);
+                nextRun = trigger.getNextRunTime(lastExecution, scheduledTime);
+                if (nextRun == null) {
+                    done = true;
+                    return result;
+                }
+
+                final ScheduledFuture<T> future = executorService.schedule(this, millisUntilNextRun(), TimeUnit.MILLISECONDS);
                 futureRef.set(future);
                 taskSubmitted(future, executorService, delegate);
 
@@ -94,8 +100,12 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         });
     }
 
-    protected long nextDelay(final Date next) {
-        return next.getTime() - ManagedScheduledExecutorServiceImpl.nowMs();
+    protected long millisUntilNextRun() {
+        if (nextRun == null) {
+            return 0;
+        }
+
+        return nextRun.getTime() - ManagedScheduledExecutorServiceImpl.nowMs();
     }
 
     protected abstract T doInvoke() throws Exception;
