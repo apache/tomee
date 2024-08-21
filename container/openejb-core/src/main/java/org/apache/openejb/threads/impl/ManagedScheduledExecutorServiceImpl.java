@@ -16,7 +16,8 @@
  */
 package org.apache.openejb.threads.impl;
 
-import org.apache.openejb.threads.future.CUScheduleFuture;
+import org.apache.openejb.threads.future.CUScheduledFuture;
+import org.apache.openejb.threads.future.CUTriggerScheduledFuture;
 import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.threads.task.CURunnable;
 import org.apache.openejb.threads.task.TriggerCallable;
@@ -79,9 +80,9 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         ScheduledFuture<V> proxy = (ScheduledFuture<V>) Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[]{ScheduledFuture.class},
-                new TriggerBasedScheduledFutureFacade(futureHandle, wrapper));
+                new TriggerBasedScheduledFutureFacade(futureHandle));
 
-        return new CUScheduleFuture<>(proxy, wrapper);
+        return new CUTriggerScheduledFuture<>(proxy, wrapper, wrapper);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CURunnable wrapper = new CURunnable(command, contextService);
         final ScheduledFuture<?> future = delegate.schedule(wrapper, delay, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduledFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     @Override
@@ -99,7 +100,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CUCallable<V> wrapper = new CUCallable<>(callable);
         final ScheduledFuture<V> future = delegate.schedule(wrapper, delay, unit);
         wrapper.taskSubmitted(future, this, callable);
-        return new CUScheduleFuture<>(future, wrapper);
+        return new CUScheduledFuture<>(future, wrapper);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CURunnable wrapper = new CURunnable(command, contextService);
         final ScheduledFuture<?> future = delegate.scheduleAtFixedRate(wrapper, initialDelay, period, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduledFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     @Override
@@ -117,7 +118,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CURunnable wrapper = new CURunnable(command, contextService);
         final ScheduledFuture<?> future = delegate.scheduleWithFixedDelay(wrapper, initialDelay, delay, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduledFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     public static long nowMs() {
@@ -136,23 +137,18 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     }
 
     /**
-     * Automatically resolves an AtomicReference and delegates isDone calls to TriggerTask
+     * Automatically resolves an AtomicReference
      * @param delegate
-     * @param wrapper
      * @param <V>
      */
-    private record TriggerBasedScheduledFutureFacade<V>(AtomicReference<ScheduledFuture<V>> delegate, TriggerTask<V> wrapper) implements InvocationHandler {
+    private record TriggerBasedScheduledFutureFacade<V>(AtomicReference<ScheduledFuture<V>> delegate) implements InvocationHandler {
         @Override
-            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                try {
-                    if (method.getName().equals("isDone")) {
-                        return wrapper.isDone();
-                    }
-
-                    return method.invoke(delegate.get(), args);
-                } catch (final InvocationTargetException ite) {
-                    throw ite.getCause();
-                }
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            try {
+                return method.invoke(delegate.get(), args);
+            } catch (final InvocationTargetException ite) {
+                throw ite.getCause();
             }
         }
+    }
 }

@@ -30,7 +30,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class TriggerTask<T> extends CUTask<T> {
@@ -45,7 +44,6 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
     protected volatile boolean done;
 
-    private final AtomicBoolean running = new AtomicBoolean(true);
     private volatile T result;
     private volatile Date nextRun;
 
@@ -77,7 +75,7 @@ public abstract class TriggerTask<T> extends CUTask<T> {
                         lastExecution = new LastExecutionImpl(id, result, scheduledTime, now, new Date());
                     } else {
                         result = null;
-                        running.set(false);
+                        lastExecution = new LastExecutionImpl(id, result, scheduledTime, null, null);
                     }
                 } catch (final RuntimeException re) {
                     final SkippedException skippedException = new SkippedException(re);
@@ -112,10 +110,6 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
     public String getId() {
         return id;
-    }
-
-    public void stop() {
-        running.set(false);
     }
 
     public boolean isDone() {
@@ -177,7 +171,12 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
         @Override
         public ZonedDateTime getRunStart(final ZoneId zone) {
-            return getRunStart().toInstant().atZone(zone);
+            Date runStart = getRunStart();
+            if (runStart == null) {
+                return null;
+            }
+
+            return runStart.toInstant().atZone(zone);
         }
 
         @Override
@@ -187,7 +186,12 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
         @Override
         public ZonedDateTime getRunEnd(final ZoneId zone) {
-            return getRunEnd().toInstant().atZone(zone);
+            Date runEnd = getRunEnd();
+            if (runEnd == null) {
+                return null;
+            }
+
+            return runEnd.toInstant().atZone(zone);
         }
 
         @Override
