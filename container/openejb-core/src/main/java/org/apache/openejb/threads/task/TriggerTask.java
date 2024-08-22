@@ -16,17 +16,15 @@
  */
 package org.apache.openejb.threads.task;
 
-import org.apache.openejb.threads.impl.ContextServiceImpl;
-import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
-
 import jakarta.enterprise.concurrent.LastExecution;
 import jakarta.enterprise.concurrent.SkippedException;
 import jakarta.enterprise.concurrent.Trigger;
+import org.apache.openejb.threads.impl.ContextServiceImpl;
+import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class TriggerTask<T> extends CUTask<T> {
     protected final ManagedScheduledExecutorServiceImpl executorService;
     protected final Trigger trigger;
-    protected final Date scheduledTime;
+    protected final Date initiallyScheduled;
     protected final String id;
     protected final AtomicReference<Future<T>> futureRef;
 
@@ -52,50 +50,52 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         super(original, contextService);
         this.executorService = es;
         this.trigger = trigger;
-        this.scheduledTime = taskScheduledTime;
+        this.initiallyScheduled = taskScheduledTime;
         this.id = id;
         this.futureRef = ref;
     }
 
-    public T invoke() throws Exception {
-        return invoke(new Callable<T>() {
-            @Override
-            public T call() throws Exception {
-                final long wait = millisUntilNextRun();
-                if (wait > 0) {
-                    Thread.sleep(wait);
-                }
+    public void scheduleNextRun() {
+        this.nextRun = trigger.getNextRunTime(lastExecution, initiallyScheduled);
+        if (nextRun == null) {
+            done = true;
+            return;
+        }
 
-                final Date now = new Date();
-                try {
-                    skipped = trigger.skipRun(lastExecution, now);
-                    if (!skipped) {
-                        result = doInvoke();
-                        taskDone(future, executor, delegate, null);
-                        lastExecution = new LastExecutionImpl(id, result, scheduledTime, now, new Date());
-                    } else {
-                        result = null;
-                        lastExecution = new LastExecutionImpl(id, result, scheduledTime, null, null);
-                    }
-                } catch (final RuntimeException re) {
-                    final SkippedException skippedException = new SkippedException(re);
-                    taskAborted(skippedException);
-                    throw skippedException;
-                }
+        final ScheduledFuture<T> future = executorService.schedule(this::execute, millisUntilNextRun(), TimeUnit.MILLISECONDS);
+        futureRef.set(future);
+        taskSubmitted(future, executorService, delegate);
+    }
 
-                nextRun = trigger.getNextRunTime(lastExecution, scheduledTime);
-                if (nextRun == null) {
-                    done = true;
-                    return result;
-                }
+    private T execute() throws Exception {
+        final long wait = millisUntilNextRun();
+        if (wait > 0) {
+            Thread.sleep(wait);
+        }
 
-                final ScheduledFuture<T> future = executorService.schedule(this, millisUntilNextRun(), TimeUnit.MILLISECONDS);
-                futureRef.set(future);
-                taskSubmitted(future, executorService, delegate);
-
-                return result;
+        final ZonedDateTime runStart = ZonedDateTime.now();
+        try {
+            skipped = trigger.skipRun(lastExecution, initiallyScheduled);
+            if (!skipped) {
+                result = doInvoke();
+                taskDone(future, executor, delegate, null);
+                lastExecution = new LastExecutionImpl(id, result, nextRun, runStart, ZonedDateTime.now());
+            } else {
+                result = null;
+                lastExecution = new LastExecutionImpl(id, result, nextRun, null, null);
             }
-        });
+        } catch (final RuntimeException re) {
+            final SkippedException skippedException = new SkippedException(re);
+            taskAborted(skippedException);
+            throw skippedException;
+        }
+
+        scheduleNextRun();
+        return result;
+    }
+
+    public T invoke() throws Exception {
+        return invoke(this::execute);
     }
 
     protected long millisUntilNextRun() {
@@ -131,15 +131,16 @@ public abstract class TriggerTask<T> extends CUTask<T> {
     private static class LastExecutionImpl implements LastExecution {
         private final String identityName;
         private final Object result;
-        private final Date scheduledStart;
-        private final Date runStart;
-        private final Date runEnd;
 
-        public LastExecutionImpl(final String identityName, final Object result, final Date scheduledStart,
-                                 final Date runStart, final Date runEnd) {
+        private final ZonedDateTime scheduledStart;
+        private final ZonedDateTime runStart;
+        private final ZonedDateTime runEnd;
+
+        public LastExecutionImpl(final String identityName, final Object result,
+                                 final Date scheduledStart, final ZonedDateTime runStart, final ZonedDateTime runEnd) {
             this.identityName = identityName;
             this.result = result;
-            this.scheduledStart = scheduledStart;
+            this.scheduledStart = scheduledStart.toInstant().atZone(ZoneId.systemDefault());
             this.runStart = runStart;
             this.runEnd = runEnd;
         }
@@ -155,49 +156,32 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         }
 
         @Override
-        public Date getScheduledStart() {
-            return scheduledStart;
-        }
-
-        @Override
         public ZonedDateTime getScheduledStart(final ZoneId zone) {
-            return getScheduledStart().toInstant().atZone(zone);
-        }
-
-        @Override
-        public Date getRunStart() {
-            return runStart;
+            return scheduledStart.withZoneSameInstant(zone);
         }
 
         @Override
         public ZonedDateTime getRunStart(final ZoneId zone) {
-            Date runStart = getRunStart();
             if (runStart == null) {
                 return null;
             }
 
-            return runStart.toInstant().atZone(zone);
-        }
-
-        @Override
-        public Date getRunEnd() {
-            return runEnd;
+            return runStart.withZoneSameInstant(zone);
         }
 
         @Override
         public ZonedDateTime getRunEnd(final ZoneId zone) {
-            Date runEnd = getRunEnd();
             if (runEnd == null) {
                 return null;
             }
 
-            return runEnd.toInstant().atZone(zone);
+            return runEnd.withZoneSameInstant(zone);
         }
 
         @Override
         public String toString() {
             return "LastExecutionImpl{" +
-                (identityName != null ? "identityName='" + identityName + "\', " : "") +
+                (identityName != null ? "identityName='" + identityName + "', " : "") +
                 "result=" + result +
                 ", scheduledStart=" + scheduledStart +
                 ", runStart=" + runStart +

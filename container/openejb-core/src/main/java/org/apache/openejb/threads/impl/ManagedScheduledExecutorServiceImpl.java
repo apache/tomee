@@ -58,8 +58,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final Date taskScheduledTime = new Date();
         final AtomicReference<Future<?>> futureHandle = new AtomicReference<>();
         final TriggerRunnable wrapper = new TriggerRunnable(this, contextService, runnable, new CURunnable(runnable, contextService), trigger, taskScheduledTime, getTaskId(runnable), AtomicReference.class.cast(futureHandle));
-        final ScheduledFuture<?> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-        return initTriggerScheduledFuture(runnable, AtomicReference.class.cast(futureHandle), wrapper, ScheduledFuture.class.cast(future));
+        return initTriggerScheduledFuture(AtomicReference.class.cast(futureHandle), wrapper);
     }
 
     @Override
@@ -68,14 +67,11 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final Date taskScheduledTime = new Date();
         final AtomicReference<Future<V>> futureHandle = new AtomicReference<>();
         final TriggerCallable<V> wrapper = new TriggerCallable<>(this, this.contextService, vCallable, new CUCallable<>(vCallable, contextService), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
-        final ScheduledFuture<V> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-        return initTriggerScheduledFuture(vCallable, futureHandle, wrapper, future);
+        return initTriggerScheduledFuture(futureHandle, wrapper);
     }
 
-    private <V> ScheduledFuture<V> initTriggerScheduledFuture(final Object original, final AtomicReference<Future<V>> futureHandle,
-                                                              final TriggerTask<V> wrapper, final ScheduledFuture<V> future) {
-        futureHandle.set(future);
-        wrapper.taskSubmitted(future, this, original);
+    private <V> ScheduledFuture<V> initTriggerScheduledFuture(final AtomicReference<Future<V>> futureHandle, final TriggerTask<V> wrapper) {
+        wrapper.scheduleNextRun();
 
         ScheduledFuture<V> proxy = (ScheduledFuture<V>) Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
