@@ -110,7 +110,7 @@
     <version.plugin.bundle>5.1.9</version.plugin.bundle>
     <version.plugin.javadoc>3.8.0</version.plugin.javadoc>
     <asciidoclet.version>1.5.0</asciidoclet.version>
-    <surefire.version>3.3.1</surefire.version>
+    <surefire.version>3.4.0</surefire.version>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
