@@ -135,10 +135,27 @@ public class ManagedConnection implements InvocationHandler {
             // get the already bound connection to the current transaction or enlist this one in the tx
             final int transactionStatus = transaction.getStatus();
             if (isUnderTransaction(transactionStatus)) {
-                Connection connection = Connection.class.cast(registry.getResource(key));
-                if (connection == null && delegate == null) {
-                    newConnection();
+                Connection registeredConnection = Connection.class.cast(registry.getResource(key));
+                if (delegate == null && registeredConnection != null) {
+                    // this happens if the caller obtains subsequent connections from the *same* datasource
+                    // are enlisted in the *same* transaction:
+                    //   connection != null (because it comes from the tx registry)
+                    //   delegate == null (because its a new ManagedConnection instance)
+                    // we attempt to work-around this by looking up the connection in the tx registry in ManaagedDataSource
+                    // and ManagedXADataSource, but there is an edge case where the connection is fetch from the datasource
+                    // first, and a BMT tx is started by the user.
 
+                    final ManagedConnection managedConnection = ManagedConnection.class.cast(Proxy.getInvocationHandler(registeredConnection));
+                    this.delegate = managedConnection.delegate;
+                    this.xaConnection = managedConnection.xaConnection;
+                    this.xaResource = managedConnection.xaResource;
+                }
+
+                if (delegate == null) {
+                    newConnection();
+                }
+
+                if (registeredConnection == null) {
                     currentTransaction = transaction;
                     try {
                         if (!transaction.enlistResource(getXAResource())) {
@@ -167,19 +184,6 @@ public class ManagedConnection implements InvocationHandler {
                             }
                         }
                     }
-                } else if (delegate == null) {
-                    // this happens if the caller obtains subsequent connections from the *same* datasource
-                    // are enlisted in the *same* transaction:
-                    //   connection != null (because it comes from the tx registry)
-                    //   delegate == null (because its a new ManagedConnection instance)
-                    // we attempt to work-around this by looking up the connection in the tx registry in ManaagedDataSource
-                    // and ManagedXADataSource, but there is an edge case where the connection is fetch from the datasource
-                    // first, and a BMT tx is started by the user.
-
-                    final ManagedConnection managedConnection = ManagedConnection.class.cast(Proxy.getInvocationHandler(connection));
-                    this.delegate = managedConnection.delegate;
-                    this.xaConnection = managedConnection.xaConnection;
-                    this.xaResource = managedConnection.xaResource;
                 }
 
                 return invokeUnderTransaction(method, args);
