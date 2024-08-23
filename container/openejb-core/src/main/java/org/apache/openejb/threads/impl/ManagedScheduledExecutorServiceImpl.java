@@ -78,7 +78,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
                 new Class<?>[]{ScheduledFuture.class},
                 new TriggerBasedScheduledFutureFacade(futureHandle));
 
-        return new CUTriggerScheduledFuture<>(proxy, wrapper, wrapper);
+        return new CUTriggerScheduledFuture<>(proxy, wrapper);
     }
 
     @Override

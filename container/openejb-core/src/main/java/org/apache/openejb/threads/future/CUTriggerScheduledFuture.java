@@ -1,7 +1,6 @@
 package org.apache.openejb.threads.future;
 
 import jakarta.enterprise.concurrent.SkippedException;
-import org.apache.openejb.threads.task.ManagedTaskListenerTask;
 import org.apache.openejb.threads.task.TriggerTask;
 
 import java.util.concurrent.ExecutionException;
@@ -14,22 +13,19 @@ import java.util.concurrent.TimeoutException;
  * @param <V>
  */
 public class CUTriggerScheduledFuture<V> extends CUScheduledFuture<V> {
-    private final TriggerTask<V> task;
-
-    public CUTriggerScheduledFuture(ScheduledFuture<V> delegate, ManagedTaskListenerTask listener, TriggerTask<V> task) {
-        super(delegate, listener);
-        this.task = task;
+    public CUTriggerScheduledFuture(ScheduledFuture<V> delegate, TriggerTask<V> task) {
+        super(delegate, task);
     }
 
     @Override
     public boolean isDone() {
-        return task.isDone();
+        return ((TriggerTask<V>) listener).isDone();
     }
 
     @Override
     public V get() throws InterruptedException, ExecutionException {
         V result = super.get();
-        if (task.isSkipped()) {
+        if (((TriggerTask<V>) listener).isSkipped()) {
             throw new SkippedException();
         }
 
@@ -39,7 +35,7 @@ public class CUTriggerScheduledFuture<V> extends CUScheduledFuture<V> {
     @Override
     public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         V result = super.get(timeout, unit);
-        if (task.isSkipped()) {
+        if (((TriggerTask<V>) listener).isSkipped()) {
             throw new SkippedException();
         }
 
