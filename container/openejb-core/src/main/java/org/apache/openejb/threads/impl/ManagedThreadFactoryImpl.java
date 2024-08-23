@@ -32,6 +32,12 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
     private final String prefix;
     private final Integer priority;
 
+    // Invoked by ThreadFactories.findThreadFactory via reflection
+    @SuppressWarnings("unused")
+    public ManagedThreadFactoryImpl() {
+        this(DEFAULT_PREFIX, Thread.NORM_PRIORITY, ContextServiceImplFactory.getOrCreateDefaultSingleton());
+    }
+
     public ManagedThreadFactoryImpl(final String prefix, final Integer priority, final ContextServiceImpl contextService) {
         this.prefix = prefix;
         this.priority = priority;

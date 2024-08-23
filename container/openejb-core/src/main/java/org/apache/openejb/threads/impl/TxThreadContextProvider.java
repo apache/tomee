@@ -59,7 +59,12 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
         @Override
         public ThreadContextRestorer begin() {
             try {
-                return new TxThreadContextRestorer(OpenEJB.getTransactionManager().suspend());
+                TransactionManager tm = OpenEJB.getTransactionManager();
+                if (tm != null) {
+                    return new TxThreadContextRestorer(tm.suspend());
+                }
+
+                return () -> {};
             } catch (SystemException e) {
                 throw new OpenEJBRuntimeException(e);
             }
