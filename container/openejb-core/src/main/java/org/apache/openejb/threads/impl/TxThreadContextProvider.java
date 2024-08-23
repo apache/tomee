@@ -31,6 +31,8 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class TxThreadContextProvider implements ThreadContextProvider, Serializable {
+    public static final TxThreadContextProvider INSTANCE = new TxThreadContextProvider();
+
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
         try {

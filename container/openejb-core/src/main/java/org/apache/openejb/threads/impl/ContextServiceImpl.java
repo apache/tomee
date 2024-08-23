@@ -23,8 +23,6 @@ import jakarta.enterprise.concurrent.ManagedTask;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
-import jakarta.transaction.Transaction;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.resource.thread.ManagedExecutorServiceImplFactory;
 import org.apache.openejb.threads.future.CUCompletableFuture;
@@ -57,7 +55,7 @@ import java.util.function.Supplier;
 
 public class ContextServiceImpl implements ContextService, Serializable {
     private final List<ThreadContextProvider> propagated;
-    private final List<ThreadContextProvider> cleared ;
+    private final List<ThreadContextProvider> cleared;
     private final List<ThreadContextProvider> unchanged;
 
     // TODO is lost after serialization, probably need to store some reference that can be resolved again after deserializing
@@ -262,13 +260,45 @@ public class ContextServiceImpl implements ContextService, Serializable {
     private final static class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
         private final Object instance;
         private final Map<String, String> properties;
-        private final boolean suspendTx;
 
         private CUHandler(final Object instance, final Map<String, String> props, ContextServiceImpl contextService) {
-            super(instance, contextService);
+            super(instance, reconfigureContextService(contextService, props), props);
+
             this.instance = instance;
             this.properties = props;
-            this.suspendTx = ManagedTask.SUSPEND.equals(props.get(ManagedTask.TRANSACTION));
+        }
+
+        private static ContextServiceImpl reconfigureContextService(ContextServiceImpl contextService, Map<String, String> props) {
+            if (props == null || !props.containsKey(ManagedTask.TRANSACTION)) {
+                return contextService;
+            }
+
+            ArrayList<ThreadContextProvider> propagated = new ArrayList<>(contextService.propagated);
+            ArrayList<ThreadContextProvider> cleared = new ArrayList<>(contextService.cleared);
+            ArrayList<ThreadContextProvider> unchanged = new ArrayList<>(contextService.unchanged);
+
+            if (ManagedTask.SUSPEND.equals(props.get(ManagedTask.TRANSACTION))) {
+                if (!cleared.contains(TxThreadContextProvider.INSTANCE)) {
+                    cleared.add(TxThreadContextProvider.INSTANCE);
+                }
+
+                propagated.remove(TxThreadContextProvider.INSTANCE);
+                unchanged.remove(TxThreadContextProvider.INSTANCE);
+            }
+
+            if (ManagedTask.USE_TRANSACTION_OF_EXECUTION_THREAD.equals(props.get(ManagedTask.TRANSACTION))) {
+                if (!propagated.contains(TxThreadContextProvider.INSTANCE)) {
+                    propagated.add(TxThreadContextProvider.INSTANCE);
+                }
+
+                cleared.remove(TxThreadContextProvider.INSTANCE);
+                unchanged.remove(TxThreadContextProvider.INSTANCE);
+            }
+
+            return new ContextServiceImpl(
+                    new ArrayList<>(propagated),
+                    new ArrayList<>(cleared),
+                    new ArrayList<>(unchanged));
         }
 
         @Override
@@ -277,25 +307,12 @@ public class ContextServiceImpl implements ContextService, Serializable {
                 return method.invoke(this, args);
             }
 
-            final Transaction suspendedTx;
-            if (suspendTx) {
-                suspendedTx = OpenEJB.getTransactionManager().suspend();
-            } else {
-                suspendedTx = null;
-            }
-
-            try {
-                return invoke(() -> method.invoke(instance, args));
-            } finally {
-                if (suspendedTx != null) {
-                    OpenEJB.getTransactionManager().resume(suspendedTx);
-                }
-            }
+            return invoke(() -> method.invoke(instance, args));
         }
     }
 
     // Not serializable by design because e.g. ApplicationThreadContextProvider holds
-    // a ClassLoader to restore which is not serializabel
+    // a ClassLoader to restore which is not serializable
     public record State(List<ThreadContextRestorer> restorers) { }
     public record Snapshot(List<ThreadContextSnapshot> snapshots) implements Serializable { }
 }

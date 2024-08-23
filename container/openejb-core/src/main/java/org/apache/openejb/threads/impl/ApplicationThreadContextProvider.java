@@ -29,6 +29,8 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class ApplicationThreadContextProvider implements ThreadContextProvider, Serializable {
+    public static final ApplicationThreadContextProvider INSTANCE = new ApplicationThreadContextProvider();
+
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
         AppContext appContext = AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE);

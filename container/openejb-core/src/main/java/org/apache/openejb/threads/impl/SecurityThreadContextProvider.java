@@ -32,6 +32,8 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class SecurityThreadContextProvider implements ThreadContextProvider, Serializable {
+    public static final SecurityThreadContextProvider INSTANCE = new SecurityThreadContextProvider();
+
     private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
     @Override
