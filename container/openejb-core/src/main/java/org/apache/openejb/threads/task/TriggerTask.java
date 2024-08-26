@@ -39,8 +39,8 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
     protected LastExecution lastExecution;
     protected volatile boolean skipped;
-
     protected volatile boolean done;
+    protected volatile boolean cancelled;
 
     private volatile T result;
     private volatile Date nextRun;
@@ -56,6 +56,12 @@ public abstract class TriggerTask<T> extends CUTask<T> {
     }
 
     public void scheduleNextRun() {
+        synchronized (this) {
+            if (cancelled) {
+                return;
+            }
+        }
+
         this.nextRun = trigger.getNextRunTime(lastExecution, initiallyScheduled);
         if (nextRun == null) {
             done = true;
@@ -126,6 +132,13 @@ public abstract class TriggerTask<T> extends CUTask<T> {
 
     public LastExecution getLastExecution() {
         return lastExecution;
+    }
+
+    public void cancelScheduling() {
+        synchronized (this) {
+            this.cancelled = true;
+            this.done = true;
+        }
     }
 
     private static class LastExecutionImpl implements LastExecution {

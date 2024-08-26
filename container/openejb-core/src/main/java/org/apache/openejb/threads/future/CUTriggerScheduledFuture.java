@@ -19,7 +19,13 @@ public class CUTriggerScheduledFuture<V> extends CUScheduledFuture<V> {
 
     @Override
     public boolean isDone() {
-        return ((TriggerTask<V>) listener).isDone();
+        return super.isDone() && ((TriggerTask<V>) listener).isDone();
+    }
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        ((TriggerTask<V>) listener).cancelScheduling();
+        return super.cancel(mayInterruptIfRunning);
     }
 
     @Override
