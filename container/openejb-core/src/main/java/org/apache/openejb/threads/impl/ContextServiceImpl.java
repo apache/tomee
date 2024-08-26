@@ -26,13 +26,6 @@ import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.resource.thread.ManagedExecutorServiceImplFactory;
 import org.apache.openejb.threads.future.CUCompletableFuture;
-import org.apache.openejb.threads.task.CUBiConsumer;
-import org.apache.openejb.threads.task.CUBiFunction;
-import org.apache.openejb.threads.task.CUCallable;
-import org.apache.openejb.threads.task.CUConsumer;
-import org.apache.openejb.threads.task.CUFunction;
-import org.apache.openejb.threads.task.CURunnable;
-import org.apache.openejb.threads.task.CUSupplier;
 import org.apache.openejb.threads.task.CUTask;
 
 import javax.naming.NamingException;
@@ -74,37 +67,37 @@ public class ContextServiceImpl implements ContextService, Serializable {
 
     @Override
     public <R> Callable<R> contextualCallable(final Callable<R> callable) {
-        return new CUCallable<>(callable, this);
+        return createContextualProxy(callable, Callable.class);
     }
 
     @Override
     public <T, U> BiConsumer<T, U> contextualConsumer(final BiConsumer<T, U> biConsumer) {
-        return new CUBiConsumer<>(biConsumer, this);
+        return createContextualProxy(biConsumer, BiConsumer.class);
     }
 
     @Override
     public <T> Consumer<T> contextualConsumer(final Consumer<T> consumer) {
-        return new CUConsumer<>(consumer, this);
+        return createContextualProxy(consumer, Consumer.class);
     }
 
     @Override
     public <T, U, R> BiFunction<T, U, R> contextualFunction(final BiFunction<T, U, R> biFunction) {
-        return new CUBiFunction<>(biFunction, this);
+        return createContextualProxy(biFunction, BiFunction.class);
     }
 
     @Override
     public <T, R> Function<T, R> contextualFunction(final Function<T, R> function) {
-        return new CUFunction<>(function, this);
+        return createContextualProxy(function, Function.class);
     }
 
     @Override
     public Runnable contextualRunnable(final Runnable runnable) {
-        return new CURunnable(runnable, this);
+        return createContextualProxy(runnable, Runnable.class);
     }
 
     @Override
     public <R> Supplier<R> contextualSupplier(final Supplier<R> supplier) {
-        return new CUSupplier<>(supplier, this);
+        return createContextualProxy(supplier, Supplier.class);
     }
 
     @Override
