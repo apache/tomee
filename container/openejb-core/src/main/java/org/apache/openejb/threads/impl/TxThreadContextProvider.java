@@ -64,7 +64,7 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
                     return new TxThreadContextRestorer(tm.suspend());
                 }
 
-                return () -> {};
+                return ThreadContextProviderUtil.NOOP_RESTORER;
             } catch (SystemException e) {
                 throw new OpenEJBRuntimeException(e);
             }
