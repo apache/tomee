@@ -1,35 +1,39 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
+ * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.openejb.jee;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import org.metatype.sxc.jaxb.FieldAccessor;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.Attribute;
 import org.metatype.sxc.util.XoXMLStreamReader;
 import org.metatype.sxc.util.XoXMLStreamWriter;
 
-import javax.xml.XMLConstants;
-import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.openejb.jee.AbsoluteOrdering$JAXB.readAbsoluteOrdering;
 import static org.apache.openejb.jee.AbsoluteOrdering$JAXB.writeAbsoluteOrdering;
+import static org.apache.openejb.jee.ContextService$JAXB.readContextService;
+import static org.apache.openejb.jee.ContextService$JAXB.writeContextService;
 import static org.apache.openejb.jee.DataSource$JAXB.readDataSource;
 import static org.apache.openejb.jee.DataSource$JAXB.writeDataSource;
 import static org.apache.openejb.jee.EjbLocalRef$JAXB.readEjbLocalRef;
@@ -49,6 +53,9 @@ import static org.apache.openejb.jee.FilterMapping$JAXB.writeFilterMapping;
 import static org.apache.openejb.jee.Icon$JAXB.readIcon;
 import static org.apache.openejb.jee.Icon$JAXB.writeIcon;
 import static org.apache.openejb.jee.JMSConnectionFactory$JAXB.readJMSConnectionFactory;
+import static org.apache.openejb.jee.JMSConnectionFactory$JAXB.writeJMSConnectionFactory;
+import static org.apache.openejb.jee.JMSDestination$JAXB.readJMSDestination;
+import static org.apache.openejb.jee.JMSDestination$JAXB.writeJMSDestination;
 import static org.apache.openejb.jee.JspConfig$JAXB.readJspConfig;
 import static org.apache.openejb.jee.JspConfig$JAXB.writeJspConfig;
 import static org.apache.openejb.jee.LifecycleCallback$JAXB.readLifecycleCallback;
@@ -98,30 +105,36 @@ import static org.apache.openejb.jee.WelcomeFileList$JAXB.writeWelcomeFileList;
     "StringEquality"
 })
 public class WebApp$JAXB
-    extends JAXBObject<WebApp> {
+    extends JAXBObject<WebApp>
+{
 
+    private static final FieldAccessor<WebApp, KeyedCollection<String, ContextService>> webAppContextService = new FieldAccessor<>(WebApp.class, "contextService");
 
     public WebApp$JAXB() {
-        super(WebApp.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-app".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-appType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, ParamValue$JAXB.class, Filter$JAXB.class, FilterMapping$JAXB.class, Listener$JAXB.class, Servlet$JAXB.class, ServletMapping$JAXB.class, SessionConfig$JAXB.class, MimeMapping$JAXB.class, WelcomeFileList$JAXB.class, ErrorPage$JAXB.class, Taglib$JAXB.class, JspConfig$JAXB.class, SecurityConstraint$JAXB.class, LoginConfig$JAXB.class, SecurityRole$JAXB.class, LocaleEncodingMappingList$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, MessageDestination$JAXB.class, AbsoluteOrdering$JAXB.class, DataSource$JAXB.class);
+        super(WebApp.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-app".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-appType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, ParamValue$JAXB.class, Filter$JAXB.class, FilterMapping$JAXB.class, Listener$JAXB.class, Servlet$JAXB.class, ServletMapping$JAXB.class, SessionConfig$JAXB.class, MimeMapping$JAXB.class, WelcomeFileList$JAXB.class, ErrorPage$JAXB.class, Taglib$JAXB.class, JspConfig$JAXB.class, SecurityConstraint$JAXB.class, LoginConfig$JAXB.class, SecurityRole$JAXB.class, LocaleEncodingMappingList$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, MessageDestination$JAXB.class, AbsoluteOrdering$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class);
     }
 
-    public static WebApp readWebApp(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public static WebApp readWebApp(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public static void writeWebApp(final XoXMLStreamWriter writer, final WebApp webApp, final RuntimeContext context)
-        throws Exception {
+    public static void writeWebApp(XoXMLStreamWriter writer, WebApp webApp, RuntimeContext context)
+        throws Exception
+    {
         _write(writer, webApp, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final WebApp webApp, final RuntimeContext context)
-        throws Exception {
+    public void write(XoXMLStreamWriter writer, WebApp webApp, RuntimeContext context)
+        throws Exception
+    {
         _write(writer, webApp, context);
     }
 
-    public final static WebApp _read(final XoXMLStreamReader reader, RuntimeContext context)
-        throws Exception {
+    public static final WebApp _read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -132,7 +145,7 @@ public class WebApp$JAXB
             context = new RuntimeContext();
         }
 
-        final WebApp webApp = new WebApp();
+        WebApp webApp = new WebApp();
         context.beforeUnmarshal(webApp, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -168,567 +181,602 @@ public class WebApp$JAXB
         List<MessageDestination> messageDestination = null;
         KeyedCollection<String, DataSource> dataSource = null;
         KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories = null;
+        KeyedCollection<String, JMSDestination> jmsDestinations = null;
+        KeyedCollection<String, ContextService> contextService = null;
 
         // Check xsi:type
-        final QName xsiType = reader.getXsiType();
-        if (xsiType != null) {
-            if (("web-appType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+        QName xsiType = reader.getXsiType();
+        if (xsiType!= null) {
+            if (("web-appType"!= xsiType.getLocalPart())||("http://java.sun.com/xml/ns/javaee"!= xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, WebApp.class);
             }
         }
 
         // Read attributes
-        for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+        for (Attribute attribute: reader.getAttributes()) {
+            if (("id" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, webApp);
                 webApp.id = id;
-            } else if (("metadata-complete" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            } else if (("metadata-complete" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: metadataComplete
-                final Boolean metadataComplete = ("1".equals(attribute.getValue()) || "true".equals(attribute.getValue()));
+                Boolean metadataComplete = ("1".equals(attribute.getValue())||"true".equals(attribute.getValue()));
                 webApp.metadataComplete = metadataComplete;
-            } else if (("version" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            } else if (("version" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: version
                 webApp.version = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI!= attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute, new QName("", "id"), new QName("", "metadata-complete"), new QName("", "version"));
             }
         }
 
         // Read elements
-        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+        for (XoXMLStreamReader elementReader: reader.getChildElements()) {
+            if (("description" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                final Text descriptionsItem = readText(elementReader, context);
+                Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
-                    descriptions = new ArrayList<Text>();
+                    descriptions = new ArrayList<>();
                 }
                 descriptions.add(descriptionsItem);
-            } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("display-name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                final Text displayNamesItem = readText(elementReader, context);
+                Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
-                    displayNames = new ArrayList<Text>();
+                    displayNames = new ArrayList<>();
                 }
                 displayNames.add(displayNamesItem);
-            } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("icon" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                final Icon iconItem = readIcon(elementReader, context);
+                Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = webApp.icon;
-                    if (icon != null) {
+                    if (icon!= null) {
                         icon.clear();
                     } else {
-                        icon = new LocalCollection<Icon>();
+                        icon = new LocalCollection<>();
                     }
                 }
                 icon.add(iconItem);
-            } else if (("distributable" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("distributable" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: distributable
-                final Empty distributableItem = readEmpty(elementReader, context);
+                Empty distributableItem = readEmpty(elementReader, context);
                 if (distributable == null) {
                     distributable = webApp.distributable;
-                    if (distributable != null) {
+                    if (distributable!= null) {
                         distributable.clear();
                     } else {
-                        distributable = new ArrayList<Empty>();
+                        distributable = new ArrayList<>();
                     }
                 }
                 distributable.add(distributableItem);
-            } else if (("context-param" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("context-param" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: contextParam
-                final ParamValue contextParamItem = readParamValue(elementReader, context);
+                ParamValue contextParamItem = readParamValue(elementReader, context);
                 if (contextParam == null) {
                     contextParam = webApp.contextParam;
-                    if (contextParam != null) {
+                    if (contextParam!= null) {
                         contextParam.clear();
                     } else {
-                        contextParam = new ArrayList<ParamValue>();
+                        contextParam = new ArrayList<>();
                     }
                 }
                 contextParam.add(contextParamItem);
-            } else if (("filter" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("filter" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: filter
-                final Filter filterItem = readFilter(elementReader, context);
+                Filter filterItem = readFilter(elementReader, context);
                 if (filter == null) {
                     filter = webApp.filter;
-                    if (filter != null) {
+                    if (filter!= null) {
                         filter.clear();
                     } else {
-                        filter = new ArrayList<Filter>();
+                        filter = new ArrayList<>();
                     }
                 }
                 filter.add(filterItem);
-            } else if (("filter-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("filter-mapping" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: filterMapping
-                final FilterMapping filterMappingItem = readFilterMapping(elementReader, context);
+                FilterMapping filterMappingItem = readFilterMapping(elementReader, context);
                 if (filterMapping == null) {
                     filterMapping = webApp.filterMapping;
-                    if (filterMapping != null) {
+                    if (filterMapping!= null) {
                         filterMapping.clear();
                     } else {
-                        filterMapping = new ArrayList<FilterMapping>();
+                        filterMapping = new ArrayList<>();
                     }
                 }
                 filterMapping.add(filterMappingItem);
-            } else if (("listener" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("listener" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: listener
-                final Listener listenerItem = readListener(elementReader, context);
+                Listener listenerItem = readListener(elementReader, context);
                 if (listener == null) {
                     listener = webApp.listener;
-                    if (listener != null) {
+                    if (listener!= null) {
                         listener.clear();
                     } else {
-                        listener = new ArrayList<Listener>();
+                        listener = new ArrayList<>();
                     }
                 }
                 listener.add(listenerItem);
-            } else if (("servlet" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("servlet" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: servlet
-                final Servlet servletItem = readServlet(elementReader, context);
+                Servlet servletItem = readServlet(elementReader, context);
                 if (servlet == null) {
                     servlet = webApp.servlet;
-                    if (servlet != null) {
+                    if (servlet!= null) {
                         servlet.clear();
                     } else {
-                        servlet = new ArrayList<Servlet>();
+                        servlet = new ArrayList<>();
                     }
                 }
                 servlet.add(servletItem);
-            } else if (("servlet-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("servlet-mapping" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: servletMapping
-                final ServletMapping servletMappingItem = readServletMapping(elementReader, context);
+                ServletMapping servletMappingItem = readServletMapping(elementReader, context);
                 if (servletMapping == null) {
                     servletMapping = webApp.servletMapping;
-                    if (servletMapping != null) {
+                    if (servletMapping!= null) {
                         servletMapping.clear();
                     } else {
-                        servletMapping = new ArrayList<ServletMapping>();
+                        servletMapping = new ArrayList<>();
                     }
                 }
                 servletMapping.add(servletMappingItem);
-            } else if (("session-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: sessionConfig
-                final SessionConfig sessionConfigItem = readSessionConfig(elementReader, context);
-                if (sessionConfig == null) {
-                    sessionConfig = webApp.sessionConfig;
-                    if (sessionConfig != null) {
-                        sessionConfig.clear();
-                    } else {
-                        sessionConfig = new ArrayList<SessionConfig>();
-                    }
-                }
-                sessionConfig.add(sessionConfigItem);
-            } else if (("mime-mapping" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: mimeMapping
-                final MimeMapping mimeMappingItem = readMimeMapping(elementReader, context);
-                if (mimeMapping == null) {
-                    mimeMapping = webApp.mimeMapping;
-                    if (mimeMapping != null) {
-                        mimeMapping.clear();
-                    } else {
-                        mimeMapping = new ArrayList<MimeMapping>();
-                    }
-                }
-                mimeMapping.add(mimeMappingItem);
-            } else if (("welcome-file-list" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: welcomeFileList
-                final WelcomeFileList welcomeFileListItem = readWelcomeFileList(elementReader, context);
-                if (welcomeFileList == null) {
-                    welcomeFileList = webApp.welcomeFileList;
-                    if (welcomeFileList != null) {
-                        welcomeFileList.clear();
-                    } else {
-                        welcomeFileList = new ArrayList<WelcomeFileList>();
-                    }
-                }
-                welcomeFileList.add(welcomeFileListItem);
-            } else if (("error-page" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: errorPage
-                final ErrorPage errorPageItem = readErrorPage(elementReader, context);
-                if (errorPage == null) {
-                    errorPage = webApp.errorPage;
-                    if (errorPage != null) {
-                        errorPage.clear();
-                    } else {
-                        errorPage = new ArrayList<ErrorPage>();
-                    }
-                }
-                errorPage.add(errorPageItem);
-            } else if (("taglib" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: taglib
-                final Taglib taglib = readTaglib(elementReader, context);
-                try {
-                    webApp.setTaglib(taglib);
-                } catch (final Exception e) {
-                    context.setterError(reader, WebApp.class, "setTaglib", Taglib.class, e);
-                }
-            } else if (("jsp-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: jspConfig
-                final JspConfig jspConfigItem = readJspConfig(elementReader, context);
-                if (jspConfig == null) {
-                    jspConfig = webApp.jspConfig;
-                    if (jspConfig != null) {
-                        jspConfig.clear();
-                    } else {
-                        jspConfig = new ArrayList<JspConfig>();
-                    }
-                }
-                jspConfig.add(jspConfigItem);
-            } else if (("security-constraint" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: securityConstraint
-                final SecurityConstraint securityConstraintItem = readSecurityConstraint(elementReader, context);
-                if (securityConstraint == null) {
-                    securityConstraint = webApp.securityConstraint;
-                    if (securityConstraint != null) {
-                        securityConstraint.clear();
-                    } else {
-                        securityConstraint = new ArrayList<SecurityConstraint>();
-                    }
-                }
-                securityConstraint.add(securityConstraintItem);
-            } else if (("login-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: loginConfig
-                final LoginConfig loginConfigItem = readLoginConfig(elementReader, context);
-                if (loginConfig == null) {
-                    loginConfig = webApp.loginConfig;
-                    if (loginConfig != null) {
-                        loginConfig.clear();
-                    } else {
-                        loginConfig = new ArrayList<LoginConfig>();
-                    }
-                }
-                loginConfig.add(loginConfigItem);
-            } else if (("security-role" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: securityRole
-                final SecurityRole securityRoleItem = readSecurityRole(elementReader, context);
-                if (securityRole == null) {
-                    securityRole = webApp.securityRole;
-                    if (securityRole != null) {
-                        securityRole.clear();
-                    } else {
-                        securityRole = new ArrayList<SecurityRole>();
-                    }
-                }
-                securityRole.add(securityRoleItem);
-            } else if (("locale-encoding-mapping-list" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: localeEncodingMappingList
-                final LocaleEncodingMappingList localeEncodingMappingListItem = readLocaleEncodingMappingList(elementReader, context);
-                if (localeEncodingMappingList == null) {
-                    localeEncodingMappingList = webApp.localeEncodingMappingList;
-                    if (localeEncodingMappingList != null) {
-                        localeEncodingMappingList.clear();
-                    } else {
-                        localeEncodingMappingList = new ArrayList<LocaleEncodingMappingList>();
-                    }
-                }
-                localeEncodingMappingList.add(localeEncodingMappingListItem);
-            } else if (("env-entry" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: envEntry
-                final EnvEntry envEntryItem = readEnvEntry(elementReader, context);
-                if (envEntry == null) {
-                    envEntry = webApp.envEntry;
-                    if (envEntry != null) {
-                        envEntry.clear();
-                    } else {
-                        envEntry = new KeyedCollection<String, EnvEntry>();
-                    }
-                }
-                envEntry.add(envEntryItem);
-            } else if (("ejb-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: ejbRef
-                final EjbRef ejbRefItem = readEjbRef(elementReader, context);
-                if (ejbRef == null) {
-                    ejbRef = webApp.ejbRef;
-                    if (ejbRef != null) {
-                        ejbRef.clear();
-                    } else {
-                        ejbRef = new KeyedCollection<String, EjbRef>();
-                    }
-                }
-                ejbRef.add(ejbRefItem);
-            } else if (("ejb-local-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: ejbLocalRef
-                final EjbLocalRef ejbLocalRefItem = readEjbLocalRef(elementReader, context);
-                if (ejbLocalRef == null) {
-                    ejbLocalRef = webApp.ejbLocalRef;
-                    if (ejbLocalRef != null) {
-                        ejbLocalRef.clear();
-                    } else {
-                        ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
-                    }
-                }
-                ejbLocalRef.add(ejbLocalRefItem);
-            } else if (("service-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: serviceRef
-                final ServiceRef serviceRefItem = readServiceRef(elementReader, context);
-                if (serviceRef == null) {
-                    serviceRef = webApp.serviceRef;
-                    if (serviceRef != null) {
-                        serviceRef.clear();
-                    } else {
-                        serviceRef = new KeyedCollection<String, ServiceRef>();
-                    }
-                }
-                serviceRef.add(serviceRefItem);
-            } else if (("resource-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: resourceRef
-                final ResourceRef resourceRefItem = readResourceRef(elementReader, context);
-                if (resourceRef == null) {
-                    resourceRef = webApp.resourceRef;
-                    if (resourceRef != null) {
-                        resourceRef.clear();
-                    } else {
-                        resourceRef = new KeyedCollection<String, ResourceRef>();
-                    }
-                }
-                resourceRef.add(resourceRefItem);
-            } else if (("resource-env-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: resourceEnvRef
-                final ResourceEnvRef resourceEnvRefItem = readResourceEnvRef(elementReader, context);
-                if (resourceEnvRef == null) {
-                    resourceEnvRef = webApp.resourceEnvRef;
-                    if (resourceEnvRef != null) {
-                        resourceEnvRef.clear();
-                    } else {
-                        resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
-                    }
-                }
-                resourceEnvRef.add(resourceEnvRefItem);
-            } else if (("message-destination-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: messageDestinationRef
-                final MessageDestinationRef messageDestinationRefItem = readMessageDestinationRef(elementReader, context);
-                if (messageDestinationRef == null) {
-                    messageDestinationRef = webApp.messageDestinationRef;
-                    if (messageDestinationRef != null) {
-                        messageDestinationRef.clear();
-                    } else {
-                        messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
-                    }
-                }
-                messageDestinationRef.add(messageDestinationRefItem);
-            } else if (("persistence-context-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: persistenceContextRef
-                final PersistenceContextRef persistenceContextRefItem = readPersistenceContextRef(elementReader, context);
-                if (persistenceContextRef == null) {
-                    persistenceContextRef = webApp.persistenceContextRef;
-                    if (persistenceContextRef != null) {
-                        persistenceContextRef.clear();
-                    } else {
-                        persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
-                    }
-                }
-                persistenceContextRef.add(persistenceContextRefItem);
-            } else if (("persistence-unit-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: persistenceUnitRef
-                final PersistenceUnitRef persistenceUnitRefItem = readPersistenceUnitRef(elementReader, context);
-                if (persistenceUnitRef == null) {
-                    persistenceUnitRef = webApp.persistenceUnitRef;
-                    if (persistenceUnitRef != null) {
-                        persistenceUnitRef.clear();
-                    } else {
-                        persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
-                    }
-                }
-                persistenceUnitRef.add(persistenceUnitRefItem);
-            } else if (("post-construct" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: postConstruct
-                final org.apache.openejb.jee.LifecycleCallback postConstructItem = readLifecycleCallback(elementReader, context);
-                if (postConstruct == null) {
-                    postConstruct = webApp.postConstruct;
-                    if (postConstruct != null) {
-                        postConstruct.clear();
-                    } else {
-                        postConstruct = new ArrayList<org.apache.openejb.jee.LifecycleCallback>();
-                    }
-                }
-                postConstruct.add(postConstructItem);
-            } else if (("pre-destroy" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: preDestroy
-                final org.apache.openejb.jee.LifecycleCallback preDestroyItem = readLifecycleCallback(elementReader, context);
-                if (preDestroy == null) {
-                    preDestroy = webApp.preDestroy;
-                    if (preDestroy != null) {
-                        preDestroy.clear();
-                    } else {
-                        preDestroy = new ArrayList<org.apache.openejb.jee.LifecycleCallback>();
-                    }
-                }
-                preDestroy.add(preDestroyItem);
-            } else if (("message-destination" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: messageDestination
-                final MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
-                if (messageDestination == null) {
-                    messageDestination = webApp.messageDestination;
-                    if (messageDestination != null) {
-                        messageDestination.clear();
-                    } else {
-                        messageDestination = new ArrayList<MessageDestination>();
-                    }
-                }
-                messageDestination.add(messageDestinationItem);
-            } else if (("absolute-ordering" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: absoluteOrdering
-                final AbsoluteOrdering absoluteOrdering = readAbsoluteOrdering(elementReader, context);
-                webApp.absoluteOrdering = absoluteOrdering;
-            } else if (("data-source" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: dataSource
-                final DataSource dataSourceItem = readDataSource(elementReader, context);
-                if (dataSource == null) {
-                    dataSource = webApp.dataSource;
-                    if (dataSource != null) {
-                        dataSource.clear();
-                    } else {
-                        dataSource = new KeyedCollection<String, DataSource>();
-                    }
-                }
-                dataSource.add(dataSourceItem);
-            } else if (("jms-connection-factory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: dataSource
-                final JMSConnectionFactory connectionFactory = readJMSConnectionFactory(elementReader, context);
-                if (jmsConnectionFactories == null) {
-                    jmsConnectionFactories = webApp.jmsConnectionFactories;
-                    if (jmsConnectionFactories != null) {
-                        jmsConnectionFactories.clear();
-                    } else {
-                        jmsConnectionFactories = new KeyedCollection<>();
-                    }
-                }
-                jmsConnectionFactories.add(connectionFactory);
-            } else if (("module-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: moduleName
-                final String moduleNameRaw = elementReader.getElementAsString();
-
-                final String moduleName;
-                try {
-                    moduleName = Adapters.collapsedStringAdapterAdapter.unmarshal(moduleNameRaw);
-                } catch (final Exception e) {
-                    context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
-                    continue;
-                }
-
-                webApp.moduleName = moduleName;
-            } else if (("default-context-path" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("default-context-path" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultContextPath
-                final String defaultContextPathRaw = elementReader.getElementAsString();
+                String defaultContextPathRaw = elementReader.getElementText();
 
-                final String defaultContextPath;
+                String defaultContextPath;
                 try {
                     defaultContextPath = Adapters.collapsedStringAdapterAdapter.unmarshal(defaultContextPathRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 webApp.defaultContextPath = defaultContextPath;
-            } /*
-            else not yet used so ignored, here will come servlet 3.1 elements we don't parse cause don't need yet
-            */
+            } else if (("session-config" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: sessionConfig
+                SessionConfig sessionConfigItem = readSessionConfig(elementReader, context);
+                if (sessionConfig == null) {
+                    sessionConfig = webApp.sessionConfig;
+                    if (sessionConfig!= null) {
+                        sessionConfig.clear();
+                    } else {
+                        sessionConfig = new ArrayList<>();
+                    }
+                }
+                sessionConfig.add(sessionConfigItem);
+            } else if (("mime-mapping" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: mimeMapping
+                MimeMapping mimeMappingItem = readMimeMapping(elementReader, context);
+                if (mimeMapping == null) {
+                    mimeMapping = webApp.mimeMapping;
+                    if (mimeMapping!= null) {
+                        mimeMapping.clear();
+                    } else {
+                        mimeMapping = new ArrayList<>();
+                    }
+                }
+                mimeMapping.add(mimeMappingItem);
+            } else if (("welcome-file-list" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: welcomeFileList
+                WelcomeFileList welcomeFileListItem = readWelcomeFileList(elementReader, context);
+                if (welcomeFileList == null) {
+                    welcomeFileList = webApp.welcomeFileList;
+                    if (welcomeFileList!= null) {
+                        welcomeFileList.clear();
+                    } else {
+                        welcomeFileList = new ArrayList<>();
+                    }
+                }
+                welcomeFileList.add(welcomeFileListItem);
+            } else if (("error-page" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: errorPage
+                ErrorPage errorPageItem = readErrorPage(elementReader, context);
+                if (errorPage == null) {
+                    errorPage = webApp.errorPage;
+                    if (errorPage!= null) {
+                        errorPage.clear();
+                    } else {
+                        errorPage = new ArrayList<>();
+                    }
+                }
+                errorPage.add(errorPageItem);
+            } else if (("taglib" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: taglib
+                Taglib taglib = readTaglib(elementReader, context);
+                try {
+                    webApp.setTaglib(taglib);
+                } catch (Exception e) {
+                    context.setterError(reader, WebApp.class, "setTaglib", Taglib.class, e);
+                }
+            } else if (("jsp-config" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: jspConfig
+                JspConfig jspConfigItem = readJspConfig(elementReader, context);
+                if (jspConfig == null) {
+                    jspConfig = webApp.jspConfig;
+                    if (jspConfig!= null) {
+                        jspConfig.clear();
+                    } else {
+                        jspConfig = new ArrayList<>();
+                    }
+                }
+                jspConfig.add(jspConfigItem);
+            } else if (("security-constraint" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: securityConstraint
+                SecurityConstraint securityConstraintItem = readSecurityConstraint(elementReader, context);
+                if (securityConstraint == null) {
+                    securityConstraint = webApp.securityConstraint;
+                    if (securityConstraint!= null) {
+                        securityConstraint.clear();
+                    } else {
+                        securityConstraint = new ArrayList<>();
+                    }
+                }
+                securityConstraint.add(securityConstraintItem);
+            } else if (("login-config" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: loginConfig
+                LoginConfig loginConfigItem = readLoginConfig(elementReader, context);
+                if (loginConfig == null) {
+                    loginConfig = webApp.loginConfig;
+                    if (loginConfig!= null) {
+                        loginConfig.clear();
+                    } else {
+                        loginConfig = new ArrayList<>();
+                    }
+                }
+                loginConfig.add(loginConfigItem);
+            } else if (("security-role" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: securityRole
+                SecurityRole securityRoleItem = readSecurityRole(elementReader, context);
+                if (securityRole == null) {
+                    securityRole = webApp.securityRole;
+                    if (securityRole!= null) {
+                        securityRole.clear();
+                    } else {
+                        securityRole = new ArrayList<>();
+                    }
+                }
+                securityRole.add(securityRoleItem);
+            } else if (("locale-encoding-mapping-list" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: localeEncodingMappingList
+                LocaleEncodingMappingList localeEncodingMappingListItem = readLocaleEncodingMappingList(elementReader, context);
+                if (localeEncodingMappingList == null) {
+                    localeEncodingMappingList = webApp.localeEncodingMappingList;
+                    if (localeEncodingMappingList!= null) {
+                        localeEncodingMappingList.clear();
+                    } else {
+                        localeEncodingMappingList = new ArrayList<>();
+                    }
+                }
+                localeEncodingMappingList.add(localeEncodingMappingListItem);
+            } else if (("env-entry" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: envEntry
+                EnvEntry envEntryItem = readEnvEntry(elementReader, context);
+                if (envEntry == null) {
+                    envEntry = webApp.envEntry;
+                    if (envEntry!= null) {
+                        envEntry.clear();
+                    } else {
+                        envEntry = new KeyedCollection<>();
+                    }
+                }
+                envEntry.add(envEntryItem);
+            } else if (("ejb-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: ejbRef
+                EjbRef ejbRefItem = readEjbRef(elementReader, context);
+                if (ejbRef == null) {
+                    ejbRef = webApp.ejbRef;
+                    if (ejbRef!= null) {
+                        ejbRef.clear();
+                    } else {
+                        ejbRef = new KeyedCollection<>();
+                    }
+                }
+                ejbRef.add(ejbRefItem);
+            } else if (("ejb-local-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: ejbLocalRef
+                EjbLocalRef ejbLocalRefItem = readEjbLocalRef(elementReader, context);
+                if (ejbLocalRef == null) {
+                    ejbLocalRef = webApp.ejbLocalRef;
+                    if (ejbLocalRef!= null) {
+                        ejbLocalRef.clear();
+                    } else {
+                        ejbLocalRef = new KeyedCollection<>();
+                    }
+                }
+                ejbLocalRef.add(ejbLocalRefItem);
+            } else if (("service-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: serviceRef
+                ServiceRef serviceRefItem = readServiceRef(elementReader, context);
+                if (serviceRef == null) {
+                    serviceRef = webApp.serviceRef;
+                    if (serviceRef!= null) {
+                        serviceRef.clear();
+                    } else {
+                        serviceRef = new KeyedCollection<>();
+                    }
+                }
+                serviceRef.add(serviceRefItem);
+            } else if (("resource-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: resourceRef
+                ResourceRef resourceRefItem = readResourceRef(elementReader, context);
+                if (resourceRef == null) {
+                    resourceRef = webApp.resourceRef;
+                    if (resourceRef!= null) {
+                        resourceRef.clear();
+                    } else {
+                        resourceRef = new KeyedCollection<>();
+                    }
+                }
+                resourceRef.add(resourceRefItem);
+            } else if (("resource-env-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: resourceEnvRef
+                ResourceEnvRef resourceEnvRefItem = readResourceEnvRef(elementReader, context);
+                if (resourceEnvRef == null) {
+                    resourceEnvRef = webApp.resourceEnvRef;
+                    if (resourceEnvRef!= null) {
+                        resourceEnvRef.clear();
+                    } else {
+                        resourceEnvRef = new KeyedCollection<>();
+                    }
+                }
+                resourceEnvRef.add(resourceEnvRefItem);
+            } else if (("message-destination-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: messageDestinationRef
+                MessageDestinationRef messageDestinationRefItem = readMessageDestinationRef(elementReader, context);
+                if (messageDestinationRef == null) {
+                    messageDestinationRef = webApp.messageDestinationRef;
+                    if (messageDestinationRef!= null) {
+                        messageDestinationRef.clear();
+                    } else {
+                        messageDestinationRef = new KeyedCollection<>();
+                    }
+                }
+                messageDestinationRef.add(messageDestinationRefItem);
+            } else if (("persistence-context-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: persistenceContextRef
+                PersistenceContextRef persistenceContextRefItem = readPersistenceContextRef(elementReader, context);
+                if (persistenceContextRef == null) {
+                    persistenceContextRef = webApp.persistenceContextRef;
+                    if (persistenceContextRef!= null) {
+                        persistenceContextRef.clear();
+                    } else {
+                        persistenceContextRef = new KeyedCollection<>();
+                    }
+                }
+                persistenceContextRef.add(persistenceContextRefItem);
+            } else if (("persistence-unit-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: persistenceUnitRef
+                PersistenceUnitRef persistenceUnitRefItem = readPersistenceUnitRef(elementReader, context);
+                if (persistenceUnitRef == null) {
+                    persistenceUnitRef = webApp.persistenceUnitRef;
+                    if (persistenceUnitRef!= null) {
+                        persistenceUnitRef.clear();
+                    } else {
+                        persistenceUnitRef = new KeyedCollection<>();
+                    }
+                }
+                persistenceUnitRef.add(persistenceUnitRefItem);
+            } else if (("post-construct" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: postConstruct
+                org.apache.openejb.jee.LifecycleCallback postConstructItem = readLifecycleCallback(elementReader, context);
+                if (postConstruct == null) {
+                    postConstruct = webApp.postConstruct;
+                    if (postConstruct!= null) {
+                        postConstruct.clear();
+                    } else {
+                        postConstruct = new ArrayList<>();
+                    }
+                }
+                postConstruct.add(postConstructItem);
+            } else if (("pre-destroy" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: preDestroy
+                org.apache.openejb.jee.LifecycleCallback preDestroyItem = readLifecycleCallback(elementReader, context);
+                if (preDestroy == null) {
+                    preDestroy = webApp.preDestroy;
+                    if (preDestroy!= null) {
+                        preDestroy.clear();
+                    } else {
+                        preDestroy = new ArrayList<>();
+                    }
+                }
+                preDestroy.add(preDestroyItem);
+            } else if (("message-destination" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: messageDestination
+                MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
+                if (messageDestination == null) {
+                    messageDestination = webApp.messageDestination;
+                    if (messageDestination!= null) {
+                        messageDestination.clear();
+                    } else {
+                        messageDestination = new ArrayList<>();
+                    }
+                }
+                messageDestination.add(messageDestinationItem);
+            } else if (("absolute-ordering" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: absoluteOrdering
+                AbsoluteOrdering absoluteOrdering = readAbsoluteOrdering(elementReader, context);
+                webApp.absoluteOrdering = absoluteOrdering;
+            } else if (("data-source" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: dataSource
+                DataSource dataSourceItem = readDataSource(elementReader, context);
+                if (dataSource == null) {
+                    dataSource = webApp.dataSource;
+                    if (dataSource!= null) {
+                        dataSource.clear();
+                    } else {
+                        dataSource = new KeyedCollection<>();
+                    }
+                }
+                dataSource.add(dataSourceItem);
+            } else if (("jms-connection-factory" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: jmsConnectionFactories
+                JMSConnectionFactory jmsConnectionFactoriesItem = readJMSConnectionFactory(elementReader, context);
+                if (jmsConnectionFactories == null) {
+                    jmsConnectionFactories = webApp.jmsConnectionFactories;
+                    if (jmsConnectionFactories!= null) {
+                        jmsConnectionFactories.clear();
+                    } else {
+                        jmsConnectionFactories = new KeyedCollection<>();
+                    }
+                }
+                jmsConnectionFactories.add(jmsConnectionFactoriesItem);
+            } else if (("jms-destination" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: jmsDestinations
+                JMSDestination jmsDestinationsItem = readJMSDestination(elementReader, context);
+                if (jmsDestinations == null) {
+                    jmsDestinations = webApp.jmsDestinations;
+                    if (jmsDestinations!= null) {
+                        jmsDestinations.clear();
+                    } else {
+                        jmsDestinations = new KeyedCollection<>();
+                    }
+                }
+                jmsDestinations.add(jmsDestinationsItem);
+            } else if (("module-name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: moduleName
+                String moduleNameRaw = elementReader.getElementText();
+
+                String moduleName;
+                try {
+                    moduleName = Adapters.collapsedStringAdapterAdapter.unmarshal(moduleNameRaw);
+                } catch (Exception e) {
+                    context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
+                    continue;
+                }
+
+                webApp.moduleName = moduleName;
+            } else if (("context-service" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: contextService
+                ContextService contextServiceItem = readContextService(elementReader, context);
+                if (contextService == null) {
+                    contextService = webAppContextService.getObject(reader, context, webApp);
+                    if (contextService!= null) {
+                        contextService.clear();
+                    } else {
+                        contextService = new KeyedCollection<>();
+                    }
+                }
+                contextService.add(contextServiceItem);
+            } else {
+                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "distributable"), new QName("http://java.sun.com/xml/ns/javaee", "context-param"), new QName("http://java.sun.com/xml/ns/javaee", "filter"), new QName("http://java.sun.com/xml/ns/javaee", "filter-mapping"), new QName("http://java.sun.com/xml/ns/javaee", "listener"), new QName("http://java.sun.com/xml/ns/javaee", "servlet"), new QName("http://java.sun.com/xml/ns/javaee", "servlet-mapping"), new QName("http://java.sun.com/xml/ns/javaee", "default-context-path"), new QName("http://java.sun.com/xml/ns/javaee", "session-config"), new QName("http://java.sun.com/xml/ns/javaee", "mime-mapping"), new QName("http://java.sun.com/xml/ns/javaee", "welcome-file-list"), new QName("http://java.sun.com/xml/ns/javaee", "error-page"), new QName("http://java.sun.com/xml/ns/javaee", "taglib"), new QName("http://java.sun.com/xml/ns/javaee", "jsp-config"), new QName("http://java.sun.com/xml/ns/javaee", "security-constraint"), new QName("http://java.sun.com/xml/ns/javaee", "login-config"), new QName("http://java.sun.com/xml/ns/javaee", "security-role"), new QName("http://java.sun.com/xml/ns/javaee", "locale-encoding-mapping-list"), new QName("http://java.sun.com/xml/ns/javaee", "env-entry"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-ref"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-local-ref"), new QName("http://java.sun.com/xml/ns/javaee", "service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-env-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-context-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-unit-ref"), new QName("http://java.sun.com/xml/ns/javaee", "post-construct"), new QName("http://java.sun.com/xml/ns/javaee", "pre-destroy"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination"), new QName("http://java.sun.com/xml/ns/javaee", "absolute-ordering"), new QName("http://java.sun.com/xml/ns/javaee", "data-source"), new QName("http://java.sun.com/xml/ns/javaee", "jms-connection-factory"), new QName("http://java.sun.com/xml/ns/javaee", "jms-destination"), new QName("http://java.sun.com/xml/ns/javaee", "module-name"), new QName("http://java.sun.com/xml/ns/javaee", "context-service"));
+            }
         }
-        if (descriptions != null) {
+        if (descriptions!= null) {
             try {
-                webApp.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (final Exception e) {
+                webApp.setDescriptions(descriptions.toArray(new Text[descriptions.size()] ));
+            } catch (Exception e) {
                 context.setterError(reader, WebApp.class, "setDescriptions", Text[].class, e);
             }
         }
-        if (displayNames != null) {
+        if (displayNames!= null) {
             try {
-                webApp.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (final Exception e) {
+                webApp.setDisplayNames(displayNames.toArray(new Text[displayNames.size()] ));
+            } catch (Exception e) {
                 context.setterError(reader, WebApp.class, "setDisplayNames", Text[].class, e);
             }
         }
-        if (icon != null) {
+        if (icon!= null) {
             webApp.icon = icon;
         }
-        if (distributable != null) {
+        if (distributable!= null) {
             webApp.distributable = distributable;
         }
-        if (contextParam != null) {
+        if (contextParam!= null) {
             webApp.contextParam = contextParam;
         }
-        if (filter != null) {
+        if (filter!= null) {
             webApp.filter = filter;
         }
-        if (filterMapping != null) {
+        if (filterMapping!= null) {
             webApp.filterMapping = filterMapping;
         }
-        if (listener != null) {
+        if (listener!= null) {
             webApp.listener = listener;
         }
-        if (servlet != null) {
+        if (servlet!= null) {
             webApp.servlet = servlet;
         }
-        if (servletMapping != null) {
+        if (servletMapping!= null) {
             webApp.servletMapping = servletMapping;
         }
-        if (sessionConfig != null) {
+        if (sessionConfig!= null) {
             webApp.sessionConfig = sessionConfig;
         }
-        if (mimeMapping != null) {
+        if (mimeMapping!= null) {
             webApp.mimeMapping = mimeMapping;
         }
-        if (welcomeFileList != null) {
+        if (welcomeFileList!= null) {
             webApp.welcomeFileList = welcomeFileList;
         }
-        if (errorPage != null) {
+        if (errorPage!= null) {
             webApp.errorPage = errorPage;
         }
-        if (jspConfig != null) {
+        if (jspConfig!= null) {
             webApp.jspConfig = jspConfig;
         }
-        if (securityConstraint != null) {
+        if (securityConstraint!= null) {
             webApp.securityConstraint = securityConstraint;
         }
-        if (loginConfig != null) {
+        if (loginConfig!= null) {
             webApp.loginConfig = loginConfig;
         }
-        if (securityRole != null) {
+        if (securityRole!= null) {
             webApp.securityRole = securityRole;
         }
-        if (localeEncodingMappingList != null) {
+        if (localeEncodingMappingList!= null) {
             webApp.localeEncodingMappingList = localeEncodingMappingList;
         }
-        if (envEntry != null) {
+        if (envEntry!= null) {
             webApp.envEntry = envEntry;
         }
-        if (ejbRef != null) {
+        if (ejbRef!= null) {
             webApp.ejbRef = ejbRef;
         }
-        if (ejbLocalRef != null) {
+        if (ejbLocalRef!= null) {
             webApp.ejbLocalRef = ejbLocalRef;
         }
-        if (serviceRef != null) {
+        if (serviceRef!= null) {
             webApp.serviceRef = serviceRef;
         }
-        if (resourceRef != null) {
+        if (resourceRef!= null) {
             webApp.resourceRef = resourceRef;
         }
-        if (resourceEnvRef != null) {
+        if (resourceEnvRef!= null) {
             webApp.resourceEnvRef = resourceEnvRef;
         }
-        if (messageDestinationRef != null) {
+        if (messageDestinationRef!= null) {
             webApp.messageDestinationRef = messageDestinationRef;
         }
-        if (persistenceContextRef != null) {
+        if (persistenceContextRef!= null) {
             webApp.persistenceContextRef = persistenceContextRef;
         }
-        if (persistenceUnitRef != null) {
+        if (persistenceUnitRef!= null) {
             webApp.persistenceUnitRef = persistenceUnitRef;
         }
-        if (postConstruct != null) {
+        if (postConstruct!= null) {
             webApp.postConstruct = postConstruct;
         }
-        if (preDestroy != null) {
+        if (preDestroy!= null) {
             webApp.preDestroy = preDestroy;
         }
-        if (messageDestination != null) {
+        if (messageDestination!= null) {
             webApp.messageDestination = messageDestination;
         }
-        if (dataSource != null) {
+        if (dataSource!= null) {
             webApp.dataSource = dataSource;
+        }
+        if (jmsConnectionFactories!= null) {
+            webApp.jmsConnectionFactories = jmsConnectionFactories;
+        }
+        if (jmsDestinations!= null) {
+            webApp.jmsDestinations = jmsDestinations;
+        }
+        if (contextService!= null) {
+            webAppContextService.setObject(reader, context, webApp, contextService);
         }
 
         context.afterUnmarshal(webApp, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -736,56 +784,58 @@ public class WebApp$JAXB
         return webApp;
     }
 
-    public final WebApp read(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public final WebApp read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, final WebApp webApp, RuntimeContext context)
-        throws Exception {
+    public static final void _write(XoXMLStreamWriter writer, WebApp webApp, RuntimeContext context)
+        throws Exception
+    {
         if (webApp == null) {
             writer.writeXsiNil();
-            return;
+            return ;
         }
 
         if (context == null) {
             context = new RuntimeContext();
         }
 
-        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
-        if (WebApp.class != webApp.getClass()) {
+        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        if (WebApp.class!= webApp.getClass()) {
             context.unexpectedSubclass(writer, webApp, WebApp.class);
-            return;
+            return ;
         }
 
         context.beforeMarshal(webApp, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
 
 
         // ATTRIBUTE: id
-        final String idRaw = webApp.id;
-        if (idRaw != null) {
+        String idRaw = webApp.id;
+        if (idRaw!= null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 context.xmlAdapterError(webApp, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ATTRIBUTE: metadataComplete
-        final Boolean metadataComplete = webApp.metadataComplete;
-        if (metadataComplete != null) {
+        Boolean metadataComplete = webApp.metadataComplete;
+        if (metadataComplete!= null) {
             writer.writeAttribute("", "", "metadata-complete", Boolean.toString(metadataComplete));
         }
 
         // ATTRIBUTE: version
-        final String versionRaw = webApp.version;
-        if (versionRaw != null) {
+        String versionRaw = webApp.version;
+        if (versionRaw!= null) {
             String version = null;
             try {
                 version = Adapters.collapsedStringAdapterAdapter.marshal(versionRaw);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 context.xmlAdapterError(webApp, "version", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "version", version);
@@ -795,12 +845,12 @@ public class WebApp$JAXB
         Text[] descriptions = null;
         try {
             descriptions = webApp.getDescriptions();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.getterError(webApp, "descriptions", WebApp.class, "getDescriptions", e);
         }
-        if (descriptions != null) {
-            for (final Text descriptionsItem : descriptions) {
-                if (descriptionsItem != null) {
+        if (descriptions!= null) {
+            for (Text descriptionsItem: descriptions) {
+                if (descriptionsItem!= null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
                     writer.writeEndElement();
@@ -814,12 +864,12 @@ public class WebApp$JAXB
         Text[] displayNames = null;
         try {
             displayNames = webApp.getDisplayNames();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.getterError(webApp, "displayNames", WebApp.class, "getDisplayNames", e);
         }
-        if (displayNames != null) {
-            for (final Text displayNamesItem : displayNames) {
-                if (displayNamesItem != null) {
+        if (displayNames!= null) {
+            for (Text displayNamesItem: displayNames) {
+                if (displayNamesItem!= null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
                     writer.writeEndElement();
@@ -830,10 +880,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: icon
-        final LocalCollection<Icon> icon = webApp.icon;
-        if (icon != null) {
-            for (final Icon iconItem : icon) {
-                if (iconItem != null) {
+        LocalCollection<Icon> icon = webApp.icon;
+        if (icon!= null) {
+            for (Icon iconItem: icon) {
+                if (iconItem!= null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
                     writer.writeEndElement();
@@ -844,11 +894,11 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: distributable
-        final List<Empty> distributable = webApp.distributable;
-        if (distributable != null) {
-            for (final Empty distributableItem : distributable) {
+        List<Empty> distributable = webApp.distributable;
+        if (distributable!= null) {
+            for (Empty distributableItem: distributable) {
                 writer.writeStartElement(prefix, "distributable", "http://java.sun.com/xml/ns/javaee");
-                if (distributableItem != null) {
+                if (distributableItem!= null) {
                     writeEmpty(writer, distributableItem, context);
                 } else {
                     writer.writeXsiNil();
@@ -858,10 +908,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: contextParam
-        final List<ParamValue> contextParam = webApp.contextParam;
-        if (contextParam != null) {
-            for (final ParamValue contextParamItem : contextParam) {
-                if (contextParamItem != null) {
+        List<ParamValue> contextParam = webApp.contextParam;
+        if (contextParam!= null) {
+            for (ParamValue contextParamItem: contextParam) {
+                if (contextParamItem!= null) {
                     writer.writeStartElement(prefix, "context-param", "http://java.sun.com/xml/ns/javaee");
                     writeParamValue(writer, contextParamItem, context);
                     writer.writeEndElement();
@@ -870,11 +920,11 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: filter
-        final List<Filter> filter = webApp.filter;
-        if (filter != null) {
-            for (final Filter filterItem : filter) {
+        List<Filter> filter = webApp.filter;
+        if (filter!= null) {
+            for (Filter filterItem: filter) {
                 writer.writeStartElement(prefix, "filter", "http://java.sun.com/xml/ns/javaee");
-                if (filterItem != null) {
+                if (filterItem!= null) {
                     writeFilter(writer, filterItem, context);
                 } else {
                     writer.writeXsiNil();
@@ -884,10 +934,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: filterMapping
-        final List<FilterMapping> filterMapping = webApp.filterMapping;
-        if (filterMapping != null) {
-            for (final FilterMapping filterMappingItem : filterMapping) {
-                if (filterMappingItem != null) {
+        List<FilterMapping> filterMapping = webApp.filterMapping;
+        if (filterMapping!= null) {
+            for (FilterMapping filterMappingItem: filterMapping) {
+                if (filterMappingItem!= null) {
                     writer.writeStartElement(prefix, "filter-mapping", "http://java.sun.com/xml/ns/javaee");
                     writeFilterMapping(writer, filterMappingItem, context);
                     writer.writeEndElement();
@@ -896,11 +946,11 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: listener
-        final List<Listener> listener = webApp.listener;
-        if (listener != null) {
-            for (final Listener listenerItem : listener) {
+        List<Listener> listener = webApp.listener;
+        if (listener!= null) {
+            for (Listener listenerItem: listener) {
                 writer.writeStartElement(prefix, "listener", "http://java.sun.com/xml/ns/javaee");
-                if (listenerItem != null) {
+                if (listenerItem!= null) {
                     writeListener(writer, listenerItem, context);
                 } else {
                     writer.writeXsiNil();
@@ -910,11 +960,11 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: servlet
-        final List<Servlet> servlet = webApp.servlet;
-        if (servlet != null) {
-            for (final Servlet servletItem : servlet) {
+        List<Servlet> servlet = webApp.servlet;
+        if (servlet!= null) {
+            for (Servlet servletItem: servlet) {
                 writer.writeStartElement(prefix, "servlet", "http://java.sun.com/xml/ns/javaee");
-                if (servletItem != null) {
+                if (servletItem!= null) {
                     writeServlet(writer, servletItem, context);
                 } else {
                     writer.writeXsiNil();
@@ -924,10 +974,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: servletMapping
-        final List<ServletMapping> servletMapping = webApp.servletMapping;
-        if (servletMapping != null) {
-            for (final ServletMapping servletMappingItem : servletMapping) {
-                if (servletMappingItem != null) {
+        List<ServletMapping> servletMapping = webApp.servletMapping;
+        if (servletMapping!= null) {
+            for (ServletMapping servletMappingItem: servletMapping) {
+                if (servletMappingItem!= null) {
                     writer.writeStartElement(prefix, "servlet-mapping", "http://java.sun.com/xml/ns/javaee");
                     writeServletMapping(writer, servletMappingItem, context);
                     writer.writeEndElement();
@@ -935,11 +985,25 @@ public class WebApp$JAXB
             }
         }
 
+        // ELEMENT: defaultContextPath
+        String defaultContextPathRaw = webApp.defaultContextPath;
+        String defaultContextPath = null;
+        try {
+            defaultContextPath = Adapters.collapsedStringAdapterAdapter.marshal(defaultContextPathRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(webApp, "defaultContextPath", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (defaultContextPath!= null) {
+            writer.writeStartElement(prefix, "default-context-path", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(defaultContextPath);
+            writer.writeEndElement();
+        }
+
         // ELEMENT: sessionConfig
-        final List<SessionConfig> sessionConfig = webApp.sessionConfig;
-        if (sessionConfig != null) {
-            for (final SessionConfig sessionConfigItem : sessionConfig) {
-                if (sessionConfigItem != null) {
+        List<SessionConfig> sessionConfig = webApp.sessionConfig;
+        if (sessionConfig!= null) {
+            for (SessionConfig sessionConfigItem: sessionConfig) {
+                if (sessionConfigItem!= null) {
                     writer.writeStartElement(prefix, "session-config", "http://java.sun.com/xml/ns/javaee");
                     writeSessionConfig(writer, sessionConfigItem, context);
                     writer.writeEndElement();
@@ -948,10 +1012,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: mimeMapping
-        final List<MimeMapping> mimeMapping = webApp.mimeMapping;
-        if (mimeMapping != null) {
-            for (final MimeMapping mimeMappingItem : mimeMapping) {
-                if (mimeMappingItem != null) {
+        List<MimeMapping> mimeMapping = webApp.mimeMapping;
+        if (mimeMapping!= null) {
+            for (MimeMapping mimeMappingItem: mimeMapping) {
+                if (mimeMappingItem!= null) {
                     writer.writeStartElement(prefix, "mime-mapping", "http://java.sun.com/xml/ns/javaee");
                     writeMimeMapping(writer, mimeMappingItem, context);
                     writer.writeEndElement();
@@ -960,10 +1024,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: welcomeFileList
-        final List<WelcomeFileList> welcomeFileList = webApp.welcomeFileList;
-        if (welcomeFileList != null) {
-            for (final WelcomeFileList welcomeFileListItem : welcomeFileList) {
-                if (welcomeFileListItem != null) {
+        List<WelcomeFileList> welcomeFileList = webApp.welcomeFileList;
+        if (welcomeFileList!= null) {
+            for (WelcomeFileList welcomeFileListItem: welcomeFileList) {
+                if (welcomeFileListItem!= null) {
                     writer.writeStartElement(prefix, "welcome-file-list", "http://java.sun.com/xml/ns/javaee");
                     writeWelcomeFileList(writer, welcomeFileListItem, context);
                     writer.writeEndElement();
@@ -972,10 +1036,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: errorPage
-        final List<ErrorPage> errorPage = webApp.errorPage;
-        if (errorPage != null) {
-            for (final ErrorPage errorPageItem : errorPage) {
-                if (errorPageItem != null) {
+        List<ErrorPage> errorPage = webApp.errorPage;
+        if (errorPage!= null) {
+            for (ErrorPage errorPageItem: errorPage) {
+                if (errorPageItem!= null) {
                     writer.writeStartElement(prefix, "error-page", "http://java.sun.com/xml/ns/javaee");
                     writeErrorPage(writer, errorPageItem, context);
                     writer.writeEndElement();
@@ -987,20 +1051,20 @@ public class WebApp$JAXB
         Taglib taglib = null;
         try {
             taglib = webApp.getTaglib();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.getterError(webApp, "taglib", WebApp.class, "getTaglib", e);
         }
-        if (taglib != null) {
+        if (taglib!= null) {
             writer.writeStartElement(prefix, "taglib", "http://java.sun.com/xml/ns/javaee");
             writeTaglib(writer, taglib, context);
             writer.writeEndElement();
         }
 
         // ELEMENT: jspConfig
-        final List<JspConfig> jspConfig = webApp.jspConfig;
-        if (jspConfig != null) {
-            for (final JspConfig jspConfigItem : jspConfig) {
-                if (jspConfigItem != null) {
+        List<JspConfig> jspConfig = webApp.jspConfig;
+        if (jspConfig!= null) {
+            for (JspConfig jspConfigItem: jspConfig) {
+                if (jspConfigItem!= null) {
                     writer.writeStartElement(prefix, "jsp-config", "http://java.sun.com/xml/ns/javaee");
                     writeJspConfig(writer, jspConfigItem, context);
                     writer.writeEndElement();
@@ -1009,10 +1073,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: securityConstraint
-        final List<SecurityConstraint> securityConstraint = webApp.securityConstraint;
-        if (securityConstraint != null) {
-            for (final SecurityConstraint securityConstraintItem : securityConstraint) {
-                if (securityConstraintItem != null) {
+        List<SecurityConstraint> securityConstraint = webApp.securityConstraint;
+        if (securityConstraint!= null) {
+            for (SecurityConstraint securityConstraintItem: securityConstraint) {
+                if (securityConstraintItem!= null) {
                     writer.writeStartElement(prefix, "security-constraint", "http://java.sun.com/xml/ns/javaee");
                     writeSecurityConstraint(writer, securityConstraintItem, context);
                     writer.writeEndElement();
@@ -1021,10 +1085,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: loginConfig
-        final List<LoginConfig> loginConfig = webApp.loginConfig;
-        if (loginConfig != null) {
-            for (final LoginConfig loginConfigItem : loginConfig) {
-                if (loginConfigItem != null) {
+        List<LoginConfig> loginConfig = webApp.loginConfig;
+        if (loginConfig!= null) {
+            for (LoginConfig loginConfigItem: loginConfig) {
+                if (loginConfigItem!= null) {
                     writer.writeStartElement(prefix, "login-config", "http://java.sun.com/xml/ns/javaee");
                     writeLoginConfig(writer, loginConfigItem, context);
                     writer.writeEndElement();
@@ -1033,10 +1097,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: securityRole
-        final List<SecurityRole> securityRole = webApp.securityRole;
-        if (securityRole != null) {
-            for (final SecurityRole securityRoleItem : securityRole) {
-                if (securityRoleItem != null) {
+        List<SecurityRole> securityRole = webApp.securityRole;
+        if (securityRole!= null) {
+            for (SecurityRole securityRoleItem: securityRole) {
+                if (securityRoleItem!= null) {
                     writer.writeStartElement(prefix, "security-role", "http://java.sun.com/xml/ns/javaee");
                     writeSecurityRole(writer, securityRoleItem, context);
                     writer.writeEndElement();
@@ -1045,10 +1109,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: localeEncodingMappingList
-        final List<LocaleEncodingMappingList> localeEncodingMappingList = webApp.localeEncodingMappingList;
-        if (localeEncodingMappingList != null) {
-            for (final LocaleEncodingMappingList localeEncodingMappingListItem : localeEncodingMappingList) {
-                if (localeEncodingMappingListItem != null) {
+        List<LocaleEncodingMappingList> localeEncodingMappingList = webApp.localeEncodingMappingList;
+        if (localeEncodingMappingList!= null) {
+            for (LocaleEncodingMappingList localeEncodingMappingListItem: localeEncodingMappingList) {
+                if (localeEncodingMappingListItem!= null) {
                     writer.writeStartElement(prefix, "locale-encoding-mapping-list", "http://java.sun.com/xml/ns/javaee");
                     writeLocaleEncodingMappingList(writer, localeEncodingMappingListItem, context);
                     writer.writeEndElement();
@@ -1057,10 +1121,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: envEntry
-        final KeyedCollection<String, EnvEntry> envEntry = webApp.envEntry;
-        if (envEntry != null) {
-            for (final EnvEntry envEntryItem : envEntry) {
-                if (envEntryItem != null) {
+        KeyedCollection<String, EnvEntry> envEntry = webApp.envEntry;
+        if (envEntry!= null) {
+            for (EnvEntry envEntryItem: envEntry) {
+                if (envEntryItem!= null) {
                     writer.writeStartElement(prefix, "env-entry", "http://java.sun.com/xml/ns/javaee");
                     writeEnvEntry(writer, envEntryItem, context);
                     writer.writeEndElement();
@@ -1071,10 +1135,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: ejbRef
-        final KeyedCollection<String, EjbRef> ejbRef = webApp.ejbRef;
-        if (ejbRef != null) {
-            for (final EjbRef ejbRefItem : ejbRef) {
-                if (ejbRefItem != null) {
+        KeyedCollection<String, EjbRef> ejbRef = webApp.ejbRef;
+        if (ejbRef!= null) {
+            for (EjbRef ejbRefItem: ejbRef) {
+                if (ejbRefItem!= null) {
                     writer.writeStartElement(prefix, "ejb-ref", "http://java.sun.com/xml/ns/javaee");
                     writeEjbRef(writer, ejbRefItem, context);
                     writer.writeEndElement();
@@ -1085,10 +1149,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: ejbLocalRef
-        final KeyedCollection<String, EjbLocalRef> ejbLocalRef = webApp.ejbLocalRef;
-        if (ejbLocalRef != null) {
-            for (final EjbLocalRef ejbLocalRefItem : ejbLocalRef) {
-                if (ejbLocalRefItem != null) {
+        KeyedCollection<String, EjbLocalRef> ejbLocalRef = webApp.ejbLocalRef;
+        if (ejbLocalRef!= null) {
+            for (EjbLocalRef ejbLocalRefItem: ejbLocalRef) {
+                if (ejbLocalRefItem!= null) {
                     writer.writeStartElement(prefix, "ejb-local-ref", "http://java.sun.com/xml/ns/javaee");
                     writeEjbLocalRef(writer, ejbLocalRefItem, context);
                     writer.writeEndElement();
@@ -1099,10 +1163,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: serviceRef
-        final KeyedCollection<String, ServiceRef> serviceRef = webApp.serviceRef;
-        if (serviceRef != null) {
-            for (final ServiceRef serviceRefItem : serviceRef) {
-                if (serviceRefItem != null) {
+        KeyedCollection<String, ServiceRef> serviceRef = webApp.serviceRef;
+        if (serviceRef!= null) {
+            for (ServiceRef serviceRefItem: serviceRef) {
+                if (serviceRefItem!= null) {
                     writer.writeStartElement(prefix, "service-ref", "http://java.sun.com/xml/ns/javaee");
                     writeServiceRef(writer, serviceRefItem, context);
                     writer.writeEndElement();
@@ -1113,10 +1177,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: resourceRef
-        final KeyedCollection<String, ResourceRef> resourceRef = webApp.resourceRef;
-        if (resourceRef != null) {
-            for (final ResourceRef resourceRefItem : resourceRef) {
-                if (resourceRefItem != null) {
+        KeyedCollection<String, ResourceRef> resourceRef = webApp.resourceRef;
+        if (resourceRef!= null) {
+            for (ResourceRef resourceRefItem: resourceRef) {
+                if (resourceRefItem!= null) {
                     writer.writeStartElement(prefix, "resource-ref", "http://java.sun.com/xml/ns/javaee");
                     writeResourceRef(writer, resourceRefItem, context);
                     writer.writeEndElement();
@@ -1127,10 +1191,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: resourceEnvRef
-        final KeyedCollection<String, ResourceEnvRef> resourceEnvRef = webApp.resourceEnvRef;
-        if (resourceEnvRef != null) {
-            for (final ResourceEnvRef resourceEnvRefItem : resourceEnvRef) {
-                if (resourceEnvRefItem != null) {
+        KeyedCollection<String, ResourceEnvRef> resourceEnvRef = webApp.resourceEnvRef;
+        if (resourceEnvRef!= null) {
+            for (ResourceEnvRef resourceEnvRefItem: resourceEnvRef) {
+                if (resourceEnvRefItem!= null) {
                     writer.writeStartElement(prefix, "resource-env-ref", "http://java.sun.com/xml/ns/javaee");
                     writeResourceEnvRef(writer, resourceEnvRefItem, context);
                     writer.writeEndElement();
@@ -1141,10 +1205,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: messageDestinationRef
-        final KeyedCollection<String, MessageDestinationRef> messageDestinationRef = webApp.messageDestinationRef;
-        if (messageDestinationRef != null) {
-            for (final MessageDestinationRef messageDestinationRefItem : messageDestinationRef) {
-                if (messageDestinationRefItem != null) {
+        KeyedCollection<String, MessageDestinationRef> messageDestinationRef = webApp.messageDestinationRef;
+        if (messageDestinationRef!= null) {
+            for (MessageDestinationRef messageDestinationRefItem: messageDestinationRef) {
+                if (messageDestinationRefItem!= null) {
                     writer.writeStartElement(prefix, "message-destination-ref", "http://java.sun.com/xml/ns/javaee");
                     writeMessageDestinationRef(writer, messageDestinationRefItem, context);
                     writer.writeEndElement();
@@ -1155,10 +1219,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: persistenceContextRef
-        final KeyedCollection<String, PersistenceContextRef> persistenceContextRef = webApp.persistenceContextRef;
-        if (persistenceContextRef != null) {
-            for (final PersistenceContextRef persistenceContextRefItem : persistenceContextRef) {
-                if (persistenceContextRefItem != null) {
+        KeyedCollection<String, PersistenceContextRef> persistenceContextRef = webApp.persistenceContextRef;
+        if (persistenceContextRef!= null) {
+            for (PersistenceContextRef persistenceContextRefItem: persistenceContextRef) {
+                if (persistenceContextRefItem!= null) {
                     writer.writeStartElement(prefix, "persistence-context-ref", "http://java.sun.com/xml/ns/javaee");
                     writePersistenceContextRef(writer, persistenceContextRefItem, context);
                     writer.writeEndElement();
@@ -1169,10 +1233,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: persistenceUnitRef
-        final KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef = webApp.persistenceUnitRef;
-        if (persistenceUnitRef != null) {
-            for (final PersistenceUnitRef persistenceUnitRefItem : persistenceUnitRef) {
-                if (persistenceUnitRefItem != null) {
+        KeyedCollection<String, PersistenceUnitRef> persistenceUnitRef = webApp.persistenceUnitRef;
+        if (persistenceUnitRef!= null) {
+            for (PersistenceUnitRef persistenceUnitRefItem: persistenceUnitRef) {
+                if (persistenceUnitRefItem!= null) {
                     writer.writeStartElement(prefix, "persistence-unit-ref", "http://java.sun.com/xml/ns/javaee");
                     writePersistenceUnitRef(writer, persistenceUnitRefItem, context);
                     writer.writeEndElement();
@@ -1183,10 +1247,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: postConstruct
-        final List<org.apache.openejb.jee.LifecycleCallback> postConstruct = webApp.postConstruct;
-        if (postConstruct != null) {
-            for (final org.apache.openejb.jee.LifecycleCallback postConstructItem : postConstruct) {
-                if (postConstructItem != null) {
+        List<org.apache.openejb.jee.LifecycleCallback> postConstruct = webApp.postConstruct;
+        if (postConstruct!= null) {
+            for (org.apache.openejb.jee.LifecycleCallback postConstructItem: postConstruct) {
+                if (postConstructItem!= null) {
                     writer.writeStartElement(prefix, "post-construct", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, postConstructItem, context);
                     writer.writeEndElement();
@@ -1197,10 +1261,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: preDestroy
-        final List<org.apache.openejb.jee.LifecycleCallback> preDestroy = webApp.preDestroy;
-        if (preDestroy != null) {
-            for (final org.apache.openejb.jee.LifecycleCallback preDestroyItem : preDestroy) {
-                if (preDestroyItem != null) {
+        List<org.apache.openejb.jee.LifecycleCallback> preDestroy = webApp.preDestroy;
+        if (preDestroy!= null) {
+            for (org.apache.openejb.jee.LifecycleCallback preDestroyItem: preDestroy) {
+                if (preDestroyItem!= null) {
                     writer.writeStartElement(prefix, "pre-destroy", "http://java.sun.com/xml/ns/javaee");
                     writeLifecycleCallback(writer, preDestroyItem, context);
                     writer.writeEndElement();
@@ -1211,10 +1275,10 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: messageDestination
-        final List<MessageDestination> messageDestination = webApp.messageDestination;
-        if (messageDestination != null) {
-            for (final MessageDestination messageDestinationItem : messageDestination) {
-                if (messageDestinationItem != null) {
+        List<MessageDestination> messageDestination = webApp.messageDestination;
+        if (messageDestination!= null) {
+            for (MessageDestination messageDestinationItem: messageDestination) {
+                if (messageDestinationItem!= null) {
                     writer.writeStartElement(prefix, "message-destination", "http://java.sun.com/xml/ns/javaee");
                     writeMessageDestination(writer, messageDestinationItem, context);
                     writer.writeEndElement();
@@ -1225,18 +1289,18 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: absoluteOrdering
-        final AbsoluteOrdering absoluteOrdering = webApp.absoluteOrdering;
-        if (absoluteOrdering != null) {
+        AbsoluteOrdering absoluteOrdering = webApp.absoluteOrdering;
+        if (absoluteOrdering!= null) {
             writer.writeStartElement(prefix, "absolute-ordering", "http://java.sun.com/xml/ns/javaee");
             writeAbsoluteOrdering(writer, absoluteOrdering, context);
             writer.writeEndElement();
         }
 
         // ELEMENT: dataSource
-        final KeyedCollection<String, DataSource> dataSource = webApp.dataSource;
-        if (dataSource != null) {
-            for (final DataSource dataSourceItem : dataSource) {
-                if (dataSourceItem != null) {
+        KeyedCollection<String, DataSource> dataSource = webApp.dataSource;
+        if (dataSource!= null) {
+            for (DataSource dataSourceItem: dataSource) {
+                if (dataSourceItem!= null) {
                     writer.writeStartElement(prefix, "data-source", "http://java.sun.com/xml/ns/javaee");
                     writeDataSource(writer, dataSourceItem, context);
                     writer.writeEndElement();
@@ -1246,18 +1310,56 @@ public class WebApp$JAXB
             }
         }
 
+        // ELEMENT: jmsConnectionFactories
+        KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories = webApp.jmsConnectionFactories;
+        if (jmsConnectionFactories!= null) {
+            for (JMSConnectionFactory jmsConnectionFactoriesItem: jmsConnectionFactories) {
+                if (jmsConnectionFactoriesItem!= null) {
+                    writer.writeStartElement(prefix, "jms-connection-factory", "http://java.sun.com/xml/ns/javaee");
+                    writeJMSConnectionFactory(writer, jmsConnectionFactoriesItem, context);
+                    writer.writeEndElement();
+                } else {
+                    context.unexpectedNullValue(webApp, "jmsConnectionFactories");
+                }
+            }
+        }
+
+        // ELEMENT: jmsDestinations
+        KeyedCollection<String, JMSDestination> jmsDestinations = webApp.jmsDestinations;
+        if (jmsDestinations!= null) {
+            for (JMSDestination jmsDestinationsItem: jmsDestinations) {
+                if (jmsDestinationsItem!= null) {
+                    writer.writeStartElement(prefix, "jms-destination", "http://java.sun.com/xml/ns/javaee");
+                    writeJMSDestination(writer, jmsDestinationsItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
         // ELEMENT: moduleName
-        final String moduleNameRaw = webApp.moduleName;
+        String moduleNameRaw = webApp.moduleName;
         String moduleName = null;
         try {
             moduleName = Adapters.collapsedStringAdapterAdapter.marshal(moduleNameRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(webApp, "moduleName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (moduleName != null) {
+        if (moduleName!= null) {
             writer.writeStartElement(prefix, "module-name", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(moduleName);
             writer.writeEndElement();
+        }
+
+        // ELEMENT: contextService
+        KeyedCollection<String, ContextService> contextService = webAppContextService.getObject(webApp, context, webApp);
+        if (contextService!= null) {
+            for (ContextService contextServiceItem: contextService) {
+                if (contextServiceItem!= null) {
+                    writer.writeStartElement(prefix, "context-service", "http://java.sun.com/xml/ns/javaee");
+                    writeContextService(writer, contextServiceItem, context);
+                    writer.writeEndElement();
+                }
+            }
         }
 
         context.afterMarshal(webApp, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
