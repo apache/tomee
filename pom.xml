@@ -234,6 +234,7 @@
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
     <version.jose4j>0.9.6</version.jose4j>
+    <version.sxc>0.9-SNAPSHOT</version.sxc>
 
     <!-- JDBC Drivers -->
     <version.derby>10.15.2.0</version.derby>
@@ -333,7 +334,7 @@
         <plugin>
           <groupId>org.metatype.sxc</groupId>
           <artifactId>sxc-jaxb-maven-plugin</artifactId>
-          <version>0.8</version>
+          <version>${version.sxc}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -1858,9 +1859,9 @@
         <version>${version.groovy}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>sxc-shade</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.metatype.sxc</groupId>
+        <artifactId>sxc-jaxb-core</artifactId>
+        <version>${version.sxc}</version>
       </dependency>
       <dependency>
         <groupId>org.hibernate.orm</groupId>

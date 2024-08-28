@@ -1642,17 +1642,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>sxc-shade</artifactId>
-      <version>10.0.0-M3-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
       <version>10.0.0-M3-SNAPSHOT</version>
       <exclusions>
