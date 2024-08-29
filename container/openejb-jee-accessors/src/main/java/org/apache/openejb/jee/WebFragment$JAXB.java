@@ -22,7 +22,6 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import org.metatype.sxc.jaxb.FieldAccessor;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.Attribute;
@@ -106,7 +105,6 @@ public class WebFragment$JAXB
     extends JAXBObject<WebFragment>
 {
 
-    private static final FieldAccessor<WebFragment, KeyedCollection<String, ContextService>> webFragmentContextService = new FieldAccessor<>(WebFragment.class, "contextService");
 
     public WebFragment$JAXB() {
         super(WebFragment.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-fragment".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-fragmentType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, ParamValue$JAXB.class, Filter$JAXB.class, FilterMapping$JAXB.class, Listener$JAXB.class, Servlet$JAXB.class, ServletMapping$JAXB.class, SessionConfig$JAXB.class, MimeMapping$JAXB.class, WelcomeFileList$JAXB.class, ErrorPage$JAXB.class, JspConfig$JAXB.class, SecurityConstraint$JAXB.class, LoginConfig$JAXB.class, SecurityRole$JAXB.class, LocaleEncodingMappingList$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, MessageDestination$JAXB.class, Ordering$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class);
@@ -630,7 +628,7 @@ public class WebFragment$JAXB
                 // ELEMENT: contextService
                 ContextService contextServiceItem = readContextService(elementReader, context);
                 if (contextService == null) {
-                    contextService = webFragmentContextService.getObject(reader, context, webFragment);
+                    contextService = webFragment.contextService;
                     if (contextService!= null) {
                         contextService.clear();
                     } else {
@@ -753,7 +751,7 @@ public class WebFragment$JAXB
             webFragment.jmsDestinations = jmsDestinations;
         }
         if (contextService!= null) {
-            webFragmentContextService.setObject(reader, context, webFragment, contextService);
+            webFragment.contextService = contextService;
         }
 
         context.afterUnmarshal(webFragment, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -1301,7 +1299,7 @@ public class WebFragment$JAXB
         }
 
         // ELEMENT: contextService
-        KeyedCollection<String, ContextService> contextService = webFragmentContextService.getObject(webFragment, context, webFragment);
+        KeyedCollection<String, ContextService> contextService = webFragment.contextService;
         if (contextService!= null) {
             for (ContextService contextServiceItem: contextService) {
                 if (contextServiceItem!= null) {

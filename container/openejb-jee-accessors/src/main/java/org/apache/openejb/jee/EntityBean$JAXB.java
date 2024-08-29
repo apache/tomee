@@ -22,7 +22,6 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import org.metatype.sxc.jaxb.FieldAccessor;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.Attribute;
@@ -82,7 +81,6 @@ public class EntityBean$JAXB
     extends JAXBObject<EntityBean>
 {
 
-    private static final FieldAccessor<EntityBean, KeyedCollection<String, ContextService>> entityBeanContextService = new FieldAccessor<>(EntityBean.class, "contextService");
 
     public EntityBean$JAXB() {
         super(EntityBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "entity-beanType".intern()), Text$JAXB.class, Icon$JAXB.class, PersistenceType$JAXB.class, CmpVersion$JAXB.class, CmpField$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, SecurityRoleRef$JAXB.class, SecurityIdentity$JAXB.class, Query$JAXB.class, ContextService$JAXB.class);
@@ -559,7 +557,7 @@ public class EntityBean$JAXB
                 // ELEMENT: contextService
                 ContextService contextServiceItem = readContextService(elementReader, context);
                 if (contextService == null) {
-                    contextService = entityBeanContextService.getObject(reader, context, entityBean);
+                    contextService = entityBean.contextService;
                     if (contextService!= null) {
                         contextService.clear();
                     } else {
@@ -640,7 +638,7 @@ public class EntityBean$JAXB
             entityBean.query = query;
         }
         if (contextService!= null) {
-            entityBeanContextService.setObject(reader, context, entityBean, contextService);
+            entityBean.contextService = contextService;
         }
 
         context.afterUnmarshal(entityBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -1162,7 +1160,7 @@ public class EntityBean$JAXB
         }
 
         // ELEMENT: contextService
-        KeyedCollection<String, ContextService> contextService = entityBeanContextService.getObject(entityBean, context, entityBean);
+        KeyedCollection<String, ContextService> contextService = entityBean.contextService;
         if (contextService!= null) {
             for (ContextService contextServiceItem: contextService) {
                 if (contextServiceItem!= null) {

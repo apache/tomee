@@ -22,7 +22,6 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import org.metatype.sxc.jaxb.FieldAccessor;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.Attribute;
@@ -108,7 +107,6 @@ public class WebApp$JAXB
     extends JAXBObject<WebApp>
 {
 
-    private static final FieldAccessor<WebApp, KeyedCollection<String, ContextService>> webAppContextService = new FieldAccessor<>(WebApp.class, "contextService");
 
     public WebApp$JAXB() {
         super(WebApp.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-app".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-appType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, ParamValue$JAXB.class, Filter$JAXB.class, FilterMapping$JAXB.class, Listener$JAXB.class, Servlet$JAXB.class, ServletMapping$JAXB.class, SessionConfig$JAXB.class, MimeMapping$JAXB.class, WelcomeFileList$JAXB.class, ErrorPage$JAXB.class, Taglib$JAXB.class, JspConfig$JAXB.class, SecurityConstraint$JAXB.class, LoginConfig$JAXB.class, SecurityRole$JAXB.class, LocaleEncodingMappingList$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, MessageDestination$JAXB.class, AbsoluteOrdering$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class);
@@ -653,7 +651,7 @@ public class WebApp$JAXB
                 // ELEMENT: contextService
                 ContextService contextServiceItem = readContextService(elementReader, context);
                 if (contextService == null) {
-                    contextService = webAppContextService.getObject(reader, context, webApp);
+                    contextService = webApp.contextService;
                     if (contextService!= null) {
                         contextService.clear();
                     } else {
@@ -776,7 +774,7 @@ public class WebApp$JAXB
             webApp.jmsDestinations = jmsDestinations;
         }
         if (contextService!= null) {
-            webAppContextService.setObject(reader, context, webApp, contextService);
+            webApp.contextService = contextService;
         }
 
         context.afterUnmarshal(webApp, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -1351,7 +1349,7 @@ public class WebApp$JAXB
         }
 
         // ELEMENT: contextService
-        KeyedCollection<String, ContextService> contextService = webAppContextService.getObject(webApp, context, webApp);
+        KeyedCollection<String, ContextService> contextService = webApp.contextService;
         if (contextService!= null) {
             for (ContextService contextServiceItem: contextService) {
                 if (contextServiceItem!= null) {

@@ -22,7 +22,6 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import org.metatype.sxc.jaxb.FieldAccessor;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.Attribute;
@@ -72,7 +71,6 @@ public class Interceptor$JAXB
     extends JAXBObject<Interceptor>
 {
 
-    private static final FieldAccessor<Interceptor, KeyedCollection<String, ContextService>> interceptorContextService = new FieldAccessor<>(Interceptor.class, "contextService");
 
     public Interceptor$JAXB() {
         super(Interceptor.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptorType".intern()), Text$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class);
@@ -447,7 +445,7 @@ public class Interceptor$JAXB
                 // ELEMENT: contextService
                 ContextService contextServiceItem = readContextService(elementReader, context);
                 if (contextService == null) {
-                    contextService = interceptorContextService.getObject(reader, context, interceptor);
+                    contextService = interceptor.contextService;
                     if (contextService!= null) {
                         contextService.clear();
                     } else {
@@ -533,7 +531,7 @@ public class Interceptor$JAXB
             interceptor.afterCompletion = afterCompletion;
         }
         if (contextService!= null) {
-            interceptorContextService.setObject(reader, context, interceptor, contextService);
+            interceptor.contextService = contextService;
         }
 
         context.afterUnmarshal(interceptor, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -920,7 +918,7 @@ public class Interceptor$JAXB
         }
 
         // ELEMENT: contextService
-        KeyedCollection<String, ContextService> contextService = interceptorContextService.getObject(interceptor, context, interceptor);
+        KeyedCollection<String, ContextService> contextService = interceptor.contextService;
         if (contextService!= null) {
             for (ContextService contextServiceItem: contextService) {
                 if (contextServiceItem!= null) {

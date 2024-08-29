@@ -22,7 +22,6 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import org.metatype.sxc.jaxb.FieldAccessor;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.Attribute;
@@ -88,7 +87,6 @@ public class MessageDrivenBean$JAXB
     extends JAXBObject<MessageDrivenBean>
 {
 
-    private static final FieldAccessor<MessageDrivenBean, KeyedCollection<String, ContextService>> messageDrivenBeanContextService = new FieldAccessor<>(MessageDrivenBean.class, "contextService");
 
     public MessageDrivenBean$JAXB() {
         super(MessageDrivenBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "message-driven-beanType".intern()), Text$JAXB.class, Icon$JAXB.class, NamedMethod$JAXB.class, Timer$JAXB.class, TransactionType$JAXB.class, MessageDrivenDestination$JAXB.class, ActivationConfig$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, SecurityRoleRef$JAXB.class, SecurityIdentity$JAXB.class, ContextService$JAXB.class);
@@ -557,7 +555,7 @@ public class MessageDrivenBean$JAXB
                 // ELEMENT: contextService
                 ContextService contextServiceItem = readContextService(elementReader, context);
                 if (contextService == null) {
-                    contextService = messageDrivenBeanContextService.getObject(reader, context, messageDrivenBean);
+                    contextService = messageDrivenBean.contextService;
                     if (contextService!= null) {
                         contextService.clear();
                     } else {
@@ -641,7 +639,7 @@ public class MessageDrivenBean$JAXB
             messageDrivenBean.securityRoleRef = securityRoleRef;
         }
         if (contextService!= null) {
-            messageDrivenBeanContextService.setObject(reader, context, messageDrivenBean, contextService);
+            messageDrivenBean.contextService = contextService;
         }
 
         context.afterUnmarshal(messageDrivenBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -1158,7 +1156,7 @@ public class MessageDrivenBean$JAXB
         }
 
         // ELEMENT: contextService
-        KeyedCollection<String, ContextService> contextService = messageDrivenBeanContextService.getObject(messageDrivenBean, context, messageDrivenBean);
+        KeyedCollection<String, ContextService> contextService = messageDrivenBean.contextService;
         if (contextService!= null) {
             for (ContextService contextServiceItem: contextService) {
                 if (contextServiceItem!= null) {

@@ -23,7 +23,6 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import org.metatype.sxc.jaxb.FieldAccessor;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.RuntimeContext;
 import org.metatype.sxc.util.Attribute;
@@ -101,7 +100,6 @@ public class SessionBean$JAXB
     extends JAXBObject<SessionBean>
 {
 
-    private static final FieldAccessor<SessionBean, KeyedCollection<String, ContextService>> sessionBeanContextService = new FieldAccessor<>(SessionBean.class, "contextService");
 
     public SessionBean$JAXB() {
         super(SessionBean.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "session-beanType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, SessionType$JAXB.class, Timeout$JAXB.class, NamedMethod$JAXB.class, Timer$JAXB.class, ConcurrencyManagementType$JAXB.class, ConcurrentMethod$JAXB.class, InitMethod$JAXB.class, RemoveMethod$JAXB.class, AsyncMethod$JAXB.class, TransactionType$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, SecurityRoleRef$JAXB.class, SecurityIdentity$JAXB.class, ContextService$JAXB.class);
@@ -727,7 +725,7 @@ public class SessionBean$JAXB
                 // ELEMENT: contextService
                 ContextService contextServiceItem = readContextService(elementReader, context);
                 if (contextService == null) {
-                    contextService = sessionBeanContextService.getObject(reader, context, sessionBean);
+                    contextService = sessionBean.contextService;
                     if (contextService!= null) {
                         contextService.clear();
                     } else {
@@ -835,7 +833,7 @@ public class SessionBean$JAXB
             sessionBean.securityRoleRef = securityRoleRef;
         }
         if (contextService!= null) {
-            sessionBeanContextService.setObject(reader, context, sessionBean, contextService);
+            sessionBean.contextService = contextService;
         }
 
         context.afterUnmarshal(sessionBean, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -1571,7 +1569,7 @@ public class SessionBean$JAXB
         }
 
         // ELEMENT: contextService
-        KeyedCollection<String, ContextService> contextService = sessionBeanContextService.getObject(sessionBean, context, sessionBean);
+        KeyedCollection<String, ContextService> contextService = sessionBean.contextService;
         if (contextService!= null) {
             for (ContextService contextServiceItem: contextService) {
                 if (contextServiceItem!= null) {
