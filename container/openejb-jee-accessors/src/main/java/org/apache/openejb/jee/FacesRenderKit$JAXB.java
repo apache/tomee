@@ -93,6 +93,7 @@ public class FacesRenderKit$JAXB
         List<FacesRenderer> renderer = null;
         List<FacesClientBehaviorRenderer> clientBehaviorRenderer = null;
         List<FacesRenderKitExtension> renderKitExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -205,7 +206,16 @@ public class FacesRenderKit$JAXB
                 }
                 renderKitExtension.add(renderKitExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-id"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-class"), new QName("http://java.sun.com/xml/ns/javaee", "renderer"), new QName("http://java.sun.com/xml/ns/javaee", "client-behavior-renderer"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesRenderKit.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -233,6 +243,9 @@ public class FacesRenderKit$JAXB
         }
         if (renderKitExtension!= null) {
             facesRenderKit.renderKitExtension = renderKitExtension;
+        }
+        if (others!= null) {
+            facesRenderKit.others = others;
         }
 
         context.afterUnmarshal(facesRenderKit, LifecycleCallback.NONE);
@@ -394,6 +407,14 @@ public class FacesRenderKit$JAXB
                     writeFacesRenderKitExtension(writer, renderKitExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesRenderKit.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesRenderKit, "others", othersItem);
             }
         }
 

@@ -126,6 +126,7 @@ public class FacesConfig$JAXB
         List<FacesExtension> facesConfigExtension = null;
         List<FacesConfigFlowDefinition> flowDefinitions = null;
         List<FacesConfigProtectedViews> protectedViews = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -373,7 +374,16 @@ public class FacesConfig$JAXB
                 }
                 protectedViews.add(protectedViewsItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "application"), new QName("http://java.sun.com/xml/ns/javaee", "ordering"), new QName("http://java.sun.com/xml/ns/javaee", "absolute-ordering"), new QName("http://java.sun.com/xml/ns/javaee", "factory"), new QName("http://java.sun.com/xml/ns/javaee", "component"), new QName("http://java.sun.com/xml/ns/javaee", "converter"), new QName("http://java.sun.com/xml/ns/javaee", "managed-bean"), new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "navigation-rule"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle"), new QName("http://java.sun.com/xml/ns/javaee", "validator"), new QName("http://java.sun.com/xml/ns/javaee", "behavior"), new QName("http://java.sun.com/xml/ns/javaee", "faces-config-extension"), new QName("http://java.sun.com/xml/ns/javaee", "flow-definition"), new QName("http://java.sun.com/xml/ns/javaee", "protected-views"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesConfig.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (application!= null) {
@@ -426,6 +436,9 @@ public class FacesConfig$JAXB
         }
         if (protectedViews!= null) {
             facesConfig.protectedViews = protectedViews;
+        }
+        if (others!= null) {
+            facesConfig.others = others;
         }
 
         context.afterUnmarshal(facesConfig, LifecycleCallback.NONE);
@@ -715,6 +728,14 @@ public class FacesConfig$JAXB
                     writeFacesConfigProtectedViews(writer, protectedViewsItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesConfig.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesConfig, "others", othersItem);
             }
         }
 

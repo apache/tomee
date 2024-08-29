@@ -79,6 +79,7 @@ public class FacesAbsoluteOrdering$JAXB
         context.beforeUnmarshal(facesAbsoluteOrdering, LifecycleCallback.NONE);
 
         List<Object> nameOrOthers = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -122,11 +123,23 @@ public class FacesAbsoluteOrdering$JAXB
                 }
                 nameOrOthers.add(nameOrOthersItem1);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "others"), new QName("http://java.sun.com/xml/ns/javaee", "name"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesAbsoluteOrdering.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (nameOrOthers!= null) {
             facesAbsoluteOrdering.nameOrOthers = nameOrOthers;
+        }
+        if (others!= null) {
+            facesAbsoluteOrdering.others = others;
         }
 
         context.afterUnmarshal(facesAbsoluteOrdering, LifecycleCallback.NONE);
@@ -180,6 +193,14 @@ public class FacesAbsoluteOrdering$JAXB
                 } else {
                     context.unexpectedElementType(writer, facesAbsoluteOrdering, "nameOrOthers", nameOrOthersItem, java.lang.String.class, org.apache.openejb.jee.FacesOrderingOthers.class);
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesAbsoluteOrdering.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesAbsoluteOrdering, "others", othersItem);
             }
         }
 

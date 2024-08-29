@@ -93,6 +93,7 @@ public class FacesConverter$JAXB
         List<FacesAttribute> attribute1 = null;
         List<FacesProperty> property = null;
         List<FacesConverterExtension> converterExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -218,7 +219,16 @@ public class FacesConverter$JAXB
                 }
                 converterExtension.add(converterExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "converter-id"), new QName("http://java.sun.com/xml/ns/javaee", "converter-for-class"), new QName("http://java.sun.com/xml/ns/javaee", "converter-class"), new QName("http://java.sun.com/xml/ns/javaee", "attribute"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "converter-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesConverter.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -246,6 +256,9 @@ public class FacesConverter$JAXB
         }
         if (converterExtension!= null) {
             facesConverter.converterExtension = converterExtension;
+        }
+        if (others!= null) {
+            facesConverter.others = others;
         }
 
         context.afterUnmarshal(facesConverter, LifecycleCallback.NONE);
@@ -425,6 +438,14 @@ public class FacesConverter$JAXB
                     writeFacesConverterExtension(writer, converterExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesConverter.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesConverter, "others", othersItem);
             }
         }
 

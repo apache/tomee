@@ -96,6 +96,7 @@ public class FacesComponent$JAXB
         List<FacesAttribute> attribute1 = null;
         List<FacesProperty> property = null;
         List<FacesComponentExtension> componentExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -220,7 +221,16 @@ public class FacesComponent$JAXB
                 }
                 componentExtension.add(componentExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "component-type"), new QName("http://java.sun.com/xml/ns/javaee", "component-class"), new QName("http://java.sun.com/xml/ns/javaee", "facet"), new QName("http://java.sun.com/xml/ns/javaee", "attribute"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "component-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesComponent.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -251,6 +261,9 @@ public class FacesComponent$JAXB
         }
         if (componentExtension!= null) {
             facesComponent.componentExtension = componentExtension;
+        }
+        if (others!= null) {
+            facesComponent.others = others;
         }
 
         context.afterUnmarshal(facesComponent, LifecycleCallback.NONE);
@@ -432,6 +445,14 @@ public class FacesComponent$JAXB
                     writeFacesComponentExtension(writer, componentExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesComponent.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesComponent, "others", othersItem);
             }
         }
 

@@ -93,6 +93,7 @@ public class FacesValidator$JAXB
         List<FacesAttribute> attribute1 = null;
         List<FacesProperty> property = null;
         List<FacesValidatorExtension> validatorExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -205,7 +206,16 @@ public class FacesValidator$JAXB
                 }
                 validatorExtension.add(validatorExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "validator-id"), new QName("http://java.sun.com/xml/ns/javaee", "validator-class"), new QName("http://java.sun.com/xml/ns/javaee", "attribute"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "validator-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesValidator.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -233,6 +243,9 @@ public class FacesValidator$JAXB
         }
         if (validatorExtension!= null) {
             facesValidator.validatorExtension = validatorExtension;
+        }
+        if (others!= null) {
+            facesValidator.others = others;
         }
 
         context.afterUnmarshal(facesValidator, LifecycleCallback.NONE);
@@ -400,6 +413,14 @@ public class FacesValidator$JAXB
                     writeFacesValidatorExtension(writer, validatorExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesValidator.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesValidator, "others", othersItem);
             }
         }
 

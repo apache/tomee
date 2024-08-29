@@ -90,6 +90,7 @@ public class FacesFactory$JAXB
         List<String> renderKitFactory = null;
         List<String> visitContextFactory = null;
         List<FacesFactoryExtension> factoryExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -336,7 +337,16 @@ public class FacesFactory$JAXB
                 }
                 factoryExtension.add(factoryExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "application-factory"), new QName("http://java.sun.com/xml/ns/javaee", "exception-handler-factory"), new QName("http://java.sun.com/xml/ns/javaee", "external-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "faces-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "partial-view-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle-factory"), new QName("http://java.sun.com/xml/ns/javaee", "view-declaration-language-factory"), new QName("http://java.sun.com/xml/ns/javaee", "tag-handler-delegate-factory"), new QName("http://java.sun.com/xml/ns/javaee", "render-kit-factory"), new QName("http://java.sun.com/xml/ns/javaee", "visit-context-factory"), new QName("http://java.sun.com/xml/ns/javaee", "factory-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesFactory.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (applicationFactory!= null) {
@@ -371,6 +381,9 @@ public class FacesFactory$JAXB
         }
         if (factoryExtension!= null) {
             facesFactory.factoryExtension = factoryExtension;
+        }
+        if (others!= null) {
+            facesFactory.others = others;
         }
 
         context.afterUnmarshal(facesFactory, LifecycleCallback.NONE);
@@ -606,6 +619,14 @@ public class FacesFactory$JAXB
                     writeFacesFactoryExtension(writer, factoryExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesFactory.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesFactory, "others", othersItem);
             }
         }
 

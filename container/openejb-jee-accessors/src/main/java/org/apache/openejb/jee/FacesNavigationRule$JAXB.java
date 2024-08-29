@@ -90,6 +90,7 @@ public class FacesNavigationRule$JAXB
         LocalCollection<Icon> icon = null;
         List<FacesNavigationCase> navigationCase = null;
         List<FacesNavigationRuleExtension> navigationRuleExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -177,7 +178,16 @@ public class FacesNavigationRule$JAXB
                 }
                 navigationRuleExtension.add(navigationRuleExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "from-view-id"), new QName("http://java.sun.com/xml/ns/javaee", "navigation-case"), new QName("http://java.sun.com/xml/ns/javaee", "navigation-rule-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesNavigationRule.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -202,6 +212,9 @@ public class FacesNavigationRule$JAXB
         }
         if (navigationRuleExtension!= null) {
             facesNavigationRule.navigationRuleExtension = navigationRuleExtension;
+        }
+        if (others!= null) {
+            facesNavigationRule.others = others;
         }
 
         context.afterUnmarshal(facesNavigationRule, LifecycleCallback.NONE);
@@ -335,6 +348,14 @@ public class FacesNavigationRule$JAXB
                     writeFacesNavigationRuleExtension(writer, navigationRuleExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesNavigationRule.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesNavigationRule, "others", othersItem);
             }
         }
 

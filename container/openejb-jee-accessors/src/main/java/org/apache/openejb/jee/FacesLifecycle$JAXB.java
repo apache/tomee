@@ -81,6 +81,7 @@ public class FacesLifecycle$JAXB
 
         List<String> phaseListener = null;
         List<FacesLifecycleExtension> lifecycleExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -138,7 +139,16 @@ public class FacesLifecycle$JAXB
                 }
                 lifecycleExtension.add(lifecycleExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "phase-listener"), new QName("http://java.sun.com/xml/ns/javaee", "lifecycle-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesLifecycle.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (phaseListener!= null) {
@@ -146,6 +156,9 @@ public class FacesLifecycle$JAXB
         }
         if (lifecycleExtension!= null) {
             facesLifecycle.lifecycleExtension = lifecycleExtension;
+        }
+        if (others!= null) {
+            facesLifecycle.others = others;
         }
 
         context.afterUnmarshal(facesLifecycle, LifecycleCallback.NONE);
@@ -219,6 +232,14 @@ public class FacesLifecycle$JAXB
                     writeFacesLifecycleExtension(writer, lifecycleExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesLifecycle.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesLifecycle, "others", othersItem);
             }
         }
 

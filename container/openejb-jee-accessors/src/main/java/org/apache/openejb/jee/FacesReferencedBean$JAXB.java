@@ -18,6 +18,7 @@
 package org.apache.openejb.jee;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -83,6 +84,7 @@ public class FacesReferencedBean$JAXB
         ArrayList<Text> descriptions = null;
         ArrayList<Text> displayNames = null;
         LocalCollection<Icon> icon = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -159,7 +161,16 @@ public class FacesReferencedBean$JAXB
 
                 facesReferencedBean.referencedBeanClass = referencedBeanClass;
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean-name"), new QName("http://java.sun.com/xml/ns/javaee", "referenced-bean-class"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesReferencedBean.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -178,6 +189,9 @@ public class FacesReferencedBean$JAXB
         }
         if (icon!= null) {
             facesReferencedBean.icon = icon;
+        }
+        if (others!= null) {
+            facesReferencedBean.others = others;
         }
 
         context.afterUnmarshal(facesReferencedBean, LifecycleCallback.NONE);
@@ -306,6 +320,14 @@ public class FacesReferencedBean$JAXB
             writer.writeEndElement();
         } else {
             context.unexpectedNullValue(facesReferencedBean, "referencedBeanClass");
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesReferencedBean.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesReferencedBean, "others", othersItem);
+            }
         }
 
         context.afterMarshal(facesReferencedBean, LifecycleCallback.NONE);

@@ -101,6 +101,7 @@ public class FacesApplication$JAXB
         List<FacesLocaleConfig> localeConfig = null;
         List<FacesApplicationExtension> applicationExtension = null;
         List<FacesValidator> defaultValidators = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -387,7 +388,16 @@ public class FacesApplication$JAXB
                 }
                 defaultValidators.add(defaultValidatorsItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "action-listener"), new QName("http://java.sun.com/xml/ns/javaee", "default-render-kit-id"), new QName("http://java.sun.com/xml/ns/javaee", "message-bundle"), new QName("http://java.sun.com/xml/ns/javaee", "navigation-handler"), new QName("http://java.sun.com/xml/ns/javaee", "view-handler"), new QName("http://java.sun.com/xml/ns/javaee", "state-manager"), new QName("http://java.sun.com/xml/ns/javaee", "el-resolver"), new QName("http://java.sun.com/xml/ns/javaee", "property-resolver"), new QName("http://java.sun.com/xml/ns/javaee", "variable-resolver"), new QName("http://java.sun.com/xml/ns/javaee", "resource-handler"), new QName("http://java.sun.com/xml/ns/javaee", "system-event-listener"), new QName("http://java.sun.com/xml/ns/javaee", "locale-config"), new QName("http://java.sun.com/xml/ns/javaee", "resource-bundle"), new QName("http://java.sun.com/xml/ns/javaee", "application-extension"), new QName("http://java.sun.com/xml/ns/javaee", "default-validators"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesApplication.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (actionListener!= null) {
@@ -431,6 +441,9 @@ public class FacesApplication$JAXB
         }
         if (defaultValidators!= null) {
             facesApplication.defaultValidators = defaultValidators;
+        }
+        if (others!= null) {
+            facesApplication.others = others;
         }
 
         context.afterUnmarshal(facesApplication, LifecycleCallback.NONE);
@@ -712,6 +725,14 @@ public class FacesApplication$JAXB
                     writeFacesValidator(writer, defaultValidatorsItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesApplication.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesApplication, "others", othersItem);
             }
         }
 

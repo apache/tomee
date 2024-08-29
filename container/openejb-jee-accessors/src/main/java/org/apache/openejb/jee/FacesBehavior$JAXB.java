@@ -93,6 +93,7 @@ public class FacesBehavior$JAXB
         List<FacesAttribute> attribute1 = null;
         List<FacesProperty> property = null;
         List<FacesBehaviorExtension> behaviorExtension = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -200,7 +201,16 @@ public class FacesBehavior$JAXB
                 }
                 behaviorExtension.add(behaviorExtensionItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "behavior-id"), new QName("http://java.sun.com/xml/ns/javaee", "behavior-class"), new QName("http://java.sun.com/xml/ns/javaee", "attribute"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "behavior-extension"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesBehavior.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -228,6 +238,9 @@ public class FacesBehavior$JAXB
         }
         if (behaviorExtension!= null) {
             facesBehavior.behaviorExtension = behaviorExtension;
+        }
+        if (others!= null) {
+            facesBehavior.others = others;
         }
 
         context.afterUnmarshal(facesBehavior, LifecycleCallback.NONE);
@@ -383,6 +396,14 @@ public class FacesBehavior$JAXB
                     writeFacesBehaviorExtension(writer, behaviorExtensionItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesBehavior.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesBehavior, "others", othersItem);
             }
         }
 

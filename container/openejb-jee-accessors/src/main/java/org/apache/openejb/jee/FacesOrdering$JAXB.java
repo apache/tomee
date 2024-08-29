@@ -17,6 +17,8 @@
 
 package org.apache.openejb.jee;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import org.metatype.sxc.jaxb.JAXBObject;
@@ -76,6 +78,7 @@ public class FacesOrdering$JAXB
         FacesOrdering facesOrdering = new FacesOrdering();
         context.beforeUnmarshal(facesOrdering, LifecycleCallback.NONE);
 
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -103,8 +106,20 @@ public class FacesOrdering$JAXB
                 FacesOrderingOrdering before = readFacesOrderingOrdering(elementReader, context);
                 facesOrdering.before = before;
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "after"), new QName("http://java.sun.com/xml/ns/javaee", "before"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = facesOrdering.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
+        }
+        if (others!= null) {
+            facesOrdering.others = others;
         }
 
         context.afterUnmarshal(facesOrdering, LifecycleCallback.NONE);
@@ -153,6 +168,14 @@ public class FacesOrdering$JAXB
             writer.writeStartElement(prefix, "before", "http://java.sun.com/xml/ns/javaee");
             writeFacesOrderingOrdering(writer, before, context);
             writer.writeEndElement();
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = facesOrdering.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, facesOrdering, "others", othersItem);
+            }
         }
 
         context.afterMarshal(facesOrdering, LifecycleCallback.NONE);
