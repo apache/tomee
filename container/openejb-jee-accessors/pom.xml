@@ -67,7 +67,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.metatype.sxc</groupId>
+      <groupId>io.github.rzo1.org.metatype.sxc</groupId>
       <artifactId>sxc-jaxb-core</artifactId>
     </dependency>
   </dependencies>

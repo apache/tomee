@@ -234,7 +234,7 @@
     <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
     <version.jose4j>0.9.6</version.jose4j>
-    <version.sxc>0.9-SNAPSHOT</version.sxc>
+    <version.sxc>0.9</version.sxc>
 
     <!-- JDBC Drivers -->
     <version.derby>10.15.2.0</version.derby>
@@ -332,7 +332,7 @@
           <version>1.0.2</version>
         </plugin>
         <plugin>
-          <groupId>org.metatype.sxc</groupId>
+          <groupId>io.github.rzo1.org.metatype.sxc</groupId>
           <artifactId>sxc-jaxb-maven-plugin</artifactId>
           <version>${version.sxc}</version>
         </plugin>
@@ -1859,7 +1859,7 @@
         <version>${version.groovy}</version>
       </dependency>
       <dependency>
-        <groupId>org.metatype.sxc</groupId>
+        <groupId>io.github.rzo1.org.metatype.sxc</groupId>
         <artifactId>sxc-jaxb-core</artifactId>
         <version>${version.sxc}</version>
       </dependency>
