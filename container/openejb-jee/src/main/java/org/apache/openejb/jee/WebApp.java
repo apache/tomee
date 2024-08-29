@@ -19,6 +19,7 @@ package org.apache.openejb.jee;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlID;
@@ -99,8 +100,8 @@ import java.util.Map;
     "jmsConnectionFactories",
     "jmsDestinations",
     "moduleName",
-    "contextService"
-
+    "contextService",
+    "others"
 })
 public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlTransient
@@ -196,6 +197,9 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     protected String version = "3.0";
     @XmlElement(name="context-service")
     protected KeyedCollection<String, ContextService> contextService;
+
+    @XmlAnyElement
+    protected List<Object> others;
 
     @Override
     public String getJndiConsumerName() {

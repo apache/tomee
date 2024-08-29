@@ -181,6 +181,7 @@ public class WebApp$JAXB
         KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories = null;
         KeyedCollection<String, JMSDestination> jmsDestinations = null;
         KeyedCollection<String, ContextService> contextService = null;
+        List<Object> others = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -660,7 +661,16 @@ public class WebApp$JAXB
                 }
                 contextService.add(contextServiceItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "distributable"), new QName("http://java.sun.com/xml/ns/javaee", "context-param"), new QName("http://java.sun.com/xml/ns/javaee", "filter"), new QName("http://java.sun.com/xml/ns/javaee", "filter-mapping"), new QName("http://java.sun.com/xml/ns/javaee", "listener"), new QName("http://java.sun.com/xml/ns/javaee", "servlet"), new QName("http://java.sun.com/xml/ns/javaee", "servlet-mapping"), new QName("http://java.sun.com/xml/ns/javaee", "default-context-path"), new QName("http://java.sun.com/xml/ns/javaee", "session-config"), new QName("http://java.sun.com/xml/ns/javaee", "mime-mapping"), new QName("http://java.sun.com/xml/ns/javaee", "welcome-file-list"), new QName("http://java.sun.com/xml/ns/javaee", "error-page"), new QName("http://java.sun.com/xml/ns/javaee", "taglib"), new QName("http://java.sun.com/xml/ns/javaee", "jsp-config"), new QName("http://java.sun.com/xml/ns/javaee", "security-constraint"), new QName("http://java.sun.com/xml/ns/javaee", "login-config"), new QName("http://java.sun.com/xml/ns/javaee", "security-role"), new QName("http://java.sun.com/xml/ns/javaee", "locale-encoding-mapping-list"), new QName("http://java.sun.com/xml/ns/javaee", "env-entry"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-ref"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-local-ref"), new QName("http://java.sun.com/xml/ns/javaee", "service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-env-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-context-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-unit-ref"), new QName("http://java.sun.com/xml/ns/javaee", "post-construct"), new QName("http://java.sun.com/xml/ns/javaee", "pre-destroy"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination"), new QName("http://java.sun.com/xml/ns/javaee", "absolute-ordering"), new QName("http://java.sun.com/xml/ns/javaee", "data-source"), new QName("http://java.sun.com/xml/ns/javaee", "jms-connection-factory"), new QName("http://java.sun.com/xml/ns/javaee", "jms-destination"), new QName("http://java.sun.com/xml/ns/javaee", "module-name"), new QName("http://java.sun.com/xml/ns/javaee", "context-service"));
+                // ELEMENT_REF: others
+                if (others == null) {
+                    others = webApp.others;
+                    if (others!= null) {
+                        others.clear();
+                    } else {
+                        others = new ArrayList<>();
+                    }
+                }
+                others.add(context.readXmlAny(elementReader, Object.class, false));
             }
         }
         if (descriptions!= null) {
@@ -775,6 +785,9 @@ public class WebApp$JAXB
         }
         if (contextService!= null) {
             webApp.contextService = contextService;
+        }
+        if (others!= null) {
+            webApp.others = others;
         }
 
         context.afterUnmarshal(webApp, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -1357,6 +1370,14 @@ public class WebApp$JAXB
                     writeContextService(writer, contextServiceItem, context);
                     writer.writeEndElement();
                 }
+            }
+        }
+
+        // ELEMENT_REF: others
+        List<Object> others = webApp.others;
+        if (others!= null) {
+            for (Object othersItem: others) {
+                context.writeXmlAny(writer, webApp, "others", othersItem);
             }
         }
 
