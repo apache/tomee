@@ -123,6 +123,28 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>io.github.rzo1.org.metatype.sxc</groupId>
+      <artifactId>sxc-jaxb-core</artifactId>
+      <version>0.9</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.metatype.sxc</groupId>
+      <artifactId>sxc-runtime</artifactId>
+      <version>0.9</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
       <version>3.0.1</version>
