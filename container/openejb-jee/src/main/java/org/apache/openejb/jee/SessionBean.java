@@ -33,6 +33,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -146,6 +147,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "passivationCapable",
     "contextService"
 })
+@XmlSeeAlso({StatelessBean.class, StatefulBean.class, SingletonBean.class, ManagedBean.class})
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     protected TextMap description = new TextMap();
