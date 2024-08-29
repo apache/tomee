@@ -195,7 +195,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version = "3.0";
     @XmlElement(name="context-service")
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
 
     @Override
     public String getJndiConsumerName() {

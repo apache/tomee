@@ -185,7 +185,7 @@ public class EntityBean implements RemoteBean {
     @XmlID
     protected String id;
     @XmlElement(name="context-service")
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
 
     public EntityBean() {
         final Set<String> publicIds = JaxbJavaee.currentPublicId.get();
