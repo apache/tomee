@@ -200,7 +200,7 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>json2</artifactId>
-      <version>20110223</version>
+      <version>20140204</version>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
