@@ -43,12 +43,6 @@
       <artifactId>myfaces-impl</artifactId>
       <version>${version.myfaces}</version>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-beanutils</artifactId>
-          <groupId>commons-beanutils</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

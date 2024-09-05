@@ -156,7 +156,6 @@
     <version.commons-logging>1.3.3</version.commons-logging>
 
     <!-- Apache Commons -->
-    <version.commons-beanutils>1.9.4</version.commons-beanutils>
     <version.commons-cli>1.8.0</version.commons-cli>
     <version.commons-codec>1.16.0</version.commons-codec>
     <version.commons-dbcp2>2.12.0</version.commons-dbcp2>

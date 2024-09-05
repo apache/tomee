@@ -53,11 +53,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency><!-- needed by myfaces -->
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>${version.commons-beanutils}</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
