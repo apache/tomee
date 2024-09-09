@@ -310,7 +310,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>codenarc-maven-plugin</artifactId>
-        <version>0.18-1</version>
+        <version>0.22-1</version>
         <configuration>
           <sourceDirectory>${project.basedir}/src/main/groovy</sourceDirectory>
           <groovyVersion>${version.groovy}</groovyVersion>
