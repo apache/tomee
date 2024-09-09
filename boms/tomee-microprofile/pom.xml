@@ -180,7 +180,7 @@
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-commons</artifactId>
-      <version>1.12.5</version>
+      <version>1.13.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
