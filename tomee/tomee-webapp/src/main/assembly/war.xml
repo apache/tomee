@@ -41,6 +41,10 @@
       <outputDirectory>/</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.build.directory}/webjars-resources/META-INF/resources</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
