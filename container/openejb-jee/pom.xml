@@ -106,7 +106,7 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.metatype.sxc</groupId>
+            <groupId>io.github.rzo1.org.metatype.sxc</groupId>
             <artifactId>sxc-jaxb-maven-plugin</artifactId>
             <executions>
               <execution>
@@ -121,6 +121,14 @@
                 </goals>
               </execution>
             </executions>
+
+            <dependencies>
+              <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>4.0.5</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>

@@ -151,7 +151,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
     @XmlTransient
     protected String mainClass;
     @XmlElement(name="context-service")
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
 
     public ApplicationClient() {
     }

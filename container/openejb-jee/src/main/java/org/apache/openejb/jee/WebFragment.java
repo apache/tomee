@@ -190,7 +190,7 @@ public class WebFragment implements WebCommon {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
     @XmlElement(name="context-service")
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
 
 
     @Override

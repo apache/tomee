@@ -178,6 +178,28 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>io.github.rzo1.org.metatype.sxc</groupId>
+      <artifactId>sxc-jaxb-core</artifactId>
+      <version>0.9</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.metatype.sxc</groupId>
+      <artifactId>sxc-runtime</artifactId>
+      <version>0.9</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-commons</artifactId>
       <version>1.12.5</version>
@@ -1643,17 +1665,6 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>servicemix-bcel-shade</artifactId>
-      <version>10.0.0-M3-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>sxc-shade</artifactId>
       <version>10.0.0-M3-SNAPSHOT</version>
       <exclusions>
         <exclusion>

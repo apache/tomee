@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
@@ -60,7 +61,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "behaviorClass",
     "attribute",
     "property",
-    "behaviorExtension"
+    "behaviorExtension",
+    "others"
 })
 public class FacesBehavior {
 
@@ -78,6 +80,9 @@ public class FacesBehavior {
     protected List<FacesProperty> property;
     @XmlElement(name = "behavior-extension")
     protected List<FacesBehaviorExtension> behaviorExtension;
+
+    @XmlAnyElement
+    protected List<Object> others;
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {

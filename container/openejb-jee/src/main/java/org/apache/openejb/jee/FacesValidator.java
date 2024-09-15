@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlID;
@@ -66,7 +67,8 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "validatorClass",
     "attribute",
     "property",
-    "validatorExtension"
+    "validatorExtension",
+    "others"
 })
 public class FacesValidator {
 
@@ -89,6 +91,9 @@ public class FacesValidator {
     @XmlID
     @XmlSchemaType(name = "ID")
     protected java.lang.String id;
+
+    @XmlAnyElement
+    protected List<Object> others;
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {

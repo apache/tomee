@@ -1,21 +1,25 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
+ * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.openejb.jee;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.LifecycleCallback;
 import org.metatype.sxc.jaxb.RuntimeContext;
@@ -23,38 +27,39 @@ import org.metatype.sxc.util.Attribute;
 import org.metatype.sxc.util.XoXMLStreamReader;
 import org.metatype.sxc.util.XoXMLStreamWriter;
 
-import javax.xml.XMLConstants;
-import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.namespace.QName;
-
 @SuppressWarnings({
     "StringEquality"
 })
 public class CookieConfig$JAXB
-    extends JAXBObject<CookieConfig> {
+    extends JAXBObject<CookieConfig>
+{
 
 
     public CookieConfig$JAXB() {
         super(CookieConfig.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "cookie-configType".intern()));
     }
 
-    public static CookieConfig readCookieConfig(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public static CookieConfig readCookieConfig(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public static void writeCookieConfig(final XoXMLStreamWriter writer, final CookieConfig cookieConfig, final RuntimeContext context)
-        throws Exception {
+    public static void writeCookieConfig(XoXMLStreamWriter writer, CookieConfig cookieConfig, RuntimeContext context)
+        throws Exception
+    {
         _write(writer, cookieConfig, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final CookieConfig cookieConfig, final RuntimeContext context)
-        throws Exception {
+    public void write(XoXMLStreamWriter writer, CookieConfig cookieConfig, RuntimeContext context)
+        throws Exception
+    {
         _write(writer, cookieConfig, context);
     }
 
-    public final static CookieConfig _read(final XoXMLStreamReader reader, RuntimeContext context)
-        throws Exception {
+    public static final CookieConfig _read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,95 +70,95 @@ public class CookieConfig$JAXB
             context = new RuntimeContext();
         }
 
-        final CookieConfig cookieConfig = new CookieConfig();
+        CookieConfig cookieConfig = new CookieConfig();
         context.beforeUnmarshal(cookieConfig, LifecycleCallback.NONE);
 
 
         // Check xsi:type
-        final QName xsiType = reader.getXsiType();
-        if (xsiType != null) {
-            if (("cookie-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+        QName xsiType = reader.getXsiType();
+        if (xsiType!= null) {
+            if (("cookie-configType"!= xsiType.getLocalPart())||("http://java.sun.com/xml/ns/javaee"!= xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, CookieConfig.class);
             }
         }
 
         // Read attributes
-        for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+        for (Attribute attribute: reader.getAttributes()) {
+            if (("id" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, cookieConfig);
                 cookieConfig.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI!= attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
-        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+        for (XoXMLStreamReader elementReader: reader.getChildElements()) {
+            if (("name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+                String nameRaw = elementReader.getElementText();
 
-                final String name;
+                String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 cookieConfig.name = name;
-            } else if (("domain" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("domain" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: domain
-                final String domainRaw = elementReader.getElementAsString();
+                String domainRaw = elementReader.getElementText();
 
-                final String domain;
+                String domain;
                 try {
                     domain = Adapters.collapsedStringAdapterAdapter.unmarshal(domainRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 cookieConfig.domain = domain;
-            } else if (("path" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("path" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: path
-                final String pathRaw = elementReader.getElementAsString();
+                String pathRaw = elementReader.getElementText();
 
-                final String path;
+                String path;
                 try {
                     path = Adapters.collapsedStringAdapterAdapter.unmarshal(pathRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 cookieConfig.path = path;
-            } else if (("comment" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("comment" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: comment
-                final String commentRaw = elementReader.getElementAsString();
+                String commentRaw = elementReader.getElementText();
 
-                final String comment;
+                String comment;
                 try {
                     comment = Adapters.collapsedStringAdapterAdapter.unmarshal(commentRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 cookieConfig.comment = comment;
-            } else if (("http-only" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("http-only" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: httpOnly
-                final Boolean httpOnly = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                Boolean httpOnly = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
                 cookieConfig.httpOnly = httpOnly;
-            } else if (("secure" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("secure" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: secure
-                final Boolean secure = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                Boolean secure = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
                 cookieConfig.secure = secure;
-            } else if (("max-age" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("max-age" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxAge
-                final Integer maxAge = Integer.valueOf(elementReader.getElementAsString());
+                Integer maxAge = Integer.valueOf(elementReader.getElementText());
                 cookieConfig.maxAge = maxAge;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "domain"), new QName("http://java.sun.com/xml/ns/javaee", "path"), new QName("http://java.sun.com/xml/ns/javaee", "comment"), new QName("http://java.sun.com/xml/ns/javaee", "http-only"), new QName("http://java.sun.com/xml/ns/javaee", "secure"), new QName("http://java.sun.com/xml/ns/javaee", "max-age"));
@@ -165,118 +170,120 @@ public class CookieConfig$JAXB
         return cookieConfig;
     }
 
-    public final CookieConfig read(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public final CookieConfig read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, final CookieConfig cookieConfig, RuntimeContext context)
-        throws Exception {
+    public static final void _write(XoXMLStreamWriter writer, CookieConfig cookieConfig, RuntimeContext context)
+        throws Exception
+    {
         if (cookieConfig == null) {
             writer.writeXsiNil();
-            return;
+            return ;
         }
 
         if (context == null) {
             context = new RuntimeContext();
         }
 
-        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
-        if (CookieConfig.class != cookieConfig.getClass()) {
+        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        if (CookieConfig.class!= cookieConfig.getClass()) {
             context.unexpectedSubclass(writer, cookieConfig, CookieConfig.class);
-            return;
+            return ;
         }
 
         context.beforeMarshal(cookieConfig, LifecycleCallback.NONE);
 
 
         // ATTRIBUTE: id
-        final String idRaw = cookieConfig.id;
-        if (idRaw != null) {
+        String idRaw = cookieConfig.id;
+        if (idRaw!= null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 context.xmlAdapterError(cookieConfig, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
         }
 
         // ELEMENT: name
-        final String nameRaw = cookieConfig.name;
+        String nameRaw = cookieConfig.name;
         String name = null;
         try {
             name = Adapters.collapsedStringAdapterAdapter.marshal(nameRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(cookieConfig, "name", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (name != null) {
+        if (name!= null) {
             writer.writeStartElement(prefix, "name", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(name);
             writer.writeEndElement();
         }
 
         // ELEMENT: domain
-        final String domainRaw = cookieConfig.domain;
+        String domainRaw = cookieConfig.domain;
         String domain = null;
         try {
             domain = Adapters.collapsedStringAdapterAdapter.marshal(domainRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(cookieConfig, "domain", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (domain != null) {
+        if (domain!= null) {
             writer.writeStartElement(prefix, "domain", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(domain);
             writer.writeEndElement();
         }
 
         // ELEMENT: path
-        final String pathRaw = cookieConfig.path;
+        String pathRaw = cookieConfig.path;
         String path = null;
         try {
             path = Adapters.collapsedStringAdapterAdapter.marshal(pathRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(cookieConfig, "path", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (path != null) {
+        if (path!= null) {
             writer.writeStartElement(prefix, "path", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(path);
             writer.writeEndElement();
         }
 
         // ELEMENT: comment
-        final String commentRaw = cookieConfig.comment;
+        String commentRaw = cookieConfig.comment;
         String comment = null;
         try {
             comment = Adapters.collapsedStringAdapterAdapter.marshal(commentRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(cookieConfig, "comment", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (comment != null) {
+        if (comment!= null) {
             writer.writeStartElement(prefix, "comment", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(comment);
             writer.writeEndElement();
         }
 
         // ELEMENT: httpOnly
-        final Boolean httpOnly = cookieConfig.httpOnly;
-        if (httpOnly != null) {
+        Boolean httpOnly = cookieConfig.httpOnly;
+        if (httpOnly!= null) {
             writer.writeStartElement(prefix, "http-only", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(httpOnly));
             writer.writeEndElement();
         }
 
         // ELEMENT: secure
-        final Boolean secure = cookieConfig.secure;
-        if (secure != null) {
+        Boolean secure = cookieConfig.secure;
+        if (secure!= null) {
             writer.writeStartElement(prefix, "secure", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(secure));
             writer.writeEndElement();
         }
 
         // ELEMENT: maxAge
-        final Integer maxAge = cookieConfig.maxAge;
-        if (maxAge != null) {
+        Integer maxAge = cookieConfig.maxAge;
+        if (maxAge!= null) {
             writer.writeStartElement(prefix, "max-age", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(maxAge));
             writer.writeEndElement();

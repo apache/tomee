@@ -107,7 +107,6 @@
         -->
         <!-- exclude shaded artifacts because they are under our own groupId -->
         <exclude>org.apache.commons.dbcp2:*</exclude>
-        <exclude>org.metatype.sxc:*</exclude>
         <exclude>org.apache.taglibs:*</exclude>
 
         <!-- jakartaee-api -->
