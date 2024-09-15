@@ -122,8 +122,13 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
                 emf.createEntityManager().close();
             }
 
+            /*
+			 * The code below is outdated, because the ImportSql class, is no
+			 * longer to be used. It is deprecated, be used to import database objects.
+			 * Whether to use the Flyway or Liquibase tools.
+			 */
             if (unitInfo.getNonJtaDataSource() != null) {
-                final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
+               final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
                 if (importer.hasSomethingToImport()) {
                     emf.createEntityManager().close(); // to let OpenJPA create the database if configured this way
                     importer.doImport();

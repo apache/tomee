@@ -35,6 +35,13 @@ import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Locale;
 
+/**
+ * This class should no longer be used to import database objects. 
+ * Whether to use the Flyway or Liquibase tools.
+ * 
+ * @version $Rev$ $Date$
+ */
+@Deprecated
 public class ImportSql {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, EntityManagerFactoryCallable.class.getName());
 

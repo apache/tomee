@@ -1,0 +1,247 @@
+= Importação de Banco de Dados via Flyway
+:index-group: Import
+:jbake-type: page
+:jbake-status: not published/unrevised
+
+Este é um exemplo sobre como utilizar a ferramenta Flyway, para fazer a importação de banco de dados programaticamente.
+
+[discrete]
+==== Importação de Banco de Dados via Flyway
+
+Para utilizarmos o Flyway, em tempo de execução da aplicação dentro do servidor de aplicação, iremos utilizar o DataSource do servidor de aplicações, mas para o teste unitário/teste integrado, iremos utilizar um DataSource configurado, para utilizar um banco de dados em memória.
+
+[source,java]
+----
+public class ImportByFlyway {
+	private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB,
+			EntityManagerFactoryCallable.class.getName());
+
+	public static final String IMPORT_FILE_PREFIX = "V_";
+	public static final String IMPORT_FILE_EXTENSION = ".sql";
+
+	private final DataSource dataSource;
+	private final String resource;
+
+	public ImportByFlyway(final ClassLoader cl, final String resource, final DataSource ds) {
+		this.dataSource = ds;
+		this.resource = resource;
+
+		if (dataSource == null) {
+			throw new NullPointerException("datasource can't be null");
+		}
+
+	}
+
+	public void doImport() {
+
+		try {
+
+			try {
+				
+				List<String> sqlFiles = listFilteredFiles(resource, Integer.MAX_VALUE);
+
+				if (Objects.nonNull(sqlFiles)) {
+					if (sqlFiles.isEmpty()) {
+						LOGGER.error("The Resource directory for sql files, can not to be empty.");
+						throw new Exception("The Resource directory for sql files, can not to be empty.");
+					}
+				}
+
+			} catch (final IOException e) {
+				throw new OpenEJBRuntimeException("The Resource directory for sql files, can not to be empty.", e);
+			}
+
+			Flyway flyway = Flyway.configure().locations("filesystem:src/test/resources").dataSource(dataSource)
+					.cleanDisabled(false).load();
+
+			flyway.clean();
+			flyway.migrate();
+
+		} catch (final Exception e) {
+			LOGGER.error("Can not create a statement, import scripts will be ignored", e);
+			return;
+		}
+
+	}
+
+	public void doValidate() {
+		String selectAllByMail = "SELECT id, description FROM table_test";
+
+		try (PreparedStatement statement = dataSource.getConnection().prepareStatement(selectAllByMail)) {
+
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				LOGGER.info("id:" + resultSet.getInt("id") + " description:" + resultSet.getString("description"));
+
+			}
+		} catch (Exception ex) {
+			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+		}
+
+	}
+
+	public List<String> listFilteredFiles(String dir, int depth) throws IOException {
+		try (Stream<Path> stream = Files.walk(Paths.get(dir), depth)) {
+			return stream.filter(file -> !Files.isDirectory(file))
+					.filter(file -> !file.getFileName().toString().startsWith(".")).map(Path::toString)
+					.map(s -> s.replaceFirst(resource, "")).collect(Collectors.toList());
+		}
+	}
+
+}
+----
+
+O teste unitário está vinculado a um conjunto de instruções SQL, definidas no script `V1_0__import-ImportSqlScriptTest.sql`:
+
+[source,sql]
+----
+CREATE TABLE table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
+insert into table_test (id, description) values(1, 'Test 1');
+insert into table_test (id, description) values(2, 'Test 2');
+insert into table_test (id, description) values(3, 'Test 3');
+----
+
+== Executando o teste unitário:
+
+Executar o teste unitário para a classe ImportByFlywayTest.
+Deve-se seguir, as seguintes etapas: 
+
+1 - Executar o build do projeto inteiro, no diretório raíz do projeto, tomee: 
+
+[source,bash]
+----
+-Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
+
+----
+
+2 - Executar o build do projeto examples/import-database-flyway: 
+
+[source,bash]
+----
+mvn clean install 
+
+----
+
+Deve ser exibida, a seguinte saída: 
+
+[source,console]
+----
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ T E S T S
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< org.superbiz:import-database-flyway >-----------------
+[INFO] Building TomEE :: Examples :: Import Database By Flyway Programmatically 10.0.0-M3-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ import-database-flyway ---
+[INFO] Deleting /home/evaldo/workspace_2024/tomee/examples/import-database-flyway/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ import-database-flyway ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.13.0:compile (default-compile) @ import-database-flyway ---
+[INFO] Recompiling the module because of changed source code.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ import-database-flyway ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.13.0:testCompile (default-testCompile) @ import-database-flyway ---
+[INFO] Recompiling the module because of changed dependency.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ import-database-flyway ---
+[INFO] Surefire report directory: /home/evaldo/workspace_2024/tomee/examples/import-database-flyway/target/surefire-reports
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ T E S T S
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+Running org.apache.openejb.assembler.classic.migrate.database.ImportByFlywayTest
+[Server@3cef309d]: [Thread[main,5,main]]: checkRunning(false) entered
+[Server@3cef309d]: [Thread[main,5,main]]: checkRunning(false) exited
+[Server@3cef309d]: [Thread[main,5,main]]: setDatabaseName(0,hsqldb)
+[Server@3cef309d]: [Thread[main,5,main]]: checkRunning(false) entered
+[Server@3cef309d]: [Thread[main,5,main]]: checkRunning(false) exited
+[Server@3cef309d]: [Thread[main,5,main]]: setDatabasePath(0,mem:hsqldb)
+[Server@3cef309d]: [Thread[main,5,main]]: checkRunning(false) entered
+[Server@3cef309d]: [Thread[main,5,main]]: checkRunning(false) exited
+[Server@3cef309d]: [Thread[main,5,main]]: setPort(9001)
+[Server@3cef309d]: [Thread[main,5,main]]: start() entered
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: run() entered
+[Server@3cef309d]: Initiating startup sequence...
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.maxdatabases=10
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.tls=false
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.port=9001
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.trace=false
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.database.0=mem:hsqldb
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.restart_on_shutdown=false
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.no_system_exit=true
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.silent=true
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.default_page=index.html
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.dbname.0=hsqldb
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.address=0.0.0.0
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: server.root=.
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: openServerSocket() entered
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: Got server socket: ServerSocket[addr=0.0.0.0/0.0.0.0,localport=9001]
+[Server@3cef309d]: Server socket opened successfully in 170 ms.
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: openServerSocket() exiting
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: openDatabases() entered
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: Opening database: [mem:hsqldb]
+[Server@3cef309d]: Database [index=0, id=0, db=mem:hsqldb, alias=hsqldb] opened successfully in 548 ms.
+[Server@3cef309d]: [Thread[HSQLDB Server @3cef309d,5,main]]: openDatabases() exiting
+[Server@3cef309d]: Startup sequence completed in 757 ms.
+[Server@3cef309d]: 2024-09-15 16:34:42.892 HSQLDB server 2.7.3 is online on port 9001
+[Server@3cef309d]: To close normally, connect and execute SHUTDOWN SQL
+[Server@3cef309d]: From command line, use [Ctrl]+[C] to abort abruptly
+[Server@3cef309d]: [Thread[main,5,main]]: start() exiting
+set. 15, 2024 1:34:43 PM com.zaxxer.hikari.HikariDataSource <init>
+INFORMAÇÕES: hikariCP - Starting...
+set. 15, 2024 1:34:43 PM com.zaxxer.hikari.pool.PoolBase getAndSetNetworkTimeout
+INFORMAÇÕES: hikariCP - Driver does not support get/set network timeout for connections. (feature not supported)
+set. 15, 2024 1:34:43 PM com.zaxxer.hikari.pool.HikariPool checkFailFast
+INFORMAÇÕES: hikariCP - Added connection org.hsqldb.jdbc.JDBCConnection@b7f23d9
+set. 15, 2024 1:34:43 PM com.zaxxer.hikari.HikariDataSource <init>
+INFORMAÇÕES: hikariCP - Start completed.
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Database: jdbc:hsqldb:mem:hsqldb;ifexists=true (HSQL Database Engine 2.7)
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Schema history table "PUBLIC"."flyway_schema_history" does not exist yet
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Successfully dropped pre-schema database level objects (execution time 00:00.005s)
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Successfully cleaned schema "PUBLIC" (execution time 00:00.009s)
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Successfully cleaned schema "PUBLIC" (execution time 00:00.008s)
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Successfully dropped post-schema database level objects (execution time 00:00.002s)
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Schema history table "PUBLIC"."flyway_schema_history" does not exist yet
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Successfully validated 1 migration (execution time 00:00.074s)
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Creating Schema History table "PUBLIC"."flyway_schema_history" ...
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Current version of schema "PUBLIC": << Empty Schema >>
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Migrating schema "PUBLIC" to version "1.0 - import-ImportSqlScriptTest"
+set. 15, 2024 1:34:44 PM org.flywaydb.core.internal.logging.slf4j.Slf4jLog info
+INFORMAÇÕES: Successfully applied 1 migration to schema "PUBLIC", now at version v1.0 (execution time 00:00.019s)
+INFORMAÇÕES - id:1 description:Test 1
+INFORMAÇÕES - id:2 description:Test 2
+INFORMAÇÕES - id:3 description:Test 3
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.382 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+----
