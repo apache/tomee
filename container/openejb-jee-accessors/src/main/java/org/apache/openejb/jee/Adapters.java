@@ -22,11 +22,11 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 public class Adapters {
 
     public static final CollapsedStringAdapter collapsedStringAdapterAdapter = new CollapsedStringAdapter();
+    public static final TrimStringAdapter trimStringAdapterAdapter = new TrimStringAdapter();
     public static final StringAdapter stringAdapterAdapter = new StringAdapter();
     public static final HandlerChainsStringQNameAdapter handlerChainsStringQNameAdapterAdapter = new HandlerChainsStringQNameAdapter();
     public static final TimeUnitAdapter timeUnitAdapterAdapter = new TimeUnitAdapter();
     public static final BooleanAdapter booleanAdapterAdapter = new BooleanAdapter();
-    public static final TrimStringAdapter trimStringAdapterAdapter = new TrimStringAdapter();
     public static final LoadOnStartupAdapter loadOnStartupAdapterAdapter = new LoadOnStartupAdapter();
 
 }

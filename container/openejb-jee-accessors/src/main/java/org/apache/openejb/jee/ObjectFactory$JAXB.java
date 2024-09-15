@@ -31,14 +31,14 @@ public class ObjectFactory$JAXB
     private final Map<QName, Class<? extends JAXBObject>> rootElements = new HashMap<>();
 
     public ObjectFactory$JAXB() {
-        super(ObjectFactory.class, Application$JAXB.class, ApplicationClient$JAXB.class, EjbJar$JAXB.class, EjbRelationshipRole$JAXB.class, Text$JAXB.class, WebApp$JAXB.class, TldTaglib$JAXB.class, Connector$JAXB.class, Webservices$JAXB.class, JavaWsdlMapping$JAXB.class, FacesConfig$JAXB.class, WebFragment$JAXB.class);
-        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "application".intern()), Application$JAXB.class);
-        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "application-client".intern()), ApplicationClient$JAXB.class);
-        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-jar".intern()), EjbJar$JAXB.class);
+        super(ObjectFactory.class, EjbRelationshipRole$JAXB.class, Text$JAXB.class, Application$JAXB.class, ApplicationClient$JAXB.class, EjbJar$JAXB.class, WebApp$JAXB.class, TldTaglib$JAXB.class, Connector$JAXB.class, Webservices$JAXB.class, JavaWsdlMapping$JAXB.class, FacesConfig$JAXB.class, WebFragment$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-relation-name".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-relationship-role".intern()), EjbRelationshipRole$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "description".intern()), Text$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "http-method".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
+        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "application".intern()), Application$JAXB.class);
+        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "application-client".intern()), ApplicationClient$JAXB.class);
+        rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "ejb-jar".intern()), EjbJar$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-app".intern()), WebApp$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/javaee".intern(), "taglib".intern()), TldTaglib$JAXB.class);
         rootElements.put(new QName("http://java.sun.com/xml/ns/j2ee".intern(), "connector".intern()), Connector$JAXB.class);
