@@ -132,6 +132,11 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         return null;
     }
 
+    @Override
+    public ScheduledExecutorService getDelegate() {
+        return delegate;
+    }
+
     /**
      * Automatically resolves an AtomicReference
      * @param delegate

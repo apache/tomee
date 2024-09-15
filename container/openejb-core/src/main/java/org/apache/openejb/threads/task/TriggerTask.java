@@ -37,7 +37,7 @@ public abstract class TriggerTask<T> extends CUTask<T> {
     protected final String id;
     protected final AtomicReference<Future<T>> futureRef;
 
-    protected LastExecution lastExecution;
+    protected volatile LastExecution lastExecution;
     protected volatile boolean skipped;
     protected volatile boolean done;
     protected volatile boolean cancelled;
@@ -60,17 +60,18 @@ public abstract class TriggerTask<T> extends CUTask<T> {
             if (cancelled) {
                 return;
             }
-        }
 
-        this.nextRun = trigger.getNextRunTime(lastExecution, initiallyScheduled);
-        if (nextRun == null) {
-            done = true;
-            return;
-        }
+            this.nextRun = trigger.getNextRunTime(lastExecution, initiallyScheduled);
+            if (nextRun == null) {
+                done = true;
+                return;
+            }
 
-        final ScheduledFuture<T> future = executorService.schedule(this::execute, millisUntilNextRun(), TimeUnit.MILLISECONDS);
-        futureRef.set(future);
-        taskSubmitted(future, executorService, delegate);
+            final ScheduledFuture<T> future = executorService.getDelegate().schedule(this::invokeExecute, millisUntilNextRun(), TimeUnit.MILLISECONDS);
+
+            futureRef.set(future);
+            taskSubmitted(future, executorService, delegate);
+        }
     }
 
     private T execute() throws Exception {
@@ -100,7 +101,7 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         return result;
     }
 
-    public T invoke() throws Exception {
+    public T invokeExecute() throws Exception {
         return invoke(this::execute);
     }
 
