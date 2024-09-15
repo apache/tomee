@@ -118,5 +118,5 @@ Downloading from flyway-community-db-support: https://maven.pkg.github.com/flywa
 [INFO] Total time:  12.469 s
 [INFO] Finished at: 2024-09-15T16:05:48-03:00
 [INFO] ------------------------------------------------------------------------
-evaldo@evaldo-Ubuntu:~/workspace_2024/tomee/examples/import-database-flyway-maven$ 
+
 ----
