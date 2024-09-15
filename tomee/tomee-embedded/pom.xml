@@ -339,16 +339,6 @@
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-beanutils-core</artifactId>
-          <groupId>commons-beanutils</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <artifactId>commons-beanutils</artifactId>
-      <groupId>commons-beanutils</groupId>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>

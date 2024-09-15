@@ -88,7 +88,7 @@ import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.recipe.ObjectRecipe;
-import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
+import org.tomitribe.swizzle.stream.ReplaceStringsInputStream;
 
 import javax.naming.Context;
 import javax.naming.NamingException;

@@ -178,7 +178,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @XmlID
     protected String id;
     @XmlElement(name="context-service")
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
     @XmlElement(name="managed-executor")
     private KeyedCollection<String, ManagedExecutor> managedExecutor;
     @XmlElement(name = "managed-scheduled-executor")

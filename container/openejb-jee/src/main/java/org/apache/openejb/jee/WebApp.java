@@ -19,6 +19,7 @@ package org.apache.openejb.jee;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlID;
@@ -102,7 +103,8 @@ import java.util.Map;
     "contextService",
     "managedExecutor",
     "managedScheduledExecutor",
-    "managedThreadFactory"
+    "managedThreadFactory",
+    "others"
 })
 public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlTransient
@@ -204,6 +206,9 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
     @XmlElement(name = "managed-thread-factory")
     protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
+
+    @XmlAnyElement
+    protected List<Object> others;
 
     @Override
     public String getJndiConsumerName() {

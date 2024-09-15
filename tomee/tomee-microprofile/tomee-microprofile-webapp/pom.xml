@@ -39,11 +39,6 @@
 
   <dependencies>
 
-    <dependency><!-- needed by myfaces -->
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>${version.commons-beanutils}</version>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
@@ -304,10 +299,6 @@
           <artifactId>myfaces-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>commons-beanutils</groupId>
-          <artifactId>commons-beanutils</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>*</artifactId>
         </exclusion>
@@ -414,8 +405,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.swizzle</groupId>
-      <artifactId>swizzle-stream</artifactId>
+      <groupId>org.tomitribe</groupId>
+      <artifactId>swizzle</artifactId>
     </dependency>
     <dependency>
       <groupId>org.easymock</groupId>

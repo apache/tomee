@@ -69,7 +69,7 @@ public class CdiBeanInfo implements JndiConsumer {
     private String beanName;
     private ClassLoader classLoader;
     private List<Injection> injections;
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
     private KeyedCollection<String, ManagedExecutor> managedExecutor;
     protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
     protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;

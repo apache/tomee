@@ -1,21 +1,27 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
+ * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.openejb.jee;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.LifecycleCallback;
 import org.metatype.sxc.jaxb.RuntimeContext;
@@ -23,11 +29,6 @@ import org.metatype.sxc.util.Attribute;
 import org.metatype.sxc.util.XoXMLStreamReader;
 import org.metatype.sxc.util.XoXMLStreamWriter;
 
-import javax.xml.XMLConstants;
-import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.openejb.jee.Icon$JAXB.readIcon;
 import static org.apache.openejb.jee.Icon$JAXB.writeIcon;
@@ -46,30 +47,35 @@ import static org.apache.openejb.jee.Text$JAXB.writeText;
     "StringEquality"
 })
 public class Servlet$JAXB
-    extends JAXBObject<Servlet> {
+    extends JAXBObject<Servlet>
+{
 
 
     public Servlet$JAXB() {
         super(Servlet.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "servletType".intern()), Text$JAXB.class, Icon$JAXB.class, ParamValue$JAXB.class, RunAs$JAXB.class, SecurityRoleRef$JAXB.class, MultipartConfig$JAXB.class);
     }
 
-    public static Servlet readServlet(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public static Servlet readServlet(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public static void writeServlet(final XoXMLStreamWriter writer, final Servlet servlet, final RuntimeContext context)
-        throws Exception {
+    public static void writeServlet(XoXMLStreamWriter writer, Servlet servlet, RuntimeContext context)
+        throws Exception
+    {
         _write(writer, servlet, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final Servlet servlet, final RuntimeContext context)
-        throws Exception {
+    public void write(XoXMLStreamWriter writer, Servlet servlet, RuntimeContext context)
+        throws Exception
+    {
         _write(writer, servlet, context);
     }
 
-    public final static Servlet _read(final XoXMLStreamReader reader, RuntimeContext context)
-        throws Exception {
+    public static final Servlet _read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -80,7 +86,7 @@ public class Servlet$JAXB
             context = new RuntimeContext();
         }
 
-        final Servlet servlet = new Servlet();
+        Servlet servlet = new Servlet();
         context.beforeUnmarshal(servlet, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
@@ -90,170 +96,170 @@ public class Servlet$JAXB
         List<SecurityRoleRef> securityRoleRef = null;
 
         // Check xsi:type
-        final QName xsiType = reader.getXsiType();
-        if (xsiType != null) {
-            if (("servletType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+        QName xsiType = reader.getXsiType();
+        if (xsiType!= null) {
+            if (("servletType"!= xsiType.getLocalPart())||("http://java.sun.com/xml/ns/javaee"!= xsiType.getNamespaceURI())) {
                 return context.unexpectedXsiType(reader, Servlet.class);
             }
         }
 
         // Read attributes
-        for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+        for (Attribute attribute: reader.getAttributes()) {
+            if (("id" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, servlet);
                 servlet.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI!= attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
-        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+        for (XoXMLStreamReader elementReader: reader.getChildElements()) {
+            if (("description" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
-                final Text descriptionsItem = readText(elementReader, context);
+                Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
-                    descriptions = new ArrayList<Text>();
+                    descriptions = new ArrayList<>();
                 }
                 descriptions.add(descriptionsItem);
-            } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("display-name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: displayNames
-                final Text displayNamesItem = readText(elementReader, context);
+                Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
-                    displayNames = new ArrayList<Text>();
+                    displayNames = new ArrayList<>();
                 }
                 displayNames.add(displayNamesItem);
-            } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("icon" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: icon
-                final Icon iconItem = readIcon(elementReader, context);
+                Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
                     icon = servlet.icon;
-                    if (icon != null) {
+                    if (icon!= null) {
                         icon.clear();
                     } else {
-                        icon = new LocalCollection<Icon>();
+                        icon = new LocalCollection<>();
                     }
                 }
                 icon.add(iconItem);
-            } else if (("servlet-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("servlet-name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: servletName
-                final String servletNameRaw = elementReader.getElementAsString();
+                String servletNameRaw = elementReader.getElementText();
 
-                final String servletName;
+                String servletName;
                 try {
                     servletName = Adapters.collapsedStringAdapterAdapter.unmarshal(servletNameRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 servlet.servletName = servletName;
-            } else if (("servlet-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("servlet-class" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: servletClass
-                final String servletClassRaw = elementReader.getElementAsString();
+                String servletClassRaw = elementReader.getElementText();
 
-                final String servletClass;
+                String servletClass;
                 try {
                     servletClass = Adapters.collapsedStringAdapterAdapter.unmarshal(servletClassRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 servlet.servletClass = servletClass;
-            } else if (("jsp-file" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("jsp-file" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: jspFile
-                final String jspFileRaw = elementReader.getElementAsString();
+                String jspFileRaw = elementReader.getElementText();
 
-                final String jspFile;
+                String jspFile;
                 try {
                     jspFile = Adapters.collapsedStringAdapterAdapter.unmarshal(jspFileRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 servlet.jspFile = jspFile;
-            } else if (("init-param" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("init-param" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initParam
-                final ParamValue initParamItem = readParamValue(elementReader, context);
+                ParamValue initParamItem = readParamValue(elementReader, context);
                 if (initParam == null) {
                     initParam = servlet.initParam;
-                    if (initParam != null) {
+                    if (initParam!= null) {
                         initParam.clear();
                     } else {
-                        initParam = new ArrayList<ParamValue>();
+                        initParam = new ArrayList<>();
                     }
                 }
                 initParam.add(initParamItem);
-            } else if (("load-on-startup" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("load-on-startup" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: loadOnStartup
-                final String loadOnStartupRaw = elementReader.getElementAsString();
+                String loadOnStartupRaw = elementReader.getElementText();
 
-                final Integer loadOnStartup;
+                Integer loadOnStartup;
                 try {
                     loadOnStartup = Adapters.loadOnStartupAdapterAdapter.unmarshal(loadOnStartupRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, LoadOnStartupAdapter.class, Integer.class, Integer.class, e);
                     continue;
                 }
 
                 servlet.loadOnStartup = loadOnStartup;
-            } else if (("enabled" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("enabled" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enabled
-                final Boolean enabled = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                Boolean enabled = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
                 servlet.enabled = enabled;
-            } else if (("async-supported" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("async-supported" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: asyncSupported
-                final Boolean asyncSupported = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
+                Boolean asyncSupported = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
                 servlet.asyncSupported = asyncSupported;
-            } else if (("run-as" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("run-as" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: runAs
-                final RunAs runAs = readRunAs(elementReader, context);
+                RunAs runAs = readRunAs(elementReader, context);
                 servlet.runAs = runAs;
-            } else if (("security-role-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("security-role-ref" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: securityRoleRef
-                final SecurityRoleRef securityRoleRefItem = readSecurityRoleRef(elementReader, context);
+                SecurityRoleRef securityRoleRefItem = readSecurityRoleRef(elementReader, context);
                 if (securityRoleRef == null) {
                     securityRoleRef = servlet.securityRoleRef;
-                    if (securityRoleRef != null) {
+                    if (securityRoleRef!= null) {
                         securityRoleRef.clear();
                     } else {
-                        securityRoleRef = new ArrayList<SecurityRoleRef>();
+                        securityRoleRef = new ArrayList<>();
                     }
                 }
                 securityRoleRef.add(securityRoleRefItem);
-            } else if (("multipart-config" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("multipart-config" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: multipartConfig
-                final MultipartConfig multipartConfig = readMultipartConfig(elementReader, context);
+                MultipartConfig multipartConfig = readMultipartConfig(elementReader, context);
                 servlet.multipartConfig = multipartConfig;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "servlet-name"), new QName("http://java.sun.com/xml/ns/javaee", "servlet-class"), new QName("http://java.sun.com/xml/ns/javaee", "jsp-file"), new QName("http://java.sun.com/xml/ns/javaee", "init-param"), new QName("http://java.sun.com/xml/ns/javaee", "load-on-startup"), new QName("http://java.sun.com/xml/ns/javaee", "enabled"), new QName("http://java.sun.com/xml/ns/javaee", "async-supported"), new QName("http://java.sun.com/xml/ns/javaee", "run-as"), new QName("http://java.sun.com/xml/ns/javaee", "security-role-ref"), new QName("http://java.sun.com/xml/ns/javaee", "multipart-config"));
             }
         }
-        if (descriptions != null) {
+        if (descriptions!= null) {
             try {
-                servlet.setDescriptions(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (final Exception e) {
+                servlet.setDescriptions(descriptions.toArray(new Text[descriptions.size()] ));
+            } catch (Exception e) {
                 context.setterError(reader, Servlet.class, "setDescriptions", Text[].class, e);
             }
         }
-        if (displayNames != null) {
+        if (displayNames!= null) {
             try {
-                servlet.setDisplayNames(displayNames.toArray(new Text[displayNames.size()]));
-            } catch (final Exception e) {
+                servlet.setDisplayNames(displayNames.toArray(new Text[displayNames.size()] ));
+            } catch (Exception e) {
                 context.setterError(reader, Servlet.class, "setDisplayNames", Text[].class, e);
             }
         }
-        if (icon != null) {
+        if (icon!= null) {
             servlet.icon = icon;
         }
-        if (initParam != null) {
+        if (initParam!= null) {
             servlet.initParam = initParam;
         }
-        if (securityRoleRef != null) {
+        if (securityRoleRef!= null) {
             servlet.securityRoleRef = securityRoleRef;
         }
 
@@ -262,38 +268,40 @@ public class Servlet$JAXB
         return servlet;
     }
 
-    public final Servlet read(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public final Servlet read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, final Servlet servlet, RuntimeContext context)
-        throws Exception {
+    public static final void _write(XoXMLStreamWriter writer, Servlet servlet, RuntimeContext context)
+        throws Exception
+    {
         if (servlet == null) {
             writer.writeXsiNil();
-            return;
+            return ;
         }
 
         if (context == null) {
             context = new RuntimeContext();
         }
 
-        final String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
-        if (Servlet.class != servlet.getClass()) {
+        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        if (Servlet.class!= servlet.getClass()) {
             context.unexpectedSubclass(writer, servlet, Servlet.class);
-            return;
+            return ;
         }
 
         context.beforeMarshal(servlet, LifecycleCallback.NONE);
 
 
         // ATTRIBUTE: id
-        final String idRaw = servlet.id;
-        if (idRaw != null) {
+        String idRaw = servlet.id;
+        if (idRaw!= null) {
             String id = null;
             try {
                 id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 context.xmlAdapterError(servlet, "id", CollapsedStringAdapter.class, String.class, String.class, e);
             }
             writer.writeAttribute("", "", "id", id);
@@ -303,12 +311,12 @@ public class Servlet$JAXB
         Text[] descriptions = null;
         try {
             descriptions = servlet.getDescriptions();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.getterError(servlet, "descriptions", Servlet.class, "getDescriptions", e);
         }
-        if (descriptions != null) {
-            for (final Text descriptionsItem : descriptions) {
-                if (descriptionsItem != null) {
+        if (descriptions!= null) {
+            for (Text descriptionsItem: descriptions) {
+                if (descriptionsItem!= null) {
                     writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, descriptionsItem, context);
                     writer.writeEndElement();
@@ -322,12 +330,12 @@ public class Servlet$JAXB
         Text[] displayNames = null;
         try {
             displayNames = servlet.getDisplayNames();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.getterError(servlet, "displayNames", Servlet.class, "getDisplayNames", e);
         }
-        if (displayNames != null) {
-            for (final Text displayNamesItem : displayNames) {
-                if (displayNamesItem != null) {
+        if (displayNames!= null) {
+            for (Text displayNamesItem: displayNames) {
+                if (displayNamesItem!= null) {
                     writer.writeStartElement(prefix, "display-name", "http://java.sun.com/xml/ns/javaee");
                     writeText(writer, displayNamesItem, context);
                     writer.writeEndElement();
@@ -338,10 +346,10 @@ public class Servlet$JAXB
         }
 
         // ELEMENT: icon
-        final LocalCollection<Icon> icon = servlet.icon;
-        if (icon != null) {
-            for (final Icon iconItem : icon) {
-                if (iconItem != null) {
+        LocalCollection<Icon> icon = servlet.icon;
+        if (icon!= null) {
+            for (Icon iconItem: icon) {
+                if (iconItem!= null) {
                     writer.writeStartElement(prefix, "icon", "http://java.sun.com/xml/ns/javaee");
                     writeIcon(writer, iconItem, context);
                     writer.writeEndElement();
@@ -352,14 +360,14 @@ public class Servlet$JAXB
         }
 
         // ELEMENT: servletName
-        final String servletNameRaw = servlet.servletName;
+        String servletNameRaw = servlet.servletName;
         String servletName = null;
         try {
             servletName = Adapters.collapsedStringAdapterAdapter.marshal(servletNameRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(servlet, "servletName", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (servletName != null) {
+        if (servletName!= null) {
             writer.writeStartElement(prefix, "servlet-name", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(servletName);
             writer.writeEndElement();
@@ -368,38 +376,38 @@ public class Servlet$JAXB
         }
 
         // ELEMENT: servletClass
-        final String servletClassRaw = servlet.servletClass;
+        String servletClassRaw = servlet.servletClass;
         String servletClass = null;
         try {
             servletClass = Adapters.collapsedStringAdapterAdapter.marshal(servletClassRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(servlet, "servletClass", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (servletClass != null) {
+        if (servletClass!= null) {
             writer.writeStartElement(prefix, "servlet-class", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(servletClass);
             writer.writeEndElement();
         }
 
         // ELEMENT: jspFile
-        final String jspFileRaw = servlet.jspFile;
+        String jspFileRaw = servlet.jspFile;
         String jspFile = null;
         try {
             jspFile = Adapters.collapsedStringAdapterAdapter.marshal(jspFileRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(servlet, "jspFile", CollapsedStringAdapter.class, String.class, String.class, e);
         }
-        if (jspFile != null) {
+        if (jspFile!= null) {
             writer.writeStartElement(prefix, "jsp-file", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(jspFile);
             writer.writeEndElement();
         }
 
         // ELEMENT: initParam
-        final List<ParamValue> initParam = servlet.initParam;
-        if (initParam != null) {
-            for (final ParamValue initParamItem : initParam) {
-                if (initParamItem != null) {
+        List<ParamValue> initParam = servlet.initParam;
+        if (initParam!= null) {
+            for (ParamValue initParamItem: initParam) {
+                if (initParamItem!= null) {
                     writer.writeStartElement(prefix, "init-param", "http://java.sun.com/xml/ns/javaee");
                     writeParamValue(writer, initParamItem, context);
                     writer.writeEndElement();
@@ -408,48 +416,48 @@ public class Servlet$JAXB
         }
 
         // ELEMENT: loadOnStartup
-        final Integer loadOnStartupRaw = servlet.loadOnStartup;
+        Integer loadOnStartupRaw = servlet.loadOnStartup;
         String loadOnStartup = null;
         try {
             loadOnStartup = Adapters.loadOnStartupAdapterAdapter.marshal(loadOnStartupRaw);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             context.xmlAdapterError(servlet, "loadOnStartup", LoadOnStartupAdapter.class, Integer.class, Integer.class, e);
         }
-        if (loadOnStartup != null) {
+        if (loadOnStartup!= null) {
             writer.writeStartElement(prefix, "load-on-startup", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(loadOnStartup);
             writer.writeEndElement();
         }
 
         // ELEMENT: enabled
-        final Boolean enabled = servlet.enabled;
-        if (enabled != null) {
+        Boolean enabled = servlet.enabled;
+        if (enabled!= null) {
             writer.writeStartElement(prefix, "enabled", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(enabled));
             writer.writeEndElement();
         }
 
         // ELEMENT: asyncSupported
-        final Boolean asyncSupported = servlet.asyncSupported;
-        if (asyncSupported != null) {
+        Boolean asyncSupported = servlet.asyncSupported;
+        if (asyncSupported!= null) {
             writer.writeStartElement(prefix, "async-supported", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Boolean.toString(asyncSupported));
             writer.writeEndElement();
         }
 
         // ELEMENT: runAs
-        final RunAs runAs = servlet.runAs;
-        if (runAs != null) {
+        RunAs runAs = servlet.runAs;
+        if (runAs!= null) {
             writer.writeStartElement(prefix, "run-as", "http://java.sun.com/xml/ns/javaee");
             writeRunAs(writer, runAs, context);
             writer.writeEndElement();
         }
 
         // ELEMENT: securityRoleRef
-        final List<SecurityRoleRef> securityRoleRef = servlet.securityRoleRef;
-        if (securityRoleRef != null) {
-            for (final SecurityRoleRef securityRoleRefItem : securityRoleRef) {
-                if (securityRoleRefItem != null) {
+        List<SecurityRoleRef> securityRoleRef = servlet.securityRoleRef;
+        if (securityRoleRef!= null) {
+            for (SecurityRoleRef securityRoleRefItem: securityRoleRef) {
+                if (securityRoleRefItem!= null) {
                     writer.writeStartElement(prefix, "security-role-ref", "http://java.sun.com/xml/ns/javaee");
                     writeSecurityRoleRef(writer, securityRoleRefItem, context);
                     writer.writeEndElement();
@@ -458,8 +466,8 @@ public class Servlet$JAXB
         }
 
         // ELEMENT: multipartConfig
-        final MultipartConfig multipartConfig = servlet.multipartConfig;
-        if (multipartConfig != null) {
+        MultipartConfig multipartConfig = servlet.multipartConfig;
+        if (multipartConfig!= null) {
             writer.writeStartElement(prefix, "multipart-config", "http://java.sun.com/xml/ns/javaee");
             writeMultipartConfig(writer, multipartConfig, context);
             writer.writeEndElement();

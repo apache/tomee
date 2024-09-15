@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.server.cli;
 
-import jline.ConsoleReader;
-import jline.FileNameCompletor;
-import jline.SimpleCompletor;
+import jline.console.ConsoleReader;
+import jline.console.completer.FileNameCompleter;
+import jline.console.completer.StringsCompleter;
 import org.apache.openejb.config.ConfigurableClasspathArchive;
 import org.apache.openejb.server.cli.command.AbstractCommand;
 import org.apache.openejb.server.cli.command.Command;
@@ -183,9 +183,9 @@ public class CliRunnable implements Runnable {
         try {
             final StreamManager streamManager = new StreamManager(out, err, lineSep);
 
-            final ConsoleReader reader = new ConsoleReader(sin, streamManager.getSout());
-            reader.addCompletor(new FileNameCompletor());
-            reader.addCompletor(new SimpleCompletor(COMMANDS.keySet().toArray(new String[COMMANDS.size()])));
+            final ConsoleReader reader = new ConsoleReader(sin, streamManager.getOut());
+            reader.addCompleter(new FileNameCompleter());
+            reader.addCompleter(new StringsCompleter(COMMANDS.keySet().toArray(new String[COMMANDS.size()])));
             // TODO : add completers
 
             String line;

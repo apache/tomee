@@ -56,7 +56,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.8.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -67,7 +67,7 @@
       <dependency>
         <groupId>org.omnifaces</groupId>
         <artifactId>omnifaces</artifactId>
-        <version>4.4.1</version>
+        <version>4.5.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.deltaspike.core</groupId>

@@ -18,13 +18,6 @@ version: 2
 updates:
 
   - package-ecosystem: maven
-    directory: "/examples"
-    schedule:
-      interval: weekly
-      time: '04:00'
-    open-pull-requests-limit: 0
-
-  - package-ecosystem: maven
     directory: "/"
     schedule:
       interval: weekly

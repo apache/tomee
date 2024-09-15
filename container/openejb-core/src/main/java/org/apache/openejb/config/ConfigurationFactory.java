@@ -1232,6 +1232,21 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
             props.putAll(overrides);
 
+            if (logger.isDebugEnabled()) {
+                for (final Map.Entry<Object, Object> entry : props.entrySet()) {
+                    final Object key = entry.getKey();
+                    Object value = entry.getValue();
+
+                    if (! overrides.containsKey(key) && ! serviceProperties.containsKey(key)) {
+                        if (key instanceof String && "password".equalsIgnoreCase((String) key)) {
+                            value = "<hidden>";
+                        }
+
+                        logger.debug("[ default used " + key + "=" + value + "]");
+                    }
+                }
+            }
+
             {// force user properties last
                 String propertiesProvider = service.getPropertiesProvider();
                 if (propertiesProvider == null) {

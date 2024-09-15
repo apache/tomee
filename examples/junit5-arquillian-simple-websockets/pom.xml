@@ -28,9 +28,9 @@
         <tomee.version>10.0.0-M3-SNAPSHOT</tomee.version>
         <tomcat.version>10.1.28</tomcat.version>
 
-        <junit.jupiter.version>5.10.3</junit.jupiter.version>
+        <junit.jupiter.version>5.11.0</junit.jupiter.version>
         <!-- 1.8.1.Final is broken, see https://github.com/arquillian/arquillian-core/pull/583 -->
-        <arquillian.version>1.8.0.Final</arquillian.version>
+        <arquillian.version>1.9.1.Final</arquillian.version>
 
     </properties>
     <build>
@@ -54,7 +54,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.4.0</version>
             </plugin>
         </plugins>
     </build>
