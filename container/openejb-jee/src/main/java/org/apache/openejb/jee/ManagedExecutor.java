@@ -35,17 +35,17 @@ import java.util.List;
 })
 public class ManagedExecutor implements Keyable<String> {
     @XmlElement
-    private Description description;
+    protected Description description;
     @XmlElement
-    private JndiName name;
+    protected JndiName name;
     @XmlElement(name = "context-service-ref")
-    private JndiName contextService;
+    protected JndiName contextService;
     @XmlElement(name = "hung-task-threshold")
-    private Long hungTaskThreshold;
+    protected Long hungTaskThreshold;
     @XmlElement(name = "max-async")
-    private Integer maxAsync;
+    protected Integer maxAsync;
     @XmlElement(name = "properties")
-    private List<Property> properties;
+    protected List<Property> properties;
 
     public Description getDescription() {
         return description;

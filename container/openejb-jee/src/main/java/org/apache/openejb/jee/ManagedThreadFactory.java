@@ -34,15 +34,15 @@ import java.util.List;
 })
 public class ManagedThreadFactory implements Keyable<String> {
     @XmlElement
-    private Description description;
+    protected Description description;
     @XmlElement
-    private JndiName name;
+    protected JndiName name;
     @XmlElement(name = "context-service-ref")
-    private JndiName contextService;
+    protected JndiName contextService;
     @XmlElement
-    private Integer priority;
+    protected Integer priority;
     @XmlElement(name = "property")
-    private List<Property> properties;
+    protected List<Property> properties;
 
     public Description getDescription() {
         return description;

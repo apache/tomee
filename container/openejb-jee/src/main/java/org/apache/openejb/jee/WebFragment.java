@@ -194,7 +194,7 @@ public class WebFragment implements WebCommon {
     @XmlElement(name="context-service")
     protected KeyedCollection<String, ContextService> contextService;
     @XmlElement(name="managed-executor")
-    private KeyedCollection<String, ManagedExecutor> managedExecutor;
+    protected KeyedCollection<String, ManagedExecutor> managedExecutor;
     @XmlElement(name = "managed-scheduled-executor")
     protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
     @XmlElement(name = "managed-thread-factory")
