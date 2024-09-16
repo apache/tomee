@@ -27,7 +27,8 @@
     <name>TomEE :: TCK :: Concurrency Signature Tests</name>
 
     <properties>
-        <jakarta.concurrent.version>3.0.3</jakarta.concurrent.version>
+        <jakarta.concurrent.version>3.0.4</jakarta.concurrent.version>
+        <sigtest.version>2.3</sigtest.version>
     </properties>
 
     <dependencies>
@@ -38,10 +39,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.tools</groupId>
+            <groupId>jakarta.tck</groupId>
             <artifactId>sigtest-maven-plugin</artifactId>
-            <version>1.6</version>
-            <scope>test</scope>
+            <version>${sigtest.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -139,9 +140,6 @@
                                     ${project.build.directory}/signaturedirectory/jakartaee-api.jar:${project.build.directory}/jimage/java.base:${project.build.directory}/jimage/java.rmi:${project.build.directory}/jimage/java.sql:${project.build.directory}/jimage/java.naming
                                 </signature.sigTestClasspath>
                             </systemProperties>
-                            <argLine>${surefire.argline} --add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED
-                                --add-opens java.base/jdk.internal.vm.annotation=ALL-UNNAMED
-                            </argLine>
                         </configuration>
                     </plugin>
                     <plugin>

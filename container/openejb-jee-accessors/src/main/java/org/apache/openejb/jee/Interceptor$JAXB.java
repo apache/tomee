@@ -49,6 +49,12 @@ import static org.apache.openejb.jee.JMSDestination$JAXB.readJMSDestination;
 import static org.apache.openejb.jee.JMSDestination$JAXB.writeJMSDestination;
 import static org.apache.openejb.jee.LifecycleCallback$JAXB.readLifecycleCallback;
 import static org.apache.openejb.jee.LifecycleCallback$JAXB.writeLifecycleCallback;
+import static org.apache.openejb.jee.ManagedExecutor$JAXB.readManagedExecutor;
+import static org.apache.openejb.jee.ManagedExecutor$JAXB.writeManagedExecutor;
+import static org.apache.openejb.jee.ManagedScheduledExecutor$JAXB.readManagedScheduledExecutor;
+import static org.apache.openejb.jee.ManagedScheduledExecutor$JAXB.writeManagedScheduledExecutor;
+import static org.apache.openejb.jee.ManagedThreadFactory$JAXB.readManagedThreadFactory;
+import static org.apache.openejb.jee.ManagedThreadFactory$JAXB.writeManagedThreadFactory;
 import static org.apache.openejb.jee.MessageDestinationRef$JAXB.readMessageDestinationRef;
 import static org.apache.openejb.jee.MessageDestinationRef$JAXB.writeMessageDestinationRef;
 import static org.apache.openejb.jee.PersistenceContextRef$JAXB.readPersistenceContextRef;
@@ -73,7 +79,7 @@ public class Interceptor$JAXB
 
 
     public Interceptor$JAXB() {
-        super(Interceptor.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptorType".intern()), Text$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class);
+        super(Interceptor.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "interceptorType".intern()), Text$JAXB.class, AroundInvoke$JAXB.class, AroundTimeout$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class, ManagedExecutor$JAXB.class, ManagedScheduledExecutor$JAXB.class, ManagedThreadFactory$JAXB.class);
     }
 
     public static Interceptor readInterceptor(XoXMLStreamReader reader, RuntimeContext context)
@@ -134,6 +140,9 @@ public class Interceptor$JAXB
         List<org.apache.openejb.jee.LifecycleCallback> beforeCompletion = null;
         List<org.apache.openejb.jee.LifecycleCallback> afterCompletion = null;
         KeyedCollection<String, ContextService> contextService = null;
+        KeyedCollection<String, ManagedExecutor> managedExecutor = null;
+        KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor = null;
+        KeyedCollection<String, ManagedThreadFactory> managedThreadFactory = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -453,8 +462,44 @@ public class Interceptor$JAXB
                     }
                 }
                 contextService.add(contextServiceItem);
+            } else if (("managed-executor" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedExecutor
+                ManagedExecutor managedExecutorItem = readManagedExecutor(elementReader, context);
+                if (managedExecutor == null) {
+                    managedExecutor = interceptor.managedExecutor;
+                    if (managedExecutor!= null) {
+                        managedExecutor.clear();
+                    } else {
+                        managedExecutor = new KeyedCollection<>();
+                    }
+                }
+                managedExecutor.add(managedExecutorItem);
+            } else if (("managed-scheduled-executor" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedScheduledExecutor
+                ManagedScheduledExecutor managedScheduledExecutorItem = readManagedScheduledExecutor(elementReader, context);
+                if (managedScheduledExecutor == null) {
+                    managedScheduledExecutor = interceptor.managedScheduledExecutor;
+                    if (managedScheduledExecutor!= null) {
+                        managedScheduledExecutor.clear();
+                    } else {
+                        managedScheduledExecutor = new KeyedCollection<>();
+                    }
+                }
+                managedScheduledExecutor.add(managedScheduledExecutorItem);
+            } else if (("managed-thread-factory" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedThreadFactory
+                ManagedThreadFactory managedThreadFactoryItem = readManagedThreadFactory(elementReader, context);
+                if (managedThreadFactory == null) {
+                    managedThreadFactory = interceptor.managedThreadFactory;
+                    if (managedThreadFactory!= null) {
+                        managedThreadFactory.clear();
+                    } else {
+                        managedThreadFactory = new KeyedCollection<>();
+                    }
+                }
+                managedThreadFactory.add(managedThreadFactoryItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "interceptor-class"), new QName("http://java.sun.com/xml/ns/javaee", "around-invoke"), new QName("http://java.sun.com/xml/ns/javaee", "around-timeout"), new QName("http://java.sun.com/xml/ns/javaee", "env-entry"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-ref"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-local-ref"), new QName("http://java.sun.com/xml/ns/javaee", "service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-env-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-context-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-unit-ref"), new QName("http://java.sun.com/xml/ns/javaee", "around-construct"), new QName("http://java.sun.com/xml/ns/javaee", "post-construct"), new QName("http://java.sun.com/xml/ns/javaee", "pre-destroy"), new QName("http://java.sun.com/xml/ns/javaee", "data-source"), new QName("http://java.sun.com/xml/ns/javaee", "jms-connection-factory"), new QName("http://java.sun.com/xml/ns/javaee", "jms-destination"), new QName("http://java.sun.com/xml/ns/javaee", "post-activate"), new QName("http://java.sun.com/xml/ns/javaee", "pre-passivate"), new QName("http://java.sun.com/xml/ns/javaee", "after-begin"), new QName("http://java.sun.com/xml/ns/javaee", "before-completion"), new QName("http://java.sun.com/xml/ns/javaee", "after-completion"), new QName("http://java.sun.com/xml/ns/javaee", "context-service"));
+                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "interceptor-class"), new QName("http://java.sun.com/xml/ns/javaee", "around-invoke"), new QName("http://java.sun.com/xml/ns/javaee", "around-timeout"), new QName("http://java.sun.com/xml/ns/javaee", "env-entry"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-ref"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-local-ref"), new QName("http://java.sun.com/xml/ns/javaee", "service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-env-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-context-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-unit-ref"), new QName("http://java.sun.com/xml/ns/javaee", "around-construct"), new QName("http://java.sun.com/xml/ns/javaee", "post-construct"), new QName("http://java.sun.com/xml/ns/javaee", "pre-destroy"), new QName("http://java.sun.com/xml/ns/javaee", "data-source"), new QName("http://java.sun.com/xml/ns/javaee", "jms-connection-factory"), new QName("http://java.sun.com/xml/ns/javaee", "jms-destination"), new QName("http://java.sun.com/xml/ns/javaee", "post-activate"), new QName("http://java.sun.com/xml/ns/javaee", "pre-passivate"), new QName("http://java.sun.com/xml/ns/javaee", "after-begin"), new QName("http://java.sun.com/xml/ns/javaee", "before-completion"), new QName("http://java.sun.com/xml/ns/javaee", "after-completion"), new QName("http://java.sun.com/xml/ns/javaee", "context-service"), new QName("http://java.sun.com/xml/ns/javaee", "managed-executor"), new QName("http://java.sun.com/xml/ns/javaee", "managed-scheduled-executor"), new QName("http://java.sun.com/xml/ns/javaee", "managed-thread-factory"));
             }
         }
         if (descriptions!= null) {
@@ -532,6 +577,15 @@ public class Interceptor$JAXB
         }
         if (contextService!= null) {
             interceptor.contextService = contextService;
+        }
+        if (managedExecutor!= null) {
+            interceptor.managedExecutor = managedExecutor;
+        }
+        if (managedScheduledExecutor!= null) {
+            interceptor.managedScheduledExecutor = managedScheduledExecutor;
+        }
+        if (managedThreadFactory!= null) {
+            interceptor.managedThreadFactory = managedThreadFactory;
         }
 
         context.afterUnmarshal(interceptor, org.metatype.sxc.jaxb.LifecycleCallback.NONE);
@@ -924,6 +978,42 @@ public class Interceptor$JAXB
                 if (contextServiceItem!= null) {
                     writer.writeStartElement(prefix, "context-service", "http://java.sun.com/xml/ns/javaee");
                     writeContextService(writer, contextServiceItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedExecutor
+        KeyedCollection<String, ManagedExecutor> managedExecutor = interceptor.managedExecutor;
+        if (managedExecutor!= null) {
+            for (ManagedExecutor managedExecutorItem: managedExecutor) {
+                if (managedExecutorItem!= null) {
+                    writer.writeStartElement(prefix, "managed-executor", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedExecutor(writer, managedExecutorItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedScheduledExecutor
+        KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor = interceptor.managedScheduledExecutor;
+        if (managedScheduledExecutor!= null) {
+            for (ManagedScheduledExecutor managedScheduledExecutorItem: managedScheduledExecutor) {
+                if (managedScheduledExecutorItem!= null) {
+                    writer.writeStartElement(prefix, "managed-scheduled-executor", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedScheduledExecutor(writer, managedScheduledExecutorItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedThreadFactory
+        KeyedCollection<String, ManagedThreadFactory> managedThreadFactory = interceptor.managedThreadFactory;
+        if (managedThreadFactory!= null) {
+            for (ManagedThreadFactory managedThreadFactoryItem: managedThreadFactory) {
+                if (managedThreadFactoryItem!= null) {
+                    writer.writeStartElement(prefix, "managed-thread-factory", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedThreadFactory(writer, managedThreadFactoryItem, context);
                     writer.writeEndElement();
                 }
             }

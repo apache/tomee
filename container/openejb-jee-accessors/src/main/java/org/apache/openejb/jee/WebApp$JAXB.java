@@ -65,6 +65,12 @@ import static org.apache.openejb.jee.LocaleEncodingMappingList$JAXB.readLocaleEn
 import static org.apache.openejb.jee.LocaleEncodingMappingList$JAXB.writeLocaleEncodingMappingList;
 import static org.apache.openejb.jee.LoginConfig$JAXB.readLoginConfig;
 import static org.apache.openejb.jee.LoginConfig$JAXB.writeLoginConfig;
+import static org.apache.openejb.jee.ManagedExecutor$JAXB.readManagedExecutor;
+import static org.apache.openejb.jee.ManagedExecutor$JAXB.writeManagedExecutor;
+import static org.apache.openejb.jee.ManagedScheduledExecutor$JAXB.readManagedScheduledExecutor;
+import static org.apache.openejb.jee.ManagedScheduledExecutor$JAXB.writeManagedScheduledExecutor;
+import static org.apache.openejb.jee.ManagedThreadFactory$JAXB.readManagedThreadFactory;
+import static org.apache.openejb.jee.ManagedThreadFactory$JAXB.writeManagedThreadFactory;
 import static org.apache.openejb.jee.MessageDestination$JAXB.readMessageDestination;
 import static org.apache.openejb.jee.MessageDestination$JAXB.writeMessageDestination;
 import static org.apache.openejb.jee.MessageDestinationRef$JAXB.readMessageDestinationRef;
@@ -109,7 +115,7 @@ public class WebApp$JAXB
 
 
     public WebApp$JAXB() {
-        super(WebApp.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-app".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-appType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, ParamValue$JAXB.class, Filter$JAXB.class, FilterMapping$JAXB.class, Listener$JAXB.class, Servlet$JAXB.class, ServletMapping$JAXB.class, SessionConfig$JAXB.class, MimeMapping$JAXB.class, WelcomeFileList$JAXB.class, ErrorPage$JAXB.class, Taglib$JAXB.class, JspConfig$JAXB.class, SecurityConstraint$JAXB.class, LoginConfig$JAXB.class, SecurityRole$JAXB.class, LocaleEncodingMappingList$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, MessageDestination$JAXB.class, AbsoluteOrdering$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class);
+        super(WebApp.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-app".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "web-appType".intern()), Text$JAXB.class, Icon$JAXB.class, Empty$JAXB.class, ParamValue$JAXB.class, Filter$JAXB.class, FilterMapping$JAXB.class, Listener$JAXB.class, Servlet$JAXB.class, ServletMapping$JAXB.class, SessionConfig$JAXB.class, MimeMapping$JAXB.class, WelcomeFileList$JAXB.class, ErrorPage$JAXB.class, Taglib$JAXB.class, JspConfig$JAXB.class, SecurityConstraint$JAXB.class, LoginConfig$JAXB.class, SecurityRole$JAXB.class, LocaleEncodingMappingList$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, LifecycleCallback$JAXB.class, MessageDestination$JAXB.class, AbsoluteOrdering$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class, ManagedExecutor$JAXB.class, ManagedScheduledExecutor$JAXB.class, ManagedThreadFactory$JAXB.class);
     }
 
     public static WebApp readWebApp(XoXMLStreamReader reader, RuntimeContext context)
@@ -181,6 +187,9 @@ public class WebApp$JAXB
         KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories = null;
         KeyedCollection<String, JMSDestination> jmsDestinations = null;
         KeyedCollection<String, ContextService> contextService = null;
+        KeyedCollection<String, ManagedExecutor> managedExecutor = null;
+        KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor = null;
+        KeyedCollection<String, ManagedThreadFactory> managedThreadFactory = null;
         List<Object> others = null;
 
         // Check xsi:type
@@ -660,6 +669,42 @@ public class WebApp$JAXB
                     }
                 }
                 contextService.add(contextServiceItem);
+            } else if (("managed-executor" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedExecutor
+                ManagedExecutor managedExecutorItem = readManagedExecutor(elementReader, context);
+                if (managedExecutor == null) {
+                    managedExecutor = webApp.managedExecutor;
+                    if (managedExecutor!= null) {
+                        managedExecutor.clear();
+                    } else {
+                        managedExecutor = new KeyedCollection<>();
+                    }
+                }
+                managedExecutor.add(managedExecutorItem);
+            } else if (("managed-scheduled-executor" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedScheduledExecutor
+                ManagedScheduledExecutor managedScheduledExecutorItem = readManagedScheduledExecutor(elementReader, context);
+                if (managedScheduledExecutor == null) {
+                    managedScheduledExecutor = webApp.managedScheduledExecutor;
+                    if (managedScheduledExecutor!= null) {
+                        managedScheduledExecutor.clear();
+                    } else {
+                        managedScheduledExecutor = new KeyedCollection<>();
+                    }
+                }
+                managedScheduledExecutor.add(managedScheduledExecutorItem);
+            } else if (("managed-thread-factory" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedThreadFactory
+                ManagedThreadFactory managedThreadFactoryItem = readManagedThreadFactory(elementReader, context);
+                if (managedThreadFactory == null) {
+                    managedThreadFactory = webApp.managedThreadFactory;
+                    if (managedThreadFactory!= null) {
+                        managedThreadFactory.clear();
+                    } else {
+                        managedThreadFactory = new KeyedCollection<>();
+                    }
+                }
+                managedThreadFactory.add(managedThreadFactoryItem);
             } else {
                 // ELEMENT_REF: others
                 if (others == null) {
@@ -785,6 +830,15 @@ public class WebApp$JAXB
         }
         if (contextService!= null) {
             webApp.contextService = contextService;
+        }
+        if (managedExecutor!= null) {
+            webApp.managedExecutor = managedExecutor;
+        }
+        if (managedScheduledExecutor!= null) {
+            webApp.managedScheduledExecutor = managedScheduledExecutor;
+        }
+        if (managedThreadFactory!= null) {
+            webApp.managedThreadFactory = managedThreadFactory;
         }
         if (others!= null) {
             webApp.others = others;
@@ -1368,6 +1422,42 @@ public class WebApp$JAXB
                 if (contextServiceItem!= null) {
                     writer.writeStartElement(prefix, "context-service", "http://java.sun.com/xml/ns/javaee");
                     writeContextService(writer, contextServiceItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedExecutor
+        KeyedCollection<String, ManagedExecutor> managedExecutor = webApp.managedExecutor;
+        if (managedExecutor!= null) {
+            for (ManagedExecutor managedExecutorItem: managedExecutor) {
+                if (managedExecutorItem!= null) {
+                    writer.writeStartElement(prefix, "managed-executor", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedExecutor(writer, managedExecutorItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedScheduledExecutor
+        KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor = webApp.managedScheduledExecutor;
+        if (managedScheduledExecutor!= null) {
+            for (ManagedScheduledExecutor managedScheduledExecutorItem: managedScheduledExecutor) {
+                if (managedScheduledExecutorItem!= null) {
+                    writer.writeStartElement(prefix, "managed-scheduled-executor", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedScheduledExecutor(writer, managedScheduledExecutorItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedThreadFactory
+        KeyedCollection<String, ManagedThreadFactory> managedThreadFactory = webApp.managedThreadFactory;
+        if (managedThreadFactory!= null) {
+            for (ManagedThreadFactory managedThreadFactoryItem: managedThreadFactory) {
+                if (managedThreadFactoryItem!= null) {
+                    writer.writeStartElement(prefix, "managed-thread-factory", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedThreadFactory(writer, managedThreadFactoryItem, context);
                     writer.writeEndElement();
                 }
             }

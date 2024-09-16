@@ -48,7 +48,7 @@ public class ManagedScheduledExecutorServiceImplFactory {
             managedThreadFactory = ThreadFactories.findThreadFactory(threadFactory);
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImplFactory.class).warning("Unable to create configured thread factory: " + threadFactory, e);
-            managedThreadFactory = new ManagedThreadFactoryImpl();
+            managedThreadFactory = new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context));
         }
 
         return new ScheduledThreadPoolExecutor(core, managedThreadFactory, CURejectHandler.INSTANCE);

@@ -28,7 +28,9 @@
 	    </groups>
         <packages>
             <package name="ee.jakarta.tck.concurrent.api.*"/>
-            <package name="ee.jakarta.tck.concurrent.spec.*"/>
+            <package name="ee.jakarta.tck.concurrent.spec.*">
+                <exclude name="ee.jakarta.tck.concurrent.spec.signature"/>
+            </package>
         </packages>
     </test>
 </suite>

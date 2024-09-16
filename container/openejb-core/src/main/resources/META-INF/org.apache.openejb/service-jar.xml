@@ -797,6 +797,9 @@
                    class-name="org.apache.openejb.threads.impl.ContextServiceImplFactory"
                    factory-name="create">
     SkipImplicitAttributes = true
+    Propagated = Remaining
+    Cleared = Transaction
+    Unchanged
   </ServiceProvider>
   <ServiceProvider id="Default Executor Service"
                    service="Resource"
@@ -828,6 +831,8 @@
                    factory-name="create"
                    class-name="org.apache.openejb.resource.thread.ManagedThreadFactoryImplFactory">
     Prefix = openejb-managed-thread-
+    Priority = 5
+    Context = [automatic]
     Lazy = true
     SkipImplicitAttributes = true
   </ServiceProvider>

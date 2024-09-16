@@ -14,32 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.openejb.threads.impl;
 
-package org.apache.openejb.resource.thread;
+import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
+import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
 
-import org.apache.openejb.threads.impl.ContextServiceImplFactory;
-import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
+import java.io.Serializable;
 
-import jakarta.enterprise.concurrent.ManagedThreadFactory;
+public class ThreadContextProviderUtil {
+    public static final ThreadContextSnapshot NOOP_SNAPSHOT = new NoOpThreadContextSnapshot();
+    public static final ThreadContextRestorer NOOP_RESTORER = new NoOpThreadContextRestorer();
 
-public class ManagedThreadFactoryImplFactory {
-    private String prefix = "openejb-managed-thread-";
-    private Integer priority;
-    private String context;
-
-    public ManagedThreadFactory create() {
-        return new ManagedThreadFactoryImpl(prefix, priority, ContextServiceImplFactory.lookupOrDefault(context));
+    public static class NoOpThreadContextSnapshot implements ThreadContextSnapshot, Serializable {
+        @Override
+        public ThreadContextRestorer begin() {
+            return NOOP_RESTORER;
+        }
     }
 
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
-    }
-
-    public void setPriority(final int priority) {
-        this.priority = priority;
-    }
-
-    public void setContext(final String context) {
-        this.context = context;
+    public static class NoOpThreadContextRestorer implements ThreadContextRestorer {
+        @Override
+        public void endContext() throws IllegalStateException {}
     }
 }

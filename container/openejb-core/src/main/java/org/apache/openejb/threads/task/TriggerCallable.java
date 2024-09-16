@@ -39,7 +39,7 @@ public class TriggerCallable<V> extends TriggerTask<V> implements Callable<V> {
 
     @Override
     public V call() throws Exception {
-        return invoke();
+        return invokeExecute();
     }
 
     @Override

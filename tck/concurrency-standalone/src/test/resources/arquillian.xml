@@ -33,6 +33,7 @@
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
@@ -46,13 +47,14 @@
             <property name="httpPort">-1</property>
             <property name="ajpPort">-1</property>
             <property name="stopPort">-1</property>
-            <property name="classifier">microprofile</property>
+            <property name="classifier">plus</property>
             <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
             <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
@@ -66,13 +68,14 @@
             <property name="httpPort">-1</property>
             <property name="ajpPort">-1</property>
             <property name="stopPort">-1</property>
-            <property name="classifier">microprofile</property>
+            <property name="classifier">plume</property>
             <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
             <property name="cleanOnStartUp">false</property>
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
@@ -93,6 +96,7 @@
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
+                mvn:org.apache.derby:derbyshared:10.15.2.0
                 mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>

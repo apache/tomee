@@ -19,14 +19,16 @@ package org.apache.openejb.threads.task;
 import jakarta.enterprise.concurrent.ManagedExecutorService;
 import jakarta.enterprise.concurrent.ManagedTask;
 import jakarta.enterprise.concurrent.ManagedTaskListener;
+
+import java.io.Serializable;
 import java.util.concurrent.Future;
 
-public abstract class ManagedTaskListenerTask implements ManagedTaskListener {
+public abstract class ManagedTaskListenerTask implements ManagedTaskListener, Serializable {
     private final ManagedTaskListener listener;
 
     protected Future<?> future;
     protected final Object delegate;
-    protected ManagedExecutorService executor;
+    protected transient ManagedExecutorService executor;
 
     protected ManagedTaskListenerTask(final Object task) {
         if (ManagedTask.class.isInstance(task)) {
@@ -77,7 +79,7 @@ public abstract class ManagedTaskListenerTask implements ManagedTaskListener {
         return delegate;
     }
 
-    private static class NoopManagedTaskListener implements ManagedTaskListener {
+    private static class NoopManagedTaskListener implements ManagedTaskListener, Serializable {
         private static final NoopManagedTaskListener INSTANCE = new NoopManagedTaskListener();
 
         @Override

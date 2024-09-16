@@ -31,11 +31,11 @@ public class ObjectFactory$JAXB
     private final Map<QName, Class<? extends JAXBObject>> rootElements = new HashMap<>();
 
     public ObjectFactory$JAXB() {
-        super(ObjectFactory.class, EjbDeployment$JAXB.class, OpenejbJar$JAXB.class, EjbLink$JAXB.class, ResourceLink$JAXB.class, MethodParams$JAXB.class, QueryMethod$JAXB.class, Query$JAXB.class);
-        rootElements.put(new QName("http://www.openejb.org/openejb-jar/1.1".intern(), "method-param".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
-        rootElements.put(new QName("http://www.openejb.org/openejb-jar/1.1".intern(), "method-name".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
-        rootElements.put(new QName("http://www.openejb.org/openejb-jar/1.1".intern(), "object-ql".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
+        super(ObjectFactory.class, Query$JAXB.class, QueryMethod$JAXB.class, EjbDeployment$JAXB.class, MethodParams$JAXB.class, ResourceLink$JAXB.class, EjbLink$JAXB.class, OpenejbJar$JAXB.class);
         rootElements.put(new QName("http://www.openejb.org/openejb-jar/1.1".intern(), "description".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
+        rootElements.put(new QName("http://www.openejb.org/openejb-jar/1.1".intern(), "object-ql".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
+        rootElements.put(new QName("http://www.openejb.org/openejb-jar/1.1".intern(), "method-name".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
+        rootElements.put(new QName("http://www.openejb.org/openejb-jar/1.1".intern(), "method-param".intern()), org.metatype.sxc.jaxb.StandardJAXBObjects.StringJAXB.class);
     }
 
     public Map<QName, Class<? extends JAXBObject>> getRootElements() {

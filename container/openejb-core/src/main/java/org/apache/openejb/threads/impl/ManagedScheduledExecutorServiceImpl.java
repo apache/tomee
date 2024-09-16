@@ -16,7 +16,8 @@
  */
 package org.apache.openejb.threads.impl;
 
-import org.apache.openejb.threads.future.CUScheduleFuture;
+import org.apache.openejb.threads.future.CUScheduledFuture;
+import org.apache.openejb.threads.future.CUTriggerScheduledFuture;
 import org.apache.openejb.threads.task.CUCallable;
 import org.apache.openejb.threads.task.CURunnable;
 import org.apache.openejb.threads.task.TriggerCallable;
@@ -31,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -55,9 +57,8 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         Objects.requireNonNull(runnable);
         final Date taskScheduledTime = new Date();
         final AtomicReference<Future<?>> futureHandle = new AtomicReference<>();
-        final TriggerRunnable wrapper = new TriggerRunnable(this, contextService, runnable, new CURunnable(runnable), trigger, taskScheduledTime, getTaskId(runnable), AtomicReference.class.cast(futureHandle));
-        final ScheduledFuture<?> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-        return initTriggerScheduledFuture(runnable, AtomicReference.class.cast(futureHandle), wrapper, ScheduledFuture.class.cast(future));
+        final TriggerRunnable wrapper = new TriggerRunnable(this, contextService, runnable, new CURunnable(runnable, contextService), trigger, taskScheduledTime, getTaskId(runnable), AtomicReference.class.cast(futureHandle));
+        return initTriggerScheduledFuture(AtomicReference.class.cast(futureHandle), wrapper);
     }
 
     @Override
@@ -65,25 +66,28 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         Objects.requireNonNull(vCallable);
         final Date taskScheduledTime = new Date();
         final AtomicReference<Future<V>> futureHandle = new AtomicReference<>();
-        final TriggerCallable<V> wrapper = new TriggerCallable<>(this, this.contextService, vCallable, new CUCallable<>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
-        final ScheduledFuture<V> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
-        return initTriggerScheduledFuture(vCallable, futureHandle, wrapper, future);
+        final TriggerCallable<V> wrapper = new TriggerCallable<>(this, this.contextService, vCallable, new CUCallable<>(vCallable, contextService), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
+        return initTriggerScheduledFuture(futureHandle, wrapper);
     }
 
-    private <V> ScheduledFuture<V> initTriggerScheduledFuture(final Object original, final AtomicReference<Future<V>> futureHandle,
-                                                              final TriggerTask<V> wrapper, final ScheduledFuture<V> future) {
-        futureHandle.set(future);
-        wrapper.taskSubmitted(future, this, original);
-        return new CUScheduleFuture<>(ScheduledFutureFacade.newProxy(futureHandle), wrapper);
+    private <V> ScheduledFuture<V> initTriggerScheduledFuture(final AtomicReference<Future<V>> futureHandle, final TriggerTask<V> wrapper) {
+        wrapper.scheduleNextRun();
+
+        ScheduledFuture<V> proxy = (ScheduledFuture<V>) Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]{ScheduledFuture.class},
+                new TriggerBasedScheduledFutureFacade(futureHandle));
+
+        return new CUTriggerScheduledFuture<>(proxy, wrapper);
     }
 
     @Override
     public ScheduledFuture<?> schedule(final Runnable command, final long delay, final TimeUnit unit) {
         Objects.requireNonNull(command);
-        final CURunnable wrapper = new CURunnable(command);
+        final CURunnable wrapper = new CURunnable(command, contextService);
         final ScheduledFuture<?> future = delegate.schedule(wrapper, delay, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduledFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     @Override
@@ -92,25 +96,25 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CUCallable<V> wrapper = new CUCallable<>(callable);
         final ScheduledFuture<V> future = delegate.schedule(wrapper, delay, unit);
         wrapper.taskSubmitted(future, this, callable);
-        return new CUScheduleFuture<>(future, wrapper);
+        return new CUScheduledFuture<>(future, wrapper);
     }
 
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(final Runnable command, final long initialDelay, final long period, final TimeUnit unit) {
         Objects.requireNonNull(command);
-        final CURunnable wrapper = new CURunnable(command);
+        final CURunnable wrapper = new CURunnable(command, contextService);
         final ScheduledFuture<?> future = delegate.scheduleAtFixedRate(wrapper, initialDelay, period, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduledFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(final Runnable command, final long initialDelay, final long delay, final TimeUnit unit) {
         Objects.requireNonNull(command);
-        final CURunnable wrapper = new CURunnable(command);
+        final CURunnable wrapper = new CURunnable(command, contextService);
         final ScheduledFuture<?> future = delegate.scheduleWithFixedDelay(wrapper, initialDelay, delay, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduledFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     public static long nowMs() {
@@ -118,19 +122,27 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     }
 
     private static String getTaskId(final Object runnable) {
-        if (ManagedTask.class.isInstance(runnable)) {
-            return ManagedTask.class.cast(runnable).getExecutionProperties().get(ManagedTask.IDENTITY_NAME);
+        if (runnable instanceof ManagedTask managedTask) {
+            Map<String, String> executionProps = managedTask.getExecutionProperties();
+            if (executionProps != null) {
+                return executionProps.get(ManagedTask.IDENTITY_NAME);
+            }
         }
+
         return null;
     }
 
-    private static final class ScheduledFutureFacade<V> implements InvocationHandler {
-        private final AtomicReference<ScheduledFuture<V>> delegate;
+    @Override
+    public ScheduledExecutorService getDelegate() {
+        return delegate;
+    }
 
-        private ScheduledFutureFacade(final AtomicReference<ScheduledFuture<V>> delegate) {
-            this.delegate = delegate;
-        }
-
+    /**
+     * Automatically resolves an AtomicReference
+     * @param delegate
+     * @param <V>
+     */
+    private record TriggerBasedScheduledFutureFacade<V>(AtomicReference<ScheduledFuture<V>> delegate) implements InvocationHandler {
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             try {
@@ -138,10 +150,6 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
             } catch (final InvocationTargetException ite) {
                 throw ite.getCause();
             }
-        }
-
-        private static <V> ScheduledFuture<V> newProxy(final AtomicReference<Future<V>> futureHandle) {
-            return ScheduledFuture.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{ScheduledFuture.class}, new ScheduledFutureFacade(futureHandle)));
         }
     }
 }

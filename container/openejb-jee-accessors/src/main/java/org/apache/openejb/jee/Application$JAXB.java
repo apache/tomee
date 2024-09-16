@@ -46,6 +46,12 @@ import static org.apache.openejb.jee.JMSConnectionFactory$JAXB.readJMSConnection
 import static org.apache.openejb.jee.JMSConnectionFactory$JAXB.writeJMSConnectionFactory;
 import static org.apache.openejb.jee.JMSDestination$JAXB.readJMSDestination;
 import static org.apache.openejb.jee.JMSDestination$JAXB.writeJMSDestination;
+import static org.apache.openejb.jee.ManagedExecutor$JAXB.readManagedExecutor;
+import static org.apache.openejb.jee.ManagedExecutor$JAXB.writeManagedExecutor;
+import static org.apache.openejb.jee.ManagedScheduledExecutor$JAXB.readManagedScheduledExecutor;
+import static org.apache.openejb.jee.ManagedScheduledExecutor$JAXB.writeManagedScheduledExecutor;
+import static org.apache.openejb.jee.ManagedThreadFactory$JAXB.readManagedThreadFactory;
+import static org.apache.openejb.jee.ManagedThreadFactory$JAXB.writeManagedThreadFactory;
 import static org.apache.openejb.jee.MessageDestination$JAXB.readMessageDestination;
 import static org.apache.openejb.jee.MessageDestination$JAXB.writeMessageDestination;
 import static org.apache.openejb.jee.MessageDestinationRef$JAXB.readMessageDestinationRef;
@@ -76,7 +82,7 @@ public class Application$JAXB
 
 
     public Application$JAXB() {
-        super(Application.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "application".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "applicationType".intern()), Text$JAXB.class, Icon$JAXB.class, Module$JAXB.class, SecurityRole$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, MessageDestination$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class);
+        super(Application.class, new QName("http://java.sun.com/xml/ns/javaee".intern(), "application".intern()), new QName("http://java.sun.com/xml/ns/javaee".intern(), "applicationType".intern()), Text$JAXB.class, Icon$JAXB.class, Module$JAXB.class, SecurityRole$JAXB.class, EnvEntry$JAXB.class, EjbRef$JAXB.class, EjbLocalRef$JAXB.class, ServiceRef$JAXB.class, ResourceRef$JAXB.class, ResourceEnvRef$JAXB.class, MessageDestinationRef$JAXB.class, PersistenceContextRef$JAXB.class, PersistenceUnitRef$JAXB.class, MessageDestination$JAXB.class, DataSource$JAXB.class, JMSConnectionFactory$JAXB.class, JMSDestination$JAXB.class, ContextService$JAXB.class, ManagedExecutor$JAXB.class, ManagedScheduledExecutor$JAXB.class, ManagedThreadFactory$JAXB.class);
     }
 
     public static Application readApplication(XoXMLStreamReader reader, RuntimeContext context)
@@ -132,6 +138,9 @@ public class Application$JAXB
         KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories = null;
         KeyedCollection<String, JMSDestination> jmsDestinations = null;
         KeyedCollection<String, ContextService> contextService = null;
+        KeyedCollection<String, ManagedExecutor> managedExecutor = null;
+        KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor = null;
+        KeyedCollection<String, ManagedThreadFactory> managedThreadFactory = null;
 
         // Check xsi:type
         QName xsiType = reader.getXsiType();
@@ -406,8 +415,44 @@ public class Application$JAXB
                     }
                 }
                 contextService.add(contextServiceItem);
+            } else if (("managed-executor" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedExecutor
+                ManagedExecutor managedExecutorItem = readManagedExecutor(elementReader, context);
+                if (managedExecutor == null) {
+                    managedExecutor = application.managedExecutor;
+                    if (managedExecutor!= null) {
+                        managedExecutor.clear();
+                    } else {
+                        managedExecutor = new KeyedCollection<>();
+                    }
+                }
+                managedExecutor.add(managedExecutorItem);
+            } else if (("managed-scheduled-executor" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedScheduledExecutor
+                ManagedScheduledExecutor managedScheduledExecutorItem = readManagedScheduledExecutor(elementReader, context);
+                if (managedScheduledExecutor == null) {
+                    managedScheduledExecutor = application.managedScheduledExecutor;
+                    if (managedScheduledExecutor!= null) {
+                        managedScheduledExecutor.clear();
+                    } else {
+                        managedScheduledExecutor = new KeyedCollection<>();
+                    }
+                }
+                managedScheduledExecutor.add(managedScheduledExecutorItem);
+            } else if (("managed-thread-factory" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: managedThreadFactory
+                ManagedThreadFactory managedThreadFactoryItem = readManagedThreadFactory(elementReader, context);
+                if (managedThreadFactory == null) {
+                    managedThreadFactory = application.managedThreadFactory;
+                    if (managedThreadFactory!= null) {
+                        managedThreadFactory.clear();
+                    } else {
+                        managedThreadFactory = new KeyedCollection<>();
+                    }
+                }
+                managedThreadFactory.add(managedThreadFactoryItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "application-name"), new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "initialize-in-order"), new QName("http://java.sun.com/xml/ns/javaee", "module"), new QName("http://java.sun.com/xml/ns/javaee", "security-role"), new QName("http://java.sun.com/xml/ns/javaee", "library-directory"), new QName("http://java.sun.com/xml/ns/javaee", "env-entry"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-ref"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-local-ref"), new QName("http://java.sun.com/xml/ns/javaee", "service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-env-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-context-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-unit-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination"), new QName("http://java.sun.com/xml/ns/javaee", "data-source"), new QName("http://java.sun.com/xml/ns/javaee", "jms-connection-factory"), new QName("http://java.sun.com/xml/ns/javaee", "jms-destination"), new QName("http://java.sun.com/xml/ns/javaee", "context-service"));
+                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "application-name"), new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "initialize-in-order"), new QName("http://java.sun.com/xml/ns/javaee", "module"), new QName("http://java.sun.com/xml/ns/javaee", "security-role"), new QName("http://java.sun.com/xml/ns/javaee", "library-directory"), new QName("http://java.sun.com/xml/ns/javaee", "env-entry"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-ref"), new QName("http://java.sun.com/xml/ns/javaee", "ejb-local-ref"), new QName("http://java.sun.com/xml/ns/javaee", "service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-ref"), new QName("http://java.sun.com/xml/ns/javaee", "resource-env-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-context-ref"), new QName("http://java.sun.com/xml/ns/javaee", "persistence-unit-ref"), new QName("http://java.sun.com/xml/ns/javaee", "message-destination"), new QName("http://java.sun.com/xml/ns/javaee", "data-source"), new QName("http://java.sun.com/xml/ns/javaee", "jms-connection-factory"), new QName("http://java.sun.com/xml/ns/javaee", "jms-destination"), new QName("http://java.sun.com/xml/ns/javaee", "context-service"), new QName("http://java.sun.com/xml/ns/javaee", "managed-executor"), new QName("http://java.sun.com/xml/ns/javaee", "managed-scheduled-executor"), new QName("http://java.sun.com/xml/ns/javaee", "managed-thread-factory"));
             }
         }
         if (descriptions!= null) {
@@ -474,6 +519,15 @@ public class Application$JAXB
         }
         if (contextService!= null) {
             application.contextService = contextService;
+        }
+        if (managedExecutor!= null) {
+            application.managedExecutor = managedExecutor;
+        }
+        if (managedScheduledExecutor!= null) {
+            application.managedScheduledExecutor = managedScheduledExecutor;
+        }
+        if (managedThreadFactory!= null) {
+            application.managedThreadFactory = managedThreadFactory;
         }
 
         context.afterUnmarshal(application, LifecycleCallback.NONE);
@@ -831,6 +885,42 @@ public class Application$JAXB
                 if (contextServiceItem!= null) {
                     writer.writeStartElement(prefix, "context-service", "http://java.sun.com/xml/ns/javaee");
                     writeContextService(writer, contextServiceItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedExecutor
+        KeyedCollection<String, ManagedExecutor> managedExecutor = application.managedExecutor;
+        if (managedExecutor!= null) {
+            for (ManagedExecutor managedExecutorItem: managedExecutor) {
+                if (managedExecutorItem!= null) {
+                    writer.writeStartElement(prefix, "managed-executor", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedExecutor(writer, managedExecutorItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedScheduledExecutor
+        KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor = application.managedScheduledExecutor;
+        if (managedScheduledExecutor!= null) {
+            for (ManagedScheduledExecutor managedScheduledExecutorItem: managedScheduledExecutor) {
+                if (managedScheduledExecutorItem!= null) {
+                    writer.writeStartElement(prefix, "managed-scheduled-executor", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedScheduledExecutor(writer, managedScheduledExecutorItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: managedThreadFactory
+        KeyedCollection<String, ManagedThreadFactory> managedThreadFactory = application.managedThreadFactory;
+        if (managedThreadFactory!= null) {
+            for (ManagedThreadFactory managedThreadFactoryItem: managedThreadFactory) {
+                if (managedThreadFactoryItem!= null) {
+                    writer.writeStartElement(prefix, "managed-thread-factory", "http://java.sun.com/xml/ns/javaee");
+                    writeManagedThreadFactory(writer, managedThreadFactoryItem, context);
                     writer.writeEndElement();
                 }
             }

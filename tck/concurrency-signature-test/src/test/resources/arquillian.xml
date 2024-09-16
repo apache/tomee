@@ -32,7 +32,9 @@
       </property>
       <property name="additionalLibs">
         mvn:org.testng:testng:7.5:jar
+        mvn:jakarta.tck:sigtest-maven-plugin:2.3:jar
       </property>
+      <property name="catalina_opts">--add-exports java.base/jdk.internal.vm.annotation=ALL-UNNAMED --add-opens java.base/jdk.internal.vm.annotation=ALL-UNNAMED</property>
     </configuration>
   </container>
 </arquillian>

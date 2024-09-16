@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 
 public class Adapters {
 
-    public static final PropertiesAdapter propertiesAdapterAdapter = new PropertiesAdapter();
     public static final CollapsedStringAdapter collapsedStringAdapterAdapter = new CollapsedStringAdapter();
+    public static final PropertiesAdapter propertiesAdapterAdapter = new PropertiesAdapter();
 
 }

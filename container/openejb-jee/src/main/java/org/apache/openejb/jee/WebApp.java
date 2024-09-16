@@ -101,6 +101,9 @@ import java.util.Map;
     "jmsDestinations",
     "moduleName",
     "contextService",
+    "managedExecutor",
+    "managedScheduledExecutor",
+    "managedThreadFactory",
     "others"
 })
 public class WebApp implements WebCommon, Lifecycle, NamedModule {
@@ -197,6 +200,12 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     protected String version = "3.0";
     @XmlElement(name="context-service")
     protected KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    protected KeyedCollection<String, ManagedExecutor> managedExecutor;
+    @XmlElement(name = "managed-scheduled-executor")
+    protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
+    @XmlElement(name = "managed-thread-factory")
+    protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
 
     @XmlAnyElement
     protected List<Object> others;
@@ -832,5 +841,31 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection<>();
+        }
+        return this.managedExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap() {
+        if (managedScheduledExecutor == null) {
+            managedScheduledExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedScheduledExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedThreadFactory> getManagedThreadFactoryMap() {
+        if (managedThreadFactory == null) {
+            managedThreadFactory = new KeyedCollection<>();
+        }
+
+        return this.managedThreadFactory.toMap();
     }
 }

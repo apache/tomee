@@ -76,7 +76,16 @@ public class ContextServiceImplFactory {
     }
 
     public static ContextServiceImpl newDefaultContextService() {
-        return new ContextServiceImplFactory().create();
+        ContextServiceImplFactory factory = new ContextServiceImplFactory();
+
+        // It's unclear what the default is, spec says (§ 3.3.4.3 Default Context Service):
+        //   The types of contexts to be propagated by this default ContextService from a contextualizing application component
+        //   must include naming context, class loader, and security information.
+        // But @ContextServiceDefinition defaults to propagated="Remaining", cleared="Transaction" unchanged=""
+        factory.setPropagated(ContextServiceDefinition.ALL_REMAINING);
+        factory.setCleared(ContextServiceDefinition.TRANSACTION);
+
+        return factory.create();
     }
 
     public static ContextServiceImpl newPropagateEverythingContextService() {
@@ -156,9 +165,9 @@ public class ContextServiceImplFactory {
         final Map<String, ThreadContextProvider> threadContextProviders = new HashMap<>();
 
         // add the in-build ThreadContextProviders
-        threadContextProviders.put(ContextServiceDefinition.APPLICATION, new ApplicationThreadContextProvider());
-        threadContextProviders.put(ContextServiceDefinition.SECURITY, new SecurityThreadContextProvider());
-        threadContextProviders.put(ContextServiceDefinition.TRANSACTION, new TxThreadContextProvider());
+        threadContextProviders.put(ContextServiceDefinition.APPLICATION, ApplicationThreadContextProvider.INSTANCE);
+        threadContextProviders.put(ContextServiceDefinition.SECURITY, SecurityThreadContextProvider.INSTANCE);
+        threadContextProviders.put(ContextServiceDefinition.TRANSACTION, TxThreadContextProvider.INSTANCE);
         getThreadContextProviders().forEach(t -> threadContextProviders.putIfAbsent(t.getThreadContextType(), t));
 
         // Let's resolve what should actually be in each bucket:
@@ -208,12 +217,7 @@ public class ContextServiceImplFactory {
 //            suspendTx = true;
 //        }
 
-        final ContextServiceImpl contextService = new ContextServiceImpl();
-        contextService.getPropagated().addAll(resolvedPropagated);
-        contextService.getCleared().addAll(resolvedCleared);
-        contextService.getUnchanged().addAll(resolvedUnchanged);
-
-        return contextService;
+        return new ContextServiceImpl(resolvedPropagated, resolvedCleared, resolvedUnchanged);
     }
 
     protected List<ThreadContextProvider> getThreadContextProviders() {

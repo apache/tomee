@@ -20,18 +20,31 @@ import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
+import jakarta.transaction.InvalidTransactionException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBRuntimeException;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class TxThreadContextProvider implements ThreadContextProvider {
+public class TxThreadContextProvider implements ThreadContextProvider, Serializable {
+    public static final TxThreadContextProvider INSTANCE = new TxThreadContextProvider();
+
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
-        return new TxThreadContextSnapshot();
+        try {
+            return new TxThreadContextRestoringSnapshot(OpenEJB.getTransactionManager().getTransaction());
+        } catch (SystemException e) {
+            throw new OpenEJBRuntimeException(e);
+        }
     }
 
     @Override
     public ThreadContextSnapshot clearedContext(final Map<String, String> props) {
-        return new TxThreadContextSnapshot();
+        return TxThreadContextClearingSnapshot.INSTANCE;
     }
 
     @Override
@@ -39,25 +52,60 @@ public class TxThreadContextProvider implements ThreadContextProvider {
         return ContextServiceDefinition.TRANSACTION;
     }
 
-    public class TxThreadContextSnapshot implements ThreadContextSnapshot {
+    // Basically TxThreadContextSnapshot but being serializable because it does not store a non-serializable transaction
+    public static class TxThreadContextClearingSnapshot implements ThreadContextSnapshot, Serializable {
+        public static final TxThreadContextClearingSnapshot INSTANCE = new TxThreadContextClearingSnapshot();
 
+        @Override
+        public ThreadContextRestorer begin() {
+            try {
+                TransactionManager tm = OpenEJB.getTransactionManager();
+                if (tm != null) {
+                    return new TxThreadContextRestorer(tm.suspend());
+                }
 
-        public TxThreadContextSnapshot() {
+                return ThreadContextProviderUtil.NOOP_RESTORER;
+            } catch (SystemException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+        }
+    }
+
+    public static class TxThreadContextRestoringSnapshot implements ThreadContextSnapshot {
+        private final Transaction transaction;
+
+        public TxThreadContextRestoringSnapshot(Transaction transaction) {
+            this.transaction = transaction;
         }
 
         @Override
         public ThreadContextRestorer begin() {
-            return new TxThreadContextRestorer();
+            TransactionManager transactionManager = OpenEJB.getTransactionManager();
+
+            try {
+                Transaction oldTransaction = transactionManager.suspend();
+                transactionManager.resume(transaction);
+                return new TxThreadContextRestorer(oldTransaction);
+            } catch (SystemException | InvalidTransactionException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
         }
     }
 
-    public class TxThreadContextRestorer implements ThreadContextRestorer {
+    public static class TxThreadContextRestorer implements ThreadContextRestorer {
+        private final Transaction transaction;
 
-        public TxThreadContextRestorer() {
+        public TxThreadContextRestorer(Transaction transaction) {
+            this.transaction = transaction;
         }
 
         @Override
         public void endContext() throws IllegalStateException {
+            try {
+                OpenEJB.getTransactionManager().resume(transaction);
+            } catch (SystemException | InvalidTransactionException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
         }
     }
 }
