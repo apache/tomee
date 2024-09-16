@@ -108,7 +108,7 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
-      <version>11</version>
+      <version>22.0.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
