@@ -663,28 +663,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jcs-core</artifactId>
-      <version>2.2.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jcs-jcache</artifactId>
-      <version>2.2.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.16.0</version>
       <exclusions>
@@ -951,17 +929,6 @@
       <groupId>org.apache.geronimo.mail</groupId>
       <artifactId>geronimo-mail_2.1_provider</artifactId>
       <version>1.0.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>1.0-alpha-1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

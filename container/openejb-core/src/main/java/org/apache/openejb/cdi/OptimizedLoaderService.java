@@ -197,23 +197,6 @@ public class OptimizedLoaderService implements LoaderService {
                 break;
             case "org.apache.batchee.container.cdi.BatchCDIInjectionExtension": // see org.apache.openejb.batchee.BatchEEServiceManager
                 return "true".equals(systemInstance.getProperty("tomee.batchee.cdi.use-extension", "false"));
-            case "org.apache.commons.jcs.jcache.cdi.MakeJCacheCDIInterceptorFriendly":
-                final String spi = "META-INF/services/javax.cache.spi.CachingProvider";
-                try {
-                    final Enumeration<URL> appResources = Thread.currentThread().getContextClassLoader().getResources(spi);
-                    if (appResources != null && appResources.hasMoreElements()) {
-                        final Collection<URL> containerResources = Collections.list(containerLoader.getResources(spi));
-                        do {
-                            if (!containerResources.contains(appResources.nextElement())) {
-                                log.info("Skipping JCS CDI integration cause another provide was found in the application");
-                                return true;
-                            }
-                        } while (appResources.hasMoreElements());
-                    }
-                } catch (final Exception e) {
-                    // no-op
-                }
-                break;
             default:
         }
         return false;

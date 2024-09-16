@@ -1117,7 +1117,6 @@ public class DeploymentLoader implements DeploymentFilterable {
                                 if ((skipContainerFolders && file.isDirectory())
                                         // few hardcoded exclusions, TODO: see if we should filter them in previous call of applyBuiltinExcludes()
                                         || name.endsWith("tomcat-websocket.jar")
-                                        || name.startsWith("commons-jcs-")
                                         || name.startsWith("xx-arquillian-tomee")
                                         || ("lib".equals(name) && file.isDirectory() &&
                                             new File(JavaSecurityManagers.getSystemProperty("openejb.base", "-")).equals(file.getParentFile()))) {
