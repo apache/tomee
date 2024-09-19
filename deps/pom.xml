@@ -30,7 +30,6 @@
   <modules>
     <module>taglibs-shade</module>
     <module>commons-dbcp2-shade</module>
-    <module>servicemix-bcel-shade</module>
   </modules>
   <build>
     <plugins>

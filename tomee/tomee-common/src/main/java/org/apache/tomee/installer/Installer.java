@@ -769,7 +769,6 @@ public class Installer implements InstallerInterface {
                 "# OpenEJB.startup.service.level = WARNING\r\n" +
                 "# OpenEJB.startup.config.level = INFO\r\n" +
                 "# OpenEJB.hsql.level        = INFO\r\n" +
-                "# CORBA-Adapter.level       = WARNING\r\n" +
                 "# Transaction.level         = WARNING\r\n" +
                 "# org.apache.activemq.level = SEVERE\r\n" +
                 "# org.apache.geronimo.level = SEVERE\r\n" +
@@ -788,7 +787,6 @@ public class Installer implements InstallerInterface {
                 "# OpenEJB.startup.service.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
                 "# OpenEJB.startup.config.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
                 "# OpenEJB.hsql.handlers        = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
-                "# CORBA-Adapter.handlers       = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
                 "# Transaction.handlers         = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
                 "# org.apache.activemq.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +
                 "# org.apache.geronimo.handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler\r\n" +

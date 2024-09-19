@@ -81,17 +81,6 @@ import java.util.Set;
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
 class JndiRequestHandler extends RequestHandler {
-    private static final Class<?> ORB_CLASS;
-
-    static {
-        Class<?> orb;
-        try {
-            orb = JndiRequestHandler.class.getClassLoader().loadClass("org.omg.CORBA.ORB");
-        } catch (final ClassNotFoundException e) {
-            orb = null;
-        }
-        ORB_CLASS = orb;
-    }
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
@@ -300,10 +289,6 @@ class JndiRequestHandler extends RequestHandler {
             } else if (object instanceof ConnectionFactory) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(ConnectionFactory.class.getName());
-                return;
-            } else if (ORB_CLASS != null && ORB_CLASS.isInstance(object)) {
-                res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
-                res.setResult(ORB_CLASS.getName());
                 return;
             } else if (object instanceof ValidatorFactory) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);

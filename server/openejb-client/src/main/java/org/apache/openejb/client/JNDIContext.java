@@ -429,10 +429,6 @@ public class JNDIContext implements InitialContextFactory, Context {
             return parseEntry(prop, value);
         }
 
-        if (name.equals("comp/ORB")) {
-            return getDefaultOrb();
-        }
-
         final JNDIRequest req = new JNDIRequest();
         req.setRequestMethod(RequestMethodCode.JNDI_LOOKUP);
         req.setRequestString(name);
@@ -545,8 +541,6 @@ public class JNDIContext implements InitialContextFactory, Context {
                 return build(uri);
             } else if (scheme.equals("javamail")) {
                 return jakarta.mail.Session.getDefaultInstance(new Properties());
-            } else if (scheme.equals("orb")) {
-                return getDefaultOrb();
             } else if (scheme.equals("queue")) {
                 return build(uri);
             } else if (scheme.equals("topic")) {
@@ -588,16 +582,6 @@ public class JNDIContext implements InitialContextFactory, Context {
             return webserviceMetaData.createWebservice();
         } catch (Exception e) {
             throw (NamingException) new NamingException("Error creating webservice").initCause(e);
-        }
-    }
-
-    private Object getDefaultOrb() {
-        try {
-            return Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB").getMethod("init").invoke(null);
-        } catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
-            throw new IllegalStateException("No CORBA available", e);
-        } catch (final InvocationTargetException e) {
-            throw new IllegalStateException("No CORBA available", e.getCause());
         }
     }
 

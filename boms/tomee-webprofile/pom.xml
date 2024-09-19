@@ -1092,17 +1092,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>servicemix-bcel-shade</artifactId>
-      <version>10.0.0-M3-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
       <version>10.0.0-M3-SNAPSHOT</version>
       <exclusions>
@@ -1358,50 +1347,6 @@
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
       <version>4.25</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-osgi</artifactId>
-      <version>1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-rmi-impl</artifactId>
-      <version>1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-rmi-spec</artifactId>
-      <version>1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-spec-corba</artifactId>
-      <version>1.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

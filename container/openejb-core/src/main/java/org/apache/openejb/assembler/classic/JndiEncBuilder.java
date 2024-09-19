@@ -551,11 +551,6 @@ public class JndiEncBuilder {
         // bind TransactionSynchronizationRegistry
         bindings.put("comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
 
-        try {
-            bindings.put("comp/ORB", new SystemComponentReference(ParentClassLoaderFinder.Helper.get().loadClass("org.omg.CORBA.ORB")));
-        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
-            // no corba, who does recall what it is today anyway :D
-        }
         bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
         // bind bean validation objects

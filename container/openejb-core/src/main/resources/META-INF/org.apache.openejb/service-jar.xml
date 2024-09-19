@@ -727,20 +727,6 @@
 
   <!--
   # ================================================
-  # Default ORB
-  # ================================================
-  -->
-  <ServiceProvider
-          id="Default ORB"
-          service="Resource"
-          types="org.omg.CORBA.ORB, ORB"
-          factory-name="create"
-          class-name="org.apache.openejb.core.OrbFactory">
-
-  </ServiceProvider>
-
-  <!--
-  # ================================================
   # Default JavaMail
   # ================================================
   -->

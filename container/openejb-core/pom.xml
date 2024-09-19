@@ -208,7 +208,6 @@
       org.junit.runners;resolution:=optional,
       org.junit.runners.model;resolution:=optional,
       org.testng;resolution:=optional,
-      org.omg.CORBA,
       org.osgi.framework,
       org.apache.openejb.quartz;resolution:=optional,
       org.apache.openejb.quartz.impl;resolution:=optional,
@@ -750,25 +749,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>java17plus</id>
-      <activation>
-        <jdk>[17,)</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.yoko</groupId>
-          <artifactId>yoko-spec-corba</artifactId>
-          <version>1.4</version>
-          <exclusions>
-            <exclusion>
-              <artifactId>*</artifactId>
-              <groupId>*</groupId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 </project>
