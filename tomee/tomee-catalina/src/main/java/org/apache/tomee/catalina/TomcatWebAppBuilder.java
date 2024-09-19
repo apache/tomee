@@ -1786,14 +1786,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
-            try {
-                final Class<?> orb = TomcatWebAppBuilder.class.getClassLoader().loadClass("org.omg.CORBA.ORB");
-                if (SystemInstance.get().getComponent(orb) != null) {
-                    safeBind(comp, "ORB", new SystemComponentReference(orb));
-                }
-            } catch (final NoClassDefFoundError | ClassNotFoundException cnfe) {
-                // no-op
-            }
             if (SystemInstance.get().getComponent(HandleDelegate.class) != null) {
                 safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
             }

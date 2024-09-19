@@ -51,7 +51,6 @@ public final class LogCategory {
     public static final LogCategory ACTIVEMQ = new LogCategory("org.apache.activemq");
     public static final LogCategory GERONIMO = new LogCategory("org.apache.geronimo");
     public static final LogCategory OPENJPA = new LogCategory("openjpa");
-    public static final LogCategory CORBA_ADAPTER = new LogCategory("CORBA-Adapter");
     public static final LogCategory AXIS = new LogCategory("axis");
     public static final LogCategory AXIS2 = new LogCategory("axis");
     public static final LogCategory CXF = new LogCategory("cxf");

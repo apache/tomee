@@ -267,11 +267,6 @@ public class TomcatJndiBuilder {
             final TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
             comp.rebind("TransactionSynchronizationRegistry", synchronizationRegistry);
 
-            try {
-                comp.rebind("ORB", new SystemComponentReference(TomcatJndiBuilder.class.getClassLoader().loadClass("org.omg.CORBA.ORB")));
-            } catch (final NoClassDefFoundError | ClassNotFoundException ncdfe) {
-                // no-op
-            }
             comp.rebind("HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
             if (webContext != null && webContext.getWebbeansContext() != null) {
@@ -700,9 +695,6 @@ public class TomcatJndiBuilder {
         } else if (TransactionSynchronizationRegistry.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
             resourceEnv.setProperty(NamingUtil.COMPONENT_TYPE, TransactionSynchronizationRegistry.class.getName());
-        } else if ("org.omg.CORBA.ORB".equals(ref.resourceEnvRefType)) {
-            resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
-            resourceEnv.setProperty(NamingUtil.COMPONENT_TYPE, ref.resourceEnvRefType);
         } else if (HandleDelegate.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, SystemComponentFactory.class.getName());
             resourceEnv.setProperty(NamingUtil.COMPONENT_TYPE, HandleDelegate.class.getName());

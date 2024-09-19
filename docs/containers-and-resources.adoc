@@ -453,16 +453,6 @@ destination
 
 Specifies the name of the topic
 
-org.omg.CORBA.ORB
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
-Foo = new://Resource?type=org.omg.CORBA.ORB
-
-No properties.
-
 jakarta.mail.Session
 
 Declarable in tomee.xml via

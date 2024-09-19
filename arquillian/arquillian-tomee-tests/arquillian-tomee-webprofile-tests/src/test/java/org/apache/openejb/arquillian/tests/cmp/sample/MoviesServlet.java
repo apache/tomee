@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,8 +42,7 @@ public class MoviesServlet extends HttpServlet {
 
             final Context initial = new InitialContext();
 
-            final MoviesBusinessHome home = (MoviesBusinessHome)
-                    PortableRemoteObject.narrow(initial.lookup("java:comp/env/ejb/MoviesBusiness"), MoviesBusinessHome.class);
+            final MoviesBusinessHome home = (MoviesBusinessHome) (initial.lookup("java:comp/env/ejb/MoviesBusiness"));
 
             final MoviesBusiness moviesBusiness = home.create();
             moviesBusiness.doLogic();

@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
-<%@ page import="javax.naming.InitialContext"%><%@ page import="java.util.Properties"%><%@ page import="javax.naming.Context"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.DataBusinessHome"%><%@ page import="javax.rmi.PortableRemoteObject"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.DataBusiness"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.Data"%><%@ page contentType="text/plain;charset=UTF-8" language="java" %>
+<%@ page import="javax.naming.InitialContext"%><%@ page import="java.util.Properties"%><%@ page import="javax.naming.Context"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.DataBusinessHome"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.DataBusiness"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.Data"%><%@ page contentType="text/plain;charset=UTF-8" language="java" %>
 <%
 
     final Properties p = new Properties();
@@ -22,7 +22,7 @@
 
     final InitialContext initialContext = new InitialContext(p);
     Object lookup = initialContext.lookup("java:comp/env/ejb/DataBusiness");
-    DataBusinessHome home = (DataBusinessHome) PortableRemoteObject.narrow(lookup, DataBusinessHome.class);
+    DataBusinessHome home = (DataBusinessHome) lookup;
 
     final DataBusiness dataBusiness = home.create();
     final Data data = new Data();

@@ -146,52 +146,6 @@ Object bean = initialContext.lookup("/my/bean/Foo");
 ...
 ----
 
-== In the CORBA Adapter
-
-The CORBA Adapter is separate than the Remote Server. It adapts the
-OpenEJB Container System and the Local Server into OpenORB as an
-embedded library. It provides users of OpenORB the ability to lookup and
-execute beans (EJBs) via the RMI-IIOP protocol. All the EJBHome and
-EJBObject interfaces of beans in OpenEJB are implemented by OpenORB as
-CORBA stubs and ties.
-
-The beans are exported into OpenORB's naming service by deployment id.
-So, just as with the Local Server and Remote Server, clients can lookup
-beans using the bean's deployment id. OpenORB has a JNDI implementation
-of their naming service, so lookups can be done just as before.
-
-[source,java]
-----
-...
-String[] args = ...
-
-// The ORB and Object
-org.omg.CORBA.ORB    orb  = null;
-org.omg.CORBA.Object bean = null.
-
-// The Naming Service and Object Name
-org.omg.CosNaming.NamingContext   context = null;
-org.omg.CosNaming.NameComponent[]    name = null;
-
-// Get the ORB
-orb = org.omg.CORBA.ORB.init( args, null );
-
-// Get the Naming Service
-org.omg.CORBA.Object ref = null;
-ref = orb.resolve_initial_references("NameService");
-context = org.omg.CosNaming.NamingContextHelper.narrow( ref );
-
-// Get the Name as a component
-// Note: the string is the bean's deployment id
-name    = new org.omg.CosNaming.NameComponent[ 1 ];
-name[0] = new org.omg.CosNaming.NameComponent("/my/bean/foo","");
-
-// Finally, get the bean as a CORBA object
-// Equvalent to an InitialContext.lookup("/my/bean/foo");
-bean = context.resolve( name );
-...
-----
-
 = What happens if there is a duplicate deployment ID?
 
 The deployment ID uniquely identifies the bean in the OpenEJB container

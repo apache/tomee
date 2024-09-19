@@ -39,7 +39,6 @@
     <ServiceProvider id="Default JMS Connection Factory" parent="org.apache.openejb:Default JMS Connection Factory"/>
     <ServiceProvider id="Default Queue" parent="org.apache.openejb:Default Queue"/>
     <ServiceProvider id="Default Topic" parent="org.apache.openejb:Default Topic"/>
-    <ServiceProvider id="Default ORB" parent="org.apache.openejb:Default ORB"/>
     <ServiceProvider id="Default Mail Session" parent="org.apache.openejb:Default Mail Session"/>
     <ServiceProvider id="Default Remote Jndi Provider" parent="org.apache.openejb:Default Remote Jndi Provider"/>
     <ServiceProvider id="RoutedDataSource" parent="org.apache.openejb:RoutedDataSource"/>
