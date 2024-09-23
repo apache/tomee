@@ -181,7 +181,7 @@
     <version.microprofile.health>4.0.1</version.microprofile.health>
     <version.microprofile.jwt>2.1</version.microprofile.jwt>
     <version.microprofile.metrics>5.0.2</version.microprofile.metrics>
-    <version.microprofile.openapi>3.1.1</version.microprofile.openapi>
+    <version.microprofile.openapi>4.0.1</version.microprofile.openapi>
     <version.microprofile.opentracing>3.0</version.microprofile.opentracing>
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
 
