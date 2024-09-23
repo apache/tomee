@@ -26,7 +26,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>10.0.0-M3-SNAPSHOT</tomee.version>
-    <version.openjpa>3.2.2</version.openjpa>
   </properties>
   <repositories>
     <repository>
