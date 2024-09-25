@@ -1040,8 +1040,11 @@
         <version>${version.io.opentracing}</version>
       </dependency>
       <!-- Following dependencies remain to be cleaned up -->
-
-
+      <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging</artifactId>
+        <version>3.6.1.Final</version>
+      </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>jakartaee-api</artifactId>

@@ -169,7 +169,6 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>3.4.3.Final</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
