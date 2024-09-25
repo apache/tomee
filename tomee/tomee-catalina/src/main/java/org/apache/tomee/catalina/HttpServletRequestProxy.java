@@ -45,7 +45,7 @@ public interface HttpServletRequestProxy extends HttpServletRequest, Serializabl
             try {
                 HttpServletRequest obj = OpenEJBSecurityListener.requests.get();
                 if (obj == null) {
-                    throw new RequestNotActiveException("Method '%s' was invoked on HttpServletRequest, but no servlet request is active on the current thread".formatted(method.getName()));
+                    throw new RequestNotActiveException(String.format("Method '%s' was invoked on HttpServletRequest, but no servlet request is active on the current thread", method.getName()));
                 }
 
                 return method.invoke(obj, args);
