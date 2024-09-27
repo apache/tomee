@@ -32,13 +32,15 @@ import com.zaxxer.hikari.HikariDataSource;
  * 
  * @version $Rev$ $Date$
  */
-public class ImportByFlywayTest {
+public class ImportByLiquibaseTest {
+	
+	final String DB_PATH = "mem:testdb;sql.enforce_strict_size=true;sql.restrict_exec=true";
 	
 	@Before
 	public void createDatabase() {
 		Server server = new Server();
-		server.setDatabaseName(0, "hsqldb");
-		server.setDatabasePath(0, "mem:hsqldb");		
+		server.setDatabaseName(0, "testdb");
+		server.setDatabasePath(0, DB_PATH);		
 		server.setPort(9001); // default port
 		server.start();
 	}
@@ -48,20 +50,21 @@ public class ImportByFlywayTest {
 		final ClassLoader classLoader = getClass().getClassLoader();
 		final String RESOURCE = "src/test/resources"; 
 		
-		final ImportByFlyway importByFlyway = new ImportByFlyway(classLoader, RESOURCE, getDataSource());
-		importByFlyway.doImport();
-		importByFlyway.doValidate(); 
+		final ImportByLiquibase importByLiquibase = new ImportByLiquibase(classLoader, RESOURCE, getDataSource());
+		importByLiquibase.doImport();
+		importByLiquibase.doValidate(); 
 		
 	}
 
 	private DataSource getDataSource() {
 		HikariConfig hikariConfig = new HikariConfig();
 		hikariConfig.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
-		hikariConfig.setJdbcUrl("jdbc:hsqldb:mem:hsqldb;ifexists=true");		
-		hikariConfig.setUsername("SA");
+		final String url = "jdbc:hsqldb:" + DB_PATH + ";ifexists=true;shutdown=true;";
+		hikariConfig.setJdbcUrl(url);		
+		hikariConfig.setUsername("sa");
 		hikariConfig.setPassword("");
 
-		hikariConfig.setMaximumPoolSize(10);
+		hikariConfig.setMaximumPoolSize(10); 
 		hikariConfig.setConnectionTestQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 		hikariConfig.setPoolName("hikariCP");
 
