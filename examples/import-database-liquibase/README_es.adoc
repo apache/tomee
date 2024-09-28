@@ -1,0 +1,317 @@
+= Importar Base de Datos por Liquibase
+:index-group: Import
+:jbake-type: page
+:jbake-status: not published/unrevised
+
+Este es un ejemplo de cómo utilizar la herramienta Liquibase para importar una base de datos mediante programación.
+
+[discrete]
+==== Importar Base de Datos por Liquibase
+
+Para utilizar Liquibase, en el tiempo de ejecución de la aplicación dentro del servidor de aplicaciones, utilizaremos lo DataSource del servidor de aplicaciones, pero para pruebas unitarias/pruebas integradas, utilizaremos una fuente de datos configurada para utilizar una base de datos en memoria.
+
+[source,java]
+----
+public class ImportByLiquibase {
+	private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB,
+			EntityManagerFactoryCallable.class.getName());
+
+	public static final String IMPORT_FILE_PREFIX = "V_";
+	public static final String IMPORT_FILE_EXTENSION = ".sql";
+
+	private final DataSource dataSource;
+	private final String resource;
+
+	public ImportByLiquibase(final ClassLoader cl, final String resource, final DataSource ds) {
+		this.dataSource = ds;
+		this.resource = resource;
+
+		if (dataSource == null) {
+			throw new NullPointerException("datasource can't be null");
+		}
+
+	}
+
+	@SuppressWarnings("deprecation")
+	public void doImport() {
+
+		try {
+
+			List<String> sqlFiles = new ArrayList<String>();
+
+			try {
+
+				sqlFiles = listFilteredFiles(resource, Integer.MAX_VALUE);
+
+				if (Objects.nonNull(sqlFiles)) {
+					if (sqlFiles.isEmpty()) {
+						LOGGER.error("The Resource directory for sql files, can not to be empty.");
+						throw new Exception("The Resource directory for sql files, can not to be empty.");
+					}
+				}
+
+			} catch (final IOException e) {
+				throw new OpenEJBRuntimeException("The Resource directory for sql files, can not to be empty.", e);
+			}
+			ChangeLogHistoryServiceFactory.getInstance().resetAll();
+			for (String changelogPath : sqlFiles) {
+
+				try (Liquibase liquibase = getLiquibase(changelogPath)) {
+					liquibase.update("test");
+
+				} catch (Exception e) {
+					LOGGER.error("Error running Liquibase changelog", e);
+					throw new RuntimeException("Error running Liquibase changelog", e);
+				}
+			}
+
+		} catch (final Exception e) {
+			LOGGER.error("Can not create a statement, import scripts will be ignored", e);
+			return;
+		}
+
+	}
+
+	public void doValidate() {
+		String selectAllByMail = "SELECT id, description FROM public.table_test";
+
+		try (PreparedStatement statement = dataSource.getConnection().prepareStatement(selectAllByMail)) {
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				LOGGER.info("id:" + resultSet.getInt("id") + " description:" + resultSet.getString("description"));
+
+			}
+		} catch (Exception ex) {
+			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+		}
+
+	}
+
+	public List<String> listFilteredFiles(String dir, int depth) throws IOException {
+		try (Stream<Path> stream = Files.walk(Paths.get(dir), depth)) {
+			return stream.filter(file -> !Files.isDirectory(file))
+					.filter(file -> !file.getFileName().toString().startsWith(".")).map(Path::toString)
+					.map(s -> s.replaceFirst(resource, "")).collect(Collectors.toList());
+		}
+	}
+	
+	private Liquibase getLiquibase(final String changelogPath) throws DatabaseException, SQLException {
+		Liquibase liquibase = null;
+		HsqlConnection hsqlConnection = new HsqlConnection(dataSource.getConnection());
+
+		try {
+			Path path = Paths.get(this.resource);
+
+			ResourceAccessor resourceAccessor = new SearchPathResourceAccessor(
+					new DirectoryResourceAccessor(path.toFile()));
+
+			liquibase = new Liquibase(changelogPath, resourceAccessor, hsqlConnection);
+
+		} catch (FileNotFoundException ex) {
+			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+
+		} catch (LiquibaseException ex) {
+			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+		}
+		return liquibase;
+	}
+
+}
+
+----
+
+La prueba unitaria está vinculada a un conjunto de sentencias SQL, definidas en el script `V1_0__importSqlScriptTest.sql`:
+
+[source,sql]
+----
+CREATE TABLE public.table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
+insert into public.table_test (id, description) values(1, 'Test 1');
+insert into public.table_test (id, description) values(2, 'Test 2');
+insert into public.table_test (id, description) values(3, 'Test 3');
+----
+
+== Ejecución de la prueba unitaria:
+
+Run the unit test for the ImportByLiquibaseTest class.
+The following steps must be followed:
+
+1 - Ejecuta la compilación de todo el proyecto, en el directorio raíz del proyecto, tomee:
+
+[source,bash]
+----
+-Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
+
+----
+
+2 - Ejecute la compilación del proyecto examples/import-database-liquibase:
+
+[source,bash]
+----
+mvn clean install 
+
+----
+
+Debería mostrarse el siguiente resultado:
+
+[source,console]
+----
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ T E S T S
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+Running org.apache.openejb.assembler.classic.migrate.database.ImportByLiquibaseTest
+[Server@50b494a6]: [Thread[main,5,main]]: checkRunning(false) entered
+[Server@50b494a6]: [Thread[main,5,main]]: checkRunning(false) exited
+[Server@50b494a6]: [Thread[main,5,main]]: setDatabaseName(0,testdb)
+[Server@50b494a6]: [Thread[main,5,main]]: checkRunning(false) entered
+[Server@50b494a6]: [Thread[main,5,main]]: checkRunning(false) exited
+[Server@50b494a6]: [Thread[main,5,main]]: setDatabasePath(0,mem:testdb;sql.enforce_strict_size=true;sql.restrict_exec=true)
+[Server@50b494a6]: [Thread[main,5,main]]: checkRunning(false) entered
+[Server@50b494a6]: [Thread[main,5,main]]: checkRunning(false) exited
+[Server@50b494a6]: [Thread[main,5,main]]: setPort(9001)
+[Server@50b494a6]: [Thread[main,5,main]]: start() entered
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: run() entered
+[Server@50b494a6]: Initiating startup sequence...
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.maxdatabases=10
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.tls=false
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.port=9001
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.trace=false
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.database.0=mem:testdb;sql.enforce_strict_size=true;sql.restrict_exec=true
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.restart_on_shutdown=false
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.no_system_exit=true
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.silent=true
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.default_page=index.html
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.dbname.0=testdb
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.address=0.0.0.0
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: server.root=.
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: openServerSocket() entered
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: Got server socket: ServerSocket[addr=0.0.0.0/0.0.0.0,localport=9001]
+[Server@50b494a6]: Server socket opened successfully in 174 ms.
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: openServerSocket() exiting
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: openDatabases() entered
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: Opening database: [mem:testdb]
+[Server@50b494a6]: Database [index=0, id=0, db=mem:testdb, alias=testdb] opened successfully in 613 ms.
+[Server@50b494a6]: [Thread[HSQLDB Server @50b494a6,5,main]]: openDatabases() exiting
+[Server@50b494a6]: Startup sequence completed in 828 ms.
+[Server@50b494a6]: 2024-09-28 00:47:40.682 HSQLDB server 2.7.3 is online on port 9001
+[Server@50b494a6]: To close normally, connect and execute SHUTDOWN SQL
+[Server@50b494a6]: From command line, use [Ctrl]+[C] to abort abruptly
+[Server@50b494a6]: [Thread[main,5,main]]: start() exiting
+set. 27, 2024 9:47:40 PM com.zaxxer.hikari.HikariDataSource <init>
+INFORMAÇÕES: hikariCP - Starting...
+set. 27, 2024 9:47:41 PM com.zaxxer.hikari.pool.PoolBase getAndSetNetworkTimeout
+INFORMAÇÕES: hikariCP - Driver does not support get/set network timeout for connections. (feature not supported)
+set. 27, 2024 9:47:41 PM com.zaxxer.hikari.pool.HikariPool checkFailFast
+INFORMAÇÕES: hikariCP - Added connection org.hsqldb.jdbc.JDBCConnection@4d49af10
+set. 27, 2024 9:47:41 PM com.zaxxer.hikari.HikariDataSource <init>
+INFORMAÇÕES: hikariCP - Start completed.
+set. 27, 2024 9:47:41 PM liquibase.database
+INFORMAÇÕES: Set default schema name to PUBLIC
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Creating database history table with name: PUBLIC.DATABASECHANGELOG
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Reading from PUBLIC.DATABASECHANGELOG
+set. 27, 2024 9:47:42 PM liquibase.lockservice
+INFORMAÇÕES: Successfully acquired change log lock
+set. 27, 2024 9:47:42 PM liquibase.command
+INFORMAÇÕES: Using deploymentId: 7484462456
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Reading from PUBLIC.DATABASECHANGELOG
+Running Changeset: 0010_create_table_test.sql::1::user
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Custom SQL executed
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: ChangeSet 0010_create_table_test.sql::1::user ran successfully in 37ms
+
+UPDATE SUMMARY
+Run:                          1
+Previously run:               0
+Filtered out:                 0
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+Total change sets:            1
+
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: UPDATE SUMMARY
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Run:                          1
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Previously run:               0
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Filtered out:                 0
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: -------------------------------
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Total change sets:            1
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Update summary generated
+set. 27, 2024 9:47:42 PM liquibase.command
+INFORMAÇÕES: Update command completed successfully.
+Liquibase: Update has been successful. Rows affected: 1
+set. 27, 2024 9:47:42 PM liquibase.lockservice
+INFORMAÇÕES: Successfully released change log lock
+set. 27, 2024 9:47:42 PM liquibase.command
+INFORMAÇÕES: Command execution complete
+set. 27, 2024 9:47:42 PM liquibase.database
+INFORMAÇÕES: Set default schema name to PUBLIC
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Reading from PUBLIC.DATABASECHANGELOG
+set. 27, 2024 9:47:42 PM liquibase.lockservice
+INFORMAÇÕES: Successfully acquired change log lock
+set. 27, 2024 9:47:42 PM liquibase.command
+INFORMAÇÕES: Using deploymentId: 7484462849
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Reading from PUBLIC.DATABASECHANGELOG
+Running Changeset: 0020_insert_table_test.sql::1::user
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Custom SQL executed
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: ChangeSet 0020_insert_table_test.sql::1::user ran successfully in 7ms
+Running Changeset: 0020_insert_table_test.sql::2::user
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Custom SQL executed
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: ChangeSet 0020_insert_table_test.sql::2::user ran successfully in 10ms
+Running Changeset: 0020_insert_table_test.sql::3::user
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: Custom SQL executed
+set. 27, 2024 9:47:42 PM liquibase.changelog
+INFORMAÇÕES: ChangeSet 0020_insert_table_test.sql::3::user ran successfully in 18ms
+
+UPDATE SUMMARY
+Run:                          3
+Previously run:               0
+Filtered out:                 0
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+Total change sets:            3
+
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: UPDATE SUMMARY
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Run:                          3
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Previously run:               0
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Filtered out:                 0
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: -------------------------------
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Total change sets:            3
+set. 27, 2024 9:47:42 PM liquibase.util
+INFORMAÇÕES: Update summary generated
+set. 27, 2024 9:47:42 PM liquibase.command
+INFORMAÇÕES: Update command completed successfully.
+Liquibase: Update has been successful. Rows affected: 6
+set. 27, 2024 9:47:43 PM liquibase.lockservice
+INFORMAÇÕES: Successfully released change log lock
+set. 27, 2024 9:47:43 PM liquibase.command
+INFORMAÇÕES: Command execution complete
+INFORMAÇÕES - id:1 description:Test 1
+INFORMAÇÕES - id:2 description:Test 2
+INFORMAÇÕES - id:3 description:Test 3
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.647 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+----

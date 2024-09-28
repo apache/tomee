@@ -1,0 +1,577 @@
+= Import Database By Liquibase By Maven Plugin
+:index-group: Import
+:jbake-type: page
+:jbake-status: not published/unrevised
+
+This is an example of how to use the Liquibase tool to import a database via the Maven Plugin.
+
+[discrete]
+==== Import Database By Liquibase By Maven Plugin
+
+To use Liquibase, when building the application, we will use the Maven Plugin to import the database, we will use an in-memory database.
+
+The SQL instructions defined in the script will be used `V1_0__importSqlScriptTest.sql`:
+
+[source,sql]
+----
+CREATE TABLE public.table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
+insert into public.table_test (id, description) values(1, 'Test 1');
+insert into public.table_test (id, description) values(2, 'Test 2');
+insert into public.table_test (id, description) values(3, 'Test 3');
+----
+
+== Running the import by the Maven Plugin:
+
+The following steps must be followed:
+
+1 - Run the build of the entire project, in the project root directory, tomee:
+
+[source,bash]
+----
+-Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
+
+----
+
+2 - Run the build of the examples/import-database-liquibase-maven project:
+
+[source,bash]
+----
+mvn clean install 
+
+----
+
+The following output should be displayed:
+
+[source,console]
+----
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------< org.superbiz:import-database-liquibase-maven >------------
+[INFO] Building TomEE :: Examples :: Import Database By Liquibase By Maven Plugin 10.0.0-M3-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+[WARNING] The POM for org.apache.tomee:openejb-jee-accessors:jar:10.0.0-M3-20240927.071039-91 is invalid, transitive dependencies (if any) will not be available, enable debug logging for more details
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ import-database-liquibase-maven ---
+[INFO] Deleting /home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ import-database-liquibase-maven ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- liquibase-maven-plugin:4.29.2:update (liquibase-install) @ import-database-liquibase-maven ---
+[INFO] ------------------------------------------------------------------------
+[INFO] Loading artifacts into URLClassLoader
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-core/10.0.0-M3-SNAPSHOT/openejb-core-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/mbean-annotation-api/10.0.0-M3-SNAPSHOT/mbean-annotation-api-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-jpa-integration/10.0.0-M3-SNAPSHOT/openejb-jpa-integration-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/bom/jaxb-runtime/10.0.0-M3-SNAPSHOT/jaxb-runtime-10.0.0-M3-SNAPSHOT.pom
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/glassfish/jaxb/jaxb-runtime/4.0.4/jaxb-runtime-4.0.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/glassfish/jaxb/jaxb-core/4.0.4/jaxb-core-4.0.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/glassfish/jaxb/txw2/4.0.4/txw2-4.0.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/com/sun/istack/istack-commons-runtime/4.1.2/istack-commons-runtime-4.1.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/angus/angus-activation/2.0.2/angus-activation-2.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-api/10.0.0-M3-SNAPSHOT/openejb-api-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-loader/10.0.0-M3-SNAPSHOT/openejb-loader-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-javaagent/10.0.0-M3-SNAPSHOT/openejb-javaagent-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-jee/10.0.0-M3-SNAPSHOT/openejb-jee-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-jee-accessors/10.0.0-M3-SNAPSHOT/openejb-jee-accessors-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/components/geronimo-connector/4.0.0/geronimo-connector-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/components/geronimo-transaction/4.0.0/geronimo-transaction-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/objectweb/howl/howl/1.0.1-1/howl-1.0.1-1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/mail/geronimo-mail_2.1_provider/1.0.0/geronimo-mail_2.1_provider-1.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/specs/geronimo-mail_2.1_spec/1.0.0-M1/geronimo-mail_2.1_spec-1.0.0-M1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-asm9-shaded/4.25/xbean-asm9-shaded-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-finder-shaded/4.25/xbean-finder-shaded-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-reflect/4.25/xbean-reflect-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-naming/4.25/xbean-naming-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-bundleutils/4.25/xbean-bundleutils-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/commons-dbcp2-shade/10.0.0-M3-SNAPSHOT/commons-dbcp2-shade-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-dbcp2/2.12.0/commons-dbcp2-2.12.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-pool2/2.12.0/commons-pool2-2.12.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/tomitribe/swizzle/1.3/swizzle-1.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-logging/commons-logging/1.3.4/commons-logging-1.3.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openejb/shade/quartz-openejb-shade/2.2.4/quartz-openejb-shade-2.2.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/slf4j/slf4j-jdk14/2.0.16/slf4j-jdk14-2.0.16.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-impl/4.0.2/openwebbeans-impl-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-spi/4.0.2/openwebbeans-spi-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-el22/4.0.2/openwebbeans-el22-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-ejb/4.0.2/openwebbeans-ejb-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-ee/4.0.2/openwebbeans-ee-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-ee-common/4.0.2/openwebbeans-ee-common-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-web/4.0.2/openwebbeans-web-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openjpa/openjpa/4.0.0/openjpa-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/bval/bval-jsr/3.0.1/bval-jsr-3.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-spec-corba/1.4/yoko-spec-corba-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/jakartaee-api/10.0-M2/jakartaee-api-10.0-M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/jakarta.json-api/2.1.1/jakarta.json-api-2.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/bind/jakarta.json.bind-api/3.0.0/jakarta.json.bind-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/ejb/jakarta.ejb-api/4.0.1/jakarta.ejb-api-4.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/transaction/jakarta.transaction-api/2.0.1/jakarta.transaction-api-2.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/persistence/jakarta.persistence-api/3.1.0/jakarta.persistence-api-3.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/validation/jakarta.validation-api/3.0.2/jakarta.validation-api-3.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/interceptor/jakarta.interceptor-api/2.1.0/jakarta.interceptor-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/enterprise/jakarta.enterprise.cdi-api/4.0.1/jakarta.enterprise.cdi-api-4.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/enterprise/jakarta.enterprise.lang-model/4.0.1/jakarta.enterprise.lang-model-4.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/el/jakarta.el-api/5.0.0/jakarta.el-api-5.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/inject/jakarta.inject-api/2.0.0/jakarta.inject-api-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/security/enterprise/jakarta.security.enterprise-api/3.0.0/jakarta.security.enterprise-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/jms/jakarta.jms-api/3.1.0/jakarta.jms-api-3.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/specs/geronimo-activation_2.0_spec/1.0.0/geronimo-activation_2.0_spec-1.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/resource/jakarta.resource-api/2.1.0/jakarta.resource-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/authorization/jakarta.authorization-api/2.1.0/jakarta.authorization-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/servlet/jakarta.servlet-api/6.0.0/jakarta.servlet-api-6.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/enterprise/concurrent/jakarta.enterprise.concurrent-api/3.0.2/jakarta.enterprise.concurrent-api-3.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/batch/jakarta.batch-api/2.1.1/jakarta.batch-api-2.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/4.0.0/jakarta.xml.bind-api-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/activation/jakarta.activation-api/2.1.0/jakarta.activation-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/xml/ws/jakarta.xml.ws-api/4.0.0/jakarta.xml.ws-api-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/jws/jakarta.jws-api/3.0.0/jakarta.jws-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/xml/soap/jakarta.xml.soap-api/3.0.0/jakarta.xml.soap-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/microprofile/5.0/microprofile-5.0.pom
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/config/microprofile-config-api/3.0/microprofile-config-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/fault-tolerance/microprofile-fault-tolerance-api/4.0/microprofile-fault-tolerance-api-4.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/health/microprofile-health-api/4.0/microprofile-health-api-4.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/metrics/microprofile-metrics-api/4.0/microprofile-metrics-api-4.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/jwt/microprofile-jwt-auth-api/2.0/microprofile-jwt-auth-api-2.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/openapi/microprofile-openapi-api/3.0/microprofile-openapi-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/rest/client/microprofile-rest-client-api/3.0/microprofile-rest-client-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/opentracing/microprofile-opentracing-api/3.0/microprofile-opentracing-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-dbutils/commons-dbutils/1.8.1/commons-dbutils-1.8.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/apache-tomee/10.0.0-M3-SNAPSHOT/apache-tomee-10.0.0-M3-SNAPSHOT-microprofile.zip
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/tomee-util/10.0.0-M3-SNAPSHOT/tomee-util-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-client/10.0.0-M3-SNAPSHOT/openejb-client-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-rmi-spec/1.4/yoko-rmi-spec-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-rmi-impl/1.4/yoko-rmi-impl-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-osgi/1.4/yoko-osgi-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/servicemix-bcel-shade/10.0.0-M3-SNAPSHOT/servicemix-bcel-shade-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/junit/arquillian-junit-container/1.9.1.Final/arquillian-junit-container-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/junit/arquillian-junit-core/1.9.1.Final/arquillian-junit-core-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/test/arquillian-test-api/1.9.1.Final/arquillian-test-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/core/arquillian-core-api/1.9.1.Final/arquillian-core-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/test/arquillian-test-spi/1.9.1.Final/arquillian-test-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/core/arquillian-core-spi/1.9.1.Final/arquillian-core-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-test-api/1.9.1.Final/arquillian-container-test-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-test-spi/1.9.1.Final/arquillian-container-test-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/core/arquillian-core-impl-base/1.9.1.Final/arquillian-core-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/test/arquillian-test-impl-base/1.9.1.Final/arquillian-test-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-impl-base/1.9.1.Final/arquillian-container-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/config/arquillian-config-api/1.9.1.Final/arquillian-config-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/config/arquillian-config-impl-base/1.9.1.Final/arquillian-config-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/config/arquillian-config-spi/1.9.1.Final/arquillian-config-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-spi/2.0.0/shrinkwrap-descriptors-spi-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-test-impl-base/1.9.1.Final/arquillian-container-test-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/shrinkwrap-impl-base/1.2.6/shrinkwrap-impl-base-1.2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/shrinkwrap-spi/1.2.6/shrinkwrap-spi-1.2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/ziplock/10.0.0-M3-SNAPSHOT/ziplock-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/shrinkwrap-api/1.2.6/shrinkwrap-api-1.2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-impl-maven/2.1.0/shrinkwrap-resolver-impl-maven-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-api-maven/2.1.0/shrinkwrap-resolver-api-maven-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-api/2.1.0/shrinkwrap-resolver-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-spi-maven/2.1.0/shrinkwrap-resolver-spi-maven-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-spi/2.1.0/shrinkwrap-resolver-spi-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-api/0.9.0.M2/aether-api-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-impl/0.9.0.M2/aether-impl-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-spi/0.9.0.M2/aether-spi-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-util/0.9.0.M2/aether-util-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-connector-wagon/0.9.0.M2/aether-connector-wagon-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-aether-provider/3.1.1/maven-aether-provider-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-model/3.1.1/maven-model-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-model-builder/3.1.1/maven-model-builder-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/codehaus/plexus/plexus-component-annotations/1.5.5/plexus-component-annotations-1.5.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-repository-metadata/3.1.1/maven-repository-metadata-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-settings/3.1.1/maven-settings-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-settings-builder/3.1.1/maven-settings-builder-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/codehaus/plexus/plexus-interpolation/1.19/plexus-interpolation-1.19.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/codehaus/plexus/plexus-utils/3.0.15/plexus-utils-3.0.15.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/sonatype/plexus/plexus-cipher/1.4/plexus-cipher-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-provider-api/2.6/wagon-provider-api-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-file/2.6/wagon-file-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-http-lightweight/2.6/wagon-http-lightweight-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-http-shared/2.6/wagon-http-shared-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jsoup/jsoup/1.7.2/jsoup-1.7.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-tomee-remote/10.0.0-M3-SNAPSHOT/arquillian-tomee-remote-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-openejb-transaction-provider/10.0.0-M3-SNAPSHOT/arquillian-openejb-transaction-provider-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/extension/arquillian-transaction-impl-base/1.0.5/arquillian-transaction-impl-base-1.0.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/extension/arquillian-transaction-api/1.0.5/arquillian-transaction-api-1.0.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/extension/arquillian-transaction-spi/1.0.5/arquillian-transaction-spi-1.0.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-spi/1.9.1.Final/arquillian-container-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/protocol/arquillian-protocol-servlet-jakarta/1.8.0.Final/arquillian-protocol-servlet-jakarta-1.8.0.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/specs/geronimo-j2ee-deployment_1.1_spec/1.1/geronimo-j2ee-deployment_1.1_spec-1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-tomee-common/10.0.0-M3-SNAPSHOT/arquillian-tomee-common-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/tomee-common/10.0.0-M3-SNAPSHOT/tomee-common-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-impl-javaee/2.0.0/shrinkwrap-descriptors-impl-javaee-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-api-javaee/2.0.0/shrinkwrap-descriptors-api-javaee-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-impl-base/2.0.0/shrinkwrap-descriptors-impl-base-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-api-base/2.0.0/shrinkwrap-descriptors-api-base-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-common/10.0.0-M3-SNAPSHOT/arquillian-common-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/liquibase/liquibase-core/4.29.2/liquibase-core-4.29.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/com/opencsv/opencsv/5.9/opencsv-5.9.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-text/1.12.0/commons-text-1.12.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-lang3/3.15.0/commons-lang3-3.15.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/com/zaxxer/HikariCP/5.1.0/HikariCP-5.1.0.jar
+[INFO]   artifact: file:/home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target/classes/
+[INFO]   artifact: file:/home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target/test-classes
+[INFO] ------------------------------------------------------------------------
+[WARNING] Cannot handle classloader url file:/home/evaldo/.m2/repository/org/apache/tomee/bom/jaxb-runtime/10.0.0-M3-SNAPSHOT/jaxb-runtime-10.0.0-M3-SNAPSHOT.pom: Not a directory: /home/evaldo/.m2/repository/org/apache/tomee/bom/jaxb-runtime/10.0.0-M3-SNAPSHOT/jaxb-runtime-10.0.0-M3-SNAPSHOT.pom. Operations that need to list files from this location may not work as expected
+java.lang.IllegalArgumentException: Not a directory: /home/evaldo/.m2/repository/org/apache/tomee/bom/jaxb-runtime/10.0.0-M3-SNAPSHOT/jaxb-runtime-10.0.0-M3-SNAPSHOT.pom
+    at liquibase.resource.DirectoryResourceAccessor.<init> (DirectoryResourceAccessor.java:37)
+    at liquibase.resource.DirectoryResourceAccessor.<init> (DirectoryResourceAccessor.java:20)
+    at liquibase.resource.DirectoryPathHandler.getResourceAccessor (DirectoryPathHandler.java:48)
+    at liquibase.resource.PathHandlerFactory.getResourceAccessor (PathHandlerFactory.java:37)
+    at liquibase.resource.ClassLoaderResourceAccessor.configureAdditionalResourceAccessors (ClassLoaderResourceAccessor.java:72)
+    at liquibase.resource.ClassLoaderResourceAccessor.configureAdditionalResourceAccessors (ClassLoaderResourceAccessor.java:86)
+    at liquibase.resource.ClassLoaderResourceAccessor.init (ClassLoaderResourceAccessor.java:55)
+    at liquibase.resource.ClassLoaderResourceAccessor.describeLocations (ClassLoaderResourceAccessor.java:34)
+    at liquibase.resource.CompositeResourceAccessor.describeLocations (CompositeResourceAccessor.java:82)
+    at liquibase.resource.SearchPathResourceAccessor.<init> (SearchPathResourceAccessor.java:50)
+    at org.liquibase.maven.plugins.AbstractLiquibaseChangeLogMojo.getResourceAccessor (AbstractLiquibaseChangeLogMojo.java:137)
+    at org.liquibase.maven.plugins.AbstractLiquibaseMojo.lambda$execute$3 (AbstractLiquibaseMojo.java:864)
+    at liquibase.Scope.lambda$child$0 (Scope.java:191)
+    at liquibase.Scope.child (Scope.java:200)
+    at liquibase.Scope.child (Scope.java:190)
+    at liquibase.Scope.child (Scope.java:169)
+    at org.liquibase.maven.plugins.AbstractLiquibaseMojo.execute (AbstractLiquibaseMojo.java:843)
+    at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo (DefaultBuildPluginManager.java:137)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:210)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:156)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:148)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:117)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:81)
+    at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build (SingleThreadedBuilder.java:56)
+    at org.apache.maven.lifecycle.internal.LifecycleStarter.execute (LifecycleStarter.java:128)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:305)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:192)
+    at org.apache.maven.DefaultMaven.execute (DefaultMaven.java:105)
+    at org.apache.maven.cli.MavenCli.execute (MavenCli.java:972)
+    at org.apache.maven.cli.MavenCli.doMain (MavenCli.java:293)
+    at org.apache.maven.cli.MavenCli.main (MavenCli.java:196)
+    at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
+    at jdk.internal.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:77)
+    at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke (Method.java:568)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced (Launcher.java:282)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:225)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:406)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:347)
+[WARNING] Cannot handle classloader url file:/home/evaldo/.m2/repository/org/eclipse/microprofile/microprofile/5.0/microprofile-5.0.pom: Not a directory: /home/evaldo/.m2/repository/org/eclipse/microprofile/microprofile/5.0/microprofile-5.0.pom. Operations that need to list files from this location may not work as expected
+java.lang.IllegalArgumentException: Not a directory: /home/evaldo/.m2/repository/org/eclipse/microprofile/microprofile/5.0/microprofile-5.0.pom
+    at liquibase.resource.DirectoryResourceAccessor.<init> (DirectoryResourceAccessor.java:37)
+    at liquibase.resource.DirectoryResourceAccessor.<init> (DirectoryResourceAccessor.java:20)
+    at liquibase.resource.DirectoryPathHandler.getResourceAccessor (DirectoryPathHandler.java:48)
+    at liquibase.resource.PathHandlerFactory.getResourceAccessor (PathHandlerFactory.java:37)
+    at liquibase.resource.ClassLoaderResourceAccessor.configureAdditionalResourceAccessors (ClassLoaderResourceAccessor.java:72)
+    at liquibase.resource.ClassLoaderResourceAccessor.configureAdditionalResourceAccessors (ClassLoaderResourceAccessor.java:86)
+    at liquibase.resource.ClassLoaderResourceAccessor.init (ClassLoaderResourceAccessor.java:55)
+    at liquibase.resource.ClassLoaderResourceAccessor.describeLocations (ClassLoaderResourceAccessor.java:34)
+    at liquibase.resource.CompositeResourceAccessor.describeLocations (CompositeResourceAccessor.java:82)
+    at liquibase.resource.SearchPathResourceAccessor.<init> (SearchPathResourceAccessor.java:50)
+    at org.liquibase.maven.plugins.AbstractLiquibaseChangeLogMojo.getResourceAccessor (AbstractLiquibaseChangeLogMojo.java:137)
+    at org.liquibase.maven.plugins.AbstractLiquibaseMojo.lambda$execute$3 (AbstractLiquibaseMojo.java:864)
+    at liquibase.Scope.lambda$child$0 (Scope.java:191)
+    at liquibase.Scope.child (Scope.java:200)
+    at liquibase.Scope.child (Scope.java:190)
+    at liquibase.Scope.child (Scope.java:169)
+    at org.liquibase.maven.plugins.AbstractLiquibaseMojo.execute (AbstractLiquibaseMojo.java:843)
+    at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo (DefaultBuildPluginManager.java:137)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:210)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:156)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:148)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:117)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:81)
+    at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build (SingleThreadedBuilder.java:56)
+    at org.apache.maven.lifecycle.internal.LifecycleStarter.execute (LifecycleStarter.java:128)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:305)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:192)
+    at org.apache.maven.DefaultMaven.execute (DefaultMaven.java:105)
+    at org.apache.maven.cli.MavenCli.execute (MavenCli.java:972)
+    at org.apache.maven.cli.MavenCli.doMain (MavenCli.java:293)
+    at org.apache.maven.cli.MavenCli.main (MavenCli.java:196)
+    at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
+    at jdk.internal.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:77)
+    at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke (Method.java:568)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced (Launcher.java:282)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:225)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:406)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:347)
+[INFO] Loading artifacts into URLClassLoader
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-core/10.0.0-M3-SNAPSHOT/openejb-core-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/mbean-annotation-api/10.0.0-M3-SNAPSHOT/mbean-annotation-api-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-jpa-integration/10.0.0-M3-SNAPSHOT/openejb-jpa-integration-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/bom/jaxb-runtime/10.0.0-M3-SNAPSHOT/jaxb-runtime-10.0.0-M3-SNAPSHOT.pom
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/glassfish/jaxb/jaxb-runtime/4.0.4/jaxb-runtime-4.0.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/glassfish/jaxb/jaxb-core/4.0.4/jaxb-core-4.0.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/glassfish/jaxb/txw2/4.0.4/txw2-4.0.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/com/sun/istack/istack-commons-runtime/4.1.2/istack-commons-runtime-4.1.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/angus/angus-activation/2.0.2/angus-activation-2.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-api/10.0.0-M3-SNAPSHOT/openejb-api-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-loader/10.0.0-M3-SNAPSHOT/openejb-loader-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-javaagent/10.0.0-M3-SNAPSHOT/openejb-javaagent-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-jee/10.0.0-M3-SNAPSHOT/openejb-jee-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-jee-accessors/10.0.0-M3-SNAPSHOT/openejb-jee-accessors-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/components/geronimo-connector/4.0.0/geronimo-connector-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/components/geronimo-transaction/4.0.0/geronimo-transaction-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/objectweb/howl/howl/1.0.1-1/howl-1.0.1-1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/mail/geronimo-mail_2.1_provider/1.0.0/geronimo-mail_2.1_provider-1.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/specs/geronimo-mail_2.1_spec/1.0.0-M1/geronimo-mail_2.1_spec-1.0.0-M1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-asm9-shaded/4.25/xbean-asm9-shaded-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-finder-shaded/4.25/xbean-finder-shaded-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-reflect/4.25/xbean-reflect-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-naming/4.25/xbean-naming-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/xbean/xbean-bundleutils/4.25/xbean-bundleutils-4.25.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/commons-dbcp2-shade/10.0.0-M3-SNAPSHOT/commons-dbcp2-shade-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-dbcp2/2.12.0/commons-dbcp2-2.12.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-pool2/2.12.0/commons-pool2-2.12.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/tomitribe/swizzle/1.3/swizzle-1.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-logging/commons-logging/1.3.4/commons-logging-1.3.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openejb/shade/quartz-openejb-shade/2.2.4/quartz-openejb-shade-2.2.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/slf4j/slf4j-jdk14/2.0.16/slf4j-jdk14-2.0.16.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-impl/4.0.2/openwebbeans-impl-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-spi/4.0.2/openwebbeans-spi-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-el22/4.0.2/openwebbeans-el22-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-ejb/4.0.2/openwebbeans-ejb-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-ee/4.0.2/openwebbeans-ee-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-ee-common/4.0.2/openwebbeans-ee-common-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openwebbeans/openwebbeans-web/4.0.2/openwebbeans-web-4.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openjpa/openjpa/4.0.0/openjpa-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/bval/bval-jsr/3.0.1/bval-jsr-3.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-spec-corba/1.4/yoko-spec-corba-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/jakartaee-api/10.0-M2/jakartaee-api-10.0-M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/jakarta.json-api/2.1.1/jakarta.json-api-2.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/bind/jakarta.json.bind-api/3.0.0/jakarta.json.bind-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/ejb/jakarta.ejb-api/4.0.1/jakarta.ejb-api-4.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/transaction/jakarta.transaction-api/2.0.1/jakarta.transaction-api-2.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/persistence/jakarta.persistence-api/3.1.0/jakarta.persistence-api-3.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/validation/jakarta.validation-api/3.0.2/jakarta.validation-api-3.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/interceptor/jakarta.interceptor-api/2.1.0/jakarta.interceptor-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/enterprise/jakarta.enterprise.cdi-api/4.0.1/jakarta.enterprise.cdi-api-4.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/enterprise/jakarta.enterprise.lang-model/4.0.1/jakarta.enterprise.lang-model-4.0.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/el/jakarta.el-api/5.0.0/jakarta.el-api-5.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/inject/jakarta.inject-api/2.0.0/jakarta.inject-api-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/security/enterprise/jakarta.security.enterprise-api/3.0.0/jakarta.security.enterprise-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/jms/jakarta.jms-api/3.1.0/jakarta.jms-api-3.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/specs/geronimo-activation_2.0_spec/1.0.0/geronimo-activation_2.0_spec-1.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/resource/jakarta.resource-api/2.1.0/jakarta.resource-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/authorization/jakarta.authorization-api/2.1.0/jakarta.authorization-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/servlet/jakarta.servlet-api/6.0.0/jakarta.servlet-api-6.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/enterprise/concurrent/jakarta.enterprise.concurrent-api/3.0.2/jakarta.enterprise.concurrent-api-3.0.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/batch/jakarta.batch-api/2.1.1/jakarta.batch-api-2.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/4.0.0/jakarta.xml.bind-api-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/activation/jakarta.activation-api/2.1.0/jakarta.activation-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/xml/ws/jakarta.xml.ws-api/4.0.0/jakarta.xml.ws-api-4.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/jws/jakarta.jws-api/3.0.0/jakarta.jws-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/xml/soap/jakarta.xml.soap-api/3.0.0/jakarta.xml.soap-api-3.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/microprofile/5.0/microprofile-5.0.pom
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/config/microprofile-config-api/3.0/microprofile-config-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/fault-tolerance/microprofile-fault-tolerance-api/4.0/microprofile-fault-tolerance-api-4.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/health/microprofile-health-api/4.0/microprofile-health-api-4.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/metrics/microprofile-metrics-api/4.0/microprofile-metrics-api-4.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/jwt/microprofile-jwt-auth-api/2.0/microprofile-jwt-auth-api-2.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/openapi/microprofile-openapi-api/3.0/microprofile-openapi-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/rest/client/microprofile-rest-client-api/3.0/microprofile-rest-client-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/microprofile/opentracing/microprofile-opentracing-api/3.0/microprofile-opentracing-api-3.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-dbutils/commons-dbutils/1.8.1/commons-dbutils-1.8.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/apache-tomee/10.0.0-M3-SNAPSHOT/apache-tomee-10.0.0-M3-SNAPSHOT-microprofile.zip
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/tomee-util/10.0.0-M3-SNAPSHOT/tomee-util-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/openejb-client/10.0.0-M3-SNAPSHOT/openejb-client-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-rmi-spec/1.4/yoko-rmi-spec-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-rmi-impl/1.4/yoko-rmi-impl-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-osgi/1.4/yoko-osgi-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/servicemix-bcel-shade/10.0.0-M3-SNAPSHOT/servicemix-bcel-shade-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/junit/arquillian-junit-container/1.9.1.Final/arquillian-junit-container-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/junit/arquillian-junit-core/1.9.1.Final/arquillian-junit-core-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/test/arquillian-test-api/1.9.1.Final/arquillian-test-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/core/arquillian-core-api/1.9.1.Final/arquillian-core-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/test/arquillian-test-spi/1.9.1.Final/arquillian-test-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/core/arquillian-core-spi/1.9.1.Final/arquillian-core-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-test-api/1.9.1.Final/arquillian-container-test-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-test-spi/1.9.1.Final/arquillian-container-test-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/core/arquillian-core-impl-base/1.9.1.Final/arquillian-core-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/test/arquillian-test-impl-base/1.9.1.Final/arquillian-test-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-impl-base/1.9.1.Final/arquillian-container-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/config/arquillian-config-api/1.9.1.Final/arquillian-config-api-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/config/arquillian-config-impl-base/1.9.1.Final/arquillian-config-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/config/arquillian-config-spi/1.9.1.Final/arquillian-config-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-spi/2.0.0/shrinkwrap-descriptors-spi-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-test-impl-base/1.9.1.Final/arquillian-container-test-impl-base-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/shrinkwrap-impl-base/1.2.6/shrinkwrap-impl-base-1.2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/shrinkwrap-spi/1.2.6/shrinkwrap-spi-1.2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/ziplock/10.0.0-M3-SNAPSHOT/ziplock-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/shrinkwrap-api/1.2.6/shrinkwrap-api-1.2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-impl-maven/2.1.0/shrinkwrap-resolver-impl-maven-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-api-maven/2.1.0/shrinkwrap-resolver-api-maven-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-api/2.1.0/shrinkwrap-resolver-api-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-spi-maven/2.1.0/shrinkwrap-resolver-spi-maven-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/resolver/shrinkwrap-resolver-spi/2.1.0/shrinkwrap-resolver-spi-2.1.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-api/0.9.0.M2/aether-api-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-impl/0.9.0.M2/aether-impl-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-spi/0.9.0.M2/aether-spi-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-util/0.9.0.M2/aether-util-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/eclipse/aether/aether-connector-wagon/0.9.0.M2/aether-connector-wagon-0.9.0.M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-aether-provider/3.1.1/maven-aether-provider-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-model/3.1.1/maven-model-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-model-builder/3.1.1/maven-model-builder-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/codehaus/plexus/plexus-component-annotations/1.5.5/plexus-component-annotations-1.5.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-repository-metadata/3.1.1/maven-repository-metadata-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-settings/3.1.1/maven-settings-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/maven-settings-builder/3.1.1/maven-settings-builder-3.1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/codehaus/plexus/plexus-interpolation/1.19/plexus-interpolation-1.19.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/codehaus/plexus/plexus-utils/3.0.15/plexus-utils-3.0.15.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/sonatype/plexus/plexus-cipher/1.4/plexus-cipher-1.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-provider-api/2.6/wagon-provider-api-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-file/2.6/wagon-file-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-http-lightweight/2.6/wagon-http-lightweight-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/maven/wagon/wagon-http-shared/2.6/wagon-http-shared-2.6.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jsoup/jsoup/1.7.2/jsoup-1.7.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-tomee-remote/10.0.0-M3-SNAPSHOT/arquillian-tomee-remote-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-openejb-transaction-provider/10.0.0-M3-SNAPSHOT/arquillian-openejb-transaction-provider-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/extension/arquillian-transaction-impl-base/1.0.5/arquillian-transaction-impl-base-1.0.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/extension/arquillian-transaction-api/1.0.5/arquillian-transaction-api-1.0.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/extension/arquillian-transaction-spi/1.0.5/arquillian-transaction-spi-1.0.5.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/container/arquillian-container-spi/1.9.1.Final/arquillian-container-spi-1.9.1.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/arquillian/protocol/arquillian-protocol-servlet-jakarta/1.8.0.Final/arquillian-protocol-servlet-jakarta-1.8.0.Final.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/geronimo/specs/geronimo-j2ee-deployment_1.1_spec/1.1/geronimo-j2ee-deployment_1.1_spec-1.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-tomee-common/10.0.0-M3-SNAPSHOT/arquillian-tomee-common-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/tomee-common/10.0.0-M3-SNAPSHOT/tomee-common-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-impl-javaee/2.0.0/shrinkwrap-descriptors-impl-javaee-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-api-javaee/2.0.0/shrinkwrap-descriptors-api-javaee-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-impl-base/2.0.0/shrinkwrap-descriptors-impl-base-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-api-base/2.0.0/shrinkwrap-descriptors-api-base-2.0.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/arquillian-common/10.0.0-M3-SNAPSHOT/arquillian-common-10.0.0-M3-SNAPSHOT.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/liquibase/liquibase-core/4.29.2/liquibase-core-4.29.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/com/opencsv/opencsv/5.9/opencsv-5.9.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-text/1.12.0/commons-text-1.12.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/commons/commons-lang3/3.15.0/commons-lang3-3.15.0.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/com/zaxxer/HikariCP/5.1.0/HikariCP-5.1.0.jar
+[INFO]   artifact: file:/home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target/classes/
+[INFO]   artifact: file:/home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target/test-classes
+[INFO] ------------------------------------------------------------------------
+[INFO] ####################################################
+##   _     _             _ _                      ##
+##  | |   (_)           (_) |                     ##
+##  | |    _  __ _ _   _ _| |__   __ _ ___  ___   ##
+##  | |   | |/ _` | | | | | '_ \ / _` / __|/ _ \  ##
+##  | |___| | (_| | |_| | | |_) | (_| \__ \  __/  ##
+##  \_____/_|\__, |\__,_|_|_.__/ \__,_|___/\___|  ##
+##              | |                               ##
+##              |_|                               ##
+##                                                ## 
+##  Get documentation at docs.liquibase.com       ##
+##  Get certified courses at learn.liquibase.com  ## 
+##                                                ##
+####################################################
+Starting Liquibase at 23:27:26 using Java 17.0.11 (version 4.29.2 #3683 built at 2024-08-29 16:45+0000)
+[INFO] Settings
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+[INFO]     driver: org.hsqldb.jdbc.JDBCDriver
+[INFO]     url: jdbc:hsqldb:mem:testdb;?createDatabaseIfNotExist=true
+[INFO]     username: *****
+[INFO]     password: *****
+[INFO]     use empty password: false
+[INFO]     properties file: null
+[INFO]     properties file will override? false
+[INFO]     clear checksums? false
+[INFO]     changeLogDirectory: null
+[INFO]     changeLogFile: changelog.xml
+[INFO]     context(s): null
+[INFO]     label(s): null
+[INFO]     number of changes to apply: 0
+[INFO]     drop first? false
+[INFO] ------------------------------------------------------------------------
+[INFO] Set default schema name to PUBLIC
+[INFO] Executing on Database: jdbc:hsqldb:mem:testdb;?createDatabaseIfNotExist=true
+[INFO] Reading resource: src/test/resources/0010_create_table_test.sql
+[INFO] Reading resource: src/test/resources/0020_insert_table_test.sql
+[INFO] Creating database history table with name: DATABASECHANGELOG
+[INFO] Reading from DATABASECHANGELOG
+[INFO] Successfully acquired change log lock
+[INFO] Using deploymentId: 7490451709
+[INFO] Reading from DATABASECHANGELOG
+[INFO] Running Changeset: src/test/resources/0010_create_table_test.sql::1::user
+[INFO] Custom SQL executed
+[INFO] ChangeSet src/test/resources/0010_create_table_test.sql::1::user ran successfully in 85ms
+[INFO] Running Changeset: src/test/resources/0020_insert_table_test.sql::1::user
+[INFO] Custom SQL executed
+[INFO] ChangeSet src/test/resources/0020_insert_table_test.sql::1::user ran successfully in 6ms
+[INFO] Running Changeset: src/test/resources/0020_insert_table_test.sql::2::user
+[INFO] Custom SQL executed
+[INFO] ChangeSet src/test/resources/0020_insert_table_test.sql::2::user ran successfully in 17ms
+[INFO] Running Changeset: src/test/resources/0020_insert_table_test.sql::3::user
+[INFO] Custom SQL executed
+[INFO] ChangeSet src/test/resources/0020_insert_table_test.sql::3::user ran successfully in 6ms
+
+UPDATE SUMMARY
+Run:                          4
+Previously run:               0
+Filtered out:                 0
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+Total change sets:            4
+
+[INFO] UPDATE SUMMARY
+[INFO] Run:                          4
+[INFO] Previously run:               0
+[INFO] Filtered out:                 0
+[INFO] -------------------------------
+[INFO] Total change sets:            4
+[INFO] Update summary generated
+[INFO] Update command completed successfully.
+[INFO] Liquibase: Update has been successful. Rows affected: 7
+[INFO] Successfully released change log lock
+[INFO] Command execution complete
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.13.0:compile (default-compile) @ import-database-liquibase-maven ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ import-database-liquibase-maven ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.13.0:testCompile (default-testCompile) @ import-database-liquibase-maven ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ import-database-liquibase-maven ---
+[INFO] 
+[INFO] --- maven-war-plugin:3.4.0:war (default-war) @ import-database-liquibase-maven ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [import-database-liquibase-maven] in [/home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target/import-database-liquibase-maven-10.0.0-M3-SNAPSHOT]
+[INFO] Processing war project
+[INFO] Building war: /home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target/import-database-liquibase-maven-10.0.0-M3-SNAPSHOT.war
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ import-database-liquibase-maven ---
+[INFO] Installing /home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/target/import-database-liquibase-maven-10.0.0-M3-SNAPSHOT.war to /home/evaldo/.m2/repository/org/superbiz/import-database-liquibase-maven/10.0.0-M3-SNAPSHOT/import-database-liquibase-maven-10.0.0-M3-SNAPSHOT.war
+[INFO] Installing /home/evaldo/workspace_2024/tomee/examples/import-database-liquibase-maven/pom.xml to /home/evaldo/.m2/repository/org/superbiz/import-database-liquibase-maven/10.0.0-M3-SNAPSHOT/import-database-liquibase-maven-10.0.0-M3-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18.533 s
+[INFO] Finished at: 2024-09-27T23:27:37-03:00
+[INFO] ------------------------------------------------------------------------
+----
