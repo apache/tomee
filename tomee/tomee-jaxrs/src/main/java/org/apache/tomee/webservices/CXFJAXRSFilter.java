@@ -17,7 +17,6 @@
 package org.apache.tomee.webservices;
 
 import jakarta.servlet.ServletRegistration;
-import org.apache.catalina.Wrapper;
 import org.apache.openejb.server.cxf.rs.CxfRsHttpListener;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.httpd.ServletResponseAdapter;
@@ -31,12 +30,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class CXFJAXRSFilter implements Filter {
     private final CxfRsHttpListener delegate;
-    private final ConcurrentMap<Wrapper, Boolean> mappingByServlet = new ConcurrentHashMap<>();
     private final String[] welcomeFiles;
 
     public CXFJAXRSFilter(final CxfRsHttpListener delegate, final String[] welcomeFiles) {
