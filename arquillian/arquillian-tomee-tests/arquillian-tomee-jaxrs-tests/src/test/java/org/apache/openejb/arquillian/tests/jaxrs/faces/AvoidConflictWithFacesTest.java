@@ -51,14 +51,11 @@ public class AvoidConflictWithFacesTest extends JaxrsTest {
                     .urlPattern("*.xhtml")
                 .up();
 
-        WebArchive war = ShrinkWrap.create(WebArchive.class)
+        return ShrinkWrap.create(WebArchive.class)
                 .addClasses(MyRestApi.class, MyRestApplication.class)
                 .setWebXML(new StringAsset(webXml.exportAsString()))
                 .addAsWebInfResource(new StringAsset(facesConfig.exportAsString()), "faces-config.xml")
                 .addAsResource(new StringAsset("Hello from Faces"), "META-INF/resources/my-resources/hello.txt");
-
-        System.err.println(war.toString(true));
-        return war;
     }
 
     @Test
