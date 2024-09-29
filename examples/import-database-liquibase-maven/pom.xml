@@ -25,40 +25,7 @@
 	<artifactId>import-database-liquibase-maven</artifactId>
 	<version>10.0.0-M3-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>TomEE :: Examples :: Import Database By Liquibase By Maven Plugin</name>
-	<properties>
-		<version.jakartaee-api>10.0-M2</version.jakartaee-api>		
-		<version.arquillian>1.9.1.Final</version.arquillian>
-		<tomee.version>10.0.0-M3-SNAPSHOT</tomee.version>
-	</properties>
-	<dependencies>		
-		<dependency>
-			<groupId>commons-dbutils</groupId>
-			<artifactId>commons-dbutils</artifactId>
-			<version>1.8.1</version>
-		</dependency>	
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<version>4.29.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.7.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<version>5.1.0</version>
-		</dependency>
-	</dependencies>
+	<name>TomEE :: Examples :: Import Database By Liquibase By Maven Plugin</name>	
 	<pluginRepositories>
 		<pluginRepository>
 			<id>redgate</id>
@@ -111,6 +78,7 @@
 						<groupId>org.hsqldb</groupId>
 						<artifactId>hsqldb</artifactId>
 						<version>2.7.3</version>
+						<scope>runtime</scope>
 					</dependency>
 				</dependencies>
 			</plugin>
