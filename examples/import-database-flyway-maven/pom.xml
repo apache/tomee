@@ -25,13 +25,7 @@
 	<artifactId>import-database-flyway-maven</artifactId>
 	<version>10.0.0-M3-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>TomEE :: Examples :: Import Database By Flyway By Maven Plugin</name>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>redgate</id>
-			<url>https://download.red-gate.com/maven/release</url>
-		</pluginRepository>
-	</pluginRepositories>
+	<name>TomEE :: Examples :: Import Database By Flyway By Maven Plugin</name>	
 	<build>
 		<plugins>
 			<plugin>
@@ -51,7 +45,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>com.redgate.flyway</groupId>
+				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
 				<version>10.17.3</version>
 				<configuration>
