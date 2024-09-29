@@ -10,11 +10,17 @@ Este é um exemplo sobre como utilizar a ferramenta Liquibase, para fazer a impo
 
 Para utilizarmos o Liquibase, no build da aplicação, iremos utilizar o Plugin do Maven, para fazer a importação do banco de dados, vamos utilizar um banco de dados em memória.
 
-Serão utilizadas as instruções SQL, definidas no script `V1_0__importSqlScriptTest.sql`:
+Serão utilizadas as instruções SQL, definidas nos scripts `0010_create_table_test.sql` e `0020_insert_table_test.sql`:
 
 [source,sql]
+
+0010_create_table_test.sql
 ----
 CREATE TABLE public.table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
+----
+
+0020_insert_table_test.sql
+----
 insert into public.table_test (id, description) values(1, 'Test 1');
 insert into public.table_test (id, description) values(2, 'Test 2');
 insert into public.table_test (id, description) values(3, 'Test 3');

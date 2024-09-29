@@ -10,11 +10,17 @@ This is an example of how to use the Liquibase tool to import a database via the
 
 To use Liquibase, when building the application, we will use the Maven Plugin to import the database, we will use an in-memory database.
 
-The SQL instructions defined in the script will be used `V1_0__importSqlScriptTest.sql`:
+The SQL instructions defined in the scripts `0010_create_table_test.sql` and `0020_insert_table_test.sql` will be used:
 
 [source,sql]
+
+0010_create_table_test.sql
 ----
 CREATE TABLE public.table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
+----
+
+0020_insert_table_test.sql
+----
 insert into public.table_test (id, description) values(1, 'Test 1');
 insert into public.table_test (id, description) values(2, 'Test 2');
 insert into public.table_test (id, description) values(3, 'Test 3');

@@ -91,7 +91,7 @@ public class ImportByFlyway {
 }
 ----
 
-La prueba unitaria está vinculada a un conjunto de sentencias SQL, definidas en el script `V1_0__import-ImportSqlScriptTest.sql`:
+La prueba unitaria está vinculada a un conjunto de sentencias SQL, definidas en el script `V1_0__importSqlScriptTest.sql`:
 
 [source,sql]
 ----
@@ -106,15 +106,7 @@ insert into table_test (id, description) values(3, 'Test 3');
 Run the unit test for the ImportByFlywayTest class.
 The following steps must be followed:
 
-1 - Ejecuta la compilación de todo el proyecto, en el directorio raíz del proyecto, tomee:
-
-[source,bash]
-----
--Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
-
-----
-
-2 - Ejecute la compilación del proyecto examples/import-database-flyway:
+Ejecute la compilación del proyecto examples/import-database-flyway:
 
 [source,bash]
 ----

@@ -10,7 +10,7 @@ Este es un ejemplo de cómo utilizar la herramienta Flyway para importar una bas
 
 Para usar Flyway, al crear la aplicación, usaremos el complemento Maven para importar la base de datos, usaremos una base de datos en memoria.
 
-Se utilizarán las instrucciones SQL definidas en el script `V1_0__import-ImportSqlScriptTest.sql`:
+Se utilizarán las instrucciones SQL definidas en el script `V1_0__importSqlScriptTest.sql`:
 
 [source,sql]
 ----
@@ -24,19 +24,11 @@ insert into table_test (id, description) values(3, 'Test 3');
 
 The following steps must be followed:
 
-1 - Ejecuta la compilación de todo el proyecto, en el directorio raíz del proyecto, tomee:
+Ejecute la compilación del proyecto examples/import-database-flyway-maven:
 
 [source,bash]
 ----
--Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
-
-----
-
-2 - Ejecute la compilación del proyecto examples/import-database-flyway-maven:
-
-[source,bash]
-----
-mvn clean install flyway:clean flyway:migrate flyway:info flyway:validate 
+mvn clean install
 
 ----
 

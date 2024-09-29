@@ -119,14 +119,20 @@ public class ImportByLiquibase {
 }
 ----
 
-O teste unitário está vinculado a um conjunto de instruções SQL, definidas no script `V1_0__importSqlScriptTest.sql`:
+O teste unitário está vinculado a um conjunto de instruções SQL, definidas nos scripts `0010_create_table_test.sql` e `0020_insert_table_test.sql`:
 
 [source,sql]
+
+0010_create_table_test.sql
 ----
-CREATE TABLE pulbic.table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
-insert into pulbic.table_test (id, description) values(1, 'Test 1');
-insert into pulbic.table_test (id, description) values(2, 'Test 2');
-insert into pulbic.table_test (id, description) values(3, 'Test 3');
+CREATE TABLE public.table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
+----
+
+0020_insert_table_test.sql
+----
+insert into public.table_test (id, description) values(1, 'Test 1');
+insert into public.table_test (id, description) values(2, 'Test 2');
+insert into public.table_test (id, description) values(3, 'Test 3');
 ----
 
 == Executando o teste unitário:
@@ -134,15 +140,7 @@ insert into pulbic.table_test (id, description) values(3, 'Test 3');
 Executar o teste unitário para a classe ImportByLiquibaseTest.
 Deve-se seguir, as seguintes etapas: 
 
-1 - Executar o build do projeto inteiro, no diretório raíz do projeto, tomee: 
-
-[source,bash]
-----
--Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
-
-----
-
-2 - Executar o build do projeto examples/import-database-liquibase: 
+Executar o build do projeto examples/import-database-liquibase: 
 
 [source,bash]
 ----

@@ -91,7 +91,7 @@ public class ImportByFlyway {
 }
 ----
 
-The unit test is tied to a set of SQL statements, defined in the script `V1_0__import-ImportSqlScriptTest.sql`:
+The unit test is tied to a set of SQL statements, defined in the script `V1_0__importSqlScriptTest.sql`:
 
 [source,sql]
 ----
@@ -106,15 +106,7 @@ insert into table_test (id, description) values(3, 'Test 3');
 Run the unit test for the ImportByFlywayTest class.
 The following steps must be followed:
 
-1 - Run the build of the entire project, in the project root directory, tomee:
-
-[source,bash]
-----
--Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
-
-----
-
-2 - Run the build of the examples/import-database-flyway project:
+Run the build of the examples/import-database-flyway project:
 
 [source,bash]
 ----

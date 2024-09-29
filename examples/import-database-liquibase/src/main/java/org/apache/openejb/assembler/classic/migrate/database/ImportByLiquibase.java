@@ -28,15 +28,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.sql.DataSource;
-
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeLogHistoryServiceFactory;
@@ -54,8 +51,7 @@ import liquibase.resource.SearchPathResourceAccessor;
  * @version $Rev$ $Date$
  */
 public class ImportByLiquibase {
-	private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB,
-			EntityManagerFactoryCallable.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ImportByLiquibase.class.getName());
 
 	public static final String IMPORT_FILE_PREFIX = "V_";
 	public static final String IMPORT_FILE_EXTENSION = ".sql";
@@ -86,13 +82,13 @@ public class ImportByLiquibase {
 
 				if (Objects.nonNull(sqlFiles)) {
 					if (sqlFiles.isEmpty()) {
-						LOGGER.error("The Resource directory for sql files, can not to be empty.");
+						LOGGER.severe("The Resource directory for sql files, can not to be empty.");
 						throw new Exception("The Resource directory for sql files, can not to be empty.");
 					}
 				}
 
 			} catch (final IOException e) {
-				throw new OpenEJBRuntimeException("The Resource directory for sql files, can not to be empty.", e);
+				throw new RuntimeException("The Resource directory for sql files, can not to be empty.", e);
 			}
 			ChangeLogHistoryServiceFactory.getInstance().resetAll();
 			for (String changelogPath : sqlFiles) {
@@ -101,13 +97,13 @@ public class ImportByLiquibase {
 					liquibase.update("test");
 
 				} catch (Exception e) {
-					LOGGER.error("Error running Liquibase changelog", e);
+					LOGGER.log(Level.SEVERE,"Error running Liquibase changelog",e.getCause());
 					throw new RuntimeException("Error running Liquibase changelog", e);
 				}
 			}
 
 		} catch (final Exception e) {
-			LOGGER.error("Can not create a statement, import scripts will be ignored", e);
+			LOGGER.log(Level.SEVERE,"Can not create a statement, import scripts will be ignored",e.getCause());			
 			return;
 		}
 
@@ -123,7 +119,7 @@ public class ImportByLiquibase {
 
 			}
 		} catch (Exception ex) {
-			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+			LOGGER.log(Level.SEVERE,"Can't create a statement, import scripts will be ignored",ex.getCause());			
 		}
 
 	}
@@ -149,10 +145,10 @@ public class ImportByLiquibase {
 			liquibase = new Liquibase(changelogPath, resourceAccessor, hsqlConnection);
 
 		} catch (FileNotFoundException ex) {
-			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+			LOGGER.log(Level.SEVERE,"Can't create a statement, import scripts will be ignored",ex.getCause());			
 
 		} catch (LiquibaseException ex) {
-			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+			LOGGER.log(Level.SEVERE,"Can't create a statement, import scripts will be ignored",ex.getCause());
 		}
 		return liquibase;
 	}

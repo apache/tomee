@@ -27,65 +27,9 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.tomee</groupId>
-			<artifactId>openejb-core</artifactId>
-			<version>10.0.0-M3-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-lang3</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomee</groupId>
-			<artifactId>jakartaee-api</artifactId>
-			<version>${version.jakartaee-api}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.microprofile</groupId>
-			<artifactId>microprofile</artifactId>
-			<version>${version.microprofile}</version>
-			<type>pom</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-dbutils</groupId>
 			<artifactId>commons-dbutils</artifactId>
 			<version>1.8.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomee</groupId>
-			<artifactId>apache-tomee</artifactId>
-			<version>${tomee.version}</version>
-			<type>zip</type>
-			<classifier>microprofile</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.junit</groupId>
-			<artifactId>arquillian-junit-container</artifactId>
-			<version>${version.arquillian}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomee</groupId>
-			<artifactId>ziplock</artifactId>
-			<version>${tomee.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.shrinkwrap.resolver</groupId>
-			<artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-			<version>2.1.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomee</groupId>
-			<artifactId>arquillian-tomee-remote</artifactId>
-			<version>${tomee.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -131,15 +75,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.tomee.maven</groupId>
-				<artifactId>tomee-maven-plugin</artifactId>
-				<version>${tomee.version}</version>
-				<configuration>
-					<tomeeClassifier>microprofile</tomeeClassifier>
-					<context>${project.artifactId}</context>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
@@ -166,6 +101,18 @@
 					<cleanDisabled>false</cleanDisabled>
 					<outputQueryResults>true</outputQueryResults>
 				</configuration>
+				<executions>
+					<execution>
+						<id>flyway-install</id>
+						<phase>install</phase>
+						<goals>
+							<goal>clean</goal>
+							<goal>migrate</goal>
+							<goal>info</goal>
+							<goal>validate</goal>							
+						</goals>
+					</execution>
+				</executions>
 				<dependencies>
 					<dependency>
 						<groupId>org.hsqldb</groupId>

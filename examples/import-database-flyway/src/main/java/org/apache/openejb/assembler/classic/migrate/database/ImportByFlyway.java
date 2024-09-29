@@ -25,15 +25,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
-import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.flywaydb.core.Flyway;
 
 /**
@@ -43,8 +41,7 @@ import org.flywaydb.core.Flyway;
  * @version $Rev$ $Date$
  */
 public class ImportByFlyway {
-	private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB,
-			EntityManagerFactoryCallable.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ImportByFlyway.class.getName());
 
 	public static final String IMPORT_FILE_PREFIX = "V_";
 	public static final String IMPORT_FILE_EXTENSION = ".sql";
@@ -72,13 +69,13 @@ public class ImportByFlyway {
 
 				if (Objects.nonNull(sqlFiles)) {
 					if (sqlFiles.isEmpty()) {
-						LOGGER.error("The Resource directory for sql files, can not to be empty.");
+						LOGGER.severe("The Resource directory for sql files, can not to be empty.");
 						throw new Exception("The Resource directory for sql files, can not to be empty.");
 					}
 				}
 
 			} catch (final IOException e) {
-				throw new OpenEJBRuntimeException("The Resource directory for sql files, can not to be empty.", e);
+				throw new RuntimeException("The Resource directory for sql files, can not to be empty.", e);
 			}
 
 			Flyway flyway = Flyway.configure().locations("filesystem:src/test/resources").dataSource(dataSource)
@@ -88,7 +85,7 @@ public class ImportByFlyway {
 			flyway.migrate();
 
 		} catch (final Exception e) {
-			LOGGER.error("Can not create a statement, import scripts will be ignored", e);
+			LOGGER.log(Level.SEVERE, "Can not create a statement, import scripts will be ignored", e);
 			return;
 		}
 
@@ -105,7 +102,7 @@ public class ImportByFlyway {
 
 			}
 		} catch (Exception ex) {
-			LOGGER.error("can't create a statement, import scripts will be ignored", ex);
+			LOGGER.log(Level.SEVERE, "Can not create a statement, import scripts will be ignored", ex);			
 		}
 
 	}
