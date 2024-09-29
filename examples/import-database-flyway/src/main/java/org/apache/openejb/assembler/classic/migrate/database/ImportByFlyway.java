@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -91,22 +89,7 @@ public class ImportByFlyway {
 
 	}
 
-	public void doValidate() {
-		String selectAllByMail = "SELECT id, description FROM table_test";
-
-		try (PreparedStatement statement = dataSource.getConnection().prepareStatement(selectAllByMail)) {
-
-			ResultSet resultSet = statement.executeQuery();
-			while (resultSet.next()) {
-				LOGGER.info("id:" + resultSet.getInt("id") + " description:" + resultSet.getString("description"));
-
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE, "Can not create a statement, import scripts will be ignored", ex);			
-		}
-
-	}
-
+	
 	public List<String> listFilteredFiles(String dir, int depth) throws IOException {
 		try (Stream<Path> stream = Files.walk(Paths.get(dir), depth)) {
 			return stream.filter(file -> !Files.isDirectory(file))

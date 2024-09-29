@@ -17,6 +17,11 @@
 
 package org.apache.openejb.assembler.classic.migrate.database;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.sql.DataSource;
 
 import org.hsqldb.Server;
@@ -33,6 +38,7 @@ import com.zaxxer.hikari.HikariDataSource;
  * @version $Rev$ $Date$
  */
 public class ImportByFlywayTest {
+	private static final Logger LOGGER = Logger.getLogger(ImportByFlywayTest.class.getName());
 	
 	@Before
 	public void createDatabase() {
@@ -50,7 +56,7 @@ public class ImportByFlywayTest {
 		
 		final ImportByFlyway importByFlyway = new ImportByFlyway(classLoader, RESOURCE, getDataSource());
 		importByFlyway.doImport();
-		importByFlyway.doValidate(); 
+		doValidate(); 
 		
 	}
 
@@ -68,6 +74,22 @@ public class ImportByFlywayTest {
 		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
 		return dataSource;
+	}
+
+	private void doValidate() {
+		String selectAllByMail = "SELECT id, description FROM table_test";
+
+		try (PreparedStatement statement = getDataSource().getConnection().prepareStatement(selectAllByMail)) {
+
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				LOGGER.info("id:" + resultSet.getInt("id") + " description:" + resultSet.getString("description"));
+
+			}
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, "Can not read a statement, the table is empty or not exists.", ex);			
+		}
+
 	}
 
 }

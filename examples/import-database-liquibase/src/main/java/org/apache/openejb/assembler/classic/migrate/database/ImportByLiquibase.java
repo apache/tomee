@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,22 +106,7 @@ public class ImportByLiquibase {
 		}
 
 	}
-
-	public void doValidate() {
-		String selectAllByMail = "SELECT id, description FROM public.table_test";
-
-		try (PreparedStatement statement = dataSource.getConnection().prepareStatement(selectAllByMail)) {
-			ResultSet resultSet = statement.executeQuery();
-			while (resultSet.next()) {
-				LOGGER.info("id:" + resultSet.getInt("id") + " description:" + resultSet.getString("description"));
-
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE,"Can't create a statement, import scripts will be ignored",ex.getCause());			
-		}
-
-	}
-
+	
 	public List<String> listFilteredFiles(String dir, int depth) throws IOException {
 		try (Stream<Path> stream = Files.walk(Paths.get(dir), depth)) {
 			return stream.filter(file -> !Files.isDirectory(file))
