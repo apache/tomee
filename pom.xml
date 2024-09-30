@@ -201,7 +201,7 @@
 
     <!-- Jakarta EE API -->
     <!-- we currently rely on Mail API from Geronimo, this might change in the future -->
-    <version.geronimo-mail_2.1_spec>1.0.0-M1</version.geronimo-mail_2.1_spec>
+    <version.geronimo-mail_2.1_spec>1.0.0</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
     <tomcat.version>10.1.30</tomcat.version>
