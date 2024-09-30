@@ -351,44 +351,37 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private boolean applicationProvidesResources(final Application application) {
-        try {
-            if (application == null) {
-                return false;
-            }
-            if (InternalApplication.class.isInstance(application) && (InternalApplication.class.cast(application).getOriginal() == null)) {
-                return false;
-            }
-            return !application.getClasses().isEmpty() || !application.getSingletons().isEmpty();
-        } catch (final Exception e) {
+        if (application == null) {
             return false;
         }
+
+        Set<Class<?>> classes = application.getClasses();
+        Set<Object> singletons = application.getSingletons();
+        return classes != null && !classes.isEmpty() || singletons != null && !singletons.isEmpty();
     }
 
     public boolean isCXFResource(final HttpServletRequest request) {
         try {
-            Application application = findApplication();
-            if (!applicationProvidesResources(application)) {
-                JAXRSServiceImpl service = (JAXRSServiceImpl) server.getEndpoint().getService();
+            if (!applicationProvidesResources(findApplication())) { // nothing is registered in JAX-RS
+                return false;
+            }
 
-                if (service == null) {
-                    return false;
+            JAXRSServiceImpl service = (JAXRSServiceImpl) server.getEndpoint().getService();
+            if (service == null) {
+                return false;
+            }
+
+            String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
+            final List<ClassResourceInfo> resources = service.getClassResourceInfos();
+            for (final ClassResourceInfo info : resources) {
+                if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
+                    continue;
                 }
 
-                String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
-
-                final List<ClassResourceInfo> resources = service.getClassResourceInfos();
-                for (final ClassResourceInfo info : resources) {
-                    if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
-                        continue;
-                    }
-
-                    final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
-                    if (info.getURITemplate().match(pathToMatch, parameters)) {
-                        return true;
-                    }
+                final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
+                if (info.getURITemplate().match(pathToMatch, parameters)) {
+                    return true;
                 }
-            } else {
-                return true;
             }
         } catch (final Exception e) {
             LOGGER.info("No JAX-RS service");

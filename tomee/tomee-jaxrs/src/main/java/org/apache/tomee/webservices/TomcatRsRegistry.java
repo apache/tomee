@@ -123,7 +123,6 @@ public class TomcatRsRegistry implements RsRegistry {
         filterDef.setDisplayName(description);
         filterDef.setFilter(new CXFJAXRSFilter(cxfRsHttpListener, context.findWelcomeFiles()));
         filterDef.setFilterClass(CXFJAXRSFilter.class.getName());
-        filterDef.addInitParameter("mapping", urlPattern.substring(0, urlPattern.length() - "/*".length())); // just keep base path
         context.addFilterDef(filterDef);
 
         final FilterMap filterMap = new FilterMap();
