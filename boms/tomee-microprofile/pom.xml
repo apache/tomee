@@ -851,7 +851,7 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-mail_2.1_spec</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.0-M1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
