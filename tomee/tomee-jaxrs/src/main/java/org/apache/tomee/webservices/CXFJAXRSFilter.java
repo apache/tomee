@@ -60,7 +60,7 @@ public class CXFJAXRSFilter implements Filter {
         }
 
         // if a servlet matched it always has priority over JAX-RS endpoints, see TOMEE-4406
-        if (nonDefaultServletMatches(httpServletRequest)) {
+        if (!defaultServletMatched(httpServletRequest)) {
             chain.doFilter(request, response);
             return;
         }
@@ -89,13 +89,13 @@ public class CXFJAXRSFilter implements Filter {
      * Checks if the request matched a defined servlet mapping matches the given request
      *
      * @param request the HttpServletRequest to check
-     * @return if the servlet mapping matches and is not the tomcat DefaultServlet
+     * @return true if the servlet request is mapped to the tomcat default servlet
      */
-    private boolean nonDefaultServletMatches(final HttpServletRequest request) {
+    private boolean defaultServletMatched(final HttpServletRequest request) {
         ServletRegistration servletRegistration = request.getServletContext().getServletRegistration(
                 request.getHttpServletMapping().getServletName());
 
-        return !"org.apache.catalina.servlets.DefaultServlet".equals(servletRegistration.getClassName());
+        return "default".equals(servletRegistration.getName());
     }
 
     @Override
