@@ -44,6 +44,7 @@ import jakarta.persistence.PersistenceContext;
  * Because the ImportSql class, is no longer to be used. 
  * It is deprecated, be used to import database objects.
  * Whether to use the Flyway or Liquibase tools.
+ * @see <a href="https://issues.apache.org/jira/browse/TOMEE-1380">Apache Jira TOMEE-1380</a>
  * 
  * @version $Rev$ $Date$
  */
