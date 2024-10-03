@@ -3359,7 +3359,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 			 * The code below is outdated, because the ImportSql class, is no
 			 * longer to be used. It is deprecated, be used to import database objects.
 			 * Whether to use the Flyway or Liquibase tools.
-			 */            
+			 * Please look at the project examples to see which sub-project best suits your needs.
+			 * In programmatic form, the following projects are: import-database-flyway and import-database-liquibase.
+			 * In form via Maven Plugin are the followiAssembler.javang projects: import-database-flyway-maven and import-database-liquibase-maven.
+			 */
             final ImportSql importer = new ImportSql(classLoader, serviceInfo.id, (DataSource) service);
             if (importer.hasSomethingToImport()) {
                 importer.doImport();

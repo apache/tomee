@@ -39,6 +39,10 @@ import java.util.Locale;
  * This class should no longer be used to import database objects. 
  * Whether to use the Flyway or Liquibase tools.
  * 
+ * Please look at the project examples to see which sub-project best suits your needs.
+ * In programmatic form, the following projects are: import-database-flyway e import-database-liquibase.
+ * In form via Maven Plugin are the following projects: import-database-flyway-maven e import-database-liquibase-maven.
+ *  
  * @version $Rev$ $Date$
  */
 @Deprecated

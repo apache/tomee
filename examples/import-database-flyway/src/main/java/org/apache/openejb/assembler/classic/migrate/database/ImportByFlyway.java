@@ -77,9 +77,8 @@ public class ImportByFlyway {
 			}
 
 			Flyway flyway = Flyway.configure().locations("filesystem:src/test/resources").dataSource(dataSource)
-					.cleanDisabled(false).load();
-
-			flyway.clean();
+					.load();
+			
 			flyway.migrate();
 
 		} catch (final Exception e) {

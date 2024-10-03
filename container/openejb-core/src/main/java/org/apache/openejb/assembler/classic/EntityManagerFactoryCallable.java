@@ -17,6 +17,15 @@
 
 package org.apache.openejb.assembler.classic;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
@@ -31,14 +40,6 @@ import jakarta.persistence.ValidationMode;
 import jakarta.persistence.spi.PersistenceProvider;
 import jakarta.transaction.Transaction;
 import jakarta.validation.ValidatorFactory;
-import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class EntityManagerFactoryCallable implements Callable<EntityManagerFactory> {
     public static final String OPENEJB_JPA_INIT_ENTITYMANAGER = "openejb.jpa.init-entitymanager";
@@ -126,6 +127,9 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 			 * The code below is outdated, because the ImportSql class, is no
 			 * longer to be used. It is deprecated, be used to import database objects.
 			 * Whether to use the Flyway or Liquibase tools.
+			 * Please look at the project examples to see which sub-project best suits your needs.
+			 * In programmatic form, the following projects are: import-database-flyway and import-database-liquibase.
+			 * In form via Maven Plugin are the following projects: import-database-flyway-maven and import-database-liquibase-maven.
 			 */
             if (unitInfo.getNonJtaDataSource() != null) {
                final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
