@@ -16,10 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Properties;
-
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -37,19 +33,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Id;
 import jakarta.persistence.PersistenceContext;
+import java.util.Properties;
 
+import static org.junit.Assert.assertEquals;
 
-/**
- * This class should no longer be used to test the ImportSql class.
- * Because the ImportSql class, is no longer to be used. 
- * It is deprecated, be used to import database objects.
- * Whether to use the Flyway or Liquibase tools.
- * @see <a href="https://issues.apache.org/jira/browse/TOMEE-1380">Apache Jira TOMEE-1380</a>
- * 
- * @version $Rev$ $Date$
- */
 @RunWith(ApplicationComposer.class)
-@Deprecated
 public class ImportSqlScriptTest {
     @EJB
     private Persister persister;
@@ -102,11 +90,6 @@ public class ImportSqlScriptTest {
         private long id;
     }
 
-    /*
-	 * The code below should no longer be used, because the ImportSql class, is no
-	 * longer to be used. It is deprecated, be used to import database objects.
-	 * Whether to use the Flyway or Liquibase tools.
-	 */
     @Test
     public void checkImportData() {
         assertEquals(3, persister.count());
