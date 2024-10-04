@@ -37,12 +37,9 @@ import java.util.Locale;
 
 /**
  * This class should no longer be used to import database objects. 
- * Whether to use the Flyway or Liquibase tools.
+ * Use frameworks such as Flyway or Liquibase instead.
  * 
- * Please look at the project examples to see which sub-project best suits your needs.
- * In programmatic form, the following projects are: import-database-flyway e import-database-liquibase.
- * In form via Maven Plugin are the following projects: import-database-flyway-maven e import-database-liquibase-maven.
- * @see <a href="https://issues.apache.org/jira/browse/TOMEE-1380">Apache Jira TOMEE-1380</a>
+ * @see <a href="https://issues.apache.org/jira/browse/TOMEE-1380">TOMEE-1380</a>
  *  
  * @version $Rev$ $Date$
  */
