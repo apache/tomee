@@ -1,0 +1,114 @@
+= Importar Base de Datos por Flyway por Plugin Maven
+:index-group: Import
+:jbake-type: page
+:jbake-status: not published/unrevised
+
+Este es un ejemplo de cómo utilizar la herramienta Flyway para importar una base de datos através del Plugin Maven.
+
+[discrete]
+==== Importar Base de Datos por Flyway por Plugin Maven
+
+Para usar Flyway, al crear la aplicación, usaremos el complemento Maven para importar la base de datos, usaremos una base de datos en memoria.
+
+Se utilizarán las instrucciones SQL definidas en el script `V1_0__importSqlScriptTest.sql`:
+
+[source,sql]
+----
+CREATE TABLE table_test (ID INT NOT NULL, DESCRIPTION VARCHAR(120) NOT NULL, PRIMARY KEY (ID));
+insert into table_test (id, description) values(1, 'Test 1');
+insert into table_test (id, description) values(2, 'Test 2');
+insert into table_test (id, description) values(3, 'Test 3');
+----
+
+== Ejecutar la importación mediante el Plugin Maven:
+
+The following steps must be followed:
+
+Ejecute la compilación del proyecto examples/import-database-flyway-maven:
+
+[source,bash]
+----
+mvn clean install
+
+----
+
+Debería mostrarse el siguiente resultado:
+
+[source,console]
+----
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------< org.superbiz:import-database-flyway-maven >--------------
+[INFO] Building TomEE :: Examples :: Import Database By Flyway By Maven Plugin 10.0.0-M3-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ import-database-flyway-maven ---
+[INFO] Deleting /home/evaldo/workspace_2024/tomee/examples/import-database-flyway-maven/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ import-database-flyway-maven ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.13.0:compile (default-compile) @ import-database-flyway-maven ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ import-database-flyway-maven ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.13.0:testCompile (default-testCompile) @ import-database-flyway-maven ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ import-database-flyway-maven ---
+[INFO] 
+[INFO] --- maven-war-plugin:3.4.0:war (default-war) @ import-database-flyway-maven ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [import-database-flyway-maven] in [/home/evaldo/workspace_2024/tomee/examples/import-database-flyway-maven/target/import-database-flyway-maven-10.0.0-M3-SNAPSHOT]
+[INFO] Processing war project
+[INFO] Copying webapp resources [/home/evaldo/workspace_2024/tomee/examples/import-database-flyway-maven/src/main/webapp]
+[INFO] Building war: /home/evaldo/workspace_2024/tomee/examples/import-database-flyway-maven/target/import-database-flyway-maven-10.0.0-M3-SNAPSHOT.war
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ import-database-flyway-maven ---
+[INFO] Installing /home/evaldo/workspace_2024/tomee/examples/import-database-flyway-maven/target/import-database-flyway-maven-10.0.0-M3-SNAPSHOT.war to /home/evaldo/.m2/repository/org/superbiz/import-database-flyway-maven/10.0.0-M3-SNAPSHOT/import-database-flyway-maven-10.0.0-M3-SNAPSHOT.war
+[INFO] Installing /home/evaldo/workspace_2024/tomee/examples/import-database-flyway-maven/pom.xml to /home/evaldo/.m2/repository/org/superbiz/import-database-flyway-maven/10.0.0-M3-SNAPSHOT/import-database-flyway-maven-10.0.0-M3-SNAPSHOT.pom
+[INFO] 
+[INFO] --- flyway-maven-plugin:10.17.3:clean (default-cli) @ import-database-flyway-maven ---
+Downloading from flyway-community-db-support: https://maven.pkg.github.com/flyway/flyway-community-db-support/net/minidev/json-smart/maven-metadata.xml
+[WARNING] Could not transfer metadata net.minidev:json-smart/maven-metadata.xml from/to flyway-community-db-support (https://maven.pkg.github.com/flyway/flyway-community-db-support): authentication failed for https://maven.pkg.github.com/flyway/flyway-community-db-support/net/minidev/json-smart/maven-metadata.xml, status: 401 Unauthorized
+[INFO] Database: jdbc:hsqldb:mem:hsqldb; (HSQL Database Engine 2.7)
+[INFO] Schema history table "hsqldb"."flyway_schema_history" does not exist yet
+[INFO] Successfully dropped pre-schema database level objects (execution time 00:00.006s)
+[WARNING] Unable to clean unknown schema: "hsqldb"
+[INFO] Successfully dropped post-schema database level objects (execution time 00:00.000s)
+[INFO] 
+[INFO] --- flyway-maven-plugin:10.17.3:migrate (default-cli) @ import-database-flyway-maven ---
+[INFO] Database: jdbc:hsqldb:mem:hsqldb; (HSQL Database Engine 2.7)
+[INFO] Creating schema "hsqldb" ...
+[INFO] Creating Schema History table "hsqldb"."flyway_schema_history" ...
+[INFO] Current version of schema "hsqldb": null
+[INFO] Migrating schema "hsqldb" to version "1.0 - import-ImportSqlScriptTest"
+[INFO] Successfully applied 1 migration to schema "hsqldb", now at version v1.0 (execution time 00:00.017s)
+[INFO] 
+[INFO] --- flyway-maven-plugin:10.17.3:info (default-cli) @ import-database-flyway-maven ---
+[INFO] Database: jdbc:hsqldb:mem:hsqldb; (HSQL Database Engine 2.7)
+[INFO] Schema version: 1.0
+[INFO] 
+[INFO] +-----------+---------+------------------------------+--------+---------------------+---------+----------+
+| Category  | Version | Description                  | Type   | Installed On        | State   | Undoable |
++-----------+---------+------------------------------+--------+---------------------+---------+----------+
+|           |         | << Flyway Schema Creation >> | SCHEMA | 2024-09-15 16:05:47 | Success |          |
+| Versioned | 1.0     | import-ImportSqlScriptTest   | SQL    | 2024-09-15 16:05:47 | Success | No       |
++-----------+---------+------------------------------+--------+---------------------+---------+----------+
+
+[INFO] 
+[INFO] --- flyway-maven-plugin:10.17.3:validate (default-cli) @ import-database-flyway-maven ---
+[INFO] Database: jdbc:hsqldb:mem:hsqldb; (HSQL Database Engine 2.7)
+[INFO] Successfully validated 2 migrations (execution time 00:00.016s)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.469 s
+[INFO] Finished at: 2024-09-15T16:05:48-03:00
+[INFO] ------------------------------------------------------------------------
+
+----

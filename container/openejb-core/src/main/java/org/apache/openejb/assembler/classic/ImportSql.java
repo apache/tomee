@@ -35,6 +35,15 @@ import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Locale;
 
+/**
+ * This class should no longer be used to import database objects. 
+ * Use frameworks such as Flyway or Liquibase instead.
+ * 
+ * @see <a href="https://issues.apache.org/jira/browse/TOMEE-1380">TOMEE-1380</a>
+ *  
+ * @version $Rev$ $Date$
+ */
+@Deprecated
 public class ImportSql {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, EntityManagerFactoryCallable.class.getName());
 
