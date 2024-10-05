@@ -447,6 +447,7 @@
           <releaseProfiles />
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <arguments>-Pno-examples,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
+          <preparationGoals>clean install</preparationGoals>
         </configuration>
       </plugin>
       <plugin>
