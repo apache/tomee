@@ -20,11 +20,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>datasource-definition</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-M3-SNAPSHOT</version>
+  <version>10.0.0-M3</version>
   <name>TomEE :: Examples :: Datasource Definition</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-M3-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M3</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
