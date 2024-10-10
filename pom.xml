@@ -273,7 +273,7 @@
             <dependency> <!-- java 8 NPE fix -->
               <groupId>org.apache.maven.shared</groupId>
               <artifactId>maven-filtering</artifactId>
-              <version>1.3</version>
+              <version>3.4.0</version>
             </dependency>
           </dependencies>
         </plugin>
