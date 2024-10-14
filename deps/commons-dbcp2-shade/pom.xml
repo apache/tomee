@@ -98,7 +98,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/commons-dbcp2-shade-10.0.0-M3-SNAPSHOT.jar</file>
+                  <file>${project.build.directory}/commons-dbcp2-shade-10.0.0-M4-SNAPSHOT.jar</file>
                   <type>jar</type>
                   <classifier>optional</classifier>
                 </artifact>
