@@ -26,9 +26,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomee.version>10.0.0-M4-SNAPSHOT</tomee.version>
-        <tomcat.version>10.1.30</tomcat.version>
+        <tomcat.version>10.1.31</tomcat.version>
 
-        <junit.jupiter.version>5.11.1</junit.jupiter.version>
+        <junit.jupiter.version>5.11.2</junit.jupiter.version>
         <!-- 1.8.1.Final is broken, see https://github.com/arquillian/arquillian-core/pull/583 -->
         <arquillian.version>1.9.1.Final</arquillian.version>
 
