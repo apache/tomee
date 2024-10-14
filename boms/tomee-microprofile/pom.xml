@@ -664,7 +664,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-api</artifactId>
-      <version>6.2.2</version>
+      <version>6.5.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -675,7 +675,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-autoconfig-core</artifactId>
-      <version>6.2.2</version>
+      <version>6.5.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -686,7 +686,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-core</artifactId>
-      <version>6.2.2</version>
+      <version>6.5.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -697,7 +697,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance</artifactId>
-      <version>6.2.2</version>
+      <version>6.5.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
