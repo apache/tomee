@@ -599,7 +599,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>1.2.1.jbossorg-3</version>
             <executions>
               <execution>
                 <phase>package</phase>
@@ -832,7 +832,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>1.2.1.jbossorg-3</version>
             <executions>
               <execution>
                 <phase>package</phase>
