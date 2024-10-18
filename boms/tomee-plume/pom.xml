@@ -124,17 +124,6 @@
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-core</artifactId>
-      <version>3.0.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>2.3.4</version>
       <exclusions>
@@ -633,7 +622,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -644,7 +633,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -655,7 +644,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -666,7 +655,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -677,7 +666,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -688,7 +677,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -699,7 +688,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -710,7 +699,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -721,7 +710,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -732,7 +721,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -743,7 +732,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -754,7 +743,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -765,7 +754,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -776,7 +765,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -787,7 +776,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -798,7 +787,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -809,7 +798,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -820,7 +809,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -831,7 +820,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -842,7 +831,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1958,7 +1947,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>1.76</version>
+      <version>1.78.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1969,7 +1958,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.76</version>
+      <version>1.78.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1980,7 +1969,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcutil-jdk15to18</artifactId>
-      <version>1.76</version>
+      <version>1.78.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2135,6 +2124,17 @@
       <groupId>org.fusesource.hawtbuf</groupId>
       <artifactId>hawtbuf</artifactId>
       <version>1.11</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>3.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2376,7 +2376,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.6</version>
+      <version>9.7</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

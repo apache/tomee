@@ -45,4 +45,12 @@ public class HttpServletRequestProxyTest {
 
         Assert.assertNotNull(readRequest);
     }
+
+    @Test
+    public void noRequestActive() {
+        final HttpServletRequest request = HttpServletRequestProxy.get();
+
+        RequestNotActiveException exception = Assert.assertThrows(RequestNotActiveException.class, () -> request.getRequestURI());
+        Assert.assertEquals("Method 'getRequestURI' was invoked on HttpServletRequest, but no servlet request is active on the current thread", exception.getMessage());
+    }
 }
