@@ -167,6 +167,12 @@ public class CxfRSService extends RESTService {
         config = properties;
         factoryByListener = "true".equalsIgnoreCase(properties.getProperty("openejb.cxf-rs.factoryByListener", "false"));
 
+        try {
+            Class.forName("org.apache.cxf.jaxrs.springmvc.SpringWebUtils");
+        } catch (Throwable t) {
+            // ignore
+        }
+
         System.setProperty("org.apache.johnzon.max-string-length",
                 SystemInstance.get().getProperty("org.apache.johnzon.max-string-length",
                         properties.getProperty("org.apache.johnzon.max-string-length", "8192")));
