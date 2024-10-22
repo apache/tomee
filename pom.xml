@@ -182,20 +182,19 @@
     <version.microprofile.jwt>2.1</version.microprofile.jwt>
     <version.microprofile.metrics>5.0.2</version.microprofile.metrics>
     <version.microprofile.openapi>3.1.1</version.microprofile.openapi>
-    <version.microprofile.opentracing>3.0</version.microprofile.opentracing>
     <version.microprofile.opentelemetry>1.0</version.microprofile.opentelemetry>
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
 
     <version.io.opentracing>0.33.0</version.io.opentracing>
 
     <!-- Micro Profile Impl. -->
-    <version.microprofile.impl.config>3.8.2</version.microprofile.impl.config>
+    <version.microprofile.impl.config>3.9.1</version.microprofile.impl.config>
     <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
     <version.microprofile.impl.openapi>3.13.0</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
-    <version.microprofile.impl.opentelemetry>2.6.1-SNAPSHOT</version.microprofile.impl.opentelemetry>
+    <version.microprofile.impl.opentelemetry>2.8.1</version.microprofile.impl.opentelemetry>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.18.0</version.jackson>
@@ -220,7 +219,7 @@
     <version.johnzon>2.0.1</version.johnzon>
     <version.myfaces>4.0.2</version.myfaces>
     <version.openjpa>4.0.1</version.openjpa>
-    <version.openwebbeans>4.0.2</version.openwebbeans>
+    <version.openwebbeans>4.0.3-SNAPSHOT</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>4.0.4</version.eclipselink>
     <!-- org.glassfish -->

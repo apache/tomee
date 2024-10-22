@@ -114,7 +114,6 @@
     <module>mp-metrics-timed</module>
     <module>mp-metrics-gauge</module>
     <module>mp-metrics-metered</module>
-    <module>mp-opentracing-traced</module>
     <module>mp-rest-jwt-jwk</module>
     <module>mp-rest-jwt-principal</module>
     <module>mp-rest-jwt-public-key</module>

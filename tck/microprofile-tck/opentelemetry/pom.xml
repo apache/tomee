@@ -82,12 +82,6 @@
             <version>${version.jakartaee-api}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-client</artifactId>
-            <version>${version.cxf}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.johnzon</groupId>

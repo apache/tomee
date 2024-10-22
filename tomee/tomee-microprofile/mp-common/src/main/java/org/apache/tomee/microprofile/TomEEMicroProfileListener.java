@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.microprofile;
 
-import io.smallrye.opentracing.SmallRyeTracingDynamicFeature;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -34,7 +33,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
 import org.apache.tomee.microprofile.openapi.MicroProfileOpenApiRegistration;
-import org.apache.tomee.microprofile.opentracing.MicroProfileOpenTracingExceptionMapper;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.Indexer;
 
@@ -66,8 +64,6 @@ public class TomEEMicroProfileListener {
         "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
         "io.smallrye.config.inject.ConfigExtension",
         "io.smallrye.metrics.legacyapi.LegacyMetricsExtension",
-        "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
-        "io.smallrye.opentracing.contrib.interceptor.OpenTracingInterceptor",
         "io.smallrye.faulttolerance.FaultToleranceExtension",
         "io.smallrye.opentelemetry.implementation.cdi.OpenTelemetryExtension",
         };
@@ -156,19 +152,6 @@ public class TomEEMicroProfileListener {
         } catch (final UncheckedIOException e) {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
-    }
-
-    public void registerMicroProfileJaxRsProviders(@Observes final ExtensionProviderRegistration extensionProviderRegistration) {
-        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
-            return;
-        }
-
-        extensionProviderRegistration.getProviders().add(new SmallRyeTracingDynamicFeature());
-
-        // The OpenTracing TCK tests that an exception is turned into a 500. JAX-RS 3.1 mandates a default mapper
-        // which was not required on the current versions; see TOMEE-4133 for details.
-        extensionProviderRegistration.getProviders().add(new MicroProfileOpenTracingExceptionMapper());
-
     }
 
     /**
