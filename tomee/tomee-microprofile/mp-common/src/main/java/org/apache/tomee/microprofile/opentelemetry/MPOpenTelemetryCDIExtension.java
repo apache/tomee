@@ -17,6 +17,8 @@
 package org.apache.tomee.microprofile.opentelemetry;
 
 import io.smallrye.opentelemetry.implementation.config.OpenTelemetryConfigProducer;
+import io.smallrye.opentelemetry.implementation.rest.OpenTelemetryClientFilter;
+import io.smallrye.opentelemetry.implementation.rest.OpenTelemetryServerFilter;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
@@ -33,6 +35,11 @@ public class MPOpenTelemetryCDIExtension implements Extension {
       return;
     }
 
-    beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenTelemetryConfigProducer.class), "OpenTelemetryConfigProducer");
+    beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenTelemetryServerFilter.class),
+            OpenTelemetryServerFilter.class.getName());
+    beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenTelemetryClientFilter.class),
+            OpenTelemetryClientFilter.class.getName());
+    beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenTelemetryConfigProducer.class),
+            "OpenTelemetryConfigProducer");
   }
 }
