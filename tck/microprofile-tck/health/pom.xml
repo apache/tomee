@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-health-tck</artifactId>
@@ -32,7 +32,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>3.5.0</version>
         <configuration>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.health:microprofile-health-tck</dependency>

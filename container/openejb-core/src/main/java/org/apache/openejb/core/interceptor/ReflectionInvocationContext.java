@@ -22,7 +22,6 @@ import org.apache.openejb.util.Classes;
 
 import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;

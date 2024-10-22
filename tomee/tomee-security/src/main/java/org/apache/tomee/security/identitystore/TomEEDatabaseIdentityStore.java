@@ -44,7 +44,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;

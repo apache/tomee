@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -44,17 +44,6 @@
       <groupId>io.opentracing</groupId>
       <artifactId>opentracing-api</artifactId>
       <version>0.33.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>1.0-alpha-1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -274,7 +263,7 @@
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.faces</artifactId>
-      <version>4.0.1</version>
+      <version>4.0.8</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

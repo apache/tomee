@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.httpd;
 
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;

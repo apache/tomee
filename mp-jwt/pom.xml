@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mp-jwt</artifactId>
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.bitbucket.b_c</groupId>
       <artifactId>jose4j</artifactId>
-      <version>0.9.6</version>
+      <version>${version.jose4j}</version>
     </dependency>
     <dependency>
       <groupId>io.churchkey</groupId>
@@ -94,19 +94,19 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>9.39.1</version>
+      <version>9.40</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.2</version>
+      <version>9.7</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm-util</artifactId>
-      <version>9.7</version>
+      <version>9.7.1</version>
       <scope>test</scope>
     </dependency>
 

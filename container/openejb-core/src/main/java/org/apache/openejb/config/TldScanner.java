@@ -328,7 +328,7 @@ public class TldScanner {
             urlSet = applyBuiltinExcludes(
                     urlSet,
                     Filters.tokens("taglibs-shade", "taglibs-standard-impl", "taglibs-standard-jstlel", "jakarta.faces-2.", "jakarta.faces-2", "spring-security-taglibs", "spring-webmvc"),
-                    Filters.prefixes("commons-jcs-", "myfaces-", "tomcat-websocket.jar")); // myfaces is hardcoded in tomee
+                    Filters.prefixes("myfaces-", "tomcat-websocket.jar")); // myfaces is hardcoded in tomee
         } catch (final IOException e) {
             DeploymentLoader.LOGGER.warning("Error scanning class loader for JSP tag libraries", e);
         }

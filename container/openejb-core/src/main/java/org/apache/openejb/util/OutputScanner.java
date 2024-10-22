@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util;
 
-import org.codehaus.swizzle.stream.ScanBuffer;
+import org.tomitribe.swizzle.stream.ScanBuffer;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;

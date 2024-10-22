@@ -17,7 +17,6 @@
 package org.apache.openejb.test.stateless;
 
 import java.util.Map;
-import java.util.List;
 
 /**
  * @version $Rev$ $Date$

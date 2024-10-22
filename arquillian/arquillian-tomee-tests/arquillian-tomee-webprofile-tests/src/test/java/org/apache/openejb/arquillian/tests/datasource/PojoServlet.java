@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertEquals;
-
 @WebServlet("/test")
 public class PojoServlet extends HttpServlet {
 

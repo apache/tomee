@@ -19,7 +19,9 @@ package org.apache.tomee.microprofile;
 import io.smallrye.opentracing.SmallRyeTracingDynamicFeature;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.event.AssemblerBeforeApplicationDestroyed;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.Files;
@@ -40,6 +42,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
@@ -47,6 +50,8 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -67,6 +72,9 @@ public class TomEEMicroProfileListener {
         "io.smallrye.opentelemetry.implementation.cdi.OpenTelemetryExtension",
         };
 
+    private final Map<AppInfo, Index> indexCache = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
 
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
@@ -74,7 +82,6 @@ public class TomEEMicroProfileListener {
         if (mpScan.equals("none")) {
             Stream.of(MICROPROFILE_EXTENSIONS).forEach(
                 extension -> SystemInstance.get().setProperty(extension + ".active", "false"));
-
             return;
         }
 
@@ -98,7 +105,16 @@ public class TomEEMicroProfileListener {
         SystemInstance.get().setProperty("openejb.cxf-rs.cache-application", "false");
     }
 
+    public void afterApplicationDeployed(@Observes final BeforeEvent<AssemblerBeforeApplicationDestroyed> event) {
+        //Just in case, remove the index from the cache if it still exits
+        indexCache.remove(event.getEvent().getApp());
+    }
+
     public void processApplication(@Observes final BeforeEvent<AfterApplicationCreated> afterApplicationCreated) {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         final ServletContext context = afterApplicationCreated.getEvent().getContext();
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
 
@@ -106,37 +122,53 @@ public class TomEEMicroProfileListener {
         // that REST path has priority over servlet and there may override old applications that have servlets
         // with /* mapping.
         context.getServletRegistrations()
-               .values()
-               .stream()
-               .map(ServletRegistration::getMappings)
-               .flatMap(Collection::stream)
-               .filter(mapping -> mapping.equals("/*"))
-               .findFirst()
-               .ifPresent(mapping -> {
-                   webApp.restClass.removeIf(
-                       className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
-               });
+                .values()
+                .stream()
+                .map(ServletRegistration::getMappings)
+                .flatMap(Collection::stream)
+                .filter(mapping -> mapping.equals("/*"))
+                .findFirst()
+                .ifPresent(mapping -> {
+                    webApp.restClass.removeIf(
+                            className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
+                });
 
         // we need to register the OpenAPI servlet, but in order to generate the OpenAPI model, SmallRye uses Jandex,
         // a XBean Finder equivalent from JBoss. This seems to be a library used in many placed, so we want to build the
         // index only once and pass it everywhere it's needed. Also in order to build the index, we need the entire
         // application so doing it here from the AppInfo is way simpler
         try {
-            final Index index = of(afterApplicationCreated.getEvent().getApp().libs);
+            final AppInfo app = afterApplicationCreated.getEvent().getApp();
+            final Index index = indexCache.computeIfAbsent(app, k -> {
+                try {
+                    return of(app.libs);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
             MicroProfileOpenApiRegistration.registerOpenApiServlet(context, index);
 
-        } catch (final IOException e) {
+            //Check if this was the last webapp to be processed and if so, remove it from the cache
+            int lastIndex = app.webApps.size() - 1;
+            if (app.webApps.indexOf(afterApplicationCreated.getEvent().getWeb()) == lastIndex) {
+                indexCache.remove(app);
+            }
+        } catch (final UncheckedIOException e) {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
-
     }
 
     public void registerMicroProfileJaxRsProviders(@Observes final ExtensionProviderRegistration extensionProviderRegistration) {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         extensionProviderRegistration.getProviders().add(new SmallRyeTracingDynamicFeature());
 
         // The OpenTracing TCK tests that an exception is turned into a 500. JAX-RS 3.1 mandates a default mapper
         // which was not required on the current versions; see TOMEE-4133 for details.
         extensionProviderRegistration.getProviders().add(new MicroProfileOpenTracingExceptionMapper());
+
     }
 
     /**

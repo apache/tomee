@@ -22,6 +22,7 @@ import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Set;
 
@@ -35,6 +36,10 @@ public class MicroProfileMetricsRegistration implements ServletContainerInitiali
 
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         final FilterRegistration.Dynamic metricsServletFilter = ctx.addFilter("mp-metrics-filter", JaxRsMetricsServletFilter.class);
         metricsServletFilter.setAsyncSupported(true);
         metricsServletFilter.addMappingForUrlPatterns(null, false, "/*");

@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>rest-jaas</artifactId>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M4-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: JAXRS and JAAS</name>
   <dependencies>
@@ -37,7 +37,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.13.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -46,7 +46,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>10.0.0-M2-SNAPSHOT</version>
+        <version>10.0.0-M4-SNAPSHOT</version>
         <configuration>
           <systemVariables>
             <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>

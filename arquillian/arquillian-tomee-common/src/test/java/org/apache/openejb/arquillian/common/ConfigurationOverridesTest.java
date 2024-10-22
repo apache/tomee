@@ -19,7 +19,6 @@ package org.apache.openejb.arquillian.common;
 import junit.framework.TestCase;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 

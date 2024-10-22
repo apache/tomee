@@ -24,10 +24,8 @@ import org.apache.openejb.junit.TestSecurity;
 import org.apache.openejb.junit5.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit5.ejbs.SecuredEjbLocal;
 import org.apache.openejb.junit5.security.RunWithOpenEjbTestSecurity;
-import org.apache.openejb.junit5.security.TestSecurityTemplateInvocationContextProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestTemplate;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.EJBAccessException;

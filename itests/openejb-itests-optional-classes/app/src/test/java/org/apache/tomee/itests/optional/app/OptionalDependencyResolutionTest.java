@@ -26,7 +26,6 @@ import javax.naming.NamingException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.tomee.itests.optional.optlib.Car;
 import org.apache.tomee.itests.optional.optlib.SomeBean;
 import org.apache.tomee.itests.optional.optlib.Vehicle;
 import org.junit.Test;

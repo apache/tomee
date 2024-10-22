@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>26</version>
+    <version>33</version>
     <relativePath><!--Resolve on repository--></relativePath>
   </parent>
 
@@ -31,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M4-SNAPSHOT</version>
 
   <name>Apache TomEE</name>
   <description>Apache TomEE is a JakartaEE 10 Web Profile stack for Apache Tomcat</description>
@@ -107,10 +107,10 @@
 
     <!-- Plugins and Build -->
     <maven.version>3.0.5</maven.version>
-    <version.plugin.bundle>3.3.0</version.plugin.bundle>
-    <version.plugin.javadoc>3.3.2</version.plugin.javadoc>
+    <version.plugin.bundle>5.1.9</version.plugin.bundle>
+    <version.plugin.javadoc>3.10.1</version.plugin.javadoc>
     <asciidoclet.version>1.5.0</asciidoclet.version>
-    <surefire.version>3.2.5</surefire.version>
+    <surefire.version>3.5.0</surefire.version>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
@@ -127,45 +127,42 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- arquillian related -->
-    <version.arquillian>1.8.0.Final</version.arquillian>
-    <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
-    <version.arquillian-protocol-servlet-jakarta>1.7.1.Final</version.arquillian-protocol-servlet-jakarta>
+    <version.arquillian>1.9.1.Final</version.arquillian>
+    <version.arquillian.bom>1.9.1.Final</version.arquillian.bom>
+    <version.arquillian-protocol-servlet-jakarta>1.8.0.Final</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
     <version.quartz-openejb-shade>2.2.4</version.quartz-openejb-shade>
-    <version.axiom>1.3.0</version.axiom>
-    <version.xbean>4.25</version.xbean>
-    <version.groovy>2.4.12</version.groovy>
+    <version.axiom>1.4.0</version.axiom>
+    <version.xbean>4.26</version.xbean>
+    <version.groovy>2.4.21</version.groovy>
     <!-- Starting from 3.34.0 it requires J17+ -->
-    <version.ecj>3.37.0</version.ecj>
+    <version.ecj>3.39.0</version.ecj>
     <version.jetty>11.0.20</version.jetty>
-    <version.ehcache>3.10.0</version.ehcache>
+    <version.ehcache>3.10.8</version.ehcache>
     <junit.version>4.13.2</junit.version>
-    <junit.jupiter.version>5.9.3</junit.jupiter.version>
+    <junit.jupiter.version>5.11.2</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.3</version.xalan>
     <version.nashorn>15.4</version.nashorn>
 
     <!-- Logging frameworks -->
-    <version.slf4j>2.0.12</version.slf4j>
+    <version.slf4j>2.0.16</version.slf4j>
     <version.log4j>1.2.17</version.log4j>
-    <version.log4j2>2.23.1</version.log4j2>
-    <version.commons-logging>1.3.2</version.commons-logging>
+    <version.log4j2>2.24.1</version.log4j2>
+    <version.commons-logging>1.3.4</version.commons-logging>
 
     <!-- Apache Commons -->
-    <version.commons-beanutils>1.9.4</version.commons-beanutils>
-    <version.commons-cli>1.6.0</version.commons-cli>
-    <version.commons-codec>1.16.0</version.commons-codec>
-    <version.commons-collections>3.2.2</version.commons-collections>
-    <version.commons-dbcp2>2.11.0</version.commons-dbcp2>
+    <version.commons-cli>1.9.0</version.commons-cli>
+    <version.commons-codec>1.17.1</version.commons-codec>
+    <version.commons-dbcp2>2.12.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
-    <version.commons-io>2.15.0</version.commons-io>
-    <version.commons-jcs-cache>2.1</version.commons-jcs-cache>
-    <version.commons-lang3>3.14.0</version.commons-lang3>
-    <version.commons-net>3.9.0</version.commons-net>
+    <version.commons-io>2.17.0</version.commons-io>
+    <version.commons-lang3>3.17.0</version.commons-lang3>
+    <version.commons-net>3.11.1</version.commons-net>
     <version.commons-pool>2.12.0</version.commons-pool>
     <version.commons-fileupload>2.0.0-M2</version.commons-fileupload>
     <version.commons-fileupload-servlet>2.0.0-M1</version.commons-fileupload-servlet>
@@ -196,60 +193,52 @@
     <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
-    <version.microprofile.impl.openapi>3.10.0</version.microprofile.impl.openapi>
+    <version.microprofile.impl.openapi>3.13.0</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentracing>3.0.3</version.microprofile.impl.opentracing>
     <version.microprofile.impl.opentelemetry>2.6.1-SNAPSHOT</version.microprofile.impl.opentelemetry>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
-    <version.jackson>2.16.2</version.jackson>
-    <version.snakeyaml>2.2</version.snakeyaml>
+    <version.jackson>2.18.0</version.jackson>
+    <version.snakeyaml>2.3</version.snakeyaml>
 
     <!-- Jakarta EE API -->
     <!-- we currently rely on Mail API from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_spec>1.0.0-M1</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>10.1.24</tomcat.version>
+    <tomcat.version>10.1.31</tomcat.version>
     <!-- com.sun -->
     <version.impl.saaj>2.0.1</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>6.1.2</version.activemq>
+    <version.activemq>6.1.3</version.activemq>
     <version.batchee>2.0.0</version.batchee>
-    <version.bval>3.0.0</version.bval>
-    <version.cxf>4.1.0-SNAPSHOT</version.cxf>
+    <version.bval>3.0.1</version.bval>
+    <version.cxf>4.1.0-tomee-M2</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.1</version.johnzon>
     <version.myfaces>4.0.2</version.myfaces>
-    <version.openjpa>4.0.0</version.openjpa>
+    <version.openjpa>4.0.1</version.openjpa>
     <version.openwebbeans>4.0.2</version.openwebbeans>
     <!-- org.eclipse -->
-    <version.eclipselink>3.0.4</version.eclipselink>
+    <version.eclipselink>4.0.4</version.eclipselink>
     <!-- org.glassfish -->
-    <version.mojarra>4.0.1</version.mojarra>
+    <version.mojarra>4.0.8</version.mojarra>
     <!-- org.hibernate -->
     <version.hibernate.orm>6.4.3.Final</version.hibernate.orm>
-    <version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
+    <version.hibernate.validator>8.0.1.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
     <version.wss4j>3.0.3</version.wss4j>
     <version.xmlsec>3.0.4</version.xmlsec>
-    <version.geronimo-jcache_1.0_spec>1.0-alpha-1</version.geronimo-jcache_1.0_spec>
     <version.krazo>2.0.2</version.krazo>
+    <version.jose4j>0.9.6</version.jose4j>
+    <version.sxc>0.9</version.sxc>
 
     <!-- JDBC Drivers -->
     <version.derby>10.15.2.0</version.derby>
-    <version.hsqldb>2.7.2</version.hsqldb>
-
-    <!-- unused properties -->
-    <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <pax-url.version>1.3.5</pax-url.version>
-    <plexus.version>1.5.5</plexus.version>
-    <plexus-utils.version>3.0.10</plexus-utils.version>
-    <scannotation.version>1.0.2</scannotation.version>
-    <wagon.version>2.2</wagon.version>
+    <version.hsqldb>2.7.3</version.hsqldb>
 
   </properties>
 
@@ -261,7 +250,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -298,12 +287,12 @@
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.14</version>
+          <version>0.16.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -313,19 +302,19 @@
             <dependency>
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.8.0</version>
+              <version>4.10.0</version>
             </dependency>
           </dependencies>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.9.1</version>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.20</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
           <groupId>org.apache.geronimo.buildsupport</groupId>
@@ -343,24 +332,24 @@
           <version>1.0.2</version>
         </plugin>
         <plugin>
-          <groupId>org.metatype.sxc</groupId>
+          <groupId>io.github.rzo1.org.metatype.sxc</groupId>
           <artifactId>sxc-jaxb-maven-plugin</artifactId>
-          <version>0.8</version>
+          <version>${version.sxc}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jxr-plugin</artifactId>
-          <version>2.5</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.4</version>
+          <version>3.24.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>jaxb2-maven-plugin</artifactId>
-          <version>1.6</version>
+          <version>3.2.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -380,12 +369,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.15</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.gmaven</groupId>
           <artifactId>groovy-maven-plugin</artifactId>
-          <version>2.0</version>
+          <version>2.1.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -395,7 +384,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>3.1.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -405,12 +394,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.6.2</version>
+          <version>3.13.0</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.2</version>
+          <version>0.8.12</version>
           <executions>
             <execution>
               <goals>
@@ -460,6 +449,7 @@
           <releaseProfiles />
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <arguments>-Pno-examples,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
+          <preparationGoals>clean install</preparationGoals>
         </configuration>
       </plugin>
       <plugin>
@@ -467,8 +457,16 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${version.plugin.javadoc}</version>
         <configuration>
-          <source>8</source>
-          <release>8</release>
+          <failOnError>false</failOnError>
+          <encoding>utf-8</encoding>
+          <show>public</show>
+          <detectLinks>false</detectLinks>
+          <detectOfflineLinks>true</detectOfflineLinks>
+          <detectJavaApiLink>false</detectJavaApiLink>
+          <!-- Speeds up the build of the javadocs -->
+          <quiet>true</quiet>
+          <use>false</use>
+          <doclint>none</doclint>
         </configuration>
       </plugin>
 
@@ -533,7 +531,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.8.0</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.swizzle</groupId>
@@ -568,7 +566,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-doap-plugin</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
         <configuration>
           <doapFile>doap_tomee.rdf</doapFile>
           <outputDirectory>${project.basedir}</outputDirectory>
@@ -725,7 +723,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
-            <version>2.5</version>
+            <version>3.5.0</version>
           </plugin>
         </plugins>
       </reporting>
@@ -963,7 +961,6 @@
         <enabled>true</enabled>
       </releases>
     </repository>
-
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -1045,7 +1042,11 @@
         <version>${version.io.opentracing}</version>
       </dependency>
       <!-- Following dependencies remain to be cleaned up -->
-
+<dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging</artifactId>
+        <version>3.6.1.Final</version>
+      </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>jakartaee-api</artifactId>
@@ -1125,7 +1126,7 @@
         <version>${version.bval}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1148,12 +1149,12 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1176,7 +1177,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1203,7 +1204,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1238,7 +1239,7 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
         <version>${version.cxf}</version>
         <exclusions>
@@ -1249,22 +1250,22 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-sse</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description</artifactId>
         <version>${version.cxf}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-extension-providers</artifactId>
         <version>${version.cxf}</version>
       </dependency>
@@ -1514,9 +1515,9 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.codehaus.swizzle</groupId>
-        <artifactId>swizzle-stream</artifactId>
-        <version>1.6.2</version>
+        <groupId>org.tomitribe</groupId>
+        <artifactId>swizzle</artifactId>
+        <version>1.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
@@ -1629,12 +1630,12 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
-        <version>2.12.1</version>
+        <version>2.13.2</version>
       </dependency>
       <dependency>
         <groupId>jline</groupId>
         <artifactId>jline</artifactId>
-        <version>1.0</version>
+        <version>2.14.6</version>
       </dependency>
       <dependency>
         <artifactId>slf4j-api</artifactId>
@@ -1656,11 +1657,6 @@
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>${version.log4j}</version>
-      </dependency>
-      <dependency>
-        <artifactId>commons-collections</artifactId>
-        <groupId>commons-collections</groupId>
-        <version>${version.commons-collections}</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
@@ -1822,18 +1818,18 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>7.5.1</version>
+        <version>7.10.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.26.0</version>
+        <version>1.27.1</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-archiver</artifactId>
-        <version>4.8.0</version>
+        <version>4.10.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -1866,9 +1862,9 @@
         <version>${version.groovy}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>sxc-shade</artifactId>
-        <version>${project.version}</version>
+        <groupId>io.github.rzo1.org.metatype.sxc</groupId>
+        <artifactId>sxc-jaxb-core</artifactId>
+        <version>${version.sxc}</version>
       </dependency>
       <dependency>
         <groupId>org.hibernate.orm</groupId>

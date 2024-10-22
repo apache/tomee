@@ -218,7 +218,6 @@ public class TomcatLoader implements Loader {
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
         optionalService(properties, "org.apache.tomee.microprofile.TomEEMicroProfileService");
-
         // tomee webapp enricher
         final TomEEClassLoaderEnricher classLoaderEnricher = new TomEEClassLoaderEnricher();
         SystemInstance.get().setComponent(WebAppEnricher.class, classLoaderEnricher);

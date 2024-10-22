@@ -38,27 +38,37 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     public ManagedExecutorServiceImpl(final ExecutorService delegate, final ContextServiceImpl contextService) {
         this.delegate = delegate;
-        this.contextService = contextService;
+        this.contextService = new ContextServiceImpl(contextService, this);
     }
 
+    // Forbidden lifecycle managing methods, see § 3.1.6.1
     @Override
     public void shutdown() {
-        throw new IllegalStateException("You can't call shutdown");
+        throw forbiddenMethod("shutdown");
     }
 
     @Override
     public List<Runnable> shutdownNow() {
-        throw new IllegalStateException("You can't call shutdownNow");
+        throw forbiddenMethod("shutdownNow");
     }
 
     @Override
     public boolean isShutdown() {
-        return delegate.isShutdown();
+        throw forbiddenMethod("isShutdown");
     }
 
     @Override
     public boolean isTerminated() {
-        return delegate.isTerminated();
+        throw forbiddenMethod("isTerminated");
+    }
+
+    @Override
+    public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
+        throw forbiddenMethod("awaitTermination");
+    }
+
+    protected IllegalStateException forbiddenMethod(String method) {
+        return new IllegalStateException("You can't call " + method);
     }
     
     public Integer getCorePoolSize() {
@@ -117,11 +127,6 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         }
     }
 
-        @Override
-    public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
-        return delegate.awaitTermination(timeout, unit);
-    }
-
     @Override
     public <T> Future<T> submit(final Callable<T> task) {
         final CUCallable<T> wrapper = new CUCallable<>(task, contextService);
@@ -175,14 +180,14 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <U> CompletableFuture<U> completedFuture(U value) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.complete(value);
         return future;
     }
 
     @Override
     public <U> CompletionStage<U> completedStage(U value) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.complete(value);
         return future;
     }
@@ -199,14 +204,14 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <U> CompletableFuture<U> failedFuture(Throwable ex) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.completeExceptionally(ex);
         return future;
     }
 
     @Override
     public <U> CompletionStage<U> failedStage(Throwable ex) {
-        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> future = new CUCompletableFuture<>(this, contextService);
         future.completeExceptionally(ex);
         return future.minimalCompletionStage();
     }
@@ -218,7 +223,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <U> CompletableFuture<U> newIncompleteFuture() {
-        return new CUCompletableFuture<>(this);
+        return new CUCompletableFuture<>(this, contextService);
     }
 
     @Override
@@ -228,7 +233,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) {
-        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this, contextService);
         this.execute(() -> {
             try {
                 managedFuture.complete(supplier.get());
@@ -240,7 +245,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     }
 
     private <U> CompletableFuture<U> copyInternal(CompletionStage<U> future) {
-        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this);
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(this, contextService);
         future.whenComplete((result, exception) -> {
             if (exception == null) {
                 managedFuture.complete(result);

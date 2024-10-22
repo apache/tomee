@@ -28,8 +28,6 @@ import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Service;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.WebServiceFeature;

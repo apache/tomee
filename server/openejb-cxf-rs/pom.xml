@@ -19,7 +19,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -47,23 +47,23 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
     </dependency>
     <dependency>
@@ -108,7 +108,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.8.0</version>
         <executions>
           <execution>
             <id>copy-dependencies-for-patching</id>

@@ -33,6 +33,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -144,8 +145,12 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "securityRoleRef",
     "securityIdentity",
     "passivationCapable",
-    "contextService"
+    "contextService",
+    "managedExecutor",
+    "managedScheduledExecutor",
+    "managedThreadFactory"
 })
+@XmlSeeAlso({StatelessBean.class, StatefulBean.class, SingletonBean.class, ManagedBean.class})
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     protected TextMap description = new TextMap();
@@ -270,7 +275,13 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     private final Collection<String> parents = new ArrayList<String>(); // always needed so initialize it early
     @XmlElement(name="context-service")
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    protected KeyedCollection<String, ManagedExecutor> managedExecutor;
+    @XmlElement(name = "managed-scheduled-executor")
+    protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
+    @XmlElement(name = "managed-thread-factory")
+    protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
 
     public SessionBean() {
     }
@@ -963,5 +974,31 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection();
+        }
+        return this.managedExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap() {
+        if (managedScheduledExecutor == null) {
+            managedScheduledExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedScheduledExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedThreadFactory> getManagedThreadFactoryMap() {
+        if (managedThreadFactory == null) {
+            managedThreadFactory = new KeyedCollection<>();
+        }
+
+        return this.managedThreadFactory.toMap();
     }
 }

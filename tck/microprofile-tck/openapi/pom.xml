@@ -22,24 +22,55 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-openapi-tck</artifactId>
   <name>TomEE :: TCK :: MicroProfile Open API TCK</name>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
     <plugins>
+      <!-- we can't just set httpPort=-1 in arquillian.xml because we need to know the URL below to set as a system property
+           so instead let's rely on build-helper plugin to reserve an actually free port for us -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+
+        <executions>
+          <execution>
+            <id>reserve-tomee-port</id>
+
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+
+            <configuration>
+              <portNames>
+                <name>tomee.port</name>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <!-- Updated version to fix hanging text -->
-        <version>3.2.5</version>
+        <version>3.5.0</version>
         <configuration>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.openapi:microprofile-openapi-tck</dependency>
           </dependenciesToScan>
           <systemPropertyVariables>
-            <test.url>http://localhost:50290</test.url>
+            <test.url>http://localhost:${tomee.port}</test.url>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -133,7 +164,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.testng</groupId>
       <artifactId>arquillian-testng-container</artifactId>
-      <version>1.8.0.Final</version>
+      <version>1.9.1.Final</version>
       <scope>test</scope>
     </dependency>
 

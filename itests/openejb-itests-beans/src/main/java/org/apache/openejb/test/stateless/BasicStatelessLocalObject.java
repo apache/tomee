@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.rmi.RemoteException;
 import java.util.Properties;
 
 import org.apache.openejb.test.ApplicationException;

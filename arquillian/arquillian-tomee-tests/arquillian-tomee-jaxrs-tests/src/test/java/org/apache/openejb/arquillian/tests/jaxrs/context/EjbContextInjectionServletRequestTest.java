@@ -29,19 +29,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.ejb.Singleton;
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.Request;
-import jakarta.ws.rs.core.SecurityContext;
-import jakarta.ws.rs.core.UriInfo;
-import jakarta.ws.rs.ext.ContextResolver;
-import jakarta.ws.rs.ext.Providers;
+
 import java.io.IOException;
 import java.net.URL;
 

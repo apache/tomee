@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class SecurityServiceImplTest {

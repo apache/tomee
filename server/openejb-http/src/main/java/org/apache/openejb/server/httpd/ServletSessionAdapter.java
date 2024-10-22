@@ -18,7 +18,6 @@
 package org.apache.openejb.server.httpd;
 
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpSessionContext;
 
 import java.util.Enumeration;
 

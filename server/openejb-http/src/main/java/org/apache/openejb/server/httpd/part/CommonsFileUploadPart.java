@@ -24,7 +24,6 @@ import org.apache.commons.fileupload2.core.DiskFileItem;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;

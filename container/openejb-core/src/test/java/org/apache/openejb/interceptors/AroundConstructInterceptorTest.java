@@ -17,7 +17,6 @@
 package org.apache.openejb.interceptors;
 
 import jakarta.interceptor.AroundConstruct;
-import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ContainerInfo;

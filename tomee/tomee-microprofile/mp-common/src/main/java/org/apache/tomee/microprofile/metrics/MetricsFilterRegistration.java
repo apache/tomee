@@ -21,11 +21,15 @@ import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
 import jakarta.ws.rs.ext.Provider;
+import org.apache.openejb.loader.SystemInstance;
 
 @Provider
 public class MetricsFilterRegistration implements DynamicFeature {
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
         context.register(JaxRsMetricsFilter.class);
     }
 }

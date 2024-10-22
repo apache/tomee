@@ -20,7 +20,6 @@ import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.core.security.JaccProvider;
-import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.JavaSecurityManagers;

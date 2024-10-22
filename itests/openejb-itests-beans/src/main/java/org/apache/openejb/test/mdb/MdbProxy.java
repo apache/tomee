@@ -34,8 +34,6 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MdbProxy {
     @SuppressWarnings({"unchecked"})

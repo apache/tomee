@@ -27,8 +27,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import jakarta.inject.Inject;
-
 @RunWith(Arquillian.class)
 public class MultipleDeploymentsTest extends Assert {
 

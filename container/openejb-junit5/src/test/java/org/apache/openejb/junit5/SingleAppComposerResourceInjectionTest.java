@@ -17,7 +17,6 @@
 package org.apache.openejb.junit5;
 
 import jakarta.annotation.Resource;
-import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import org.apache.openejb.junit5.app.MyResourceApp;
 import org.junit.jupiter.api.Test;

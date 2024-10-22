@@ -32,7 +32,7 @@ import jakarta.ejb.EJBException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import javax.naming.InitialContext;
+
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Session;
 import jakarta.jms.Topic;

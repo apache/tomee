@@ -73,7 +73,11 @@ public class AsyncMethod {
         this.methodName = method.getName();
         final MethodParams methodParams = new MethodParams();
         for (final Class<?> type : method.getParameterTypes()) {
-            methodParams.getMethodParam().add(type.getCanonicalName());
+            if (type.isMemberClass()) {
+                methodParams.getMethodParam().add(type.getName());
+            } else {
+                methodParams.getMethodParam().add(type.getCanonicalName());
+            }
         }
         this.methodParams = methodParams;
     }

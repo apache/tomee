@@ -17,7 +17,6 @@
 package org.apache.openejb.test.stateful;
 
 import java.rmi.RemoteException;
-import java.util.Hashtable;
 import java.util.Properties;
 
 import jakarta.ejb.EJBException;

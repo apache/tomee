@@ -16,10 +16,9 @@
  */
 package org.apache.tomee.security.cdi;
 
+import org.apache.tomee.security.http.SavedRequest;
 import org.apache.tomee.security.http.LoginToContinueMechanism;
 import org.apache.tomee.security.http.SavedAuthentication;
-import org.apache.tomee.security.http.SavedHttpServletRequest;
-import org.apache.tomee.security.http.SavedRequest;
 
 import jakarta.annotation.Priority;
 import jakarta.interceptor.AroundInvoke;
@@ -156,7 +155,7 @@ public class LoginToContinueInterceptor {
                                    httpMessageContext.getGroups());
 
                 final SavedRequest savedRequest = getRequest(httpMessageContext.getRequest());
-                return httpMessageContext.redirect(savedRequest.getRequestURLWithQueryString());
+                return httpMessageContext.redirect(savedRequest.getUrlWithQueryString());
 
             } else if (authenticationStatus.equals(SEND_FAILURE)) {
                 final LoginToContinue loginToContinue = getLoginToContinue(invocationContext);
@@ -178,10 +177,7 @@ public class LoginToContinueInterceptor {
 
             clearRequestAndAuthentication(httpMessageContext.getRequest());
 
-            final SavedHttpServletRequest savedHttpServletRequest =
-                    new SavedHttpServletRequest(httpMessageContext.getRequest(), savedRequest);
-
-            return httpMessageContext.withRequest(savedHttpServletRequest)
+            return httpMessageContext.withRequest(savedRequest.mask(httpMessageContext.getRequest()))
                                      .notifyContainerAboutLogin(savedAuthentication.getPrincipal(),
                                                                 savedAuthentication.getGroups());
         }

@@ -46,7 +46,7 @@ public class TriggerRunnable extends TriggerTask<Void> implements Runnable {
     @Override
     public void run() {
         try {
-            invoke();
+            invokeExecute();
         } catch (final RuntimeException re) {
             throw re;
         } catch (final Exception e) {

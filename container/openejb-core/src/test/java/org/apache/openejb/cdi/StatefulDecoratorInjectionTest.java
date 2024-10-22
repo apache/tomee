@@ -29,7 +29,6 @@ import jakarta.decorator.Decorator;
 import jakarta.decorator.Delegate;
 import jakarta.ejb.ApplicationException;
 import jakarta.ejb.EJB;
-import jakarta.ejb.EJBException;
 import jakarta.ejb.Local;
 import jakarta.ejb.SessionContext;
 import jakarta.ejb.Stateful;
@@ -39,7 +38,6 @@ import java.io.Serializable;
 import java.security.Principal;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**

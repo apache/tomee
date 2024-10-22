@@ -26,7 +26,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-client</artifactId>
@@ -44,7 +44,6 @@
       javax.net,
       javax.net.ssl,
       javax.rmi,
-      javax.rmi.CORBA,
       javax.security.auth,
       javax.security.auth.callback,
       javax.security.auth.login,
@@ -60,7 +59,6 @@
       jakarta.xml.ws.spi,
       jakarta.xml.ws.wsaddressing,
       org.apache.geronimo.osgi.locator,
-      org.omg.CORBA,
       org.osgi.framework,
       org.w3c.dom
     </openejb.osgi.import.pkg>
@@ -152,36 +150,6 @@
       <artifactId>bcmail-jdk15to18</artifactId>
       <version>1.78.1</version>
       <scope>test</scope>
-    </dependency>
-
-    <!-- javax.rmi.PortableRemoteObject -->
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-rmi-spec</artifactId>
-      <version>1.4</version>
-      <!-- Not sure if we need the transitive yoko-spec-corba -->
-    </dependency>
-    <dependency>
-      <groupId>org.apache.yoko</groupId>
-      <artifactId>yoko-rmi-impl</artifactId>
-      <version>1.4</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.servicemix.bundles</groupId>
-          <artifactId>org.apache.servicemix.bundles.bcel</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>servicemix-bcel-shade</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.servicemix.bundles</groupId>
-          <artifactId>org.apache.servicemix.bundles.bcel</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 </project>

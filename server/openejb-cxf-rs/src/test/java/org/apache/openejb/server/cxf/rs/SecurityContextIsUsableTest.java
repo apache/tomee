@@ -21,7 +21,6 @@ import org.apache.openejb.core.security.SecurityServiceImpl;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Component;
@@ -34,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.ejb.Singleton;
-import javax.security.auth.login.LoginException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Context;
@@ -43,7 +41,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
 import java.util.Properties;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 

@@ -15,11 +15,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>moviefun</artifactId>
   <packaging>war</packaging>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M4-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Moviefun</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M4-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
   <repositories>
@@ -36,7 +36,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
+        <version>3.8.0</version>
         <executions>
           <execution>
             <id>copy-test-libs</id>
@@ -68,7 +68,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>3.5.0</version>
         <configuration>
           <reuseForks>false</reuseForks>
           <!-- otherwise openejb embedded and tomee embedded shares the same context and EJBContainer is broken -->
@@ -77,7 +77,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.13.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -94,7 +94,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.9</version>
+        <version>2.10</version>
         <configuration>
           <configuration>
             <wtpapplicationxml>true</wtpapplicationxml>
@@ -105,7 +105,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>10.0.0-M2-SNAPSHOT</version>
+        <version>10.0.0-M4-SNAPSHOT</version>
         <configuration>
           <tomeeClassifier>plus</tomeeClassifier>
           <args>-Xmx512m -XX:PermSize=256m</args>
@@ -129,7 +129,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.7.1.Final</version>
+        <version>1.9.1.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -151,7 +151,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -164,19 +164,19 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <!--<classifier>uber</classifier> -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
+      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.8.0.Final</version>
+      <version>1.9.1.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -188,7 +188,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

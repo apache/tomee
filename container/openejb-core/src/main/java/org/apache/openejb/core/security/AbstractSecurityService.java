@@ -386,7 +386,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             } else {
                 securityContext = new SecurityContext(currentIdentity.getSubject());
             }
-            securityContext.acc.checkPermission(new EJBMethodPermission(ejbName, name, method));
+            securityContext.getAccessControlContext().checkPermission(new EJBMethodPermission(ejbName, name, method));
         } catch (final AccessControlException e) {
             return false;
         }
@@ -505,20 +505,20 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         }
     }
 
-    public static final class SecurityContext {
-
+    public static final class SecurityContext implements Serializable {
         public final Subject subject;
-        public final AccessControlContext acc;
 
         @SuppressWarnings("unchecked")
         public SecurityContext(final Subject subject) {
             this.subject = subject;
-            this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, (PrivilegedAction) AccessController::getContext, null);
+        }
+
+        public AccessControlContext getAccessControlContext() {
+            return (AccessControlContext) Subject.doAsPrivileged(subject, (PrivilegedAction) AccessController::getContext, null);
         }
     }
 
     protected static class Identity implements Serializable {
-
         private final Subject subject;
         private final UUID token;
 
@@ -542,7 +542,6 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     }
 
     public static class Group implements java.security.Principal {
-
         private final List<Principal> members = new ArrayList<>();
         private final String name;
 
@@ -562,7 +561,6 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @CallerPrincipal // to force it to be before group in getCallerPrincipal, otherwise we aren't deterministic
     public static class User implements Principal {
-
         private final String name;
 
         public User(final String name) {

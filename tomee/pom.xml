@@ -25,7 +25,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <artifactId>tomee</artifactId>
@@ -148,11 +148,6 @@
         <version>${version.ecj}</version>
       </dependency>
       <dependency>
-        <artifactId>commons-beanutils</artifactId>
-        <groupId>commons-beanutils</groupId>
-        <version>${version.commons-beanutils}</version>
-      </dependency>
-      <dependency>
         <groupId>jakarta.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>1.2</version>
@@ -248,10 +243,6 @@
           <exclusion>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <artifactId>commons-beanutils</artifactId>
-            <groupId>commons-beanutils</groupId>
           </exclusion>
           <exclusion>
             <groupId>jakarta.validation</groupId>

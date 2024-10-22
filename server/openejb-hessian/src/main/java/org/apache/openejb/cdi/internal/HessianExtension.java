@@ -27,10 +27,8 @@ import org.apache.openejb.server.hessian.HessianRegistry;
 import org.apache.openejb.server.hessian.HessianServer;
 import org.apache.openejb.server.hessian.HessianService;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.AppFinder;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.container.InjectableBeanManager;
 
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.event.Observes;

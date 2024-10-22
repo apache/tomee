@@ -21,8 +21,7 @@ package org.apache.openejb.jee;
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Map;
 import java.util.LinkedHashMap;
 

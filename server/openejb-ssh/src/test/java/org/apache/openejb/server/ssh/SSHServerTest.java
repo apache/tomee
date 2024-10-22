@@ -22,7 +22,6 @@ import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.session.ClientSession;
-import org.apache.sshd.common.FactoryManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +34,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

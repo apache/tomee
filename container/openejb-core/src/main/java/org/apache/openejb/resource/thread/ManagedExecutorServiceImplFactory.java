@@ -16,9 +16,11 @@
  */
 package org.apache.openejb.resource.thread;
 
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.threads.impl.ContextServiceImpl;
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.threads.reject.CURejectHandler;
@@ -26,11 +28,9 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import jakarta.enterprise.concurrent.ManagedThreadFactory;
-
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -46,8 +46,30 @@ public class ManagedExecutorServiceImplFactory {
 
     private String context;
 
+    public static ManagedExecutorServiceImpl lookup(String name) throws NamingException {
+        Object obj;
+        try {
+            obj = InitialContext.doLookup(name);
+        } catch (NamingException e) {
+            Context ctx = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+
+            if (name.equals("java:comp/DefaultManagedExecutorService")) {
+                name = "Default Managed Executor Service";
+            }
+
+            obj = ctx.lookup("openejb/Resource/" + name);
+        }
+
+        if (!(obj instanceof ManagedExecutorServiceImpl mes)) {
+            throw new IllegalArgumentException("Resource with id " + name
+                    + " is not a ManagedExecutorService, but is " + obj.getClass().getName());
+        }
+
+        return mes;
+    }
+
     public ManagedExecutorServiceImpl create() {
-        return new ManagedExecutorServiceImpl(createExecutorService(), findContextService());
+        return new ManagedExecutorServiceImpl(createExecutorService(), ContextServiceImplFactory.lookupOrDefault(context));
     }
 
     private ExecutorService createExecutorService() {
@@ -61,33 +83,21 @@ public class ManagedExecutorServiceImplFactory {
         ManagedThreadFactory managedThreadFactory;
         try {
             managedThreadFactory = "org.apache.openejb.threads.impl.ManagedThreadFactoryImpl".equals(threadFactory) ?
-                    new ManagedThreadFactoryImpl() :
+                    new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context)) :
                     ThreadFactories.findThreadFactory(threadFactory);
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImplFactory.class).warning("Can't create configured thread factory: " + threadFactory, e);
-            managedThreadFactory = new ManagedThreadFactoryImpl();
+            managedThreadFactory = new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context));
+        }
+
+        if (core > max) {
+            Logger.getInstance(LogCategory.OPENEJB, ManagedExecutorServiceImplFactory.class)
+                    .warning("Core size (=" + core + ") is bigger than Max size (=" + max + "), lowering Core to Max");
+
+            core = max;
         }
 
         return new ThreadPoolExecutor(core, max, keepAlive.getTime(), keepAlive.getUnit(), blockingQueue, managedThreadFactory, CURejectHandler.INSTANCE);
-    }
-
-    private ContextServiceImpl findContextService() {
-        if (context == null || context.trim().isEmpty()) {
-            throw new IllegalArgumentException("Please specify a context service to be used with the managed executor");
-        }
-
-        try {
-            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            final Context context = containerSystem.getJNDIContext();
-            final Object obj = context.lookup("openejb/Resource/" + this.context);
-            if (!(obj instanceof ContextServiceImpl)) {
-                throw new IllegalArgumentException("Resource with id " + context
-                        + " is not a ContextService, but is " + obj.getClass().getName());
-            }
-            return (ContextServiceImpl) obj;
-        } catch (final NamingException e) {
-            throw new IllegalArgumentException("Unknown context service " + context);
-        }
     }
 
     public void setCore(final int core) {

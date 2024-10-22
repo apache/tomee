@@ -20,7 +20,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -70,14 +70,14 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.14.0</version>
+      <version>3.17.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.juli</tomee.build.name>
-    <jmh.version>1.18</jmh.version>
+    <jmh.version>1.37</jmh.version>
   </properties>
 
   <build>

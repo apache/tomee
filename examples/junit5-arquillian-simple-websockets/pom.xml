@@ -21,16 +21,16 @@
     <groupId>org.superbiz</groupId>
     <artifactId>junit5-simple-websockets-arquillian</artifactId>
     <packaging>jar</packaging>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
     <name>TomEE :: Examples :: JUnit 5 :: Simple Websockets with Arquillian</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
-        <tomcat.version>10.1.24</tomcat.version>
+        <tomee.version>10.0.0-M4-SNAPSHOT</tomee.version>
+        <tomcat.version>10.1.31</tomcat.version>
 
-        <junit.jupiter.version>5.8.2</junit.jupiter.version>
-        <!-- version >= 1.7.0.Alpha5 is required for JUnit5 -->
-        <arquillian.version>1.7.1.Final</arquillian.version>
+        <junit.jupiter.version>5.11.2</junit.jupiter.version>
+        <!-- 1.8.1.Final is broken, see https://github.com/arquillian/arquillian-core/pull/583 -->
+        <arquillian.version>1.9.1.Final</arquillian.version>
 
     </properties>
     <build>
@@ -45,7 +45,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -54,7 +54,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.5.0</version>
             </plugin>
         </plugins>
     </build>

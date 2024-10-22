@@ -16,10 +16,19 @@
  */
 package org.apache.tomee.security.cdi;
 
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import org.apache.tomee.security.TomEEELInvocationHandler;
 import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
+import org.apache.tomee.security.cdi.openid.BaseUrlProducer;
+import org.apache.tomee.security.cdi.openid.OpenIdIdentityStore;
+import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
+import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
+import org.apache.tomee.security.cdi.openid.storage.impl.CookieBasedOpenIdStorageHandler;
+import org.apache.tomee.security.cdi.openid.storage.impl.SessionBasedOpenIdStorageHandler;
+import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEIdentityStoreHandler;
@@ -47,24 +56,15 @@ import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
+
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class TomEESecurityExtension implements Extension {
-
-    final List<Class<? extends Annotation>> annotationsToFind = Arrays.asList(TomcatUserIdentityStoreDefinition.class,
-                                                                              DatabaseIdentityStoreDefinition.class,
-                                                                              LdapIdentityStoreDefinition.class,
-                                                                              BasicAuthenticationMechanismDefinition.class,
-                                                                              FormAuthenticationMechanismDefinition.class,
-                                                                              CustomFormAuthenticationMechanismDefinition.class);
-
     private final AtomicReference<Annotated> basicMechanism = new AtomicReference<>();
     private final AtomicReference<Annotated> formMechanism = new AtomicReference<>();
     private final AtomicReference<Annotated> customMechanism = new AtomicReference<>();
+    private final AtomicReference<Annotated> oidcMechanism = new AtomicReference<>();
 
     private final AtomicReference<Annotated> tomcatUserStore = new AtomicReference<>();
     private final AtomicReference<Annotated> databaseStore = new AtomicReference<>();
@@ -88,6 +88,8 @@ public class TomEESecurityExtension implements Extension {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(LoginToContinueInterceptor.class), "LoginToContinueInterceptor");
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class), "TomEESecurityContext");
+
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(BaseUrlProducer.class), "TomEEBaseUrlProducer");
     }
 
     // using CDI Observes with WithAnnotations seems to trigger loading of the ProcessAnnotatedType
@@ -118,6 +120,10 @@ public class TomEESecurityExtension implements Extension {
 
         if (customMechanism.get() == null && annotatedType.isAnnotationPresent(CustomFormAuthenticationMechanismDefinition.class)) {
             customMechanism.set(annotatedType);
+        }
+
+        if (oidcMechanism.get() == null && annotatedType.isAnnotationPresent(OpenIdAuthenticationMechanismDefinition.class)) {
+            oidcMechanism.set(annotatedType);
         }
 
         if (eventIn.getBean().getTypes().contains(HttpAuthenticationMechanism.class)) {
@@ -307,10 +313,42 @@ public class TomEESecurityExtension implements Extension {
                 });
         }
 
+        if (oidcMechanism.get() != null) {
+            afterBeanDiscovery
+                    .addBean()
+                    .id(OpenIdAuthenticationMechanism.class.getName() + "#" + OpenIdAuthenticationMechanismDefinition.class.getName())
+                    .beanClass(OpenIdAuthenticationMechanismDefinition.class)
+                    .types(Object.class, OpenIdAuthenticationMechanismDefinition.class)
+                    .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                    .scope(ApplicationScoped.class)
+                    .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
+
+            afterBeanDiscovery.addBean()
+                    .id(OpenIdStorageHandler.class.getName())
+                    .beanClass(OpenIdStorageHandler.class)
+                    .types(Object.class, OpenIdStorageHandler.class)
+                    .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                    .scope(ApplicationScoped.class)
+                    .createWith(creationalContext -> {
+                        Bean<OpenIdAuthenticationMechanismDefinition> definitionBean = (Bean<OpenIdAuthenticationMechanismDefinition>)
+                                beanManager.resolve(beanManager.getBeans(OpenIdAuthenticationMechanismDefinition.class));
+
+                        OpenIdAuthenticationMechanismDefinition definition = (OpenIdAuthenticationMechanismDefinition)
+                                beanManager.getReference(definitionBean, OpenIdAuthenticationMechanismDefinition.class, creationalContext);
+
+                        return definition.useSession()
+                                ? new SessionBasedOpenIdStorageHandler()
+                                : new CookieBasedOpenIdStorageHandler();
+                    });
+
+            afterBeanDiscovery.addBean(createBean(TomEEOpenIdContext.class, beanManager));
+            afterBeanDiscovery.addBean(createBean(OpenIdIdentityStore.class, beanManager));
+            afterBeanDiscovery.addBean(createBean(OpenIdAuthenticationMechanism.class, beanManager));
+        }
     }
 
     public boolean hasAuthenticationMechanisms() {
-        return basicMechanism.get() != null || formMechanism.get() != null || customMechanism.get() != null || applicationAuthenticationMechanisms;
+        return basicMechanism.get() != null || formMechanism.get() != null || customMechanism.get() != null || oidcMechanism.get() != null || applicationAuthenticationMechanisms;
     }
 
     private Supplier<LoginToContinue> createFormLoginToContinueSupplier(final BeanManager beanManager) {
@@ -326,9 +364,7 @@ public class TomEESecurityExtension implements Extension {
 
     private Supplier<BasicAuthenticationMechanismDefinition> createBasicAuthenticationMechanismDefinitionSupplier(final BeanManager beanManager) {
         return () -> {
-            final BasicAuthenticationMechanismDefinition annotation = basicMechanism.get()
-                                                                   .getAnnotation(BasicAuthenticationMechanismDefinition.class);
-
+            final BasicAuthenticationMechanismDefinition annotation = basicMechanism.get().getAnnotation(BasicAuthenticationMechanismDefinition.class);
             return TomEEELInvocationHandler.of(BasicAuthenticationMechanismDefinition.class, annotation, beanManager);
         };
     }
@@ -346,31 +382,38 @@ public class TomEESecurityExtension implements Extension {
 
     private Supplier<TomcatUserIdentityStoreDefinition> createTomcatUserIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
         return () -> {
-            final TomcatUserIdentityStoreDefinition annotation = tomcatUserStore.get()
-                                                                                    .getAnnotation(
-                                                                                        TomcatUserIdentityStoreDefinition.class);
-
+            final TomcatUserIdentityStoreDefinition annotation = tomcatUserStore.get().getAnnotation(TomcatUserIdentityStoreDefinition.class);
             return TomEEELInvocationHandler.of(TomcatUserIdentityStoreDefinition.class, annotation, beanManager);
         };
     }
 
     private Supplier<DatabaseIdentityStoreDefinition> createDatabaseIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
         return () -> {
-            final DatabaseIdentityStoreDefinition annotation = databaseStore.get()
-                                                                                    .getAnnotation(
-                                                                                        DatabaseIdentityStoreDefinition.class);
-
+            final DatabaseIdentityStoreDefinition annotation = databaseStore.get().getAnnotation(DatabaseIdentityStoreDefinition.class);
             return TomEEELInvocationHandler.of(DatabaseIdentityStoreDefinition.class, annotation, beanManager);
         };
     }
 
     private Supplier<LdapIdentityStoreDefinition> createLdapIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
         return () -> {
-            final LdapIdentityStoreDefinition annotation = ldapStore.get()
-                                                                                    .getAnnotation(
-                                                                                        LdapIdentityStoreDefinition.class);
-
+            final LdapIdentityStoreDefinition annotation = ldapStore.get().getAnnotation(LdapIdentityStoreDefinition.class);
             return TomEEELInvocationHandler.of(LdapIdentityStoreDefinition.class, annotation, beanManager);
         };
+    }
+
+    private OpenIdAuthenticationMechanismDefinition createOpenIdAuthenticationMechanismDefinition(final BeanManager bm) {
+        final OpenIdAuthenticationMechanismDefinition annotation = oidcMechanism.get()
+                .getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(
+                TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, bm));
+    }
+
+    private <T> Bean<T> createBean(final Class<T> beanType, BeanManager bm) {
+        AnnotatedType<T> annotatedType = bm.createAnnotatedType(beanType);
+        return bm.createBean(
+                bm.createBeanAttributes(annotatedType),
+                beanType,
+                bm.getInjectionTargetFactory(annotatedType));
     }
 }

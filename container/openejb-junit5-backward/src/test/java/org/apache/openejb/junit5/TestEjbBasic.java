@@ -21,10 +21,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.junit.ContextConfig;
 import org.apache.openejb.junit.Property;
 import org.apache.openejb.junit5.ejbs.BasicEjbLocal;
-import org.apache.openejb.junit5.jee.EjbContainerExtension;
-import org.apache.openejb.junit5.jee.transaction.TransactionExtension;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import jakarta.ejb.EJB;
 

@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.itest.util;
 
-import java.beans.PropertyEditorManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

@@ -19,6 +19,7 @@ package org.apache.openejb.jee;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlID;
@@ -99,8 +100,11 @@ import java.util.Map;
     "jmsConnectionFactories",
     "jmsDestinations",
     "moduleName",
-    "contextService"
-
+    "contextService",
+    "managedExecutor",
+    "managedScheduledExecutor",
+    "managedThreadFactory",
+    "others"
 })
 public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlTransient
@@ -195,7 +199,16 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version = "3.0";
     @XmlElement(name="context-service")
-    private KeyedCollection<String, ContextService> contextService;
+    protected KeyedCollection<String, ContextService> contextService;
+    @XmlElement(name="managed-executor")
+    protected KeyedCollection<String, ManagedExecutor> managedExecutor;
+    @XmlElement(name = "managed-scheduled-executor")
+    protected KeyedCollection<String, ManagedScheduledExecutor> managedScheduledExecutor;
+    @XmlElement(name = "managed-thread-factory")
+    protected KeyedCollection<String, ManagedThreadFactory> managedThreadFactory;
+
+    @XmlAnyElement
+    protected List<Object> others;
 
     @Override
     public String getJndiConsumerName() {
@@ -828,5 +841,31 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
             contextService = new KeyedCollection<String, ContextService>();
         }
         return this.contextService.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedExecutor> getManagedExecutorMap() {
+        if (managedExecutor == null) {
+            managedExecutor = new KeyedCollection<>();
+        }
+        return this.managedExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedScheduledExecutor> getManagedScheduledExecutorMap() {
+        if (managedScheduledExecutor == null) {
+            managedScheduledExecutor = new KeyedCollection<>();
+        }
+
+        return this.managedScheduledExecutor.toMap();
+    }
+
+    @Override
+    public Map<String, ManagedThreadFactory> getManagedThreadFactoryMap() {
+        if (managedThreadFactory == null) {
+            managedThreadFactory = new KeyedCollection<>();
+        }
+
+        return this.managedThreadFactory.toMap();
     }
 }

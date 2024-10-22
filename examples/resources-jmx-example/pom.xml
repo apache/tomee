@@ -22,11 +22,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-jmx</artifactId>
   <packaging>pom</packaging>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M4-SNAPSHOT</version>
   <name>TomEE :: Examples :: Resources/JMX Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.0-M4-SNAPSHOT</tomee.version>
   </properties>
   <modules>
     <module>resources-jmx-ejb</module>
@@ -52,7 +52,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>3.13.0</version>
           <configuration>
             <source>1.8</source>
             <target>1.8</target>

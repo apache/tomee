@@ -21,14 +21,12 @@ package org.superbiz.rest;
 import org.superbiz.injection.jpa.Movie;
 import org.superbiz.injection.jpa.Movies;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Lock;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+
 import javax.sql.DataSource;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

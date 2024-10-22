@@ -17,20 +17,17 @@
 package org.apache.tomee.catalina.security;
 
 import org.apache.catalina.Container;
-import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
-import org.apache.openejb.assembler.classic.DelegatePermissionCollection;
 import org.apache.openejb.assembler.classic.PolicyContext;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 
-import jakarta.security.jacc.PolicyContextException;
 import jakarta.security.jacc.WebResourcePermission;
 import jakarta.security.jacc.WebRoleRefPermission;
 import jakarta.security.jacc.WebUserDataPermission;
 import jakarta.servlet.ServletContext;
-import java.security.PermissionCollection;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

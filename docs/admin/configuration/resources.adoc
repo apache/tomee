@@ -320,26 +320,6 @@ Foo.destination =
 
 Specifies the name of the topic
 
-
-== org.omg.CORBA.ORB
-
-NOTE: to use it you need to add an implementation of corba.
-
-Declarable in tomee.xml via
-
-[source,xml]
-----
-<Resource id="Foo" type="org.omg.CORBA.ORB" />
-----
-
-Declarable in properties via
-
-[source,properties]
-----
-Foo = new://Resource?type=org.omg.CORBA.ORB
-----
-
-
 == jakarta.mail.Session
 
 A mail session.

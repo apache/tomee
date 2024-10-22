@@ -153,7 +153,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                 try {
                     final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
                     final Class<?> clazz = cp.getClass();
-                    return clazz.getDeclaredMethod("addURL", URL.class);
+                    return clazz.getDeclaredMethod("getURLs");
                 } catch (final Exception e) {
                     throw new LoaderRuntimeException(e);
                 }
@@ -168,7 +168,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
             final Method getURLsMethod = getGetURLsMethod();
             //noinspection NullArgumentToVariableArgMethod
-            final URL[] urls = (URL[]) getURLsMethod.invoke(cp, (Object) null);
+            final URL[] urls = (URL[]) getURLsMethod.invoke(cp);
 
             if (urls.length < 1) {
                 return;

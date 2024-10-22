@@ -24,14 +24,14 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-embedded</artifactId>
   <packaging>jar</packaging>
   <name>TomEE :: TomEE :: TomEE Embedded</name>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M4-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -48,7 +48,7 @@
               https://github.com/apache/tomcat/blob/main/java/org/apache/tomcat/util/scan/StandardJarScanner.java#L467
 
               We end up with things like
-              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/10.0.0-M2-SNAPSHOT/tomee-config-10.0.0-M2-SNAPSHOT.jar
+              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/10.0.0-M4-SNAPSHOT/tomee-config-10.0.0-M4-SNAPSHOT.jar
               <addClasspath>true</addClasspath>
               -->
             </manifest>
@@ -113,16 +113,16 @@
                   <exclude>org.cryptacular:cryptacular</exclude>
                   <exclude>org.bouncycastle:bcprov-jdk15to18</exclude>
                   <exclude>org.apache.neethi:neethi</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-bindings-soap</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-bindings-xml</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-frontend-simple</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-wsdl</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-databinding-jaxb</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-ws-addr</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-ws-security</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-ws-policy</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-security-saml</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-bindings-soap</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-bindings-xml</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-frontend-simple</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-wsdl</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-databinding-jaxb</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-ws-addr</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-ws-security</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-ws-policy</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-security-saml</exclude>
                   <exclude>org.apache.ws.xmlschema:xmlschema-core</exclude>
                   <exclude>xml-resolver:xml-resolver</exclude>
                   <exclude>com.sun.xml.messaging.saaj:saaj-impl</exclude>
@@ -155,16 +155,16 @@
                   <exclude>${project.groupId}:tomee-jaxrs</exclude>
                   <exclude>${project.groupId}:openejb-rest</exclude>
                   <exclude>${project.groupId}:openejb-cxf-rs</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-service-description</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-client</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-frontend-jaxrs</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-extension-search</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-json-basic</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-cors</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-oauth2</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose-jaxrs</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-security-jose</exclude>
-                  <exclude>org.apache.cxf:cxf-rt-rs-extension-providers</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-service-description</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-client</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-frontend-jaxrs</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-extension-search</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-json-basic</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-security-cors</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-security-oauth2</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-security-jose-jaxrs</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-security-jose</exclude>
+                  <exclude>io.github.rzo1.org.apache.cxf:cxf-rt-rs-extension-providers</exclude>
                   <exclude>org.apache.johnzon:johnzon-jaxrs</exclude>
                   <exclude>org.apache.johnzon:johnzon-mapper</exclude>
                 </excludes>
@@ -339,16 +339,6 @@
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-impl</artifactId>
       <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-beanutils-core</artifactId>
-          <groupId>commons-beanutils</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <artifactId>commons-beanutils</artifactId>
-      <groupId>commons-beanutils</groupId>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -516,7 +506,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcmail-jdk15to18</artifactId>
-      <version>1.73</version>
+      <version>1.78.1</version>
       <scope>test</scope>
     </dependency>
 

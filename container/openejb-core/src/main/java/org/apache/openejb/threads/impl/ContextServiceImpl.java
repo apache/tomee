@@ -16,23 +16,24 @@
  */
 package org.apache.openejb.threads.impl;
 
+import jakarta.enterprise.concurrent.ContextService;
 import jakarta.enterprise.concurrent.ContextServiceDefinition;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedTask;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
 import jakarta.enterprise.concurrent.spi.ThreadContextRestorer;
 import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
-import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.resource.thread.ManagedExecutorServiceImplFactory;
+import org.apache.openejb.threads.future.CUCompletableFuture;
 import org.apache.openejb.threads.task.CUTask;
 
-import jakarta.enterprise.concurrent.ContextService;
-import jakarta.enterprise.concurrent.ManagedTask;
-import jakarta.transaction.Transaction;
-
+import javax.naming.NamingException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -45,24 +46,23 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ContextServiceImpl implements ContextService {
+public class ContextServiceImpl implements ContextService, Serializable {
+    private final List<ThreadContextProvider> propagated;
+    private final List<ThreadContextProvider> cleared;
+    private final List<ThreadContextProvider> unchanged;
 
-    private static final HashMap<String, String> EMPTY_PROPS = new HashMap<String, String>();
+    // TODO is lost after serialization, probably need to store some reference that can be resolved again after deserializing
+    private transient ManagedExecutorService mes;
 
-    private final List<ThreadContextProvider> propagated = new ArrayList<>();
-    private final List<ThreadContextProvider> cleared = new ArrayList<>();
-    private final List<ThreadContextProvider> unchanged = new ArrayList<>();
-
-    public List<ThreadContextProvider> getPropagated() {
-        return propagated;
+    public ContextServiceImpl(List<ThreadContextProvider> propagated, List<ThreadContextProvider> cleared, List<ThreadContextProvider> unchanged) {
+        this.propagated = propagated;
+        this.cleared = cleared;
+        this.unchanged = unchanged;
     }
 
-    public List<ThreadContextProvider> getCleared() {
-        return cleared;
-    }
-
-    public List<ThreadContextProvider> getUnchanged() {
-        return unchanged;
+    public ContextServiceImpl(ContextServiceImpl other, ManagedExecutorService mes) {
+        this(other.propagated, other.cleared, other.unchanged);
+        this.mes = mes;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public Object createContextualProxy(final Object instance, final Class<?>... interfaces) {
-        return createContextualProxy(instance, EMPTY_PROPS, interfaces);
+        return createContextualProxy(instance, Map.of(), interfaces);
     }
 
     @Override
@@ -117,7 +117,17 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public Object createContextualProxy(final Object instance, final Map<String, String> executionProperties, final Class<?>... interfaces) {
-        return Proxy.newProxyInstance(instance.getClass().getClassLoader(), interfaces, new CUHandler(instance, executionProperties));
+        if (instance == null) {
+            throw new IllegalArgumentException("Cannot create contextual proxy, instance is null");
+        }
+
+        for (Class<?> intf : interfaces) {
+            if (!intf.isInstance(instance)) {
+                throw new IllegalArgumentException("Cannot create contextual proxy, instance is not an instance of " + intf.getName());
+            }
+        }
+
+        return Proxy.newProxyInstance(instance.getClass().getClassLoader(), interfaces, new CUHandler(instance, executionProperties, this));
     }
 
     @Override
@@ -132,12 +142,12 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public <T> CompletableFuture<T> withContextCapture(final CompletableFuture<T> completableFuture) {
-        return createContextualProxy(completableFuture, CompletableFuture.class);
+        return copyInternal(completableFuture);
     }
 
     @Override
     public <T> CompletionStage<T> withContextCapture(final CompletionStage<T> completionStage) {
-        return createContextualProxy(completionStage, CompletionStage.class);
+        return copyInternal(completionStage);
     }
 
     public Snapshot snapshot(final Map<String, String> props) {
@@ -195,7 +205,7 @@ public class ContextServiceImpl implements ContextService {
 
         final List<ThreadContextRestorer> restorers = new ArrayList<>();
 
-        for (ThreadContextSnapshot tcs : snapshot.getSnapshots()) {
+        for (ThreadContextSnapshot tcs : snapshot.snapshots()) {
             try {
                 restorers.add(0, tcs.begin());
             } catch (Throwable t) {
@@ -208,23 +218,80 @@ public class ContextServiceImpl implements ContextService {
 
     public void exit(final State state) {
         if (state != null) {
-            final List<ThreadContextRestorer> restorers = state.getRestorers();
+            final List<ThreadContextRestorer> restorers = state.restorers();
             for (ThreadContextRestorer restorer : restorers) {
                 restorer.endContext();
             }
         }
     }
 
-    private final class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
+    private <U> CompletableFuture<U> copyInternal(CompletionStage<U> future) {
+        final CUCompletableFuture<U> managedFuture = new CUCompletableFuture<>(getManagedExecutorService(), this);
+        future.whenComplete((result, exception) -> {
+            if (exception == null) {
+                managedFuture.complete(result);
+            } else {
+                managedFuture.completeExceptionally(exception);
+            }
+        });
+        return managedFuture;
+    }
+
+    protected ManagedExecutorService getManagedExecutorService() {
+        if (mes == null) {
+            try {
+                ManagedExecutorServiceImpl defaultMes = ManagedExecutorServiceImplFactory.lookup("java:comp/DefaultManagedExecutorService");
+                mes = new ManagedExecutorServiceImpl(defaultMes.getDelegate(), this);
+            } catch (NamingException e) {
+                throw new OpenEJBRuntimeException(e);
+            }
+        }
+
+        return mes;
+    }
+
+    private final static class CUHandler extends CUTask<Object> implements InvocationHandler, Serializable {
         private final Object instance;
         private final Map<String, String> properties;
-        private final boolean suspendTx;
 
-        private CUHandler(final Object instance, final Map<String, String> props) {
-            super(instance, ContextServiceImpl.this);
+        private CUHandler(final Object instance, final Map<String, String> props, ContextServiceImpl contextService) {
+            super(instance, reconfigureContextService(contextService, props), props);
+
             this.instance = instance;
             this.properties = props;
-            this.suspendTx = ManagedTask.SUSPEND.equals(props.get(ManagedTask.TRANSACTION));
+        }
+
+        private static ContextServiceImpl reconfigureContextService(ContextServiceImpl contextService, Map<String, String> props) {
+            if (props == null || !props.containsKey(ManagedTask.TRANSACTION)) {
+                return contextService;
+            }
+
+            ArrayList<ThreadContextProvider> propagated = new ArrayList<>(contextService.propagated);
+            ArrayList<ThreadContextProvider> cleared = new ArrayList<>(contextService.cleared);
+            ArrayList<ThreadContextProvider> unchanged = new ArrayList<>(contextService.unchanged);
+
+            if (ManagedTask.SUSPEND.equals(props.get(ManagedTask.TRANSACTION))) {
+                if (!cleared.contains(TxThreadContextProvider.INSTANCE)) {
+                    cleared.add(TxThreadContextProvider.INSTANCE);
+                }
+
+                propagated.remove(TxThreadContextProvider.INSTANCE);
+                unchanged.remove(TxThreadContextProvider.INSTANCE);
+            }
+
+            if (ManagedTask.USE_TRANSACTION_OF_EXECUTION_THREAD.equals(props.get(ManagedTask.TRANSACTION))) {
+                if (!propagated.contains(TxThreadContextProvider.INSTANCE)) {
+                    propagated.add(TxThreadContextProvider.INSTANCE);
+                }
+
+                cleared.remove(TxThreadContextProvider.INSTANCE);
+                unchanged.remove(TxThreadContextProvider.INSTANCE);
+            }
+
+            return new ContextServiceImpl(
+                    new ArrayList<>(propagated),
+                    new ArrayList<>(cleared),
+                    new ArrayList<>(unchanged));
         }
 
         @Override
@@ -233,48 +300,12 @@ public class ContextServiceImpl implements ContextService {
                 return method.invoke(this, args);
             }
 
-            final Transaction suspendedTx;
-            if (suspendTx) {
-                suspendedTx = OpenEJB.getTransactionManager().suspend();
-            } else {
-                suspendedTx = null;
-            }
-
-            try {
-                return invoke(new Callable<Object>() {
-                    @Override
-                    public Object call() throws Exception {
-                        return method.invoke(instance, args);
-                    }
-                });
-            } finally {
-                if (suspendedTx != null) {
-                    OpenEJB.getTransactionManager().resume(suspendedTx);
-                }
-            }
+            return invoke(() -> method.invoke(instance, args));
         }
     }
 
-    public class State {
-        private final List<ThreadContextRestorer> restorers;
-
-        public State(final List<ThreadContextRestorer> restorers) {
-            this.restorers = restorers;
-        }
-
-        public List<ThreadContextRestorer> getRestorers() {
-            return restorers;
-        }
-    }
-    public class Snapshot {
-        private final List<ThreadContextSnapshot> snapshots;
-
-        public Snapshot(final List<ThreadContextSnapshot> snapshots) {
-            this.snapshots = snapshots;
-        }
-
-        public List<ThreadContextSnapshot> getSnapshots() {
-            return snapshots;
-        }
-    }
+    // Not serializable by design because e.g. ApplicationThreadContextProvider holds
+    // a ClassLoader to restore which is not serializable
+    public record State(List<ThreadContextRestorer> restorers) { }
+    public record Snapshot(List<ThreadContextSnapshot> snapshots) implements Serializable { }
 }

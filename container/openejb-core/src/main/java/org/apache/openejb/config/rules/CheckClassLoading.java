@@ -17,7 +17,6 @@
 
 package org.apache.openejb.config.rules;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ClientModule;
@@ -130,7 +129,8 @@ public class CheckClassLoading extends ValidationBase {
             for (final Map.Entry<String, Collection<String>> entry2 : cl2.fileByArchive.entrySet()) {
                 final Collection<String> v1 = entry1.getValue();
                 final Collection<String> v2 = entry2.getValue();
-                final Collection<String> inter = CollectionUtils.intersection(v1, v2);
+                final Collection<String> inter = new ArrayList<>(v1);
+                inter.retainAll(v2);
 
                 if (inter.size() == 0) {
                     continue;

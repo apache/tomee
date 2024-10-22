@@ -17,7 +17,6 @@
 package org.apache.openejb.timer;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.junit.Test;

@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
   <artifactId>examples</artifactId>
   <packaging>pom</packaging>
@@ -75,7 +75,6 @@
     <module>ejb-webservice</module>
     <module>groovy-cdi</module>
     <module>groovy-jpa</module>
-    <module>groovy-spock</module>
     <module>helloworld-weblogic</module>
     <module>injection-of-connectionfactory</module>
     <module>injection-of-datasource</module>
@@ -92,7 +91,6 @@
     <module>jpa-hibernate</module>
     <module>jpa-hibernate-arquillian</module>
     <module>jpa-enumerated</module>
-    <module>jsf-managedBean-and-ejb</module>
     <module>jsf-cdi-and-ejb</module>
     <module>junit5-application-composer</module>
     <module>junit5-arquillian-multiple-tomee</module>
@@ -210,6 +208,7 @@
     <!-- Jakarta Security Examples -->
     <module>security-tomcat-user-identitystore</module>
     <module>security-custom-identitystore</module>
+    <module>security-openid</module>
 
   </modules>
   <profiles>
@@ -220,7 +219,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.3.2</version>
+            <version>3.10.1</version>
             <configuration>
               <skip>true</skip>
             </configuration>

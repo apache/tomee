@@ -38,7 +38,7 @@ import jakarta.jms.Queue;
 import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 import jakarta.jms.XAConnection;
-import jakarta.jms.XAConnectionFactory;
+
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;

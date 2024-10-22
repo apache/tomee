@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>moviefun-ear-parent</artifactId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>moviefun-functional-test</artifactId>
@@ -49,7 +49,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.7.1.Final</version>
+        <version>1.9.1.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -76,18 +76,18 @@
     <dependency>
       <groupId>jakarta.servlet.jsp.jstl</groupId>
       <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-      <version>2.0.0</version>
+      <version>3.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
@@ -99,19 +99,19 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <!--<classifier>uber</classifier> -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
+      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.8.0.Final</version>
+      <version>1.9.1.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -129,7 +129,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

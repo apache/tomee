@@ -19,7 +19,7 @@
     <parent>
         <artifactId>tck</artifactId>
         <groupId>org.apache.tomee</groupId>
-        <version>10.0.0-M2-SNAPSHOT</version>
+        <version>10.0.0-M4-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,12 +33,12 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Dependency and Plugin Versions -->
-        <jakarta.concurrent.version>3.0.3</jakarta.concurrent.version>
+        <jakarta.concurrent.version>3.0.4</jakarta.concurrent.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <testng.version>7.5.1</testng.version>
         <sigtest.version>1.6</sigtest.version>
-        <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
-        <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
+        <maven.dep.plugin.version>3.8.0</maven.dep.plugin.version>
+        <maven.comp.plugin.version>3.13.0</maven.comp.plugin.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 
         <suiteXmlFile>suite-web.xml</suiteXmlFile>
@@ -120,6 +120,12 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbytools</artifactId>
+            <version>${version.derby}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyshared</artifactId>
             <version>${version.derby}</version>
             <scope>provided</scope>
         </dependency>

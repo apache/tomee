@@ -20,7 +20,6 @@ package org.superbiz.model;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Date;
 
 public class User {
 

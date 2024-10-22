@@ -18,9 +18,6 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
-import org.apache.activemq.broker.region.Destination;
-import org.apache.activemq.broker.region.Subscription;
-import org.apache.activemq.command.ActiveMQTopic;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;

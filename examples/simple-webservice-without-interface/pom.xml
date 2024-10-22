@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-webservice-without-interface</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M4-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple Webservice Without Interface</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,7 +33,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.13.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -68,7 +68,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
@@ -83,7 +83,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.0.1</version>
+      <version>2.16.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

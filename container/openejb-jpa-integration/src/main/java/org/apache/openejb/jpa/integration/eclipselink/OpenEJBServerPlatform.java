@@ -20,6 +20,7 @@ import org.apache.geronimo.transaction.manager.TransactionImpl;
 import org.eclipse.persistence.platform.server.JMXEnabledPlatform;
 import org.eclipse.persistence.platform.server.JMXServerPlatformBase;
 import org.eclipse.persistence.sessions.DatabaseSession;
+import org.eclipse.persistence.sessions.ExternalTransactionController;
 import org.eclipse.persistence.transaction.AbstractSynchronizationListener;
 import org.eclipse.persistence.transaction.JTATransactionController;
 
@@ -46,7 +47,7 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase implements JMXE
     }
 
     @Override
-    public Class<?> getExternalTransactionControllerClass() {
+    public Class<? extends ExternalTransactionController> getExternalTransactionControllerClass() {
         return OpenEJBJTATransactionController.class;
     }
     

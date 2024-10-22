@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.test.stateful;
 
-import org.apache.openejb.test.TestFailureException;
-
-import jakarta.ejb.EJBObject;
 import jakarta.ejb.EJBHome;
 import java.rmi.RemoteException;
 

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-opentracing-tck</artifactId>
@@ -32,7 +32,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>3.5.0</version>
         <configuration>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.opentracing:microprofile-opentracing-tck</dependency>
@@ -112,7 +112,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
       <version>${version.cxf}</version>
       <scope>test</scope>

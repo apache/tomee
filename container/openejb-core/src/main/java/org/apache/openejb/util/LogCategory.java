@@ -51,7 +51,6 @@ public final class LogCategory {
     public static final LogCategory ACTIVEMQ = new LogCategory("org.apache.activemq");
     public static final LogCategory GERONIMO = new LogCategory("org.apache.geronimo");
     public static final LogCategory OPENJPA = new LogCategory("openjpa");
-    public static final LogCategory CORBA_ADAPTER = new LogCategory("CORBA-Adapter");
     public static final LogCategory AXIS = new LogCategory("axis");
     public static final LogCategory AXIS2 = new LogCategory("axis");
     public static final LogCategory CXF = new LogCategory("cxf");
@@ -61,6 +60,7 @@ public final class LogCategory {
     public static final LogCategory OPENEJB_SQL = OPENEJB.createChild("sql");
     public static final LogCategory MONITORING = OPENEJB.createChild("monitoring");
     public static final LogCategory MICROPROFILE = OPENEJB.createChild("microprofile");
+    public static final LogCategory TOMEE_SECURITY = new LogCategory("security");
 
     private LogCategory(final String name) {
         this.name = name == null ? "" : name;

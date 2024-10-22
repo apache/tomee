@@ -17,7 +17,6 @@
 package org.superbiz.movie;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import java.util.ArrayList;
 import java.util.List;

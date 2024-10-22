@@ -494,6 +494,9 @@ public class GenerateBoms {
             if (jar.getName().equals("tomcat-coyote.jar")) {
                 return new Artifact("org.apache.tomcat", "tomcat-coyote", "${tomcat.version}", null);
             }
+            if (jar.getName().equals("tomcat-coyote-ffm.jar")) {
+                return new Artifact("org.apache.tomcat", "tomcat-coyote-ffm", "${tomcat.version}", null);
+            }
             if (jar.getName().equals("tomcat-dbcp.jar")) {
                 return new Artifact("org.apache.tomcat", "tomcat-dbcp", "${tomcat.version}", null);
             }

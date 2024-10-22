@@ -41,6 +41,10 @@
       <outputDirectory>/</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.build.directory}/webjars-resources/META-INF/resources</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
@@ -111,7 +115,6 @@
         -->
         <!-- exclude shaded artifacts because they are under our own groupId -->
         <exclude>org.apache.commons.dbcp2:*</exclude>
-        <exclude>org.metatype.sxc:*</exclude>
         <exclude>org.apache.taglibs:*</exclude>
 
         <!-- jakartaee-api -->
@@ -155,7 +158,7 @@
       <useTransitiveFiltering>true</useTransitiveFiltering>
       <includes>
         <include>org.apache.tomee:tomee-loader</include>
-        <include>org.codehaus.swizzle:swizzle-stream</include>
+        <include>org.tomitribe.swizzle:swizzle</include>
       </includes>
     </dependencySet>
     <dependencySet>

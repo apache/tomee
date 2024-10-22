@@ -19,6 +19,7 @@ package org.apache.tomee.microprofile.metrics;
 import io.smallrye.metrics.SharedMetricRegistries;
 import io.smallrye.metrics.legacyapi.LegacyMetricRegistryAdapter;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.util.Join;
 import org.eclipse.microprofile.metrics.Metadata;
@@ -49,6 +50,10 @@ public class VendorMetrics {
     private static final Logger LOGGER = Logger.getLogger(VendorMetrics.class.getName());
 
     public void afterApplicationDeployed(@Observes AssemblerAfterApplicationCreated event) {
+        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
+            return;
+        }
+
         final MetricRegistry registry = SharedMetricRegistries.getOrCreate(MetricRegistry.VENDOR_SCOPE);
 
         if (! (registry instanceof LegacyMetricRegistryAdapter)) {

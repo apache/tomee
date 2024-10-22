@@ -23,7 +23,6 @@ import org.apache.openejb.junit.RunTestAs;
 import org.apache.openejb.junit5.ejbs.BasicEjbLocal;
 import org.apache.openejb.junit5.ejbs.SecuredEjbLocal;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.EJBAccessException;

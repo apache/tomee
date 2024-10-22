@@ -20,7 +20,7 @@ import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.tomee.util.QuickServerXmlParser;
-import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
+import org.tomitribe.swizzle.stream.ReplaceStringsInputStream;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

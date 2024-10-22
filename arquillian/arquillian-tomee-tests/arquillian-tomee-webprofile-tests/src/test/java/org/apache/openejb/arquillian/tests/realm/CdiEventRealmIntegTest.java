@@ -17,10 +17,8 @@
 package org.apache.openejb.arquillian.tests.realm;
 
 import org.apache.catalina.authenticator.BasicAuthenticator;
-import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.tomee.catalina.realm.CdiEventRealm;
-import org.apache.tomee.catalina.realm.event.UserPasswordAuthenticationEvent;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -32,16 +30,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Singleton;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 import java.net.URL;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 

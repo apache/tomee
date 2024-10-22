@@ -18,8 +18,6 @@ package org.apache.tomee.microprofile.tck.opentracing;
 
 import io.opentracing.mock.MockTracer;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Default;
 import jakarta.inject.Singleton;

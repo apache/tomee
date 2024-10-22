@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>scala-basic</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.0-M2-SNAPSHOT</version>
+  <version>10.0.0-M4-SNAPSHOT</version>
   <name>TomEE :: Examples :: Basic Scala</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,7 +43,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.13.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -53,7 +53,7 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>4.9.2</version>
         <executions>
           <execution>
             <goals>
@@ -70,7 +70,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>3.5.0</version>
         <configuration>
           <skipTests>true</skipTests>
         </configuration>
@@ -79,7 +79,7 @@
       <plugin>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>2.2.0</version>
         <configuration>
           <forkMode>never</forkMode>
           <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
@@ -133,7 +133,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.0-M2-SNAPSHOT</version>
+      <version>10.0.0-M4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -52,11 +52,6 @@
           <artifactId>commons-dbcp2</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency><!-- needed by myfaces -->
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>${version.commons-beanutils}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -357,18 +352,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>${version.geronimo-jcache_1.0_spec}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jcs-jcache</artifactId>
-      <version>${version.commons-jcs-cache}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
       <exclusions>
@@ -548,13 +531,13 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.swizzle</groupId>
-      <artifactId>swizzle-stream</artifactId>
+      <groupId>org.tomitribe</groupId>
+      <artifactId>swizzle</artifactId>
     </dependency>
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
-      <version>3.2</version>
+      <version>5.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -569,7 +552,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.0</version>
         <configuration>
           <dependentWarExcludes>
             %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],

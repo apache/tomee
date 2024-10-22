@@ -19,9 +19,7 @@ package org.apache.tomee.embedded;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 import org.apache.tomee.embedded.junit.jupiter.RunWithTomEEEmbedded;
-import org.apache.tomee.embedded.junit.jupiter.TomEEEmbeddedExtension;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;

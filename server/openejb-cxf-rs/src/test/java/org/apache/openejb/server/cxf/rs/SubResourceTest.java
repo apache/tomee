@@ -19,7 +19,6 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
@@ -36,7 +35,6 @@ import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;

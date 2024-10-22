@@ -17,7 +17,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
   <artifactId>tomee-webaccess</artifactId>
   <packaging>war</packaging>
@@ -25,7 +25,7 @@
   <properties>
     <tomee.build.name>${project.groupId}.tomee.webaccess</tomee.build.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.groovy>2.5.23</version.groovy>
+    <version.groovy>3.0.22</version.groovy>
   </properties>
   <profiles>
     <profile>
@@ -159,7 +159,7 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>requirejs-text</artifactId>
-      <version>2.0.10</version>
+      <version>2.0.15</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -223,7 +223,7 @@
     <dependency>
       <groupId>org.apache.ivy</groupId>
       <artifactId>ivy</artifactId>
-      <version>2.3.0</version>
+      <version>2.5.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -286,12 +286,12 @@
       <plugin>
         <groupId>org.codehaus.gmavenplus</groupId>
         <artifactId>gmavenplus-plugin</artifactId>
-        <version>1.5</version>
+        <version>4.0.1</version>
         <executions>
           <execution>
             <goals>
               <goal>compile</goal>
-              <goal>testCompile</goal>
+              <goal>compileTests</goal>
             </goals>
           </execution>
         </executions>
@@ -310,7 +310,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>codenarc-maven-plugin</artifactId>
-        <version>0.18-1</version>
+        <version>0.22-1</version>
         <configuration>
           <sourceDirectory>${project.basedir}/src/main/groovy</sourceDirectory>
           <groovyVersion>${version.groovy}</groovyVersion>

@@ -31,7 +31,7 @@ import jakarta.ejb.Singleton;
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSException;
-import jakarta.resource.ResourceException;
+
 import java.util.Properties;
 
 @SimpleLog

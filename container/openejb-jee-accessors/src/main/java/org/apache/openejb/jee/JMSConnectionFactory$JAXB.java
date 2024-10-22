@@ -1,21 +1,27 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
+ * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.openejb.jee;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import org.metatype.sxc.jaxb.JAXBObject;
 import org.metatype.sxc.jaxb.LifecycleCallback;
 import org.metatype.sxc.jaxb.RuntimeContext;
@@ -23,38 +29,45 @@ import org.metatype.sxc.util.Attribute;
 import org.metatype.sxc.util.XoXMLStreamReader;
 import org.metatype.sxc.util.XoXMLStreamWriter;
 
-import javax.xml.XMLConstants;
-import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.openejb.jee.Property$JAXB.readProperty;
+import static org.apache.openejb.jee.Property$JAXB.writeProperty;
 import static org.apache.openejb.jee.Text$JAXB.readText;
+import static org.apache.openejb.jee.Text$JAXB.writeText;
 
 @SuppressWarnings({
     "StringEquality"
 })
 public class JMSConnectionFactory$JAXB
-    extends JAXBObject<JMSConnectionFactory> {
+    extends JAXBObject<org.apache.openejb.jee.JMSConnectionFactory>
+{
 
 
     public JMSConnectionFactory$JAXB() {
-        super(JMSConnectionFactory.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "jms-connection-factoryType".intern()), Text$JAXB.class, Property$JAXB.class);
+        super(org.apache.openejb.jee.JMSConnectionFactory.class, null, new QName("http://java.sun.com/xml/ns/javaee".intern(), "jms-connection-factoryType".intern()), Text$JAXB.class, Property$JAXB.class);
     }
 
-    public static JMSConnectionFactory readJMSConnectionFactory(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public static org.apache.openejb.jee.JMSConnectionFactory readJMSConnectionFactory(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public void write(final XoXMLStreamWriter writer, final JMSConnectionFactory JMSConnectionFactory, final RuntimeContext context)
-        throws Exception {
+    public static void writeJMSConnectionFactory(XoXMLStreamWriter writer, org.apache.openejb.jee.JMSConnectionFactory JMSConnectionFactory, RuntimeContext context)
+        throws Exception
+    {
         _write(writer, JMSConnectionFactory, context);
     }
 
-    public final static JMSConnectionFactory _read(final XoXMLStreamReader reader, RuntimeContext context)
-        throws Exception {
+    public void write(XoXMLStreamWriter writer, org.apache.openejb.jee.JMSConnectionFactory JMSConnectionFactory, RuntimeContext context)
+        throws Exception
+    {
+        _write(writer, JMSConnectionFactory, context);
+    }
+
+    public static final org.apache.openejb.jee.JMSConnectionFactory _read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
 
         // Check for xsi:nil
         if (reader.isXsiNil()) {
@@ -65,164 +78,161 @@ public class JMSConnectionFactory$JAXB
             context = new RuntimeContext();
         }
 
-        final JMSConnectionFactory JMSConnectionFactory = new JMSConnectionFactory();
+        org.apache.openejb.jee.JMSConnectionFactory JMSConnectionFactory = new org.apache.openejb.jee.JMSConnectionFactory();
         context.beforeUnmarshal(JMSConnectionFactory, LifecycleCallback.NONE);
 
         ArrayList<Text> descriptions = null;
         List<Property> property = null;
 
         // Check xsi:type
-        final QName xsiType = reader.getXsiType();
-        if (xsiType != null) {
-            if (("jms-connection-factoryType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
-                return context.unexpectedXsiType(reader, JMSConnectionFactory.class);
+        QName xsiType = reader.getXsiType();
+        if (xsiType!= null) {
+            if (("jms-connection-factoryType"!= xsiType.getLocalPart())||("http://java.sun.com/xml/ns/javaee"!= xsiType.getNamespaceURI())) {
+                return context.unexpectedXsiType(reader, org.apache.openejb.jee.JMSConnectionFactory.class);
             }
         }
 
         // Read attributes
-        for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+        for (Attribute attribute: reader.getAttributes()) {
+            if (("id" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
-                final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
+                String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, JMSConnectionFactory);
                 JMSConnectionFactory.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI!= attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
-        for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: descriptions
-                final Text descriptionsItem = readText(elementReader, context);
-                if (descriptions == null) {
-                    descriptions = new ArrayList<Text>();
-                }
-                descriptions.add(descriptionsItem);
-            } else if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+        for (XoXMLStreamReader elementReader: reader.getChildElements()) {
+            if (("name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+                String nameRaw = elementReader.getElementText();
 
-                final String name;
+                String name;
                 try {
                     name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
                 JMSConnectionFactory.name = name;
-            } else if (("class-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+            } else if (("description" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: descriptions
+                Text descriptionsItem = readText(elementReader, context);
+                if (descriptions == null) {
+                    descriptions = new ArrayList<>();
+                }
+                descriptions.add(descriptionsItem);
+            } else if (("class-name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: className
+                String classNameRaw = elementReader.getElementText();
 
-                final String name;
+                String className;
                 try {
-                    name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                    className = Adapters.collapsedStringAdapterAdapter.unmarshal(classNameRaw);
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
-                JMSConnectionFactory.className = name;
-            } else if (("interface-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+                JMSConnectionFactory.className = className;
+            } else if (("interface-name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: interfaceName
+                String interfaceNameRaw = elementReader.getElementText();
 
-                final String name;
+                String interfaceName;
                 try {
-                    name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                    interfaceName = Adapters.collapsedStringAdapterAdapter.unmarshal(interfaceNameRaw);
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
-                JMSConnectionFactory.className = name;
-            } else if (("resource-adapter" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+                JMSConnectionFactory.interfaceName = interfaceName;
+            } else if (("resource-adapter" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: resourceAdapter
+                String resourceAdapterRaw = elementReader.getElementText();
 
-                final String name;
+                String resourceAdapter;
                 try {
-                    name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                    resourceAdapter = Adapters.collapsedStringAdapterAdapter.unmarshal(resourceAdapterRaw);
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
-                JMSConnectionFactory.resourceAdapter = name;
-            } else if (("user" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+                JMSConnectionFactory.resourceAdapter = resourceAdapter;
+            } else if (("user" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: user
+                String userRaw = elementReader.getElementText();
 
-                final String name;
+                String user;
                 try {
-                    name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                    user = Adapters.collapsedStringAdapterAdapter.unmarshal(userRaw);
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
-                JMSConnectionFactory.user = name;
-            } else if (("password" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+                JMSConnectionFactory.user = user;
+            } else if (("password" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: password
+                String passwordRaw = elementReader.getElementText();
 
-                final String name;
+                String password;
                 try {
-                    name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                    password = Adapters.collapsedStringAdapterAdapter.unmarshal(passwordRaw);
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
-                JMSConnectionFactory.password = name;
-            } else if (("client-id" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                // ELEMENT: name
-                final String nameRaw = elementReader.getElementAsString();
+                JMSConnectionFactory.password = password;
+            } else if (("clientId" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: clientId
+                String clientIdRaw = elementReader.getElementText();
 
-                final String name;
+                String clientId;
                 try {
-                    name = Adapters.collapsedStringAdapterAdapter.unmarshal(nameRaw);
-                } catch (final Exception e) {
+                    clientId = Adapters.collapsedStringAdapterAdapter.unmarshal(clientIdRaw);
+                } catch (Exception e) {
                     context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
                     continue;
                 }
 
-                JMSConnectionFactory.clientId = name;
-            } else if (("max-pool-size" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                final Integer portNumber = Integer.valueOf(elementReader.getElementAsString());
-                JMSConnectionFactory.maxPoolSize = portNumber;
-            } else if (("min-pool-size" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                final Integer portNumber = Integer.valueOf(elementReader.getElementAsString());
-                JMSConnectionFactory.minPoolSize = portNumber;
-            } else if (("transactional" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
-                JMSConnectionFactory.transactional = Boolean.parseBoolean(elementReader.getElementAsString());
-            } else if (("property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                JMSConnectionFactory.clientId = clientId;
+            } else if (("transactional" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: transactional
+                Boolean transactional = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                JMSConnectionFactory.transactional = transactional;
+            } else if (("max-pool-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: maxPoolSize
+                Integer maxPoolSize = Integer.valueOf(elementReader.getElementText());
+                JMSConnectionFactory.maxPoolSize = maxPoolSize;
+            } else if (("min-pool-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: minPoolSize
+                Integer minPoolSize = Integer.valueOf(elementReader.getElementText());
+                JMSConnectionFactory.minPoolSize = minPoolSize;
+            } else if (("property" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: property
-                final Property propertyItem = readProperty(elementReader, context);
+                Property propertyItem = readProperty(elementReader, context);
                 if (property == null) {
                     property = JMSConnectionFactory.property;
-                    if (property != null) {
+                    if (property!= null) {
                         property.clear();
                     } else {
                         property = new ArrayList<>();
                     }
                 }
                 property.add(propertyItem);
-            } else if (!Boolean.getBoolean("tomee.xml.passthrough")) { // so to pass if not important
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "class-name"), new QName("http://java.sun.com/xml/ns/javaee", "server-name"), new QName("http://java.sun.com/xml/ns/javaee", "port-number"), new QName("http://java.sun.com/xml/ns/javaee", "database-name"), new QName("http://java.sun.com/xml/ns/javaee", "url"), new QName("http://java.sun.com/xml/ns/javaee", "user"), new QName("http://java.sun.com/xml/ns/javaee", "password"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "login-timeout"), new QName("http://java.sun.com/xml/ns/javaee", "transactional"), new QName("http://java.sun.com/xml/ns/javaee", "isolation-level"), new QName("http://java.sun.com/xml/ns/javaee", "initial-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "min-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-idle-time"), new QName("http://java.sun.com/xml/ns/javaee", "max-statements"));
+            } else {
+                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "class-name"), new QName("http://java.sun.com/xml/ns/javaee", "interface-name"), new QName("http://java.sun.com/xml/ns/javaee", "resource-adapter"), new QName("http://java.sun.com/xml/ns/javaee", "user"), new QName("http://java.sun.com/xml/ns/javaee", "password"), new QName("http://java.sun.com/xml/ns/javaee", "clientId"), new QName("http://java.sun.com/xml/ns/javaee", "transactional"), new QName("http://java.sun.com/xml/ns/javaee", "max-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "min-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "property"));
             }
         }
-        if (descriptions != null) {
-            try {
-                JMSConnectionFactory.description.set(descriptions.toArray(new Text[descriptions.size()]));
-            } catch (final Exception e) {
-                context.setterError(reader, JMSConnectionFactory.class, "setDescriptions", Text[].class, e);
-            }
-        }
-        if (property != null) {
+        if (property!= null) {
             JMSConnectionFactory.property = property;
         }
 
@@ -231,14 +241,199 @@ public class JMSConnectionFactory$JAXB
         return JMSConnectionFactory;
     }
 
-    public final JMSConnectionFactory read(final XoXMLStreamReader reader, final RuntimeContext context)
-        throws Exception {
+    public final org.apache.openejb.jee.JMSConnectionFactory read(XoXMLStreamReader reader, RuntimeContext context)
+        throws Exception
+    {
         return _read(reader, context);
     }
 
-    public final static void _write(final XoXMLStreamWriter writer, final JMSConnectionFactory JMSConnectionFactory, RuntimeContext context)
-        throws Exception {
-        // no-op while not useful
+    public static final void _write(XoXMLStreamWriter writer, org.apache.openejb.jee.JMSConnectionFactory JMSConnectionFactory, RuntimeContext context)
+        throws Exception
+    {
+        if (JMSConnectionFactory == null) {
+            writer.writeXsiNil();
+            return ;
+        }
+
+        if (context == null) {
+            context = new RuntimeContext();
+        }
+
+        String prefix = writer.getUniquePrefix("http://java.sun.com/xml/ns/javaee");
+        if (org.apache.openejb.jee.JMSConnectionFactory.class!= JMSConnectionFactory.getClass()) {
+            context.unexpectedSubclass(writer, JMSConnectionFactory, org.apache.openejb.jee.JMSConnectionFactory.class);
+            return ;
+        }
+
+        context.beforeMarshal(JMSConnectionFactory, LifecycleCallback.NONE);
+
+
+        // ATTRIBUTE: id
+        String idRaw = JMSConnectionFactory.id;
+        if (idRaw!= null) {
+            String id = null;
+            try {
+                id = Adapters.collapsedStringAdapterAdapter.marshal(idRaw);
+            } catch (Exception e) {
+                context.xmlAdapterError(JMSConnectionFactory, "id", CollapsedStringAdapter.class, String.class, String.class, e);
+            }
+            writer.writeAttribute("", "", "id", id);
+        }
+
+        // ELEMENT: name
+        String nameRaw = JMSConnectionFactory.name;
+        String name = null;
+        try {
+            name = Adapters.collapsedStringAdapterAdapter.marshal(nameRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(JMSConnectionFactory, "name", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (name!= null) {
+            writer.writeStartElement(prefix, "name", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(name);
+            writer.writeEndElement();
+        } else {
+            context.unexpectedNullValue(JMSConnectionFactory, "name");
+        }
+
+        // ELEMENT: descriptions
+        Text[] descriptions = null;
+        try {
+            descriptions = JMSConnectionFactory.getDescriptions();
+        } catch (Exception e) {
+            context.getterError(JMSConnectionFactory, "descriptions", org.apache.openejb.jee.JMSConnectionFactory.class, "getDescriptions", e);
+        }
+        if (descriptions!= null) {
+            for (Text descriptionsItem: descriptions) {
+                if (descriptionsItem!= null) {
+                    writer.writeStartElement(prefix, "description", "http://java.sun.com/xml/ns/javaee");
+                    writeText(writer, descriptionsItem, context);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        // ELEMENT: className
+        String classNameRaw = JMSConnectionFactory.className;
+        String className = null;
+        try {
+            className = Adapters.collapsedStringAdapterAdapter.marshal(classNameRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(JMSConnectionFactory, "className", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (className!= null) {
+            writer.writeStartElement(prefix, "class-name", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(className);
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: interfaceName
+        String interfaceNameRaw = JMSConnectionFactory.interfaceName;
+        String interfaceName = null;
+        try {
+            interfaceName = Adapters.collapsedStringAdapterAdapter.marshal(interfaceNameRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(JMSConnectionFactory, "interfaceName", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (interfaceName!= null) {
+            writer.writeStartElement(prefix, "interface-name", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(interfaceName);
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: resourceAdapter
+        String resourceAdapterRaw = JMSConnectionFactory.resourceAdapter;
+        String resourceAdapter = null;
+        try {
+            resourceAdapter = Adapters.collapsedStringAdapterAdapter.marshal(resourceAdapterRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(JMSConnectionFactory, "resourceAdapter", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (resourceAdapter!= null) {
+            writer.writeStartElement(prefix, "resource-adapter", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(resourceAdapter);
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: user
+        String userRaw = JMSConnectionFactory.user;
+        String user = null;
+        try {
+            user = Adapters.collapsedStringAdapterAdapter.marshal(userRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(JMSConnectionFactory, "user", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (user!= null) {
+            writer.writeStartElement(prefix, "user", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(user);
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: password
+        String passwordRaw = JMSConnectionFactory.password;
+        String password = null;
+        try {
+            password = Adapters.collapsedStringAdapterAdapter.marshal(passwordRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(JMSConnectionFactory, "password", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (password!= null) {
+            writer.writeStartElement(prefix, "password", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(password);
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: clientId
+        String clientIdRaw = JMSConnectionFactory.clientId;
+        String clientId = null;
+        try {
+            clientId = Adapters.collapsedStringAdapterAdapter.marshal(clientIdRaw);
+        } catch (Exception e) {
+            context.xmlAdapterError(JMSConnectionFactory, "clientId", CollapsedStringAdapter.class, String.class, String.class, e);
+        }
+        if (clientId!= null) {
+            writer.writeStartElement(prefix, "clientId", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(clientId);
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: transactional
+        Boolean transactional = JMSConnectionFactory.transactional;
+        writer.writeStartElement(prefix, "transactional", "http://java.sun.com/xml/ns/javaee");
+        writer.writeCharacters(Boolean.toString(transactional));
+        writer.writeEndElement();
+
+        // ELEMENT: maxPoolSize
+        Integer maxPoolSize = JMSConnectionFactory.maxPoolSize;
+        if (maxPoolSize!= null) {
+            writer.writeStartElement(prefix, "max-pool-size", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(Integer.toString(maxPoolSize));
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: minPoolSize
+        Integer minPoolSize = JMSConnectionFactory.minPoolSize;
+        if (minPoolSize!= null) {
+            writer.writeStartElement(prefix, "min-pool-size", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(Integer.toString(minPoolSize));
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: property
+        List<Property> property = JMSConnectionFactory.property;
+        if (property!= null) {
+            for (Property propertyItem: property) {
+                writer.writeStartElement(prefix, "property", "http://java.sun.com/xml/ns/javaee");
+                if (propertyItem!= null) {
+                    writeProperty(writer, propertyItem, context);
+                } else {
+                    writer.writeXsiNil();
+                }
+                writer.writeEndElement();
+            }
+        }
+
+        context.afterMarshal(JMSConnectionFactory, LifecycleCallback.NONE);
     }
 
 }

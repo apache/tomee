@@ -23,7 +23,7 @@ package org.apache.openejb.jee;
  * @version $Revision$ $Date$
  */
 public class ManagedBean extends SessionBean {
-    private boolean hidden;
+    protected boolean hidden;
 
     public ManagedBean(final String ejbName, final String ejbClass) {
         super(ejbName, ejbClass, SessionType.MANAGED);

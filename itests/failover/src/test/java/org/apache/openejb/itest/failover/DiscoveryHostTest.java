@@ -24,7 +24,6 @@ import org.apache.openejb.loader.Zips;
 import org.apache.openejb.server.control.StandaloneServer;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
-import org.apache.openejb.util.OpenEjbVersion;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;

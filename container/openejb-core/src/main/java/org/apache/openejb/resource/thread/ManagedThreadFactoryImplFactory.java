@@ -17,18 +17,29 @@
 
 package org.apache.openejb.resource.thread;
 
+import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
 
 public class ManagedThreadFactoryImplFactory {
     private String prefix = "openejb-managed-thread-";
+    private Integer priority;
+    private String context;
 
     public ManagedThreadFactory create() {
-        return new ManagedThreadFactoryImpl(prefix);
+        return new ManagedThreadFactoryImpl(prefix, priority, ContextServiceImplFactory.lookupOrDefault(context));
     }
 
     public void setPrefix(final String prefix) {
         this.prefix = prefix;
+    }
+
+    public void setPriority(final int priority) {
+        this.priority = priority;
+    }
+
+    public void setContext(final String context) {
+        this.context = context;
     }
 }

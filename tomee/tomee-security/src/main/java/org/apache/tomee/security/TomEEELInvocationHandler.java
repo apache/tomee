@@ -24,12 +24,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TomEEELInvocationHandler implements InvocationHandler {
 
-    private static final Pattern EL_EXPRESSION_PATTERN = Pattern.compile("^[#$]\\{(.+)}$");
+    private static final Pattern EL_EXPRESSION_PATTERN = Pattern.compile("[#$]\\{([^{}]+)}");
 
     private final Annotation annotation;
     private final ELProcessor processor;
@@ -49,6 +51,12 @@ public class TomEEELInvocationHandler implements InvocationHandler {
         // so we can evaluate the EL and return the evaluated value
         if (method.getName().endsWith("Expression") && method.getReturnType().equals(String.class)) {
             return method.invoke(annotation, args);
+        }
+
+        // Nested annotation with possible EL attributes (e.g. OpenIdAuthenticationMechanismDefinition -> LogoutDefinition)
+        if (method.getReturnType().isAnnotation())
+        {
+            return of(((Class<Annotation>) method.getReturnType()), (Annotation) method.invoke(annotation, args), processor);
         }
 
         // If return value is not a String or an array of string, there is another method with "Expression" at the end and a return type String
@@ -85,12 +93,22 @@ public class TomEEELInvocationHandler implements InvocationHandler {
 
         // if the return type is a String, we may always get an expression to evaluate.
         // check if it's something we can evaluate
-        final String value = (String) method.invoke(annotation, args);
-        if (value != null && value.length() > 3) {
-            final String sanitizedExpression = sanitizeExpression(value);
-            if (!value.equals(sanitizedExpression)) {
-                return eval(processor, sanitizedExpression, method.getReturnType());
+        // done in a loop to cover the following case from TCK: redirectURI = "${openIdConfig.redirectURI}"
+        // -> resolves to ${baseURL}/Callback which needs to be fed through EL again to make sense
+        String value = (String) method.invoke(annotation, args);
+        Set<String> previousValues = new HashSet<>();
+        while (value != null && value.length() > 3 && containsExpression(value)) {
+            if (previousValues.contains(value)) {
+                throw new IllegalArgumentException("EL in " + method.getName() + " can not be evaluated");
             }
+
+            previousValues.add(value);
+            value = EL_EXPRESSION_PATTERN.matcher(value).replaceAll(matchResult -> {
+                String evaluated = eval(processor, matchResult.group(1), String.class);
+
+                // replace $ with \$ to avoid regex group lookups
+                return evaluated.replace("$", "\\$");
+            });
         }
 
         return value;
@@ -98,9 +116,20 @@ public class TomEEELInvocationHandler implements InvocationHandler {
 
     // following should be abstracted into a wrapper of the ELProcessor utility class
 
+    /**
+     * @param rawExpression possible expression to test
+     * @return true if the _whole_ given rawExpression is an EL expression
+     */
     public static boolean isExpression(final String rawExpression) {
-        final Matcher matcher = EL_EXPRESSION_PATTERN.matcher(rawExpression);
-        return matcher.matches();
+        return EL_EXPRESSION_PATTERN.matcher(rawExpression).matches();
+    }
+
+    /**
+     * @param rawExpression possible expression to test
+     * @return true if one part (or multiple) of the given rawExpression is an EL expression
+     */
+    public static boolean containsExpression(final String rawExpression) {
+        return EL_EXPRESSION_PATTERN.matcher(rawExpression).find();
     }
 
     public static String sanitizeExpression(final String rawExpression) {
@@ -110,10 +139,10 @@ public class TomEEELInvocationHandler implements InvocationHandler {
             return rawExpression;
         }
 
-        return matcher.replaceAll("$1");
+        return matcher.group(1);
     }
 
-    public static Object eval(final ELProcessor processor, final String sanitizedExpression, final Class<?> expectedType) {
+    public static <T> T eval(final ELProcessor processor, final String sanitizedExpression, final Class<T> expectedType) {
         // ELProcessor does not do a good job with enums, so try to be a bit better (not sure)
         // otherwise, let the EL processor do its best to convert into the expected value
         if (!isEnumOrArrayOfEnums(expectedType)) {
@@ -137,13 +166,13 @@ public class TomEEELInvocationHandler implements InvocationHandler {
                 final Enum<?>[] outcomeArray = (Enum<?>[]) Array.newInstance(enumType, 1);
                 outcomeArray[0] = enumConstant;
 
-                return outcomeArray;
+                return (T) outcomeArray;
             }
 
             // else not sure what else we can do but let the Object go
         }
 
-        return value;
+        return (T) value;
     }
 
     private static boolean isEnumOrArrayOfEnums(final Class type) {

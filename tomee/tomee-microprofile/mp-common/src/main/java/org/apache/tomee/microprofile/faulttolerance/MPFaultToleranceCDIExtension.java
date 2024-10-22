@@ -23,7 +23,6 @@ import jakarta.enterprise.inject.spi.AnnotatedMethod;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
-import org.apache.openejb.loader.SystemInstance;
 import org.eclipse.microprofile.faulttolerance.Asynchronous;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
@@ -33,7 +32,6 @@ import org.eclipse.microprofile.faulttolerance.Timeout;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This class is more a hack than an actual peace of integration code for SmallRye Fault Tolerance. It addresses an issue
@@ -65,13 +63,6 @@ public class MPFaultToleranceCDIExtension implements Extension {
      * @param <X> Type of the Injection to observe
      */
     <X> void addFaultToleranceInterceptorBinding(@Observes final ProcessAnnotatedType<X> pat, final BeanManager bm) {
-
-        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
-
-        if (mpScan.equals("none")) {
-            SystemInstance.get().setProperty(MPFaultToleranceCDIExtension.class.getName() + ".active", "false");
-            return;
-        }
 
         // check fault tolerance annotations on classes
         if (hasFaultToleranceAnnotations(pat.getAnnotatedType())) {

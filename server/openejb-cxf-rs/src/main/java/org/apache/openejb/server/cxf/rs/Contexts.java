@@ -26,11 +26,8 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.rest.ThreadLocalContextManager;
-import org.apache.openejb.threads.task.CUTask;
 
 import jakarta.annotation.Resource;
-import jakarta.enterprise.concurrent.ManagedExecutorService;
-import jakarta.enterprise.concurrent.ManagedTaskListener;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
@@ -57,7 +54,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 public final class Contexts {
     private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<>();

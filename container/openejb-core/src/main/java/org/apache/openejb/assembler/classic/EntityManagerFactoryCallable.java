@@ -123,7 +123,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             }
 
             if (unitInfo.getNonJtaDataSource() != null) {
-                final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
+               final ImportSql importer = new ImportSql(appClassLoader, unitInfo.getPersistenceUnitName(), unitInfo.getNonJtaDataSource());
                 if (importer.hasSomethingToImport()) {
                     emf.createEntityManager().close(); // to let OpenJPA create the database if configured this way
                     importer.doImport();

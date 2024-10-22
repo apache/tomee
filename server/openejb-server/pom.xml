@@ -24,7 +24,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-server</artifactId>
@@ -153,7 +153,6 @@
       jakarta.resource.spi.endpoint,
       jakarta.resource.spi.work,
       javax.rmi,
-      javax.rmi.CORBA,
       javax.security.auth,
       javax.security.auth.callback,
       javax.security.auth.login,
@@ -275,7 +274,6 @@
       org.eclipse.persistence.transaction;resolution:=optional,
       org.hibernate;resolution:=optional,
       org.hibernate.transaction;resolution:=optional,
-      org.omg.CORBA,
       org.osgi.framework;version="[1.5,2)",
       org.osgi.util.tracker;version="[1.4,2)",
       org.apache.openejb.quartz;resolution:=optional,

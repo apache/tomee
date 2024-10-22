@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.microprofile.tck.openapi;
 
-import java.util.Map;
-
 import org.apache.ziplock.JarLocation;
 import org.hamcrest.Matchers;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;

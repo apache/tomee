@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.Iterator;
 import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)

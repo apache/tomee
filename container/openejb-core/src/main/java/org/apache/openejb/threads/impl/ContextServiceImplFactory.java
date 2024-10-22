@@ -18,8 +18,14 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ContextServiceDefinition;
 import jakarta.enterprise.concurrent.spi.ThreadContextProvider;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +34,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 public class ContextServiceImplFactory {
+    public static final String AUTOMATIC_SINGLETON = "[automatic]";
+
+    private static ContextServiceImpl defaultSingleton;
 
     private final List<String> propagated = new ArrayList<>();
     private final List<String> cleared = new ArrayList<>();
@@ -67,7 +76,16 @@ public class ContextServiceImplFactory {
     }
 
     public static ContextServiceImpl newDefaultContextService() {
-        return new ContextServiceImplFactory().create();
+        ContextServiceImplFactory factory = new ContextServiceImplFactory();
+
+        // It's unclear what the default is, spec says (§ 3.3.4.3 Default Context Service):
+        //   The types of contexts to be propagated by this default ContextService from a contextualizing application component
+        //   must include naming context, class loader, and security information.
+        // But @ContextServiceDefinition defaults to propagated="Remaining", cleared="Transaction" unchanged=""
+        factory.setPropagated(ContextServiceDefinition.ALL_REMAINING);
+        factory.setCleared(ContextServiceDefinition.TRANSACTION);
+
+        return factory.create();
     }
 
     public static ContextServiceImpl newPropagateEverythingContextService() {
@@ -76,6 +94,54 @@ public class ContextServiceImplFactory {
         return factory.create();
     }
 
+
+    public static ContextServiceImpl getOrCreateDefaultSingleton() {
+        // Synchronization is left out here,
+        // it's rather expensive and there is no issue with multiple ContextServiceImpl being created in rare cases
+        // as there's no need to close/dispose it in a special manner
+        if (defaultSingleton == null) {
+            defaultSingleton = newDefaultContextService();
+        }
+
+        return defaultSingleton;
+    }
+
+    /**
+     * Looks up a ContextServiceImpl using the specified name.
+     * <code>[implicit]</code> is a special name that skips any JNDI lookups
+     * and immediately returns {@link ContextServiceImplFactory#getOrCreateDefaultSingleton()}.
+     * If the lookup fails (no name given or ContextService not bound) a warning is logged
+     * to inform the user about a misconfiguration,
+     * {@link ContextServiceImplFactory#getOrCreateDefaultSingleton()} is returned as a graceful fallback.
+     */
+    public static ContextServiceImpl lookupOrDefault(String name) {
+        if (AUTOMATIC_SINGLETON.equals(name)) {
+            return getOrCreateDefaultSingleton();
+        }
+
+        if (name == null || name.trim().isEmpty()) {
+            Logger.getInstance(LogCategory.OPENEJB, ContextServiceImplFactory.class)
+                    .warning("ContextService name is unspecified, falling back to default ContextService");
+
+            return ContextServiceImplFactory.getOrCreateDefaultSingleton();
+        }
+
+        try {
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            final Context context = containerSystem.getJNDIContext();
+            final Object obj = context.lookup("openejb/Resource/" + name);
+            if (!(obj instanceof ContextServiceImpl)) {
+                throw new IllegalArgumentException("Resource with id " + context
+                        + " is not a ContextService, but is " + obj.getClass().getName());
+            }
+            return (ContextServiceImpl) obj;
+        } catch (final NamingException e) {
+            Logger.getInstance(LogCategory.OPENEJB, ContextServiceImplFactory.class)
+                    .warning("Can't look up ContextService \"" + name + "\", falling back to default ContextService");
+
+            return ContextServiceImplFactory.getOrCreateDefaultSingleton();
+        }
+    }
 
     public ContextServiceImpl create() {
         // some complication around this is ContextServiceDefinition.ALL_REMAINING, which looks like it
@@ -99,9 +165,9 @@ public class ContextServiceImplFactory {
         final Map<String, ThreadContextProvider> threadContextProviders = new HashMap<>();
 
         // add the in-build ThreadContextProviders
-        threadContextProviders.put(ContextServiceDefinition.APPLICATION, new ApplicationThreadContextProvider());
-        threadContextProviders.put(ContextServiceDefinition.SECURITY, new SecurityThreadContextProvider());
-        threadContextProviders.put(ContextServiceDefinition.TRANSACTION, new TxThreadContextProvider());
+        threadContextProviders.put(ContextServiceDefinition.APPLICATION, ApplicationThreadContextProvider.INSTANCE);
+        threadContextProviders.put(ContextServiceDefinition.SECURITY, SecurityThreadContextProvider.INSTANCE);
+        threadContextProviders.put(ContextServiceDefinition.TRANSACTION, TxThreadContextProvider.INSTANCE);
         getThreadContextProviders().forEach(t -> threadContextProviders.putIfAbsent(t.getThreadContextType(), t));
 
         // Let's resolve what should actually be in each bucket:
@@ -151,12 +217,7 @@ public class ContextServiceImplFactory {
 //            suspendTx = true;
 //        }
 
-        final ContextServiceImpl contextService = new ContextServiceImpl();
-        contextService.getPropagated().addAll(resolvedPropagated);
-        contextService.getCleared().addAll(resolvedCleared);
-        contextService.getUnchanged().addAll(resolvedUnchanged);
-
-        return contextService;
+        return new ContextServiceImpl(resolvedPropagated, resolvedCleared, resolvedUnchanged);
     }
 
     protected List<ThreadContextProvider> getThreadContextProviders() {

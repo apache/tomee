@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "jms-destination-factoryType", propOrder = {
+@XmlType(name = "jms-destinationType", propOrder = {
         "name",
         "descriptions",
         "className",
@@ -48,7 +48,7 @@ public class JMSDestination implements Keyable<String> {
     protected String className;
     @XmlElement(name = "interface-name")
     protected String interfaceName;
-    @XmlElement(name = "interface-name")
+    @XmlElement(name = "destination-name")
     protected String destinationName;
     @XmlElement(name = "resource-adapter-name")
     protected String resourceAdapter;

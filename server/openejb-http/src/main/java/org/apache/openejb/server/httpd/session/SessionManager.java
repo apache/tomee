@@ -23,7 +23,6 @@ import org.apache.openejb.server.httpd.EndWebBeansListener;
 import org.apache.openejb.server.httpd.HttpSession;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
-import org.apache.webbeans.config.WebBeansContext;
 
 import java.util.ArrayList;
 import java.util.Collection;

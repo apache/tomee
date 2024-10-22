@@ -27,12 +27,10 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.enterprise.concurrent.ContextService;
 import jakarta.enterprise.concurrent.ManagedTask;
-import jakarta.enterprise.concurrent.ManagedTaskListener;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.Transaction;
 import jakarta.transaction.TransactionManager;
 import java.util.Collections;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

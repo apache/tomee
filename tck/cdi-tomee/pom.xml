@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.0-M2-SNAPSHOT</version>
+    <version>10.0.0-M4-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -186,19 +186,6 @@
       </exclusions>
     </dependency>
 
-    <!-- debugging: said otherwise you can remove them, kept to ease future debugging if needed -->
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jcache_1.0_spec</artifactId>
-      <version>${version.geronimo-jcache_1.0_spec}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jcs-jcache</artifactId>
-      <version>${version.commons-jcs-cache}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>

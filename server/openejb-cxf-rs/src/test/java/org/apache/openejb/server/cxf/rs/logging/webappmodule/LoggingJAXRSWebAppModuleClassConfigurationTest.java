@@ -23,7 +23,6 @@ import org.apache.openejb.server.cxf.rs.logging.LoggingJAXRSCommons;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testing.RandomPort;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

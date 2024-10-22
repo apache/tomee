@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Hashtable;
-import java.util.Optional;
 
 public class EjbContainerExtension implements AfterAllCallback, BeforeAllCallback, BeforeEachCallback {
 

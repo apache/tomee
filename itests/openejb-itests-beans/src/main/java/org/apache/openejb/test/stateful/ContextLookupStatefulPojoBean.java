@@ -26,7 +26,6 @@ import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
 import jakarta.ejb.EJBContext;
 import jakarta.ejb.SessionContext;
-import jakarta.ejb.Init;
 import jakarta.ejb.Remove;
 import javax.sql.DataSource;
 import jakarta.persistence.EntityManagerFactory;

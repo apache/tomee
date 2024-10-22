@@ -18,6 +18,9 @@
 package org.apache.openejb.config;
 
 import jakarta.enterprise.concurrent.ContextServiceDefinition;
+import jakarta.enterprise.concurrent.ManagedExecutorDefinition;
+import jakarta.enterprise.concurrent.ManagedScheduledExecutorDefinition;
+import jakarta.enterprise.concurrent.ManagedThreadFactoryDefinition;
 import jakarta.interceptor.AroundConstruct;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
@@ -78,6 +81,9 @@ import org.apache.openejb.jee.License;
 import org.apache.openejb.jee.Lifecycle;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.ManagedExecutor;
+import org.apache.openejb.jee.ManagedScheduledExecutor;
+import org.apache.openejb.jee.ManagedThreadFactory;
 import org.apache.openejb.jee.MessageAdapter;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MessageListener;
@@ -4082,6 +4088,53 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             //
+            // @ManagedExecutorDefinition
+            //
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ManagedExecutorDefinition.List.class)) {
+                final ManagedExecutorDefinition.List defs = annotated.getAnnotation(ManagedExecutorDefinition.List.class);
+                for (final ManagedExecutorDefinition definition : defs.value()) {
+                    buildManagedExecutorDefinition(consumer, definition);
+                }
+            }
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ManagedExecutorDefinition.class)) {
+                final ManagedExecutorDefinition definition = annotated.getAnnotation(ManagedExecutorDefinition.class);
+                buildManagedExecutorDefinition(consumer, definition);
+            }
+
+            //
+            // @ManagedScheduledExecutorDefinition
+            //
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ManagedScheduledExecutorDefinition.List.class)) {
+                final ManagedScheduledExecutorDefinition.List defs = annotated.getAnnotation(ManagedScheduledExecutorDefinition.List.class);
+                for (final ManagedScheduledExecutorDefinition definition : defs.value()) {
+                    buildManagedScheduledExecutorDefinition(consumer, definition);
+                }
+            }
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ManagedScheduledExecutorDefinition.class)) {
+                final ManagedScheduledExecutorDefinition definition = annotated.getAnnotation(ManagedScheduledExecutorDefinition.class);
+                buildManagedScheduledExecutorDefinition(consumer, definition);
+            }
+
+            //
+            // @ManagedThreadFactoryDefinition
+            //
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ManagedThreadFactoryDefinition.List.class)) {
+                final ManagedThreadFactoryDefinition.List defs = annotated.getAnnotation(ManagedThreadFactoryDefinition.List.class);
+                for (final ManagedThreadFactoryDefinition definition : defs.value()) {
+                    buildManagedThreadFactoryDefinition(consumer, definition);
+                }
+            }
+
+            for (final Annotated<Class<?>> annotated : annotationFinder.findMetaAnnotatedClasses(ManagedThreadFactoryDefinition.class)) {
+                final ManagedThreadFactoryDefinition definition = annotated.getAnnotation(ManagedThreadFactoryDefinition.class);
+                buildManagedThreadFactoryDefinition(consumer, definition);
+            }
+
+            //
             // @JMSConnectionFactoryDefinition
             //
 
@@ -4135,6 +4188,47 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             consumer.getContextServiceMap().put(definition.name(), contextService);
+        }
+
+        private void buildManagedExecutorDefinition(final JndiConsumer consumer, final ManagedExecutorDefinition definition) {
+            ManagedExecutor existing = consumer.getManagedExecutorMap().get(definition.name());
+            final ManagedExecutor managedExecutor = (existing != null) ? existing : new ManagedExecutor();
+
+            managedExecutor.setName(new JndiName());
+            managedExecutor.getName().setvalue(definition.name());
+            managedExecutor.setContextService(new JndiName());
+            managedExecutor.getContextService().setvalue(definition.context());
+            managedExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
+            managedExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+
+            consumer.getManagedExecutorMap().put(definition.name(), managedExecutor);
+        }
+
+        private void buildManagedScheduledExecutorDefinition(final JndiConsumer consumer, final ManagedScheduledExecutorDefinition definition) {
+            ManagedScheduledExecutor existing = consumer.getManagedScheduledExecutorMap().get(definition.name());
+            final ManagedScheduledExecutor managedScheduledExecutor = (existing != null) ? existing : new ManagedScheduledExecutor();
+
+            managedScheduledExecutor.setName(new JndiName());
+            managedScheduledExecutor.getName().setvalue(definition.name());
+            managedScheduledExecutor.setContextService(new JndiName());
+            managedScheduledExecutor.getContextService().setvalue(definition.context());
+            managedScheduledExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
+            managedScheduledExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+
+            consumer.getManagedScheduledExecutorMap().put(definition.name(), managedScheduledExecutor);
+        }
+
+        private void buildManagedThreadFactoryDefinition(final JndiConsumer consumer, ManagedThreadFactoryDefinition definition) {
+            ManagedThreadFactory existing = consumer.getManagedThreadFactoryMap().get(definition.name());
+            final ManagedThreadFactory managedThreadFactory = (existing != null) ? existing : new ManagedThreadFactory();
+
+            managedThreadFactory.setName(new JndiName());
+            managedThreadFactory.getName().setvalue(definition.name());
+            managedThreadFactory.setContextService(new JndiName());
+            managedThreadFactory.getContextService().setvalue(definition.context());
+            managedThreadFactory.setPriority(definition.priority());
+
+            consumer.getManagedThreadFactoryMap().put(definition.name(), managedThreadFactory);
         }
 
         private void buildContext(final JndiConsumer consumer, final Member member) {

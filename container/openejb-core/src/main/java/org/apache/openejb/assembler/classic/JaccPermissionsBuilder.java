@@ -33,7 +33,6 @@ import jakarta.security.jacc.PolicyContextException;
 import java.lang.reflect.Method;
 import java.security.Permission;
 import java.security.PermissionCollection;
-import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;

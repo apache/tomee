@@ -88,7 +88,6 @@ import org.apache.openejb.assembler.classic.event.NewEjbAvailableAfterApplicatio
 import org.apache.openejb.cdi.CdiAppContextsService;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.OpenEJBLifecycle;
-import org.apache.openejb.cdi.Proxys;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -154,7 +153,6 @@ import javax.sql.DataSource;
 import jakarta.transaction.TransactionManager;
 import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -173,7 +171,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -1741,12 +1738,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
         // if appInfo is null this is a failed deployment... just ignore
         final ContextInfo contextInfo = getContextInfo(standardContext);
-        contextInfo.module = null; // shouldnt be there after startup (actually we shouldnt need it from info tree but our scanning does)
         if (contextInfo != null && contextInfo.appInfo == null) {
             return;
         } else if (contextInfo == null) { // openejb webapp loaded from the LoaderServlet
             return;
         }
+        contextInfo.module = null; // shouldnt be there after startup (actually we shouldnt need it from info tree but our scanning does)
 
         final String id = getId(standardContext);
         WebAppInfo currentWebAppInfo = null;
@@ -1789,14 +1786,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
             }
 
-            try {
-                final Class<?> orb = TomcatWebAppBuilder.class.getClassLoader().loadClass("org.omg.CORBA.ORB");
-                if (SystemInstance.get().getComponent(orb) != null) {
-                    safeBind(comp, "ORB", new SystemComponentReference(orb));
-                }
-            } catch (final NoClassDefFoundError | ClassNotFoundException cnfe) {
-                // no-op
-            }
             if (SystemInstance.get().getComponent(HandleDelegate.class) != null) {
                 safeBind(comp, "HandleDelegate", new SystemComponentReference(HandleDelegate.class));
             }
