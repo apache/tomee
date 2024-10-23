@@ -433,7 +433,7 @@
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-core</artifactId>
-      <version>1.12.5</version>
+      <version>1.13.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -455,7 +455,7 @@
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
-      <version>1.12.5</version>
+      <version>1.13.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
