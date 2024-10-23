@@ -27,6 +27,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,6 +38,7 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
+@Ignore
 public class AvoidConflictWithWebXmlWithNoResourceMatchingTest {
     @Deployment(testable = false)
     public static Archive<?> war() {

@@ -42,5 +42,6 @@
     <module>arquillian-openejb-embedded</module>
     <module>ziplock</module>
     <module>arquillian-tck</module>
+    <module>functional-tests</module>
   </modules>
 </project>

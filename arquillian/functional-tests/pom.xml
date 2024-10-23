@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -16,33 +17,31 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>arquillian-tomee-tests</artifactId>
-    <groupId>org.apache.tomee</groupId>
+    <parent>
+        <artifactId>arquillian</artifactId>
+        <groupId>org.apache.tomee</groupId>
+        <version>10.0.0-M4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>functional-tests</artifactId>
     <version>10.0.0-M4-SNAPSHOT</version>
-  </parent>
+    <packaging>pom</packaging>
+    <name>TomEE :: Arquillian :: Functional Tests</name>
 
-  <artifactId>arquillian-tomee-jaxrs-tests</artifactId>
-  <name>TomEE :: Arquillian Adaptors Parent :: Tests :: JAXRS</name>
+    <modules />
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tomee-jaxrs</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tomee-webapp</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-    </dependency>
-  </dependencies>
-
-  <properties>
-    <profile-under-test>webprofile</profile-under-test>
-  </properties>
+    <profiles>
+        <profile>
+            <id>skip-tests-on-old-jdk</id>
+            <!-- Profile activation based on JDK version -->
+            <activation>
+                <jdk>[17,)</jdk> <!-- Activates for JDK versions less than 17 -->
+            </activation>
+            <modules>
+                <module>spring-cxf-tomee-4332</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

@@ -14,16 +14,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrs.spring;
+package org.example.spring;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
-public class ServletInitializer extends SpringBootServletInitializer {
+@Singleton
+@Lock(LockType.READ)
+public class AlternativeGreeter {
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(DemoApplication.class);
-	}
+    @Path("hello")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String sayHello() {
+        return "Hello World!";
+    }
 
 }

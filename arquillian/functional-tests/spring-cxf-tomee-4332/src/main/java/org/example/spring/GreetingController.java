@@ -14,16 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.jaxrs.spring;
+package org.example.spring;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@SpringBootApplication
-public class DemoApplication {
+@Controller
+@RequestMapping("/greet")
+public class GreetingController {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
-	}
+    @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String sayHello() {
+        return "Hello World!";
+    }
 
 }

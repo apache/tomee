@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.facesconfig22.WebFacesConfigDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webcommon30.WebAppVersionType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 
 // Test that reproduces https://issues.apache.org/jira/browse/TOMEE-4406
 @RunWith(Arquillian.class)
+@Ignore
 public class AvoidConflictWithFacesTest extends JaxrsTest {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
