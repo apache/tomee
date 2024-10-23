@@ -17,31 +17,31 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>tomee-project</artifactId>
-    <groupId>org.apache.tomee</groupId>
+    <parent>
+        <artifactId>arquillian</artifactId>
+        <groupId>org.apache.tomee</groupId>
+        <version>9.1.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>functional-tests</artifactId>
     <version>9.1.4-SNAPSHOT</version>
-  </parent>
+    <packaging>pom</packaging>
+    <name>TomEE :: Arquillian :: Functional Tests</name>
 
-  <artifactId>arquillian</artifactId>
-  <version>9.1.4-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>TomEE :: Arquillian Adaptors Parent</name>
+    <modules />
 
-  <modules>
-    <module>arquillian-common</module>
-    <module>arquillian-tomee-common</module>
-    <module>arquillian-openejb-transaction-provider</module>
-    <module>arquillian-tomee-embedded</module>
-    <module>arquillian-tomee-remote</module>
-    <module>arquillian-tomee-webapp-remote</module>
-    <module>arquillian-tomee-tests</module>
-    <module>arquillian-tomee-moviefun-example</module>
-    <module>arquillian-openejb-embedded</module>
-    <module>ziplock</module>
-    <module>arquillian-tck</module>
-    <module>functional-tests</module>
-  </modules>
+    <profiles>
+        <profile>
+            <id>skip-tests-on-old-jdk</id>
+            <!-- Profile activation based on JDK version -->
+            <activation>
+                <jdk>[17,)</jdk> <!-- Activates for JDK versions less than 17 -->
+            </activation>
+            <modules>
+                <module>spring-cxf-tomee-4332</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
