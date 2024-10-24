@@ -116,15 +116,6 @@
         <finalName>demo</finalName>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <builder>paketobuildpacks/builder-jammy-base:latest</builder>
-                    </image>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.tomee.maven</groupId>
                 <artifactId>tomee-maven-plugin</artifactId>
                 <version>${project.version}</version>
@@ -133,7 +124,6 @@
                     <runtimeWorkingDir>${project.artifactId}</runtimeWorkingDir>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>
