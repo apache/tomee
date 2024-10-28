@@ -31,7 +31,7 @@
   <name>TomEE :: Examples :: Simple EAR :: Functional Tests</name>
 
   <properties>
-    <version.shrinkwrap.resolver>3.1.4</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.3.2</version.shrinkwrap.resolver>
   </properties>
 
   <dependencyManagement>
