@@ -98,7 +98,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>10.0-M2</version.jakartaee-api>
+    <version.jakartaee-api>10.0</version.jakartaee-api>
     <version.tomee-patch-plugin>0.10</version.tomee-patch-plugin>
 
     <!-- Project encoding -->
@@ -143,7 +143,7 @@
     <version.jetty>11.0.20</version.jetty>
     <version.ehcache>3.10.8</version.ehcache>
     <junit.version>4.13.2</junit.version>
-    <junit.jupiter.version>5.11.2</junit.jupiter.version>
+    <junit.jupiter.version>5.11.3</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.3</version.xalan>
@@ -188,8 +188,8 @@
     <version.io.opentracing>0.33.0</version.io.opentracing>
 
     <!-- Micro Profile Impl. -->
-    <version.microprofile.impl.config>3.8.2</version.microprofile.impl.config>
-    <version.microprofile.impl.fault-tolerance>6.2.2</version.microprofile.impl.fault-tolerance>
+    <version.microprofile.impl.config>3.10.0</version.microprofile.impl.config>
+    <version.microprofile.impl.fault-tolerance>6.4.1</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.1</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
     <version.microprofile.impl.openapi>3.13.0</version.microprofile.impl.openapi>

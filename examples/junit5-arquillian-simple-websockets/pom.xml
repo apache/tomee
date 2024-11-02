@@ -28,7 +28,7 @@
         <tomee.version>10.0.0-M4-SNAPSHOT</tomee.version>
         <tomcat.version>10.1.31</tomcat.version>
 
-        <junit.jupiter.version>5.11.2</junit.jupiter.version>
+        <junit.jupiter.version>5.11.3</junit.jupiter.version>
         <!-- 1.8.1.Final is broken, see https://github.com/arquillian/arquillian-core/pull/583 -->
         <arquillian.version>1.9.1.Final</arquillian.version>
 
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>jakartaee-api</artifactId>
-            <version>10.0-M2</version>
+            <version>10.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
