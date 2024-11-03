@@ -37,8 +37,8 @@ public final class Enrichers {
             try {
 
                 // try offline first since it is generally faster
-                CACHE.put(pom, Maven.resolver()
-                        .offline(true)
+                CACHE.put(pom, Maven.configureResolver()
+                        .workOffline()
                         .loadPomFromFile(pom)
                         .importCompileAndRuntimeDependencies().resolve().withTransitivity()
                         .asFile());

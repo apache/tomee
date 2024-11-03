@@ -17,21 +17,21 @@
 package org.example.spring;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-@RunWith(Arquillian.class)
+@ExtendWith(ArquillianExtension.class)
 public class SpringWebappTest {
 
     @ArquillianResource
@@ -63,7 +63,7 @@ public class SpringWebappTest {
         os.close();
 
         final String output = new String(os.toByteArray(), "UTF-8");
-        Assert.assertNotNull("Response shouldn't be null", output);
-        Assert.assertTrue("Output should contain: " + expectedOutput + "\n" + output, output.contains(expectedOutput));
+        Assertions.assertNotNull("Response shouldn't be null", output);
+        Assertions.assertTrue(output.contains(expectedOutput), "Output should contain: " + expectedOutput + "\n" + output);
     }
 }

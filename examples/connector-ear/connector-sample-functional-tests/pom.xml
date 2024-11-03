@@ -28,7 +28,7 @@
   <packaging>jar</packaging>
   <name>TomEE :: Connector Examples :: Connector in EAR :: Functional Tests</name>
   <properties>
-    <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.3.2</version.shrinkwrap.resolver>
   </properties>
   <dependencyManagement>
     <dependencies>

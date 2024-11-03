@@ -31,7 +31,8 @@
     <name>TomEE :: Arquillian :: Functional Tests :: Spring CXF Test</name>
 
     <properties>
-        <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
+        <version.shrinkwrap.resolver>3.3.2</version.shrinkwrap.resolver>
+        <junit.jupiter.version>5.10.5</junit.jupiter.version>
     </properties>
 
     <dependencies>
@@ -39,6 +40,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>3.1.11</version>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -69,9 +77,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <version>1.9.1.Final</version>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -83,6 +90,19 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>arquillian-tomee-remote</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
