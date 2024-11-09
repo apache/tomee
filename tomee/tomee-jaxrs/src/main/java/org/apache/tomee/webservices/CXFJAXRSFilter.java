@@ -86,20 +86,33 @@ public class CXFJAXRSFilter implements Filter {
     }
 
     /**
-     * Checks if the request matched a defined servlet mapping matches the given request
+     * Checks if the request matched a defined servlet mapping,
+     * this also tries to detect if the servlet path has been rewritten because of a possible &lt;welcome-file&gt;
      *
      * @param request the HttpServletRequest to check
      * @return true if the servlet request is mapped to the tomcat default servlet
      */
     private boolean defaultServletMatched(final HttpServletRequest request) {
+        // First we ask nicely if the request was mapped to the default servlet
         ServletRegistration servletRegistration = request.getServletContext().getServletRegistration(
                 request.getHttpServletMapping().getServletName());
 
-        return "default".equals(servletRegistration.getName());
-    }
+        if ("default".equals(servletRegistration.getName())) {
+            return true;
+        }
 
-    @Override
-    public void destroy() {
-        // no-op
+        // See TOMEE-4424, we try to detect if tomcat rewrote this request to a welcome-file
+        // because no servlet/static resource matched the request directly
+        // otherwise requests like `GET /api/users/` are broken if a welcome-file is defined
+        boolean welcomeFileRewriteDetected = false;
+        for (final String welcomeFile : welcomeFiles) {
+            // welcomeFile was not on requestUri but is now on servlet path, so a rewrite happened
+            if (!request.getRequestURI().endsWith(welcomeFile) && request.getServletPath().endsWith(welcomeFile)) {
+                welcomeFileRewriteDetected = true;
+                break;
+            }
+        }
+
+        return welcomeFileRewriteDetected;
     }
 }
