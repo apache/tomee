@@ -32,7 +32,7 @@
 
     <properties>
         <version.shrinkwrap.resolver>3.3.2</version.shrinkwrap.resolver>
-        <junit.jupiter.version>5.10.5</junit.jupiter.version>
+        <junit.jupiter.version>5.11.3</junit.jupiter.version>
     </properties>
 
     <dependencies>
