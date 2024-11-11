@@ -24,7 +24,7 @@
   <packaging>war</packaging>
   <properties>
     <version.jakartaee-api>10.0</version.jakartaee-api>
-    <version.microprofile.metrics>5.0.2</version.microprofile.metrics>
+    <version.microprofile.metrics>5.1.2</version.microprofile.metrics>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
     <tomee.version>10.0.0-M4-SNAPSHOT</tomee.version>
