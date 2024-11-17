@@ -213,7 +213,8 @@ public class CxfRSService extends RESTService {
     private void initCxfProviders(final Bus bus) {
         if (noProvidersExplicitlyAdded(bus)) {
             bus.setProperty("skip.default.json.provider.registration", "true"); // client jaxrs, we want johnzon not jettison
-            bus.setProperty("skip.jakarta.json.providers.registration", "true");  // Make sure default JAXRS 3.1 JSON-P/JSON-B providers are not loaded
+            bus.setProperty("skip.jakarta.json.providers.registration",
+                SystemInstance.get().getProperty("openejb.jaxrs.skip.jakarta.json.providers.registration", "true"));  // Make sure default JAXRS 3.1 JSON-P/JSON-B providers are not loaded
 
             final Collection<Object> defaults = new ArrayList<>();
             List<String> jsonProviders;
