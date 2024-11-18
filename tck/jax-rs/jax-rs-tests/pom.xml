@@ -168,6 +168,7 @@
                                 <password>j2ee</password>
                                 <authuser>javajoe</authuser>
                                 <authpassword>javajoe</authpassword>
+                                <openejb.jaxrs.skip.jakarta.json.providers.registration>false</openejb.jaxrs.skip.jakarta.json.providers.registration>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

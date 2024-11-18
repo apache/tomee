@@ -23,6 +23,8 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import net.minidev.json.JSONObject;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
@@ -69,6 +71,10 @@ public class BookstoreTest {
 
     @Test
     public void movieRestTest() throws Exception {
+        final Bus bus = BusFactory.getDefaultBus();
+        //disable json-p / json-b default registration in JAX-RS 3.1
+        bus.setProperty("skip.jakarta.json.providers.registration", "true");
+
         final WebClient webClient = WebClient
                 .create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
                         singletonList(new LoggingFeature()), null);
@@ -81,7 +87,6 @@ public class BookstoreTest {
                 .get(String.class);
         LOGGER.info("responsePayload = " + responsePayload);
         assertEquals("alice", responsePayload);
-
 
         // Testing REST endpoint with group claims manager
         Book newBook = new Book(1, "The Lord of the Rings", "J.R.R.Tolkien");
