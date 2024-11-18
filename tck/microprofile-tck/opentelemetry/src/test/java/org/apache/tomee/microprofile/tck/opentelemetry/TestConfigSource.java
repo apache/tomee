@@ -25,7 +25,8 @@ public class TestConfigSource extends MapBackedConfigSource {
         super("TestConfigSource",
                 Map.of("otel.sdk.disabled", "true",
                         "otel.traces.exporter", "none",
-                        "otel.metrics.exporter", "none"),
+                        "otel.metrics.exporter", "none",
+                        "otel.logs.exporter", "none"),
                 Integer.MIN_VALUE);
     }
 }
