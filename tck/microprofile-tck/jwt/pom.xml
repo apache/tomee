@@ -121,7 +121,7 @@
       <version>${tomcat.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
       <version>${version.cxf}</version>
       <scope>test</scope>
@@ -158,7 +158,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.2</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/suites/tck-base-suite.xml</suiteXmlFile>

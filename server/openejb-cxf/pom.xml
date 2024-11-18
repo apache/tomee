@@ -51,15 +51,15 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
     </dependency>
     <dependency>
@@ -211,12 +211,12 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.78.1</version>
+      <version>1.79</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>1.78.1</version>
+      <version>1.79</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>

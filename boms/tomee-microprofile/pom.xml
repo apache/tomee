@@ -48,7 +48,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.18.0</version>
+      <version>2.18.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.18.0</version>
+      <version>2.18.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.18.0</version>
+      <version>2.18.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.18.0</version>
+      <version>2.18.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -178,226 +178,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-core</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-management</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security-saml</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-security</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-wsdl</artifactId>
-      <version>4.1.0-tomee-M2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>io.github.rzo1.org.metatype.sxc</groupId>
       <artifactId>sxc-jaxb-core</artifactId>
       <version>0.9</version>
@@ -464,9 +244,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.opentelemetry.instrumentation</groupId>
-      <artifactId>opentelemetry-instrumentation-annotations-support</artifactId>
-      <version>2.5.0-alpha</version>
+      <groupId>io.opentracing.contrib</groupId>
+      <artifactId>opentracing-concurrent</artifactId>
+      <version>0.4.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -475,9 +255,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.opentelemetry.instrumentation</groupId>
-      <artifactId>opentelemetry-instrumentation-annotations</artifactId>
-      <version>2.5.0</version>
+      <groupId>io.opentracing</groupId>
+      <artifactId>opentracing-api</artifactId>
+      <version>0.33.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -486,9 +266,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.opentelemetry.instrumentation</groupId>
-      <artifactId>opentelemetry-instrumentation-api-incubator</artifactId>
-      <version>2.5.0-alpha</version>
+      <groupId>io.opentracing</groupId>
+      <artifactId>opentracing-noop</artifactId>
+      <version>0.33.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -497,152 +277,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.opentelemetry.instrumentation</groupId>
-      <artifactId>opentelemetry-instrumentation-api</artifactId>
-      <version>2.5.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry.instrumentation</groupId>
-      <artifactId>opentelemetry-runtime-telemetry-java8</artifactId>
-      <version>2.5.0-alpha</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry.semconv</groupId>
-      <artifactId>opentelemetry-semconv-incubating</artifactId>
-      <version>1.25.0-alpha</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry.semconv</groupId>
-      <artifactId>opentelemetry-semconv</artifactId>
-      <version>1.25.0-alpha</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-api-incubator</artifactId>
-      <version>1.39.0-alpha</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-api</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-context</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-sdk-common</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-sdk-extension-autoconfigure-spi</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-sdk-logs</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-sdk-metrics</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-sdk-trace</artifactId>
-      <version>1.39.0</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-sdk</artifactId>
-      <version>1.39.0</version>
+      <groupId>io.opentracing</groupId>
+      <artifactId>opentracing-util</artifactId>
+      <version>0.33.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -708,7 +345,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-annotation</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -719,7 +356,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-classloader</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -730,7 +367,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-constraint</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -741,7 +378,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-expression</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -752,7 +389,7 @@
     <dependency>
       <groupId>io.smallrye.common</groupId>
       <artifactId>smallrye-common-function</artifactId>
-      <version>2.4.0</version>
+      <version>2.8.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -763,7 +400,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-common</artifactId>
-      <version>3.9.1</version>
+      <version>3.10.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -774,7 +411,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config-core</artifactId>
-      <version>3.9.1</version>
+      <version>3.10.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -785,51 +422,7 @@
     <dependency>
       <groupId>io.smallrye.config</groupId>
       <artifactId>smallrye-config</artifactId>
-      <version>3.9.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.smallrye.opentelemetry</groupId>
-      <artifactId>smallrye-opentelemetry-api</artifactId>
-      <version>2.8.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.smallrye.opentelemetry</groupId>
-      <artifactId>smallrye-opentelemetry-cdi</artifactId>
-      <version>2.8.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.smallrye.opentelemetry</groupId>
-      <artifactId>smallrye-opentelemetry-config</artifactId>
-      <version>2.8.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.smallrye.opentelemetry</groupId>
-      <artifactId>smallrye-opentelemetry-rest</artifactId>
-      <version>2.8.1</version>
+      <version>3.10.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -851,7 +444,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-api</artifactId>
-      <version>6.2.2</version>
+      <version>6.4.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -862,7 +455,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-autoconfig-core</artifactId>
-      <version>6.2.2</version>
+      <version>6.4.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -873,7 +466,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance-core</artifactId>
-      <version>6.2.2</version>
+      <version>6.4.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -884,7 +477,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-fault-tolerance</artifactId>
-      <version>6.2.2</version>
+      <version>6.4.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -937,6 +530,28 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-opentracing-contrib</artifactId>
+      <version>3.0.3</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-opentracing</artifactId>
+      <version>3.0.3</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>net.shibboleth.utilities</groupId>
       <artifactId>java-support</artifactId>
       <version>8.4.0</version>
@@ -973,6 +588,226 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-pool2</artifactId>
       <version>2.12.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-core</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-bindings-soap</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-bindings-xml</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-databinding-jaxb</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxws</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-simple</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-management</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-client</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-extension-providers</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-service-description</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-sse</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-security-saml</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-security</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-addr</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-policy</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-security</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-wsdl</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1126,7 +961,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1137,7 +972,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1148,7 +983,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1159,7 +994,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1170,7 +1005,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1181,7 +1016,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1192,7 +1027,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1203,7 +1038,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>4.0.3-SNAPSHOT</version>
+      <version>4.0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1478,7 +1313,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>10.0-M2</version>
+      <version>10.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1995,7 +1830,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>1.78.1</version>
+      <version>1.79</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2006,7 +1841,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <version>1.78.1</version>
+      <version>1.79</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2017,7 +1852,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcutil-jdk15to18</artifactId>
-      <version>1.78.1</version>
+      <version>1.79</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2127,7 +1962,18 @@
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>
-      <version>3.1.1</version>
+      <version>3.1.2</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.microprofile.opentracing</groupId>
+      <artifactId>microprofile-opentracing-api</artifactId>
+      <version>3.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2193,7 +2039,7 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.7.3</version>
+      <version>2.7.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2402,7 +2248,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.7</version>
+      <version>9.7.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

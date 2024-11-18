@@ -110,7 +110,7 @@ The following output should be displayed:
 [INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openjpa/openjpa/4.0.0/openjpa-4.0.0.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/bval/bval-jsr/3.0.1/bval-jsr-3.0.1.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-spec-corba/1.4/yoko-spec-corba-1.4.jar
-[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/jakartaee-api/10.0-M2/jakartaee-api-10.0-M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/jakartaee-api/10.0/jakartaee-api-10.0.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/jakarta.json-api/2.1.1/jakarta.json-api-2.1.1.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/bind/jakarta.json.bind-api/3.0.0/jakarta.json.bind-api-3.0.0.jar
@@ -357,7 +357,7 @@ java.lang.IllegalArgumentException: Not a directory: /home/evaldo/.m2/repository
 [INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/openjpa/openjpa/4.0.0/openjpa-4.0.0.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/bval/bval-jsr/3.0.1/bval-jsr-3.0.1.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/yoko/yoko-spec-corba/1.4/yoko-spec-corba-1.4.jar
-[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/jakartaee-api/10.0-M2/jakartaee-api-10.0-M2.jar
+[INFO]   artifact: file:/home/evaldo/.m2/repository/org/apache/tomee/jakartaee-api/10.0/jakartaee-api-10.0.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/jakarta.json-api/2.1.1/jakarta.json-api-2.1.1.jar
 [INFO]   artifact: file:/home/evaldo/.m2/repository/jakarta/json/bind/jakarta.json.bind-api/3.0.0/jakarta.json.bind-api-3.0.0.jar

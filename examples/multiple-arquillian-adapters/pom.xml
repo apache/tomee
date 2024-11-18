@@ -49,7 +49,7 @@
         -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.2</version>
         <executions>
           <execution>
             <id>test-embedded</id>
@@ -134,7 +134,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>10.0-M2</version>
+      <version>10.0</version>
       <scope>provided</scope>
     </dependency>
     <!-- common arquillian dependencies -->

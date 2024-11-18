@@ -25,9 +25,9 @@
   <name>TomEE :: Examples :: MicroProfile JWT Bean Validation</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.jakartaee-api>10.0-M2</version.jakartaee-api>
+    <version.jakartaee-api>10.0</version.jakartaee-api>
     <tomee.version>10.0.0-M4-SNAPSHOT</tomee.version>
-    <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.3.2</version.shrinkwrap.resolver>
     <mp-jwt.version>1.1</mp-jwt.version>
   </properties>
   <build>
@@ -37,7 +37,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.2</version>
         <configuration>
           <reuseForks>false</reuseForks>
         </configuration>
