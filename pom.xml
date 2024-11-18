@@ -229,7 +229,7 @@
 
     <!-- Other API and Impl. not in Jakarta EE -->
     <version.wss4j>3.0.3</version.wss4j>
-    <version.xmlsec>3.0.4</version.xmlsec>
+    <version.xmlsec>4.0.3</version.xmlsec>
     <version.krazo>2.0.2</version.krazo>
     <version.jose4j>0.9.6</version.jose4j>
     <version.sxc>0.9</version.sxc>
