@@ -26,6 +26,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.apache.cxf.BusFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -64,6 +65,8 @@ public class WeatherServiceTest {
     @Before
     public void before() {
         this.client = ClientBuilder.newClient();
+        //disable json-p / json-b default registration in JAX-RS 3.1
+        BusFactory.getDefaultBus().setProperty("skip.jakarta.json.providers.registration", "true");
     }
 
     @Test
