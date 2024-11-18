@@ -1236,7 +1236,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-bindings</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
