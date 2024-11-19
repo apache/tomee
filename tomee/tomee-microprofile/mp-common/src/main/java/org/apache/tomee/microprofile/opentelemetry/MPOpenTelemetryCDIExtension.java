@@ -40,6 +40,6 @@ public class MPOpenTelemetryCDIExtension implements Extension {
     beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenTelemetryClientFilter.class),
             OpenTelemetryClientFilter.class.getName());
     beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(OpenTelemetryConfigProducer.class),
-            "OpenTelemetryConfigProducer");
+            OpenTelemetryConfigProducer.class.getName());
   }
 }
