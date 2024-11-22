@@ -32,6 +32,18 @@ public class MPOpenTelemetryFilterRegistration implements DynamicFeature {
         if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
             return;
         }
-        context.register(CDI.current().select(OpenTelemetryServerFilter.class).get());
+
+        if (context.getConfiguration().isRegistered(OpenTelemetryServerFilter.class)) {
+            return;
+        }
+
+        try {
+            final OpenTelemetryServerFilter serverFilter = CDI.current().select(OpenTelemetryServerFilter.class).get();
+            if (serverFilter != null) {
+                context.register(serverFilter);
+            }
+        } catch (IllegalStateException e) {
+            // noop
+        }
     }
 }
