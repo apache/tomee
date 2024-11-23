@@ -51,6 +51,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>10.0.0-M4-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
       <scope>provided</scope>
