@@ -23,7 +23,7 @@
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
   <container qualifier="tomee-microprofile" default="true">
     <configuration>
-      <property name="httpPort">50290</property>
+      <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">microprofile</property>
@@ -38,7 +38,7 @@
   </container>
   <container qualifier="tomee-plus">
     <configuration>
-      <property name="httpPort">50290</property>
+      <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">plus</property>
@@ -53,7 +53,7 @@
   </container>
   <container qualifier="tomee-plume">
     <configuration>
-      <property name="httpPort">50290</property>
+      <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="classifier">plume</property>
