@@ -58,31 +58,23 @@ public class TomEEMicroProfileListener {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), TomEEMicroProfileListener.class);
 
-    private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
-        "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
-        "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
-        "io.smallrye.config.inject.ConfigExtension",
-        "io.smallrye.metrics.legacyapi.LegacyMetricsExtension",
-        "io.smallrye.faulttolerance.FaultToleranceExtension",
-        "io.smallrye.opentelemetry.implementation.cdi.OpenTelemetryExtension",
-        };
-
     private final Map<AppInfo, Index> indexCache = new ConcurrentHashMap<>();
 
     @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
+        final String[] mpExtensions = SystemInstance.get().getOptions().get("tomee.mp.cdi.extensions", "").split(",");
 
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
 
         if (mpScan.equals("none")) {
-            Stream.of(MICROPROFILE_EXTENSIONS).forEach(
+            Stream.of(mpExtensions).forEach(
                 extension -> SystemInstance.get().setProperty(extension + ".active", "false"));
             return;
         }
 
         final List<URL> containerUrls = enhanceScannableUrlsEvent.getScannableUrls();
 
-        for (final String extension : MICROPROFILE_EXTENSIONS) {
+        for (final String extension : mpExtensions) {
             try {
                 final CodeSource src = Class.forName(extension).getProtectionDomain().getCodeSource();
                 if (src != null) {
