@@ -22,16 +22,14 @@ updates:
     schedule:
       interval: weekly
       time: '04:00'
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 20
     ignore:
         # Ignore JavaFX - needed in a specific version by TCKs
       - dependency-name: "org.openjfx:*"
         # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.smallrye:*"
-        update-types: [ "version-update:semver-minor"]
         # Ignore MicroMeter Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.micrometer:*"
-        update-types: [ "version-update:semver-minor"]
         # This is a transient dependency. Ignore for updates.
       - dependency-name: "micrometer-commons:*"
         # Ignore Santuario XML Security - need to be aligned with CXF
