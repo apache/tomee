@@ -30,8 +30,8 @@ updates:
       - dependency-name: "io.smallrye:*"
         # Ignore MicroMeter Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.micrometer:*"
-        # This is a transient dependency. Ignore for updates.
-      - dependency-name: "micrometer-commons:*"
+      - dependency-name: "io.opentelemetry:*"
+      - dependency-name: "io.opentracing:*"
         # Ignore Santuario XML Security - need to be aligned with CXF
       - dependency-name: "org.apache.santuario:*"
         # Ignore Woodstox - need to be aligned with CXF
