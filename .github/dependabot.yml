@@ -23,6 +23,44 @@ updates:
       interval: weekly
       time: '04:00'
     open-pull-requests-limit: 10
+    ignore:
+        # Ignore JavaFX - needed in a specific version by TCKs
+      - dependency-name: "org.openjfx:*"
+        update-types: [ "version-update:semver-major"]
+        # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
+      - dependency-name: "io.smallrye:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore MicroMeter Implementation Updates - need to be carefully reviewed to align with target MP spec version
+      - dependency-name: "io.micrometer:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore Santuario XML Security - need to be aligned with CXF
+      - dependency-name: "org.apache.santuario:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore Woodstox - need to be aligned with CXF
+      - dependency-name: "com.fasterxml.woodstox:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore OpenSAML - need to be aligned with CXF
+      - dependency-name: "org.opensaml:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore Spec Updates
+      - dependency-name: "jakarta.*:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore Spec Updates
+      - dependency-name: "org.eclipse.microprofile:*"
+        update-types: [ "version-update:semver-major"]
+        # Ignore Jetty (required version for TCKs)
+      - dependency-name: "org.eclipse.jetty*:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore Glassfish (required version for TCKs)
+      - dependency-name: "org.glassfish.*:*"
+        update-types: [ "version-update:semver-minor"]
+        # Ignore Tomcat (major) updates
+      - dependency-name: "org.apache.tomcat:*"
+        update-types: [ "version-update:semver-major"]
+        # Ignore WebJars from Examples
+      - dependency-name: "org.webjars:*"
+        update-types: [ "version-update:semver-minor"]
+
 
   - package-ecosystem: "github-actions"
     directory: "/"
