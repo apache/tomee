@@ -510,7 +510,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-open-api-core</artifactId>
-      <version>3.13.0</version>
+      <version>4.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -521,7 +521,7 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-open-api-jaxrs</artifactId>
-      <version>3.13.0</version>
+      <version>4.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
