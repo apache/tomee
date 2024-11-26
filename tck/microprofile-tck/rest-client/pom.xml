@@ -30,7 +30,7 @@
 
   <properties>
     <!-- Note: This old version is needed for the MP Rest Client TCK-->
-    <jetty-tck.version>9.2.28.v20190418</jetty-tck.version>
+    <jetty-tck.version>9.2.30.v20200428</jetty-tck.version>
   </properties>
 
   <build>
