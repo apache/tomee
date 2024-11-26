@@ -14,27 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.opentracing;
+package org.apache.tomee.microprofile.opentelemetry;
 
-import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
-import jakarta.enterprise.inject.spi.Extension;
+import io.smallrye.opentelemetry.implementation.rest.OpenTelemetryServerFilter;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.Provider;
 import org.apache.openejb.loader.SystemInstance;
 
-public class MPOpenTracingCDIExtension implements Extension {
+@Provider
+public class MPOpenTelemetryFilterRegistration implements DynamicFeature {
 
-    /**
-     * This event is used to add the TracerProducer bean to the application
-     *
-     * @param bbd         BeanDiscoveryEvent passed in by CDI
-     * @param beanManager the BeanManager reference
-     */
-    public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
+    @Override
+    public void configure(ResourceInfo resourceInfo, FeatureContext context) {
         if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
             return;
         }
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(TracerProducer.class), "TracerProducer");
-    }
 
+        if (context.getConfiguration().isRegistered(OpenTelemetryServerFilter.class)) {
+            return;
+        }
+
+        try {
+            final OpenTelemetryServerFilter serverFilter = CDI.current().select(OpenTelemetryServerFilter.class).get();
+            if (serverFilter != null) {
+                context.register(serverFilter);
+            }
+        } catch (IllegalStateException e) {
+            // noop
+        }
+    }
 }

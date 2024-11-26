@@ -14,19 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.opentracing;
+package org.apache.tomee.microprofile.tck.opentelemetry;
 
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
-import jakarta.enterprise.inject.Produces;
+import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
+import org.jboss.arquillian.core.spi.LoadableExtension;
 
-@Dependent
-public class TracerProducer {
-    @Produces
-    @ApplicationScoped
-    Tracer tracer() {
-        return GlobalTracer.get();
+public class ArquillianExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder extensionBuilder) {
+        extensionBuilder.observer(ArquillianLifecycle.class);
     }
 }

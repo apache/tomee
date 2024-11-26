@@ -1,5 +1,3 @@
 org.apache.tomee.microprofile.health.MPHealthCDIExtension
-org.apache.tomee.microprofile.opentracing.MPOpenTracingCDIExtension
+org.apache.tomee.microprofile.opentelemetry.MPOpenTelemetryCDIExtension
 org.apache.tomee.microprofile.faulttolerance.MPFaultToleranceCDIExtension
-
-

@@ -67,11 +67,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>apache-tomee</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile</artifactId>
       <version>${project.version}</version>
-      <type>zip</type>
-      <classifier>microprofile</classifier>
       <scope>test</scope>
     </dependency>
   </dependencies>

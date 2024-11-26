@@ -24,6 +24,7 @@ import org.apache.openejb.observer.ObserverManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
@@ -144,6 +145,20 @@ public final class SystemInstance {
 
         if (getProperty("hsqldb.reconfig_logging") == null) {
             setProperty("hsqldb.reconfig_logging", "false", true);
+        }
+
+        if (!this.internalProperties.containsKey("tomee.mp.cdi.extensions")) {
+            this.internalProperties.setProperty("tomee.mp.cdi.extensions", String.join(",", List.of(
+                    "io.smallrye.config.inject.ConfigExtension",
+                    "io.smallrye.faulttolerance.FaultToleranceExtension",
+                    "io.smallrye.metrics.legacyapi.LegacyMetricsExtension",
+                    "io.smallrye.opentelemetry.implementation.cdi.OpenTelemetryExtension",
+                    "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
+                    "org.apache.tomee.microprofile.faulttolerance.MPFaultToleranceCDIExtension",
+                    "org.apache.tomee.microprofile.health.MPHealthCDIExtension",
+                    "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
+                    "org.apache.tomee.microprofile.opentelemetry.MPOpenTelemetryCDIExtension"
+            )));
         }
     }
 

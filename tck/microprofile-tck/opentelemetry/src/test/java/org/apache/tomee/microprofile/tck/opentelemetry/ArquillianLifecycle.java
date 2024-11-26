@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.tck.opentracing;
+package org.apache.tomee.microprofile.tck.opentelemetry;
 
-import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocol;
+import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.test.spi.TestClass;
 
-public class MicroProfileOpenTracingTCKExtension implements LoadableExtension {
-    @Override
-    public void register(final ExtensionBuilder extensionBuilder) {
-        extensionBuilder
-                .override(Protocol.class, ServletProtocol.class, MicroProfileOpenTracingTCKProtocol.class)
-        ;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+
+public class ArquillianLifecycle {
+    public void beforeDeploy(@Observes BeforeDeploy event, TestClass testClass) {
+        GlobalOpenTelemetry.resetForTest();
     }
 }

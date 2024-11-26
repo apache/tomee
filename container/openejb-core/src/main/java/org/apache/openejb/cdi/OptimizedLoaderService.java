@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -181,9 +182,18 @@ public class OptimizedLoaderService implements LoaderService {
             return true;
         }
 
+        // Filter MicroProfile SPI extensions if we are not in MicroProfile mode
+        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
+        if (mpScan.equals("none")) {
+            for (String e : SystemInstance.get().getOptions().get("tomee.mp.cdi.extensions", "").split(",")) {
+                if (e.equals(name)) {
+                    log.debug("Skipping MicroProfile CDI Extension {} cause MicroProfile is not enabled", name);
+                    return true;
+                }
+            }
+        }
+
         switch (name) {
-            case "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension":
-                return true;
             case "org.apache.bval.cdi.BValExtension":
                 for (final Extension e : extensions) {
                     final String en = e.getClass().getName();

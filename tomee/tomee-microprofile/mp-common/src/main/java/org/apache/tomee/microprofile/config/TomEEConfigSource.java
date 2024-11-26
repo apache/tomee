@@ -16,76 +16,20 @@
  */
 package org.apache.tomee.microprofile.config;
 
-import org.apache.openejb.AppContext;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.AppFinder;
-import org.eclipse.microprofile.config.spi.ConfigSource;
+import io.smallrye.config.common.MapBackedConfigSource;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import static java.util.Arrays.asList;
-
-public class TomEEConfigSource implements ConfigSource {
-    private final Map<String, String> configuration = new HashMap<>();
-
+/**
+ * This class exists to disable the open telemetry sdk in the general case.
+ */
+public class TomEEConfigSource extends MapBackedConfigSource {
     public TomEEConfigSource() {
-        final AppContext appContextOrWeb =
-                AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(),
-                                              AppFinder.AppContextTransformer.INSTANCE);
-
-        if (appContextOrWeb != null) {
-            final List<String> mpIgnoredApps =
-                    asList(SystemInstance.get()
-                                         .getProperty("mp.ignored.apps", "ROOT,docs,host-manager,manager")
-                                         .split(","));
-
-            if (mpIgnoredApps.stream().anyMatch(s -> s.equalsIgnoreCase(appContextOrWeb.getId()))) {
-                openTracingFilterActive(false);
-                metricsJaxRsActive(false);
-            }
-        }
-
-        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
-        if (mpScan.equals("none")) {
-            openTracingFilterActive(false);
-            metricsJaxRsActive(false);
-        }
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
-        return configuration;
-    }
-
-    @Override
-    public Set<String> getPropertyNames() {
-        return new HashSet<>(getProperties().keySet());
-    }
-
-    @Override
-    public int getOrdinal() {
-        return 150;
-    }
-
-    @Override
-    public String getValue(final String propertyName) {
-        return configuration.get(propertyName);
-    }
-
-    @Override
-    public String getName() {
-        return TomEEConfigSource.class.getSimpleName();
-    }
-
-    public void openTracingFilterActive(final boolean active) {
-        configuration.put("geronimo.opentracing.filter.active", Boolean.toString(active));
-    }
-
-    public void metricsJaxRsActive(final boolean active) {
-        configuration.put("geronimo.metrics.jaxrs.activated", Boolean.toString(active));
+        super(TomEEConfigSource.class.getSimpleName(),
+                Map.of("otel.sdk.disabled", "true",
+                        "otel.traces.exporter", "none",
+                        "otel.metrics.exporter", "none",
+                        "otel.logs.exporter", "none"),
+                Integer.MIN_VALUE);
     }
 }

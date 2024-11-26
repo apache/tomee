@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.microprofile;
 
-import io.smallrye.opentracing.SmallRyeTracingDynamicFeature;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -28,13 +27,11 @@ import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.BeforeEvent;
-import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.microprofile.health.MicroProfileHealthChecksEndpoint;
 import org.apache.tomee.microprofile.openapi.MicroProfileOpenApiRegistration;
-import org.apache.tomee.microprofile.opentracing.MicroProfileOpenTracingExceptionMapper;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.Indexer;
 
@@ -61,32 +58,23 @@ public class TomEEMicroProfileListener {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), TomEEMicroProfileListener.class);
 
-    private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
-        "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
-        "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
-        "io.smallrye.config.inject.ConfigExtension",
-        "io.smallrye.metrics.legacyapi.LegacyMetricsExtension",
-        "io.smallrye.opentracing.SmallRyeTracingDynamicFeature",
-        "io.smallrye.opentracing.contrib.interceptor.OpenTracingInterceptor",
-        "io.smallrye.faulttolerance.FaultToleranceExtension",
-        };
-
     private final Map<AppInfo, Index> indexCache = new ConcurrentHashMap<>();
 
     @SuppressWarnings("Duplicates")
     public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
+        final String[] mpExtensions = SystemInstance.get().getOptions().get("tomee.mp.cdi.extensions", "").split(",");
 
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
 
         if (mpScan.equals("none")) {
-            Stream.of(MICROPROFILE_EXTENSIONS).forEach(
+            Stream.of(mpExtensions).forEach(
                 extension -> SystemInstance.get().setProperty(extension + ".active", "false"));
             return;
         }
 
         final List<URL> containerUrls = enhanceScannableUrlsEvent.getScannableUrls();
 
-        for (final String extension : MICROPROFILE_EXTENSIONS) {
+        for (final String extension : mpExtensions) {
             try {
                 final CodeSource src = Class.forName(extension).getProtectionDomain().getCodeSource();
                 if (src != null) {
@@ -155,19 +143,6 @@ public class TomEEMicroProfileListener {
         } catch (final UncheckedIOException e) {
             throw new IllegalStateException("Can't build Jandex index for application " + webApp.contextRoot, e);
         }
-    }
-
-    public void registerMicroProfileJaxRsProviders(@Observes final ExtensionProviderRegistration extensionProviderRegistration) {
-        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
-            return;
-        }
-
-        extensionProviderRegistration.getProviders().add(new SmallRyeTracingDynamicFeature());
-
-        // The OpenTracing TCK tests that an exception is turned into a 500. JAX-RS 3.1 mandates a default mapper
-        // which was not required on the current versions; see TOMEE-4133 for details.
-        extensionProviderRegistration.getProviders().add(new MicroProfileOpenTracingExceptionMapper());
-
     }
 
     /**
