@@ -27,7 +27,7 @@ services:
             - m2:/var/maven/.m2
     # Build+test. Stops on first test failure
     build:
-        image: "maven:3-eclipse-temurin-11"
+        image: "maven:3-eclipse-temurin-17"
         profiles: ["build"]
         command: ["-Duser.home=/var/maven", "-Pall-adapters", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "clean", "install"]
         entrypoint: "mvn"
