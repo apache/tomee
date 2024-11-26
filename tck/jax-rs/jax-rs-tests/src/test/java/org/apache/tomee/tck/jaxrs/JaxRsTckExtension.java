@@ -18,6 +18,7 @@
  */
 package org.apache.tomee.tck.jaxrs;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -33,6 +34,8 @@ public class JaxRsTckExtension implements LoadableExtension {
     public void observeDeployment(@Observes BeforeDeploy bd) {
         if (bd.getDeployment().getArchive() instanceof ClassContainer<?> classContainer) {
             classContainer.addClass(NotFoundServlet.class);
+            // hack to ensure, that default providers are registered for the TCK (JAX-RS 3.1 mandates them ...)
+            SystemInstance.get().setProperty("openejb.jaxrs.skip.jakarta.json.providers.registration", "false");
         }
     }
 }
