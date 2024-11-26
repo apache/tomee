@@ -236,6 +236,10 @@
           <artifactId>jakarta.json</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.eclipse.parsson</groupId>
+          <artifactId>jakarta.json</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>io.smallrye</groupId>
           <artifactId>smallrye-health-api</artifactId>
         </exclusion>
