@@ -1775,7 +1775,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1786,7 +1786,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-common</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1797,7 +1797,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1808,7 +1808,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1819,7 +1819,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
