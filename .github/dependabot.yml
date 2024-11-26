@@ -26,7 +26,6 @@ updates:
     ignore:
         # Ignore JavaFX - needed in a specific version by TCKs
       - dependency-name: "org.openjfx:*"
-        update-types: [ "version-update:semver-major"]
         # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.smallrye:*"
         update-types: [ "version-update:semver-minor"]
@@ -37,35 +36,27 @@ updates:
       - dependency-name: "micrometer-commons:*"
         # Ignore Santuario XML Security - need to be aligned with CXF
       - dependency-name: "org.apache.santuario:*"
-        update-types: [ "version-update:semver-minor"]
         # Ignore Woodstox - need to be aligned with CXF
       - dependency-name: "com.fasterxml.woodstox:*"
-        update-types: [ "version-update:semver-minor"]
         # Ignore OpenSAML - need to be aligned with CXF
       - dependency-name: "org.opensaml:*"
-        update-types: [ "version-update:semver-minor"]
         # Ignore Spec Updates
       - dependency-name: "jakarta.*:*"
-        update-types: [ "version-update:semver-minor"]
         # Ignore Spec Updates
       - dependency-name: "org.eclipse.microprofile:*"
-        update-types: [ "version-update:semver-major"]
         # Ignore Jetty (required version for TCKs)
       - dependency-name: "org.eclipse.jetty*:*"
-        update-types: [ "version-update:semver-minor"]
         # Ignore Glassfish (required version for TCKs)
       - dependency-name: "org.glassfish.*:*"
-        update-types: [ "version-update:semver-minor"]
         # Ignore Tomcat (major) updates
       - dependency-name: "org.apache.tomcat:*"
         update-types: [ "version-update:semver-major"]
         # Ignore WebJars from Examples
       - dependency-name: "org.webjars:*"
-        update-types: [ "version-update:semver-minor"]
-        # Ignore WebJars from Examples
+        # Ignore HTNML Unit from Examples
       - dependency-name: "org.htmlunit:*"
-        update-types: [ "version-update:semver-minor"]
-
+        # 1.0.0 is broken
+      - dependency-name: "org.apache.geronimo.specs:geronimo-mail_2.1_spec"
 
   - package-ecosystem: "github-actions"
     directory: "/"
