@@ -187,6 +187,7 @@ public class OptimizedLoaderService implements LoaderService {
         if (mpScan.equals("none")) {
             for (String e : SystemInstance.get().getOptions().get("tomee.mp.cdi.extensions", "").split(",")) {
                 if (e.equals(name)) {
+                    log.debug("Skipping MicroProfile CDI Extension {} cause MicroProfile is not enabled", name);
                     return true;
                 }
             }

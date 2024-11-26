@@ -24,12 +24,15 @@ import jakarta.ws.rs.client.ClientResponseContext;
 import jakarta.ws.rs.client.ClientResponseFilter;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * OpenTelemetryClientFilter <b>requires</b> CDI constructor injection, however the way we register this filter makes it impossible to do that.
  * This is a small workaround to lazily fetch the correct instance from CDI when it is needed.
  */
 public class LazyOpenTelemetryClientFilter implements ClientRequestFilter, ClientResponseFilter {
+    private static final Logger LOGGER = Logger.getLogger(LazyOpenTelemetryClientFilter.class.getName());
+
     private OpenTelemetryClientFilter delegate;
 
     @Override
@@ -44,9 +47,26 @@ public class LazyOpenTelemetryClientFilter implements ClientRequestFilter, Clien
 
     protected OpenTelemetryClientFilter delegate() {
         if (delegate == null) {
-            delegate = CDI.current().select(OpenTelemetryClientFilter.class).get();
+            try {
+                delegate = CDI.current().select(OpenTelemetryClientFilter.class).get();
+            } catch (final IllegalStateException ise) {
+                LOGGER.warning("No CDI context available, falling back to NoOp");
+                delegate = new NoOp();
+            }
         }
 
         return delegate;
+    }
+
+    private static class NoOp extends OpenTelemetryClientFilter {
+        @Override
+        public void filter(ClientRequestContext requestContext)  {
+            // no-op
+        }
+
+        @Override
+        public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
+            // no-op
+        }
     }
 }

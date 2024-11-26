@@ -239,8 +239,19 @@ public class CxfRSService extends RESTService {
 
             try {
                 final List<Object> all;
-                final String userProviders = SystemInstance.get().getProperty("openejb.jaxrs.client.providers");
-                if (userProviders == null) {
+                String userProviders = SystemInstance.get().getProperty("openejb.jaxrs.client.providers", "");
+                final boolean isMicroProfile = !("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none")));
+
+                if(isMicroProfile) {
+                    if(!userProviders.isBlank()) {
+                        userProviders += ", ";
+                    } else {
+                        userProviders += "org.apache.tomee.microprofile.opentelemetry.LazyOpenTelemetryClientFilter";
+                        SystemInstance.get().setProperty("openejb.jaxrs.client.providers", userProviders);
+                    }
+                }
+
+                if (userProviders.isBlank()) {
                     (all = new ArrayList<>(defaults.size())).addAll(defaults);
                 } else {
                     all = new ArrayList<>(defaults.size() + 2 /* blind guess */);

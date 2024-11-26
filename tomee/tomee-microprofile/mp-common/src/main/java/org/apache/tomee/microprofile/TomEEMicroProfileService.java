@@ -18,22 +18,12 @@ package org.apache.tomee.microprofile;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.Service;
-import org.apache.tomee.microprofile.opentelemetry.LazyOpenTelemetryClientFilter;
 
 import java.util.Properties;
 
 public class TomEEMicroProfileService implements Service {
     static {
         SystemInstance.get().addObserver(new TomEEMicroProfileListener());
-
-        String clientProviders = SystemInstance.get().getProperty("openejb.jaxrs.client.providers", "");
-        if (!clientProviders.isEmpty())
-        {
-            clientProviders += ", ";
-        }
-
-        clientProviders += LazyOpenTelemetryClientFilter.class.getName();
-        SystemInstance.get().setProperty("openejb.jaxrs.client.providers", clientProviders);
     }
 
     @Override
