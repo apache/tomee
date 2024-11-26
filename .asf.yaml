@@ -65,4 +65,5 @@ notifications:
   commits:      commits@tomee.apache.org
   issues:       dev@tomee.apache.org
   pullrequests: dev@tomee.apache.org
+  pullrequests_bot_dependabot: commits@tomee.apache.org
   jira_options: link worklog
