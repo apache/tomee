@@ -42,6 +42,7 @@ updates:
       - dependency-name: "jakarta.*:*"
         # Ignore Spec Updates
       - dependency-name: "org.eclipse.microprofile:*"
+      - dependency-name: "org.eclipse.microprofile.*:*"
         # Ignore Jetty (required version for TCKs)
       - dependency-name: "org.eclipse.jetty*:*"
         # Ignore Glassfish (required version for TCKs)
