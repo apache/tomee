@@ -60,6 +60,7 @@ github:
     delete_comment_discussion: "Re: [D] {title} ({repository})"
   dependabot_alerts: true
   dependabot_updates: true
+  del_branch_on_merge: true
 
 notifications:
   commits:      commits@tomee.apache.org
