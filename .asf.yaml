@@ -62,6 +62,9 @@ github:
   dependabot_updates: true
   del_branch_on_merge: true
 
+  autolink_jira:
+    - TOMEE
+
 notifications:
   commits:      commits@tomee.apache.org
   issues:       dev@tomee.apache.org
