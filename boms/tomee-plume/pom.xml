@@ -2059,6 +2059,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.parsson</groupId>
+      <artifactId>jakarta.json</artifactId>
+      <version>1.1.4</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
       <version>4.0.4</version>
