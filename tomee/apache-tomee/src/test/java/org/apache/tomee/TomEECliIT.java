@@ -89,11 +89,11 @@ public class TomEECliIT {
         });
 
         final ProcessBuilder builder = new ProcessBuilder()
-            .command("java", "-cp", jar.getAbsolutePath() + File.pathSeparator +
-                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + openejbCore[0] + File.pathSeparator +
-                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsCli[0] + File.pathSeparator +
-                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsLang[0],
-                    "org.apache.openejb.cli.Bootstrap", "classloadertest");
+                .command(getJavaBinaryPath(), "-cp", jar.getAbsolutePath() + File.pathSeparator +
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + openejbCore[0] + File.pathSeparator +
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsCli[0] + File.pathSeparator +
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsLang[0],
+                        "org.apache.openejb.cli.Bootstrap", "classloadertest");
 
         final Process start = builder.start();
         start.waitFor();
@@ -133,7 +133,7 @@ public class TomEECliIT {
         }
 
         final ProcessBuilder builder = new ProcessBuilder()
-                .command("java", "-cp", file.getAbsolutePath() + File.separator + "*" + File.pathSeparator +
+                .command(getJavaBinaryPath(), "-cp", file.getAbsolutePath() + File.separator + "*" + File.pathSeparator +
                                 tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "*",
                         "org.apache.openejb.cli.Bootstrap", "classloadertest");
 
@@ -205,7 +205,7 @@ public class TomEECliIT {
         });
 
         final ProcessBuilder builder = new ProcessBuilder()
-                .command("java", "-cp", jar.getAbsolutePath() + File.pathSeparator +
+                .command(getJavaBinaryPath(), "-cp", jar.getAbsolutePath() + File.pathSeparator +
                                 jar2.getAbsolutePath() + File.pathSeparator +
                                 tomee.getAbsolutePath() + File.separator + "lib" + File.separator + openejbCore[0] + File.pathSeparator +
                                 tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsCli[0] + File.pathSeparator +
@@ -258,7 +258,7 @@ public class TomEECliIT {
         }
 
         final ProcessBuilder builder = new ProcessBuilder()
-                .command("java", "-cp", file.getAbsolutePath() + File.separator + "*" + File.pathSeparator +
+                .command(getJavaBinaryPath(), "-cp", file.getAbsolutePath() + File.separator + "*" + File.pathSeparator +
                                 tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "*",
                         "org.apache.openejb.cli.Bootstrap", "classloadertest2");
 
@@ -308,7 +308,7 @@ public class TomEECliIT {
         }
 
         final ProcessBuilder builder = new ProcessBuilder()
-                .command("java", "-cp", file.getAbsolutePath() + File.separator + "*" + File.pathSeparator +
+                .command(getJavaBinaryPath(), "-cp", file.getAbsolutePath() + File.separator + "*" + File.pathSeparator +
                                 tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "*",
                         "org.apache.openejb.cli.Bootstrap", "classloadertest2");
 
@@ -324,5 +324,14 @@ public class TomEECliIT {
         final ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         new Bootstrap().main(new String[]{"cipher"});
         assertEquals(originalClassLoader, Thread.currentThread().getContextClassLoader());
+    }
+
+    protected String getJavaBinaryPath() {
+        String javaExecutable = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+        if (System.getProperty("os.name").startsWith("Win")) {
+            javaExecutable += ".exe";
+        }
+
+        return javaExecutable;
     }
 }
