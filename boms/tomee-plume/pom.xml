@@ -268,7 +268,7 @@
     <dependency>
       <groupId>io.opentelemetry.instrumentation</groupId>
       <artifactId>opentelemetry-instrumentation-api-semconv</artifactId>
-      <version>1.20.2-alpha</version>
+      <version>1.33.6-alpha</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
