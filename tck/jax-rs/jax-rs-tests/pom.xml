@@ -149,13 +149,6 @@
                                  ee.jakarta.tck.ws.rs.jaxrs31.spec.extensions.JAXRSClientIT#dynamicFeatureIsRegisteredTest
                                 -->
                                 <exclude>**/jaxrs31/spec/extensions/JAXRSClientIT.java</exclude>
-                                <!-- TODO: TOMEE-4436 -->
-                                <exclude>**/spec/provider/standard/JAXRSClientIT.java</exclude>
-                                <exclude>**/interceptor/clientwriter/interceptorcontext/JAXRSClientIT.java</exclude>
-                                <exclude>**/interceptor/containerreader/interceptorcontext/JAXRSClientIT.java</exclude>
-                                <exclude>**/interceptor/reader/interceptorcontext/JAXRSClientIT.java</exclude>
-                                <exclude>**/interceptor/containerwriter/interceptorcontext/JAXRSClientIT.java</exclude>
-                                <exclude>**/spec/client/invocations/JAXRSClientIT.java</exclude>
                             </excludes>
 
                             <dependenciesToScan>
@@ -175,7 +168,6 @@
                                 <password>j2ee</password>
                                 <authuser>javajoe</authuser>
                                 <authpassword>javajoe</authpassword>
-                                <openejb.jaxrs.skip.jakarta.json.providers.registration>false</openejb.jaxrs.skip.jakarta.json.providers.registration>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
