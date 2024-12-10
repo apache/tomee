@@ -212,7 +212,7 @@
     <version.activemq>6.1.4</version.activemq>
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
-    <version.cxf>4.1.0-SNAPSHOT</version.cxf>
+    <version.cxf>4.1.0</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.0</version.geronimo-mail_2.1_provider>
@@ -639,6 +639,16 @@
           <id>Apache Snapshots</id>
           <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <id>CXF 4.1.0</id>
+          <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
+        </repository>
       </repositories>
     </profile>
     <profile>
@@ -760,6 +770,16 @@
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
+        </repository>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <id>CXF 4.1.0</id>
+          <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
         </repository>
       </repositories>
     </profile>
@@ -938,7 +958,16 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>CXF 4.1.0</id>
+      <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
+    </repository>
     <!-- transitive dependency from WSS4J -->
     <repository>
       <id>B_shibboleth</id>
