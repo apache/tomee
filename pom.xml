@@ -219,7 +219,7 @@
     <version.johnzon>2.0.1</version.johnzon>
     <version.myfaces>4.0.2</version.myfaces>
     <version.openjpa>4.0.1</version.openjpa>
-    <version.openwebbeans>4.0.3-SNAPSHOT</version.openwebbeans>
+    <version.openwebbeans>4.0.3</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>4.0.4</version.eclipselink>
     <!-- org.glassfish -->
@@ -639,6 +639,7 @@
           <id>Apache Snapshots</id>
           <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
+
         <repository>
           <snapshots>
             <enabled>false</enabled>
@@ -648,6 +649,16 @@
           </releases>
           <id>CXF 4.1.0</id>
           <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
+        </repository>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <id>OpenWebBeans 4.0.3</id>
+          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1086</url>
         </repository>
       </repositories>
     </profile>
@@ -780,6 +791,16 @@
           </releases>
           <id>CXF 4.1.0</id>
           <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
+        </repository>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <id>OpenWebBeans 4.0.3</id>
+          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1086</url>
         </repository>
       </repositories>
     </profile>
@@ -968,6 +989,17 @@
       <id>CXF 4.1.0</id>
       <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
     </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>OpenWebBeans 4.0.3</id>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1086</url>
+    </repository>
+
     <!-- transitive dependency from WSS4J -->
     <repository>
       <id>B_shibboleth</id>
