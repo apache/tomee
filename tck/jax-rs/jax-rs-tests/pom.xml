@@ -156,7 +156,8 @@
                                  -->
                                 <exclude>**/api/client/invocationcallback/JAXRSClientIT.java</exclude>
                                 <exclude>**/spec/client/invocations/JAXRSClientIT.java</exclude>
-                                <exclude>**/ext/interceptor/reader/interceptorcontext/JAXRSClientIT.java</exclude>
+                                <exclude>**/ext/interceptor/reader/interceptorcontext/JAXRSClientIT.java</exclude>                    
+                                <exclude>**/ext/interceptor/containerwriter/interceptorcontext/JAXRSClientIT.java</exclude>
                              </excludes>
 
                             <dependenciesToScan>
