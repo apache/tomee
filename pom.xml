@@ -647,16 +647,6 @@
           <releases>
             <enabled>true</enabled>
           </releases>
-          <id>CXF 4.1.0</id>
-          <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
-        </repository>
-        <repository>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
           <id>OpenWebBeans 4.0.3</id>
           <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1086</url>
         </repository>
@@ -781,16 +771,6 @@
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
-        </repository>
-        <repository>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <id>CXF 4.1.0</id>
-          <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
         </repository>
         <repository>
           <snapshots>
@@ -978,16 +958,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </repository>
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <id>CXF 4.1.0</id>
-      <url>https://repository.apache.org/content/repositories/orgapachecxf-1214</url>
     </repository>
     <repository>
       <snapshots>
