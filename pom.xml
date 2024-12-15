@@ -638,17 +638,6 @@
           <id>Apache Snapshots</id>
           <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
-
-        <repository>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <id>OpenWebBeans 4.0.3</id>
-          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1086</url>
-        </repository>
       </repositories>
     </profile>
     <profile>
@@ -770,16 +759,6 @@
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
-        </repository>
-        <repository>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <id>OpenWebBeans 4.0.3</id>
-          <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1086</url>
         </repository>
       </repositories>
     </profile>
@@ -957,16 +936,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </repository>
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <id>OpenWebBeans 4.0.3</id>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1086</url>
     </repository>
 
     <!-- transitive dependency from WSS4J -->
