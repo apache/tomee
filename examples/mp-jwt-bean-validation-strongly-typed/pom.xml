@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-jwt-bean-validation-strongly-typed</artifactId>
-  <version>10.0.0</version>
+  <version>10.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile JWT Bean Validation, Strongly-typed Annotations</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.jakartaee-api>10.0</version.jakartaee-api>
-    <tomee.version>10.0.0</tomee.version>
+    <tomee.version>10.0.1-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>3.3.3</version.shrinkwrap.resolver>
     <mp-jwt.version>1.1</mp-jwt.version>
   </properties>

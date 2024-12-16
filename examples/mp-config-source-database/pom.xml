@@ -19,14 +19,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-config-source-database</artifactId>
-  <version>10.0.0</version>
+  <version>10.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile Config Source Database</name>
   <properties>
     <version.jakartaee-api>10.0</version.jakartaee-api>
     <version.microprofile>6.0</version.microprofile>
     <version.arquillian>1.9.1.Final</version.arquillian>
-    <tomee.version>10.0.0</tomee.version>
+    <tomee.version>10.0.1-SNAPSHOT</tomee.version>
   </properties>
   <dependencies>
     <dependency>
