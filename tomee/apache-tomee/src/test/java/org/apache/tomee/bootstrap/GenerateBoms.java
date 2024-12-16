@@ -523,7 +523,7 @@ public class GenerateBoms {
             }
 
             if (jar.getName().startsWith("ecj-")) {
-                return new Artifact("org.eclipse.jdt", "ecj", "3.33.0", null);
+                return new Artifact("org.eclipse.jdt", "ecj", "3.40.0", null);
             }
 
             if (jar.getName().equals("openejb-javaagent.jar")) {
@@ -598,8 +598,7 @@ public class GenerateBoms {
          * and all such data would be in the parent pom.
          */
         public String asBomDep() {
-            return "" +
-                    "    <dependency>\n" +
+            return "    <dependency>\n" +
                     "      <groupId>" + groupId + "</groupId>\n" +
                     "      <artifactId>" + artifactId + "</artifactId>\n" +
                     "      <version>" + version + "</version>\n" +
@@ -619,8 +618,7 @@ public class GenerateBoms {
          * the dependencies needed, but not duplicate the version information.
          */
         public String asManagedDep() {
-            return "" +
-                    "    <dependency>\n" +
+            return "    <dependency>\n" +
                     "      <groupId>" + groupId + "</groupId>\n" +
                     "      <artifactId>" + artifactId + "</artifactId>\n" +
                     "      <version>" + version + "</version>\n" +
@@ -658,7 +656,7 @@ public class GenerateBoms {
                 }
             }
             out.flush();
-            return new String(bytes.toByteArray());
+            return bytes.toString();
         }
     }
 }
