@@ -583,4 +583,18 @@
       </plugin>
     </plugins>
   </build>
+  <!--
+  Webapp distributions removed per https://lists.apache.org/thread/31w7336d5ycqhmoy4pngbsjg3odm0yqx
+  -->
+  <distributionManagement>
+    <repository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/snapshot-repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 </project>
