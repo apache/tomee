@@ -24,7 +24,7 @@
   <name>TomEE :: Examples :: Bean Validation Design By Contract</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.1-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
