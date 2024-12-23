@@ -25,7 +25,6 @@
   <name>TomEE :: Examples :: Groovy CDI</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.arquillian.container>1.0.3.Final</version.arquillian.container>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -96,6 +95,12 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
       <version>10.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>1.9.1.Final</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

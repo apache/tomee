@@ -124,6 +124,12 @@
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>1.9.1.Final</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <!--
   This section allows you to configure where to publish libraries for sharing.
