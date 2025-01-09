@@ -209,9 +209,9 @@
       org.junit.runners.model;resolution:=optional,
       org.testng;resolution:=optional,
       org.osgi.framework,
-      org.apache.openejb.quartz;resolution:=optional,
-      org.apache.openejb.quartz.impl;resolution:=optional,
-      org.apache.openejb.quartz.spi;resolution:=optional,
+      org.apache.tomee.quartz;resolution:=optional,
+      org.apache.tomee.quartz.impl;resolution:=optional,
+      org.apache.tomee.quartz.spi;resolution:=optional,
       org.slf4j;resolution:=optional;version="[1.6,4)",
       org.w3c.dom,
       org.w3c.dom.ls,
@@ -611,8 +611,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.shade</groupId>
-      <artifactId>quartz-openejb-shade</artifactId>
+      <groupId>org.apache.tomee.shade</groupId>
+      <artifactId>tomee-quartz-shade</artifactId>
     </dependency>
     <!-- Dependency of Quartz -->
     <dependency>

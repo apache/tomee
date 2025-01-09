@@ -565,9 +565,9 @@
       <artifactId>geronimo-connector</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.shade</groupId>
-      <artifactId>quartz-openejb-shade</artifactId>
-      <version>${version.quartz-openejb-shade}</version>
+      <groupId>org.apache.tomee.shade</groupId>
+      <artifactId>tomee-quartz-shade</artifactId>
+      <version>${version.tomee-quartz-shade}</version>
       <exclusions>
         <exclusion>
           <groupId>org.quartz-scheduler</groupId>
