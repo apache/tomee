@@ -134,7 +134,7 @@
     <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <version.quartz-openejb-shade>2.2.4</version.quartz-openejb-shade>
+    <version.tomee-quartz-shade>2.5.0</version.tomee-quartz-shade>
     <version.axiom>1.4.0</version.axiom>
     <version.xbean>4.26</version.xbean>
     <version.groovy>2.4.21</version.groovy>
@@ -1548,16 +1548,12 @@
         <version>${tomcat.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb.shade</groupId>
-        <artifactId>quartz-openejb-shade</artifactId>
-        <version>${version.quartz-openejb-shade}</version>
+        <groupId>org.apache.tomee.shade</groupId>
+        <artifactId>tomee-quartz-shade</artifactId>
+        <version>${version.tomee-quartz-shade}</version>
         <exclusions>
           <exclusion>
             <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.tomitribe.quartz</groupId>
             <artifactId>quartz</artifactId>
           </exclusion>
           <exclusion>
