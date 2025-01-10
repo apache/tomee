@@ -11,56 +11,56 @@
 
 xref:../../comparison.adoc[See main comparison page.]
 
-== [[specifications]] Detailed list of Jakarta EE 9.1 and MicroProfile 5.0 specifications
+== [[specifications]] Detailed list of Jakarta EE 10 and MicroProfile 6.0 specifications
 
 [options="header",cols="5,5*^1"]
 |===
 |Specifications|Tomcat|TomEE WebProfile|TomEE MicroProfile|TomEE Plus|TomEE Plume
 // TOMCAT
-|https://jakarta.ee/specifications/annotations/2.0/[Jakarta Annotations^] 2.0|{y}|{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/authentication/2.0/[Jakarta Authentication^] (JASPIC) 2.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/annotations/2.1/[Jakarta Annotations^] 2.1|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/authentication/3.0/[Jakarta Authentication^] (JASPIC) 3.0|{y}|{y}|{y}|{y}|{y}
 |https://jakarta.ee/specifications/debugging/2.0/[Jakarta Debugging Support for Other Languages^] 2.0|{y}|{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/servlet/5.0/[Jakarta Servlet^] 5.0|{y}|{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/pages/3.0/[Jakarta Server Pages^] (JSP) 3.0|{y}|{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/expression-language/4.0/[Jakarta Expression Language^] (EL) 4.0|{y}|{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/websocket/2.0/[Jakarta WebSocket^] 2.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/servlet/6.0/[Jakarta Servlet^] 6.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/pages/3.1/[Jakarta Server Pages^] (JSP) 3.1|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/expression-language/5.0/[Jakarta Expression Language^] (EL) 5.0|{y}|{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/websocket/2.1/[Jakarta WebSocket^] 2.1|{y}|{y}|{y}|{y}|{y}
 // WEB PROFILE
-|https://jakarta.ee/specifications/webprofile/9.1/[Jakarta Web Profile specifications^] 9.1||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/activation/2.0/[Jakarta Activation^] 2.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/webprofile/10/[Jakarta Web Profile specifications^] 10||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/activation/2.1/[Jakarta Activation^] 2.1||{y}|{y}|{y}|{y}
 |https://jakarta.ee/specifications/bean-validation/3.0/[Jakarta Bean Validation^] 3.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/cdi/3.0/[Jakarta Contexts and Dependency Injection^] (CDI) 3.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/cdi/4.0/[Jakarta Contexts and Dependency Injection^] (CDI) 4.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/concurrency/3.0/[Jakarta Concurrency^] 3.0||||{y}|{y}
 |https://jakarta.ee/specifications/dependency-injection/2.0/[Jakarta Dependency Injection^] (@Inject) 2.0||{y}|{y}|{y}|{y}
 |https://jakarta.ee/specifications/enterprise-beans/4.0/[Jakarta Enterprise Beans^] (EJB) 4.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/faces/3.0/[Jakarta Faces^] (JSF) 3.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/interceptors/2.0/[Jakarta Interceptors^] 2.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/jsonb/2.0/[Jakarta JSON Binding^] (JSON-B) 2.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/jsonp/2.0/[Jakarta JSON Processing^] (JSON-P) 2.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/mail/2.0/[Jakarta Mail^] (JavaMail) 2.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/faces/4.0/[Jakarta Faces^] (JSF) 4.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/interceptors/2.1/[Jakarta Interceptors^] 2.1||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/jsonb/3.0/[Jakarta JSON Binding^] (JSON-B) 3.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/jsonp/2.1/[Jakarta JSON Processing^] (JSON-P) 2.1||{y}|{y}|{y}|{y}
 |https://jakarta.ee/specifications/managedbeans/2.0/[Jakarta Managed Beans^] 2.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/persistence/3.0/[Jakarta Persistence^] (JPA) 3.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/restful-ws/3.0/[Jakarta RESTful Web Services^] (JAX-RS) 3.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/security/2.0/[Jakarta Security^] (Enterprise Security) * 2.0||{y}|{y}|{y}|{y}
-|https://jakarta.ee/specifications/tags/2.0/[Jakarta Standard Tag Library^] (JSTL) * 2.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/persistence/3.1/[Jakarta Persistence^] (JPA) 3.1||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/restful-ws/3.1/[Jakarta RESTful Web Services^] (JAX-RS) 3.1||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/security/3.0/[Jakarta Security^] (Enterprise Security) * 3.0||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/tags/3.0/[Jakarta Standard Tag Library^] (JSTL) * 3.0||{y}|{y}|{y}|{y}
 |https://jakarta.ee/specifications/transactions/2.0/[Jakarta Transactions^] (JTA) 2.0||{y}|{y}|{y}|{y}
 |https://jakarta.ee/specifications/xml-binding/3.0/[Jakarta XML Binding^] (JAXB) 3.0||{y}|{y}|{y}|{y}
 // MICRO PROFILE
-|https://download.eclipse.org/microprofile/microprofile-5.0/microprofile-spec-5.0.html[MicroProfile specifications^] 5.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-6.0/microprofile-spec-6.0.html[MicroProfile specifications^] 5.0|||{y}|{y}|{y}
 |https://download.eclipse.org/microprofile/microprofile-config-3.0/microprofile-config-spec-3.0.html[MicroProfile Config^] 3.0|||{y}|{y}|{y}
 |https://download.eclipse.org/microprofile/microprofile-fault-tolerance-4.0/microprofile-fault-tolerance-spec-4.0.html[MicroProfile Fault Tolerance^] 4.0|||{y}|{y}|{y}
 |https://download.eclipse.org/microprofile/microprofile-health-4.0/microprofile-health-spec-4.0.html[MicroProfile Health^] 4.0|||{y}|{y}|{y}
-|https://download.eclipse.org/microprofile/microprofile-jwt-auth-2.0/microprofile-jwt-auth-spec-2.0.html[MicroProfile JWT Authentication^] 2.0|||{y}|{y}|{y}
-|https://download.eclipse.org/microprofile/microprofile-metrics-4.0/microprofile-metrics-spec-4.0.html[MicroProfile Metrics^] 4.0|||{y}|{y}|{y}
-|https://download.eclipse.org/microprofile/microprofile-open-api-3.0/microprofile-openapi-spec-3.0.html[MicroProfile OpenAPI^] 3.0|||{y}|{y}|{y}
-|https://download.eclipse.org/microprofile/microprofile-opentracing-3.0/microprofile-opentracing-spec-3.0.html[MicroProfile OpenTracing^] 3.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-jwt-auth-2.1/microprofile-jwt-auth-spec-2.1.html[MicroProfile JWT Authentication^] 2.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-metrics-5.0/microprofile-metrics-spec-5.0.html[MicroProfile Metrics^] 4.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-open-api-3.1/microprofile-openapi-spec-3.1.html[MicroProfile OpenAPI^] 3.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-telemetry-1.0/tracing/microprofile-telemetry-tracing-spec-1.0.html[MicroProfile Telemetry^] 1.0|||{y}|{y}|{y}
 |https://download.eclipse.org/microprofile/microprofile-rest-client-3.0/microprofile-rest-client-spec-3.0.html[MicroProfile Rest Client^] 3.0|||{y}|{y}|{y}
 // FULL EE
-|https://jakarta.ee/specifications/platform/9.1/[Jakarta EE specifications^] 9.1||||{y}|{y}
-|https://jakarta.ee/specifications/authorization/2.0/[Jakarta Authorization^] (JACC) 2.0||||{y}|{y}
-|https://jakarta.ee/specifications/batch/2.0/[Jakarta Batch^] (JBatch) 2.0||||{y}|{y}
-|https://jakarta.ee/specifications/concurrency/2.0/[Jakarta Concurrency^] 2.0||||{y}|{y}
-|https://jakarta.ee/specifications/connectors/2.0/[Jakarta Connectors^] 2.0||||{y}|{y}
+|https://jakarta.ee/specifications/platform/10/[Jakarta EE specifications^] 10||||{y}|{y}
+|https://jakarta.ee/specifications/authorization/2.1/[Jakarta Authorization^] (JACC) 2.1||||{y}|{y}
+|https://jakarta.ee/specifications/batch/2.1/[Jakarta Batch^] (JBatch) 2.1||||{y}|{y}
+|https://jakarta.ee/specifications/connectors/2.1/[Jakarta Connectors^] 2.1||||{y}|{y}
 |https://jakarta.ee/specifications/enterprise-ws/2.0/[Jakarta Enterprise Web Services^] 2.0||||{y}|{y}
-|https://jakarta.ee/specifications/messaging/3.0/[Jakarta Messaging^] (JMS) 3.0||||{y}|{y}
+|https://jakarta.ee/specifications/mail/2.1/[Jakarta Mail^] (JavaMail) 2.1||{y}|{y}|{y}|{y}
+|https://jakarta.ee/specifications/messaging/3.1/[Jakarta Messaging^] (JMS) 3.1||||{y}|{y}
 |https://jakarta.ee/specifications/soap-attachments/2.0/[Jakarta SOAP with Attachments^] (SAAJ) 2.0||||{y}|{y}
 |https://jakarta.ee/specifications/web-services-metadata/3.0/[Jakarta Web Services Metadata^] (JWS) 3.0||||{y}|{y}
 |https://jakarta.ee/specifications/xml-web-services/3.0/[Jakarta XML Web Services^] (JAX-WS) 3.0||||{y}|{y}
@@ -75,27 +75,27 @@ xref:../../comparison.adoc[See main comparison page.]
 
 [options="header",cols="1,1"]
 |===
-|Specifications|Implementations included by TomEE 9.x
+|Specifications|Implementations included by TomEE 10.x
 |Jakarta Servlet, Server Pages (JSP), Expression Language (EL), +
 Jakarta Annotations, Authentication (JASPIC), WebSocket, ... |
-https://tomcat.apache.org/[Apache Tomcat^] 10.0.x
+https://tomcat.apache.org/[Apache Tomcat^] 10.1.x
 |Jakarta{nbsp}Standard{nbsp}Tag{nbsp}Library{nbsp}(JSTL)|https://tomcat.apache.org/taglibs.html[Apache Standard Taglib Implementation^]
 // 2.0.x
 |Jakarta Faces (JSF)|
 https://myfaces.apache.org/[Apache MyFaces^] *(shipped in all TomEE flavors except Plume)* +
 https://projects.eclipse.org/projects/ee4j.mojarra[Eclipse Mojarra^] *(shipped in TomEE Plume)*
-|Jakarta Contexts and Dependency Injection (CDI)|https://openwebbeans.apache.org/[Apache OpenWebBeans^] 2.x (with jakarta classifier)
+|Jakarta Contexts and Dependency Injection (CDI)|https://openwebbeans.apache.org/[Apache OpenWebBeans^] 4.x (with jakarta classifier)
 |Jakarta Enterprise Beans (EJB)|https://openejb.apache.org/[Apache OpenEJB^]
 |Jakarta Transactions (JTA)|Apache{nbsp}Geronimo{nbsp}Transaction{nbsp}Manager
 |Jakarta Persistence (JPA)|
-https://openjpa.apache.org/[Apache OpenJPA^] 3.2.x jakarta (shipped in all TomEE flavors) +
-https://www.eclipse.org/eclipselink/[EclipseLink^] 3.x *(shipped in TomEE Plume)*
+https://openjpa.apache.org/[Apache OpenJPA^] 4.0.x jakarta (shipped in all TomEE flavors) +
+https://www.eclipse.org/eclipselink/[EclipseLink^] 4.0.x *(shipped in TomEE Plume)*
 |Jakarta Bean Validation|
 https://bval.apache.org/[Apache BVal^]
-|Web Services|https://cxf.apache.org/[Apache CXF^] 3.5.x
+|Web Services|https://cxf.apache.org/[Apache CXF^] 4.1.x
 |Jakarta JSON Binding (JSON-B), +
 Jakarta JSON Processing (JSON-P)|
-https://johnzon.apache.org/[Apache Johnzon^] 1.2.x
+https://johnzon.apache.org/[Apache Johnzon^] 2.0.x
 |Jakarta XML Binding (JAXB)|https://projects.eclipse.org/projects/ee4j.jaxb-impl[Eclipse Implementation of JAXB^] 3.0.x
 |Jakarta Mail (JavaMail)|Apache Geronimo JavaMail
 |MicroProfile|
@@ -113,9 +113,9 @@ In bold : Implementations that differ between flavors or between versions
 |===
 |Specifications|Implementations alternatives +
 //(see icons for compatibilities with TomEE 9.x)
-|Jakarta Persistence (JPA)|https://hibernate.org/orm/[Hibernate ORM^] {y} 6.1.x +
+|Jakarta Persistence (JPA)|https://hibernate.org/orm/[Hibernate ORM^] {y} 6.6.x
 |Jakarta MVC|
-https://eclipse-ee4j.github.io/krazo/[Eclipse Krazo^] {y} 2.0.x +
+https://eclipse-ee4j.github.io/krazo/[Eclipse Krazo^] {y} 3.0.x +
 |Other containers (CDI, EJB, JTA, etc.) and frameworks|
 https://spring.io/[Spring^] {y} 6.0.x +
 |===
