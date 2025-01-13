@@ -157,7 +157,7 @@
 
     <!-- Apache Commons -->
     <version.commons-cli>1.9.0</version.commons-cli>
-    <version.commons-codec>1.17.1</version.commons-codec>
+    <version.commons-codec>1.17.2</version.commons-codec>
     <version.commons-dbcp2>2.13.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
     <version.commons-io>2.18.0</version.commons-io>
