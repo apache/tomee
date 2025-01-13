@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.9.2.Final</version>
+      <version>1.9.3.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>
