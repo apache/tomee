@@ -177,9 +177,9 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
                                 executor = new ManagedExecutorServiceImpl(
                                         new ExecutorBuilder()
                                                 .size(3)
-                                                .threadFactory(new ManagedThreadFactoryImpl(appContext.getId() + "-cdi-fireasync-", null, ContextServiceImplFactory.newPropagateEverythingContextService()))
+                                                .threadFactory(new ManagedThreadFactoryImpl(appContext.getId() + "-cdi-fireasync-", null, ContextServiceImplFactory.newDefaultContextService()))
                                                 .prefix("CDIAsyncPool")
-                                                .build(appContext.getOptions()), ContextServiceImplFactory.newPropagateEverythingContextService());
+                                                .build(appContext.getOptions()), ContextServiceImplFactory.newDefaultContextService());
                                 delegate.compareAndSet(null, executor);
                             } else {
                                 executor = alreadyUpdated;
