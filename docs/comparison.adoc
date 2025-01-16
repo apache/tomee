@@ -44,7 +44,7 @@ xref:../../comparison.adoc[See main comparison page.]
 |https://jakarta.ee/specifications/transactions/2.0/[Jakarta Transactions^] (JTA) 2.0||{y}|{y}|{y}|{y}
 |https://jakarta.ee/specifications/xml-binding/3.0/[Jakarta XML Binding^] (JAXB) 3.0||{y}|{y}|{y}|{y}
 // MICRO PROFILE
-|https://download.eclipse.org/microprofile/microprofile-6.0/microprofile-spec-6.0.html[MicroProfile specifications^] 5.0|||{y}|{y}|{y}
+|https://download.eclipse.org/microprofile/microprofile-6.0/microprofile-spec-6.0.html[MicroProfile specifications^] 6.0|||{y}|{y}|{y}
 |https://download.eclipse.org/microprofile/microprofile-config-3.0/microprofile-config-spec-3.0.html[MicroProfile Config^] 3.0|||{y}|{y}|{y}
 |https://download.eclipse.org/microprofile/microprofile-fault-tolerance-4.0/microprofile-fault-tolerance-spec-4.0.html[MicroProfile Fault Tolerance^] 4.0|||{y}|{y}|{y}
 |https://download.eclipse.org/microprofile/microprofile-health-4.0/microprofile-health-spec-4.0.html[MicroProfile Health^] 4.0|||{y}|{y}|{y}
@@ -71,7 +71,7 @@ xref:../../comparison.adoc[See main comparison page.]
 
 * Please note that Tomcat does not ship with the jars for Standard Tag Library (JSTL) nor the jakarta.security.enterprise.* packages.
 
-== [[implementations]] Implementations of Jakarta EE and MicroProfile features in TomEE 9.x
+== [[implementations]] Implementations of Jakarta EE and MicroProfile features in TomEE 10.x
 
 [options="header",cols="1,1"]
 |===
@@ -114,8 +114,6 @@ In bold : Implementations that differ between flavors or between versions
 |Specifications|Implementations alternatives +
 //(see icons for compatibilities with TomEE 9.x)
 |Jakarta Persistence (JPA)|https://hibernate.org/orm/[Hibernate ORM^] {y} 6.6.x
-|Jakarta MVC|
-https://eclipse-ee4j.github.io/krazo/[Eclipse Krazo^] {y} 3.0.x +
 |Other containers (CDI, EJB, JTA, etc.) and frameworks|
 https://spring.io/[Spring^] {y} 6.0.x +
 |===
