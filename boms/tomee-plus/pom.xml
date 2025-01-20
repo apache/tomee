@@ -774,7 +774,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
-      <version>6.1.4</version>
+      <version>6.1.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
