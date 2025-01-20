@@ -2105,7 +2105,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcutil-jdk15to18</artifactId>
-      <version>1.79</version>
+      <version>1.80</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
