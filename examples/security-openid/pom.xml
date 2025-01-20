@@ -31,7 +31,7 @@
         <version.microprofile.config>3.0.2</version.microprofile.config>
         <junit.jupiter.version>5.11.3</junit.jupiter.version>
         <arquillian.version>1.9.3.Final</arquillian.version>
-        <testcontainers-keycloak.version>3.5.1</testcontainers-keycloak.version>
+        <testcontainers-keycloak.version>3.6.0</testcontainers-keycloak.version>
     </properties>
     <dependencies>
         <dependency>
