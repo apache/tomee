@@ -1883,7 +1883,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>org.apache.tomee.shade</groupId>
       <artifactId>tomee-quartz-shade</artifactId>
       <version>${version.tomee-quartz-shade}</version>
       <exclusions>

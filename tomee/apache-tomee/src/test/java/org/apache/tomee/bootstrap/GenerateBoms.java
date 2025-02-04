@@ -531,7 +531,7 @@ public class GenerateBoms {
             }
 
             if (jar.getName().startsWith("tomee-quartz-shade")) {
-                return new Artifact("org.apache.tomee", "tomee-quartz-shade", "${version.tomee-quartz-shade}", null);
+                return new Artifact("org.apache.tomee.shade", "tomee-quartz-shade", "${version.tomee-quartz-shade}", null);
             }
 
             if ((jar.getName().startsWith("openejb-") ||
