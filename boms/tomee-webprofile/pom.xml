@@ -860,6 +860,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.tomee.shade</groupId>
+      <artifactId>tomee-quartz-shade</artifactId>
+      <version>${version.tomee-quartz-shade}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>commons-dbcp2-shade</artifactId>
       <version>10.0.1-SNAPSHOT</version>
@@ -1182,17 +1193,6 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-myfaces</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee.shade</groupId>
-      <artifactId>tomee-quartz-shade</artifactId>
-      <version>${version.tomee-quartz-shade}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
