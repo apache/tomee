@@ -530,11 +530,15 @@ public class GenerateBoms {
                 return new Artifact("org.apache.tomee", "openejb-javaagent", "${project.version}", null);
             }
 
-            if (jar.getName().startsWith("openejb-") ||
+            if (jar.getName().startsWith("tomee-quartz-shade")) {
+                return new Artifact("org.apache.tomee", "tomee-quartz-shade", "${version.tomee-quartz-shade}", null);
+            }
+
+            if ((jar.getName().startsWith("openejb-") ||
                     jar.getName().startsWith("tomee-") ||
                     jar.getName().startsWith("mp-common-") ||
                     jar.getName().startsWith("mp-jwt-") ||
-                    jar.getName().startsWith("mbean-annotation-")) {
+                    jar.getName().startsWith("mbean-annotation-"))) {
                 final String artifact = jar.getName().replaceAll("-\\d\\d?.0.*", "");
                 return new Artifact("org.apache.tomee", artifact, "${project.version}", null);
             }

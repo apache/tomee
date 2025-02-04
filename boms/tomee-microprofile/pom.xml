@@ -1818,8 +1818,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-quartz-shade-2.5.0.jar</artifactId>
-      <version>${project.version}</version>
+      <artifactId>tomee-quartz-shade</artifactId>
+      <version>${version.tomee-quartz-shade}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
