@@ -135,7 +135,7 @@
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
     <version.tomee-quartz-shade>2.5.0</version.tomee-quartz-shade>
-    <version.axiom>1.4.0</version.axiom>
+    <version.axiom>2.0.0</version.axiom>
     <version.xbean>4.26</version.xbean>
     <version.groovy>2.4.21</version.groovy>
     <!-- Starting from 3.34.0 it requires J17+ -->
