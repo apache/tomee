@@ -1884,17 +1884,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-plume-webapp</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-security</artifactId>
       <version>${project.version}</version>
       <exclusions>

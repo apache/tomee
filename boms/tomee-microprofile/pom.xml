@@ -1796,17 +1796,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-microprofile-webapp</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-mojarra</artifactId>
       <version>${project.version}</version>
       <exclusions>

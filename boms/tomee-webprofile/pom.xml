@@ -1212,17 +1212,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-webapp</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.ws.xmlschema</groupId>
       <artifactId>xmlschema-core</artifactId>
       <version>2.3.1</version>
