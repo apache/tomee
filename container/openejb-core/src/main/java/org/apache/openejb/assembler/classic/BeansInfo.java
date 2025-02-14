@@ -34,6 +34,7 @@ public class BeansInfo extends InfoObject {
 
     public String version = "1.1";
     public String discoveryMode;
+    public boolean trim;
     public final List<ExclusionEntryInfo> excludes = new LinkedList<>();
     public final List<BDAInfo> bdas = new LinkedList<>();
     public final List<BDAInfo> noDescriptorBdas = new LinkedList<>();

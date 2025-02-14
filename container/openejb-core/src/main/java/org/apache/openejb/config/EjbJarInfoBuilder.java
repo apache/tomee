@@ -236,6 +236,7 @@ public class EjbJarInfoBuilder {
             ejbJar.beans = new BeansInfo();
             ejbJar.beans.version = beans.getVersion();
             ejbJar.beans.discoveryMode = beans.getBeanDiscoveryMode();
+            ejbJar.beans.trim = beans.isTrim();
             if (beans.getScan() != null) {
                 for (final Beans.Scan.Exclude exclude : beans.getScan().getExclude()) {
                     final ExclusionInfo exclusionInfo = new ExclusionInfo();
@@ -271,11 +272,13 @@ public class EjbJarInfoBuilder {
             ejbJar.beans.startupClasses.addAll(beans.getStartupBeans());
 
             final Map<URL, String> discoveryModeByUrl = new HashMap<>();
+            final Map<URL, Boolean> trimByUrl = new HashMap<>();
             final CompositeBeans composite;
             final boolean isComposite = CompositeBeans.class.isInstance(beans);
             if (isComposite) {
                 composite = CompositeBeans.class.cast(beans);
                 discoveryModeByUrl.putAll(composite.getDiscoveryByUrl());
+                trimByUrl.putAll(composite.getTrimByUrl());
             } else {
                 composite = null;
                 URL key = DEFAULT_BEANS_XML_KEY;
@@ -287,12 +290,14 @@ public class EjbJarInfoBuilder {
                     }
                 }
                 discoveryModeByUrl.put(key, beans.getBeanDiscoveryMode());
+                trimByUrl.put(key, beans.isTrim());
             }
             for (final Map.Entry<URL, List<String>> next : beans.getManagedClasses().entrySet()) {
                 final URL key = next.getKey();
 
                 final BeansInfo.BDAInfo bdaInfo = new BeansInfo.BDAInfo();
                 bdaInfo.discoveryMode = discoveryModeByUrl.get(key);
+                bdaInfo.trim = Boolean.TRUE.equals(trimByUrl.get(key));
                 merge(composite, key == null ? DEFAULT_BEANS_XML_KEY : key, bdaInfo, next.getValue());
                 ejbJar.beans.bdas.add(bdaInfo);
             }
