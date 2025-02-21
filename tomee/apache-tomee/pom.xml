@@ -95,28 +95,28 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webapp</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+      <type>pom</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-plus-webapp</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+      <type>pom</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-plume-webapp</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+      <type>pom</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-microprofile-webapp</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+      <type>pom</type>
       <scope>provided</scope>
     </dependency>
 
