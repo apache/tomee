@@ -56,6 +56,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
       <scope>provided</scope>

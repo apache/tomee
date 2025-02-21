@@ -146,9 +146,6 @@
       <scope>runtime</scope>
     </dependency>
 
-
-
-
     <!-- needed to compile in intellij for tomcat patches -->
     <dependency>
       <groupId>org.apache.tomcat</groupId>
