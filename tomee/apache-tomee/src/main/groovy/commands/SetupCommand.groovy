@@ -88,7 +88,7 @@ class SetupCommand {
 
         log.info('Deploying the tomee war')
         def localRepo = pom.settings.localRepository
-        ant.unzip(src: "${localRepo}/org/apache/tomee/${webapp}/${tomeeVersion}/${webapp}-${tomeeVersion}.war",
+        ant.unzip(src: "${localRepo}/org/apache/tomee/${webapp}/${tomeeVersion}/${webapp}-${tomeeVersion}.zip",
                 dest: "${workDir}/apache-tomcat-${tomcatVersion}/webapps/tomee")
 
         log.info("Installing to: ${catalinaHome}")
