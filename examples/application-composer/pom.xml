@@ -45,6 +45,11 @@
         <version>3.5.2</version>
         <configuration>
           <argLine>-Djdk.attach.allowAttachSelf</argLine>
+          <systemPropertyVariables>
+            <java.util.logging.config.file>
+              src/test/resources/logging.properties
+            </java.util.logging.config.file>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       

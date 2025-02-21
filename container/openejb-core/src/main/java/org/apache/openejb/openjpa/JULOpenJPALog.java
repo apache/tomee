@@ -127,8 +127,12 @@ public class JULOpenJPALog implements Log {
     }
 
     private LogRecord record(final Object o, final Level level) {
-        final LogRecord record = new JuliLogStream.OpenEJBLogRecord(level, o.toString());
-        record.setSourceMethodName(logger().getName());
-        return record;
+        try {
+            final LogRecord record = new JuliLogStream.OpenEJBLogRecord(level, o.toString());
+            record.setSourceMethodName(logger().getName());
+            return record;
+        } catch (Exception e) {
+            return new JuliLogStream.OpenEJBLogRecord(level, "Failed to log message. Reason: " + e.getLocalizedMessage());
+        }
     }
 }

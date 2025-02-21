@@ -16,6 +16,7 @@
  */
 package org.superbiz.composed;
 
+import jakarta.inject.Inject;
 import junit.framework.TestCase;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
@@ -31,6 +32,8 @@ import jakarta.ejb.EJB;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.UserTransaction;
+
+import java.security.Principal;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,6 +49,9 @@ public class MoviesTest extends TestCase {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Inject
+    private Principal principal;
 
     @Module
     public PersistenceUnit persistence() {
@@ -75,6 +81,7 @@ public class MoviesTest extends TestCase {
 
     @Test
     public void test() throws Exception {
+        assertNotNull(principal);
 
         userTransaction.begin();
 
