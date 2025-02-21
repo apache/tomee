@@ -86,6 +86,27 @@ class SetupCommand {
         log.info("extracting ${catalinaHome}")
         ant.unzip(src: dest, dest: "${workDir}")
 
+        if (tomcatVersion.endsWith("-SNAPSHOT")) {
+            def extractedFolder = "${workDir}/apache-tomcat-${tomcatVersion.replace('-SNAPSHOT', '-dev')}"
+            def renamedFolder = "${workDir}/apache-tomcat-${tomcatVersion}"
+            log.info("Renaming extracted folder to ${renamedFolder}")
+
+            def extractedDir = new File(extractedFolder)
+            def renamedDir = new File(renamedFolder)
+
+            if (extractedDir.exists()) {
+                boolean renamed = extractedDir.renameTo(renamedDir)
+                if (renamed) {
+                   log.info("Folder renamed and catalina.home updated to ${renamedFolder}")
+                } else {
+                    log.error("Failed to rename folder from ${extractedFolder} to ${renamedFolder}")
+                }
+            } else {
+                log.error("The extracted folder does not exist: ${extractedFolder}")
+            }
+
+        }
+
         log.info('Deploying the tomee war')
         def localRepo = pom.settings.localRepository
         ant.unzip(src: "${localRepo}/org/apache/tomee/${webapp}/${tomeeVersion}/${webapp}-${tomeeVersion}.zip",
