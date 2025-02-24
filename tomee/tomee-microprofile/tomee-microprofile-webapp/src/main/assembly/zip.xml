@@ -16,13 +16,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
-<!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
-
 <assembly>
-  <id>war</id>
+  <id>zip</id>
   <formats>
-    <format>war</format>
+    <format>zip</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
@@ -38,10 +35,6 @@
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/src/main/webapp</directory>
-      <outputDirectory>/</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>${project.build.directory}/webjars-resources/META-INF/resources</directory>
       <outputDirectory>/</outputDirectory>
     </fileSet>
     <fileSet>
@@ -70,37 +63,17 @@
         <include>**/*.html</include>
         <include>**/*.css</include>
         <include>**/*.js</include>
-        <!-- libs are handled with dependencies because exclude don't work too well bellow -->
-        <!-- if some deps are missing, they should be added as project dependencies -->
         <include>lib/*.jar</include>
       </includes>
-      <excludes>
-        <exclude>%regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar]</exclude>
-      </excludes>
     </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
-      <useTransitiveDependencies>true</useTransitiveDependencies>
-      <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>
-        <exclude>org.apache.myfaces:*</exclude>
-
-        <!-- should be in a pom exclusion but it does perfectly the trick -->
-        <exclude>org.springframework:*</exclude>
-
-        <exclude>*:jakarta.jws-api:*</exclude>
-        <exclude>*:jakarta.xml.bind-api:*</exclude>
-        <exclude>*:jakarta.xml.ws-api:*</exclude>
-
-        <exclude>org.eclipse.microprofile.rest.client:*</exclude>
-        <exclude>org.reactivestreams:*</exclude>
-        <exclude>org.opensaml:*</exclude>
-
         <!-- wars and pom -->
         <exclude>*:war</exclude>
         <exclude>*:pom</exclude>
@@ -154,8 +127,6 @@
     <dependencySet>
       <outputDirectory>WEB-INF/lib</outputDirectory>
       <scope>runtime</scope>
-      <useTransitiveDependencies>true</useTransitiveDependencies>
-      <useTransitiveFiltering>true</useTransitiveFiltering>
       <includes>
         <include>org.apache.tomee:tomee-loader</include>
         <include>org.tomitribe.swizzle:swizzle</include>

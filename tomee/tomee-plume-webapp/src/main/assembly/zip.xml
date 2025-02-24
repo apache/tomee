@@ -20,9 +20,9 @@
 <!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
 
 <assembly>
-  <id>war</id>
+  <id>zip</id>
   <formats>
-    <format>war</format>
+    <format>zip</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
@@ -66,8 +66,13 @@
         <include>**/*.html</include>
         <include>**/*.css</include>
         <include>**/*.js</include>
+        <!-- libs are handled with dependencies because exclude don't work too well bellow -->
+        <!-- if some deps are missing, they should be added as project dependencies -->
         <include>lib/*.jar</include>
       </includes>
+      <excludes>
+        <exclude>%regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar]</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
   <dependencySets>
@@ -79,6 +84,7 @@
       <excludes>
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>
+        <exclude>org.apache.myfaces:*</exclude>
 
         <!-- should be in a pom exclusion but it does perfectly the trick -->
         <exclude>org.springframework:*</exclude>

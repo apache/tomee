@@ -28,8 +28,8 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-plus-webapp</artifactId>
-  <name>TomEE :: TomEE :: Plus Webapp</name>
-  <packaging>jar</packaging>
+  <name>TomEE :: TomEE :: Plus Flavour</name>
+  <packaging>pom</packaging>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.plus.webapp</tomee.build.name>
@@ -574,7 +574,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
-            <id>war</id>
+            <id>zip</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
@@ -584,7 +584,7 @@
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptors>
-            <descriptor>src/main/assembly/war.xml</descriptor>
+            <descriptor>src/main/assembly/zip.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>

@@ -29,98 +29,14 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webapp</artifactId>
-  <packaging>jar</packaging>
-  <name>TomEE :: TomEE :: Webapp</name>
+  <packaging>pom</packaging>
+  <name>TomEE :: TomEE :: Web Flavour</name>
+
   <properties>
     <tomee.build.name>${project.groupId}.tomee.webapp</tomee.build.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>package</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.webjars</groupId>
-                  <artifactId>bootstrap</artifactId>
-                  <version>3.1.0</version>
-                  <includes>**/bootstrap.min.css,**/bootstrap.min.js,**/bootstrap.min.css,**/bootstrap.css.map,**/fonts/*</includes>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.webjars</groupId>
-                  <artifactId>jquery</artifactId>
-                  <version>2.1.0-1</version>
-                  <includes>**/jquery.min.*</includes>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.directory}/webjars-resources</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin> <!-- the jar is only for resources and other classes are for the gui -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>META-INF/**/*</include>
-            <include>juli.properties</include>
-          </includes>
-          <archive combine.children="append">
-            <manifestEntries>
-              <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>war</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attached</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptors>
-            <descriptor>src/main/assembly/war.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.googlecode.jslint4java</groupId>
-        <artifactId>jslint4java-maven-plugin</artifactId>
-        <configuration>
-          <failOnError>true</failOnError>
-          <options>
-            <vars>true</vars>
-            <predef>$,CodeMirror,Handlebars,define,window,console,requirejs,require,APP_CONFIG</predef>
-            <indent>4</indent>
-          </options>
-          <sourceFolders>
-            <sourceFolder>${basedir}/src/main/webapp/app/js</sourceFolder>
-          </sourceFolders>
-        </configuration>
-      </plugin>
 
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -602,11 +518,49 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Looks like the war still have myfaces because of the overlay with tomee-webapp -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.4.0</version>
+        <configuration>
+          <dependentWarExcludes>
+            %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],
+          </dependentWarExcludes>
+          <packagingExcludes>
+            %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],
+          </packagingExcludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>zip</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>src/main/assembly/zip.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <!--
-  Webapp distributions removed per:
-    - https://issues.apache.org/jira/browse/TOMEE-3724
-    - https://lists.apache.org/thread/31w7336d5ycqhmoy4pngbsjg3odm0yqx
-  -->
+Webapp distributions removed per:
+  - https://issues.apache.org/jira/browse/TOMEE-3724
+  - https://lists.apache.org/thread/31w7336d5ycqhmoy4pngbsjg3odm0yqx
+-->
   <distributionManagement>
     <repository>
       <id>localhost</id>
