@@ -36,7 +36,6 @@
     <module>arquillian-openejb-transaction-provider</module>
     <module>arquillian-tomee-embedded</module>
     <module>arquillian-tomee-remote</module>
-    <module>arquillian-tomee-webapp-remote</module>
     <module>arquillian-tomee-tests</module>
     <module>arquillian-tomee-moviefun-example</module>
     <module>arquillian-openejb-embedded</module>

@@ -109,11 +109,6 @@
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>arquillian-tomee-webapp-remote</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency> <!-- tomee-embedded needs it + dependencies but tomee-*-remote doesn't need dependencies so to avoid conflicts bringing it back here -->
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>

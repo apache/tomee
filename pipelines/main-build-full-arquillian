@@ -47,7 +47,7 @@ pipeline {
             }
             steps {
                 timeout(time: 180, unit: 'MINUTES') {
-                    sh 'mvn -U --show-version --fail-at-end clean install -Pall-adapters -Dfile.encoding=UTF-8 -pl arquillian/arquillian-common,arquillian/arquillian-openejb-embedded,arquillian/arquillian-openejb-transaction-provider,arquillian/arquillian-tck,arquillian/arquillian-tomee-common,arquillian/arquillian-tomee-embedded,arquillian/arquillian-tomee-moviefun-example,arquillian/arquillian-tomee-remote,arquillian/arquillian-tomee-tests,arquillian/arquillian-tomee-webapp-remote,arquillian/ziplock'
+                    sh 'mvn -U --show-version --fail-at-end clean install -Pall-adapters -Dfile.encoding=UTF-8 -pl arquillian/arquillian-common,arquillian/arquillian-openejb-embedded,arquillian/arquillian-openejb-transaction-provider,arquillian/arquillian-tck,arquillian/arquillian-tomee-common,arquillian/arquillian-tomee-embedded,arquillian/arquillian-tomee-moviefun-example,arquillian/arquillian-tomee-remote,arquillian/arquillian-tomee-tests,arquillian/ziplock'
                 }
             }
             post {
