@@ -38,7 +38,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webapp</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+      <type>pom</type>
     </dependency>
   </dependencies>
 

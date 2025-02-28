@@ -30,7 +30,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-microprofile-webapp</artifactId>
-  <name>TomEE :: TomEE :: MicroProfile Webapp</name>
+  <name>TomEE :: TomEE :: MicroProfile Flavour</name>
   <packaging>jar</packaging>
 
   <properties>
@@ -422,7 +422,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
-            <id>war</id>
+            <id>zip</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
@@ -432,7 +432,7 @@
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptors>
-            <descriptor>src/main/assembly/war.xml</descriptor>
+            <descriptor>src/main/assembly/zip.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>

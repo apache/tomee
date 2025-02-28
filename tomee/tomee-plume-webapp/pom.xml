@@ -30,7 +30,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-plume-webapp</artifactId>
-  <name>TomEE :: TomEE :: Plume Webapp</name>
+  <name>TomEE :: TomEE :: Plume Flavour</name>
   <packaging>jar</packaging>
 
   <properties>
@@ -567,7 +567,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
-            <id>war</id>
+            <id>zip</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
@@ -577,15 +577,17 @@
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptors>
-            <descriptor>src/main/assembly/war.xml</descriptor>
+            <descriptor>src/main/assembly/zip.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>
     </plugins>
   </build>
   <!--
-  Webapp distributions removed per https://lists.apache.org/thread/31w7336d5ycqhmoy4pngbsjg3odm0yqx
-  -->
+Webapp distributions removed per:
+  - https://issues.apache.org/jira/browse/TOMEE-3724
+  - https://lists.apache.org/thread/31w7336d5ycqhmoy4pngbsjg3odm0yqx
+-->
   <distributionManagement>
     <repository>
       <id>localhost</id>
@@ -596,5 +598,4 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
 </project>
