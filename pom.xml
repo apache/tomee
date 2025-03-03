@@ -195,7 +195,7 @@
     <version.microprofile.impl.opentelemetry>2.3.2</version.microprofile.impl.opentelemetry>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
-    <version.jackson>2.18.2</version.jackson>
+    <version.jackson>2.18.3</version.jackson>
     <version.snakeyaml>2.4</version.snakeyaml>
 
     <!-- Jakarta EE API -->
