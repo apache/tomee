@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>10.0.1-SNAPSHOT</tomee.version>
-    <version.shrinkwrap.resolver>3.3.3</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
