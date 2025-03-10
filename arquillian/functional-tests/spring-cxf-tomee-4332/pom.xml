@@ -32,7 +32,7 @@
 
     <properties>
         <version.spring-boot>3.4.3</version.spring-boot>
-        <version.shrinkwrap.resolver>3.3.3</version.shrinkwrap.resolver>
+        <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
 
         <!-- junit 5.11 is broken for some reason here -->
         <junit.jupiter.version>5.10.5</junit.jupiter.version>
