@@ -1027,7 +1027,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>4.1.0</version>
+      <version>4.1.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
