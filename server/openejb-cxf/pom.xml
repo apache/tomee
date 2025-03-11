@@ -67,12 +67,6 @@
       <artifactId>wsdl4j</artifactId>
     </dependency>
 
-    <!-- override woodstox to mitigate woodstox CVE-2022-40152 -->
-    <dependency>
-      <groupId>com.fasterxml.woodstox</groupId>
-      <artifactId>woodstox-core</artifactId>
-      <version>6.6.2</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
@@ -154,6 +148,10 @@
       <version>${version.wss4j}</version>
       <exclusions>
         <exclusion>
+          <groupId>jakarta.mail</groupId>
+          <artifactId>jakarta.mail-api</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.apache.santuario</groupId>
           <artifactId>xmlsec</artifactId>
         </exclusion>
@@ -184,6 +182,26 @@
         <exclusion>
           <groupId>io.dropwizard.metrics</groupId>
           <artifactId>metrics-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-json</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.datatype</groupId>
+          <artifactId>jackson-datatype-jsr310</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.httpcomponents.client5</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.httpcomponents.core5</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
         </exclusion>
         <exclusion>
           <artifactId>jakarta.activation-api</artifactId>

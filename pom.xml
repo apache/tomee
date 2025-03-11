@@ -205,7 +205,7 @@
     <!-- Jakarta EE Impl. -->
     <tomcat.version>10.1.39</tomcat.version>
     <!-- com.sun -->
-    <version.impl.saaj>2.0.1</version.impl.saaj>
+    <version.impl.saaj>3.0.4</version.impl.saaj>
     <!-- org.apache -->
     <version.activemq>6.1.5</version.activemq>
     <version.batchee>2.0.0</version.batchee>
@@ -227,8 +227,8 @@
     <version.hibernate.validator>8.0.1.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
-    <version.wss4j>3.0.4</version.wss4j>
-    <version.xmlsec>3.0.5</version.xmlsec>
+    <version.wss4j>4.0.0</version.wss4j>
+    <version.xmlsec>4.0.3</version.xmlsec>
     <version.krazo>2.0.2</version.krazo>
     <version.jose4j>0.9.6</version.jose4j>
     <version.sxc>0.9</version.sxc>
