@@ -40,6 +40,12 @@
       <artifactId>tomee-plus-api</artifactId>
       <version>10.0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
+      <version>1.1.1</version>
+      <scope>test</scope>
+    </dependency>
     <!--
     The <scope>test</scope> guarantees that non of your runtime
     code is dependent on any OpenEJB classes.
