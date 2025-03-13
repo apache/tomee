@@ -20,7 +20,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>jaxrs-filter</artifactId>
   <packaging>war</packaging>
-  <version>10.0.1-SNAPSHOT</version>
+  <version>10.0.1</version>
   <name>TomEE :: Examples :: JAXRS Filter</name>
   <url>http://maven.apache.org</url>
   <dependencies>
