@@ -157,9 +157,9 @@ public class LowTypedRealm implements Realm {
 
     @Override
     public Principal authenticate(final String username, final String digest, final String nonce,
-                                  final String nc, final String cnonce, final String qop,
-                                  final String realm, final String md5a2) {
-        return (Principal) invoke(authenticateMethod, username, digest, nonce, nc, cnonce, qop, realm, md5a2);
+                                  final String nc, final String cnonce, final String qop, final String realm,
+                                  final String digestA2, final String algorithm) {
+        return (Principal) invoke(authenticateMethod, username, digest, nonce, nc, cnonce, qop, realm, digestA2, algorithm);
     }
 
     @Override
@@ -167,7 +167,8 @@ public class LowTypedRealm implements Realm {
         return (Principal) invoke(gsMethod, gssContext, storeCreds);
     }
 
-    @Override public Principal authenticate(final GSSName gssName, final GSSCredential gssCredential) {
+    @Override
+    public Principal authenticate(final GSSName gssName, final GSSCredential gssCredential) {
         return (Principal) invoke(gsNameCredentials, gssName, gssCredential);
     }
 

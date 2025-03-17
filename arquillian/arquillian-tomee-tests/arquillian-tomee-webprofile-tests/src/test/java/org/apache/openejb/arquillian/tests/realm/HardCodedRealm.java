@@ -34,6 +34,6 @@ public class HardCodedRealm extends RealmBase
     @Override
     protected Principal getPrincipal(final String username)
     {
-        return new GenericPrincipal(username, "ee", asList("role    "));
+        return new GenericPrincipal(username, asList("role    "));
     }
 }

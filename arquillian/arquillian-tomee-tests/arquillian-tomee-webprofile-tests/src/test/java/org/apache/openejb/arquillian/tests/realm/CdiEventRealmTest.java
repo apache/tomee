@@ -70,9 +70,9 @@ public class CdiEventRealmTest {
 
     @Test
     public void digest() {
-        final GenericPrincipal gp = getGenericPrincipal(new CdiEventRealm().authenticate("ryan", "md5", "nonce", "nc", "cnonce", "qop", "realm", "md5a2"));
+        final GenericPrincipal gp = getGenericPrincipal(new CdiEventRealm().authenticate("ryan", "md5", "nonce", "nc", "cnonce", "qop", "realm", "digestA2", "algorithm"));
         final String[] actual = gp.getRoles();
-        final String[] expected = new String[] {"ryan", "md5", "nonce", "nc", "cnonce", "qop", "realm", "md5a2"};
+        final String[] expected = new String[] {"ryan", "md5", "nonce", "nc", "cnonce", "qop", "realm", "digestA2", "algorithm"};
 
         Arrays.sort(actual);
         Arrays.sort(expected);
@@ -91,7 +91,7 @@ public class CdiEventRealmTest {
     @Test
     public void ssl() {
         X509Certificate cert = mock(X509Certificate.class);
-        GenericPrincipal expected = new GenericPrincipal("john", "doe", Arrays.asList("test"));
+        GenericPrincipal expected = new GenericPrincipal("john", Arrays.asList("test"));
         when(cert.getSubjectDN()).thenReturn(expected);
         final GenericPrincipal gp = getGenericPrincipal(new CdiEventRealm().authenticate(new X509Certificate[] { cert }));
         assertEquals(expected, gp);
@@ -123,25 +123,26 @@ public class CdiEventRealmTest {
         public void authenticate(@Observes final UserPasswordAuthenticationEvent event) {
             assertEquals("john", event.getUsername());
             assertEquals("secret", event.getCredential());
-            event.setPrincipal(new GenericPrincipal(event.getUsername(), "", Arrays.asList("admin")));
+            event.setPrincipal(new GenericPrincipal(event.getUsername(), Arrays.asList("admin")));
         }
 
         public void authenticate(@Observes final DigestAuthenticationEvent event) {
             final List<String> roles = new ArrayList<>();
             roles.add(event.getCnonce());
             roles.add(event.getDigest());
-            roles.add(event.getMd5a2());
+            roles.add(event.getDigestA2());
+            roles.add(event.getAlgorithm());
             roles.add(event.getNc());
             roles.add(event.getNonce());
             roles.add(event.getQop());
             roles.add(event.getRealm());
             roles.add(event.getUsername());
-            event.setPrincipal(new GenericPrincipal(event.getUsername(), "", roles));
+            event.setPrincipal(new GenericPrincipal(event.getUsername(), roles));
         }
 
         public void authenticate(@Observes final GssAuthenticationEvent event) {
             assertNotNull(event.getGssContext());
-            event.setPrincipal(new GenericPrincipal("gss", "", Arrays.asList("dummy")));
+            event.setPrincipal(new GenericPrincipal("gss", Arrays.asList("dummy")));
         }
 
         public void authenticate(@Observes final SslAuthenticationEvent event) {

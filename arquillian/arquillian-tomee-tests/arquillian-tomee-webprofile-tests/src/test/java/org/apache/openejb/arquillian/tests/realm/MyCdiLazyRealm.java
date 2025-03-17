@@ -69,18 +69,18 @@ public class MyCdiLazyRealm implements Realm {
 
     @Override
     public Principal authenticate(final String username) {
-        return "user".equalsIgnoreCase(username) ? new GenericPrincipal(username, "pwd", asList("role")) : null;
+        return "user".equalsIgnoreCase(username) ? new GenericPrincipal(username, asList("role")) : null;
     }
 
     @Override
     public Principal authenticate(final String username, final String credentials) {
-        return "user".equalsIgnoreCase(username) && "pwd".equalsIgnoreCase(credentials) ? new GenericPrincipal(username, "pwd", asList("role")) : null;
+        return "user".equalsIgnoreCase(username) && "pwd".equalsIgnoreCase(credentials) ? new GenericPrincipal(username, asList("role")) : null;
     }
 
     @Override
     public Principal authenticate(final String username, final String digest, final String nonce,
                                   final String nc, final String cnonce, final String qop,
-                                  final String realm, final String md5a2) {
+                                  final String realm, final String digestA2, final String algorithm) {
         throw new UnsupportedOperationException();
     }
 
