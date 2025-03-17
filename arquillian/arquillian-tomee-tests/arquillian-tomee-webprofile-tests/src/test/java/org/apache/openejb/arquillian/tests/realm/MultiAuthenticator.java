@@ -29,7 +29,7 @@ public class MultiAuthenticator {
 
     public void authenticate(@Observes final UserPasswordAuthenticationEvent event) {
         if (!"secret".equals(event.getCredential())) return; // not authenticated
-        event.setPrincipal(new GenericPrincipal(event.getUsername(), "", Arrays.asList(event.getUsername())));
+        event.setPrincipal(new GenericPrincipal(event.getUsername(), Arrays.asList(event.getUsername())));
     }
 
     public void stacked(@Observes final UserPasswordAuthenticationEvent event) {

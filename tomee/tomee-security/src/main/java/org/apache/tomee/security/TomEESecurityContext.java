@@ -138,7 +138,6 @@ public class TomEESecurityContext implements SecurityContext {
             final GenericPrincipal genericPrincipal =
                     new GenericPrincipal(
                         principal.getName(),
-                        null,
                         groups == null ? Collections.emptyList() : new ArrayList<>(groups),
                         principal);
 
