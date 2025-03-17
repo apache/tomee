@@ -32,6 +32,6 @@ public class MyCdiRealmBaseLazyRealm extends RealmBase {
 
     @Override
     protected Principal getPrincipal(final String username) {
-        return new GenericPrincipal(username, getPassword(username), asList("role"));
+        return new GenericPrincipal(username, asList("role"));
     }
 }

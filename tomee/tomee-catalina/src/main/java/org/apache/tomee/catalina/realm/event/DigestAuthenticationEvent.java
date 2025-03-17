@@ -25,10 +25,11 @@ public class DigestAuthenticationEvent extends BaseAuthenticationEvent {
     private final String cnonce;
     private final String qop;
     private final String realm;
-    private final String md5a2;
+    private final String digestA2;
+    private final String algorithm;
 
     public DigestAuthenticationEvent(final String username, final String digest, final String nonce, final String nc,
-                                     final String cnonce, final String qop, final String realm, final String md5a2) {
+                                     final String cnonce, final String qop, final String realm, final String digestA2, final String algorithm) {
 
         this.username = username;
         this.digest = digest;
@@ -37,7 +38,8 @@ public class DigestAuthenticationEvent extends BaseAuthenticationEvent {
         this.cnonce = cnonce;
         this.qop = qop;
         this.realm = realm;
-        this.md5a2 = md5a2;
+        this.digestA2 = digestA2;
+        this.algorithm = algorithm;
     }
 
     public String getUsername() {
@@ -68,7 +70,11 @@ public class DigestAuthenticationEvent extends BaseAuthenticationEvent {
         return realm;
     }
 
-    public String getMd5a2() {
-        return md5a2;
+    public String getDigestA2() {
+        return digestA2;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
     }
 }

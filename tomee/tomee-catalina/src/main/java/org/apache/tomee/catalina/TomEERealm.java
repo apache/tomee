@@ -54,10 +54,10 @@ public class TomEERealm extends CombinedRealm {
     }
 
     @Override
-    public Principal authenticate(final String username, final String clientDigest,
-                                  final String nonce, final String nc, final String cnonce, final String qop,
-                                  final String realmName, final String md5a2) {
-        return logInTomEE(super.authenticate(username, clientDigest, nonce, nc, cnonce, qop, realmName, md5a2));
+    public Principal authenticate(final String username, final String digest, final String nonce,
+                                  final String nc, final String cnonce, final String qop, final String realm,
+                                  final String digestA2, final String algorithm) {
+        return logInTomEE(super.authenticate(username, digest, nonce, nc, cnonce, qop, realm, digestA2, algorithm));
     }
 
     @Override
