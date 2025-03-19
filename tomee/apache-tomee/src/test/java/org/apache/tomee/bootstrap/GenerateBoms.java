@@ -532,7 +532,7 @@ public class GenerateBoms {
             }
 
             if (jar.getName().startsWith("ecj-")) {
-                return new Artifact("org.eclipse.jdt", "ecj", "3.41.0", null);
+                return new Artifact("org.eclipse.jdt", "ecj", "3.40.0", null);
             }
 
             if (jar.getName().equals("openejb-javaagent.jar")) {
