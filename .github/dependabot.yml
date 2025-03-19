@@ -54,8 +54,6 @@ updates:
       - dependency-name: "org.webjars:*"
         # Ignore HTNML Unit from Examples
       - dependency-name: "org.htmlunit:*"
-        # 1.0.0 is broken
-      - dependency-name: "org.apache.geronimo.specs:geronimo-mail_2.1_spec"
 
   - package-ecosystem: "github-actions"
     directory: "/"

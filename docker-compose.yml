@@ -15,7 +15,6 @@
 #  limitations under the License.
 #
 
-version: '3'
 volumes:
         m2:
 services:
