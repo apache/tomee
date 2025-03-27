@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-rest-jwt-jwk</artifactId>
-  <version>10.0.1-SNAPSHOT</version>
+  <version>10.0.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MP REST JWT JWK</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.0.1-SNAPSHOT</tomee.version>
+    <tomee.version>10.0.2-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
   </properties>
   <build>

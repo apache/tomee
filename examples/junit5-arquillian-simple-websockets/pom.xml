@@ -21,11 +21,11 @@
     <groupId>org.superbiz</groupId>
     <artifactId>junit5-simple-websockets-arquillian</artifactId>
     <packaging>jar</packaging>
-    <version>10.0.1-SNAPSHOT</version>
+    <version>10.0.2-SNAPSHOT</version>
     <name>TomEE :: Examples :: JUnit 5 :: Simple Websockets with Arquillian</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tomee.version>10.0.1-SNAPSHOT</tomee.version>
+        <tomee.version>10.0.2-SNAPSHOT</tomee.version>
         <tomcat.version>10.1.39</tomcat.version>
 
         <junit.jupiter.version>5.11.3</junit.jupiter.version>
