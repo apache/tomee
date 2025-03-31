@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.jboss.arquillian.container</groupId>
       <artifactId>arquillian-container-test-api</artifactId>
-      <version>1.9.3.Final</version>
+      <version>1.9.4.Final</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
