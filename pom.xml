@@ -186,7 +186,7 @@
     <version.io.opentracing>0.33.0</version.io.opentracing>
 
     <!-- Micro Profile Impl. -->
-    <version.microprofile.impl.config>3.12.3</version.microprofile.impl.config>
+    <version.microprofile.impl.config>3.12.4</version.microprofile.impl.config>
     <version.microprofile.impl.fault-tolerance>6.4.3</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.4</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
