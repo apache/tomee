@@ -124,7 +124,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.9.3.Final</version>
+        <version>1.9.4.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
