@@ -135,7 +135,7 @@
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
     <version.tomee-quartz-shade>2.5.0</version.tomee-quartz-shade>
-    <version.xbean>4.26</version.xbean>
+    <version.xbean>4.27</version.xbean>
     <version.groovy>2.4.21</version.groovy>
     <!-- Starting from 3.34.0 it requires J17+ -->
     <version.ecj>3.40.0</version.ecj>
