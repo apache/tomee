@@ -697,6 +697,17 @@
     <dependency>
       <groupId>io.smallrye</groupId>
       <artifactId>smallrye-metrics</artifactId>
+      <version>5.1.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>smallrye-metrics</artifactId>
       <version>5.0.1</version>
       <exclusions>
         <exclusion>
@@ -2205,6 +2216,17 @@
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-api</artifactId>
       <version>2.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>5.1.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

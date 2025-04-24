@@ -178,7 +178,7 @@
     <version.microprofile.fault-tolerance>4.0.2</version.microprofile.fault-tolerance>
     <version.microprofile.health>4.0.1</version.microprofile.health>
     <version.microprofile.jwt>2.1</version.microprofile.jwt>
-    <version.microprofile.metrics>5.0.2</version.microprofile.metrics> <!-- TODO 5.1 -->
+    <version.microprofile.metrics>5.1.0</version.microprofile.metrics>
     <version.microprofile.openapi>3.1.2</version.microprofile.openapi>
     <version.microprofile.opentelemetry>1.1</version.microprofile.opentelemetry>
     <version.microprofile.rest-client>3.0.1</version.microprofile.rest-client>
@@ -189,7 +189,7 @@
     <version.microprofile.impl.config>3.12.4</version.microprofile.impl.config>
     <version.microprofile.impl.fault-tolerance>6.4.3</version.microprofile.impl.fault-tolerance>
     <version.microprofile.impl.health>4.0.4</version.microprofile.impl.health>
-    <version.microprofile.impl.metrics>5.0.1</version.microprofile.impl.metrics>
+    <version.microprofile.impl.metrics>5.1.0</version.microprofile.impl.metrics>
     <version.microprofile.impl.openapi>3.13.0</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentelemetry>2.7.0</version.microprofile.impl.opentelemetry>
 

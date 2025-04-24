@@ -208,6 +208,17 @@
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
+      <version>5.1.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
       <version>5.0.2</version>
       <exclusions>
         <exclusion>
