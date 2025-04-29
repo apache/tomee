@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>injection-of-entitymanager</artifactId>
   <packaging>jar</packaging>
-  <version>10.0.2-SNAPSHOT</version>
+  <version>10.1.0-SNAPSHOT</version>
   <name>TomEE :: Examples :: @PersistenceContext EntityManager Injection</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.0.2-SNAPSHOT</version>
+      <version>10.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

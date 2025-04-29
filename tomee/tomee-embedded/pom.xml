@@ -24,14 +24,14 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.0.2-SNAPSHOT</version>
+    <version>10.1.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-embedded</artifactId>
   <packaging>jar</packaging>
   <name>TomEE :: TomEE :: TomEE Embedded</name>
-  <version>10.0.2-SNAPSHOT</version>
+  <version>10.1.0-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -48,7 +48,7 @@
               https://github.com/apache/tomcat/blob/main/java/org/apache/tomcat/util/scan/StandardJarScanner.java#L467
 
               We end up with things like
-              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/10.0.2-SNAPSHOT/tomee-config-10.0.2-SNAPSHOT.jar
+              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/10.1.0-SNAPSHOT/tomee-config-10.1.0-SNAPSHOT.jar
               <addClasspath>true</addClasspath>
               -->
             </manifest>
