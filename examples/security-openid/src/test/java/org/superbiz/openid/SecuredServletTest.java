@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SecuredServletTest {
     @Container
     private static final KeycloakContainer KEYCLOAK_CONTAINER = new KeycloakContainer()
-            .withRealmImportFile("keycloak-realm.json");
+            .withRealmImportFile("tomee-realm.json");
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
