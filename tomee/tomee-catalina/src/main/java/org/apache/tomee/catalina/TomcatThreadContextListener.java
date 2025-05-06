@@ -73,7 +73,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
      * {@inheritDoc}
      */
     @Override
-    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
+    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, final boolean propagateTx) {
         // save off the old context if possible
         try {
             final Data data = new Data(getThreadName());

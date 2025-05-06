@@ -31,7 +31,7 @@ import jakarta.enterprise.context.spi.Context;
  */
 public class RequestScopedThreadContextListener implements ThreadContextListener {
     @Override
-    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
+    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, boolean propagateTx) {
 
         final BeanContext beanContext = newContext.getBeanContext();
 

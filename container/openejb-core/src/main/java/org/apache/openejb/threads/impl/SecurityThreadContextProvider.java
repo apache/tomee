@@ -114,7 +114,7 @@ public class SecurityThreadContextProvider implements ThreadContextProvider, Ser
             final ThreadContext oldCtx;
             if (threadContext != null) {
                 final ThreadContext newContext = new ThreadContext(threadContext);
-                oldCtx = ThreadContext.enter(newContext);
+                oldCtx = ThreadContext.enter(newContext, false);
                 if (sc != null) {
                     newContext.set(AbstractSecurityService.SecurityContext.class, sc);
                 }

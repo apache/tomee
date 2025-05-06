@@ -73,7 +73,7 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
 
             // Don't touch ThreadContext if it is already correct or none was captured
             boolean changeThreadContext = threadContext != null && threadContext != ThreadContext.getThreadContext();
-            ThreadContext oldThreadContext = changeThreadContext ? ThreadContext.enter(threadContext) : null;
+            ThreadContext oldThreadContext = changeThreadContext ? ThreadContext.enter(threadContext, false) : null;
             return new ApplicationThreadContextRestorer(oldCl, oldThreadContext, changeThreadContext);
         }
     }
