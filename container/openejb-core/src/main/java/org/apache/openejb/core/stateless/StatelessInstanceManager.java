@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.cdi.CdiEjbBean;
@@ -245,6 +246,9 @@ public class StatelessInstanceManager {
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
+            }
+            if (e instanceof InvalidateReferenceException) {
+                e = e.getCause();
             }
             final String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
             logger.error(t, e);
