@@ -95,7 +95,7 @@ public class CdiScanner implements BdaScannerService {
 
 
     public CdiScanner() {
-        logDebug = "true".equals(SystemInstance.get().getProperty("openejb.cdi.noclassdeffound.log", "false"));
+        logDebug = "true".equals(SystemInstance.get().getProperty("openejb.cdi.noclassdeffound.log", "true"));
 
         tomeeBeanArchiveInformation = new DefaultBeanArchiveInformation("tomee");
         tomeeBeanArchiveInformation.setBeanDiscoveryMode(BeanArchiveService.BeanDiscoveryMode.ALL);
@@ -392,16 +392,21 @@ public class CdiScanner implements BdaScannerService {
             tryToMakeItFail(loadClass);
             return loadClass;
         } catch (final ClassNotFoundException e) {
+            Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).debug("Can not load {0}.", e, className);
             return null;
         } catch (final NoClassDefFoundError e) {
             if (logDebug) {
-                Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).warning(className + " -> " + e);
+                Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).warning("Can not load {0} dependencies.", e, className);
             }
+            Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).debug("Can not load {0} dependencies.", e, className);
             return null;
         }
     }
 
     private void tryToMakeItFail(final Class<?> loadClass) { // we try to avoid later NoClassDefFoundError
+        if (!logDebug) {
+            return;
+        }
         loadClass.getDeclaredFields();
         loadClass.getDeclaredMethods();
     }
