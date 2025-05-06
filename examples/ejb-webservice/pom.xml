@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>ejb-webservice</artifactId>
   <packaging>war</packaging>
-  <version>10.0.2-SNAPSHOT</version>
+  <version>10.1.0-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: EJB WebService</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

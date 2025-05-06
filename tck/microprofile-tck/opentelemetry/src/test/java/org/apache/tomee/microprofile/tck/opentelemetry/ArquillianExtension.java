@@ -16,12 +16,11 @@
  */
 package org.apache.tomee.microprofile.tck.opentelemetry;
 
-import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 public class ArquillianExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder extensionBuilder) {
-        extensionBuilder.observer(ArquillianLifecycle.class);
+        extensionBuilder.observer(ArquillianLifecycle.class).observer(OpenTelemetryTCKDeploymentProcessor.class);
     }
 }

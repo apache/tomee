@@ -23,7 +23,7 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchive
 import org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocolDeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import java.util.Collection;
@@ -38,9 +38,14 @@ public class MicroProfileMetricsTCKDeploymentPackager extends ServletProtocolDep
                                          final Collection<ProtocolArchiveProcessor> processors) {
         final Archive<?> applicationArchive = testDeployment.getApplicationArchive();
         final WebArchive wrapperWar = ShrinkWrap.create(WebArchive.class, "microprofile-metrics.war");
-        if (applicationArchive instanceof JavaArchive) {
-            wrapperWar.addAsLibrary(applicationArchive);
-            return super.generateDeployment(new TestDeploymentDelegate(testDeployment, wrapperWar), processors);
+
+        // Move microprofile-config.properties from /META-INF/ to /WEB-INF/classes/META-INF/
+        // cf. https://github.com/microprofile/microprofile-config/issues/268
+        // cf. https://github.com/microprofile/microprofile-config#design <- should be on the class path which is /WEB-INF/classes in a WAR file
+        if (applicationArchive.contains("META-INF/microprofile-config.properties")) {
+            Asset configAsset = applicationArchive.get("META-INF/microprofile-config.properties").getAsset();
+            applicationArchive.delete("META-INF/microprofile-config.properties");
+            wrapperWar.add(configAsset, "WEB-INF/classes/META-INF/microprofile-config.properties");
         }
 
         wrapperWar.merge(applicationArchive);
