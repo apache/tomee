@@ -175,7 +175,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     }
 
     @Override
-    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
+    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, boolean propagateTx) {
         final String moduleID = newContext.getBeanContext().getModuleID();
         JavaSecurityManagers.setContextID(moduleID);
 
