@@ -548,7 +548,7 @@ public class GenerateBoms {
                     jar.getName().startsWith("mp-common-") ||
                     jar.getName().startsWith("mp-jwt-") ||
                     jar.getName().startsWith("mbean-annotation-"))) {
-                final String artifact = jar.getName().replaceAll("-\\d\\d?.0.*", "");
+                final String artifact = jar.getName().replaceAll("-\\d\\d?.1.*", "");
                 return new Artifact("org.apache.tomee", artifact, "${project.version}", null);
             }
 
