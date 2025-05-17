@@ -32,6 +32,9 @@ public class CompositeBeans extends Beans {
     private final Map<URL, String> discoveryByUrl = new HashMap<>();
 
     @XmlTransient
+    private final Map<URL, Boolean> trimByUrl = new HashMap<>();
+
+    @XmlTransient
     private final Map<URL, Collection<String>> interceptorsByUrl = new HashMap<>();
 
     @XmlTransient
@@ -42,10 +45,6 @@ public class CompositeBeans extends Beans {
 
     @XmlTransient
     private final Map<URL, Collection<String>> alternativeStereotypesByUrl = new HashMap<>();
-
-    public Map<URL, String> getDiscoveryByUrl() {
-        return discoveryByUrl;
-    }
 
     public void mergeClasses(final URL url, final Beans beans) {
         // just for jaxb tree
@@ -59,6 +58,15 @@ public class CompositeBeans extends Beans {
         decoratorsByUrl.put(url, beans.getDecorators());
         alternativesByUrl.put(url, beans.getAlternativeClasses());
         alternativeStereotypesByUrl.put(url, beans.getAlternativeStereotypes());
+        trimByUrl.put(url, beans.isTrim());
+    }
+
+    public Map<URL, String> getDiscoveryByUrl() {
+        return discoveryByUrl;
+    }
+
+    public Map<URL, Boolean> getTrimByUrl() {
+        return trimByUrl;
     }
 
     public Map<URL, Collection<String>> getInterceptorsByUrl() {

@@ -249,6 +249,17 @@ public class Beans {
         this.trim = trim;
     }
 
+    /**
+     * Marks a Bean Archive with the &lt;trim/&gt; tag.
+     * In a trimmed bean archive the {@code ProcessAnnotatedType} is sent for all
+     * discovered classes and interfaces. But only if the resulting AnnotatedType
+     * ends up having a bean defining annotation it will get picked up as CDI bean.
+     *
+     * This is a very useful compromise between bean-discovery-type='all' and 'annotated'
+     * We still get the PAT event also for e.g. interfaces which enabling CDI Extensions like
+     * {@code @MessageBundle} ) but don't pick up every class as {@code @Dependent} scoped
+     * bean even if we don't need it to be managed by CDI.
+     */
     public boolean isTrim() {
         return trim != null;
     }
