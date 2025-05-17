@@ -24,7 +24,7 @@
 
   <container qualifier="tomee" default="true">
     <configuration>
-      <property name="catalina_opts">-Xmx512m</property>
+      <property name="catalina_opts">-Xmx512m -Duser.language=en -Duser.region=GB</property>
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="ajpPort">-1</property>

@@ -153,6 +153,10 @@
           <systemPropertyVariables>
             <validation.provider>${validation.provider}</validation.provider>
           </systemPropertyVariables>
+
+          <!-- sadly required, as the TCK tests only validate against the english validation messages -->
+          <argLine>-Duser.language=en -Duser.region=GB</argLine>
+
           <parallel>none</parallel>
           <threadCount>4</threadCount>
         </configuration>

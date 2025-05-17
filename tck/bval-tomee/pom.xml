@@ -158,7 +158,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <argLine>-Duser.language=en --add-opens=java.base/java.lang=ALL-UNNAMED</argLine>
+          <!-- sadly required, as the TCK tests only validate against the english validation messages -->
+          <argLine>-Duser.language=en -Duser.region=GB --add-opens=java.base/java.lang=ALL-UNNAMED</argLine>
+
           <reuseForks>false</reuseForks>
           <suiteXmlFiles>
             <suiteXmlFile>${suiteFile}</suiteXmlFile>
