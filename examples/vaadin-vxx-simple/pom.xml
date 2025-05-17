@@ -83,7 +83,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
     <dependencies>
       <!--Specs-->
       <dependency>
-        <groupId>javax</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>javaee-api</artifactId>
         <version>8.0-6</version>
         <scope>provided</scope>
