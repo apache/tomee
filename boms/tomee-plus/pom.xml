@@ -290,7 +290,7 @@
     <dependency>
       <groupId>io.opentelemetry.semconv</groupId>
       <artifactId>opentelemetry-semconv</artifactId>
-      <version>1.21.0-alpha</version>
+      <version>1.32.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
