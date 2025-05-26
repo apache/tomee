@@ -818,7 +818,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -829,7 +829,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -840,7 +840,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -873,7 +873,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -950,7 +950,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -961,7 +961,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -983,7 +983,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -994,7 +994,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1016,7 +1016,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
