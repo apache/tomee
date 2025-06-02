@@ -163,7 +163,7 @@
     <version.commons-lang3>3.17.0</version.commons-lang3>
     <version.commons-net>3.11.1</version.commons-net>
     <version.commons-pool>2.12.1</version.commons-pool>
-    <version.commons-fileupload>2.0.0-M2</version.commons-fileupload>
+    <version.commons-fileupload>2.0.0-M3</version.commons-fileupload>
     <version.commons-fileupload-servlet>2.0.0-M1</version.commons-fileupload-servlet>
 
 
