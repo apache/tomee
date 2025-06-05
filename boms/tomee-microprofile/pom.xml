@@ -2028,7 +2028,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>1.80</version>
+      <version>1.81</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
