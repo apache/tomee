@@ -30,7 +30,7 @@
 
         <junit.jupiter.version>5.12.0</junit.jupiter.version>
         <!-- 1.8.1.Final is broken, see https://github.com/arquillian/arquillian-core/pull/583 -->
-        <arquillian.version>1.9.4.Final</arquillian.version>
+        <arquillian.version>1.9.5.Final</arquillian.version>
 
     </properties>
     <build>
