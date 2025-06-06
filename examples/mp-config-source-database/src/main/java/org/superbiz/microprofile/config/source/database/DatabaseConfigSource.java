@@ -47,18 +47,18 @@ public class DatabaseConfigSource implements ConfigSource {
 
         try {
             final Connection connection = dataSource.getConnection();
-            final PreparedStatement query = connection.prepareStatement("SELECT NAME, VALUE FROM CONFIGURATIONS");
+            final PreparedStatement query = connection.prepareStatement("SELECT NAME, VALUE FROM PUBLIC.CONFIGURATIONS");
             final ResultSet names = query.executeQuery();
 
             while (names.next()) {
-                properties.put(names.getString(0), names.getString(1));
+                properties.put(names.getString("NAME"), names.getString("VALUE"));
             }
 
             DbUtils.closeQuietly(names);
             DbUtils.closeQuietly(query);
             DbUtils.closeQuietly(connection);
-        } catch (final SQLException e) {
-            e.printStackTrace();
+        } catch (final SQLException ignored) {
+
         }
 
         return properties;
@@ -76,7 +76,7 @@ public class DatabaseConfigSource implements ConfigSource {
         try {
             final Connection connection = dataSource.getConnection();
             final PreparedStatement query =
-                    connection.prepareStatement("SELECT VALUE FROM CONFIGURATIONS WHERE NAME = ?");
+                    connection.prepareStatement("SELECT VALUE FROM PUBLIC.CONFIGURATIONS WHERE NAME = ?");
             query.setString(1, propertyName);
             final ResultSet value = query.executeQuery();
 
@@ -87,8 +87,8 @@ public class DatabaseConfigSource implements ConfigSource {
             DbUtils.closeQuietly(value);
             DbUtils.closeQuietly(query);
             DbUtils.closeQuietly(connection);
-        } catch (final SQLException e) {
-            e.printStackTrace();
+        } catch (final SQLException ignored) {
+
         }
 
         return null;
