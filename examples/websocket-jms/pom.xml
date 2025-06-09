@@ -26,7 +26,7 @@
   <name>TomEE :: Examples :: Websocket JMS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.arquillian>1.9.4.Final</version.arquillian>
+    <version.arquillian>1.9.5.Final</version.arquillian>
     <tomee.version>10.1.0-SNAPSHOT</tomee.version>
   </properties>
   <build>
