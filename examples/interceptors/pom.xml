@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>interceptors</artifactId>
   <packaging>jar</packaging>
-  <version>10.1.0-SNAPSHOT</version>
+  <version>10.1.0</version>
   <name>TomEE :: Examples :: Interceptors</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.1.0-SNAPSHOT</version>
+      <version>10.1.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
