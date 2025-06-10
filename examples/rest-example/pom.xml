@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-example</artifactId>
   <packaging>war</packaging>
-  <version>10.1.0-SNAPSHOT</version>
+  <version>10.1.0</version>
   <name>TomEE :: Web Examples :: REST Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.1.0-SNAPSHOT</tomee.version>
+    <tomee.version>10.1.0</tomee.version>
     <version.openjpa>4.0.1</version.openjpa>
   </properties>
   <repositories>

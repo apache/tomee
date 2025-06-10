@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>bval-evaluation-redeployment</artifactId>
-    <version>10.1.0-SNAPSHOT</version>
+    <version>10.1.0</version>
   </parent>
   <artifactId>WebApp1</artifactId>
   <packaging>war</packaging>

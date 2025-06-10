@@ -19,7 +19,7 @@
   <parent>
     <artifactId>gradle</artifactId>
     <groupId>org.apache.tomee.gradle</groupId>
-    <version>10.1.0-SNAPSHOT</version>
+    <version>10.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
