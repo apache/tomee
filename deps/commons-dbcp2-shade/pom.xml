@@ -20,7 +20,7 @@
   <parent>
     <artifactId>deps</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.1.0</version>
+    <version>10.1.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -98,7 +98,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/commons-dbcp2-shade-10.1.0.jar</file>
+                  <file>${project.build.directory}/commons-dbcp2-shade-10.1.1-SNAPSHOT.jar</file>
                   <type>jar</type>
                   <classifier>optional</classifier>
                 </artifact>
