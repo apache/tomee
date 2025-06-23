@@ -52,7 +52,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.0</version>
         <configuration>
           <version>6</version>
           <generateApplicationXml>true</generateApplicationXml>
