@@ -17,6 +17,12 @@
 
 package org.apache.openejb.core.security;
 
+import jakarta.security.jacc.EJBMethodPermission;
+import jakarta.security.jacc.PolicyConfigurationFactory;
+import jakarta.security.jacc.PolicyContext;
+import jakarta.security.jacc.PolicyContextException;
+import jakarta.security.jacc.PolicyContextHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.api.resource.DestroyableResource;
@@ -34,12 +40,6 @@ import org.apache.openejb.util.Logger;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
-import jakarta.security.jacc.EJBMethodPermission;
-import jakarta.security.jacc.PolicyConfigurationFactory;
-import jakarta.security.jacc.PolicyContext;
-import jakarta.security.jacc.PolicyContextException;
-import jakarta.security.jacc.PolicyContextHandler;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
@@ -371,24 +371,31 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public boolean isCallerAuthorized(final Method method, final InterfaceType type) {
-        final ThreadContext threadContext = ThreadContext.getThreadContext();
-        final BeanContext beanContext = threadContext.getBeanContext();
-        try {
-            final String ejbName = beanContext.getEjbName();
-            String name = type == null ? null : type.getSpecName();
-            if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
-                name = null;
+        if (System.getProperty("java.vm.specification.version").compareTo("21") < 0) {
+            final ThreadContext threadContext = ThreadContext.getThreadContext();
+            final BeanContext beanContext = threadContext.getBeanContext();
+            try {
+
+                final String ejbName = beanContext.getEjbName();
+                String name = type == null ? null : type.getSpecName();
+                if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
+                    name = null;
+                }
+
+                final Identity currentIdentity = clientIdentity.get();
+                final SecurityContext securityContext;
+                if (currentIdentity == null) {
+                    securityContext = threadContext.get(SecurityContext.class);
+                } else {
+                    securityContext = new SecurityContext(currentIdentity.getSubject());
+                }
+
+                securityContext.getAccessControlContext().checkPermission(new EJBMethodPermission(ejbName, name, method));
+            } catch (final AccessControlException e) {
+                return false;
             }
-            final Identity currentIdentity = clientIdentity.get();
-            final SecurityContext securityContext;
-            if (currentIdentity == null) {
-                securityContext = threadContext.get(SecurityContext.class);
-            } else {
-                securityContext = new SecurityContext(currentIdentity.getSubject());
-            }
-            securityContext.getAccessControlContext().checkPermission(new EJBMethodPermission(ejbName, name, method));
-        } catch (final AccessControlException e) {
-            return false;
+        } else {
+            LOGGER.warning("Skipping JACC authorization check for method {} on type {} as TomEE running on JDK 21+ does not support method security at the moment.", method, type);
         }
         return true;
     }
@@ -422,11 +429,11 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
         // check the system provided provider first - if for some reason it isn't loaded, load it
         final String systemPolicyProvider = SystemInstance.get().getOptions().getProperties().getProperty("jakarta.security.jacc.policy.provider");
-        if (systemPolicyProvider != null && Policy.getPolicy() == null) {
+        if (systemPolicyProvider != null && getPolicy() == null) {
             installPolicy(systemPolicyProvider);
         }
 
-        if (! JaccProvider.Policy.class.getName().equals(Policy.getPolicy().getClass().getName())) {
+        if (! JaccProvider.Policy.class.getName().equals(getPolicy().getClass().getName())) {
             // this should delegate to the policy installed above
             installPolicy(JaccProvider.Policy.class.getName());
         }
@@ -436,11 +443,30 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         try {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             final Class policyClass = Class.forName(policyProvider, true, classLoader);
-            final Policy policy = (Policy) policyClass.newInstance();
+            final Policy policy = (Policy) policyClass.getDeclaredConstructor().newInstance();
             policy.refresh();
-            Policy.setPolicy(policy);
+            setPolicy(policy);
         } catch (final Exception e) {
             throw new IllegalStateException("Could not install JACC Policy Provider: " + policyProvider, e);
+        }
+    }
+
+
+    public static Policy getPolicy() {
+        Policy policy = PolicyJDK24.getPolicy();
+        if (policy == null) {
+            policy = Policy.getPolicy();
+        }
+
+        return policy;
+    }
+
+    public static void setPolicy(Policy policy) {
+        try {
+            Policy.setPolicy(policy);
+        } catch (UnsupportedOperationException e) {
+            //we are running JDK 24 or later, so no system-wide policy possible.
+            PolicyJDK24.setPolicy(policy);
         }
     }
 

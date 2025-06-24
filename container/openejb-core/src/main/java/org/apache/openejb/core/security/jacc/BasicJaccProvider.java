@@ -18,6 +18,7 @@
 package org.apache.openejb.core.security.jacc;
 
 import org.apache.openejb.core.security.JaccProvider;
+import org.apache.openejb.core.security.PolicyJDK24;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
@@ -66,7 +67,7 @@ public class BasicJaccProvider extends JaccProvider {
     private final java.security.Policy systemPolicy;
 
     public BasicJaccProvider() {
-        systemPolicy = Policy.getPolicy();
+        systemPolicy = PolicyJDK24.getPolicy();
     }
 
     public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {
