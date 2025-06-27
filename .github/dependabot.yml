@@ -47,13 +47,19 @@ updates:
       - dependency-name: "org.eclipse.jetty*:*"
         # Ignore Glassfish (required version for TCKs)
       - dependency-name: "org.glassfish.*:*"
-        # Ignore Tomcat (major) updates
-      - dependency-name: "org.apache.tomcat:*"
-        update-types: [ "version-update:semver-major"]
         # Ignore WebJars from Examples
       - dependency-name: "org.webjars:*"
         # Ignore HTNML Unit from Examples
       - dependency-name: "org.htmlunit:*"
+
+        # Ignore implementations for newer specs
+      - dependency-name: "org.apache.myfaces.core:*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "org.apache.tomcat:*"
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: "github-actions"
     directory: "/"
