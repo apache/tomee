@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>10.1.1-SNAPSHOT</tomee.version>
-    <arquillian-bom.version>1.9.5.Final</arquillian-bom.version>
+    <arquillian-bom.version>1.10.0.Final</arquillian-bom.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
