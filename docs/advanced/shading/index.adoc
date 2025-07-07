@@ -146,6 +146,7 @@ def excludedDependenciesGroups = [
         'org.jvnet.mimepull',
         'org.opensaml',
         'wsdl4j',
+        'io.github.librewsdl4j',
         'xml-resolver'
 ]
 

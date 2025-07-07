@@ -63,8 +63,8 @@
       <artifactId>cxf-rt-ws-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>wsdl4j</groupId>
-      <artifactId>wsdl4j</artifactId>
+      <groupId>io.github.librewsdl4j</groupId>
+      <artifactId>libre-wsdl4j</artifactId>
     </dependency>
 
     <dependency>
