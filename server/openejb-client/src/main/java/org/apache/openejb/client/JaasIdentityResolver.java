@@ -17,15 +17,16 @@
  */
 package org.apache.openejb.client;
 
+import org.apache.openejb.client.util.JDK24Subject;
+
 import javax.security.auth.Subject;
-import java.security.AccessController;
 import java.util.Set;
 
 public class JaasIdentityResolver implements IdentityResolver {
 
     @Override
     public Object getIdentity() {
-        final Subject subject = Subject.getSubject(AccessController.getContext());
+        final Subject subject = JDK24Subject.currentSubject();
         if (subject == null) {
             return null;
         }

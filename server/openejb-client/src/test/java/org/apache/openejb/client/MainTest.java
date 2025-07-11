@@ -18,6 +18,7 @@
 package org.apache.openejb.client;
 
 import junit.framework.TestCase;
+import org.apache.openejb.client.util.JDK24Subject;
 
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -87,7 +88,7 @@ public class MainTest extends TestCase {
     public static class SecureMain {
 
         public static void main(String[] args) {
-            Subject subject = Subject.getSubject(AccessController.getContext());
+            Subject subject = JDK24Subject.currentSubject();
 
             // verify subject
             assertEquals("Should have one principal", 1, subject.getPrincipals().size());
@@ -109,7 +110,7 @@ public class MainTest extends TestCase {
     public static class NormalMain {
 
         public static void main(String[] args) {
-            Subject subject = Subject.getSubject(AccessController.getContext());
+            Subject subject = JDK24Subject.currentSubject();
 
             assertNull("subject is not null", subject);
 
