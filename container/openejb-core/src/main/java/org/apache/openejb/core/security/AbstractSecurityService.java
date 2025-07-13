@@ -395,7 +395,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
                 return false;
             }
         } else {
-            LOGGER.warning("Skipping JACC authorization check for method {} on type {} as TomEE running on JDK 21+ does not support method security at the moment.", method, type);
+            LOGGER.warning("Skipping JACC authorization check for method '"
+                    + (method == null ? "null" : method.getName())
+                    + "' on type '" + (type == null ? "null" : type.getSpecName())
+                    + "' as TomEE running on JDK 21+ does not support method security at the moment.");
         }
         return true;
     }
