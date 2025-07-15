@@ -17,12 +17,15 @@
 
 package org.apache.openejb.persistence;
 
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.Parameter;
 import jakarta.persistence.Query;
 import jakarta.persistence.TemporalType;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -97,6 +100,12 @@ public class JtaQuery implements Query {
         } finally {
             jtaEntityManager.closeIfNoTx(em);
         }
+    }
+
+    @Override
+    public Object getSingleResultOrNull() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     public int executeUpdate() {
@@ -265,6 +274,42 @@ public class JtaQuery implements Query {
      */
     public LockModeType getLockMode() {
         return query.getLockMode();
+    }
+
+    @Override
+    public Query setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public Query setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public Query setTimeout(Integer timeout) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public Integer getTimeout() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     /* (non-Javadoc)
