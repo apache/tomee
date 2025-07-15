@@ -18,22 +18,22 @@
 package org.apache.openejb.persistence;
 
 
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.ClassTransformer;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 import jakarta.persistence.spi.TransformerException;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.jdbc.managed.xa.DataSourceXADataSource;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
 
-import jakarta.persistence.SharedCacheMode;
-import jakarta.persistence.ValidationMode;
-import jakarta.persistence.spi.ClassTransformer;
-import jakarta.persistence.spi.PersistenceUnitInfo;
-import jakarta.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
-import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -177,6 +177,18 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     public String getPersistenceProviderClassName() {
         return persistenceProviderClassName;
+    }
+
+    @Override
+    public String getScopeAnnotationName() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public List<String> getQualifierAnnotationNames() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     public void setPersistenceProviderClassName(final String persistenceProviderClassName) {

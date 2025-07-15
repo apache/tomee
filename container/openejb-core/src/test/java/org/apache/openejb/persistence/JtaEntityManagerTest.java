@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.persistence;
 
-import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
-import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
-import org.junit.Test;
-
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceConfiguration;
 import jakarta.persistence.spi.PersistenceProvider;
 import jakarta.persistence.spi.PersistenceUnitInfo;
 import jakarta.persistence.spi.ProviderUtil;
+import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
+import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,6 +64,11 @@ public class JtaEntityManagerTest {
         @Override
         public boolean generateSchema(final String persistenceUnitName, final Map map) {
             return false;
+        }
+
+        @Override
+        public EntityManagerFactory createEntityManagerFactory(PersistenceConfiguration configuration) {
+            return null;
         }
 
         @Override

@@ -17,6 +17,31 @@
 
 package org.apache.openejb.persistence;
 
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
+import jakarta.persistence.ConnectionConsumer;
+import jakarta.persistence.ConnectionFunction;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.FindOption;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.LockOption;
+import jakarta.persistence.Query;
+import jakarta.persistence.RefreshOption;
+import jakarta.persistence.StoredProcedureQuery;
+import jakarta.persistence.SynchronizationType;
+import jakarta.persistence.TransactionRequiredException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.TypedQueryReference;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaSelect;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.metamodel.Metamodel;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
@@ -25,22 +50,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.reflection.Reflections;
 
-import jakarta.persistence.EntityGraph;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.FlushModeType;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.Query;
-import jakarta.persistence.StoredProcedureQuery;
-import jakarta.persistence.SynchronizationType;
-import jakarta.persistence.TransactionRequiredException;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaUpdate;
-import jakarta.persistence.metamodel.Metamodel;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -244,6 +253,12 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public <T> T getReference(T entity) {
+       //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
     public void flush() {
         assertTransactionActive();
         final Timer timer = Op.flush.start(this.timer, this);
@@ -433,6 +448,12 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> reference) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
     /* (non-Javadoc)
      * @see jakarta.persistence.EntityManager#createQuery(jakarta.persistence.criteria.CriteriaQuery)
      */
@@ -443,6 +464,12 @@ public class JtaEntityManager implements EntityManager, Serializable {
         } finally {
             timer.stop();
         }
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> selectQuery) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     /* (non-Javadoc)
@@ -522,6 +549,18 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public <T> T find(Class<T> entityClass, Object primaryKey, FindOption... options) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public <T> T find(EntityGraph<T> entityGraph, Object primaryKey, FindOption... options) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
     /* (non-Javadoc)
      * @see jakarta.persistence.EntityManager#getEntityManagerFactory()
      */
@@ -540,6 +579,32 @@ public class JtaEntityManager implements EntityManager, Serializable {
         } finally {
             timer.stop();
         }
+    }
+
+    @Override
+    public void setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+
+    }
+
+    @Override
+    public void setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     /* (non-Javadoc)
@@ -606,6 +671,12 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public void lock(Object entity, LockModeType lockMode, LockOption... options) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
     /* (non-Javadoc)
      * @see jakarta.persistence.EntityManager#refresh(java.lang.Object, java.util.Map)
      */
@@ -643,6 +714,12 @@ public class JtaEntityManager implements EntityManager, Serializable {
         } finally {
             timer.stop();
         }
+    }
+
+    @Override
+    public void refresh(Object entity, RefreshOption... options) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     /* (non-Javadoc)
@@ -812,6 +889,18 @@ public class JtaEntityManager implements EntityManager, Serializable {
         } finally {
             timer.stop();
         }
+    }
+
+    @Override
+    public <C> void runWithConnection(ConnectionConsumer<C> action) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public <C, T> T callWithConnection(ConnectionFunction<C, T> function) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     @Override

@@ -17,19 +17,8 @@
 
 package org.apache.openejb.persistence;
 
-import jakarta.persistence.EntityGraph;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.FlushModeType;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.Query;
-import jakarta.persistence.StoredProcedureQuery;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.*;
 import jakarta.persistence.metamodel.Metamodel;
 import java.util.List;
 import java.util.Map;
@@ -79,8 +68,26 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
+    public <T> T find(Class<T> entityClass, Object primaryKey, FindOption... options) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public <T> T find(EntityGraph<T> entityGraph, Object primaryKey, FindOption... options) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
     public <T> T getReference(final Class<T> entityClass, final Object primaryKey) {
         return delegate.getReference(entityClass, primaryKey);
+    }
+
+    @Override
+    public <T> T getReference(T entity) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     @Override
@@ -109,6 +116,11 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
+    public void lock(Object entity, LockModeType lockMode, LockOption... options) {
+
+    }
+
+    @Override
     public void refresh(final Object entity) {
         delegate.refresh(entity);
     }
@@ -126,6 +138,12 @@ public class QueryLogEntityManager implements EntityManager {
     @Override
     public void refresh(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
         delegate.refresh(entity, lockMode, properties);
+    }
+
+    @Override
+    public void refresh(Object entity, RefreshOption... options) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     @Override
@@ -149,6 +167,30 @@ public class QueryLogEntityManager implements EntityManager {
     }
 
     @Override
+    public void setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public void setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
     public void setProperty(final String propertyName, final Object value) {
         delegate.setProperty(propertyName, value);
     }
@@ -166,6 +208,12 @@ public class QueryLogEntityManager implements EntityManager {
     @Override
     public <T> TypedQuery<T> createQuery(final CriteriaQuery<T> criteriaQuery) {
         return new CriteriaLogQuery(delegate.createQuery(criteriaQuery), level);
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> selectQuery) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     @Override
@@ -191,6 +239,12 @@ public class QueryLogEntityManager implements EntityManager {
     @Override
     public <T> TypedQuery<T> createNamedQuery(final String name, final Class<T> resultClass) {
         return delegate.createNamedQuery(name, resultClass);
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> reference) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     @Override
@@ -296,5 +350,17 @@ public class QueryLogEntityManager implements EntityManager {
     @Override
     public <T> List<EntityGraph<? super T>> getEntityGraphs(final Class<T> entityClass) {
         return delegate.getEntityGraphs(entityClass);
+    }
+
+    @Override
+    public <C> void runWithConnection(ConnectionConsumer<C> action) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public <C, T> T callWithConnection(ConnectionFunction<C, T> function) {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 }

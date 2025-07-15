@@ -17,6 +17,7 @@
 
 package org.apache.openejb.assembler.classic;
 
+import jakarta.persistence.*;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.internal.Internal;
@@ -43,15 +44,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import javax.naming.NamingException;
-import jakarta.persistence.Cache;
-import jakarta.persistence.EntityGraph;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceUnitUtil;
-import jakarta.persistence.Query;
-import jakarta.persistence.SharedCacheMode;
-import jakarta.persistence.SynchronizationType;
-import jakarta.persistence.ValidationMode;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.metamodel.Metamodel;
 import jakarta.persistence.spi.PersistenceUnitInfo;
@@ -70,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.apache.openejb.monitoring.LocalMBeanServer.tabularData;
 
@@ -239,6 +234,26 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     }
 
     @Override
+    public <R> Map<String, TypedQueryReference<R>> getNamedQueries(Class<R> resultType) {
+        return Map.of();
+    }
+
+    @Override
+    public <E> Map<String, EntityGraph<? extends E>> getNamedEntityGraphs(Class<E> entityType) {
+        return Map.of();
+    }
+
+    @Override
+    public void runInTransaction(Consumer<EntityManager> work) {
+
+    }
+
+    @Override
+    public <R> R callInTransaction(Function<EntityManager, R> work) {
+        return null;
+    }
+
+    @Override
     public CriteriaBuilder getCriteriaBuilder() {
         return delegate().getCriteriaBuilder();
     }
@@ -261,6 +276,12 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     }
 
     @Override
+    public String getName() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
     public Map<String, Object> getProperties() {
         return delegate().getProperties();
     }
@@ -273,6 +294,18 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     @Override
     public PersistenceUnitUtil getPersistenceUnitUtil() {
         return delegate().getPersistenceUnitUtil();
+    }
+
+    @Override
+    public jakarta.persistence.PersistenceUnitTransactionType getTransactionType() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
+    }
+
+    @Override
+    public SchemaManager getSchemaManager() {
+        //TODO TomEE 11 - JPA 3.2
+        throw new UnsupportedOperationException("TomEE does not support JPA 3.2 yet");
     }
 
     public EntityManagerFactory getDelegate() {
