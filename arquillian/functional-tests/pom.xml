@@ -22,15 +22,17 @@
     <parent>
         <artifactId>arquillian</artifactId>
         <groupId>org.apache.tomee</groupId>
-        <version>10.1.1-SNAPSHOT</version>
+        <version>10.1.1-jpa32-SNAPSHOT</version>
     </parent>
 
     <artifactId>functional-tests</artifactId>
-    <version>10.1.1-SNAPSHOT</version>
+    <version>10.1.1-jpa32-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>TomEE :: Arquillian :: Functional Tests</name>
 
-    <modules />
+    <modules >
+        <module>jpa32-tomee</module>
+    </modules>
 
     <profiles>
         <profile>
