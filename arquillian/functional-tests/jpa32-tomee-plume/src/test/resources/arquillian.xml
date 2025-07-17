@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,24 +16,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <artifactId>arquillian</artifactId>
-        <groupId>org.apache.tomee</groupId>
-        <version>10.1.1-jpa32-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>functional-tests</artifactId>
-    <version>10.1.1-jpa32-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>TomEE :: Arquillian :: Functional Tests</name>
-
-    <modules>
-        <module>jpa32-tomee-plume</module>
-        <module>jpa32-tomee-web</module>
-        <module>spring-cxf-tomee-4332</module>
-    </modules>
-
-</project>
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+  <container qualifier="tomee" default="true">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="ajpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="dir">target/apache-tomee-remote</property>
+      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+      <property name="classifier">plume</property>
+      <property name="simpleLog">true</property>
+    </configuration>
+  </container>
+</arquillian>

@@ -26,8 +26,8 @@
         <version>10.1.1-jpa32-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jpa32-tomee</artifactId>
-    <name>TomEE :: Arquillian :: Functional Tests :: JPA 3.2</name>
+    <artifactId>jpa32-tomee-plume</artifactId>
+    <name>TomEE :: Arquillian :: Functional Tests :: JPA 3.2 :: Plume</name>
 
     <properties>
         <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>

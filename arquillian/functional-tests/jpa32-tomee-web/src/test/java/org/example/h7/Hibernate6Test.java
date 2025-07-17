@@ -40,34 +40,48 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ArquillianExtension.class)
-public class OpenJPATest {
+public class Hibernate6Test {
 
     @Deployment
     public static WebArchive war() {
+        File[] hibernate;
+        try { // try offline first since it is generally faster
+            hibernate = Maven.configureResolver()
+                    .workOffline()
+                    .loadPomFromClassLoaderResource("hibernate6-pom.xml")
+                    .importCompileAndRuntimeDependencies().resolve().withTransitivity()
+                    .asFile();
+        } catch (ResolutionException re) { // try on central
+            hibernate = Maven.resolver()
+                    .loadPomFromClassLoaderResource("hibernate6-pom.xml")
+                    .importCompileAndRuntimeDependencies().resolve().withTransitivity()
+                    .asFile();
+        }
 
-
-        return ShrinkWrap.create(WebArchive.class, "openjpa-app.war")
+        return ShrinkWrap.create(WebArchive.class, "hibernate-app.war")
                 .addAsWebInfResource(new StringAsset("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                         "<persistence version=\"3.1\"\n" +
                         "    xmlns=\"https://jakarta.ee/xml/ns/persistence\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                         "    xsi:schemaLocation=\"https://jakarta.ee/xml/ns/persistence" +
                         "                         https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd\">\n" +
-                        "  <persistence-unit name=\"openjpa\">\n" +
-                        "    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>\n" +
+                        "  <persistence-unit name=\"hibernate6\">\n" +
+                        "    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>\n" +
                         "    <exclude-unlisted-classes>true</exclude-unlisted-classes>\n" +
                         "    <properties>\n" +
-                        "      <property name=\"openejb.jpa.init-entitymanager\" value=\"true\" />\n" +
-                        "      <property name=\"openjpa.jdbc.SynchronizeMappings\" value=\"buildSchema(ForeignKeys=true)\"/>" +
+                        "      <property name=\"hibernate.hbm2ddl.auto\" value=\"create-drop\" />\n" +
                         "    </properties>\n" +
                         "  </persistence-unit>\n" +
-                        "</persistence>"), ArchivePaths.create("persistence.xml"));
+                        "</persistence>"), ArchivePaths.create("persistence.xml"))
+                .addAsLibraries(hibernate)
+                .addAsLibraries(JarLocation.jarLocation(ResolutionException.class))
+                .addAsLibraries(JarLocation.jarLocation(org.jboss.shrinkwrap.resolver.api.maven.filter.MavenResolutionFilter.class));
     }
 
     @Test // using an internal lookup because in tomee embedded new InitialContext() is not guaranteed
-    public void checkEmIsOpenJPAOne() throws Exception {
+    public void checkEmIsHibernateOne() throws Exception {
         AppInfo info = null;
         for (final AppInfo app : SystemInstance.get().getComponent(Assembler.class).getDeployedApplications()) {
-            if (app.appId.endsWith("openjpa-app")) {
+            if (app.appId.endsWith("hibernate-app")) {
                 info = app;
                 break;
             }
@@ -77,7 +91,6 @@ public class OpenJPATest {
         final EntityManagerFactory emf = (EntityManagerFactory)
                 SystemInstance.get().getComponent(ContainerSystem.class)
                         .getJNDIContext().lookup(Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + info.persistenceUnits.iterator().next().id);
-        System.out.println(((ReloadableEntityManagerFactory) emf).getDelegate().getClass().getName());
-        assertTrue(((ReloadableEntityManagerFactory) emf).getDelegate().getClass().getName().startsWith("org.apache."));
+        assertTrue(((ReloadableEntityManagerFactory) emf).getDelegate().getClass().getName().startsWith("org.hibernate."));
     }
 }
