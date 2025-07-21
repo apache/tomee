@@ -159,7 +159,7 @@
     <version.commons-codec>1.18.0</version.commons-codec>
     <version.commons-dbcp2>2.13.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
-    <version.commons-io>2.19.0</version.commons-io>
+    <version.commons-io>2.20.0</version.commons-io>
     <version.commons-lang3>3.18.0</version.commons-lang3>
     <version.commons-net>3.11.1</version.commons-net>
     <version.commons-pool>2.12.1</version.commons-pool>
