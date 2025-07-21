@@ -51,7 +51,8 @@ public class JaccPermissionServletTest extends AbstractTomEESecurityTest {
                                                    .request()
                                                    .get();
             assertEquals(200, response.getStatus());
-            final String responsePayload = response.readEntity(String.class);
+            final String responsePayload = response.readEntity(String.class)
+                    .replace("\r\n", "\n");
             System.out.println(responsePayload);
 
             final StringBuilder sb = new StringBuilder(100);
@@ -68,7 +69,8 @@ public class JaccPermissionServletTest extends AbstractTomEESecurityTest {
                                                    .request()
                                                    .get();
             assertEquals(200, response.getStatus());
-            final String responsePayload = response.readEntity(String.class);
+            final String responsePayload = response.readEntity(String.class)
+                    .replace("\r\n", "\n");
             System.out.println(responsePayload);
 
             final StringBuilder sb = new StringBuilder(100);
