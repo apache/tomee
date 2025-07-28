@@ -30,8 +30,6 @@ import jakarta.enterprise.context.spi.Context;
  * @version $Rev$ $Date$
  */
 public class RequestScopedThreadContextListener implements ThreadContextListener {
-    private final static ThreadLocal<DestroyContext> destroyable = new ThreadLocal<>();
-    
     @Override
     public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, boolean propagateTx) {
 
@@ -48,7 +46,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
 
         if (requestContext == null) {
             contextsService.startContext(RequestScoped.class, CdiAppContextsService.EJB_REQUEST_EVENT);
-            destroyable.set(new DestroyContext(contextsService, newContext));
+            newContext.set(DestroyContext.class, new DestroyContext(contextsService, newContext));
         }
     }
 
@@ -58,13 +56,14 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
             return;
         }
 
-        if (destroyable.get() instanceof DestroyContext) {
-          DestroyContext destroyContext = destroyable.get();
-          if (exitedContext==destroyContext.threadContext) {
-            destroyContext.contextsService.endContext(RequestScoped.class, CdiAppContextsService.EJB_REQUEST_EVENT);
-            destroyable.remove();
-          }
+        final DestroyContext destroyContext = exitedContext.get(DestroyContext.class);
+
+        if (destroyContext == null || destroyContext.threadContext != exitedContext) {
+            return;
         }
+
+        destroyContext.contextsService.endContext(RequestScoped.class, CdiAppContextsService.EJB_REQUEST_EVENT);
+        destroyContext.contextsService.removeThreadLocals();
     }
 
     private static final class DestroyContext {
