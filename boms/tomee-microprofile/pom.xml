@@ -178,6 +178,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>io.github.librewsdl4j</groupId>
+      <artifactId>libre-wsdl4j</artifactId>
+      <version>1.12.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>io.github.rzo1.org.metatype.sxc</groupId>
       <artifactId>sxc-jaxb-core</artifactId>
       <version>0.9</version>
@@ -2502,17 +2513,6 @@
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <version>2.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>wsdl4j</groupId>
-      <artifactId>wsdl4j</artifactId>
-      <version>1.6.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

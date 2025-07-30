@@ -1219,6 +1219,10 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -1524,9 +1528,9 @@
         <version>${version.xmlsec}</version>
       </dependency>
       <dependency>
-        <groupId>wsdl4j</groupId>
-        <artifactId>wsdl4j</artifactId>
-        <version>1.6.3</version>
+        <groupId>io.github.librewsdl4j</groupId>
+        <artifactId>libre-wsdl4j</artifactId>
+        <version>1.12.0</version>
       </dependency>
       <dependency>
         <groupId>xmlunit</groupId>

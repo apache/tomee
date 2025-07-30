@@ -3,7 +3,7 @@ Copyright 1999-2025 The Apache OpenEJB development community
 
 This product includes/uses software, HSQLDB (http://hsqldb.org/)
 
-This product includes/uses software, WSDL4J (http://sf.net/projects/wsdl4j)
+This product includes/uses software, libre-wsdl4j (https://github.com/librewsdl4j/libre-wsdl4j)
 
 This product includes/uses software, Serp (http://serp.sourceforge.net)
 

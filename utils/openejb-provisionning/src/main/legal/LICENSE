@@ -356,7 +356,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 =========================================================================
-  - WSDL4J (http://sf.net/projects/wsdl4j) wsdl4j:wsdl4j:jar:1.6.2
+  - libre-wsdl4j (https://github.com/librewsdl4j/libre-wsdl4j) io.github.librewsdl4j:libre-wsdl4j:jar:1.12.0
     License: CPL  (http://www.opensource.org/licenses/cpl1.0.txt)
 -------------------------------------------------------------------------
 
