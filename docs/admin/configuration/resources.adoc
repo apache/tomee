@@ -487,29 +487,10 @@ Declarable in tomee.xml via
 
 [source,xml]
 ----
-<Resource id="Foo" type="ContextService" />
-----
-
-Declarable in properties via
-
-[source,properties]
-----
-Foo = new://Resource?type=ContextService
-----
-
-
-== JndiProvider: inject remote clients
-
-A thread factory for a `ManagedExecutorService`.
-Default implementation is `org.apache.openejb.threads.impl.ManagedThreadFactoryImpl`.
-
-Declarable in tomee.xml via
-
-[source,xml]
-----
-<Resource id="Foo" type="ManagedThreadFactory">
-    Prefix = openejb-managed-thread-
-    Lazy = true
+<Resource id="Foo" type="ContextService">
+  Propagated = Remaining
+  Cleared = Transaction
+  Unchanged = MyFoo
 </Resource>
 ----
 
@@ -517,34 +498,13 @@ Declarable in properties via
 
 [source,properties]
 ----
-Foo = new://Resource?type=ManagedThreadFactory
-Foo.Prefix = openejb-managed-thread-
-Foo.Lazy = true
+Foo = new://Resource?type=ContextService
+Foo.Propagated = Remaining
+Foo.Cleared = Transaction
+Foo.Unchanged = MyFoo
 ----
 
 === Configuration
-
-==== Prefix
-
-The thread prefix (suffixed with thread id).
-
-
-
-== ContextService
-
-A concurrency utilities for JavaEE context service. It allows to create
-contextual proxies (inheriting from security, classloader...contexts).
-
-Declarable in tomee.xml via
-
-[source,xml]
-----
-<Resource id="Foo" type="ContextService" />
-----
-
-Declarable in properties via
-
-[source,properties]
-----
-Foo = new://Resource?type=ContextService
-----
+==== Propagated, Cleared, Unchanged
+Contexts to be propagated, cleared or ignored.
+Propagating the built-in type 'Transaction' is not supported!
