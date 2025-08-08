@@ -34,7 +34,7 @@ public class OWBContextThreadListener implements ThreadContextListener {
     private final ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
 
     @Override
-    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, boolean propagateTx) {
+    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
         final BeanContext beanContext = newContext.getBeanContext();
         if (beanContext == null) { // OWBContextHolder will be null so calling contextExited will throw a NPE
             return;
