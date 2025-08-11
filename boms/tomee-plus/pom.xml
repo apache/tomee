@@ -906,7 +906,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -950,7 +950,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -961,7 +961,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -983,7 +983,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -994,7 +994,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1005,7 +1005,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1016,7 +1016,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1027,7 +1027,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1038,7 +1038,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1071,7 +1071,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1104,7 +1104,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>4.1.2</version>
+      <version>4.1.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
