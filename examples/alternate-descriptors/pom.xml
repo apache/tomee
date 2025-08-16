@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>alternate-descriptors</artifactId>
   <packaging>jar</packaging>
-  <version>10.1.1-SNAPSHOT</version>
+  <version>10.1.1</version>
   <name>TomEE :: Examples :: Alternate Descriptors</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.1.1-SNAPSHOT</version>
+      <version>10.1.1</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
