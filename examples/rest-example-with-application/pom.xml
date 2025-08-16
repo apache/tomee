@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-example-with-application</artifactId>
   <packaging>war</packaging>
-  <version>10.1.1</version>
+  <version>10.1.2-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: REST Example With Application</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

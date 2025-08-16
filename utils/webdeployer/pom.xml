@@ -22,7 +22,7 @@
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.1.1</version>
+    <version>10.1.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>webdeployer</artifactId>
