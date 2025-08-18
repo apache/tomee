@@ -84,7 +84,7 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>7.27.0</version>
+      <version>7.27.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
