@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>lookup-of-ejbs-with-descriptor</artifactId>
   <packaging>jar</packaging>
-  <version>10.1.1-SNAPSHOT</version>
+  <version>10.1.2-SNAPSHOT</version>
   <name>TomEE :: Examples :: EJB Lookup with descriptor</name>
   <properties>
     <!--
@@ -72,7 +72,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.1.1-SNAPSHOT</version>
+      <version>10.1.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

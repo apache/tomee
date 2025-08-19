@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>ejb-examples</artifactId>
   <packaging>war</packaging>
-  <version>10.1.1-SNAPSHOT</version>
+  <version>10.1.2-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: EJB Examples War</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,7 +62,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>10.1.1-SNAPSHOT</version>
+        <version>10.1.2-SNAPSHOT</version>
         <configuration>
           <context>/ejb-examples</context>
           <tomeeClassifier>plus</tomeeClassifier>
