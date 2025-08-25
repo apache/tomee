@@ -146,7 +146,7 @@
     <version.osgi.framework>4.2.0</version.osgi.framework>
     <version.aether>1.13.1</version.aether>
     <version.xalan>2.7.3</version.xalan>
-    <version.nashorn>15.6</version.nashorn>
+    <version.nashorn>15.7</version.nashorn>
 
     <!-- Logging frameworks -->
     <version.slf4j>2.0.16</version.slf4j>
