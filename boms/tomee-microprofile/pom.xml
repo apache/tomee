@@ -774,7 +774,7 @@
     <dependency>
       <groupId>net.shibboleth</groupId>
       <artifactId>shib-velocity</artifactId>
-      <version>9.1.3</version>
+      <version>9.1.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
