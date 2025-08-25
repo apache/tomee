@@ -72,7 +72,7 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-jakarta-openejb</artifactId>
-      <version>7.27.0</version>
+      <version>7.27.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
