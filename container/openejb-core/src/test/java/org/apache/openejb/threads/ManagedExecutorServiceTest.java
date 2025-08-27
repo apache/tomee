@@ -142,9 +142,9 @@ public class ManagedExecutorServiceTest {
 
         @Override
         public Boolean call() throws Exception {
-/*            final RequestBean currentRequestBean =
- *            RequestBean.class.cast(bm.getReference(bm.resolve(bm.getBeans(RequestBean.class)),
- *            RequestBean.class, null));*/
+            /*            final RequestBean currentRequestBean =
+             *            RequestBean.class.cast(bm.getReference(bm.resolve(bm.getBeans(RequestBean.class)),
+             *            RequestBean.class, null));*/
             return /*CdiExecutorFacade.id == bean.getId()
                     && CdiExecutorFacade.id == currentRequestBean.getId()
                     && */CdiExecutorFacade.current.isValid();

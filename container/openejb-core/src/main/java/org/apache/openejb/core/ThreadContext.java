@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class ThreadContext {
 
@@ -43,6 +44,12 @@ public class ThreadContext {
         if (newContext == null) {
             throw new NullPointerException("newContext is null");
         }
+
+        if (newContext.entered.get()) {
+            throw new IllegalStateException("ThreadContext is already entered");
+        }
+
+        newContext.entered.set(true);
 
         // set the thread context class loader
         final Thread thread = Thread.currentThread();
@@ -76,6 +83,12 @@ public class ThreadContext {
         if (exitingContext == null) {
             throw new IllegalStateException("No existing context");
         }
+
+        if (!exitingContext.entered.get()) {
+            throw new IllegalStateException("ThreadContext has not been entered, or has already been exited");
+        }
+
+        exitingContext.entered.set(false);
 
         // set the thread context class loader back
         Thread.currentThread().setContextClassLoader(exitingContext.oldClassLoader);
@@ -121,6 +134,7 @@ public class ThreadContext {
     private Operation currentOperation;
     private Class invokedInterface;
     private TransactionPolicy transactionPolicy;
+    private AtomicBoolean entered = new AtomicBoolean(false);
 
     /**
      * A boolean which keeps track of whether to discard the bean instance after the method invocation.
@@ -216,12 +230,20 @@ public class ThreadContext {
         return "ThreadContext{" +
             "beanContext=" + beanContext.getId() +
             ", primaryKey=" + primaryKey +
-            ", data=" + data.size() +
+            ", data(" + data.size() +
+            ")=" + dataToString(data) +
             ", oldClassLoader=" + oldClassLoader +
             ", currentOperation=" + currentOperation +
             ", invokedInterface=" + invokedInterface +
             ", transactionPolicy=" + transactionPolicy +
             ", discardInstance=" + discardInstance +
             '}';
+    }
+
+    private String dataToString(final Map<Class, Object> data) {
+        return data.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + (entry.getValue() == null ? "null" : entry.getValue().hashCode()))
+                .collect(Collectors.joining(", "));
+
     }
 }

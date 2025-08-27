@@ -124,6 +124,16 @@ public class SecurityThreadContextProvider implements ThreadContextProvider, Ser
 
             return new SecurityThreadContextRestorer(associate, oldCtx, threadState);
         }
+
+        @Override
+        public String toString() {
+            return "SecurityThreadContextSnapshot@" + System.identityHashCode(this) +
+                    "{associate=" + associate +
+                    "{securityServiceState=" + securityServiceState +
+                    "{sc=" + sc +
+                    '}';
+        }
+
     }
 
     public static class SecurityThreadContextRestorer implements ThreadContextRestorer {
@@ -150,5 +160,15 @@ public class SecurityThreadContextProvider implements ThreadContextProvider, Ser
                 SECURITY_SERVICE.disassociate();
             }
         }
+
+        @Override
+        public String toString() {
+            return "SecurityThreadContextSnapshot@" + System.identityHashCode(this) +
+                    "{associate=" + associate +
+                    "{oldCtx=" + oldCtx +
+                    "{threadState=" + threadState +
+                    '}';
+        }
+
     }
 }
