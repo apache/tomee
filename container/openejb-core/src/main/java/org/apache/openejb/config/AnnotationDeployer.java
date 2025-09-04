@@ -297,6 +297,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         "jakarta.faces.application.ResourceDependency",
         "jakarta.faces.component.FacesComponent",
         "jakarta.faces.component.UIComponent",
+        "jakarta.faces.component.behavior.FacesBehavior",
         "jakarta.faces.convert.Converter",
         "jakarta.faces.convert.FacesConverter",
         "jakarta.faces.event.ListenerFor",
