@@ -395,10 +395,9 @@ public class CdiScanner implements BdaScannerService {
             Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).debug("Can not load {0}.", e, className);
             return null;
         } catch (final NoClassDefFoundError e) {
-            if (logDebug) {
-                Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).warning("Can not load {0} dependencies.", e, className);
-            }
-            Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).debug("Can not load {0} dependencies.", e, className);
+            Logger.getInstance(LogCategory.OPENEJB_CDI, CdiScanner.class).log(logDebug ? "warning" : "debug",
+                    String.format("Can not load dependencies of %s: class %s can not be found", className, e.getMessage()));
+
             return null;
         }
     }
