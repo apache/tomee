@@ -2105,7 +2105,7 @@
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>ecj</artifactId>
-      <version>3.43.0</version>
+      <version>3.42.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
