@@ -60,7 +60,7 @@ public class IsLoggedTest {
         securityService.disassociate();
         securityService.logout(id);
 
-        ThreadContext.enter(testContext);
+//        ThreadContext.enter(testContext);
     }
 
     @Test
