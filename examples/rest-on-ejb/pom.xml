@@ -22,11 +22,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-on-ejb</artifactId>
   <packaging>jar</packaging>
-  <version>10.1.1-SNAPSHOT</version>
+  <version>10.1.2-SNAPSHOT</version>
   <name>TomEE :: Examples :: REST and EJB</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.1.1-SNAPSHOT</tomee.version>
+    <tomee.version>10.1.2-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -62,7 +62,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>10.0</version>
+      <version>10.0.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -64,6 +64,13 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
                 throw new OpenEJBRuntimeException(e);
             }
         }
+
+        @Override
+        public String toString() {
+            return "TxThreadContextRestoringSnapshot@" + System.identityHashCode(this) +
+                    "{transaction=" + transaction +
+                    '}';
+        }
     }
 
     public static class TxThreadContextRestorer implements ThreadContextRestorer {
@@ -81,5 +88,13 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
                 throw new OpenEJBRuntimeException(e);
             }
         }
+
+        @Override
+        public String toString() {
+            return "TxThreadContextRestorer@" + System.identityHashCode(this) +
+                    "{transaction=" + transaction +
+                    '}';
+        }
+
     }
 }

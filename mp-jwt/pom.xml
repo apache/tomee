@@ -19,7 +19,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.1.1-SNAPSHOT</version>
+    <version>10.1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mp-jwt</artifactId>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>10.4</version>
+      <version>10.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>

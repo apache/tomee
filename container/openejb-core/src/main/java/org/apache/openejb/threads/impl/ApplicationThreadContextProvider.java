@@ -76,6 +76,15 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
             ThreadContext oldThreadContext = changeThreadContext ? ThreadContext.enter(threadContext) : null;
             return new ApplicationThreadContextRestorer(oldCl, oldThreadContext, changeThreadContext);
         }
+
+        @Override
+        public String toString() {
+            return "ApplicationThreadContextSnapshot@" + System.identityHashCode(this) +
+                    "{appId=" + appId +
+                    "{threadContext=" + threadContext +
+                    '}';
+        }
+
     }
 
     public static class ApplicationThreadContextRestorer implements ThreadContextRestorer {
@@ -99,5 +108,15 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
                 ThreadContext.exit(oldThreadContext);
             }
         }
+
+        @Override
+        public String toString() {
+            return "ApplicationThreadContextRestorer@" + System.identityHashCode(this) +
+                    "{oldClassLoader=" + oldClassLoader +
+                    "{oldThreadContext=" + oldThreadContext +
+                    "{exitThreadContext=" + exitThreadContext +
+                    '}';
+        }
+
     }
 }

@@ -16,7 +16,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>10.1.1-SNAPSHOT</version>
+    <version>10.1.2-SNAPSHOT</version>
   </parent>
   
   <artifactId>arquillian-tomee-tests</artifactId>
@@ -169,7 +169,7 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
-      <version>1.17.6</version>
+      <version>1.17.7</version>
       <scope>provided</scope>
     </dependency>
     <!-- just to get it in the correct order -->

@@ -21,12 +21,12 @@
     <groupId>org.superbiz</groupId>
     <artifactId>junit5-simple-websockets-arquillian</artifactId>
     <packaging>jar</packaging>
-    <version>10.1.1-SNAPSHOT</version>
+    <version>10.1.2-SNAPSHOT</version>
     <name>TomEE :: Examples :: JUnit 5 :: Simple Websockets with Arquillian</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tomee.version>10.1.1-SNAPSHOT</tomee.version>
-        <tomcat.version>10.1.43</tomcat.version>
+        <tomee.version>10.1.2-SNAPSHOT</tomee.version>
+        <tomcat.version>10.1.46</tomcat.version>
 
         <junit.jupiter.version>5.12.0</junit.jupiter.version>
         <!-- 1.8.1.Final is broken, see https://github.com/arquillian/arquillian-core/pull/583 -->
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>jakartaee-api</artifactId>
-            <version>10.0</version>
+            <version>10.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

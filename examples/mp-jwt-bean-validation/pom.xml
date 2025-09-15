@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-jwt-bean-validation</artifactId>
-  <version>10.1.1-SNAPSHOT</version>
+  <version>10.1.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile JWT Bean Validation</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.jakartaee-api>10.0</version.jakartaee-api>
-    <tomee.version>10.1.1-SNAPSHOT</tomee.version>
+    <version.jakartaee-api>10.0.1</version.jakartaee-api>
+    <tomee.version>10.1.2-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
     <mp-jwt.version>1.1</mp-jwt.version>
   </properties>
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>10.4</version>
+      <version>10.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>

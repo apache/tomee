@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>serverless-tomee-microprofile</artifactId>
-  <version>10.1.1-SNAPSHOT</version>
+  <version>10.1.2-SNAPSHOT</version>
 
   <name>TomEE :: Examples :: Serverless Apache TomEE MicroProfile</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>10.1.1-SNAPSHOT</version.tomee>
+    <version.tomee>10.1.2-SNAPSHOT</version.tomee>
   </properties>
   <dependencies>
     <dependency>

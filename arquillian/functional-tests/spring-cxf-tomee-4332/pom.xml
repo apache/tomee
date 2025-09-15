@@ -22,16 +22,16 @@
     <parent>
         <artifactId>functional-tests</artifactId>
         <groupId>org.apache.tomee</groupId>
-        <version>10.1.1-SNAPSHOT</version>
+        <version>10.1.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>spring-cxf-tomee-4332</artifactId>
-    <version>10.1.1-SNAPSHOT</version>
+    <version>10.1.2-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>TomEE :: Arquillian :: Functional Tests :: Spring CXF Test</name>
 
     <properties>
-        <version.spring-boot>3.5.4</version.spring-boot>
+        <version.spring-boot>3.5.5</version.spring-boot>
         <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
 
         <!-- junit 5.11 is broken for some reason here -->
