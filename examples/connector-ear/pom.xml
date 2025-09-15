@@ -22,7 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>10.1.2-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
-    <surefire.version>3.5.3</surefire.version>
+    <surefire.version>3.5.4</surefire.version>
   </properties>
   <repositories>
     <repository>
