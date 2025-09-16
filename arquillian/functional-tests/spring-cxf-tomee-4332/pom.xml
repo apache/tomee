@@ -22,11 +22,11 @@
     <parent>
         <artifactId>functional-tests</artifactId>
         <groupId>org.apache.tomee</groupId>
-        <version>10.1.2-SNAPSHOT</version>
+        <version>10.1.2</version>
     </parent>
 
     <artifactId>spring-cxf-tomee-4332</artifactId>
-    <version>10.1.2-SNAPSHOT</version>
+    <version>10.1.2</version>
     <packaging>war</packaging>
     <name>TomEE :: Arquillian :: Functional Tests :: Spring CXF Test</name>
 
