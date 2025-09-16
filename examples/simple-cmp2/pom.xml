@@ -22,11 +22,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-cmp2</artifactId>
   <packaging>jar</packaging>
-  <version>10.1.2</version>
+  <version>10.1.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple CMP2 Entity</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.1.2</tomee.version>
+    <tomee.version>10.1.3-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
