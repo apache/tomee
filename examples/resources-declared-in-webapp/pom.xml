@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-declared-in-webapp</artifactId>
   <packaging>war</packaging>
-  <version>10.1.2-SNAPSHOT</version>
+  <version>10.1.3-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Resource Declared In A Webapp</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.1.2-SNAPSHOT</tomee.version>
+    <tomee.version>10.1.3-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
