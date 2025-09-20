@@ -36,9 +36,9 @@ public final class EjbTransactionUtil {
     static {
         ThreadContext.addThreadContextListener(new ThreadContextListener() {
             @Override
-            public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, boolean propagateTx) {
+            public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
                 // propagate current tx environment to the new ThreadContext
-                if (oldContext != null && propagateTx) {
+                if (oldContext != null) {
                     newContext.setTransactionPolicy(oldContext.getTransactionPolicy());
                 }
             }

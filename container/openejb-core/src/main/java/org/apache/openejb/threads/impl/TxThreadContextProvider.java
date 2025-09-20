@@ -35,11 +35,7 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
 
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
-        try {
-            return new TxThreadContextRestoringSnapshot(OpenEJB.getTransactionManager().getTransaction());
-        } catch (SystemException e) {
-            throw new OpenEJBRuntimeException(e);
-        }
+        return ThreadContextProviderUtil.NOOP_SNAPSHOT;
     }
 
     @Override
@@ -52,7 +48,6 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
         return ContextServiceDefinition.TRANSACTION;
     }
 
-    // Basically TxThreadContextSnapshot but being serializable because it does not store a non-serializable transaction
     public static class TxThreadContextClearingSnapshot implements ThreadContextSnapshot, Serializable {
         public static final TxThreadContextClearingSnapshot INSTANCE = new TxThreadContextClearingSnapshot();
 
@@ -68,34 +63,6 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
             } catch (SystemException e) {
                 throw new OpenEJBRuntimeException(e);
             }
-        }
-    }
-
-    public static class TxThreadContextRestoringSnapshot implements ThreadContextSnapshot {
-        private final Transaction transaction;
-
-        public TxThreadContextRestoringSnapshot(Transaction transaction) {
-            this.transaction = transaction;
-        }
-
-        @Override
-        public ThreadContextRestorer begin() {
-            TransactionManager transactionManager = OpenEJB.getTransactionManager();
-
-            try {
-                Transaction oldTransaction = transactionManager.suspend();
-                transactionManager.resume(transaction);
-                return new TxThreadContextRestorer(oldTransaction);
-            } catch (SystemException | InvalidTransactionException e) {
-                throw new OpenEJBRuntimeException(e);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "TxThreadContextRestoringSnapshot@" + System.identityHashCode(this) +
-                    "{transaction=" + transaction +
-                    '}';
         }
     }
 

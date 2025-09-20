@@ -23,9 +23,8 @@ public interface ThreadContextListener {
      *
      * @param oldContext  the old context that was associated with the thread
      * @param newContext  the new context that is now associated with the thread
-     * @param propagateTx
      */
-    void contextEntered(ThreadContext oldContext, ThreadContext newContext, boolean propagateTx);
+    void contextEntered(ThreadContext oldContext, ThreadContext newContext);
 
     /**
      * A context has exited.  The reentered context is already associated with the thread.

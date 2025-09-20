@@ -87,7 +87,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     static {
         ThreadContext.addThreadContextListener(new ThreadContextListener() {
             @Override
-            public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, boolean propagateTx) {
+            public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
                 // no-op
             }
 

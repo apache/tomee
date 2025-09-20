@@ -39,7 +39,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
     private static Logger LOG = Logger.getInstance(LogCategory.OPENEJB.createChild("ThreadContext"), "org.apache.openejb.cdi");
 
     @Override
-    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext, boolean propagateTx) {
+    public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("ThreadContextListener contextEntered: oldContext=" + oldContext + ", newContext=" + newContext + ", from=" + fromStackTrace(new Exception()));
         }

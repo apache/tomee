@@ -40,7 +40,7 @@ public class ThreadContext {
         return threadStorage.get();
     }
 
-    public static ThreadContext enter(final ThreadContext newContext, final boolean propagateTx) {
+    public static ThreadContext enter(final ThreadContext newContext) {
         if (newContext == null) {
             throw new NullPointerException("newContext is null");
         }
@@ -63,7 +63,7 @@ public class ThreadContext {
         // notify listeners
         for (final ThreadContextListener listener : listeners) {
             try {
-                listener.contextEntered(oldContext, newContext, propagateTx);
+                listener.contextEntered(oldContext, newContext);
             } catch (final Throwable e) {
                 log.warning("ThreadContextListener threw an exception", e);
             }
@@ -72,10 +72,6 @@ public class ThreadContext {
         // return old context so it can be used for exit call below
         return oldContext;
 
-    }
-
-    public static ThreadContext enter(final ThreadContext newContext) {
-        return enter(newContext, true);
     }
 
     public static void exit(final ThreadContext oldContext) {
