@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -443,8 +444,9 @@ public class GenerateBoms {
          *
          * There is another known limitation that the Eclipse Compiler jar (ecj-4.27.jar)
          * found in the Tomcat distribution is not available in Maven Central.  The Tomcat
-         * build will download it directly from the Eclipse website.  Very strangely, the
-         * Eclipse Compiler team does publish jars to Maven Central, but only for version 3.x
+         * build will download it directly from the Eclipse website. The Version in this jar name actually describes
+         * the release version of the eclipse umbrella, not the version of JDT/ECJ.
+         * To actually determine what the JDT version is one needs to look at the Bundle-Version inside the jars manifest.
          */
         public Artifact from(final File jar) {
             if (jar.getName().equals("commons-daemon.jar")) {
@@ -531,8 +533,18 @@ public class GenerateBoms {
                 return new Artifact("org.apache.tomcat", "tomcat-jsp-api", "${tomcat.version}", null);
             }
 
+            /* ECJ is special as we cannot easily determine its version from the filename,
+             * as this version is the eclipse version and NOT the release version of JDT/ECJ.
+             * Tomcat downloads this directly from the eclipse website, hence the wrong version.
+             * To actually determine the version we must look at the Jars manifest. */
             if (jar.getName().startsWith("ecj-")) {
-                return new Artifact("org.eclipse.jdt", "ecj", "3.42.0", null);
+                String version = readBundleVersion(jar);
+                Objects.requireNonNull(version, "ECJ version could not be read");
+
+                // e.g. Bundle-Version is 3.33.0.v20230218-1114 but version deployed to maven central is 3.33.0
+                version = version.split("\\.v")[0];
+
+                return new Artifact("org.eclipse.jdt", "ecj", version, null);
             }
 
             if (jar.getName().equals("openejb-javaagent.jar")) {
@@ -585,6 +597,14 @@ public class GenerateBoms {
             }
 
             throw new IllegalStateException(jar.getName());
+        }
+
+        private String readBundleVersion(final File jar) {
+            try (JarFile jarFile = new JarFile(jar)) {
+                return jarFile.getManifest().getMainAttributes().getValue("Bundle-Version");
+            } catch (IOException e) {
+                return null;
+            }
         }
     }
 
