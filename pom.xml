@@ -149,7 +149,7 @@
     <!-- Logging frameworks -->
     <version.slf4j>2.0.16</version.slf4j>
     <version.log4j>1.2.17</version.log4j>
-    <version.log4j2>2.25.1</version.log4j2>
+    <version.log4j2>2.25.2</version.log4j2>
     <version.commons-logging>1.3.5</version.commons-logging>
 
     <!-- Apache Commons -->
