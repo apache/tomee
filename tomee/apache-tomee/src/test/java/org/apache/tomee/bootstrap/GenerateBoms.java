@@ -180,10 +180,12 @@ public class GenerateBoms {
             final URL url = this.getClass().getClassLoader().getResource("pom-template.xml");
             final String template = IO.slurp(url);
 
+            final String dependenciesManaged = Join.join("", Artifact::asManagedDep, distribution.getArtifacts());
             final String dependencies = Join.join("", Artifact::asBomDep, distribution.getArtifacts());
 
             final String pom = template.replace("TomEE Distribution", distribution.getDisplayName())
                     .replace("tomee-distribution", distribution.getName())
+                    .replace("<!--dependencies-managed-->", dependenciesManaged)
                     .replace("<!--dependencies-->", dependencies);
 
             final File dist = Files.mkdir(boms, distribution.getName());
@@ -228,11 +230,13 @@ public class GenerateBoms {
                     .filter(isApi)
                     .collect(Collectors.toList());
 
+            final String dependenciesManaged = Join.join("", Artifact::asManagedDep, apiArtifacts);
             final String dependencies = Join.join("", Artifact::asBomDep, apiArtifacts);
 
             final String pom = template.replace("TomEE Distribution", distribution.getDisplayName() + " API")
                     .replace("tomee-distribution", distribution.getName() + "-api")
                     .replaceAll("<dependency>.*</dependency>", "")
+                    .replace("<!--dependencies-managed-->", dependenciesManaged)
                     .replace("<!--dependencies-->", dependencies);
 
             final File dist = Files.mkdir(boms, distribution.getName() + "-api");
@@ -626,15 +630,10 @@ public class GenerateBoms {
             return a.compareTo(b);
         }
 
-        /**
-         * Long term the dep in the BOM should not have a version
-         * and all such data would be in the parent pom.
-         */
         public String asBomDep() {
             return "    <dependency>\n" +
                     "      <groupId>" + groupId + "</groupId>\n" +
                     "      <artifactId>" + artifactId + "</artifactId>\n" +
-                    "      <version>" + version + "</version>\n" +
                     (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
                     "      <exclusions>\n" +
                     "        <exclusion>\n" +
@@ -645,18 +644,13 @@ public class GenerateBoms {
                     "    </dependency>\n";
         }
 
-        /**
-         * Currently unused, but long term this will be the entry we'd need
-         * to add to the parent pom to ensure that the BOMs can just list
-         * the dependencies needed, but not duplicate the version information.
-         */
         public String asManagedDep() {
-            return "    <dependency>\n" +
-                    "      <groupId>" + groupId + "</groupId>\n" +
-                    "      <artifactId>" + artifactId + "</artifactId>\n" +
-                    "      <version>" + version + "</version>\n" +
-                    (classifier != null ? "      <classifier>" + classifier + "</classifier>\n" : "") +
-                    "    </dependency>\n";
+            return "      <dependency>\n" +
+                    "        <groupId>" + groupId + "</groupId>\n" +
+                    "        <artifactId>" + artifactId + "</artifactId>\n" +
+                    "        <version>" + version + "</version>\n" +
+                    (classifier != null ? "        <classifier>" + classifier + "</classifier>\n" : "") +
+                    "      </dependency>\n";
         }
     }
 

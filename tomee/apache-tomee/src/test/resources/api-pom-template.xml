@@ -39,6 +39,11 @@
 
   <name>TomEE :: BOMs :: TomEE Distribution</name>
 
+  <dependencyManagement>
+    <dependencies>
+<!--dependencies-managed-->    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 <!--dependencies-->  </dependencies>
 </project>
