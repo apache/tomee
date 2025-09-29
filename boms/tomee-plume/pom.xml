@@ -1049,7 +1049,7 @@
       <dependency>
         <groupId>org.eclipse.persistence</groupId>
         <artifactId>eclipselink</artifactId>
-        <version>4.0.7</version>
+        <version>4.0.8</version>
       </dependency>
       <dependency>
         <groupId>org.fusesource.hawtbuf</groupId>
