@@ -27,7 +27,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <surefire.argline />
-    <version.eclipselink>4.0.7</version.eclipselink>
+    <version.eclipselink>4.0.8</version.eclipselink>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
