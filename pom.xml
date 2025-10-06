@@ -208,7 +208,7 @@
     <version.cxf>4.1.3</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
-    <version.geronimo-mail_2.1_provider>1.0.1</version.geronimo-mail_2.1_provider>
+    <version.geronimo-mail_2.1_provider>1.0.2</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.0.2</version.johnzon>
     <version.myfaces>4.0.3</version.myfaces>
     <version.openjpa>4.1.1</version.openjpa>
