@@ -26,21 +26,6 @@
   <name>TomEE :: TCK :: Common</name>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.test-harness</groupId>
-      <artifactId>jboss-test-harness</artifactId>
-      <version>1.1.0-CR9</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.ejb3</groupId>
-          <artifactId>jboss-ejb3-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>compile</scope>
