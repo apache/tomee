@@ -164,10 +164,10 @@
 
 
     <!-- Java SE version -->
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
 
-    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
     <version.micrometer>1.12.5</version.micrometer>
     <!-- Micro Profile APIs (6.1)  -->
     <version.microprofile.config>3.1</version.microprofile.config>
