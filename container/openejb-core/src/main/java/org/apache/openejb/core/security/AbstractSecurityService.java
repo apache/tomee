@@ -60,6 +60,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Arrays.asList;
 
@@ -83,6 +84,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     private String realmName = "PropertiesLogin";
     protected Subject defaultSubject;
     protected SecurityContext defaultContext;
+    private static final AtomicBoolean jaccWarningLogged = new AtomicBoolean(false);
 
     public AbstractSecurityService() {
         this(autoJaccProvider());
@@ -395,10 +397,15 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
                 return false;
             }
         } else {
-            LOGGER.warning("Skipping JACC authorization check for method '"
-                    + (method == null ? "null" : method.getName())
-                    + "' on type '" + (type == null ? "null" : type.getSpecName())
-                    + "' as TomEE running on JDK 21+ does not support method security at the moment.");
+            if (!jaccWarningLogged.getAndSet(true)) {
+                LOGGER.warning("Skipping JACC authorization checks as TomEE running on JDK 21+ does not support method security at the moment.");
+            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Skipping JACC authorization checks for method '"
+                        + (method == null ? "null" : method.getName())
+                        + "' on type '" + (type == null ? "null" : type.getSpecName())
+                        + "'.");
+            }
         }
         return true;
     }
