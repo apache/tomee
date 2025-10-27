@@ -31,7 +31,7 @@
     <name>TomEE :: Arquillian :: Functional Tests :: Spring CXF Test</name>
 
     <properties>
-        <version.spring-boot>3.5.6</version.spring-boot>
+        <version.spring-boot>3.5.7</version.spring-boot>
         <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
 
         <!-- junit 5.11 is broken for some reason here -->
