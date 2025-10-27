@@ -525,7 +525,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.4.0</version>
+        <version>3.5.0</version>
         <configuration>
           <dependentWarExcludes>
             %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],
