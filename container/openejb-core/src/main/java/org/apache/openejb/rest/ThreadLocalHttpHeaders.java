@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class ThreadLocalHttpHeaders extends AbstractRestThreadLocalProxy<HttpHeaders>
     implements HttpHeaders {
@@ -84,4 +85,8 @@ public class ThreadLocalHttpHeaders extends AbstractRestThreadLocalProxy<HttpHea
         return get().getHeaderString(name);
     }
 
+    @Override
+    public boolean containsHeaderString(String name, String valueSeparatorRegex, Predicate<String> valuePredicate) {
+        return get().containsHeaderString(name, valueSeparatorRegex, valuePredicate);
+    }
 }

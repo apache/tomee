@@ -71,7 +71,7 @@ public class ActionServlet extends HttpServlet {
 
             final String[] ids = request.getParameterValues("id");
             for (final String id : ids) {
-                moviesBean.deleteMovieId(new Long(id));
+                moviesBean.deleteMovieId(Long.parseLong(id));
             }
 
         } else if (">>".equals(action)) {

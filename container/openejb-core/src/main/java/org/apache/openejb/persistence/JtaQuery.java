@@ -17,6 +17,8 @@
 
 package org.apache.openejb.persistence;
 
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
@@ -94,6 +96,16 @@ public class JtaQuery implements Query {
         final EntityManager em = getEntityManager();
         try {
             return query.getSingleResult();
+        } finally {
+            jtaEntityManager.closeIfNoTx(em);
+        }
+    }
+
+    @Override
+    public Object getSingleResultOrNull() {
+        final EntityManager em = getEntityManager();
+        try {
+            return query.getSingleResultOrNull();
         } finally {
             jtaEntityManager.closeIfNoTx(em);
         }
@@ -265,6 +277,30 @@ public class JtaQuery implements Query {
      */
     public LockModeType getLockMode() {
         return query.getLockMode();
+    }
+
+    public Query setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        return query.setCacheRetrieveMode(cacheRetrieveMode);
+    }
+
+    public Query setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        return query.setCacheStoreMode(cacheStoreMode);
+    }
+
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        return query.getCacheRetrieveMode();
+    }
+
+    public CacheStoreMode getCacheStoreMode() {
+        return query.getCacheStoreMode();
+    }
+
+    public Query setTimeout(Integer timeout) {
+        return query.setTimeout(timeout);
+    }
+
+    public Integer getTimeout() {
+        return query.getTimeout();
     }
 
     /* (non-Javadoc)

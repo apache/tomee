@@ -23,7 +23,7 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile Config</name>
   <properties>
-    <version.jakartaee-api>10.0.1</version.jakartaee-api>
+    <version.jakartaee-api>11.0.0-SNAPSHOT</version.jakartaee-api>
     <version.microprofile.config>3.0.2</version.microprofile.config>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
     <version.arquillian>1.10.0.Final</version.arquillian>

@@ -17,6 +17,15 @@
 
 package org.apache.openejb.persistence;
 
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
+import jakarta.persistence.ConnectionConsumer;
+import jakarta.persistence.ConnectionFunction;
+import jakarta.persistence.FindOption;
+import jakarta.persistence.LockOption;
+import jakarta.persistence.RefreshOption;
+import jakarta.persistence.TypedQueryReference;
+import jakarta.persistence.criteria.CriteriaSelect;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
@@ -244,6 +253,11 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public <T> T getReference(T entity) {
+        return null;
+    }
+
     public void flush() {
         assertTransactionActive();
         final Timer timer = Op.flush.start(this.timer, this);
@@ -433,6 +447,11 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> reference) {
+        return null;
+    }
+
     /* (non-Javadoc)
      * @see jakarta.persistence.EntityManager#createQuery(jakarta.persistence.criteria.CriteriaQuery)
      */
@@ -443,6 +462,11 @@ public class JtaEntityManager implements EntityManager, Serializable {
         } finally {
             timer.stop();
         }
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> selectQuery) {
+        return null;
     }
 
     /* (non-Javadoc)
@@ -522,6 +546,36 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public <T> T find(Class<T> entityClass, Object primaryKey, FindOption... options) {
+        final EntityManager entityManager = getEntityManager();
+        try {
+            final Timer timer = Op.find.start(this.timer, this);
+            try {
+                return entityManager.find(entityClass, primaryKey, options);
+            } finally {
+                timer.stop();
+            }
+        } finally {
+            closeIfNoTx(entityManager);
+        }
+    }
+
+    @Override
+    public <T> T find(EntityGraph<T> entityGraph, Object primaryKey, FindOption... options) {
+        final EntityManager entityManager = getEntityManager();
+        try {
+            final Timer timer = Op.find.start(this.timer, this);
+            try {
+                return entityManager.find(entityGraph, primaryKey, options);
+            } finally {
+                timer.stop();
+            }
+        } finally {
+            closeIfNoTx(entityManager);
+        }
+    }
+
     /* (non-Javadoc)
      * @see jakarta.persistence.EntityManager#getEntityManagerFactory()
      */
@@ -537,6 +591,46 @@ public class JtaEntityManager implements EntityManager, Serializable {
         final Timer timer = Op.getLockMode.start(this.timer, this);
         try {
             return getEntityManager().getLockMode(entity);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public void setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        final Timer timer = Op.setCacheRetrieveMode.start(this.timer, this);
+        try {
+            getEntityManager().setCacheRetrieveMode(cacheRetrieveMode);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public void setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        final Timer timer = Op.setCacheStoreMode.start(this.timer, this);
+        try {
+            getEntityManager().setCacheStoreMode(cacheStoreMode);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        final Timer timer = Op.getCacheRetrieveMode.start(this.timer, this);
+        try {
+            return getEntityManager().getCacheRetrieveMode();
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        final Timer timer = Op.getCacheStoreMode.start(this.timer, this);
+        try {
+            return getEntityManager().getCacheStoreMode();
         } finally {
             timer.stop();
         }
@@ -606,6 +700,17 @@ public class JtaEntityManager implements EntityManager, Serializable {
         }
     }
 
+    @Override
+    public void lock(Object entity, LockModeType lockMode, LockOption... options) {
+        assertTransactionActive();
+        final Timer timer = Op.lock.start(this.timer, this);
+        try {
+            getEntityManager().lock(entity, lockMode, options);
+        } finally {
+            timer.stop();
+        }
+    }
+
     /* (non-Javadoc)
      * @see jakarta.persistence.EntityManager#refresh(java.lang.Object, java.util.Map)
      */
@@ -640,6 +745,17 @@ public class JtaEntityManager implements EntityManager, Serializable {
         final Timer timer = Op.refresh.start(this.timer, this);
         try {
             getEntityManager().refresh(entity, lockMode, properties);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public void refresh(Object entity, RefreshOption... options) {
+        assertTransactionActive();
+        final Timer timer = Op.refresh.start(this.timer, this);
+        try {
+            getEntityManager().refresh(entity, options);
         } finally {
             timer.stop();
         }
@@ -693,7 +809,10 @@ public class JtaEntityManager implements EntityManager, Serializable {
     private enum Op {
         clear, close, contains, createNamedQuery, createNativeQuery, createQuery, find, flush, getFlushMode, getReference, getTransaction, lock, merge, refresh, remove, setFlushMode, persist, detach, getLockMode, unwrap, setProperty, getCriteriaBuilder, getProperties, getMetamodel, joinTransaction, getDelegate,
         // JPA 2.1
-        createNamedStoredProcedureQuery, createStoredProcedureQuery, createEntityGraph, getEntityGraph, getEntityGraphs, isJoinedToTransaction;
+        createNamedStoredProcedureQuery, createStoredProcedureQuery, createEntityGraph, getEntityGraph, getEntityGraphs, isJoinedToTransaction,
+        // JPA 3.2
+        setCacheRetrieveMode, getCacheRetrieveMode, setCacheStoreMode, getCacheStoreMode, runWithConnection, callWithConnection
+        ;
 
         private static final Timer NOOP = new Timer(null, null) {
             @Override
@@ -809,6 +928,26 @@ public class JtaEntityManager implements EntityManager, Serializable {
         final Timer timer = Op.getEntityGraphs.start(this.timer, this);
         try {
             return getEntityManager().getEntityGraphs(entityClass);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public <C> void runWithConnection(ConnectionConsumer<C> action) {
+        final Timer timer = Op.runWithConnection.start(this.timer, this);
+        try {
+            getEntityManager().runWithConnection(action);
+        } finally {
+            timer.stop();
+        }
+    }
+
+    @Override
+    public <C, T> T callWithConnection(ConnectionFunction<C, T> function) {
+        final Timer timer = Op.runWithConnection.start(this.timer, this);
+        try {
+            return getEntityManager().callWithConnection(function);
         } finally {
             timer.stop();
         }

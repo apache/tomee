@@ -33,7 +33,6 @@ import jakarta.security.enterprise.credential.Credential;
 import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
-import jakarta.security.enterprise.identitystore.IdentityStorePermission;
 import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -258,12 +257,6 @@ public class TomEELDAPIdentityStore implements IdentityStore {
 
     @Override
     public Set<String> getCallerGroups(final CredentialValidationResult validationResult) {
-
-        final SecurityManager securityManager = System.getSecurityManager();
-        if (securityManager != null) {
-            securityManager.checkPermission(new IdentityStorePermission("getGroups"));
-        }
-
         LdapContext ldapContext = null;
         try {
             ldapContext = lookup(definition.url(), definition.bindDn(), definition.bindDnPassword());

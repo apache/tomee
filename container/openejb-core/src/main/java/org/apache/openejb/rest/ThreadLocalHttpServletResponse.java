@@ -101,6 +101,11 @@ public class ThreadLocalHttpServletResponse extends AbstractRestThreadLocalProxy
     }
 
     @Override
+    public void sendRedirect(String location, int sc, boolean clearBuffer) throws IOException {
+        get().sendRedirect(location, sc, clearBuffer);
+    }
+
+    @Override
     public void setDateHeader(final String name, final long date) {
         get().setDateHeader(name, date);
     }

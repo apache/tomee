@@ -17,6 +17,8 @@
 
 package org.apache.openejb.persistence;
 
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -129,6 +131,11 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     public T getSingleResult() {
         logJPQLQuery();
         return delegate.getSingleResult();
+    }
+
+    @Override
+    public T getSingleResultOrNull() {
+        return delegate.getSingleResultOrNull();
     }
 
     @Override
@@ -282,6 +289,36 @@ public class CriteriaLogQuery<T> implements TypedQuery<T> {
     @Override
     public TypedQuery<T> setLockMode(final LockModeType lockMode) {
         return delegate.setLockMode(lockMode);
+    }
+
+    @Override
+    public TypedQuery<T> setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        return delegate.setCacheRetrieveMode(cacheRetrieveMode);
+    }
+
+    @Override
+    public TypedQuery<T> setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        return delegate.setCacheStoreMode(cacheStoreMode);
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        return delegate.getCacheRetrieveMode();
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        return delegate.getCacheStoreMode();
+    }
+
+    @Override
+    public TypedQuery<T> setTimeout(Integer timeout) {
+        return delegate.setTimeout(timeout);
+    }
+
+    @Override
+    public Integer getTimeout() {
+        return delegate.getTimeout();
     }
 
     @Override

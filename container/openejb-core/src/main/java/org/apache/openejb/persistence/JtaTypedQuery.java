@@ -17,6 +17,8 @@
 
 package org.apache.openejb.persistence;
 
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
@@ -143,4 +145,26 @@ public class JtaTypedQuery<X> extends JtaQuery implements TypedQuery<X> {
         return this;
     }
 
+    @Override
+    public TypedQuery<X> setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        super.setCacheRetrieveMode(cacheRetrieveMode);
+        return this;
+    }
+
+    @Override
+    public TypedQuery<X> setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        super.setCacheStoreMode(cacheStoreMode);
+        return this;
+    }
+
+    @Override
+    public TypedQuery<X> setTimeout(Integer timeout) {
+        super.setTimeout(timeout);
+        return this;
+    }
+
+    @Override
+    public X getSingleResultOrNull() {
+        return (X) super.getSingleResultOrNull();
+    }
 }
