@@ -32,7 +32,6 @@ import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import jakarta.security.enterprise.identitystore.IdentityStore;
-import jakarta.security.enterprise.identitystore.IdentityStorePermission;
 import jakarta.security.enterprise.identitystore.PasswordHash;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -115,12 +114,6 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
 
     @Override
     public Set<String> getCallerGroups(final CredentialValidationResult validationResult) {
-
-        final SecurityManager securityManager = System.getSecurityManager();
-        if (securityManager != null) {
-            securityManager.checkPermission(new IdentityStorePermission("getGroups"));
-        }
-
         return getGroups(validationResult.getCallerPrincipal().getName());
     }
 

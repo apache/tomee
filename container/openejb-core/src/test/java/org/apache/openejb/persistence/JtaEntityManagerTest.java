@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.persistence;
 
+import jakarta.persistence.PersistenceConfiguration;
 import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.junit.Test;
@@ -64,6 +65,11 @@ public class JtaEntityManagerTest {
         @Override
         public boolean generateSchema(final String persistenceUnitName, final Map map) {
             return false;
+        }
+
+        @Override
+        public EntityManagerFactory createEntityManagerFactory(PersistenceConfiguration configuration) {
+            return null;
         }
 
         @Override

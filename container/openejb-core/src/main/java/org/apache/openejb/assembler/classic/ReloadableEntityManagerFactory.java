@@ -17,6 +17,8 @@
 
 package org.apache.openejb.assembler.classic;
 
+import jakarta.persistence.SchemaManager;
+import jakarta.persistence.TypedQueryReference;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.api.internal.Internal;
@@ -70,6 +72,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.apache.openejb.monitoring.LocalMBeanServer.tabularData;
 
@@ -239,6 +243,26 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     }
 
     @Override
+    public <R> Map<String, TypedQueryReference<R>> getNamedQueries(Class<R> resultType) {
+        return delegate().getNamedQueries(resultType);
+    }
+
+    @Override
+    public <E> Map<String, EntityGraph<? extends E>> getNamedEntityGraphs(Class<E> entityType) {
+        return delegate.getNamedEntityGraphs(entityType);
+    }
+
+    @Override
+    public void runInTransaction(Consumer<EntityManager> work) {
+        delegate.runInTransaction(work);
+    }
+
+    @Override
+    public <R> R callInTransaction(Function<EntityManager, R> work) {
+        return delegate.callInTransaction(work);
+    }
+
+    @Override
     public CriteriaBuilder getCriteriaBuilder() {
         return delegate().getCriteriaBuilder();
     }
@@ -261,6 +285,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     }
 
     @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
     public Map<String, Object> getProperties() {
         return delegate().getProperties();
     }
@@ -273,6 +302,16 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     @Override
     public PersistenceUnitUtil getPersistenceUnitUtil() {
         return delegate().getPersistenceUnitUtil();
+    }
+
+    @Override
+    public jakarta.persistence.PersistenceUnitTransactionType getTransactionType() {
+        return null;
+    }
+
+    @Override
+    public SchemaManager getSchemaManager() {
+        return null;
     }
 
     public EntityManagerFactory getDelegate() {

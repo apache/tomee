@@ -83,10 +83,6 @@
         <!-- should be in a pom exclusion but it does perfectly the trick -->
         <exclude>org.springframework:*</exclude>
 
-        <exclude>*:jakarta.jws-api:*</exclude>
-        <exclude>*:jakarta.xml.bind-api:*</exclude>
-        <exclude>*:jakarta.xml.ws-api:*</exclude>
-
         <!-- wars and pom -->
         <exclude>*:war</exclude>
         <exclude>*:pom</exclude>
@@ -120,7 +116,6 @@
         <exclude>jakarta.jms:*</exclude>
         <exclude>jakarta.json:*</exclude>
         <exclude>jakarta.json.bind:*</exclude>
-        <exclude>jakarta.jws:*</exclude>
         <exclude>jakarta.mail:*</exclude>
         <exclude>jakarta.persistence:*</exclude>
         <exclude>jakarta.platform:*</exclude>
@@ -133,8 +128,6 @@
         <exclude>jakarta.validation:*</exclude>
         <exclude>jakarta.websocket:*</exclude>
         <exclude>jakarta.ws.rs:*</exclude>
-        <exclude>jakarta.xml.bind:*</exclude>
-        <exclude>jakarta.xml.soap:*</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

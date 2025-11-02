@@ -68,6 +68,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
      */
     private String persistenceProviderClassName;
 
+    private String scopeAnnotationName;
+    private List<String> qualifierAnnotationNames;
+
     /**
      * Does this persistence unit participate in JTA transactions or does it manage
      * resource local transactions using the JDBC APIs.
@@ -177,6 +180,23 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     public String getPersistenceProviderClassName() {
         return persistenceProviderClassName;
+    }
+
+    public void setScopeAnnotationName(String scopeAnnotationName) {
+        this.scopeAnnotationName = scopeAnnotationName;
+    }
+
+    public String getScopeAnnotationName() {
+        return scopeAnnotationName;
+    }
+
+    public void setQualifierAnnotationNames(List<String> qualifierAnnotationNames) {
+        this.qualifierAnnotationNames = qualifierAnnotationNames;
+    }
+
+    @Override
+    public List<String> getQualifierAnnotationNames() {
+        return qualifierAnnotationNames;
     }
 
     public void setPersistenceProviderClassName(final String persistenceProviderClassName) {

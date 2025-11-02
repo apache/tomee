@@ -195,6 +195,11 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
     }
 
     @Override
+    public Class<?>[] qualifiers() {
+        return delegate.qualifiers();
+    }
+
+    @Override
     public Class<? extends Annotation> annotationType() {
         return delegate.annotationType();
     }

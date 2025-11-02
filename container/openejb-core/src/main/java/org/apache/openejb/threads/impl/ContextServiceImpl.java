@@ -44,6 +44,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Flow;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -104,6 +105,16 @@ public class ContextServiceImpl implements ContextService, Serializable {
     @Override
     public <R> Supplier<R> contextualSupplier(final Supplier<R> supplier) {
         return createContextualProxy(supplier, Supplier.class);
+    }
+
+    @Override
+    public <T> Flow.Subscriber<T> contextualSubscriber(Flow.Subscriber<T> subscriber) {
+        return createContextualProxy(subscriber, Flow.Subscriber.class);
+    }
+
+    @Override
+    public <T, R> Flow.Processor<T, R> contextualProcessor(Flow.Processor<T, R> processor) {
+        return createContextualProxy(processor, Flow.Processor.class);
     }
 
     @Override

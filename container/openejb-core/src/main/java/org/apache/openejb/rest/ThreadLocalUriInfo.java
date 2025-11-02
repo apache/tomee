@@ -122,6 +122,11 @@ public class ThreadLocalUriInfo extends AbstractRestThreadLocalProxy<UriInfo>
     }
 
     @Override
+    public String getMatchedResourceTemplate() {
+        return get().getMatchedResourceTemplate();
+    }
+
+    @Override
     public List<String> getMatchedURIs(final boolean decode) {
         return get().getMatchedURIs(decode);
     }

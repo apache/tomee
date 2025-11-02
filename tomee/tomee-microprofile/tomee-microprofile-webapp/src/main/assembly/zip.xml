@@ -107,7 +107,6 @@
         <exclude>jakarta.jms:*</exclude>
         <exclude>jakarta.json:*</exclude>
         <exclude>jakarta.json.bind:*</exclude>
-        <exclude>jakarta.jws:*</exclude>
         <exclude>jakarta.mail:*</exclude>
         <exclude>jakarta.persistence:*</exclude>
         <exclude>jakarta.platform:*</exclude>
@@ -120,8 +119,6 @@
         <exclude>jakarta.validation:*</exclude>
         <exclude>jakarta.websocket:*</exclude>
         <exclude>jakarta.ws.rs:*</exclude>
-        <exclude>jakarta.xml.bind:*</exclude>
-        <exclude>jakarta.xml.soap:*</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

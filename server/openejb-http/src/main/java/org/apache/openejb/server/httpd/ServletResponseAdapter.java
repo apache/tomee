@@ -116,6 +116,11 @@ public class ServletResponseAdapter implements HttpResponse {
     }
 
     @Override
+    public void sendRedirect(String location, int sc, boolean clearBuffer) throws IOException {
+        response.sendRedirect(location, sc, clearBuffer);
+    }
+
+    @Override
     public void setDateHeader(String s, long l) {
         response.setDateHeader(s, l);
     }

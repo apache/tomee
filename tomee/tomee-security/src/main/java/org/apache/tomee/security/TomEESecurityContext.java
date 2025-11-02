@@ -81,6 +81,11 @@ public class TomEESecurityContext implements SecurityContext {
     }
 
     @Override
+    public Set<String> getAllDeclaredCallerRoles() {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
     public boolean hasAccessToWebResource(final String resource, final String... methods) {
         return jaccProvider.hasAccessToWebResource(resource, methods);
     }

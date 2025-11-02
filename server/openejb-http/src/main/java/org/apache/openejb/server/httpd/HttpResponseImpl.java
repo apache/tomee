@@ -204,16 +204,18 @@ public class HttpResponseImpl implements HttpResponse {
     }
 
     @Override
-    public void sendRedirect(final String path) throws IOException {
+    public void sendRedirect(String location, int sc, boolean clearBuffer) throws IOException {
         if (commited) {
             throw new IllegalStateException("response already committed");
         }
-        resetBuffer();
+
+        if (clearBuffer) {
+            resetBuffer();
+        }
 
         try {
-            setStatus(SC_FOUND);
-
-            setHeader("Location", base() + toEncoded(path));
+            setStatus(sc);
+            setHeader("Location", base() + toEncoded(location));
         } catch (final IllegalArgumentException e) {
             setStatus(SC_NOT_FOUND);
         }
