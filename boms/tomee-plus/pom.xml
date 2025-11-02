@@ -107,6 +107,106 @@
         <version>1.12.0</version>
       </dependency>
       <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-core</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-bindings-soap</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-bindings-xml</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-databinding-jaxb</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-simple</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-management</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-client</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-extension-providers</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-mp-client</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-service-description</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-sse</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-security-saml</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-security</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-http</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-addr</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-policy</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-ws-security</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <artifactId>cxf-rt-wsdl</artifactId>
+        <version>4.2.0-tomee-m0-ce15546</version>
+      </dependency>
+      <dependency>
         <groupId>io.github.rzo1.org.metatype.sxc</groupId>
         <artifactId>sxc-jaxb-core</artifactId>
         <version>0.9</version>
@@ -432,106 +532,6 @@
         <version>2.12.1</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-core</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-bindings-soap</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-bindings-xml</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-frontend-simple</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-management</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-rs-client</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-rs-extension-providers</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-rs-mp-client</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-rs-service-description</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-rs-sse</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-security-saml</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-security</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-transports-http</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-ws-addr</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-ws-policy</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-ws-security</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
-        <artifactId>cxf-rt-wsdl</artifactId>
-        <version>4.2.0-tomee-m0-ce15546</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
         <version>4.0.0</version>
@@ -763,62 +763,62 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>mbean-annotation-api-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>mbean-annotation-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>mp-common-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>mp-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>mp-jwt-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>mp-jwt</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-api-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-client-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-core-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-cxf-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-cxf-rs</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-cxf-rs-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-cxf-transport</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-cxf-transport-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-cxf</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-ejbd-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-ejbd</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-hsql-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-hsql</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-http-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-http</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -828,37 +828,37 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-jee-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-jee-accessors</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-jee-accessors-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-jee</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-jpa-integration-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-jpa-integration</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-loader-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-loader</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-rest-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-server-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-server</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-webservices-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>openejb-webservices</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -868,27 +868,27 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-catalina-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-catalina</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-common-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-config-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-config</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-jaxrs-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-jaxrs</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-jdbc-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-jdbc</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -898,27 +898,27 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-loader-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-loader</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-mojarra-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-mojarra</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-myfaces-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-myfaces</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-security-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-security</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>tomee-webservices-11.0.0-SNAPSHOT.jar</artifactId>
+        <artifactId>tomee-webservices</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1348,6 +1348,206 @@
     <dependency>
       <groupId>io.github.librewsdl4j</groupId>
       <artifactId>libre-wsdl4j</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-bindings-soap</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-bindings-xml</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-databinding-jaxb</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxws</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-simple</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-management</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-client</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-extension-providers</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-service-description</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-sse</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-security-saml</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-security</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-addr</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-policy</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-security</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <artifactId>cxf-rt-wsdl</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2006,206 +2206,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-core</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-soap</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-xml</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-simple</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-management</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-sse</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security-saml</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-security</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-addr</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-policy</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-security</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
-      <artifactId>cxf-rt-wsdl</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
       <exclusions>
@@ -2667,7 +2667,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>mbean-annotation-api-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>mbean-annotation-api</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2677,7 +2677,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>mp-common-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>mp-common</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2687,7 +2687,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>mp-jwt-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>mp-jwt</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2697,7 +2697,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-api-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-api</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2707,7 +2707,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-client-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-client</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2717,7 +2717,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-core</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2727,7 +2727,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-cxf-rs</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2737,7 +2737,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-cxf-transport</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2747,7 +2747,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-transport-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-cxf</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2757,7 +2757,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-ejbd-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-ejbd</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2767,7 +2767,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-hsql-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-hsql</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2777,7 +2777,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-http-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-http</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2797,7 +2797,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-jee-accessors</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2807,7 +2807,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee-accessors-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-jee</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2817,7 +2817,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jpa-integration-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-jpa-integration</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2827,7 +2827,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-loader-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-loader</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2837,7 +2837,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-rest-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-rest</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2847,7 +2847,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-server-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-server</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2857,7 +2857,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-webservices-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-webservices</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2877,7 +2877,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-catalina-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-catalina</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2887,7 +2887,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-common-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-common</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2897,7 +2897,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-config-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-config</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2907,7 +2907,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-jaxrs-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-jaxrs</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2917,7 +2917,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-jdbc-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-jdbc</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2937,7 +2937,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-loader-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-loader</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2947,7 +2947,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-mojarra-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-mojarra</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2957,7 +2957,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-myfaces-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-myfaces</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2967,7 +2967,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-security-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-security</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2977,7 +2977,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-webservices-11.0.0-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-webservices</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
