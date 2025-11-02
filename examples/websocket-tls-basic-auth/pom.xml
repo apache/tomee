@@ -28,7 +28,7 @@
     <jakartaee-api.version>10.0.1</jakartaee-api.version>
     <jakarta.websocket-api.version>2.0.0</jakarta.websocket-api.version>
     <tomee.classifier>webprofile</tomee.classifier>
-    <tomcat.version>11.0.11</tomcat.version>
+    <tomcat.version>11.0.13</tomcat.version>
     <junit.version>4.13.2</junit.version>
   </properties>
   <dependencies>
