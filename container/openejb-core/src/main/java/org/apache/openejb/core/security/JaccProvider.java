@@ -100,12 +100,12 @@ public abstract class JaccProvider {
         }
 
         public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {
-            return get().getPolicyConfiguration(contextID, remove);
+            return JaccProvider.get().getPolicyConfiguration(contextID, remove);
         }
 
         @Override
         public PolicyConfiguration getPolicyConfiguration(final String contextID) {
-            return get().getPolicyConfiguration(contextID);
+            return JaccProvider.get().getPolicyConfiguration(contextID);
         }
 
         @Override
@@ -114,7 +114,7 @@ public abstract class JaccProvider {
         }
 
         public boolean inService(final String contextID) throws PolicyContextException {
-            return get().inService(contextID);
+            return JaccProvider.get().inService(contextID);
         }
     }
 
