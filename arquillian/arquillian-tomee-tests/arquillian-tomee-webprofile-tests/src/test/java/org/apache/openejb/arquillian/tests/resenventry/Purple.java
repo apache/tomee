@@ -19,8 +19,8 @@ package org.apache.openejb.arquillian.tests.resenventry;
 
 import java.lang.reflect.Field;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.annotation.Resource;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.transaction.TransactionManager;
 import jakarta.transaction.TransactionSynchronizationRegistry;
@@ -30,7 +30,7 @@ import jakarta.validation.ValidatorFactory;
 
 import org.junit.Assert;
 
-@ManagedBean
+@ApplicationScoped
 public class Purple {
 
     @Resource

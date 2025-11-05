@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 
 import jakarta.annotation.Resource;
 import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -57,7 +58,7 @@ public class Red  extends HttpServlet {
     @Resource
     private BeanManager beanManager;
 
-    @Resource
+    @Inject
     private Purple purple;
 
     @Override
