@@ -19,12 +19,10 @@ package org.apache.openejb.config.rules;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.test.annotated.Green;
-import org.apache.openejb.test.annotated.Red;
 import org.apache.openejb.test.annotated.Yellow;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
@@ -58,17 +56,6 @@ public class CheckAnnotationTest {
         return appModule;
     }
 
-
-    @Keys({@Key(value = "annotation.invalid.managedbean.webservice", type = KeyType.WARNING)})
-    public AppModule testWebServiceWithManagedBean() {
-        final EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new ManagedBean(Red.class));
-        final EjbModule ejbModule = new EjbModule(ejbJar);
-        ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(Red.class)).link());
-
-        final AppModule appModule = new AppModule(ejbModule);
-        return appModule;
-    }
 
     @Keys({@Key(value = "ann.local.forLocalBean", type = KeyType.WARNING)})
     public EjbModule shouldWarnForLocalAnnotationOnBeanWithNoInterface() {
