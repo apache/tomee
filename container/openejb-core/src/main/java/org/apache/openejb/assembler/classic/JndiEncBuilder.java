@@ -53,7 +53,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectableBeanManager;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.ejb.EJBContext;
 import jakarta.ejb.TimerService;
 import jakarta.ejb.spi.HandleDelegate;
@@ -297,10 +296,6 @@ public class JndiEncBuilder {
                 final Object reference;
                 if (URL.class.equals(type)) {
                     reference = new URLReference(referenceInfo.resourceID);
-                } else if (type.isAnnotationPresent(ManagedBean.class)) {
-                    final ManagedBean managed = type.getAnnotation(ManagedBean.class);
-                    final String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
-                    reference = new LinkRef("module/" + name);
                 } else if (referenceInfo.resourceID != null) {
                     final String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                     reference = new IntraVmJndiReference(jndiName);

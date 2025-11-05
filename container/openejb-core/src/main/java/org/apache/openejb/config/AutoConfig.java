@@ -66,7 +66,6 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.ejb.TimerService;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.jms.Queue;
@@ -778,7 +777,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             final String refType = getType(ref, classLoader);
 
             // skip references such as URLs which are automatically handled by the server
-            if (isIgnoredReferenceType(refType, classLoader)) {
+            if (isIgnoredReferenceType(refType)) {
                 continue;
             }
 
@@ -811,7 +810,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             final String refType = getType(ref, classLoader);
 
             // skip references such as URLs which are automatically handled by the server
-            if (isIgnoredReferenceType(refType, classLoader)) {
+            if (isIgnoredReferenceType(refType)) {
                 continue;
             }
 
@@ -839,18 +838,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
     }
 
-    private boolean isIgnoredReferenceType(final String typeName, final ClassLoader loader) {
-        if (ignoredReferenceTypes.contains(typeName)) {
-            return true;
-        } else if (loader != null) {
-            try {
-                final Class<?> type = loader.loadClass(typeName);
-                return type.isAnnotationPresent(ManagedBean.class);
-            } catch (final ClassNotFoundException e) {
-                // ignore
-            }
-        }
-        return false;
+    private boolean isIgnoredReferenceType(final String typeName) {
+        return ignoredReferenceTypes.contains(typeName);
     }
 
     private void deploy(final EjbModule ejbModule, final AppResources appResources) throws OpenEJBException {
@@ -1207,15 +1196,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         try {
-            final Class<?> clazz = ejbModule.getClassLoader().loadClass(refType);
-            if (clazz.isAnnotationPresent(ManagedBean.class)) {
-                return;
-            }
-        } catch (final Throwable t) {
-            // no-op
-        }
-
-        try {
             ResourceLink link = ejbDeployment.getResourceLink(refName);
             if (link == null) {
                 String id = mappedName.length() == 0 ? ref.getName() : mappedName;
@@ -1279,7 +1259,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         final String refType = getType(ref, classLoader);
 
         // skip references such as SessionContext which are automatically handled by the server
-        if (isIgnoredReferenceType(refType, classLoader)) {
+        if (isIgnoredReferenceType(refType)) {
             return;
         }
 

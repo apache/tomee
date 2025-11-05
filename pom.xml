@@ -1321,6 +1321,13 @@
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-ra</artifactId>
         <version>${version.activemq}</version>
+
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
@@ -1331,6 +1338,13 @@
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-broker</artifactId>
         <version>${version.activemq}</version>
+
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>

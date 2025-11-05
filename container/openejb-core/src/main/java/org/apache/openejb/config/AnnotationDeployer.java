@@ -147,7 +147,6 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 
-import jakarta.annotation.ManagedBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
@@ -1438,36 +1437,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 LegacyProcessor.process(beanClass.get(), enterpriseBean);
             }
 
-            for (final Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(ManagedBean.class)) {
-                final ManagedBean managed = beanClass.getAnnotation(ManagedBean.class);
-                final String ejbName = getEjbName(managed, beanClass.get());
-
-                // TODO: this is actually against the spec, but the requirement is rather silly
-                // (allowing @Stateful and @ManagedBean on the same class)
-                // If the TCK doesn't complain we should discourage it
-                if (!isValidEjbAnnotationUsage(ManagedBean.class, beanClass, ejbName, ejbModule)) {
-                    continue;
-                }
-
-                EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
-                if (enterpriseBean == null) {
-                    enterpriseBean = new org.apache.openejb.jee.ManagedBean(ejbName, beanClass.get());
-                    ejbJar.addEnterpriseBean(enterpriseBean);
-                }
-                if (enterpriseBean.getEjbClass() == null) {
-                    enterpriseBean.setEjbClass(beanClass.get());
-                }
-                if (enterpriseBean instanceof SessionBean) {
-                    final SessionBean sessionBean = (SessionBean) enterpriseBean;
-                    sessionBean.setSessionType(SessionType.MANAGED);
-
-                    final TransactionType transactionType = sessionBean.getTransactionType();
-                    if (transactionType == null) {
-                        sessionBean.setTransactionType(TransactionType.BEAN);
-                    }
-                }
-            }
-
             for (final Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(MessageDriven.class)) {
                 final MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
                 final String ejbName = getEjbName(mdb, beanClass.get());
@@ -1599,9 +1568,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             if (clazz.isAnnotationPresent(Singleton.class)) {
                 return SessionType.SINGLETON;
-            }
-            if (clazz.isAnnotationPresent(ManagedBean.class)) {
-                return SessionType.MANAGED;
             }
             return null;
         }
@@ -1864,10 +1830,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private String getEjbName(final Singleton singleton, final Class<?> beanClass) {
             return singleton.name().isEmpty() ? beanClass.getSimpleName() : singleton.name();
-        }
-
-        private String getEjbName(final ManagedBean managed, final Class<?> beanClass) {
-            return managed.value().isEmpty() ? beanClass.getSimpleName() : managed.value();
         }
 
         private boolean isValidEjbAnnotationUsage(final Class annotationClass, final Annotated<Class<?>> beanClass, final String ejbName, final EjbModule ejbModule) {
@@ -3442,11 +3404,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     && webServiceItf != null
                     && all.remote.isEmpty()) {
                     all.remote.add(webServiceItf);
-                }
-
-                //alway set Local View for ManagedBean
-                if (beanClass.isAnnotationPresent(ManagedBean.class)) {
-                    sessionBean.setLocalBean(new Empty());
                 }
             }
 
@@ -5913,7 +5870,6 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static boolean isEJB(final Class<?> clazz) {
         return clazz.isAnnotationPresent(Stateless.class)
             || clazz.isAnnotationPresent(Singleton.class)
-            || clazz.isAnnotationPresent(ManagedBean.class)  // what a weird idea!
             || clazz.isAnnotationPresent(Stateful.class); // what another weird idea!
     }
 
