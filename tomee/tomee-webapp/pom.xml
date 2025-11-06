@@ -63,8 +63,20 @@
     </dependency>
 
     <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>jakarta.xml.soap</groupId>
+        <artifactId>jakarta.xml.soap-api</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>jakarta.xml.ws</groupId>
+        <artifactId>jakarta.xml.ws-api</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>jakarta.jws</groupId>
+        <artifactId>jakarta.jws-api</artifactId>
     </dependency>
 
     <dependency>
