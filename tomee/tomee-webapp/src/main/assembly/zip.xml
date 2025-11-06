@@ -94,7 +94,7 @@
         <exclude>org.springframework:*</exclude>
 
         <exclude>*:jakarta.jws-api</exclude>
-        <exclude>*:jakarta.xml.ws-api</exclude>
+        <exclude>*:jakarta.soap-api</exclude>
 
         <exclude>org.eclipse.microprofile.rest.client:*</exclude>
         <exclude>org.reactivestreams:*</exclude>
