@@ -197,6 +197,11 @@
         <version>3.0.0</version>
       </dependency>
       <dependency>
+        <groupId>jakarta.xml.ws</groupId>
+        <artifactId>jakarta.xml.ws-api</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
         <version>3.0.1</version>
@@ -1058,6 +1063,16 @@
     <dependency>
       <groupId>jakarta.xml.soap</groupId>
       <artifactId>jakarta.xml.soap-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

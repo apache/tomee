@@ -52,6 +52,11 @@
         <version>3.0.0</version>
       </dependency>
       <dependency>
+        <groupId>jakarta.xml.ws</groupId>
+        <artifactId>jakarta.xml.ws-api</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-mail_2.1_spec</artifactId>
         <version>1.0.2</version>
@@ -128,6 +133,16 @@
     <dependency>
       <groupId>jakarta.xml.soap</groupId>
       <artifactId>jakarta.xml.soap-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
