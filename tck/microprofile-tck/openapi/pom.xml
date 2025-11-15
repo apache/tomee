@@ -134,6 +134,14 @@
       </exclusions>
     </dependency>
 
+      <!-- This is a legacy dependendency needed by rest assured from the TCK -->
+      <dependency>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
+          <version>2.3.2</version>
+          <scope>test</scope>
+      </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
