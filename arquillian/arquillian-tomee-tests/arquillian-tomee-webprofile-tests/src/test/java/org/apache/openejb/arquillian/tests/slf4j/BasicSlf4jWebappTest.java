@@ -71,6 +71,6 @@ public class BasicSlf4jWebappTest {
         assertNotNull("Response shouldn't be null", output);
         assertTrue("Output should contain: " + "It works!" + "\n" + output, output.contains("It works!"));
         assertTrue("Output should contain: " + "Logger Factory: org.slf4j.jul.JDK14LoggerFactory" + "\n" + output, output.contains("Logger Factory: org.slf4j.jul.JDK14LoggerFactory"));
-        assertTrue("Output should contain: " + "slf4j-jdk14-2.0.16.jar" + "\n" + output, output.contains("slf4j-jdk14-2.0.16.jar"));
+        assertTrue("Output should contain: " + "slf4j-jdk14-2.0.17.jar" + "\n" + output, output.contains("slf4j-jdk14-2.0.17.jar"));
     }
 }
