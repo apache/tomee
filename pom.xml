@@ -211,7 +211,7 @@
     <!-- org.apache -->
     <version.activemq>6.2.0</version.activemq>
     <version.batchee>2.0.0</version.batchee>
-    <version.bval>3.0.1</version.bval>
+    <version.bval>3.0.2</version.bval>
     <!-- TODO: Revert this once CXF has released -->
     <version.cxf>4.2.0-tomee-m0-ce15546</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
