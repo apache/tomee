@@ -56,4 +56,4 @@ jobs:
           Found some uncommited changes (from BOM regeneration) after running build on TomEE main
         labels: |
           dependencies
-        assignees: cesarhernandezgt,dblevins,jeanouii,jgallimore,rzo1
+        assignees: jungm,dblevins,jeanouii,jgallimore,rzo1
