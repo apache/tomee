@@ -25,8 +25,8 @@ jobs:
       uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-main-pr-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-main-pr-m2
+        key: ${{ runner.os }}-tomee10-pr-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-tomee10-pr-m2
 
     - name: maven-settings-xml-action
       run: echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\"> <activeProfiles> <activeProfile>github</activeProfile> </activeProfiles> <profiles> <profile> <id>github</id> <repositories> <repository> <id>central-repo</id> <url>https://repo.maven.apache.org/maven2</url> <releases> <enabled>true</enabled> </releases> <snapshots> <enabled>false</enabled> </snapshots> </repository> </repositories> <pluginRepositories> <pluginRepository> <id>central-plugin-repository</id> <url>https://repo.maven.apache.org/maven2</url> <releases> <enabled>true</enabled> </releases> <snapshots> <enabled>false</enabled> </snapshots> </pluginRepository> </pluginRepositories> </profile> </profiles> <servers/> <mirrors/> <pluginGroups/> </settings>" > ~/.m2/settings.xml
