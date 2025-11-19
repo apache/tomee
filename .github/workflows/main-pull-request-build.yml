@@ -1,9 +1,9 @@
-name: CI Pull Request Main
+name: CI Pull Request TomEE 10
 
 on:
   pull_request:
     branches:
-      - main
+      - tomee-10.x
   workflow_dispatch:
 
 jobs:

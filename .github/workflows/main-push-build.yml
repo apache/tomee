@@ -1,9 +1,9 @@
-name: CI Main
+name: CI Pull Request TomEE 10
 
 on:
   push:
     branches:
-      - main
+      - tomee-10.x
   workflow_dispatch:
 
 jobs:
@@ -49,9 +49,9 @@ jobs:
         committer: GitHub <noreply@github.com>
         author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
         signoff: true
-        branch: regenerate_boms_after_dep_upgrade
+        branch: regenerate_boms_after_dep_upgrade_tomee-10.x
         delete-branch: true
-        title: "Regenerated BOMs after dependency upgrades"
+        title: "[tomee-10.x]: Regenerated BOMs after dependency upgrades"
         body: |
           Found some uncommited changes (from BOM regeneration) after running build on TomEE main
         labels: |
