@@ -25,6 +25,9 @@ updates:
       time: '04:00'
     open-pull-requests-limit: 20
     ignore:
+      - dependency-name: "*"
+        directories:
+          - "/boms"
         # Ignore JavaFX - needed in a specific version by TCKs
       - dependency-name: "org.openjfx:*"
         # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
@@ -82,6 +85,9 @@ updates:
     commit-message:
       prefix: "[tomee-10.x]"
     ignore:
+      - dependency-name: "*"
+        directories:
+          - "/boms"
       # Ignore JavaFX - needed in a specific version by TCKs
       - dependency-name: "org.openjfx:*"
         # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
