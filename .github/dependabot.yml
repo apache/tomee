@@ -19,6 +19,7 @@ updates:
 
   - package-ecosystem: maven
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: monthly
       time: '04:00'
@@ -67,6 +68,7 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "daily"
 
