@@ -69,8 +69,8 @@ github:
 notifications:
   commits:      commits@tomee.apache.org
   issues:       dev@tomee.apache.org
-  pullrequests_status: dev@tomee.apache.org
-  pullrequests_comment: dev@tomee.apache.org
+  pullrequests_status: commits@tomee.apache.org
+  pullrequests_comment: commits@tomee.apache.org
   # Send dependabot PRs to commits@ instead
   pullrequests_bot_dependabot: commits@tomee.apache.org
   jira_options: link worklog
