@@ -209,7 +209,7 @@
     <!-- com.sun -->
     <version.impl.saaj>3.0.4</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>6.1.8</version.activemq>
+    <version.activemq>6.2.0</version.activemq>
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
     <!-- TODO: Revert this once CXF has released -->
