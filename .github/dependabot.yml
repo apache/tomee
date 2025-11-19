@@ -23,7 +23,7 @@ updates:
     schedule:
       interval: monthly
       time: '04:00'
-    open-pull-requests-limit: 20
+    open-pull-requests-limit: 10
     ignore:
         # Ignore JavaFX - needed in a specific version by TCKs
       - dependency-name: "org.openjfx:*"
@@ -77,7 +77,7 @@ updates:
     schedule:
       interval: monthly
       time: '04:00'
-    open-pull-requests-limit: 20
+    open-pull-requests-limit: 10
     target-branch: "tomee-10.x"
     commit-message:
       prefix: "[tomee-10.x]"
