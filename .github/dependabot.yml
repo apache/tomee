@@ -69,3 +69,62 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: monthly
+      time: '04:00'
+    open-pull-requests-limit: 20
+    target-branch: "tomee-10.x"
+    commit-message:
+      prefix: "[tomee-10.x]"
+    ignore:
+      # Ignore JavaFX - needed in a specific version by TCKs
+      - dependency-name: "org.openjfx:*"
+        # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
+      - dependency-name: "io.smallrye:*"
+        # Ignore MicroMeter Implementation Updates - need to be carefully reviewed to align with target MP spec version
+      - dependency-name: "io.micrometer:*"
+      - dependency-name: "io.opentelemetry:*"
+      - dependency-name: "io.opentracing:*"
+        # Ignore Santuario XML Security - need to be aligned with CXF
+      - dependency-name: "org.apache.santuario:*"
+        # Ignore Woodstox - need to be aligned with CXF
+      - dependency-name: "com.fasterxml.woodstox:*"
+        # Ignore OpenSAML - need to be aligned with CXF
+      - dependency-name: "org.opensaml:*"
+        # Ignore Spec Updates
+      - dependency-name: "jakarta.*:*"
+        # Ignore Spec Updates
+      - dependency-name: "org.eclipse.microprofile:*"
+      - dependency-name: "org.eclipse.microprofile.*:*"
+        # Ignore Jetty (required version for TCKs)
+      - dependency-name: "org.eclipse.jetty*:*"
+        # Ignore Glassfish (required version for TCKs)
+      - dependency-name: "org.glassfish.*:*"
+        # Ignore WebJars from Examples
+      - dependency-name: "org.webjars:*"
+        # Ignore HTNML Unit from Examples
+      - dependency-name: "org.htmlunit:*"
+
+        # Ignore implementations for newer specs
+      - dependency-name: "org.apache.myfaces.core:*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "org.glassfish:jakarta.faces"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "org.apache.tomcat:*"
+        update-types:
+          - "version-update:semver-major"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "tomee-10.x"
+    commit-message:
+      prefix: "[tomee-10.x]"
+    schedule:
+      interval: "daily"
