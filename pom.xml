@@ -171,10 +171,10 @@
 
 
     <!-- Java SE version -->
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
 
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>17</maven.compiler.release>
     <version.micrometer>1.12.5</version.micrometer>
     <!-- Micro Profile APIs (6.1)  -->
     <version.microprofile.config>3.1</version.microprofile.config>
@@ -213,7 +213,7 @@
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
     <!-- TODO: Revert this once CXF has released -->
-    <version.cxf>4.2.0-tomee-m0-ce15546</version.cxf>
+    <version.cxf>4.2.0-tomee-m0-071068f</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.2</version.geronimo-mail_2.1_provider>
