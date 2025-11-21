@@ -23,7 +23,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.superbiz</groupId>
 	<artifactId>import-database-flyway</artifactId>
-	<version>10.1.4-SNAPSHOT</version>
+	<version>10.1.5-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>TomEE :: Examples :: Import Database By Flyway Programmatically</name>
 	<dependencies>		

@@ -22,7 +22,7 @@
   <parent>
     <artifactId>polling-parent</artifactId>
     <groupId>jug</groupId>
-    <version>10.1.4-SNAPSHOT</version>
+    <version>10.1.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>polling-web</artifactId>
@@ -80,6 +80,7 @@
         <configuration>
           <source>17</source>
           <target>17</target>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>

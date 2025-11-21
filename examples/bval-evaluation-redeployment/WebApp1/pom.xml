@@ -46,6 +46,7 @@
         <configuration>
           <source>17</source>
           <target>17</target>
+          <release>17</release>
           <compilerArguments>
             <endorseddirs>${endorsed.dir}</endorseddirs>
           </compilerArguments>

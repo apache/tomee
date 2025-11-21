@@ -25,7 +25,7 @@
   <name>TomEE :: Web Examples :: Pojo WS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.1.4-SNAPSHOT</tomee.version>
+    <tomee.version>10.1.5-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -52,6 +52,7 @@
         <configuration>
           <source>17</source>
           <target>17</target>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>
