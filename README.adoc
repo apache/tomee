@@ -48,7 +48,7 @@ project.
 
 TomEE is open source and you can help in its creation.
 
-Apache TomEE is built with Apache Maven >= 3.9.x and Java 21. The
+Apache TomEE is built with Apache Maven >= 3.9.x and Java 17. The
 http://tomee.apache.org/community/sources.html[Contribute to TomEE]
 section from the official website for a complete Git, Github, Build,
 Test, and Continuous Integration details.

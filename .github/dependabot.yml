@@ -19,6 +19,9 @@ updates:
 
   - package-ecosystem: maven
     directory: "/"
+    exclude-paths:
+      - "boms/**"
+      - "examples/**"
     target-branch: "main"
     schedule:
       interval: monthly
@@ -74,6 +77,9 @@ updates:
 
   - package-ecosystem: maven
     directory: "/"
+    exclude-paths:
+      - "boms"
+      - "examples"
     schedule:
       interval: monthly
       time: '04:00'

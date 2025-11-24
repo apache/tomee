@@ -161,20 +161,20 @@
 
     <!-- Apache Commons -->
     <version.commons-cli>1.11.0</version.commons-cli>
-    <version.commons-codec>1.19.0</version.commons-codec>
+    <version.commons-codec>1.20.0</version.commons-codec>
     <version.commons-dbcp2>2.13.0</version.commons-dbcp2>
     <version.commons-discovery>0.5</version.commons-discovery>
-    <version.commons-io>2.20.0</version.commons-io>
+    <version.commons-io>2.21.0</version.commons-io>
     <version.commons-lang3>3.19.0</version.commons-lang3>
     <version.commons-pool>2.12.1</version.commons-pool>
     <version.commons-fileupload>2.0.0-M4</version.commons-fileupload>
 
 
     <!-- Java SE version -->
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
 
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>17</maven.compiler.release>
     <version.micrometer>1.12.5</version.micrometer>
     <!-- Micro Profile APIs (6.1)  -->
     <version.microprofile.config>3.1</version.microprofile.config>
@@ -205,7 +205,7 @@
     <version.geronimo-mail_2.1_spec>1.0.2</version.geronimo-mail_2.1_spec>
 
     <!-- Jakarta EE Impl. -->
-    <tomcat.version>11.0.13</tomcat.version>
+    <tomcat.version>11.0.14</tomcat.version>
     <!-- com.sun -->
     <version.impl.saaj>3.0.4</version.impl.saaj>
     <!-- org.apache -->
@@ -213,7 +213,7 @@
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
     <!-- TODO: Revert this once CXF has released -->
-    <version.cxf>4.2.0-tomee-m0-ce15546</version.cxf>
+    <version.cxf>4.2.0-tomee-m0-071068f</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.2</version.geronimo-mail_2.1_provider>
@@ -429,7 +429,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.2.0</version>
         <configuration>
           <!-- the following settings are important when working with git -->
           <localCheckout>true</localCheckout>
