@@ -43,7 +43,7 @@ jobs:
     - name: Create Pull Request after BOM Regeneration
       uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9
       with:
-        base: main
+        base: tomee-10.x
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "Minor: Regenerated BOMs for ${{ github.sha }}"
         committer: GitHub <noreply@github.com>
