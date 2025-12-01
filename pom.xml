@@ -290,7 +290,7 @@
             <dependency>
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.10.3</version>
+              <version>4.10.4</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -1791,7 +1791,7 @@
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-archiver</artifactId>
-        <version>4.10.3</version>
+        <version>4.10.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
