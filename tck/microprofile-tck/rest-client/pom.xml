@@ -39,7 +39,7 @@
       <plugin>
         <groupId>uk.co.automatictester</groupId>
         <artifactId>wiremock-maven-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>7.3.0</version>
         <configuration>
           <dir>target/classes</dir>
           <params>--port=8765 --verbose</params>
