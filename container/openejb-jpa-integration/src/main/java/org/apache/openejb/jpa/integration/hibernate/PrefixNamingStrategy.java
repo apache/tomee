@@ -17,22 +17,14 @@
 package org.apache.openejb.jpa.integration.hibernate;
 
 import org.apache.openejb.jpa.integration.JPAThreadContext;
-import org.hibernate.cfg.ImprovedNamingStrategy;
+import org.hibernate.boot.model.naming.Identifier;
+import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
+import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
 import java.util.Properties;
 
-public class PrefixNamingStrategy extends ImprovedNamingStrategy {
+public class PrefixNamingStrategy implements PhysicalNamingStrategy {
     private String prefix;
-
-    @Override
-    public String tableName(final String tableName) {
-        return getPrefix() + super.tableName(tableName);
-    }
-
-    @Override
-    public String classToTableName(final String className) {
-        return getPrefix() + super.classToTableName(className);
-    }
 
     public String getPrefix() {
         if (prefix == null) {
@@ -45,4 +37,37 @@ public class PrefixNamingStrategy extends ImprovedNamingStrategy {
         }
         return prefix;
     }
+
+    private Identifier addPrefix(Identifier name, JdbcEnvironment context) {
+        if (name == null) {
+            return null;
+        }
+        return Identifier.toIdentifier(getPrefix() + name.getText());
+    }
+
+    @Override
+    public Identifier toPhysicalCatalogName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return identifier;
+    }
+
+    @Override
+    public Identifier toPhysicalSchemaName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return identifier;
+    }
+
+    @Override
+    public Identifier toPhysicalTableName(Identifier name, JdbcEnvironment context) {
+        return addPrefix(name, context);
+    }
+
+    @Override
+    public Identifier toPhysicalSequenceName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return identifier;
+    }
+
+    @Override
+    public Identifier toPhysicalColumnName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return identifier;
+    }
+
 }
