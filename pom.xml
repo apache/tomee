@@ -237,7 +237,7 @@
     <version.sxc>0.9</version.sxc>
 
     <!-- JDBC Drivers -->
-    <version.derby>10.17.1.0</version.derby>
+    <version.derby>10.15.2.0</version.derby>
     <version.hsqldb>2.7.4</version.hsqldb>
 
   </properties>
