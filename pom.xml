@@ -187,7 +187,7 @@
     <version.microprofile.impl.health>4.0.4</version.microprofile.impl.health>
     <version.microprofile.impl.metrics>5.1.0</version.microprofile.impl.metrics>
     <version.microprofile.impl.openapi>3.13.0</version.microprofile.impl.openapi>
-    <version.microprofile.impl.opentelemetry>2.7.0</version.microprofile.impl.opentelemetry>
+    <version.microprofile.impl.opentelemetry>2.11.2</version.microprofile.impl.opentelemetry>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.20.1</version.jackson>
