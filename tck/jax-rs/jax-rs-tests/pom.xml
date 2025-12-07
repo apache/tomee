@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.apache.tomee</groupId>
         <artifactId>jax-rs</artifactId>
-        <version>10.1.3</version>
+        <version>10.1.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>jax-rs-tests</artifactId>
