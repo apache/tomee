@@ -48,7 +48,7 @@
               https://github.com/apache/tomcat/blob/main/java/org/apache/tomcat/util/scan/StandardJarScanner.java#L467
 
               We end up with things like
-              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/10.1.3/tomee-config-10.1.3.jar
+              file:/....../.m2/repository/org/apache/tomee/tomee-embedded/10.1.4-SNAPSHOT/tomee-config-10.1.4-SNAPSHOT.jar
               <addClasspath>true</addClasspath>
               -->
             </manifest>
