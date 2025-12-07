@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.apache.tomee</groupId>
         <artifactId>microprofile-tck</artifactId>
-        <version>10.1.3-SNAPSHOT</version>
+        <version>10.1.3</version>
     </parent>
 
     <artifactId>microprofile-opentelemetry-tck</artifactId>
