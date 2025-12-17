@@ -216,7 +216,7 @@
     <!-- org.eclipse -->
     <version.eclipselink>4.0.8</version.eclipselink>
     <!-- org.glassfish -->
-    <version.mojarra>4.0.12</version.mojarra>
+    <version.mojarra>4.0.13</version.mojarra>
     <!-- org.hibernate -->
     <version.hibernate.orm>6.6.38.Final</version.hibernate.orm>
     <version.hibernate.validator>8.0.1.Final</version.hibernate.validator>
