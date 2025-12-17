@@ -18,7 +18,9 @@ package org.apache.tomee.security.http.openid.model;
 
 import jakarta.security.enterprise.identitystore.openid.RefreshToken;
 
-public class TomEERefreshToken implements RefreshToken {
+import java.io.Serializable;
+
+public class TomEERefreshToken implements RefreshToken, Serializable {
     private final String token;
 
     public TomEERefreshToken(String token) {

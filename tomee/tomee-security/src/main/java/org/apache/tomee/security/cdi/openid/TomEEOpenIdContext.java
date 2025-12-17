@@ -41,7 +41,7 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     private AccessToken accessToken;
     private IdentityToken identityToken;
-    private Optional<RefreshToken> refreshToken;
+    private RefreshToken refreshToken;
     private Long expiresIn;
 
     @PostConstruct
@@ -74,7 +74,7 @@ public class TomEEOpenIdContext implements OpenIdContext {
 
     @Override
     public Optional<RefreshToken> getRefreshToken() {
-        return refreshToken;
+        return Optional.ofNullable(refreshToken);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class TomEEOpenIdContext implements OpenIdContext {
         this.identityToken = identityToken;
     }
 
-    public void setRefreshToken(Optional<RefreshToken> refreshToken) {
+    public void setRefreshToken(RefreshToken refreshToken) {
         this.refreshToken = refreshToken;
     }
 

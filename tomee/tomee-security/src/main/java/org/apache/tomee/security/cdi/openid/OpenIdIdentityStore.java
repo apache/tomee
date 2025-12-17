@@ -93,7 +93,7 @@ public class OpenIdIdentityStore implements IdentityStore {
 
         openIdContext.setAccessToken(createAccessToken(defaultJwtConsumer, openIdCredential.getTokenResponse()));
         openIdContext.setIdentityToken(createIdentityToken(idTokenJwtConsumer, openIdCredential.getTokenResponse()));
-        openIdContext.setRefreshToken(openIdCredential.getTokenResponse().getRefreshToken().map(TomEERefreshToken::new));
+        openIdContext.setRefreshToken(openIdCredential.getTokenResponse().getRefreshToken().map(TomEERefreshToken::new).orElse(null));
         if (openIdContext.getIdentityToken() == null) {
             return CredentialValidationResult.INVALID_RESULT;
         }

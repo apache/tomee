@@ -21,6 +21,8 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.security.enterprise.identitystore.openid.Claims;
+
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
-public class TomEEJsonClaims implements Claims {
+public class TomEEJsonClaims implements Claims, Serializable {
     private final JsonObject claims;
 
     public TomEEJsonClaims(JsonObject claims) {
