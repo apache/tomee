@@ -166,7 +166,7 @@
     <version.commons-discovery>0.5</version.commons-discovery>
     <version.commons-io>2.21.0</version.commons-io>
     <version.commons-lang3>3.20.0</version.commons-lang3>
-    <version.commons-pool>2.12.1</version.commons-pool>
+    <version.commons-pool>2.13.0</version.commons-pool>
     <version.commons-fileupload>2.0.0-M4</version.commons-fileupload>
 
 
