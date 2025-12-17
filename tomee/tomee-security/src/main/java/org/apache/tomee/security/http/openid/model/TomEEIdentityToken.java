@@ -26,11 +26,12 @@ import jakarta.security.enterprise.identitystore.openid.JwtClaims;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Base64;
 import java.util.Map;
 
-public class TomEEIdentityToken implements IdentityToken {
+public class TomEEIdentityToken implements IdentityToken, Serializable {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEIdentityToken.class);
 
     private final String token;
