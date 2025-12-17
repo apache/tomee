@@ -209,7 +209,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
         if (state != null) {
             String originalRequest = storageHandler.get(request, response, OpenIdConstant.ORIGINAL_REQUEST);
-            boolean matchesOriginalRequest = originalRequest.startsWith(request.getRequestURL().toString());
+            boolean matchesOriginalRequest = originalRequest != null && originalRequest.startsWith(request.getRequestURL().toString());
 
             // callback from openid provider (3)
             if (!request.getRequestURL().toString().equals(definition.redirectURI()) && definition.redirectToOriginalResource() && !matchesOriginalRequest) {
@@ -229,6 +229,10 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
 
             if (definition.redirectToOriginalResource() && !matchesOriginalRequest) {
+                if (originalRequest == null) {
+                    throw new IllegalStateException("redirectToOriginalResource=true is configured but no original request has been stored before");
+                }
+
                 return messageContext.redirect(appendQueryString(originalRequest, request.getQueryString()));
             }
 
