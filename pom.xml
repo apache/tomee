@@ -135,7 +135,7 @@
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
     <version.tomee-quartz-shade>2.5.1</version.tomee-quartz-shade>
-    <version.xbean>4.28</version.xbean>
+    <version.xbean>4.29</version.xbean>
     <version.groovy>2.4.21</version.groovy>
     <version.jetty>11.0.20</version.jetty>
     <version.ehcache>3.11.1</version.ehcache>
