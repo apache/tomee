@@ -621,7 +621,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>3.6.2</version>
+            <version>3.6.3</version>
             <executions>
               <execution>
                 <phase>package</phase>
@@ -854,7 +854,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>3.6.2</version>
+            <version>3.6.3</version>
             <executions>
               <execution>
                 <phase>package</phase>
