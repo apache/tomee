@@ -19,6 +19,7 @@ package org.apache.openejb.core.ivm;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.ContainerType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
@@ -35,6 +36,7 @@ import javax.ejb.AccessLocalException;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.Remove;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
@@ -75,7 +77,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             if (logger.isDebugEnabled()) {
                 logger.debug("EjbObjectProxyHandler: invoking method " + methodName + " on " + deploymentID + " with identity " + primaryKey);
             }
-            Integer operation = dispatchTable.get(methodName);
+            Integer operation = getMappedOperation(m);
             if (operation != null) {
                 if (operation == 3) {
                     if (m.getParameterTypes()[0] != EJBObject.class && m.getParameterTypes()[0] != EJBLocalObject.class) {
@@ -85,7 +87,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                     operation = m.getParameterTypes().length == 0 ? operation : null;
                 }
             }
-            if (operation == null || !interfaceType.isComponent()) {
+
+
+            boolean isComponentOperation = operation != null && interfaceType.isComponent();
+            boolean isRemoveOperation = dispatchTable.get("remove").equals(operation) &&  ContainerType.STATEFUL.equals(this.container.getContainerType());
+
+            if (!isComponentOperation && !isRemoveOperation) {
                 retValue = businessMethod(interfce, m, a, p);
             } else {
                 switch (operation) {
@@ -172,6 +179,14 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
                 }
             }
         }
+    }
+
+    private static Integer getMappedOperation(final Method m) {
+        Integer opCode = dispatchTable.get(m.getName());
+        if (opCode == null && m.getDeclaredAnnotation(Remove.class) != null) {
+            opCode =  dispatchTable.get("remove");
+        }
+        return opCode;
     }
 
     protected Object getEJBHome(final Method method, final Object[] args, final Object proxy) throws Throwable {
