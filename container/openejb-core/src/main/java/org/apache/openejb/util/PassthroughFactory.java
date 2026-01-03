@@ -47,6 +47,7 @@ public class PassthroughFactory {
         final String param = "instance" + recipe.hashCode();
 
         recipe.setConstructorArgNames(new String[]{param});
+        recipe.setConstructorArgTypes(new Class[]{Object.class});
         recipe.setProperty(param, instance);
 
         return recipe;

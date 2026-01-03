@@ -95,7 +95,7 @@ public class DataSourceFactory {
 
     public static CommonDataSource create(final String name,
                                           final boolean configuredManaged,
-                                          final Class impl,
+                                          final Class jdbcDriver,
                                           final String definition,
                                           final Duration maxWaitTime,
                                           final Duration timeBetweenEvictionRuns,
@@ -128,9 +128,9 @@ public class DataSourceFactory {
         final String jdbcUrl = properties.getProperty("JdbcUrl");
 
         final AlternativeDriver driver;
-        if (Driver.class.isAssignableFrom(impl) && jdbcUrl != null && useAlternativeDriver) {
+        if (Driver.class.isAssignableFrom(jdbcDriver) && jdbcUrl != null && useAlternativeDriver) {
             try {
-                driver = new AlternativeDriver((Driver) impl.newInstance(), jdbcUrl);
+                driver = new AlternativeDriver((Driver) jdbcDriver.newInstance(), jdbcUrl);
                 driver.register();
             } catch (final SQLException e) {
                 throw new IllegalStateException(e);
@@ -146,7 +146,7 @@ public class DataSourceFactory {
         final String resetOnError = (String) properties.remove(RESET_PROPERTY);
         final String resetMethods = (String) properties.remove(RESET_METHODS_PROPERTY); // before setProperties()
 
-        boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && impl.getClassLoader() == DataSourceFactory.class.getClassLoader();
+        boolean useContainerLoader = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.resources.use-container-loader", "true")) && jdbcDriver.getClassLoader() == DataSourceFactory.class.getClassLoader();
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         if (useContainerLoader) {
             final ClassLoader containerLoader = DataSourceFactory.class.getClassLoader();
@@ -165,10 +165,10 @@ public class DataSourceFactory {
 
         try {
             CommonDataSource ds;
-            if (createDataSourceFromClass(impl)) { // opposed to "by driver"
+            if (createDataSourceFromClass(jdbcDriver)) { // opposed to "by driver"
                 trimNotSupportedDataSourceProperties(properties);
 
-                final ObjectRecipe recipe = new ObjectRecipe(impl);
+                final ObjectRecipe recipe = new ObjectRecipe(jdbcDriver);
                 recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
                 recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
                 recipe.allow(Option.NAMED_PARAMETERS);
@@ -208,12 +208,12 @@ public class DataSourceFactory {
                 if (managed) {
                     final XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
                     if (xaResourceWrapper != null) {
-                        ds = creator.poolManagedWithRecovery(name, xaResourceWrapper, impl.getName(), properties);
+                        ds = creator.poolManagedWithRecovery(name, xaResourceWrapper, jdbcDriver.getName(), properties);
                     } else {
-                        ds = creator.poolManaged(name, impl.getName(), properties);
+                        ds = creator.poolManaged(name, jdbcDriver.getName(), properties);
                     }
                 } else {
-                    ds = creator.pool(name, impl.getName(), properties);
+                    ds = creator.pool(name, jdbcDriver.getName(), properties);
                 }
             }
 
