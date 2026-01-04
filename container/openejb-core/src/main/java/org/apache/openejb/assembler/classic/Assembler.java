@@ -3153,6 +3153,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
             serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(props));
+            //explicitly set the argument types to avoid ambiquity in factory resolution.
+            serviceRecipe.setConstructorArgTypes(
+                    new Class[]{
+                            String.class, boolean.class, Class.class, String.class,
+                            Duration.class, Duration.class, Duration.class,
+                            boolean.class}
+            );
         } // else: any other kind of resource relying on it? shouldnt be
 
         replaceResourceAdapterProperty(serviceRecipe);
