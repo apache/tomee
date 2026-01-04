@@ -628,6 +628,7 @@
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
           constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
+          constructor-types="java.lang.String,boolean,java.lang.Class,java.lang.String,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,boolean"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     JtaManaged = false
 
