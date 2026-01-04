@@ -261,6 +261,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import static org.apache.openejb.util.Classes.ancestors;
 
@@ -1408,6 +1409,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
                 if (si.constructorArgs != null && !si.constructorArgs.isEmpty()) {
                     query.put("constructor", Join.join(",", si.constructorArgs));
+                }
+                if (si.constructorArgTypes != null && !si.constructorArgTypes.isEmpty()) {
+                    String rawConstructorArgTypes = si.constructorArgTypes.stream()
+                            .map(Class::getName)
+                            .collect(Collectors.joining(","));
+
+                    query.put("constructor-types", Join.join(",", rawConstructorArgTypes));
                 }
                 appInfo.properties.put(si.id, "new://Service?" + URISupport.createQueryString(query));
                 if (si.properties != null) {
@@ -3750,8 +3758,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static ObjectRecipe prepareRecipe(final ServiceInfo info) {
-        final String[] constructorArgs = info.constructorArgs.toArray(new String[info.constructorArgs.size()]);
-        final ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, constructorArgs, null);
+        final String[] constructorArgs = info.constructorArgs.toArray(new String[0]);
+        final Class[] constructorArgTypes = info.constructorArgTypes.toArray(new Class[0]);
+        final ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, constructorArgs, constructorArgTypes);
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
         serviceRecipe.allow(Option.PRIVATE_PROPERTIES);

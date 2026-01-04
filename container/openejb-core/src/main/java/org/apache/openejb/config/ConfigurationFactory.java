@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.Extensions;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.resource.PropertiesResourceProvider;
@@ -122,6 +123,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
@@ -1289,7 +1291,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             info.factoryMethod = provider.getFactoryName();
             info.id = service.getId();
             info.properties = props;
-            info.constructorArgs.addAll(parseConstructorArgs(provider));
+            info.constructorArgs.addAll(parseList(provider.getConstructor()));
+            info.constructorArgTypes.addAll(parseConstructorArgTypes(provider));
             if (info instanceof ResourceInfo && service instanceof Resource) {
                 final ResourceInfo ri = ResourceInfo.class.cast(info);
                 final Resource resource = Resource.class.cast(service);
@@ -1598,12 +1601,23 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return containerTypes.get(ctype);
     }
 
-    private List<String> parseConstructorArgs(final ServiceProvider service) {
-        final String constructor = service.getConstructor();
-        if (constructor == null) {
+    private List<String> parseList(final String raw) {
+        if (raw == null) {
             return Collections.emptyList();
         }
-        return Arrays.asList(constructor.split("[ ,]+"));
+        return Arrays.asList(raw.split("[ ,]+"));
+    }
+
+    private List<Class<?>> parseConstructorArgTypes(final ServiceProvider service) {
+        return parseList(service.getConstructorTypes()).stream()
+                .map(it -> {
+                    try {
+                        return Class.forName(it);
+                    } catch (final ClassNotFoundException e) {
+                        throw new OpenEJBRuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toUnmodifiableList());
     }
 
     protected List<String> getResourceIds() {

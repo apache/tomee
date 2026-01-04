@@ -64,6 +64,8 @@ public class ServiceProvider {
     protected String className;
     @XmlAttribute(name = "constructor")
     protected String constructor;
+    @XmlAttribute(name = "constructor-types")
+    protected String constructorTypes;
     @XmlAttribute
     protected String description;
     @XmlAttribute(name = "display-name")
@@ -160,6 +162,26 @@ public class ServiceProvider {
      */
     public void setConstructor(final String value) {
         this.constructor = value;
+    }
+
+    /**
+     * Gets the value of the constructorTypes property.
+     *
+     * @return possible object is
+     * {@link String }
+     */
+    public String getConstructorTypes() {
+        return constructorTypes;
+    }
+
+    /**
+     * Sets the value of the constructorTypes property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setConstructorTypes(final String value) {
+        this.constructorTypes = value;
     }
 
     /**

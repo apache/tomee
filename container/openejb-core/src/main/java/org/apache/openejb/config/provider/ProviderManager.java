@@ -130,6 +130,9 @@ public class ProviderManager {
         if (n(child.getConstructor())) {
             child.setConstructor(parent.getConstructor());
         }
+        if (n(child.getConstructorTypes())) {
+            child.setConstructor(parent.getConstructorTypes());
+        }
         if (n(child.getFactoryName())) {
             child.setFactoryName(parent.getFactoryName());
         }
