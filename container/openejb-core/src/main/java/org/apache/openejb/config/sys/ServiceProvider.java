@@ -46,6 +46,7 @@ import java.util.Properties;
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="provider-type" use="required" type="{http://www.openejb.org/Service/Configuration}ProviderTypes" /&gt;
  *       &lt;attribute name="constructor" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="constructor-types" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="factory-name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *     &lt;/extension&gt;
  *   &lt;/simpleContent&gt;

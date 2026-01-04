@@ -107,6 +107,7 @@ import jakarta.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1612,12 +1613,33 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return parseList(service.getConstructorTypes()).stream()
                 .map(it -> {
                     try {
-                        return Class.forName(it);
+                        return getClassForType(it);
                     } catch (final ClassNotFoundException e) {
                         throw new OpenEJBRuntimeException(e);
                     }
                 })
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private Class<?> getClassForType(String typeName) throws ClassNotFoundException {
+        if (typeName.endsWith("[]")) {
+            final String elementType = typeName.substring(0, typeName.length() - 2);
+            final Class<?> elementClass = getClassForType(elementType); // recursion
+            return Array.newInstance(elementClass, 0).getClass();
+        }
+
+        return switch (typeName) {
+            case "boolean" -> boolean.class;
+            case "byte"    -> byte.class;
+            case "char"    -> char.class;
+            case "short"   -> short.class;
+            case "int"     -> int.class;
+            case "long"    -> long.class;
+            case "float"   -> float.class;
+            case "double"  -> double.class;
+            case "void"    -> void.class;
+            default -> Class.forName(typeName); // regular case
+        };
     }
 
     protected List<String> getResourceIds() {

@@ -125,7 +125,7 @@
     # side of the pool reaches its `MaxAge`, it is also immediately
     # replaced.  Replacement is done in a background queue using the
     # number of threads specified by `CallbackThreads`.
-    
+
     MinSize = 0
 
     # StrictPooling tells the container what to do when the pool
@@ -362,7 +362,7 @@
     # annotation is used.
 
     AccessTimeout = 30 seconds
-    
+
   </ServiceProvider>
 
 
@@ -428,10 +428,10 @@
     # override this setting for the bean where the annotation is used.
 
     TimeOut 20
-    
-    # Specifies the frequency (in seconds) at which the bean cache is checked for 
+
+    # Specifies the frequency (in seconds) at which the bean cache is checked for
     # idle beans.
-    
+
     Frequency 60
 
     # Specifies the size of the bean pools for this
@@ -510,8 +510,8 @@
           service="SecurityService"
           types="SecurityService"
           class-name="org.apache.openejb.core.security.SecurityServiceImpl">
-  
-    DefaultUser guest         
+
+    DefaultUser guest
   </ServiceProvider>
 
   <ServiceProvider
@@ -531,6 +531,7 @@
             types="TransactionManager"
             factory-name="create"
             constructor="defaultTransactionTimeoutSeconds, defaultTransactionTimeout, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, flushSleepTime, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
+            constructor-types="java.lang.Integer, org.apache.openejb.util.Duration, boolean, byte[], java.lang.String, int, boolean, boolean, java.lang.Integer, org.apache.openejb.util.Duration, java.lang.String, java.lang.String, java.lang.String, int, int, int, int, int"
             class-name="org.apache.openejb.resource.GeronimoTransactionManagerFactory">
       defaultTransactionTimeout 10 minutes
 
