@@ -238,10 +238,14 @@ public class RemoteServer {
                 argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
                 if (debug) {
-                    argsList.add("-Xdebug");
-                    argsList.add("-Xnoagent");
-                    argsList.add("-Djava.compiler=NONE");
-                    argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + options.get(SERVER_DEBUG_PORT, 5005));
+                    final int debugPort = options.get(SERVER_DEBUG_PORT, 5005);
+                    if (System.getProperty("java.vm.specification.version").compareTo("21") < 0) {
+                        argsList.add("-Xdebug");
+                        argsList.add("-Djava.compiler=NONE");
+                        argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + debugPort);
+                    } else {
+                        argsList.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPort);
+                    }
                 }
 
                 if (profile) {
