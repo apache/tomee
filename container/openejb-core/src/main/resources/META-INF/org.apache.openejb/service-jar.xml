@@ -46,6 +46,7 @@
                    service="Container"
                    types="CMP_ENTITY"
                    constructor="id, transactionManager, securityService, CmpEngineFactory"
+                   constructor-types="java.lang.Object, jakarta.transaction.TransactionManager, org.apache.openejb.spi.SecurityService, java.lang.String"
                    class-name="org.apache.openejb.core.cmp.CmpContainer">
 
     CmpEngineFactory org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
@@ -61,6 +62,7 @@
           service="Container"
           types="BMP_ENTITY"
           constructor="id, securityService, PoolSize"
+          constructor-types="java.lang.Object, org.apache.openejb.spi.SecurityService, int"
           class-name="org.apache.openejb.core.entity.EntityContainer">
 
     # Specifies the size of the bean pools for this
@@ -345,6 +347,7 @@
           service="Container"
           types="SINGLETON"
           constructor="id, securityService"
+          constructor-types="java.lang.Object, org.apache.openejb.spi.SecurityService"
           class-name="org.apache.openejb.core.singleton.SingletonContainer">
 
     # Specifies the maximum time an invocation could wait for the
@@ -456,6 +459,7 @@
           service="Container"
           types="MANAGED"
           constructor="id, securityService"
+          constructor-types="java.lang.Object, org.apache.openejb.spi.SecurityService"
           class-name="org.apache.openejb.core.managed.ManagedContainer">
 
   </ServiceProvider>
@@ -722,6 +726,7 @@
           service="Resource"
           types="jakarta.jms.Topic, Topic, jakarta.jms.Destination"
           constructor="destination"
+          constructor-types="java.lang.String"
           class-name="org.apache.activemq.command.ActiveMQTopic">
 
     # Specifies the name of the topic
