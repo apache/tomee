@@ -185,6 +185,7 @@ import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.DefinitionException;
 import jakarta.enterprise.inject.spi.DeploymentException;
+import jakarta.jms.Queue;
 import javax.management.DynamicMBean;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
@@ -3153,7 +3154,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
             serviceRecipe.setProperty("Definition", PropertiesHelper.propertiesToString(props));
-            //explicitly set the argument types to avoid ambiquity in factory resolution.
+            //explicitly set the argument types to avoid ambiguity in factory resolution.
             serviceRecipe.setConstructorArgTypes(
                     new Class[]{
                             String.class, boolean.class, Class.class, String.class,
@@ -3161,6 +3162,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             boolean.class}
             );
         } // else: any other kind of resource relying on it? shouldnt be
+
+        //explicitly set the constructor types to avoid ambiguity in ctor resolution.
+        if (serviceInfo.types.contains("Queue") || serviceInfo.types.contains(Queue.class.getName())) {
+            serviceRecipe.setConstructorArgTypes(new Class[]{String.class});
+        }
 
         replaceResourceAdapterProperty(serviceRecipe);
 
