@@ -92,7 +92,7 @@ export JDK_JAVA_OPTIONS
 
 args="$@"
 if [ "$1" = "debug" ]; then
-    OPENEJB_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 $OPENEJB_OPTS"
+    OPENEJB_OPTS="-Xdebug -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 $OPENEJB_OPTS"
 	args="start"
 fi
 
