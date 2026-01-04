@@ -3160,7 +3160,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 //                            String.class, boolean.class, Class.class, String.class,
 //                            Duration.class, Duration.class, Duration.class,
 //                            boolean.class}
-            );
+//            );
         } // else: any other kind of resource relying on it? shouldnt be
 
         //explicitly set the constructor types to avoid ambiguity in ctor resolution.
