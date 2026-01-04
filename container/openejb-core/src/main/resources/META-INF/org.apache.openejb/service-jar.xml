@@ -586,6 +586,7 @@
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
           constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
+          constructor-types="java.lang.String,boolean,java.lang.Class,java.lang.String,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,boolean"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     # Determines wether or not this data source should be JTA managed
     # or user managed.  If set to 'true' it will automatically be enrolled
@@ -707,6 +708,7 @@
           service="Resource"
           types="jakarta.jms.Queue, Queue, jakarta.jms.Destination"
           constructor="destination"
+          constructor-types="java.lang.String"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
     # Specifies the name of the queue
