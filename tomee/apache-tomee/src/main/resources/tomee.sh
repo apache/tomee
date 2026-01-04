@@ -116,7 +116,7 @@ fi
 DEBUG=
 if [ $# -ge 2 ] && [ "$1" = "debug" ]; then
     shift
-    DEBUG="-Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=${JPDA_SUSPEND:-y},address=${JPDA_ADDRESS:-5005}"
+    DEBUG="-Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=${JPDA_SUSPEND:-y},address=${JPDA_ADDRESS:-5005}"
 fi
 
 # execute the command
