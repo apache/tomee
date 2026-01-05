@@ -1293,7 +1293,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             info.id = service.getId();
             info.properties = props;
             info.constructorArgs.addAll(parseList(provider.getConstructor()));
-            info.constructorArgTypes.addAll(parseConstructorArgTypes(provider));
+            info.constructorArgTypes.addAll(parseList(provider.getConstructorTypes()));
             if (info instanceof ResourceInfo && service instanceof Resource) {
                 final ResourceInfo ri = ResourceInfo.class.cast(info);
                 final Resource resource = Resource.class.cast(service);
@@ -1607,39 +1607,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             return Collections.emptyList();
         }
         return Arrays.asList(raw.split("[ ,]+"));
-    }
-
-    private List<Class<?>> parseConstructorArgTypes(final ServiceProvider service) {
-        return parseList(service.getConstructorTypes()).stream()
-                .map(it -> {
-                    try {
-                        return getClassForType(it);
-                    } catch (final ClassNotFoundException e) {
-                        throw new OpenEJBRuntimeException(e);
-                    }
-                })
-                .collect(Collectors.toUnmodifiableList());
-    }
-
-    private Class<?> getClassForType(String typeName) throws ClassNotFoundException {
-        if (typeName.endsWith("[]")) {
-            final String elementType = typeName.substring(0, typeName.length() - 2);
-            final Class<?> elementClass = getClassForType(elementType); // recursion
-            return Array.newInstance(elementClass, 0).getClass();
-        }
-
-        return switch (typeName) {
-            case "boolean" -> boolean.class;
-            case "byte"    -> byte.class;
-            case "char"    -> char.class;
-            case "short"   -> short.class;
-            case "int"     -> int.class;
-            case "long"    -> long.class;
-            case "float"   -> float.class;
-            case "double"  -> double.class;
-            case "void"    -> void.class;
-            default -> Class.forName(typeName); // regular case
-        };
     }
 
     protected List<String> getResourceIds() {

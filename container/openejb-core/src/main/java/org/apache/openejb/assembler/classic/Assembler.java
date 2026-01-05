@@ -228,6 +228,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -1411,11 +1412,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     query.put("constructor", Join.join(",", si.constructorArgs));
                 }
                 if (si.constructorArgTypes != null && !si.constructorArgTypes.isEmpty()) {
-                    String rawConstructorArgTypes = si.constructorArgTypes.stream()
-                            .map(Class::getName)
-                            .collect(Collectors.joining(","));
-
-                    query.put("constructor-types", Join.join(",", rawConstructorArgTypes));
+                    query.put("constructor-types", Join.join(",", si.constructorArgTypes));
                 }
                 appInfo.properties.put(si.id, "new://Service?" + URISupport.createQueryString(query));
                 if (si.properties != null) {
@@ -3759,7 +3756,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static ObjectRecipe prepareRecipe(final ServiceInfo info) {
         final String[] constructorArgs = info.constructorArgs.toArray(new String[0]);
-        final Class[] constructorArgTypes = info.constructorArgTypes.toArray(new Class[0]);
+        final Class[] constructorArgTypes = info.constructorArgTypes.stream()
+                .map(it -> {
+                    try {
+                        return getClassForType(it);
+                    } catch (final ClassNotFoundException e) {
+                        throw new OpenEJBRuntimeException(e);
+                    }
+                })
+                .toArray(Class[]::new);
+
         final ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod,
                 constructorArgs, constructorArgTypes.length > 0 ? constructorArgTypes : null); //if empty, treat as not set
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
@@ -3816,6 +3822,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } catch (final MalformedURLException e) {
             throw new OpenEJBException(messages.format("cl0001", jarPath, e.getMessage()), e);
         }
+    }
+
+    private static Class<?> getClassForType(String typeName) throws ClassNotFoundException {
+        if (typeName.endsWith("[]")) {
+            final String elementType = typeName.substring(0, typeName.length() - 2);
+            final Class<?> elementClass = getClassForType(elementType); // recursion
+            return Array.newInstance(elementClass, 0).getClass();
+        }
+
+        return switch (typeName) {
+            case "boolean" -> boolean.class;
+            case "byte"    -> byte.class;
+            case "char"    -> char.class;
+            case "short"   -> short.class;
+            case "int"     -> int.class;
+            case "long"    -> long.class;
+            case "float"   -> float.class;
+            case "double"  -> double.class;
+            case "void"    -> void.class;
+            default -> Class.forName(typeName); // regular case
+        };
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
