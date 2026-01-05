@@ -87,7 +87,7 @@ to use a MySQL database on OpenShift you can do:
 
 `resources.xml` supports `Resource`, `Service` and `Container`.
 
-=== `resources.xml` mecanism
+=== `resources.xml` mechanism
 
 `resources.xml` resources are still available globally like any `tomee.xml` resource.
 
