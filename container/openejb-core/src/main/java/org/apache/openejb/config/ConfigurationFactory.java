@@ -797,6 +797,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 service.setProvider(map.remove("provider"));
                 service.setClassName(map.remove("class-name"));
                 service.setConstructor(map.remove("constructor"));
+                service.setConstructorArgTypes(map.remove("constructor-types"));
                 service.setFactoryName(map.remove("factory-name"));
                 service.setPropertiesProvider(map.remove("properties-provider"));
                 service.setTemplate(map.remove("template"));
@@ -1462,6 +1463,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             provider.getTypes().add(service.getType());
             provider.setClassName(service.getClassName());
             provider.setConstructor(service.getConstructor());
+            provider.setConstructorTypes(service.getConstructorArgTypes());
             provider.setFactoryName(service.getFactoryName());
             return provider;
         }

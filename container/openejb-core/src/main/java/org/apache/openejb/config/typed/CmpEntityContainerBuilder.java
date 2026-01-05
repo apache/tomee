@@ -39,6 +39,8 @@ public class CmpEntityContainerBuilder extends Container {
         setId("CmpEntityContainer");
 
         setConstructor("id, transactionManager, securityService, cmpEngineFactory");
+        setConstructorArgTypes("java.lang.Object, jakarta.transaction.TransactionManager, org.apache.openejb.spi.SecurityService, java.lang.String");
+
 
     }
 
