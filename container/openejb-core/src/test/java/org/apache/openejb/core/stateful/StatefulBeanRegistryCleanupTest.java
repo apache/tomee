@@ -29,6 +29,7 @@ import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.lang.reflect.Proxy;
 import java.util.concurrent.ConcurrentMap;
 
 import static org.junit.Assert.assertTrue;
@@ -68,10 +69,8 @@ public class StatefulBeanRegistryCleanupTest extends TestCase {
     public void test() throws Exception {
         final Context context = new InitialContext();
         final MyBeanInterface myBean = (MyBeanInterface) context.lookup("MyBeanRemote");
-        java.lang.reflect.Field hField = myBean.getClass().getSuperclass().getDeclaredField("h");
-        hField.setAccessible(true);
-        Object hValue = hField.get(myBean);
-        ConcurrentMap reg = ((StatefulEjbObjectHandler) hValue).getLiveHandleRegistry();
+        StatefulEjbObjectHandler handler = (StatefulEjbObjectHandler) Proxy.getInvocationHandler(myBean);
+        ConcurrentMap reg = handler.getLiveHandleRegistry();
 
         myBean.cleanup();
         assertTrue("Live handle registry should be empty after removal", reg.isEmpty());
