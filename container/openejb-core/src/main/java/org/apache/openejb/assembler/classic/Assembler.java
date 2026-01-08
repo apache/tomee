@@ -185,6 +185,7 @@ import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.DefinitionException;
 import jakarta.enterprise.inject.spi.DeploymentException;
+import jakarta.jms.Queue;
 import javax.management.DynamicMBean;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
@@ -227,6 +228,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -260,6 +262,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import static org.apache.openejb.util.Classes.ancestors;
 
@@ -1407,6 +1410,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
                 if (si.constructorArgs != null && !si.constructorArgs.isEmpty()) {
                     query.put("constructor", Join.join(",", si.constructorArgs));
+                }
+                if (si.constructorArgTypes != null && !si.constructorArgTypes.isEmpty()) {
+                    query.put("constructor-types", Join.join(",", si.constructorArgTypes));
                 }
                 appInfo.properties.put(si.id, "new://Service?" + URISupport.createQueryString(query));
                 if (si.properties != null) {
@@ -3737,8 +3743,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static ObjectRecipe prepareRecipe(final ServiceInfo info) {
-        final String[] constructorArgs = info.constructorArgs.toArray(new String[info.constructorArgs.size()]);
-        final ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, constructorArgs, null);
+        final String[] constructorArgs = info.constructorArgs.toArray(new String[0]);
+        final Class[] constructorArgTypes = info.constructorArgTypes.stream()
+                .map(it -> {
+                    try {
+                        return getClassForType(it);
+                    } catch (final ClassNotFoundException e) {
+                        throw new OpenEJBRuntimeException(e);
+                    }
+                })
+                .toArray(Class[]::new);
+
+        final ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod,
+                constructorArgs, constructorArgTypes.length > 0 ? constructorArgTypes : null); //if empty, treat as not set
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
         serviceRecipe.allow(Option.PRIVATE_PROPERTIES);
@@ -3793,6 +3810,27 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } catch (final MalformedURLException e) {
             throw new OpenEJBException(messages.format("cl0001", jarPath, e.getMessage()), e);
         }
+    }
+
+    private static Class<?> getClassForType(String typeName) throws ClassNotFoundException {
+        if (typeName.endsWith("[]")) {
+            final String elementType = typeName.substring(0, typeName.length() - 2);
+            final Class<?> elementClass = getClassForType(elementType); // recursion
+            return Array.newInstance(elementClass, 0).getClass();
+        }
+
+        return switch (typeName) {
+            case "boolean" -> boolean.class;
+            case "byte"    -> byte.class;
+            case "char"    -> char.class;
+            case "short"   -> short.class;
+            case "int"     -> int.class;
+            case "long"    -> long.class;
+            case "float"   -> float.class;
+            case "double"  -> double.class;
+            case "void"    -> void.class;
+            default -> Class.forName(typeName); // regular case
+        };
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {

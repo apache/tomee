@@ -4,461 +4,405 @@
 :jbake-type: page
 :jbake-status: published
 
+== Containers
 
-[source,xml]
+=== CMP_ENTITY
+
+Declarable in `tomee.xml` via
+
+Declarable in properties via:
+
 ----
-          <p><a name="ContainersandResources-containers"></a></p>
-----
-
-CMP_ENTITY
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
 Foo = new://Container?type=CMP_ENTITY
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| CmpEngineFactory
+| Default value is `org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory`.
 
-CmpEngineFactory
+| TransactionManager
+| Transaction manager used by the container.
+|===
 
-Default value is org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory.
+---
 
-TransactionManager
+=== BMP_ENTITY
 
-Declarable in tomee.xml via
+Declarable in `tomee.xml` via
 
-Supports the following properties
+Declarable in properties via:
 
-Property Name
-
-Description
-
-defaultTransactionTimeoutSeconds
-
-Default value is 10 minutes.
-
-BMP_ENTITY
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
+----
 Foo = new://Container?type=BMP_ENTITY
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| PoolSize
+| Specifies the size of the bean pools for this BMP entity container.
+Default value is `10`.
+|===
 
-PoolSize
+---
 
-Specifies the size of the bean pools for this bmp entity container.
-Default value is 10.
+=== STATELESS
 
-STATELESS
+Declarable in `tomee.xml` via
 
-Declarable in tomee.xml via
+Declarable in properties via:
 
-Declarable in properties via
-
+----
 Foo = new://Container?type=STATELESS
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| TimeOut
+| Specifies the time to wait between invocations, in milliseconds.
+A value of `0` means no timeout.
+Default value is `0`.
 
-TimeOut
+| PoolSize
+| Specifies the size of the bean pools for this stateless SessionBean container.
+Default value is `10`.
 
-Specifies the time to wait between invocations. This value is measured
-in milliseconds. A value of 5 would result in a time-out of 5
-milliseconds between invocations. A value of zero would mean no timeout.
-Default value is 0.
+| StrictPooling
+| Controls behavior when the pool reaches its maximum size.
+If `true`, requests wait for instances to become available and the pool never grows beyond `PoolSize`.
+If `false`, temporary instances are created for one invocation and then discarded.
+Default value is `true`.
+|===
 
-PoolSize
+---
 
-Specifies the size of the bean pools for this stateless SessionBean
-container. Default value is 10.
+=== STATEFUL
 
-StrictPooling
+Declarable in `tomee.xml` via
 
-StrictPooling tells the container what to do when the pool reaches it's
-maximum size and there are incoming requests that need instances. With
-strict pooling, requests will have to wait for instances to become
-available. The pool size will never grow beyond the the set PoolSize
-value. Without strict pooling, the container will create temporary
-instances to meet demand. The instances will last for just one method
-invocation and then are removed. Default value is true.
+Declarable in properties via:
 
-STATEFUL
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
+----
 Foo = new://Container?type=STATEFUL
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| Passivator
+| Responsible for writing beans to disk during passivation.
+Known implementations:
+`org.apache.openejb.core.stateful.RAFPassivater`
+`org.apache.openejb.core.stateful.SimplePassivater`
+Default value is `org.apache.openejb.core.stateful.SimplePassivater`.
 
-Passivator
+| TimeOut
+| Specifies the time to wait between invocations, in minutes.
+A value of `0` means no timeout.
+Default value is `20`.
 
-The passivator is responsible for writing beans to disk at passivation
-time. Different passivators can be used by setting this property to the
-fully qualified class name of the PassivationStrategy implementation.
-The passivator is not responsible for invoking any callbacks or other
-processing, its only responsibly is to write the bean state to disk.
-Known implementations: org.apache.openejb.core.stateful.RAFPassivater
-org.apache.openejb.core.stateful.SimplePassivater Default value is
-org.apache.openejb.core.stateful.SimplePassivater.
+| PoolSize
+| Specifies the size of the bean pools for this stateful SessionBean container.
+Default value is `1000`.
 
-TimeOut
+| BulkPassivate
+| Number of instances to passivate at one time during bulk passivation.
+Default value is `100`.
+|===
 
-Specifies the time to wait between invocations. This value is measured
-in minutes. A value of 5 would result in a time-out of 5 minutes between
-invocations. A value of zero would mean no timeout. Default value is 20.
+---
 
-PoolSize
+=== MESSAGE
 
-Specifies the size of the bean pools for this stateful SessionBean
-container. Default value is 1000.
+Declarable in `tomee.xml` via
 
-BulkPassivate
+Declarable in properties via:
 
-Property name that specifies the number of instances to passivate at one
-time when doing bulk passivation. Default value is 100.
-
-MESSAGE
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
+----
 Foo = new://Container?type=MESSAGE
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| ResourceAdapter
+| Resource adapter that delivers messages to the container.
+Default value is *Default JMS Resource Adapter*.
 
-ResourceAdapter
+| MessageListenerInterface
+| Message listener interface handled by this container.
+Default value is `jakarta.jms.MessageListener`.
 
-The resource adapter delivers messages to the container Default value is
-Default JMS Resource Adapter.
+| ActivationSpecClass
+| Activation specification class.
+Default value is `org.apache.activemq.ra.ActiveMQActivationSpec`.
 
-MessageListenerInterface
+| InstanceLimit
+| Maximum number of bean instances allowed per MDB deployment.
+Default value is `10`.
+|===
 
-Specifies the message listener interface handled by this container
-Default value is jakarta.jms.MessageListener.
+---
 
-ActivationSpecClass
+== Resources
 
-Specifies the activation spec class Default value is
-org.apache.activemq.ra.ActiveMQActivationSpec.
+=== javax.sql.DataSource
 
-InstanceLimit
+Declarable in `tomee.xml` via
 
-Specifies the maximum number of bean instances that are allowed to exist
-for each MDB deployment. Default value is 10.
+Declarable in properties via:
 
-Resources
-
-javax.sql.DataSource
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
+----
 Foo = new://Resource?type=javax.sql.DataSource
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| JtaManaged
+| Determines whether the datasource is JTA managed.
+Default value is `true`.
 
-JtaManaged
+| JdbcDriver
+| JDBC driver class name.
+Default value is `org.hsqldb.jdbcDriver`.
 
-Determines wether or not this data source should be JTA managed or user
-managed.  If set to 'true' it will automatically be enrolled in any
-ongoing transactions.  Calling begin/commit/rollback or setAutoCommit on
-the datasource or connection will not be allowed.  If you need to
-perform these functions yourself, set JtaManaged to 'false' In terms of
-JPA persistence.xml: "JtaManaged=true" can be used as a
-'jta-data-source' "JtaManaged=false" can be used as a
-'non-jta-data-source' Default value is true.
+| JdbcUrl
+| JDBC URL for creating connections.
+Default value is `jdbc:hsqldb:file:data/hsqldb/hsqldb`.
 
-JdbcDriver
+| UserName
+| Default username.
+Default value is `sa`.
 
-Driver class name Default value is org.hsqldb.jdbcDriver.
+| Password
+| Default password.
 
-JdbcUrl
+| ConnectionProperties
+| Properties passed to the JDBC driver when creating connections.
+Format: `[propertyName=property;]*`
+`user` and `password` are passed explicitly.
 
-Url for creating connections Default value is
-jdbc:hsqldb:file:data/hsqldb/hsqldb.
+| DefaultAutoCommit
+| Default auto-commit state of new connections.
+Default value is `true`.
 
-UserName
+| DefaultReadOnly
+| Default read-only state of new connections.
+If not set, `setReadOnly` is not called.
 
-Default user name Default value is sa.
+| DefaultTransactionIsolation
+| Default transaction isolation level.
+Allowed values: `NONE`, `READ_COMMITTED`, `READ_UNCOMMITTED`, `REPEATABLE_READ`, `SERIALIZABLE`.
 
-Password
+| InitialSize
+| Initial number of connections created when the pool starts.
+Default value is `0`.
 
-Default password
+| MaxActive
+| Maximum number of active connections.
+Default value is `20`.
 
-ConnectionProperties
+| MaxIdle
+| Maximum number of idle connections.
+Default value is `20`.
 
-The connection properties that will be sent to the JDBC driver when
-establishing new connections Format of the string must be
-[propertyName=property;]* NOTE - The "user" and "password" properties
-will be passed explicitly, so they do not need to be included here.
+| MinIdle
+| Minimum number of idle connections.
+Default value is `0`.
 
-DefaultAutoCommit
+| MaxWait
+| Maximum wait time (ms) for a connection before throwing an exception.
+Default value is `-1`.
 
-The default auto-commit state of new connections Default value is true.
+| ValidationQuery
+| SQL query used to validate connections.
 
-DefaultReadOnly
+| TestOnBorrow
+| Validate connections before borrowing.
+Default value is `true`.
 
-The default read-only state of new connections If not set then the
-setReadOnly method will not be called. (Some drivers don't support read
-only mode, ex: Informix)
+| TestOnReturn
+| Validate connections before returning to the pool.
+Default value is `false`.
 
-DefaultTransactionIsolation
+| TestWhileIdle
+| Validate connections during idle eviction runs.
+Default value is `false`.
 
-The default TransactionIsolation state of new connections If not set
-then the setTransactionIsolation method will not be called. The allowed
-values for this property are:     NONE     READ_COMMITTED    
-READ_UNCOMMITTED     REPEATABLE_READ     SERIALIZABLE Note: Most JDBC
-drivers do not support all isolation levels
+| TimeBetweenEvictionRunsMillis
+| Time between idle eviction runs (ms).
+Default value is `-1`.
 
-InitialSize
+| NumTestsPerEvictionRun
+| Number of connections tested per eviction run.
+Default value is `3`.
 
-The initial number of connections that are created when the pool is
-started Default value is 0.
+| MinEvictableIdleTimeMillis
+| Minimum idle time before eviction.
+Default value is `1800000`.
 
-MaxActive
+| PoolPreparedStatements
+| Enables pooling of prepared statements.
+Default value is `false`.
 
-The maximum number of active connections that can be allocated from this
-pool at the same time, or a negative number for no limit. Default value
-is 20.
+| MaxOpenPreparedStatements
+| Maximum open prepared statements.
+Default value is `0`.
 
-MaxIdle
+| AccessToUnderlyingConnectionAllowed
+| Allows access to the raw JDBC connection.
+Default value is `false`.
+|===
 
-The maximum number of connections that can remain idle in the pool,
-without extra ones being released, or a negative number for no limit.
-Default value is 20.
+---
 
-MinIdle
+=== ActiveMQResourceAdapter
 
-The minimum number of connections that can remain idle in the pool,
-without extra ones being created, or zero to create none. Default value
-is 0.
+Declarable in `tomee.xml` via
 
-MaxWait
+Declarable in properties via:
 
-The maximum number of milliseconds that the pool will wait (when there
-are no available connections) for a connection to be returned before
-throwing an exception, or -1 to wait indefinitely. Default value is -1.
-
-ValidationQuery
-
-The SQL query that will be used to validate connections from this pool
-before returning them to the caller. If specified, this query MUST be an
-SQL SELECT statement that returns at least one row.
-
-TestOnBorrow
-
-If true connections will be validated before being borrowed from the
-pool. If the validation fails, the connection is destroyed, and a new
-conection will be retrieved from the pool (and validated). NOTE - for a
-true value to have any effect, the ValidationQuery parameter must be
-set. Default value is true.
-
-TestOnReturn
-
-If true connections will be validated before being returned to the
-pool.  If the validation fails, the connection is destroyed instead of
-being returned to the pool. NOTE - for a true value to have any effect,
-the ValidationQuery parameter must be set. Default value is false.
-
-TestWhileIdle
-
-If true connections will be validated by the idle connection evictor (if
-any). If the validation fails, the connection is destroyed and removed
-from the pool NOTE - for a true value to have any effect, the
-timeBetweenEvictionRunsMillis property must be a positive number and the
-ValidationQuery parameter must be set. Default value is false.
-
-TimeBetweenEvictionRunsMillis
-
-The number of milliseconds to sleep between runs of the idle connection
-evictor thread. When set to a negative number, no idle connection
-evictor thread will be run. Default value is -1.
-
-NumTestsPerEvictionRun
-
-The number of connectionss to examine during each run of the idle
-connection evictor thread (if any). Default value is 3.
-
-MinEvictableIdleTimeMillis
-
-The minimum amount of time a connection may sit idle in the pool before
-it is eligable for eviction by the idle connection evictor (if any).
-Default value is 1800000.
-
-PoolPreparedStatements
-
-If true, a statement pool is created for each Connection and
-PreparedStatements created by one of the following methods are
-pooled:    public PreparedStatement prepareStatement(String
-sql);    public PreparedStatement prepareStatement(String
-sql,            int resultSetType,            int resultSetConcurrency)
-Default value is false.
-
-MaxOpenPreparedStatements
-
-The maximum number of open statements that can be allocated from the
-statement pool at the same time, or zero for no limit. NOTE - Some
-drivers have limits on the number of open statements, so make sure there
-are some resources left for the other (non-prepared) statements. Default
-value is 0.
-
-AccessToUnderlyingConnectionAllowed
-
-If true the raw physical connection to the database can be accessed
-using the following construct:     Connection conn =
-ds.getConnection();     Connection rawConn = ((DelegatingConnection)
-conn).getInnermostDelegate();     ...     conn.close() Default is false,
-because misbehaving programs can do harmfull things to the raw
-connection shuch as closing the raw connection or continuing to use the
-raw connection after it has been assigned to another logical
-connection.  Be carefull and only use when you need direct access to
-driver specific extentions. NOTE: Do NOT close the underlying
-connection, only the original logical connection wrapper. Default value
-is false.
-
-ActiveMQResourceAdapter
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
+----
 Foo = new://Resource?type=ActiveMQResourceAdapter
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| BrokerXmlConfig
+| Broker configuration.
+Default value is `broker:(tcp://localhost:61616)?useJmx=false`.
 
-BrokerXmlConfig
+| ServerUrl
+| Broker address.
+Default value is `vm://localhost?async=true`.
 
-Broker configuration Default value is
-broker:(tcp://localhost:61616)?useJmx=false.
+| DataSource
+| Datasource for message persistence.
+Default value is *Default Unmanaged JDBC Database*.
+|===
 
-ServerUrl
+---
 
-Broker address Default value is vm://localhost?async=true.
+=== jakarta.jms.ConnectionFactory
 
-DataSource
+Declarable in `tomee.xml` via
 
-DataSource for persistence messages Default value is Default Unmanaged
-JDBC Database.
+Declarable in properties via:
 
-jakarta.jms.ConnectionFactory
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
+----
 Foo = new://Resource?type=jakarta.jms.ConnectionFactory
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| ResourceAdapter
+| Default value is *Default JMS Resource Adapter*.
 
-ResourceAdapter
+| TransactionSupport
+| Transaction support type: `xa`, `local`, or `none`.
+Default value is `xa`.
 
-Default value is Default JMS Resource Adapter.
+| PoolMaxSize
+| Maximum number of physical connections.
+Default value is `10`.
 
-TransactionSupport
+| PoolMinSize
+| Minimum number of physical connections.
+Default value is `0`.
 
-Specifies if the connection is enrolled in global transaction allowed
-values: xa, local or none Default value is xa.
+| ConnectionMaxWaitMilliseconds
+| Maximum time to wait for a connection.
+Default value is `5000`.
 
-PoolMaxSize
+| ConnectionMaxIdleMinutes
+| Maximum idle time before reclaiming a connection.
+Default value is `15`.
+|===
 
-Maximum number of physical connection to the ActiveMQ broker Default
-value is 10.
+---
 
-PoolMinSize
+=== jakarta.jms.Queue
 
-Minimum number of physical connection to the ActiveMQ broker Default
-value is 0.
+Declarable in `tomee.xml` via
 
-ConnectionMaxWaitMilliseconds
+Declarable in properties via:
 
-Maximum amount of time to wait for a connection Default value is 5000.
-
-ConnectionMaxIdleMinutes
-
-Maximum amount of time a connection can be idle before being reclaimed
-Default value is 15.
-
-jakarta.jms.Queue
-
-Declarable in tomee.xml via
-
-Declarable in properties via
-
+----
 Foo = new://Resource?type=jakarta.jms.Queue
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| destination
+| Name of the queue.
+|===
 
-destination
+---
 
-Specifies the name of the queue
+=== jakarta.jms.Topic
 
-jakarta.jms.Topic
+Declarable in `tomee.xml` via
 
-Declarable in tomee.xml via
+Declarable in properties via:
 
-Declarable in properties via
-
+----
 Foo = new://Resource?type=jakarta.jms.Topic
+----
 
-Supports the following properties
+Supports the following properties:
 
-Property Name
+[cols="1,3",options="header"]
+|===
+| Property Name | Description
 
-Description
+| destination
+| Name of the topic.
+|===
 
-destination
+---
 
-Specifies the name of the topic
+=== jakarta.mail.Session
 
-jakarta.mail.Session
+Declarable in `tomee.xml` via
 
-Declarable in tomee.xml via
+Declarable in properties via:
 
-Declarable in properties via
-
+----
 Foo = new://Resource?type=jakarta.mail.Session
+----
 
 No properties.

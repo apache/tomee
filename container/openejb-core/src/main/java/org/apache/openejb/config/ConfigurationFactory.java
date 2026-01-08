@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.Extensions;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.Vendor;
 import org.apache.openejb.api.Proxy;
 import org.apache.openejb.api.resource.PropertiesResourceProvider;
@@ -106,6 +107,7 @@ import jakarta.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -122,6 +124,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 import static org.apache.openejb.config.ServiceUtils.implies;
@@ -794,6 +797,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 service.setProvider(map.remove("provider"));
                 service.setClassName(map.remove("class-name"));
                 service.setConstructor(map.remove("constructor"));
+                service.setConstructorArgTypes(map.remove("constructor-types"));
                 service.setFactoryName(map.remove("factory-name"));
                 service.setPropertiesProvider(map.remove("properties-provider"));
                 service.setTemplate(map.remove("template"));
@@ -1289,7 +1293,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             info.factoryMethod = provider.getFactoryName();
             info.id = service.getId();
             info.properties = props;
-            info.constructorArgs.addAll(parseConstructorArgs(provider));
+            info.constructorArgs.addAll(parseList(provider.getConstructor()));
+            info.constructorArgTypes.addAll(parseList(provider.getConstructorTypes()));
             if (info instanceof ResourceInfo && service instanceof Resource) {
                 final ResourceInfo ri = ResourceInfo.class.cast(info);
                 final Resource resource = Resource.class.cast(service);
@@ -1458,6 +1463,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             provider.getTypes().add(service.getType());
             provider.setClassName(service.getClassName());
             provider.setConstructor(service.getConstructor());
+            provider.setConstructorTypes(service.getConstructorArgTypes());
             provider.setFactoryName(service.getFactoryName());
             return provider;
         }
@@ -1598,12 +1604,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return containerTypes.get(ctype);
     }
 
-    private List<String> parseConstructorArgs(final ServiceProvider service) {
-        final String constructor = service.getConstructor();
-        if (constructor == null) {
+    private List<String> parseList(final String raw) {
+        if (raw == null) {
             return Collections.emptyList();
         }
-        return Arrays.asList(constructor.split("[ ,]+"));
+        return Arrays.asList(raw.split("[ ,]+"));
     }
 
     protected List<String> getResourceIds() {

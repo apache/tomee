@@ -44,6 +44,7 @@ public class SingletonContainerBuilder extends Container {
         setId("SingletonContainer");
 
         setConstructor("id, securityService");
+        setConstructorArgTypes("java.lang.Object, org.apache.openejb.spi.SecurityService");
 
     }
 

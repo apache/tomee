@@ -481,6 +481,7 @@ public abstract class JaxbOpenejb {
             provider.setService(att.getValue("", "service"));
             provider.setFactoryName(att.getValue("", "factory-name"));
             provider.setConstructor(att.getValue("", "constructor"));
+            provider.setConstructorTypes(att.getValue("", "constructor-types"));
             provider.setClassName(att.getValue("", "class-name"));
             provider.setParent(att.getValue("", "parent"));
             final String typesString = att.getValue("", "types");

@@ -83,6 +83,9 @@ public abstract class AbstractService implements Service {
     @XmlAttribute(name = "constructor")
     protected String constructor;
 
+    @XmlAttribute(name = "constructor-types")
+    protected String constructorArgTypes;
+
     /**
      * Mutually exclusive with 'provider'
      */
@@ -229,6 +232,15 @@ public abstract class AbstractService implements Service {
 
     public void setConstructor(final String constructor) {
         this.constructor = constructor;
+    }
+
+    @Override
+    public String getConstructorArgTypes() {
+        return constructorArgTypes;
+    }
+
+    public void setConstructorArgTypes(String constructorArgTypes) {
+        this.constructorArgTypes = constructorArgTypes;
     }
 
     public String getFactoryName() {

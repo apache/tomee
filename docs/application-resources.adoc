@@ -290,6 +290,25 @@ specify the arguments as a comma separated list:
 </Resource>
 ----
 
+=== constructor-types
+
+When no types are explicitly defined, the underlying mechanism relies on implicit matching to bind
+the declared properties to the constructor parameter names.
+
+Because of this, it can be useful to explicitly define the constructor argument types to ensure that
+the correct constructor or factory method is selected for the configured resource.
+
+You can specify the types as shown below:
+
+[source,xml]
+----
+<Resource id="config" class-name="org.superbiz.Configuration" constructor="id, poolSize" constructor-types="java.lang.String,int">
+    url http://localhost
+    username tomee
+    poolSize 20
+</Resource>
+----
+
 === factory-name method
 
 In some circumstances, it may be desirable to add some additional logic
