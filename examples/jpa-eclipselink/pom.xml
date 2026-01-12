@@ -58,11 +58,6 @@
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
-    <repository>
-      <id>eclipselink-repo</id>
-      <name>EclipseLink Repository</name>
-      <url>https://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
-    </repository>
   </repositories>
   <dependencies>
     <!-- spec apis such as jakarta.persistence -->
