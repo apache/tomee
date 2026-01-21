@@ -1902,6 +1902,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         b.description = a.description;
         b.factoryMethod = a.factoryMethod;
         b.constructorArgs.addAll(a.constructorArgs);
+        b.constructorArgTypes.addAll(a.constructorArgTypes);
         b.originAppName = a.originAppName;
         b.types.addAll(a.types);
         b.properties = new SuperProperties();

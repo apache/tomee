@@ -99,6 +99,8 @@ public class DataSourceBuilder extends Resource {
         setId("DataSource");
 
         setConstructor("serviceId, jtaManaged, jdbcDriver, definition, maxWaitTime, timeBetweenEvictionRuns, minEvictableIdleTime, OpenEJBResourceClasspath");
+        setConstructorArgTypes("java.lang.String,boolean,java.lang.Class,java.lang.String,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,boolean");
+
 
         setFactoryName("create");
 

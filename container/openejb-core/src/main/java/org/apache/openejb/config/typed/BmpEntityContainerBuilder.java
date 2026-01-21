@@ -39,6 +39,7 @@ public class BmpEntityContainerBuilder extends Container {
         setId("BmpEntityContainer");
 
         setConstructor("id, securityService, poolSize");
+        setConstructorArgTypes("java.lang.Object, org.apache.openejb.spi.SecurityService, int");
 
     }
 

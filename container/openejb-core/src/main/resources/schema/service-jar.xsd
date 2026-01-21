@@ -46,6 +46,7 @@
           <xsd:attribute name="description" type="xsd:string" use="optional"/>
           <xsd:attribute name="class-name" type="ClassName"/>
           <xsd:attribute name="constructor" type="xsd:string" use="optional"/>
+          <xsd:attribute name="constructor-types" type="xsd:string" use="optional"/>
           <xsd:attribute name="factory-name" type="xsd:string" use="optional"/>
         </xsd:extension>
       </xsd:simpleContent>

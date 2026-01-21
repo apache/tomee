@@ -39,7 +39,7 @@ public class URLAsResourceTest {
     @Configuration
     public Properties config() {
         return new PropertiesBuilder()
-            .p("url", "new://Resource?class-name=java.net.URL&constructor=value")
+            .p("url", "new://Resource?class-name=java.net.URL&constructor=value&constructor-types=java.lang.String")
             .p("url.value", "http://tomee.apache.org")
             .build();
     }

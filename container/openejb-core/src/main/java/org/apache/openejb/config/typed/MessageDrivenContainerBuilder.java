@@ -45,6 +45,7 @@ public class MessageDrivenContainerBuilder extends Container {
         setId("MessageDrivenContainer");
 
         setConstructor("id, securityService, resourceAdapter, messageListenerInterface, activationSpecClass, instanceLimit, failOnUnknownActivationSpec");
+        setConstructorArgTypes("java.lang.Object, org.apache.openejb.spi.SecurityService, jakarta.resource.spi.ResourceAdapter, java.lang.Class, java.langClass, int, boolean");
 
     }
 

@@ -39,6 +39,7 @@ public class QueueBuilder extends Resource {
         setId("Queue");
 
         setConstructor("destination");
+        setConstructorArgTypes("java.lang.String");
 
     }
 
