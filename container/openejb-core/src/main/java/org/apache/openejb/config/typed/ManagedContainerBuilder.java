@@ -36,6 +36,7 @@ public class ManagedContainerBuilder extends Container {
         setId("ManagedContainer");
 
         setConstructor("id, securityService");
+        setConstructorArgTypes("java.lang.Object, org.apache.openejb.spi.SecurityService");
 
     }
 

@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -38,6 +39,10 @@ public class FlushableDataSourceHandler implements DelegatableHandler {
     public static final String[] FACTORY_ARGS = new String[]{
         "ServiceId", "JtaManaged", "JdbcDriver", "Definition", "MaxWaitTime", "TimeBetweenEvictionRuns", "MinEvictableIdleTime", "OpenEJBResourceClasspath"
     };
+    public static final Class[] FACTORY_ARG_TYPES = new Class[]{
+            String.class, boolean.class, Class.class, String.class,
+            Duration.class, Duration.class, Duration.class,
+            boolean.class};
 
     private final FlushConfig config;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -53,7 +58,8 @@ public class FlushableDataSourceHandler implements DelegatableHandler {
     private void createANewDelegate() {
         final CommonDataSource old = delegate.get();
         try {
-            final ObjectRecipe recipe = new ObjectRecipe(DataSourceFactory.class.getName(), "create", FACTORY_ARGS);
+            final ObjectRecipe recipe = new ObjectRecipe(DataSourceFactory.class.getName(), "create",
+                    FACTORY_ARGS, FACTORY_ARG_TYPES);
             recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
             recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             recipe.allow(Option.NAMED_PARAMETERS);

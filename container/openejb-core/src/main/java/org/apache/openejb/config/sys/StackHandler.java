@@ -177,6 +177,9 @@ public class StackHandler extends DefaultHandler {
             if (attributes.getValue("constructor") != null) {
                 service.setConstructor(attributes.getValue("constructor"));
             }
+            if (attributes.getValue("constructor-types") != null) {
+                service.setConstructorArgTypes(attributes.getValue("constructor-types"));
+            }
             if (attributes.getValue("factory-name") != null) {
                 service.setFactoryName(attributes.getValue("factory-name"));
             }

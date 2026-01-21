@@ -46,6 +46,7 @@
                    service="Container"
                    types="CMP_ENTITY"
                    constructor="id, transactionManager, securityService, CmpEngineFactory"
+                   constructor-types="java.lang.Object, jakarta.transaction.TransactionManager, org.apache.openejb.spi.SecurityService, java.lang.String"
                    class-name="org.apache.openejb.core.cmp.CmpContainer">
 
     CmpEngineFactory org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
@@ -61,6 +62,7 @@
           service="Container"
           types="BMP_ENTITY"
           constructor="id, securityService, PoolSize"
+          constructor-types="java.lang.Object, org.apache.openejb.spi.SecurityService, int"
           class-name="org.apache.openejb.core.entity.EntityContainer">
 
     # Specifies the size of the bean pools for this
@@ -125,7 +127,7 @@
     # side of the pool reaches its `MaxAge`, it is also immediately
     # replaced.  Replacement is done in a background queue using the
     # number of threads specified by `CallbackThreads`.
-    
+
     MinSize = 0
 
     # StrictPooling tells the container what to do when the pool
@@ -345,6 +347,7 @@
           service="Container"
           types="SINGLETON"
           constructor="id, securityService"
+          constructor-types="java.lang.Object, org.apache.openejb.spi.SecurityService"
           class-name="org.apache.openejb.core.singleton.SingletonContainer">
 
     # Specifies the maximum time an invocation could wait for the
@@ -362,7 +365,7 @@
     # annotation is used.
 
     AccessTimeout = 30 seconds
-    
+
   </ServiceProvider>
 
 
@@ -428,10 +431,10 @@
     # override this setting for the bean where the annotation is used.
 
     TimeOut 20
-    
-    # Specifies the frequency (in seconds) at which the bean cache is checked for 
+
+    # Specifies the frequency (in seconds) at which the bean cache is checked for
     # idle beans.
-    
+
     Frequency 60
 
     # Specifies the size of the bean pools for this
@@ -456,6 +459,7 @@
           service="Container"
           types="MANAGED"
           constructor="id, securityService"
+          constructor-types="java.lang.Object, org.apache.openejb.spi.SecurityService"
           class-name="org.apache.openejb.core.managed.ManagedContainer">
 
   </ServiceProvider>
@@ -510,8 +514,8 @@
           service="SecurityService"
           types="SecurityService"
           class-name="org.apache.openejb.core.security.SecurityServiceImpl">
-  
-    DefaultUser guest         
+
+    DefaultUser guest
   </ServiceProvider>
 
   <ServiceProvider
@@ -531,6 +535,7 @@
             types="TransactionManager"
             factory-name="create"
             constructor="defaultTransactionTimeoutSeconds, defaultTransactionTimeout, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, flushSleepTime, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
+            constructor-types="java.lang.Integer, org.apache.openejb.util.Duration, boolean, byte[], java.lang.String, int, boolean, boolean, java.lang.Integer, org.apache.openejb.util.Duration, java.lang.String, java.lang.String, java.lang.String, int, int, int, int, int"
             class-name="org.apache.openejb.resource.GeronimoTransactionManagerFactory">
       defaultTransactionTimeout 10 minutes
 
@@ -585,6 +590,7 @@
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
           constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
+          constructor-types="java.lang.String,boolean,java.lang.Class,java.lang.String,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,boolean"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     # Determines wether or not this data source should be JTA managed
     # or user managed.  If set to 'true' it will automatically be enrolled
@@ -626,6 +632,7 @@
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
           constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
+          constructor-types="java.lang.String,boolean,java.lang.Class,java.lang.String,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,org.apache.openejb.util.Duration,boolean"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     JtaManaged = false
 
@@ -706,6 +713,7 @@
           service="Resource"
           types="jakarta.jms.Queue, Queue, jakarta.jms.Destination"
           constructor="destination"
+          constructor-types="java.lang.String"
           class-name="org.apache.activemq.command.ActiveMQQueue">
 
     # Specifies the name of the queue
@@ -718,6 +726,7 @@
           service="Resource"
           types="jakarta.jms.Topic, Topic, jakarta.jms.Destination"
           constructor="destination"
+          constructor-types="java.lang.String"
           class-name="org.apache.activemq.command.ActiveMQTopic">
 
     # Specifies the name of the topic

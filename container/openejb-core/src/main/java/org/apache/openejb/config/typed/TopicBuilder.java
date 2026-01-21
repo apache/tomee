@@ -39,6 +39,7 @@ public class TopicBuilder extends Resource {
         setId("Topic");
 
         setConstructor("destination");
+        setConstructorArgTypes("java.lang.String");
 
     }
 

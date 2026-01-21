@@ -71,6 +71,7 @@ public class TransactionManagerBuilder extends TransactionManager {
         setId("TransactionManager");
 
         setConstructor("defaultTransactionTimeoutSeconds, defaultTransactionTimeout, txRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, flushSleepTime, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold");
+        setConstructorArgTypes("java.lang.Integer, org.apache.openejb.util.Duration, boolean, byte[], java.lang.String, int, boolean, boolean, java.lang.Integer, org.apache.openejb.util.Duration, java.lang.String, java.lang.String, java.lang.String, int, int, int, int, int");
 
         setFactoryName("create");
 

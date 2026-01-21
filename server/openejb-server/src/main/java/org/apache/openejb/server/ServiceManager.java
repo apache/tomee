@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static org.apache.openejb.util.PropertyPlaceHolderHelper.holdsWithUpdate;
 
@@ -146,6 +147,11 @@ public abstract class ServiceManager {
                             serviceClass, "createServerService", null, null, serviceProperties.stringPropertyNames(), Collections.singleton(Option.NAMED_PARAMETERS));
                     if (factory != null) {
                         recipe.setConstructorArgNames(factory.getParameterNames()); // can throw an exception so call it before next line
+                        final List<Class<?>> argTypes = factory.getParameterTypes().stream()
+                                    .filter(t -> t instanceof Class<?>)
+                                    .map(t -> (Class<?>) t)
+                                    .collect(Collectors.toList());
+                        recipe.setConstructorArgTypes(argTypes);
                         recipe.setFactoryMethod("createServerService");
                     } else if (ReflectionUtil.findStaticFactory(serviceClass, "createServerService", null, null) != null) { // old behavior, remove when sure previous check is ok
                         recipe.setFactoryMethod("createServerService");
