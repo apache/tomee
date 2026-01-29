@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>connector-ear</artifactId>
-    <version>10.1.4-SNAPSHOT</version>
+    <version>10.1.4</version>
   </parent>
   <artifactId>connector-sample-rar</artifactId>
   <packaging>rar</packaging>

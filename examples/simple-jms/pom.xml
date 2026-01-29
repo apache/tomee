@@ -22,12 +22,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-jms</artifactId>
   <packaging>war</packaging>
-  <version>10.1.4-SNAPSHOT</version>
+  <version>10.1.4</version>
   <name>TomEE :: Examples :: Simple JMS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.arquillian>1.10.0.Final</version.arquillian>
-    <tomee.version>10.1.4-SNAPSHOT</tomee.version>
+    <tomee.version>10.1.4</tomee.version>
     <activemq.port>61616</activemq.port>
   </properties>
   <build>
