@@ -31,7 +31,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>10.1.4</version>
+  <version>10.1.5-SNAPSHOT</version>
 
   <name>Apache TomEE</name>
   <description>Apache TomEE is a JakartaEE 10 Web Profile stack for Apache Tomcat</description>

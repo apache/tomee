@@ -20,14 +20,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.superbiz</groupId>
     <artifactId>security-openid</artifactId>
-    <version>10.1.4</version>
+    <version>10.1.5-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>TomEE :: Examples :: Jakarta Security OpenID Connect</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.tomee>10.1.4</version.tomee>
+        <version.tomee>10.1.5-SNAPSHOT</version.tomee>
         <version.microprofile.config>3.0.2</version.microprofile.config>
         <junit.jupiter.version>5.12.0</junit.jupiter.version>
         <arquillian.version>1.10.0.Final</arquillian.version>
