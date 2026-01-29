@@ -1335,7 +1335,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                                 }
                             }
                         } catch (final Exception e) {
-                            logger.fatal("Error calling @PostConstruct method on " + resource.getClass().getName());
+                            logger.fatal("Error calling @PostConstruct method on " + resource.getClass().getName(), e);
                             throw new OpenEJBException(e);
                         }
                     }
@@ -1367,7 +1367,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         }
                     }
                 } catch (final Exception e) {
-                    logger.fatal("Error calling PostConstruct method on " + resourceInfo.id);
+                    logger.fatal("Error calling PostConstruct method on " + resourceInfo.id, e);
                     logger.fatal("Resource " + resourceInfo.id + " could not be initialized. Application will be undeployed.");
                     throw new OpenEJBException(e);
                 }
