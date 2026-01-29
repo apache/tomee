@@ -118,13 +118,15 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>${version.log4j2}</version>
+      <!-- These versions are intentionally old for ClasspathCustomizationTest -->
+      <version>2.6.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-jul</artifactId>
-      <version>${version.log4j2}</version>
+      <!-- These versions are intentionally old for ClasspathCustomizationTest -->
+      <version>2.6.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
