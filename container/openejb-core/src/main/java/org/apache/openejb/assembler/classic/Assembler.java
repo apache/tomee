@@ -3828,6 +3828,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             case "long"    -> long.class;
             case "float"   -> float.class;
             case "double"  -> double.class;
+            case "String"  -> String.class;
             case "void"    -> void.class;
             default -> Class.forName(typeName); // regular case
         };
