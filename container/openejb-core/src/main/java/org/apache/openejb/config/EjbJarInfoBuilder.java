@@ -148,7 +148,14 @@ public class EjbJarInfoBuilder {
                 }
             }
 
-            final String message = messages.format("conf.0008", jar.getJarLocation(), String.valueOf(beansInEjbJar), String.valueOf(beansDeployed));
+            final String message = messages.format(
+                    "conf.0008",
+                    jar.getJarLocation(),
+                    String.valueOf(beansInEjbJar),
+                    String.valueOf(beansDeployed),
+                    String.join(", ", ejbds.keySet()),
+                    String.join(", ", jar.getEjbJar().getEnterpriseBeansByEjbName().keySet())
+            );
             logger.warning(message);
             throw new OpenEJBException(message);
         }
