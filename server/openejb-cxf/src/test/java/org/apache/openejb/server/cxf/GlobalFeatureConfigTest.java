@@ -18,7 +18,7 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.feature.LoggingFeature;
+import org.apache.cxf.feature.FastInfosetFeature;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -42,8 +42,8 @@ public class GlobalFeatureConfigTest {
         return new Properties() {{
             setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
 
-            setProperty(CxfUtil.BUS_PREFIX + CxfUtil.FEATURES, "logging");
-            setProperty("logging", "new://Service?class-name=" + LoggingFeature.class.getName());
+            setProperty(CxfUtil.BUS_PREFIX + CxfUtil.FEATURES, "FastInfosetFeature");
+            setProperty("FastInfosetFeature", "new://Service?class-name=" + FastInfosetFeature.class.getName());
         }};
     }
 
@@ -56,6 +56,6 @@ public class GlobalFeatureConfigTest {
     public void run() {
         final Bus bus = CxfUtil.getBus();
         assertEquals(1, bus.getFeatures().size());
-        assertThat(bus.getFeatures().iterator().next(), instanceOf(LoggingFeature.class));
+        assertThat(bus.getFeatures().iterator().next(), instanceOf(FastInfosetFeature.class));
     }
 }
