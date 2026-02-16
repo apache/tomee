@@ -30,7 +30,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.tomee.microprofile.jwt.itest.Output;
@@ -284,7 +283,7 @@ public class ValidationConstraintsTest {
 
             final WebClient webClient = WebClient.create(tomee.toURI().resolve("/test").toURL().toExternalForm(),
                     singletonList(new JohnzonProvider<>()),
-                    singletonList(new LoggingFeature()), null);
+                    null);
             return new Scenario(tokens, webClient, output);
         }
 

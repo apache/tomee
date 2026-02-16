@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import static java.util.Collections.singletonList;
 import java.util.Optional;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.tomee.server.composer.Archive;
@@ -229,8 +228,7 @@ public class AllowNoExpPropertyTest {
     }
 
     private static WebClient createWebClient(final URL base) {
-        return WebClient.create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
-                singletonList(new LoggingFeature()), null);
+        return WebClient.create(base.toExternalForm(), singletonList(new JohnzonProvider<>()), null);
     }
 
     @ApplicationPath("/api")

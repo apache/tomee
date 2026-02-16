@@ -122,7 +122,6 @@ public class HttpKeyAccessTimeoutTest {
 
         final WebClient client = WebClient.create(tomee.toURI().toASCIIString(),
                 singletonList(new JohnzonProvider<>()),
-//                    singletonList(new LoggingFeature()),
                 null);
 
         {// valid token

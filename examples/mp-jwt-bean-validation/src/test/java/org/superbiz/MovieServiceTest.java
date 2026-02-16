@@ -16,7 +16,6 @@
  */
 package org.superbiz;
 
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -182,7 +181,7 @@ public class MovieServiceTest {
 
     private static WebClient createWebClient(final URL base) {
         return WebClient.create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
-                singletonList(new LoggingFeature()), null);
+                 null);
     }
 
 }

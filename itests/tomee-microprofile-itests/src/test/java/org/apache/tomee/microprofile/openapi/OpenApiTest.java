@@ -23,7 +23,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.tomee.server.composer.Archive;
@@ -176,8 +175,7 @@ public class OpenApiTest {
     }
 
     private static WebClient createWebClient(final URL base) {
-        return WebClient.create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
-                                singletonList(new LoggingFeature()), null);
+        return WebClient.create(base.toExternalForm(), singletonList(new JohnzonProvider<>()), null);
     }
 
     @Path("ok")

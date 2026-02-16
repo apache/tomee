@@ -18,7 +18,6 @@
 
 package org.apache.tomee.microprofile.jwt.itest;
 
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.tomee.server.composer.Archive;
@@ -103,7 +102,7 @@ public class RsaKeySizesTest {
 
     private static WebClient createWebClient(final URL base) {
         return WebClient.create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
-                singletonList(new LoggingFeature()), null);
+                null);
     }
 
     @ApplicationPath("/api")

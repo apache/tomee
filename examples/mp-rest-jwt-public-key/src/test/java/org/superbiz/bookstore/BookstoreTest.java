@@ -25,7 +25,6 @@ import com.nimbusds.jwt.SignedJWT;
 import net.minidev.json.JSONObject;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.eclipse.microprofile.jwt.Claims;
@@ -76,8 +75,7 @@ public class BookstoreTest {
         bus.setProperty("skip.jakarta.json.providers.registration", "true");
 
         final WebClient webClient = WebClient
-                .create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
-                        singletonList(new LoggingFeature()), null);
+                .create(base.toExternalForm(), singletonList(new JohnzonProvider<>()), null);
 
 
         // Testing REST endpoint that returns the value of a JWT claim
