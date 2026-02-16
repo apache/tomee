@@ -19,7 +19,6 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.ws.addressing.impl.MAPAggregatorImpl;
 import org.apache.cxf.ws.addressing.soap.MAPCodec;
@@ -83,10 +82,9 @@ public class WebServiceInjectionTest {
 
     private void testPort(final Client client) {
         assertNotNull(client);
-        assertEquals(2, client.getOutInterceptors().size());
+        assertEquals(1, client.getOutInterceptors().size());
         assertEquals(1, client.getInInterceptors().size());
         final Iterator<Interceptor<? extends Message>> iterator = client.getOutInterceptors().iterator();
-        assertTrue(LoggingOutInterceptor.class.isInstance(iterator.next()));
         final Interceptor<? extends Message> wss4jout = iterator.next();
         assertTrue(WSS4JOutInterceptor.class.isInstance(wss4jout));
         assertEquals("d", WSS4JOutInterceptor.class.cast(wss4jout).getProperties().get("c"));
@@ -97,12 +95,11 @@ public class WebServiceInjectionTest {
 
     private void testPortWithFeature(final Client client) {
         assertNotNull(client);
-        assertEquals(4, client.getOutInterceptors().size());
+        assertEquals(3, client.getOutInterceptors().size());
         assertEquals(3, client.getInInterceptors().size());
         final Iterator<Interceptor<? extends Message>> Out = client.getOutInterceptors().iterator();
         assertTrue(MAPAggregatorImpl.class.isInstance(Out.next()));
         assertTrue(MAPCodec.class.isInstance(Out.next()));
-        assertTrue(LoggingOutInterceptor.class.isInstance(Out.next()));
         final Interceptor<? extends Message> wss4jout = Out.next();
         assertTrue(WSS4JOutInterceptor.class.isInstance(wss4jout));
 
@@ -123,8 +120,6 @@ public class WebServiceInjectionTest {
                 .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}myWebservice.in-interceptors", "wss4jin")
                 .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}myWebservice.out-interceptors", "loo,wss4jout")
 
-                .p("loo", "new://Service?class-name=" + LoggingOutInterceptor.class.getName())
-
                 .p("wss4jin", "new://Service?class-name=" + WSS4JInInterceptorFactory.class.getName() + "&factory-name=create")
                 .p("wss4jin.a", "b")
 
@@ -138,7 +133,7 @@ public class WebServiceInjectionTest {
     }
 
     @WebService
-    public static interface MyWsApi {
+    public interface MyWsApi {
         String test();
     }
 
