@@ -107,104 +107,104 @@
         <version>1.12.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-soap</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-xml</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-simple</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-extension-providers</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-mp-client</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-sse</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-security-saml</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-security</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-addr</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-policy</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
-        <groupId>io.github.rzo1.org.apache.cxf</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-wsdl</artifactId>
-        <version>4.2.0-tomee-m0-071068f</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
         <groupId>io.github.rzo1.org.metatype.sxc</groupId>
@@ -1326,7 +1326,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
       <exclusions>
         <exclusion>
@@ -1336,7 +1336,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
       <exclusions>
         <exclusion>
@@ -1346,7 +1346,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
       <exclusions>
         <exclusion>
@@ -1356,7 +1356,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
       <exclusions>
         <exclusion>
@@ -1366,7 +1366,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <exclusions>
         <exclusion>
@@ -1376,7 +1376,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <exclusions>
         <exclusion>
@@ -1386,7 +1386,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
       <exclusions>
         <exclusion>
@@ -1396,7 +1396,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
       <exclusions>
         <exclusion>
@@ -1406,7 +1406,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
       <exclusions>
         <exclusion>
@@ -1416,7 +1416,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <exclusions>
         <exclusion>
@@ -1426,7 +1426,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
       <exclusions>
         <exclusion>
@@ -1436,7 +1436,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
       <exclusions>
         <exclusion>
@@ -1446,7 +1446,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
       <exclusions>
         <exclusion>
@@ -1456,7 +1456,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
       <exclusions>
         <exclusion>
@@ -1466,7 +1466,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security</artifactId>
       <exclusions>
         <exclusion>
@@ -1476,7 +1476,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
       <exclusions>
         <exclusion>
@@ -1486,7 +1486,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
       <exclusions>
         <exclusion>
@@ -1496,7 +1496,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
       <exclusions>
         <exclusion>
@@ -1506,7 +1506,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
       <exclusions>
         <exclusion>
@@ -1516,7 +1516,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.github.rzo1.org.apache.cxf</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
       <exclusions>
         <exclusion>

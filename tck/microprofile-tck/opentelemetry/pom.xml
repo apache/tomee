@@ -113,7 +113,7 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.rzo1.org.apache.cxf</groupId>
+            <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
             <version>${version.cxf}</version>
             <scope>test</scope>
