@@ -17,7 +17,7 @@
 package org.apache.openejb.jpa.integration.eclipselink;
 
 import org.apache.openejb.jpa.integration.JPAThreadContext;
-import org.eclipse.persistence.config.SessionCustomizer;
+
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.helper.DatabaseTable;
 import org.eclipse.persistence.mappings.DatabaseMapping;
@@ -26,6 +26,7 @@ import org.eclipse.persistence.mappings.ManyToManyMapping;
 import org.eclipse.persistence.sequencing.Sequence;
 import org.eclipse.persistence.sequencing.TableSequence;
 import org.eclipse.persistence.sessions.Session;
+import org.eclipse.persistence.sessions.SessionCustomizer;
 
 import java.util.ArrayList;
 import java.util.List;
