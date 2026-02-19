@@ -56,9 +56,9 @@ public class SavedRequest implements Serializable {
     private String method;
     private String url;
     private String queryString;
+    private Map<String, String[]> parameterMap;
 
     public static SavedRequest fromRequest(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
         Map<String, List<String>> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -66,15 +66,13 @@ public class SavedRequest implements Serializable {
             headers.put(name, Collections.list(request.getHeaders(name)));
         }
 
-        String method = request.getMethod();
-        String queryString = request.getQueryString();
-
         SavedRequest result = new SavedRequest();
-        result.setCookies(cookies);
+        result.setCookies(request.getCookies());
         result.setHeaders(headers);
-        result.setMethod(method);
+        result.setMethod(request.getMethod());
         result.setUrl(request.getRequestURL().toString());
-        result.setQueryString(queryString);
+        result.setQueryString(request.getQueryString());
+        result.setParameterMap(request.getParameterMap());
 
         return result;
     }
@@ -132,6 +130,27 @@ public class SavedRequest implements Serializable {
             public String getQueryString() {
                 return queryString;
             }
+
+            @Override
+            public Enumeration<String> getParameterNames() {
+                return Collections.enumeration(parameterMap.keySet());
+            }
+
+            @Override
+            public String[] getParameterValues(String name) {
+                return parameterMap.get(name);
+            }
+
+            @Override
+            public String getParameter(String name) {
+                String[] values = parameterMap.get(name);
+                return values == null || values.length == 0 ? null : values[0];
+            }
+
+            @Override
+            public Map<String, String[]> getParameterMap() {
+                return parameterMap;
+            }
         };
     }
 
@@ -182,6 +201,14 @@ public class SavedRequest implements Serializable {
 
     public void setQueryString(String queryString) {
         this.queryString = queryString;
+    }
+
+    public Map<String, String[]> getParameterMap() {
+        return parameterMap;
+    }
+
+    public void setParameterMap(Map<String, String[]> parameterMap) {
+        this.parameterMap = parameterMap;
     }
 
     @JsonbTransient

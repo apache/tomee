@@ -64,7 +64,7 @@ public class SecuredServletTest {
     @RunAsClient
     public void test() throws Exception {
         try (WebClient webClient = new WebClient()) {
-            HtmlPage htmlPage = webClient.getPage(url + "/secured");
+            HtmlPage htmlPage = webClient.getPage(url + "/secured?foo=bar");
             assertTrue(htmlPage.getUrl().toString().startsWith(KEYCLOAK_CONTAINER.getAuthServerUrl() + "/realms/tomee/protocol/openid-connect/auth"));
 
             HtmlForm loginForm = htmlPage.getForms().get(0);
@@ -72,7 +72,7 @@ public class SecuredServletTest {
             loginForm.getInputByName("password").setValue("tomee");
             TextPage securedServletPage = loginForm.getButtonByName("login").click();
 
-            assertEquals("Hello, tomee-user", securedServletPage.getContent());
+            assertEquals("Hello, tomee-user\nRequest parameters: foo=bar", securedServletPage.getContent());
         }
     }
 
@@ -88,7 +88,7 @@ public class SecuredServletTest {
             loginForm.getInputByName("password").setValue("tomee");
             TextPage securedServletPage = loginForm.getButtonByName("login").click();
 
-            assertEquals("Hello, tomee-admin\nYou're an admin!", securedServletPage.getContent());
+            assertEquals("Hello, tomee-admin\nYou're an admin!\nRequest parameters: ", securedServletPage.getContent());
         }
     }
 }
