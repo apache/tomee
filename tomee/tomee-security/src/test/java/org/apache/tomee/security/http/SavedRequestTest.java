@@ -26,6 +26,7 @@ import jakarta.servlet.http.Cookie;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -50,13 +51,14 @@ public class SavedRequestTest {
         request.setMethod("PATCH");
         request.setQueryString("foo=bar");
         request.setUrl("http://example.com/foo");
+        request.setParameterMap(Map.of("foo", new String[] {"bar"}));
 
-        assertEquals("{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\",\"url\":\"http://example.com/foo\"}", request.toJson());
+        assertEquals("{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"parameterMap\":{\"foo\":[\"bar\"]},\"queryString\":\"foo=bar\",\"url\":\"http://example.com/foo\"}", request.toJson());
     }
 
     @Test
     public void deserialization() throws Exception {
-        String json = "{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"queryString\":\"foo=bar\",\"url\":\"http://example.com/foo\"}";
+        String json = "{\"cookies\":[{\"name\":\"first\",\"value\":\"val1\",\"attributes\":{}},{\"name\":\"second\",\"value\":\"val2\",\"attributes\":{}}],\"headers\":{\"header1\":[\"h1val1\",\"h1val2\"],\"header2\":[\"h2val1\"]},\"method\":\"PATCH\",\"parameterMap\":{\"foo\":[\"bar\"]},\"queryString\":\"foo=bar\",\"url\":\"http://example.com/foo\"}";
         SavedRequest request = SavedRequest.fromJson(json);
 
         assertNotNull(request);
@@ -71,6 +73,10 @@ public class SavedRequestTest {
         assertEquals("PATCH", request.getMethod());
         assertEquals("foo=bar", request.getQueryString());
         assertEquals("http://example.com/foo", request.getUrl());
+        assertNotNull(request.getParameterMap());
+        assertNotNull(request.getParameterMap().get("foo"));
+        assertEquals(1, request.getParameterMap().get("foo").length);
+        assertEquals("bar", request.getParameterMap().get("foo")[0]);
     }
 
     @Test
