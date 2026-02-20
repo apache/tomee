@@ -205,7 +205,7 @@
     <version.activemq>6.2.0</version.activemq>
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
-    <version.cxf>4.1.5</version.cxf>
+    <version.cxf>4.2.0</version.cxf>
     <version.geronimo.components>4.0.0</version.geronimo.components>
     <!-- we currently rely on Mail Impl. from Geronimo, this might change in the future -->
     <version.geronimo-mail_2.1_provider>1.0.2</version.geronimo-mail_2.1_provider>
