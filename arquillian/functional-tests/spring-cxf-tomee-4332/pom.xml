@@ -35,7 +35,7 @@
         <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
 
         <!-- junit 5.11 is broken for some reason here -->
-        <junit.jupiter.version>5.10.5</junit.jupiter.version>
+        <junit.jupiter.version>6.0.3</junit.jupiter.version>
     </properties>
 
     <dependencies>
