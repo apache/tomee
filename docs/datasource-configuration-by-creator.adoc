@@ -14,7 +14,7 @@ Depending which one you use the accept configuration are not 100% the
 same even if we try to align the most common entries to the historical
 configuration (ie DBCP).
 
-Here are a more detailled list of accepted properties by creator.
+Here are a more detailed list of accepted properties by creator.
 
 == DBCP2 (TomEE 7.x and 8.x)
 

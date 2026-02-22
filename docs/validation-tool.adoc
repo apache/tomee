@@ -66,7 +66,7 @@ More checks will be added in the future.
 
 -v
 
-Sets the output level to 1. This will output just the minumum details on
+Sets the output level to 1. This will output just the minimum details on
 each failure.
 
 -vv
@@ -101,7 +101,7 @@ Show examples of how to use the options.
 
 # COMMON ISSUES
 
-== Misslocated class or NoClassDefFoundError
+== Mislocated class or NoClassDefFoundError
 
 The short explanation is that the parent doesn't have all the classes it
 needs as some of them are only in the child classloader, where the
@@ -132,7 +132,7 @@ system attempts to load the Employee interface, the call goes right
 through that classloader and down to the system classloader. The
 Employee interface is found, because it was accidentally added to that
 extra jar in the system classpath. So now the system classloader goes
-looking for Employee's superinterface, Person, where it immediatly blows
+looking for Employee's superinterface, Person, where it immediately blows
 up and throws a NoClassDefFoundError: Person.
 
 Most people will look at their ejb-jar and think, "But all my classes

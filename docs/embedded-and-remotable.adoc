@@ -12,7 +12,7 @@ in other vms_ access your ejbs. _Note, you do not need to go to this
 extreme to unit test ejbs with remote interfaces._
 
 The basic recipe is the same for a standard embedded scenario but with
-these added ingreditents:
+these added ingredients:
 
 * _openejb.embedded.remotable_ property
 * _openejb-ejbd_ jar

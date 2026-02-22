@@ -35,6 +35,6 @@ security.provider.N=org.bouncycastle.jce.provider.BouncyCastleProvider
 
 Replace `N` with the order of precedence you would like to give Bouncy
 Castle in comparison to the other providers in the file. *Recommended*
-would be the last entry in the list -- `N` being the higest number in
+would be the last entry in the list -- `N` being the highest number in
 the list. *Warning* that configuring Bouncy Castle as the first
 provider, `security.provider.1`, may cause JVM errors.

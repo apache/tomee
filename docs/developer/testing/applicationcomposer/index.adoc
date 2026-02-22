@@ -227,7 +227,7 @@ using ApplicationComposer runner:
 using ApplicationComposerRule rule:
 public class MyTest { `@Rule` // or `@ClassRule` if you want the container/application lifecycle be bound to the class and not test methods public final ApplicationComposerRule rule = new ApplicationComposerRule(this); }
 
-Tip: since TomEE 7.x ApplicationComposerRule is decomposed in 2 rules if you need: ContainerRule and DeployApplication. Using JUnit RuleChain you can chain them to get the samebehavior as ApplicationComposerRule or better deploy multiple ApplicationComposer models and controlling their deployment ordering (to mock a remote service for instance).
+Tip: since TomEE 7.x ApplicationComposerRule is decomposed in 2 rules if you need: ContainerRule and DeployApplication. Using JUnit RuleChain you can chain them to get the same behavior as ApplicationComposerRule or better deploy multiple ApplicationComposer models and controlling their deployment ordering (to mock a remote service for instance).
 
 Finally just write `@Test` method using test class injections as if the test class was a managed bean!
 
@@ -277,7 +277,7 @@ public class MyTest {
 
 When having a huge suite of test it can be long to start/deploy/undeploy/shutdown he container/application for each method.
 
-That's why `SingleApplicationComposerRunner` allows to just reuse the same instance accross several test.
+That's why `SingleApplicationComposerRunner` allows to just reuse the same instance across several test.
 
 The first test will start and deploy the application and then other tests will reuse this instance until the JVM is destroyed
 where the server/application will be undeployed/shutdown.

@@ -20,7 +20,7 @@ ctx.lookup("java:....");
 
 This is the legacy context factory used by OpenEJB. It is still useful to fallback
 on the "default" one in embedded mode where sometimes classloaders or libraries can mess
-up the automatic conextual context.
+up the automatic contextual context.
 
 Usage:
 
@@ -70,7 +70,7 @@ final InitialContext remoteContext = new InitialContext(p);
 ctx.lookup("java:....");
 ----
 
-Contrarly to local one, the remote factory supports `Context.SECURITY_*` options in a thread safe manner, and you can do lookups at runtime using them.
+Contrarily to local one, the remote factory supports `Context.SECURITY_*` options in a thread safe manner, and you can do lookups at runtime using them.
 
 See link:../../admin/cluster/index.html[Cluster] page for more details on the options.
 

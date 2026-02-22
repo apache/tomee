@@ -36,9 +36,9 @@ classpath to do EJB development)
 
 == apps/
 
-Once you create your EJB's and jar them up, you can place your jar file
+Once you create your EJBs and jar them up, you can place your jar file
 in this directory and start the server. The server will automatically
-deploy all the EJB's contained in this JAR.
+deploy all the EJBs contained in this JAR.
 
 == logs/
 

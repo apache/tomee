@@ -14,7 +14,7 @@ The basic steps are:
 . Add the Hibernate jars to `<tomee-home>/lib/`
 . Configure the webapp or the server to use Hibernate
 
-*The atifact versions defined here are just for example, so please feel
+*The artifact versions defined here are just for example, so please feel
 free to use current library versions.*
 
 == Webapp Configuration
@@ -73,7 +73,7 @@ Hibernate over OpenJPA.
 
 Using the `<tomee-home>/conf/system.properties` file or any other valid
 means of setting `java.lang.System.getProperties()`, the following
-standard properties can set the detault for any `persistence.xml` file.
+standard properties can set the default for any `persistence.xml` file.
 
 * `jakarta.persistence.provider`
 * `jakarta.persistence.transactionType`
