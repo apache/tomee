@@ -133,7 +133,7 @@ To use Infinispan cache (default Hibernate 2nd level cache) you need the
 below jars:
 
 There are many guides on how to use 2nd level cache with JPA 2. You can
-remove OpenJPA jar so less jars are in `<tomee-home>/lib` folder. Also,
+remove OpenJPA jar so fewer jars are in `<tomee-home>/lib` folder. Also,
 be sure to put your Database JDBC driver in `<tomee-home>/lib`.
 
 The actual Maven dependencies for your project can be added in the usual

@@ -6,7 +6,7 @@
 
 = Linux Service
 
-Depending on your flavour of Linux, there are likely a few different ways you can run TomEE as a service.
+Depending on your flavor of Linux, there are likely a few different ways you can run TomEE as a service.
 This page demonstrates running as a service with systemd, and has been tested with RedHat Enterprise Linux.
 
 Create a file `/etc/systemd/system/tomee.service` with the following content:

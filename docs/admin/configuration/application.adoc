@@ -11,7 +11,7 @@ This file is located in `WEB-INF` for a war and `META-INF` for an ear.
 === `@Asynchronous` configuration
 
 Default pool size for `@Asynchronous` is 5. It can be very small for some applications highly relying on
-asynchronism or reactive patterns. Therefore it is possible to customize it adding these entries in `application.properties`:
+asynchronism or reactive patterns. Therefore, it is possible to customize it adding these entries in `application.properties`:
 
 [.table.table-bordered,options="header"]
 |===
@@ -23,7 +23,7 @@ asynchronism or reactive patterns. Therefore it is possible to customize it addi
 | AsynchronousPool.KeepAliveTime | 1 minute | Thread keep alive duration
 | AsynchronousPool.AllowCoreThreadTimeOut | true | Should thread timeout
 | AsynchronousPool.QueueType | LINKED (or SYNCHRONOUS if size == 0) | The type of queue of the pool in ARRAY, LINKED, PRIORITY or SYNCHRONOUS (same behavior as java implementations of the same name)
-| AsynchronousPool.ShutdownWaitDuration | 1 minute | How many time to wait for the pool to shutdown when undeploying the application
+| AsynchronousPool.ShutdownWaitDuration | 1 minute | How much time to wait for the pool to shut down when undeploying the application
 | AsynchronousPool.RejectedExecutionHandlerClass | - | A fully qualified name of a `java.util.concurrent.RejectedExecutionHandler`
 |===
 
@@ -92,9 +92,9 @@ to use a MySQL database on OpenShift you can do:
 `resources.xml` resources are still available globally like any `tomee.xml` resource.
 
 The actual resource is bound in an application subtree called with the application name and a resource facade is bound
-in the global naming tree to be able to route the requests depending the application.
+in the global naming tree to be able to route the requests depending on the application.
 
-Typically if your application is named `myapp` and your resource id is `myresource` then instead of being registered
+Typically, if your application is named `myapp` and your resource id is `myresource` then instead of being registered
 as `myresource`, it will get registered as `myapp/myresource`.
 
 If you get any ambiguity in resource name matching try to fully qualified your resource prefixing it with the application name.

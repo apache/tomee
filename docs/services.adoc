@@ -22,7 +22,7 @@ ThreadPoolExecutor constructor for the detail):
 * block (default true)
 * keepAliveTime (default 60000)
 
-Additionally you can force the socket to be closed after each request
+Additionally, you can force the socket to be closed after each request
 (this is an advanced setting, use it with caution):
 
 * forceSocketClose (default true)

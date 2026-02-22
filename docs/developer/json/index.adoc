@@ -14,7 +14,7 @@ to unexpected JSON tree and some unexpected escaping too.
 
 == Getting started with Johnzon Mapper
 
-http://johnzon.apache.org/ will get more informations than this quick
+http://johnzon.apache.org/ will get more information than this quick
 getting started but here are the basics of the mapping with Johnzon.
 
 The mapper uses a direct java to json representation.

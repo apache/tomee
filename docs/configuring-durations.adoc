@@ -11,7 +11,7 @@ and beans support plain english, such as:
 * "27 minutes"
 * "10 seconds"
 
-For convenience it is possible to specify a _compound_ form, such as:
+For convenience, it is possible to specify a _compound_ form, such as:
 
 * "3 days and 2 hours"
 * "1 hour, 45 minutes"

@@ -86,7 +86,7 @@ To fix this, OpenEJB supports the idea of a
 `META-INF/env-entries.properties` file where we will look for the value of
 things that need injection that are not container controlled resources
 (i.e. datasources and things of that nature). You can configure you ejbs
-via a properties file and skip the need for an `ejb-jar.xml` and it's 5
+via a properties file and skip the need for an `ejb-jar.xml` and its 5
 lines per property madness.
 
 [source,properties]
@@ -151,7 +151,7 @@ this property:
   openejb.remotable.businessLocals=true
 ----
 
-Then you can lookup your business local interfaces from remote clients.
+Then you can look up your business local interfaces from remote clients.
 
-You'd still have to ensure that the you pass back and forth is
+You'd still have to ensure that you pass back and forth is
 serializable.

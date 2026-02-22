@@ -76,7 +76,7 @@ for the properties are as follows:
 ----
 
 The exclude and the include are applied separately and the results of
-each are combined together to create the list of paths OpenEJB will
+each are combined to create the list of paths OpenEJB will
 scrape for annotations.
 
 [source,java]
@@ -92,7 +92,7 @@ scrape for annotations.
 
 If the include/exclude is not being processed as you expect first try
 reversing the order to __openejb.exclude-include.order__=exclude-include
-There are a number internal filters that may result in an unexpected
+There are a number of internal filters that may result in an unexpected
 exclusion.
 
 If you're having trouble determining if the `META-INF/ejb-jar.xml` file

@@ -28,8 +28,8 @@ manually with a simple copy command or drag and drop.
 
 The OpenEJB Deploy tool can be executed from any directory as long as
 `openejb.home/bin` is in the system PATH. `openejb.home` is the
-directory where OpenEJB was installed or unpacked. For for the remainder
-of this document we will assume you unpacked OpenEJB into the directory
+directory where OpenEJB was installed or unpacked. For the remainder
+of this document, we will assume you unpacked OpenEJB into the directory
 `C:\openejb-3.0` under Windows.
 
 In Windows, the deploy tool can be executed as follows:

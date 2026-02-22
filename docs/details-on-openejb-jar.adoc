@@ -24,7 +24,7 @@ into the container system.
 
 = Do I even need the deploy tool then?
 
-Nope. Typically you would only use the deploy tool to create your
+Nope. Typically, you would only use the deploy tool to create your
 `openejb-jar.xml`, then just keep your `openejb-jar.xml` in your CVS (or
 other repository). If you learn how to maintain this `openejb-jar.xml`
 file, you'll never need the deploy tool again! You can do all your
@@ -55,7 +55,7 @@ simple.
 ----
 
 The _ejb-name_ attribute is the name you gave the bean in your
-`ejb-jar.xml`. The _deployment-id_ is the name you want to use to lookup
+`ejb-jar.xml`. The _deployment-id_ is the name you want to use to look up
 the bean in your client's JNDI namespace. The _container-id_ is the name
 of the container in your openejb.conf file that you would like the bean
 to run in. There MUST be one _ejb-deployment_ element for each EJB in
@@ -63,7 +63,7 @@ your jar.
 
 == What if my bean uses a JDBC datasource?
 
-Then you simply add a element to your element like this
+Then you simply add an element to your element like this
 
 [source,xml]
 ----
@@ -153,4 +153,4 @@ file as such.
 
 This would require two declarations in your openejb.conf, one with the
 _id_ attribute set to _"My Oracle JDBC Database"_ , and another with
-it's _id_ attribute set to _"My PostgreSQL JDBC Database"_
+its _id_ attribute set to _"My PostgreSQL JDBC Database"_

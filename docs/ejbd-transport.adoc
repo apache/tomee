@@ -6,11 +6,11 @@
 
 
 The Ejbd Transport allows to remotely access EJBs that have a remote
-interface. Nevertheless it is not based on IIOP.
+interface. Nevertheless, it is not based on IIOP.
 
 Ejbd Transport is different using TomEE or OpenEJB.
 
-In OpenEJB it uses openejb http layer and ejbd is configured through
+In OpenEJB, it uses openejb http layer and ejbd is configured through
 ejbd service (same for ejbds). So to activate/deactivate them use
 conf/ejbd(s).properties files. You can set property disabled to true if
 you don't want them to be started.
@@ -35,10 +35,10 @@ You can easily remove it if you don't use remote EJBs. Another way is to
 deactivate the servlet using the "activated" init parameter of the
 servlet.
 
-Finally you can move this servlet in your own webapp if you want to use
-a provider url containing your webapp context. Simply copy paste the
+Finally, you can move this servlet in your own webapp if you want to use
+a provider url containing your webapp context. Simply copy and paste the
 servlet definition in your `web.xml` and set the url mapping to what you
-want (let say /foo/*). Then use the provider url
+want (let's say /foo/*). Then use the provider url
 http://<host>:<port>/<webapp context name>/foo
 
 == Remote communication and serialization
@@ -199,7 +199,7 @@ The mechanism described above principally also works when running
 Arquillian tests. As the Ejbd transport is already used for deploying
 applications all Arquillian tests would fail with the default settings.
 
-Therefore the TomEE Arquillian adapter automatically starts the
+Therefore, the TomEE Arquillian adapter automatically starts the
 container so that all classes except for a set of well-know dangerous
 classes are whitelisted.
 

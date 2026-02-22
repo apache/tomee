@@ -7,7 +7,7 @@
 
 == Overview
 
-The manual installation process is significantly harder then the
+The manual installation process is significantly harder than the
 link:tomcat.html[automatic installation] which we normally recommend. In
 this installation process you will do the following:
 
@@ -34,7 +34,7 @@ installation directory.
 
 == Unpack OpenEJB Tomcat plugin in Tomcat webapps directory
 
-Be careful, this is the most error prone step. A web application does
+Be careful, this is the most error-prone step. A web application does
 not contain a root directory, so if you unpack it in the wrong
 directory, it is difficult to undo. Please, follow this step closely,
 and most importantly make sure you execute the unpack command from
@@ -93,7 +93,7 @@ directory with the updated annotations-api.jar in the OpenEJB war.
 == Add OpenEJB javaagent to Tomcat startup
 
 OpenJPA, the Java Persistence implementation used by OpenEJB, currently
-must enhanced persistence classes to function properly, and this
+must enhance persistence classes to function properly, and this
 requires the installation of a javaagent into the Tomcat startup
 process.
 
@@ -144,5 +144,5 @@ fi
 ----
 
 == Note: The example above is an excerpt from the middle of the
-bin/catalina.sh file. Search for the this section and add the snippet
+bin/catalina.sh file. Search for this section and add the snippet
 shown

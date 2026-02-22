@@ -119,7 +119,7 @@ Let's say that the following file lives in the jar at
 ----
 
 It is strongly recommended to not leave the values in the
-service-jar.xml file blank as shown above. It is possible to setup
+service-jar.xml file blank as shown above. It is possible to set up
 several sets of defaults in a `service-jar.xml` or via several
 `service-jar.xml` files.
 

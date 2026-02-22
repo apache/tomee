@@ -62,7 +62,7 @@ The `BrokerXmlConfig` tells ActiveMQ to start on the tcp host/port
 === Internal ActiveMQ Broker with JDBC Persistence
 
 Adding the `DataSource` property to your `ActiveMQResourceAdapter`
-config will automatically setup JDBC Persistence using the
+config will automatically set up JDBC Persistence using the
 `org.apache.activemq.store.jdbc.JDBCPersistenceAdapter`
 
 [source,xml]
@@ -106,7 +106,7 @@ Add the following jars to the `tomee/lib/` directory:
 
 Later versions should work, but have not been tested.
 
-Create an link:activemq.xml[activemq.xml file] a in
+Create an link:activemq.xml[activemq.xml file] in
 `[tomee]/conf/activemq.xml`.
 
 Then use the `xbean:file:` url prefix in the `BrokerXmlConfig` as shown
@@ -163,7 +163,7 @@ InitialContext context = new InitialContext(p);
 
 == Global lookup of JMS Resources
 
-From anywhere in the same VM as the EJB Container you could lookup the
+From anywhere in the same VM as the EJB Container you could look up the
 above resources like so:
 
 [source,properties]

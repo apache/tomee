@@ -114,7 +114,7 @@ public class HelloBean implements Hello{
 === Compile the source code Since we have imported the
 jakarta.ejb.Stateless and jakarta.ejb.Remote annotations, we need these in
 our classpath to compile our source code. These annotations can be found
-in the $OPENEJB_HOME/lib/javaee-5.0-1.jar. Lets compile our source (make
+in the $OPENEJB_HOME/lib/javaee-5.0-1.jar. Let's compile our source (make
 sure you are in the projects directory)
 
 [source,bash]
@@ -125,7 +125,7 @@ karan@poweredge:~/projects$ javac -cp $OPENEJB_HOME/lib/javaee-5.0-1.jar -d
 . *.java
 
 The above will compile all the .java files and also create the required
-packages. You should now see a package named org under the projects
+packages. You should now see a package named org under the project's
 directory. All class files should be under org/acme directory. ###
 Package the EJB To package the EJB into a JAR, run the following command
 while you are in the projects directory

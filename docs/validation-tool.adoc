@@ -17,7 +17,7 @@ openejb validate link:options.html[options] jarfiles
 
 The OpenEJB Validation tool must be executed from the OPENEJB_HOME
 directory. This is the directory where OpenEJB was installed or
-unpacked. For for the remainder of this document we will assume you
+unpacked. For the remainder of this document, we will assume you
 unpacked OpenEJB into the directory C:.
 
 In Windows, the validation tool can be executed as follows:
@@ -127,7 +127,7 @@ interfaces in the jar, so everything should be good (so we think). But
 now let's say that for some reason the Employee interface is also in
 another jar and that jar was loaded into the system classpath.
 
-When a new classloader is create for my ejb-jar at runtime and the
+When a new classloader is created for my ejb-jar at runtime and the
 system attempts to load the Employee interface, the call goes right
 through that classloader and down to the system classloader. The
 Employee interface is found, because it was accidentally added to that

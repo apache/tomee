@@ -21,7 +21,7 @@ need to specify a new logging configuration for your tests.
 
 Alternatively, you can set "openejb.logger.external" to "true" as a
 system property (will not work as an InitialContext property). Then
-OpenEJB will not attempt to configure logging at all and you can
+OpenEJB will not attempt to configure logging at all, and you can
 configure logging with Log4j directly using any of its APIs; xml,
 properties, or code.
 
@@ -80,10 +80,10 @@ overriding order is as follows: 1 = highest, 4 = lowest.
 [arabic]
 . InitialContext properties
 . jndi.properties in classpath
-. system propertes
+. system properties
 . embedded.logging.properties in classpath
 
-By default there are no logging settings in 1-3, so #4 is the only
+By default, there are no logging settings in 1-3, so #4 is the only
 source of logging information.
 
 = Default embedded.logging.properties contents
@@ -109,7 +109,7 @@ log4j.appender.C           = org.apache.log4j.ConsoleAppender
 log4j.appender.C.layout        = org.apache.log4j.SimpleLayout
 ----
 
-Here is that file's location in svn as well as all of the previous
+Here is that file's location in svn as well as all the previous
 versions. Future versions will follow the same pattern.
 
 * http://svn.apache.org/repos/asf/openejb/tags/openejb-3.1.1/container/openejb-core/src/main/resources/embedded.logging.properties

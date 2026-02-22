@@ -10,7 +10,7 @@ The Eclipse Transformer provides translation from javax to jakarta on various ar
 
 == Building
 
-The Transformer is a project at the Eclipse Foundation, and is built using Gradle. To checkout and build from source, do the following:
+The Transformer is a project at the Eclipse Foundation, and is built using Gradle. To check out and build from source, do the following:
 
 [source,bash]
 ----

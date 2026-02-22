@@ -101,20 +101,20 @@ parameters.
 Once the service is installed, it is possible to make changes either
 using the Windows Service Control Manager (start, stop, change user)
 or by running the TomEE.exe executable in the bin directory which
-will allow you change more settings, such as the JVM the service
+will allow you to change more settings, such as the JVM the service
 uses.
 
 NOTE: if you use a custom name for your service, rename (or copy) TomEE.exe to
 match it - e.g. TomEE-DEV.exe to match the examples above.
 
-== Using a 32 bit JVM on 64 bit Windows
+== Using a 32-bit JVM on 64-bit Windows
 
 The service script will install either TomEE.x86.exe or TomEE.amd64.exe as the
 service. The script uses the `PROCESSOR_ARCHITECTURE=AMD64` environment
 variable to determine which to use. The TomEE executable used needs to 
 match the architecture of the JVM you wish to use.
 
-If you wish to use a 32 bit JVM on 64 bit Windows, run 
+If you wish to use a 32-bit JVM on 64-bit Windows, run
 
 `set PROCESSOR_ARCHITECTURE=X86` prior to installing the service.
 

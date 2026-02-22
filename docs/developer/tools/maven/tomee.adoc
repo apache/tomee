@@ -31,7 +31,7 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |synchronizations|-|list of synchronizations
 |reloadOnUpdate|-|should the application be redeployed when a synchronization is triggered
 
-|skipCurrentProject|false|should current project not be considered as a deployable even if its packaging is compatible (war typically)
+|skipCurrentProject|false|should the current project not be considered as a deployable even if its packaging is compatible (war typically)
 |tomeeVersion|auto, plugin one|which version of TomEE to use
 |tomeeGroupId|org.apache.tomee|TomEE artifact groupId
 |tomeeArtifactId|apache-tomee|TomEE artifact artifactId
@@ -93,7 +93,7 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |===
 
 
-Synchronization are blocks defining a source and target folder and both are synchronized. It typically copy
+Synchronization are blocks defining a source and target folder and both are synchronized. It typically copies
 `src/main/webapp` resources in `target/apache-tomee/webapps/myapp/`.
 
 

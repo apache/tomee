@@ -180,7 +180,7 @@ JaccProvider impl.
 things you have to do to create and plugin a JACC provider, but you can
 still plugin a JACC provider in the standard ways. Read the JACC spec
 for that info.
-* _JAAS LoginModule_. You can setup a different JAAS LoginModule to do
+* _JAAS LoginModule_. You can set up a different JAAS LoginModule to do
 all your authentication by simply editing the conf/login.config file
 which is a plain JAAS config file. At the moment we only support
 username/password based login modules. At some point it would be nice to

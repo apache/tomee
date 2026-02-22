@@ -21,7 +21,7 @@ Webapp can be deployed as Tomcat does. Simply put it in webapps folder
 
 ==== TomEE specific deployment
 
-By default TomEE deploys applications (ear, war, jar) contained in
+By default, TomEE deploys applications (ear, war, jar) contained in
 $CATALINA_BASE/apps directory at start up.
 
 ==== Deployer
