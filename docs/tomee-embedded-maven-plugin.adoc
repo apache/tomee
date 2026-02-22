@@ -8,7 +8,7 @@
 link:tomee-maven-plugin.html[TomEE Maven Plugin] provides a nice way to
 run "as in production" a server fully configured keeping the
 configuration in the project (easiness of sharing between team members).
-However for modern web development the fact to run the "exploded war"
+However, for modern web development the fact to run the "exploded war"
 prevents to develop web resources in place. TomEE embedded maven plugin
 solves it directly allowing to directly deploy the war project in place
 using "classpath as war" option.

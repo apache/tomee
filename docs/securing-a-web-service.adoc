@@ -30,8 +30,8 @@ It has no impact on developments. It allows you :
 . To secure data over the network with data encrypted during transport
 . To identify the end user with SSLv3 with client certificate required
 . OpenEJB supports BASIC authentication over HTTP(S), using the
-configured JAAS provider. This will honour any EJB security roles you
-have setup using
+configured JAAS provider. This will honor any EJB security roles you
+have set up using
 
 . See the webservice-security example in the OpenEJB codebase
 https://github.com/apache/tomee/tree/master/examples
@@ -194,9 +194,9 @@ Server: OpenEJB/??? (unknown os)
 = JAAS with WS-Security
 
 1 doesn't work straight off with WS-Security, but you can add calls to
-the OpenEJB SecurityService to login to a JAAS provider to a
+the OpenEJB SecurityService to log in to a JAAS provider to a
 CallbackHandler. Once you have done this, any permissions configured
-with 1 should be honoured.
+with 1 should be honored.
 
 Here is a snippet from the webservice-ws-security example demonstrating
 this:

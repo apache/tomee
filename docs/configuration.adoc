@@ -132,7 +132,7 @@ An example layout:
 
 === Another Example layout
 
-In this example openejb.home and openejb.base are setup as well as the
+In this example openejb.home and openejb.base are set up as well as the
 explicit paths for the openejb and log4j configuration files.
 
 An example layout:

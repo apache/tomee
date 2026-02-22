@@ -110,8 +110,8 @@ reaches it's maximum size and there are incoming requests that
 need instances.
 
 With strict pooling, requests will have to wait for instances to
-become available. The pool size will never grow beyond the the
-set `MaxSize` value.  The maximum amount of time a request should
+become available. The pool size will never grow beyond the set
+`MaxSize` value. The maximum amount of time a request should
 wait is specified via the `AccessTimeout` setting.
 
 Without strict pooling, the container will create temporary
@@ -119,7 +119,7 @@ instances to meet demand. The instances will last for just one
 method invocation and then are removed.
 
 Setting `StrictPooling` to `false` and `MaxSize` to `0` will result in
-no pooling. Instead instances will be created on demand and live
+no pooling. Instead, instances will be created on demand and live
 for exactly one method call before being removed.
 
 ==== MaxAge
@@ -553,7 +553,7 @@ Foo.CmpEngineFactory = org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
 
 ==== CmpEngineFactory
 
-The engine to use for this container. By default TomEE only provides the JPA implementation.
+The engine to use for this container. By default, TomEE only provides the JPA implementation.
 
 
 == BMP entity

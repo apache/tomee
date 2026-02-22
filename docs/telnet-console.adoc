@@ -131,7 +131,7 @@ Then restart OpenEJB.
 
 = Restricting Access
 
-It is unlikely you want just anyone to be able to login and execute
+It is unlikely you want just anyone to be able to log in and execute
 commands. While you can't restrict access on a user basis, yet, you can
 restrict access to specific hosts. Host based access control (HBA) is a
 built-in part of any Server Service in OpenEJB and the Telnet Service is

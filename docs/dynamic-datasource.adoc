@@ -38,7 +38,7 @@ You have to use the same kind of databases (same version, same
 configuration...).
 
 All database have to be created when you use the router. The way to do
-it automatically can depend of your JPA provider.
+it automatically can depend on your JPA provider.
 
 === OpenJPA
 
@@ -51,7 +51,7 @@ find() on each proxied datasource.
 
 Hibernate initializes the database when it starts so if you declare a
 persistence unit by database all databases will be initialized at the
-start up.
+start-up.
 
 == Example
 

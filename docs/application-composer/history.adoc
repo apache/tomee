@@ -3,14 +3,14 @@
 :jbake-status: published
 :index-group: Testing
 
-ApplicationComposer can look like a long story but following it you'll
+ApplicationComposer can look like a long story but following it, you'll
 realize it is finally quite natural.
 
 == Internal tool
 
 TomEE (former OpenEJB) is an Application Server. One of the most
 important task writing an Application Server is to ensure the
-implemented features do what is expected. However it is hard to write N
+implemented features do what is expected. However, it is hard to write N
 test applications, in N modules to ensure it works smoothly. In
 particular when you want to test a small part of the whole server.
 
@@ -21,7 +21,7 @@ So the idea came to be able to shortcut the part we don't care much
 about runtime: the application packaging.
 
 Here what is the ApplicationComposer: an (originally test) API to create
-a EE application programmatically.
+an EE application programmatically.
 
 == Designs
 
@@ -37,10 +37,10 @@ container (creating resources for instance)
 == Test but not only
 
 ApplicationComposer was originally a JUnit only runner but was pretty
-quickly extended to TestNG too and today you can even use it to write
+quickly extended to TestNG too, and today you can even use it to write
 `main(String[])` - even in a shade!
 
-API was greatly simplified and it allows you pretty easily to deploy
+API was greatly simplified, and it allows you pretty easily to deploy
 with a simple shade a JAXRS/JAXWS/JMS service!
 
 == Going further

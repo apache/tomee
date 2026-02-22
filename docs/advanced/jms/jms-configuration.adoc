@@ -21,7 +21,7 @@ Here some common configuration to validate (note that when possible the sample v
 </Resource>
 ----
 
-- Then the MDB container itself has a upper bound through `InstanceLimit` which controls the max MDB instance count:
+- Then the MDB container itself has an upper bound through `InstanceLimit` which controls the max MDB instance count:
 
 [source,xml]
 ----
@@ -32,7 +32,7 @@ Here some common configuration to validate (note that when possible the sample v
 </Container>
 ----
 
-- ActiveMQ `maxSessions` controls how many sessions a MDB can use:
+- ActiveMQ `maxSessions` controls how many sessions an MDB can use:
 
 [source,java]
 ----

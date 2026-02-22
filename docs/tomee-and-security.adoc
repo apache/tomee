@@ -19,7 +19,7 @@ License.
 
 Rather than providing its own security implementation, TomEE makes full
 use of the security features that are part of Tomcat. Any Catalina realm
-is supported or you can provide your own security module using the
+is supported, or you can provide your own security module using the
 login.config file.
 
 For example, to add some simple security to the

@@ -11,11 +11,11 @@ third-party environments whom would likely already have three things:
 * their own way to configure their platform
 * existing services like TransactionManager, Security, and Connector
 
-Thus the focus of OpenEJB was to create an EJB implementation that would
-be easily embeddible, configurable, and customizable.
+Thus, the focus of OpenEJB was to create an EJB implementation that would
+be easily embeddable, configurable, and customizable.
 
 Part of achieving that is a drive to be as simple as possible as to not
-over-define and therefore restrict the ability to be embeddible,
+over-define and therefore restrict the ability to be embeddable,
 configurable and customizable. Smaller third-party environments could
 easily 'downscale' OpenEJB in their integrations by replacing standard
 components with lighter implementations or removing them all together
@@ -27,11 +27,11 @@ Container and Server are mentioned in the EJB spec as being separate
 things but are never defined formally. In our world Containers, which
 implement the basic component contract and lifecycle of a bean are not
 coupled to any particular Server, which has the job of providing a
-naming service and providing a way for it's clients to reference and
+naming service and providing a way for its clients to reference and
 invoke components (beans) hosted in Containers. Because Containers have
 no dependence at all only Server, you can run OpenEJB without any Server
 at all in an embedded environment for example without any work or any
-extra overhead. Similarly you can add as many new Server components as
+extra overhead. Similarly, you can add as many new Server components as
 you want without ever having to modify any Containers.
 
 There is a very strong pluggability focus in OpenEJB as it was always
@@ -54,7 +54,7 @@ DefaultStatefulContainer) or more specifically by package and id (such
 as org.apache.openejb#DefaultStatefulContainer).
 
 The same implementation of a service can be declared several times in a
-service-jar.xml with different ids. This allows for you to setup several
+service-jar.xml with different ids. This allows for you to set up
 several different profiles or pre-configured versions of the services
 you provide each with a different name and different set of default
 values for its properties.
@@ -74,10 +74,10 @@ essentially instantiating the Service Provider and configuring that
 instance for inclusion in the runtime system.
 
 For example Container(id=NoTimeoutStatefulContainer,
-provider=DefaultStatefulContainer) could be declared with it's Timeout
+provider=DefaultStatefulContainer) could be declared with its Timeout
 property set to 0 for never, and a
 Container(id=ShortTimeoutStatefulContainer,
-provider=DefaultStatefulContainer) could be declared with it's Timeout
+provider=DefaultStatefulContainer) could be declared with its Timeout
 property set to 15 minutes. Both would be instances of the
 DefaultStatefulContainer Service Provider which is a service of type
 Container.

@@ -54,11 +54,11 @@ differences. List deployed EJB's in a running TomEE.
 **Note 1:** For `tomee:deploy` and `tomee:undeploy` goals, the path can
 either be specified within the section of the `pom.xml` using the
 parameter, or it can be passed via the user property
-tomee-plugin.archive. If a relative path is passed for the deploy path
+tomee-plugin.archive. If a relative path is passed for the deployment path
 archive, this must be relative to the TomEE server.
 
 **Note 2**: While running TomEE Maven Plugin, you can type `quit` directly in the
-console to shutdown the server correctly. `reload` is also available
+console to shut down the server correctly. `reload` is also available
 when internal openejb application is deployed.
 
 ### More Tweaks
@@ -78,8 +78,8 @@ Note: the name tweak can be used to rename applications too
 
 ### Provisioning Example
 
-This plugin is also usable in projects which are not war. For instance
-you can use it in a pom project to setup a TomEE install, add libraries,
+This plugin is also usable in projects which are not war. For instance,
+you can use it in a pom project to set up a TomEE installation, add libraries,
 deploy apps then run the server.
 
 [source,xml]

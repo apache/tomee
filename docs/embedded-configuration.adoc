@@ -14,7 +14,7 @@ there is quite a bit of flexibility to how things are configured.
 OpenEJB will function fine with no configuration at all and will happily
 create things as needed and select defaults for everything. So in a real
 sense configuration is all about overriding those defaults. There are
-several places to put your overrides and an a specific order how they
+several places to put your overrides and a specific order how they
 are applied. Here they are in order of preference; 1 = highest, 5 =
 lowest.
 

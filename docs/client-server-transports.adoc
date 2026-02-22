@@ -20,7 +20,7 @@ supports the ejbd protocol over http
 
 openejb-derbynet-3.0.jar
 
-allows for derby to accessed via it's network driver
+allows for derby to be accessed via it's network driver
 
 openejb-hsql-3.0.jar
 

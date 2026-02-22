@@ -128,7 +128,7 @@ public class EmbeddedServer {
 This class sets up an embedded instance of Jetty, running on port 9091.
 You'll notice the setupJndi() method. This looks through the ejb-ref
 entries in web.xml (which we deserialize using the openejb-jee library),
-and adds relevant LinkRefs to the JNDI tree, so you can lookup beans
+and adds relevant LinkRefs to the JNDI tree, so you can look up beans
 using the java:comp/env/bean format. I've added a main() method here for
 convenience, so you can run this straight from an IDE, and record tests
 using tools like the Selenium Firefox plugin.
@@ -233,6 +233,6 @@ public class AddPersonTest extends FunctionalTestCase {
 I've made a sample project which demonstrates this, source is available
 http://people.apache.org/~jgallimore/PersonApp.zip[here] . You'll need
 Maven to build it, and you can build it and run the tests by running
-'mvn clean install'. If want to run the tests from your IDE, you'll need
+'mvn clean install'. If you want to run the tests from your IDE, you'll need
 to have a Selenium server running, which you can do by running 'mvn
 selenium:start-server'.

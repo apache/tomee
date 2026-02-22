@@ -9,12 +9,12 @@
 
 === Description
 
-It can be very useful to connect to the server to get some informations.
+It can be very useful to connect to the server to get some information.
 
 === Solution
 
 For such a case OpenEJB/TomEE proposes to start with the Java EE server
-a SSH server. Currently the security is based on JAAS (see how to
+an SSH server. Currently, the security is based on JAAS (see how to
 configure JAAS for TomEE for more information about it).
 
 === Installation
@@ -60,4 +60,4 @@ if not
 
 Note1: JSR 223 can need to add some jar to openejb/tomee lib folder
 (groovy-all for instance to use groovy) Note2: ls, part, cat commands
-have to use $home and $base properties to specified the path
+have to use $home and $base properties to specify the path

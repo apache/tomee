@@ -7,7 +7,7 @@
 TomEE is supported by the main IDEs in the market:
 
 - https://eclipse.org/downloads/[Eclipse]
-- https://www.jetbrains.com/idea/download/[Intellij Idea]
+- https://www.jetbrains.com/idea/download/[IntelliJ IDEA]
 - https://netbeans.org/downloads/[Netbeans]
 
 == Eclipse

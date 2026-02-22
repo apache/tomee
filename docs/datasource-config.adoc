@@ -84,7 +84,7 @@ myDataSource.validationQuery =
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style
-variable substitution. Properties are not case sensitive. If a property
+variable substitution. Properties are not case-sensitive. If a property
 is specified that is not supported by the declared DataSource a warning
 will be logged. If a DataSource is needed by the application and one is
 not declared, TomEE will create one dynamically using default settings.
@@ -119,7 +119,7 @@ boolean
 false
 
 If true allow an alternate username and password to be specified on the
-connection, rather than those specified in the DataSource definition..
+connection, rather than those specified in the DataSource definition.
 
 connectionProperties
 
@@ -492,8 +492,8 @@ Note: in this case for Oracle for instance you'll define UserName for
 the pool and User for the datasource which can look weird if you don't
 know properties are used for 2 instances (pool and datasource).
 
-Note: this solution uses the same logic than `@DataSourceDefinition`
-factory mecanism.
+Note: this solution uses the same logic as the `@DataSourceDefinition`
+factory mechanism.
 
 === Two resources definition
 

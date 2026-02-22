@@ -46,7 +46,7 @@ Understand there is a conflict in definition here and that for EJBs,
 _java:comp_ is scoped at the component (the EJB itself) not the module
 as with webapps.
 * All vendors have some proprietary concept of global JNDI. So you may
-be able to lookup "_java:/MyBean_" or "_MyBeanLocal_", but these are
+be able to look up "_java:/MyBean_" or "_MyBeanLocal_", but these are
 vendor-specific and non-portable.
 
 As well this example shows some other interesting aspects of referring
@@ -87,7 +87,7 @@ is equivalent to the following ejb-jar.xml
 
 = Writing a unit test for the example
 
-Writing an unit test for this example is quite simple. We need just to
+Writing a unit test for this example is quite simple. We need just to
 write a setup method to create and initialize the InitialContext, and
 then write our test methods
 
