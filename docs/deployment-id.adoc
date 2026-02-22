@@ -14,16 +14,16 @@ deployment id.
 
 == Like ejb-name
 
-This deployment id is much like the element of the ejb-jar.xml , with
+This deployment id is much like the element of the `ejb-jar.xml`, with
 one very important difference. The is only required to be unique within
-the scope of the ejb-jar.xml in the bean's jar. The deployment id is
+the scope of the `ejb-jar.xml` in the bean's jar. The deployment id is
 required to be unique across all beans and jars in OpenEJB. This is a
 subtle, but important, distinction.
 
 Remember that the EJB specification was designed so that enterprise
 beans could be created, packaged, and sold by vendors (EJB Providers).
 Furthermore, users should be able to buy a packaged set of beans (a jar
-with an ejb-jar.xml in it) and deploy it into an EJB Container without
+with an `ejb-jar.xml` in it) and deploy it into an EJB Container without
 modification.
 
 == The ejb-name is not unique
@@ -32,12 +32,12 @@ Let's consider this, what happens if two vendors each sell a package
 (jar) that contains a bean with the PurchaseOrder? Both are completely
 different in terms functionality and are different beans in every other
 respect. The EJB spec says, this is fine, ejb-names only have to unique
-within the jar and that jar's ejb-jar.xml file. It's ridiculous to
+within the jar and that jar's `ejb-jar.xml` file. It's ridiculous to
 expect EJB Providers to call each other up and ask, "Are you already
 using the name 'PurchaseOrder' in your jar?" Remember that the EJB
 specification was designed so that enterprise beans could be created,
 packaged, and sold by vendors (EJB Providers). Furthermore, users should
-be able to buy a packaged set of beans (a jar with an ejb-jar.xml in it)
+be able to buy a packaged set of beans (a jar with an `ejb-jar.xml` in it)
 and deploy it into an EJB Container without modification. This is all
 fine and dandy, but it still leaves it up to the EJB Container/Server
 providers to settle the difference.
@@ -81,7 +81,7 @@ Server.
 
 For bean to bean communications, the Local Server must create a JNDI
 namespace (JNDI ENC) for each bean as defined by the bean's , , and
-elements of the bean's ejb-jar.xml file. Every bean literally gets its
+elements of the bean's `ejb-jar.xml` file. Every bean literally gets its
 very own JNDI namespace. When a bean makes a JNDI call, the Local Server
 intercepts this call and uses the deployment id of the calling bean to
 retrieve that bean's private JNDI namespace from the container system's
@@ -90,7 +90,7 @@ namespace.
 
 All non-bean clients share one big global namespace. Since non-bean
 clients are not deployed and do not have a deployment descriptor like an
-ejb-jar.xml, the Local Server is unable to taylor a namespace for each
+`ejb-jar.xml`, the Local Server is unable to taylor a namespace for each
 non-bean client as it can for bean clients. The Local server cannot
 identify non-bean clients as they have no deployment id. All JNDI calls
 made by clients that the Local Server cannot identify go to the public,
@@ -117,9 +117,10 @@ javax.naming.NameNotFoundException.
 
 In short...
 
-For beans: - Each bean has its own private, personalized JNDI namespace
-- The names in it are the same names it uses in its ejb-jar.xml - Beans
-can only access their private namespace, period
+For beans:
+- Each bean has its own private, personalized JNDI namespace
+- The names in it are the same names it uses in its `ejb-jar.xml`
+- Beans can only access their private namespace, period
 
 For non-beans (everyone else): - Non-bean clients share the public,
 global JNDI namespace - The names in it are the deployment ids of all

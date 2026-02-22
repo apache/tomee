@@ -43,7 +43,7 @@ together in your WAR file as one application.
 * No classloader boundaries between Servlets and EJBs
 * EJBs and Servlets can share all third-party libraries (like Spring!)
 * No EAR required.
-* Can put the web.xml and ejb-jar.xml in the same archive (the WAR file)
+* Can put the `web.xml` and `ejb-jar.xml` in the same archive (the WAR file)
 * EJBs can see Servlet classes and vice versa
 
 === Not quite J2EE (But it is Java EE 6)

@@ -51,7 +51,7 @@ full list of supported Resource types and their properties.
 
 == Note on <jta-data-source> and <non-jta-data-source>
 
-When configuring DataSources to be used by persistence.xml files, the
+When configuring DataSources to be used by `persistence.xml` files, the
 DataSource supplied for `<jta-data-source>` is typically identical to
 the `<non-jta-data-source>`, but with the `JtaManaged` property set
 differently. Keeping with our philosophy to free you up from redundant
