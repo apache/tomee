@@ -83,7 +83,7 @@ EntityManagers or more that OpenEJB creates injected into components
 that Spring creates, here's one technique....
 
 Let's say you have a persistence unit called "_OrangeUnit_" declared in
-a persistence.xml file. One way to get the related _EntityManager_
+a `persistence.xml` file. One way to get the related _EntityManager_
 created by OpenEJB is to do as follows. Create an `@Stateless` bean with
 an `@PersistenceContext` ref in it, then use a factory bean to look it up,
 pull the EntityManager out and return it

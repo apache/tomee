@@ -5,8 +5,8 @@
 :jbake-status: published
 
 The following built-in types are supported for
-@Resource injection in EJBs via elements in a META-INF/ejb-jar.xml or
-via plain properties in a META-INF/env-entries.properties file.
+@Resource injection in EJBs via elements in a `META-INF/ejb-jar.xml` or
+via plain properties in a `META-INF/env-entries.properties` file.
 
 EJB 3.0 required types:
 
@@ -74,7 +74,7 @@ public class MyBean {
 }
 ----
 
-Works with an ejb-jar.xml as follows:
+Works with an `ejb-jar.xml` as follows:
 
 [source,xml]
 ----

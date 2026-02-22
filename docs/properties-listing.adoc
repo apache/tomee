@@ -665,7 +665,7 @@ openejb.web.xml.major
 int
 
 major version of web.xml. Can be useful to force tomcat to scan servlet
-3 annotatino when deploying with a servlet 2.x web.xml
+3 annotation when deploying with a servlet 2.x web.xml
 
 tomee.jaxws.subcontext
 

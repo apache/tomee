@@ -4,11 +4,10 @@
 :jbake-type: page
 :jbake-status: published
 
-= Overriding the
-persistence.xml
+= Overriding the persistence.xml
 
 The most common situation in EJB related testing by far is the need to
-alter your persistence.xml for a test environment.
+alter your `persistence.xml` for a test environment.
 
 == Overriding the jta-data-source and non-jta-data-source
 
@@ -18,11 +17,11 @@ you intend even if the names don't match exactly -- or in some cases at
 all. If there is only one DataSource configured, it's very easy for us
 to guess the DataSource to use.
 
-This allows you to keep your persistence.xml configured for your
+This allows you to keep your `persistence.xml` configured for your
 production environment and helps eliminate the need for a "test"
-persistence.xml (though we do have that functionality). A log line will
+`persistence.xml` (though we do have that functionality). A log line will
 be printed saying if we had to adjust the DataSources of your
-persistence.xml.
+`persistence.xml`.
 
 == Overriding the persistence-unit properties
 
@@ -31,7 +30,7 @@ properties or the initial context properties. The format is:
 
 `<unit-name>.<property>=<value>`
 
-So for example with the following persistence.xml:
+So for example with the following `persistence.xml`:
 
 [source,xml]
 ----

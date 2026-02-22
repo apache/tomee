@@ -14,7 +14,7 @@ or even a specific test.
 
 Note that this approach was added as a catch-all for when one of the
 simpler overriding techniques will not work. For the common case of
-needing to tweak your persistence.xml, see the
+needing to tweak your `persistence.xml`, see the
 link:configuring-persistenceunits-in-tests.html[Configuring
 PersistenceUnits in Tests] page for a simpler approach.
 
@@ -64,7 +64,7 @@ Note that there does _not_ have to be an equivalent non-prefixed version
 of the file. In the example above, only a "test.env-entry.properties"
 file exists and there is no equivalent plain "env-entry.properties"
 file. This prefixing works for any deployment descriptor in the
-META-INF/ directory or WEB-INF/ directory. The prefix does not have to
+`META-INF` directory or `WEB-INF` directory. The prefix does not have to
 be "test" and could be anything you choose. You can also have as many
 prefixed files as you need and could even go as far as to have one
 prefix per individual test.
@@ -74,8 +74,8 @@ prefix per individual test.
 It is possible to have several prefixes, specified in order of
 preference, so that it is possible to avoid duplicating descriptors that
 are used in more than one "profile". For example, the "foo" test case
-uses the same "env-entries.properties" file as the "bar" test case, but
-both have their own ejb-jar.xml files:
+uses the same `env-entries.properties` file as the "bar" test case, but
+both have their own `ejb-jar.xml` files:
 
 * META-INF/ejb-jar.xml
 * META-INF/test.ejb-jar.xml

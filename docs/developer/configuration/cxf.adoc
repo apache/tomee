@@ -62,7 +62,7 @@ Databinding is simply either a qualified name or a service id in resources.xml (
 
 == Sample for JAX-WS
 
-To configure WSS4J on the EJB `CalculatorBean` for instance add in openejb-jar.xml:
+To configure WSS4J on the EJB `CalculatorBean` for instance add in `openejb-jar.xml`:
 
 [source,xml]
 ----

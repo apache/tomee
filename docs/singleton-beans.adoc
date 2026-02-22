@@ -211,7 +211,7 @@ needed.
 
 = XML and Annotation Overriding
 
-Singletons can be declared in the ejb-jar.xml as follows:
+Singletons can be declared in the `ejb-jar.xml` as follows:
 
 [source,xml]
 ----

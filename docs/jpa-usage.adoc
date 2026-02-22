@@ -9,7 +9,7 @@
 == Critical: Always set jta-data-source and non-jta-data-source
 
 Always set the value of jta-data-source and non-jta-data-source in your
-persistence.xml file. Regardless if targeting your EntityManager usage
+`persistence.xml` file. Regardless if targeting your EntityManager usage
 for transaction-type="RESOURCE_LOCAL" or transaction-type="TRANSACTION",
 it's very difficult to guarantee one or the other will be the only one
 needed. Often times the JPA Provider itself will require both internally

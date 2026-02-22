@@ -56,7 +56,7 @@ Everything in your logging.properties can be configured/overridden via
 properties. See link:configuring-logging-in-tests.html[Configuring
 Logging in Tests].
 
-The properties of persistence units declared in a persistence.xml can be
+The properties of persistence units declared in a `persistence.xml` can be
 configured/overridden via properties. See
 link:configuring-persistenceunits-in-tests.html[Configuring
 PersistenceUnits in Tests].

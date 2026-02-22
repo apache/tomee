@@ -26,7 +26,7 @@ org.openejb.alt.assembler.classic.OpenEjbConfiguration object;
 implements the
 org.openejb.alt.assembler.classic.OpenEjbConfigurationFactory interface
 * _openejb.descriptors.output_ - possible values: true|false - When set
-OpenEJB saves deployment descriptors - ejb-jar.xml and openejb-jar.xml
+OpenEJB saves deployment descriptors - `ejb-jar.xml` and `openejb-jar.xml`
 
 == Configuration File
 
