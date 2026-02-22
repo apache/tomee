@@ -25,7 +25,7 @@ prefix>.threads
 host or IP, port, bool
 
 override the host. Available for ejbd and httpejbd services (used by
-jaxws and jaxrs), number of thread to maneg requests
+jaxws and jaxrs), number of thread to manage requests
 
 openejb.embedded.initialcontext.close
 
@@ -471,7 +471,7 @@ string separated by comma
 +
 +
 +
-list of prefixes you want to remove from thedefault list of exclusion
+list of prefixes you want to remove from the default list of exclusion
 +
 +
 +
@@ -683,7 +683,7 @@ tomee.jaxws.oldsubcontext
 
 bool
 
-wether or not activate old way to bind jaxws webservices directly on
+whether or not activate old way to bind jaxws webservices directly on
 root context
 
 openejb.modulename.useHash
@@ -699,7 +699,7 @@ openejb.session.manager
 
 qualified name (string)
 
-configure a session managaer to use for all contexts
+configure a session manager to use for all contexts
 
 == TomEE Arquillian adaptor
 
@@ -713,7 +713,7 @@ tomee.ejbcontainer.http.port
 
 int
 
-tomee port, -1 means random. When using a random port you can retreive
+tomee port, -1 means random. When using a random port you can retrieve
 it getting this property too.
 
 tomee.arquillian.http

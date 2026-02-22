@@ -44,7 +44,7 @@ Simply add the following to the `<plugins>` and optionally the `<pluginManagemen
 | tomee:help | Display help information on the tomee-maven-plugin. Call mvn tomee:help
 -Ddetail=true -Dgoal=<goal-name> to display parameter details.
 | tomee:list | Largely inspired by the OpenEJB command helper, but with some
-differences. List deployed EJB's in a running TomEE.
+differences. List deployed EJBs in a running TomEE.
 | tomee:run |Start and wait for TomEE.
 | tomee:start | Start TomEE and continue.
 | tomee:stop | Stop a TomEE started with start command.
@@ -72,7 +72,7 @@ supported.
 * remove:<some prefix of jar in lib folder>: remove all jar starting
 with the specified prefix
 * unzip:<some maven zip>: extract the zip in lib folder
-* ?name=<new-name>: rename the libary once copied in lib folder
+* ?name=<new-name>: rename the library once copied in lib folder
 
 Note: the name tweak can be used to rename applications too
 

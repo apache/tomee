@@ -16,7 +16,7 @@ Spring beans. The injection system supports arbitrarily complex nesting
 (e.g., Spring bean injected into a Java EE component, which is then
 injected into another Spring bean), including:
 
-* @Resouce injection of any Spring bean into EJB
+* @Resource injection of any Spring bean into EJB
 * Injection of any Java EE resource into a Spring bean, including: **
 EJB 3.0 beans ** EJB 3.1 Singleton Bean ** JDBC Connector ** JMS
 Connector ** JMS Queue and Topic ** Generic Java EE Connector (JCA)

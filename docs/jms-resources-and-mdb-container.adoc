@@ -221,7 +221,7 @@ The Activation Spec properties that can be configured are:
 |*maxMessagesPerSessions*
 |no
 |_10_
-|This is actually the prefetch size for the subscription. (Yes, badlynamed).
+|This is actually the prefetch size for the subscription. (Yes, badly named).
 
 |*maxSessions*
 |no

@@ -24,7 +24,7 @@ urls are supported for such features.
 
 These features are explained in other places.
 
-== Supported provionings
+== Supported provisioning
 
 === file
 

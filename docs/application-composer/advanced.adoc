@@ -4,7 +4,7 @@
 :index-group: Testing
 
 link:getting-started.html[Getting Started] page gives you already a lot
-of inputs but you caneven go further.
+of inputs but you can even go further.
 
 == @Descriptors
 

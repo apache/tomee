@@ -23,7 +23,7 @@ If you compile your applications on JDK7 you have to run Apache TomEE
 == Configuring TomEE to use JDK7
 
 If you have multiple JDK installed on your system you should set
-JAVA_HOME in your stratup scripts. For example if your `JAVA_HOME` is
+JAVA_HOME in your startup scripts. For example if your `JAVA_HOME` is
 `/usr/local/java/current` edit `catalina.sh` and add a line
 
 `JAVA_HOME=/usr/local/java/current/bin`
@@ -33,7 +33,7 @@ calling `<tomee-home>/bin/startup.sh`
 
 == Endorsed libraries directory
 
-TomEE 1.0 package comes with and "endorsed" direcotry which contains
+TomEE 1.0 package comes with and "endorsed" directory which contains
 updates for core JDK6 libraries. If you are running JDK7 you should
 remove al files in this directory.
 

@@ -223,7 +223,7 @@ The handling of these sockets is all asynchronous Java NIO code which allows the
 
 It is possible in this process that two servers learn of each other at the same time and each attempts to connect to the other simultaneously, resulting in two connections between the same two servers. When this happens both servers will detect the extra connection and one of the connections will be dropped and one will be kept. In practice this race condition rarely happens and can be avoided almost entirely by fanning out server startup by as little as 100 milliseconds.
 
-===== Recommandation
+===== Recommendation
 
 As mentioned the initialServers is only used for bootstrapping the multipoint network. Once running, all servers will dynamically establish direct connections with each other and there is no single point of failure.
 

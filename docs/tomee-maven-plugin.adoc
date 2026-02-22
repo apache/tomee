@@ -72,7 +72,7 @@ supported.
 * remove:<some prefix of jar in lib folder>: remove all jar starting
 with the specified prefix
 * unzip:<some maven zip>: extract the zip in lib folder
-* ?name=<new-name>: rename the libary once copied in lib folder
+* ?name=<new-name>: rename the library once copied in lib folder
 
 Note: the name tweak can be used to rename applications too
 

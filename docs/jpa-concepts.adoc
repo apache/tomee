@@ -99,7 +99,7 @@ will become Detached if it somehow *lives longer* or is *used outside*
 the scope of the PersistenceContext/Cache.
 
 For a JTA unit, the PersistenceContext/Cache will live as long as the
-transaction does. When a transaction completes (commits or rollsback)
+transaction does. When a transaction completes (commits or rolls back)
 all objects that were in the PersistenceContext/Cache are Detached. You
 can still use them, but they are no longer associated with a
 PersistenceContext/Cache and modifications on them will *not* be

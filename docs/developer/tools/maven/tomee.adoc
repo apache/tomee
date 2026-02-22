@@ -73,7 +73,7 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |endorsedLibs|-|dependencies to add in endorsed, see after this table for advanced usage
 |javaagents|-|javaagents to add on the JVM, supports maven coordinates
 |persistJavaagents|false|should javaagent be saved or just use for this plugin run
-|webapps|-|additional applicatinos to deploy
+|webapps|-|additional applications to deploy
 |warFile|${project.build.directory}/${project.build.finalName}.${project.packaging}|the war to deploy
 |workWarFile|${project.build.directory}/${project.build.finalName}"|the exploded war to deploy
 |removeDefaultWebapps|true| should default webapps (ROOT, docs, ...) be deleted
@@ -87,7 +87,7 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |useOpenEJB|false|use openejb-standalone instead of tomee
 |inlinedServerXml|-|a server.xml content in pom.xml directly
 |inlinedTomEEXml|-|a tomee.xml content in pom.xml directly
-|overrideOnUnzip|true|if when unzipping tomee a file is already there should it be overriden
+|overrideOnUnzip|true|if when unzipping tomee a file is already there should it be overridden
 |skipRootFolderOnUnzip|true|ignore root folder of the zip
 |keystore|-|path to keystore for HTTPS connector
 |===

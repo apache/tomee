@@ -63,7 +63,7 @@
 |openejb.web.xml.major	|int|	major version of web.xml. Can be useful to force tomcat to scan servlet 3 annotation when deploying with a servlet 2.x web.xml
 |tomee.jaxws.subcontext	|string|	sub context used to bind jaxws web services, default is webservices
 |openejb.servicemanager.enabled	|bool|	run all services detected or only known available services (WS and RS
-|tomee.jaxws.oldsubcontext	|bool|	wether or not activate old way to bind jaxws webservices directly on root context
+|tomee.jaxws.oldsubcontext	|bool|	whether or not activate old way to bind jaxws webservices directly on root context
 |openejb.modulename.useHash	|bool|	add a hash after the module name of the webmodule if it is generated from the webmodule location, it avoids conflicts between multiple deployment (through ear) of the same webapp. Note: it disactivated by default since names are less nice this way.
 |openejb.session.manager	|qualified name (string)|	configure a session manager to use for all contexts
 |tomee.tomcat.resource.wrap	|bool|wrap tomcat resources (context.xml) as tomee resources if possible (true by default)

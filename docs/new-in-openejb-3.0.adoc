@@ -13,7 +13,7 @@ OpenEJB 3.0 supports the EJB 3.0 specification as well as the prior EJB
 * No home interfaces
 * Business Interfaces
 * Dependency Injection
-* Intercpetors
+* Interceptors
 * Java Persistence API
 * Service Locator (ala SessionContext.lookup)
 * POJO-style beans
@@ -74,7 +74,7 @@ public class MyBean {
 Along the lines of injection, one of the last remaining things in EJB 3
 that people need an `ejb-jar.xml` file for is to supply the value of
 env-entries. Env Entries are the source of data for all user supplied
-data injected into your bean; the afore mentioned String, Boolean,
+data injected into your bean; the aforementioned String, Boolean,
 Integer, etc. This is a very big burden as each env-entry is going to
 cost you 5 lines of xml and the complication of having to figure out how
 to add you bean declaration in xml as an override of an existing bean

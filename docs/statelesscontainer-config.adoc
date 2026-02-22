@@ -76,7 +76,7 @@ time
 
 30 seconds
 
-Specifies the time an invokation should wait for an instance of the pool
+Specifies the time an invocation should wait for an instance of the pool
 to become available.
 
 callbackThreads
@@ -190,13 +190,13 @@ expired instances.
 
 == accessTimeout
 
-Specifies the time an invokation should wait for an instance of the pool
+Specifies the time an invocation should wait for an instance of the pool
 to become available.
 
 After the timeout is reached, if an instance in the pool cannot be
 obtained, the method invocation will fail.
 
-Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+Usable time units: nanoseconds, microseconds, milliseconds, seconds,
 minutes, hours, days. Or any combination such as "1 hour and 27 minutes
 and 10 seconds"
 
@@ -224,7 +224,7 @@ bean is undeployed and its pool is closed. The `CloseTimeout` specifies
 the maximum time to wait for the pool to close and `PostConstruct`
 methods to be invoked.
 
-Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+Usable time units: nanoseconds, microseconds, milliseconds, seconds,
 minutes, hours, days. Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
@@ -258,7 +258,7 @@ Only instances in surplus of the pool's `MinSize` are eligible to expire
 via `IdleTimeout` Instances that expire due to `IdleTimeout` will have
 their `@PreDestroy` methods invoked before being completely destroyed.
 
-Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+Usable time units: nanoseconds, microseconds, milliseconds, seconds,
 minutes, hours, days. Or any combination such as "1 hour and 27 minutes
 and 10 seconds"
 
@@ -271,7 +271,7 @@ This will happen gracefully. Useful for situations where bean instances
 are designed to hold potentially expensive resources such as memory or
 file handles and need to be periodically cleared out.
 
-Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+Usable time units: nanoseconds, microseconds, milliseconds, seconds,
 minutes, hours, days. Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
@@ -436,10 +436,10 @@ functionality is enforced. Higher intervals are better.
 Instances in use are excluded from sweeping. Should an instance expire
 while in use it will be evicted immediately upon return to the pool.
 Effectively `MaxAge` and flushes will be enforced as a part of normal
-activity or sweeping, while IdleTimeout is only enforcable via sweeping.
+activity or sweeping, while IdleTimeout is only enforceable via sweeping.
 This makes aggressive sweeping less important for a pool under moderate
 load.
 
-Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+Usable time units: nanoseconds, microseconds, milliseconds, seconds,
 minutes, hours, days. Or any combination such as
 `1 hour and 27 minutes and 10 seconds`

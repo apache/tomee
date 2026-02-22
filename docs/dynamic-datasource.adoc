@@ -12,7 +12,7 @@ The openejb dynamic datasource api aims to allow to use multiple data
 sources as one.
 
 It can be useful for technical reasons (load balancing for example) or
-functionnal reasons (filtering, aggregation, enriching...).
+functional reasons (filtering, aggregation, enriching...).
 
 == The API
 

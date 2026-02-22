@@ -143,7 +143,7 @@ TomEE also provides few utilities you can add in DataSource properties:
 
 ==== DataSource and JTA
 
-`JtaManaged` determines wether or not this data source should be JTA managed
+`JtaManaged` determines whether or not this data source should be JTA managed
 or user managed.  If set to 'true' it will automatically be enrolled
 in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
 on the datasource or connection will not be allowed.  If you need to perform
@@ -356,7 +356,7 @@ mail/mysession.password = abcdefghij
 The properties are `jakarta.mail.Session` ones with the addition of `useDefault` which specifies if `getDefaultInstance()`
 or `getInstance` is used to create the session. `getDefaultInstance()` will ensure that several calls are done with the
 same configuration and return the same instance. For tomee it is likely better to rely on `getInstance()`(ie keep `useDefault` to false)
-and use `aliases` option of the resource to define an alias if you need to share the same instance accross multiple names.
+and use `aliases` option of the resource to define an alias if you need to share the same instance across multiple names.
 
 
 == ManagedExecutorService

@@ -58,10 +58,9 @@ set one type of transaction behaviour (as seen above) on the bean, and a
 different one on a specific method of that same bean, which overrides
 the one configured for the overall bean. For instance, maybe you want to
 make an audit entry in the database that you are about to attempt a
-credit card payment. It really needs to be in it's own transaction so
+credit card payment. It really needs to be in its own transaction so
 that it is IMMEDIATELY committed for audit purposes, if something goes
 wrong with the credit card payment. So, perhaps you use MANDATORY on the
 bean, and REQUIRES_NEW on the method for audit logging. As soon as the
 method that does the audit logging is complete, the transaction is
-committed, and the credit card payment transaction continues on it's
-way.
+committed, and the credit card payment transaction continues on its way.

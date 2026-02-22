@@ -76,7 +76,7 @@ See rule 2 and the above. Just creating an EJB doesn't cause it to be
 added to java:comp/env. If a
 link:container-managed-component.html[Container-Managed Component] wants
 to look up the EJB they must [Declare a Reference|Declaring References]
-to it via the `@EJB` annotionation or <ejb-local-ref> or <ejb-ref> in xml.
+to it via the `@EJB` annotation or <ejb-local-ref> or <ejb-ref> in xml.
 In Java EE 6, however, EJBs will be automatically bound to
 "java:global[/<app-name>]/<module-name>/<bean-name>[!<fully-qualified-interface-name>]"
 and can be looked up without declaring a reference first.

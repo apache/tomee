@@ -79,7 +79,7 @@ For example, if you have a directory structure like this:
 > C:\myapp\acmeEjbs\org\acme\BarHome.class
 ----
 
-Then you would delcare a 'Deployments' element with the 'dir' attribute
+Then you would declare a 'Deployments' element with the 'dir' attribute
 set to 'C:' as shown below.
 
 [source,xml]

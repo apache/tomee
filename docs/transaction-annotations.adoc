@@ -73,7 +73,7 @@ an exception.
 ==== MANDATORY
 
 A _MANDATORY_ method is guaranteed to always be executed in a
-transaction. However, it's the caller's job to take care of suppling the
+transaction. However, it's the caller's job to take care of supplying the
 transaction. If the caller attempts to invoke the method _outside_ of a
 transaction, then the container will block the call and throw them an
 _exception_.
@@ -187,7 +187,7 @@ public static class MyBean implements MyBusinessInterface {
 
 = Illegal Usage
 
-Generally, transaction annotationss cannot be made on AroundInvoke
+Generally, transaction annotations cannot be made on AroundInvoke
 methods and most callbacks.
 
 The following usages of `@TransactionAttribute` have no effect.

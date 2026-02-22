@@ -76,7 +76,7 @@ for every bean deployed in OpenEJB.
 The Local (IntraVM) Server is an integral part of the container system
 and the two are, in many ways, inseparable. The Local Server takes care
 of all bean to bean and client to bean invocations made inside the
-virtual machine. For this reason, it often refered to as the IntraVM
+virtual machine. For this reason, it often referred to as the IntraVM
 Server.
 
 For bean to bean communications, the Local Server must create a JNDI

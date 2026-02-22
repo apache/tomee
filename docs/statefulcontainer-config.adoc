@@ -133,7 +133,7 @@ bean instance to become available before giving up.
 After the timeout is reached a
 `jakarta.ejb.ConcurrentAccessTimeoutException` will be thrown.
 
-Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+Usable time units: nanoseconds, microseconds, milliseconds, seconds,
 minutes, hours, days. Or any combination such as "1 hour and 27 minutes
 and 10 seconds"
 
