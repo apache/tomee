@@ -117,7 +117,7 @@
     <version.plugin.bundle>6.0.0</version.plugin.bundle>
     <version.plugin.javadoc>3.12.0</version.plugin.javadoc>
     <asciidoclet.version>1.5.0</asciidoclet.version>
-    <surefire.version>3.5.3</surefire.version>
+    <surefire.version>3.5.5</surefire.version>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
@@ -166,8 +166,8 @@
     <version.commons-discovery>0.5</version.commons-discovery>
     <version.commons-io>2.21.0</version.commons-io>
     <version.commons-lang3>3.20.0</version.commons-lang3>
-    <version.commons-pool>2.13.0</version.commons-pool>
-    <version.commons-fileupload>2.0.0-M4</version.commons-fileupload>
+    <version.commons-pool>2.13.1</version.commons-pool>
+    <version.commons-fileupload>2.0.0-M5</version.commons-fileupload>
 
 
     <!-- Java SE version -->
@@ -209,7 +209,7 @@
     <!-- com.sun -->
     <version.impl.saaj>3.0.4</version.impl.saaj>
     <!-- org.apache -->
-    <version.activemq>6.2.0</version.activemq>
+    <version.activemq>6.2.1</version.activemq>
     <version.batchee>2.0.0</version.batchee>
     <version.bval>3.0.1</version.bval>
     <!-- TODO: Revert this once CXF has released -->
@@ -224,9 +224,9 @@
     <!-- org.eclipse -->
     <version.eclipselink>5.0.0-B13</version.eclipselink>
     <!-- org.glassfish -->
-    <version.mojarra>4.0.13</version.mojarra>
+    <version.mojarra>4.0.14</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate.orm>7.2.0.Final</version.hibernate.orm>
+    <version.hibernate.orm>7.2.5.Final</version.hibernate.orm>
     <version.hibernate.validator>9.1.0.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
@@ -280,7 +280,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>3.10.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -302,7 +302,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.4</version>
+          <version>3.5.5</version>
         </plugin>
         <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
           <groupId>org.apache.geronimo.buildsupport</groupId>
@@ -382,7 +382,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.14.1</version>
+          <version>3.15.0</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -519,7 +519,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.10.0</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.swizzle</groupId>
@@ -1010,7 +1010,7 @@
 <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>
-        <version>3.6.1.Final</version>
+        <version>3.6.2.Final</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
@@ -1592,7 +1592,7 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
-        <version>2.16.0</version>
+        <version>2.17.1</version>
       </dependency>
       <dependency>
         <groupId>jline</groupId>

@@ -17,7 +17,7 @@ Note, TomEE can be setup to support *ejbds*.
 
 First, you'll need to setup Tomcat (TomEE) with SSL as described here:
 
-http://tomcat.apache.org/tomcat-7.0-doc/ssl-howto.html
+http://tomcat.apache.org/tomcat-11.0-doc/ssl-howto.html
 
 Once that is done and the `tomee` webapp can be accessed with `https`,
 an EJB client can invoke over `https` using the following
@@ -43,9 +43,9 @@ like connection reset, you'll have to set 'https.protocols' system
 property. 'https.protocols' property must be set according to the
 SSLProtocol parameter of the HTTPS connector configuration :
 
-http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+http://tomcat.apache.org/tomcat-11.0-doc/config/http.html
 
-You can also have a look a this :
+You can also have a look at this :
 
 http://docs.oracle.com/javase/1.4.2/docs/guide/plugin/developer_guide/faq/troubleshooting.html
 

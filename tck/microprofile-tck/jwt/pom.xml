@@ -112,7 +112,7 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>10.6</version>
+      <version>10.8</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -134,7 +134,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <!-- needed for the TCK to work correctly -->
-        <version>2.10</version>
+        <version>3.10.0</version>
         <executions>
           <execution>
             <id>copy-tck-test-suite-file</id>
@@ -158,7 +158,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.5</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/suites/tck-base-suite.xml</suiteXmlFile>
