@@ -1,4 +1,4 @@
-The scope of this document to define how Apache TomEE can be configured for HA (High Availability) clustering.
+The scope of this document is to define how Apache TomEE can be configured for HA (High Availability) clustering.
 
 The configuration will focus on two local instances, with a view to an open-ended remote configuration.
 
