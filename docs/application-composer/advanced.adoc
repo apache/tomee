@@ -63,7 +63,7 @@ which is our embedded http layer).
 
 == Nice logs
 
-`@SimpleLog` annotation allows you to have one liner logs
+`@SimpleLog` annotation allows you to have one-liner logs
 
 == @JaxrsProvider
 

@@ -11,7 +11,7 @@
 |Name	|Value|	Description
 |openejb.embedded.remotable|	bool|	activate or not the remote services when available
 |.bind, <service prefix>.port, <service prefix>.disabled, <service prefix>.threads	| host or IP, port, bool|override the host. Available for ejbd and httpejbd services (used by jaxws and jaxrs), number of thread to manage requests
-|openejb.embedded.initialcontext.close	|LOGOUT or DESTROY|	configure the hook called when closing the initial context. Useful when starting OpenEJB from a new InitialContext([properties]) instantiation. By default it simply logs out the logged user if it exists. DESTROY means clean the container.
+|openejb.embedded.initialcontext.close	|LOGOUT or DESTROY|	configure the hook called when closing the initial context. Useful when starting OpenEJB from a new InitialContext([properties]) instantiation. By default, it simply logs out the logged user if it exists. DESTROY means clean the container.
 |jakarta.persistence.provider	|string|	override the JPA provider value
 |jakarta.persistence.transactionType	|string|	override the transaction type for persistence contexts
 |jakarta.persistence.jtaDataSource	|string|	override the JTA datasource value for persistence contexts
@@ -21,7 +21,7 @@
 |openejb.descriptors.output.folder|	path|	where to dump deployement descriptors if activated.
 |openejb.strict.interface.declaration	|bool|	add some validations on session beans (spec validations in particular). false by default.
 |openejb.conf.file or openejb.configuration|	string|	OpenEJB configuration file path
-|openejb.debuggable-vm-hackery	|bool|	remove JMS informations from deployment
+|openejb.debuggable-vm-hackery	|bool|	remove JMS information from deployment
 |openejb.validation.skip	|bool	|skip the validations done when OpenEJB deploys beans
 |openejb.deployments.classpath.ear	|bool|	deploy the classpath as an ear
 |openejb.webservices.enabled|	bool	|activate or not webservices
@@ -49,7 +49,7 @@
 |openejb.check.classloader	|bool|	if true print some information about duplicated classes
 |openejb.check.classloader.verbose|	bool|	if true print classes intersections
 |openejb.additional.exclude	|string separated by comma|	list of prefixes you want to exclude and are not in the default list of exclusion
-|openejb.additional.include	|string separated by comma|	list of prefixes you want to remove from thedefault list of exclusion
+|openejb.additional.include	|string separated by comma|	list of prefixes you want to remove from the default list of exclusion
 |openejb.offline	|bool|	if true can create datasources and containers automatically
 |openejb.exclude-include.order|	include-exclude or exclude-include|	if the inclusion/exclusion should win on conflicts (intersection)
 |openejb.log.color	|bool|	activate or not the color in the console in embedded mode
@@ -57,18 +57,18 @@
 |tomee.serialization.class.blacklist|	string	|default list of packages/classnames excluded for EJBd deserialization (needs to be set on server and client sides). Please see the description of Ejbd Transport for details.
 |tomee.serialization.class.whitelist|	string|	default list of packages/classnames allowed for EJBd deserialization (blacklist wins over whitelist, needs to be set on server and client sides). Please see the description of Ejbd Transport for details.
 |tomee.remote.support	|boolean	|if true /tomee webapp is auto-deployed and EJBd is active (true by default for 1.x, false for 7.x excepted for tomee maven plugin and arquillian)
-|openejb.crosscontext	|bool|	set the cross context property on tomcat context (can be done in the traditionnal way if the deployment is don through the webapp discovery and not the OpenEJB Deployer EJB)
+|openejb.crosscontext	|bool|	set the cross context property on tomcat context (can be done in the traditional way if the deployment is done through the webapp discovery and not the OpenEJB Deployer EJB)
 |openejb.jsessionid-support	|bool|	remove URL from session tracking modes for this context (see jakarta.servlet.SessionTrackingMode)
 |openejb.myfaces.disable-default-values	|bool|	by default TomEE will initialize myfaces with some its default values to avoid useless logging
-|openejb.web.xml.major	|int|	major version of web.xml. Can be useful to force tomcat to scan servlet 3 annotatino when deploying with a servlet 2.x web.xml
+|openejb.web.xml.major	|int|	major version of web.xml. Can be useful to force tomcat to scan servlet 3 annotation when deploying with a servlet 2.x web.xml
 |tomee.jaxws.subcontext	|string|	sub context used to bind jaxws web services, default is webservices
 |openejb.servicemanager.enabled	|bool|	run all services detected or only known available services (WS and RS
 |tomee.jaxws.oldsubcontext	|bool|	wether or not activate old way to bind jaxws webservices directly on root context
 |openejb.modulename.useHash	|bool|	add a hash after the module name of the webmodule if it is generated from the webmodule location, it avoids conflicts between multiple deployment (through ear) of the same webapp. Note: it disactivated by default since names are less nice this way.
-|openejb.session.manager	|qualified name (string)|	configure a session managaer to use for all contexts
+|openejb.session.manager	|qualified name (string)|	configure a session manager to use for all contexts
 |tomee.tomcat.resource.wrap	|bool|wrap tomcat resources (context.xml) as tomee resources if possible (true by default)
 |tomee.tomcat.datasource.wrap	|bool|same as tomee.tomcat.resource.wrap for datasource (false by default). Note that setting it to true will create tomee datasources but can have the side effect to create twice singleton resources
-|openejb.environment.default	|bool|should default JMS resources be created or not, default to false to ensure no port is bound or multiple resources are created and completely uncontrolled (doesn't apply to datasources etc for compatibility). For tests only!
+|openejb.environment.default	|bool|should default JMS resources be created or not, defaults to false to ensure no port is bound or multiple resources are created and completely uncontrolled (doesn't apply to datasources etc. for compatibility). For tests only!
 |===
 
 == Client

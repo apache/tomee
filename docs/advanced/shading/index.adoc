@@ -75,7 +75,7 @@ java -jar myapp-1.0-SNAPSHOT.jar
 
 == Fat Jars with Gradle
 
-With gradle you can rely on either jar plugin, fatjar plugin or shadowjar plugin. Last one is likely the closer to maven shade plugin
+With Gradle you can rely on either jar plugin, fatjar plugin or shadowjar plugin. Last one is likely the closer to maven shade plugin
 so that's the one used for next sample:
 
 [source,groovy]

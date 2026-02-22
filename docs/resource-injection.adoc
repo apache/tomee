@@ -83,7 +83,7 @@ java:comp/env/org.apache.openejb.examples.resource.InvoiceBean/maxLineItems
 ----
 
 The pattern is to combine the fully-qualified class name and the name of
-a instance field (or a name of the setter method without _set_ prefix
+an instance field (or a name of the setter method without _set_ prefix
 and the first letter lowercased).
 
 === @Resource annotation of a setter method

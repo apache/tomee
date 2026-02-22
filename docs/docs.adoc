@@ -20,7 +20,7 @@
 
 == Advanced
 - link:advanced/applicationcomposer/index.html[`ApplicationComposer` with JBatch]
-- link:advanced/setup/index.html[How to Setup TomEE in Production]
+- link:advanced/setup/index.html[How to set up TomEE in Production]
 - link:advanced/shading/index.html[Fat / Uber Jar Deployment using the Maven Shade Plugin]
 - link:advanced/client/jndi.html[Java Naming and Directory Interface (JNDI)]
 - link:advanced/jms/jms-configuration.html[Why is my ActiveMQ/JMS MDB not scaling as expected?]

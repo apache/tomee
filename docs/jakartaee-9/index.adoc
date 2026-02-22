@@ -16,7 +16,7 @@ will need to change any references as well.
 
 == Goals
 
-* Try and maintain a single codebase for javax and jakarta. It's tempting to fork master and embark on a massive renaming exercise. That's complex as we'd need to do that for various dependencies as well, who may also have other branches and timelines. Having two code-bases also means that any changes need to be applied twice, and with renamed packages, its unlikely the git merging or cherry-picking will work.
+* Try and maintain a single codebase for javax and jakarta. It's tempting to fork master and embark on a massive renaming exercise. That's complex as we'd need to do that for various dependencies as well, who may also have other branches and timelines. Having two code-bases also means that any changes need to be applied twice, and with renamed packages, it's unlikely the git merging or cherry-picking will work.
 
 * Be backwards compatible - One goal I had in my mined, is that if you have an application that uses javax, you'd probably like to be able to run it on a new Jakarta EE server. There are some options here - I quite like the idea of running the Transformer as a javaagent, so any applications deployed using the old namespaces are converted on the fly at the bytecode level.
 

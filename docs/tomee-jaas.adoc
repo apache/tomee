@@ -70,8 +70,8 @@ Configure your login module specifically (`users.properties` for
 snippets of this page for instance).
 
 Place `users.properties` and `groups.properties` files in
-`$CATALINA_BASE/conf/` folder. `users.properties` file contains user
-name and associated password entries, ex.:
+`$CATALINA_BASE/conf/` folder. `users.properties` file contains
+username and associated password entries, ex.:
 
 [source,properties]
 ----

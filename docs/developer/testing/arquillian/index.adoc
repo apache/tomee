@@ -14,13 +14,13 @@ TomEE has several arquillian adapter flavors:
 == Embedded or Remote?
 
 Big advantage of embedded adapters is to be able to debug as usual. However it has few drawbacks which can make you
-rething this choice:
+rethink this choice:
 
 - JVM resources are available where it will likely not be the case in war mode (src/main/resources typically)
 - You can mix server and client side features when writing a test
 - Classloading is a bit different by design and less isolated (test dependencies) so you can get runtime surprises when really deploying
 
-To summarize: the choice is the trade off you choose between easiness and reality of the simulation.
+To summarize: the choice is the trade-off you choose between easiness and reality of the simulation.
 
 TIP: in TomEE build we build the same tests against all tomee adapters in the same build/module, this means you can use embedded adapter in dev
 and activate remote tomee too (not only cause then if there is a failure you don't know if you missed it locally or if it is due
@@ -98,8 +98,8 @@ Sample:
 | dir    | where to create the TomEE work dir (a fake file layout is created for Tomcat needs)
 | appWorkingDir     | where to dump applications (`@Deployment`)
 | host      | which host to use
-| stopHost       | which port to use to shutdown TomEE (port on Server configuration)
-| stopCommand       | which command to use to shutdown TomEE
+| stopHost       | which port to use to shut down TomEE (port on Server configuration)
+| stopCommand       | which command to use to shut down TomEE
 | serverXml       | where is the provided server.xml
 | portRange        | when port are set to -1 TomEE adapter will generate an available port, if specified the range will be used
 | preloadClasses        | which classes to initialize during container startup
@@ -108,7 +108,7 @@ Sample:
 | unpackWars          | unpackWARs value in server.xml
 | properties           | container properties
 | webContextToUseWithEars           |sometimes you can need this to adjust which context the adapter uses to find the ArquillianServletRunner
-| keepServerXmlAsThis           |don't replace ports etc in server.xml and use it like it has been provided when serverXml is set
+| keepServerXmlAsThis           |don't replace ports etc. in server.xml and use it like it has been provided when serverXml is set
 | singleDumpByArchiveName           | dump only once `@Deployment` archives using the name as key
 | singleDeploymentByArchiveName            |deploy only once `@Deployment` archives using the name as key
 |ssl| should https be activated
@@ -238,8 +238,8 @@ For really remote instances (= not on localhost) you need the `deployerPropertie
 | dir    | where to create the TomEE work dir (a fake file layout is created for Tomcat needs)
 | appWorkingDir     | where to dump applications (`@Deployment`)
 | host      | which host to use
-| stopHost       | which port to use to shutdown TomEE (port on Server configuration)
-| stopCommand       | which command to use to shutdown TomEE
+| stopHost       | which port to use to shut down TomEE (port on Server configuration)
+| stopCommand       | which command to use to shut down TomEE
 | serverXml       | where is the provided server.xml
 | portRange        | when port are set to -1 TomEE adapter will generate an available port, if specified the range will be used
 | preloadClasses        | which classes to initialize during container startup
@@ -248,7 +248,7 @@ For really remote instances (= not on localhost) you need the `deployerPropertie
 | unpackWars          | unpackWARs value in server.xml
 | properties           | container properties
 | webContextToUseWithEars           |sometimes you can need this to adjust which context the adapter uses to find the ArquillianServletRunner
-| keepServerXmlAsThis           |don't replace ports etc in server.xml and use it like it has been provided when serverXml is set
+| keepServerXmlAsThis           |don't replace ports etc. in server.xml and use it like it has been provided when serverXml is set
 | singleDumpByArchiveName           | dump only once `@Deployment` archives using the name as key
 | singleDeploymentByArchiveName            |deploy only once `@Deployment` archives using the name as key
 |groupId|the maven groupId of the TomEE (or not) artifact

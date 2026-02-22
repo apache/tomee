@@ -77,7 +77,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 ----
 
 The URL will get injected by Arquillian. Be careful, that injection only
-works if your are on the client side (it does not make sense in the
+works if you're on the client side (it does not make sense in the
 server side). So, if for a specific need to need it, just use the system
 property.
 
@@ -139,7 +139,7 @@ Embedded Adapter:
 
 == TomEE Remote Adapter
 
-The TomEE Remote Adapter will unzip and setup a TomEE or TomEE Plus
+The TomEE Remote Adapter will unzip and set up a TomEE or TomEE Plus
 distribution. Once setup, the server will execute in a separate process.
 This will be slower, but with the added benefit it is 100% match with
 the production system environment.

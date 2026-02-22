@@ -15,11 +15,11 @@ details.
 
 In a managed environment it is usually quite difficult to perform unit
 tests, due to the fact that most of the time you have to mock almost the
-entire environment. It is very time consuming and requires complicated
+entire environment. It is very time-consuming and requires complicated
 integration tests that must reflect the production environment as best
 as possible. Unit tests lose their true value.
 
-JEE always got seen as an heavy technology, impossible to test and to
+JEE always got seen as a heavy technology, impossible to test and to
 use in development. OpenEJB always fought against that idea and proved
 that it's really possible.
 

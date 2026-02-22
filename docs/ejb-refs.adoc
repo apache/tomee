@@ -123,7 +123,7 @@ shapesApp.jar:
 ----
 
 Note that the value of could actually be anything and the above example
-would still work as there is no annotation that needs to match the and
+would still work as there is no annotation that needs to match and
 no one will likely be looking up the EJB as it's injected.
 
 == Referencing a bean in another server

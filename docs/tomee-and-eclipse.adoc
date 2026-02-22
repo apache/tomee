@@ -27,7 +27,7 @@ to install Eclipse, TomEE and create/deploy your first project is
 available on YouTube here:
 http://www.youtube.com/watch?v=Lr8pxEACVRI[Getting Started with Apache
 TomEE] (Remember to select the 'Generate web.xml descriptor' checkbox
-during project setup. Otherwise the ejb does not get injected and you
+during project setup. Otherwise, the ejb does not get injected and you
 will get an error.).
 
 [arabic]
@@ -60,7 +60,7 @@ Server.
 . Set the *Tomcat installation directory* by clicking the *Browse*
 button and selecting the folder where you extracted TomEE
 . Add your webapp to the server. Click *Finish*.
-. In the *Servers* tab, double click on your server to open up the
+. In the *Servers* tab, double-click on your server to open up the
 *Overview* page. Click on the *Modules* tab
 . Click *Add External Web Module*. In the *Add Web Module* dialog, for
 document base, browse to `<TomEE>/webapps/tomee`. Set *Path:* to
@@ -75,7 +75,7 @@ in this scenario. Otherwise, select *Use Tomcat Installation*
 saved.
 . Click on your webapp project, then select Project - clean. Hit OK.
 This will cause Eclipse to clean and rebuild
-. In the *Servers* tab, right click on the server and select *Publish*.
+. In the *Servers* tab, right-click on the server and select *Publish*.
 . Start the server.
 
 === Workspace Metadata Installation

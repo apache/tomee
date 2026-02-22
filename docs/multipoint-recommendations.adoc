@@ -10,7 +10,7 @@ multipoint network. Once running, all servers will dynamically establish
 direct connections with each other and there is no single point of
 failure.
 
-However to ensure that the bootstrapping process can occur successfully,
+However, to ensure that the bootstrapping process can occur successfully,
 the `initialServers` property of the `conf/multipoint.properties` file
 must be set carefully and with a specific server start order in mind.
 Each server consults its `initialServers` list exactly once in the
@@ -24,7 +24,7 @@ become introduced and connected to all the other servers in the network.
 == Failed scenario background
 
 As an example of a failed scenario, imagine there are three servers;
-`server1`, `server2`, `server3`. They are setup only to point to the
+`server1`, `server2`, `server3`. They are set up only to point to the
 server in front of them making a chain:
 
 * server1; `initialServers = server2`
@@ -79,7 +79,7 @@ than listing nothing at all, then all servers would fully discover each
 other regardless of startup order; assuming all three servers did
 eventually start.
 
-== Bootstrapping Three Servers or Less
+== Bootstrapping Three Servers or fewer
 
 In a three sever scenario, we recommend simply having all three servers
 list all three servers.
@@ -92,13 +92,13 @@ list all three servers.
 ** `initialServers = server1, server2, server3`
 
 There's no harm to a server listing itself. It gives you one clean list
-to maintain and it will work even if you decide not to start one of the
+to maintain, and it will work even if you decide not to start one of the
 three servers.
 
 == Bootstrapping Four Servers or More
 
 In a scenario of four or more, we recommend picking at least to servers
-and focus on always keeping at least one of them running. Lets refer to
+and focus on always keeping at least one of them running. Let's refer to
 them as "root" servers for simplicity sake.
 
 * server1/conf/multipoint.properties

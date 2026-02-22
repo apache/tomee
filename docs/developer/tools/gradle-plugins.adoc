@@ -4,7 +4,7 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-TomEE provides a gradle plugin for tomee-embedded "à la Jetty".
+TomEE provides a Gradle plugin for tomee-embedded "à la Jetty".
 
 [source,java]
 ----

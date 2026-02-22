@@ -48,9 +48,9 @@ together in your WAR file as one application.
 
 === Not quite J2EE (But it is Java EE 6)
 
-This is very different than J2EE or Java EE 5 as there are not several
+This is very different from J2EE or Java EE 5 as there are not several
 levels of separation and classloader hierarchy any more. +
-This may take some getting used to and it is important to understand
+This may take some time getting used to, and it is important to understand
 that this style of packaging is *not* J2EE compliant. +
 You should not worry though, as it is an accepted feature of Java EE 6.
 

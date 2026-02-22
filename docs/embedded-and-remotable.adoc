@@ -23,7 +23,7 @@ is seen by the LocalInitialContextFactory, it will boot up the Server
 ServiceManager in the VM which will in turn look for ServerServices in
 the classpath.
 
-Provided you have the openejb-ejbd jar in your classpath along with it's
+Provided you have the openejb-ejbd jar in your classpath along with its
 dependencies (openejb-server, openejb-client, openejb-core), then those
 services will be brought online and remote clients will be able to
 connect into your vm and invoke beans.

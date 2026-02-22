@@ -15,7 +15,7 @@ related annotations:
 
 == Basic idea
 
-* By default all methods of a business interface are accessible, logged
+* By default, all methods of a business interface are accessible, logged
 in or not
 * The annotations go on the bean class, not the business interface
 * Security annotations can be applied to entire class and/or individual
@@ -84,7 +84,7 @@ public class OpenSourceProjectBean implements Project {
 }
 ----
 
-* Allow only logged in users in the "committer" role to invoke
+* Allow only logged-in users in the "committer" role to invoke
 'svnCommit'.
 * Allow anyone logged in or not to invoke 'svnCheckout'.
 
@@ -140,7 +140,7 @@ public class OpenSourceProjectBean implements Project {
 }
 ----
 
-* Allow only logged in users in the "committer" role to invoke
+* Allow only logged-in users in the "committer" role to invoke
 'svnCommit', 'svnCheckout' or 'submitPatch'.
 
 == Mixing class and method level restrictions
@@ -171,9 +171,9 @@ public class OpenSourceProjectBean implements Project {
 }
 ----
 
-* Allow only logged in users in the "committer" role to invoke
+* Allow only logged-in users in the "committer" role to invoke
 'svnCommit' or 'svnCheckout'
-* Allow only logged in users in the "contributor" role to invoke
+* Allow only logged-in users in the "contributor" role to invoke
 'submitPatch'.
 
 == PermitAll
@@ -205,11 +205,11 @@ public class OpenSourceProjectBean implements Project {
 }
 ----
 
-* Allow only logged in users in the "committer" role to invoke
+* Allow only logged-in users in the "committer" role to invoke
 'svnCommit'.
-* Allow only logged in users in the "contributor" role to invoke
+* Allow only logged-in users in the "contributor" role to invoke
 'submitPatch'.
-* Allow anyone logged in or not to invoke 'svnCheckout'.
+* Allow anyone logged-in or not to invoke 'svnCheckout'.
 
 == DenyAll
 
@@ -245,12 +245,12 @@ public class OpenSourceProjectBean implements Project {
 }
 ----
 
-* Allow only logged in users in the "committer" role to invoke
+* Allow only logged-in users in the "committer" role to invoke
 'svnCommit'.
-* Allow only logged in users in the "contributor" role to invoke
+* Allow only logged-in users in the "contributor" role to invoke
 'submitPatch'.
-* Allow anyone logged in or not to invoke 'svnCheckout'.
-* Allow _no one_ logged in or not to invoke 'deleteProject'.
+* Allow anyone logged-in or not to invoke 'svnCheckout'.
+* Allow _no one_ logged-in or not to invoke 'deleteProject'.
 
 = Illegal Usage
 

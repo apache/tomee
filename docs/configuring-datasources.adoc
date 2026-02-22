@@ -29,7 +29,7 @@ Would map to a Resource declared in your openejb.xml as follows:
 ----
 
 Note that in the xml element, the _type_ value of _javax.sql.DataSource_
-can abbreviated to just _DataSource_ as follows:
+can be abbreviated to just _DataSource_ as follows:
 
 [source,xml]
 ----
@@ -116,7 +116,7 @@ that resource injected
 . No Match - nothing matches a resource name, so the first resource
 available gets injected
 
-There are various ways one could obtain a DataSource now. Lets take an
+There are various ways one could obtain a DataSource now. Let's take an
 example of Derby.
 
 With a Resource declaration in your openejb.xml like this:

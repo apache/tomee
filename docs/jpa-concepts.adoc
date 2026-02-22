@@ -9,7 +9,7 @@
 If there's one thing you have to understand to successfully use JPA
 (Java Persistence API) it's the concept of a _Cache_. Almost everything
 boils down to the Cache at one point or another. Unfortunately the Cache
-is an internal thing and not exposed via the JPA API classes, so it not
+is an internal thing and not exposed via the JPA API classes, so it's not
 easy to touch or feel from a coding perspective.
 
 Here's a quick cheat sheet of the JPA world:
@@ -19,7 +19,7 @@ outside the database.
 * *Flushing* a Cache is the act of putting modified data back into the
 database.
 * A *PersistenceContext* is essentially a Cache. It also tends to have
-it's own non-shared database connection.
+its own non-shared database connection.
 * An *EntityManager* represents a PersistenceContext (and therefore a
 Cache)
 * An *EntityManagerFactory* creates an EntityManager (and therefore a
@@ -113,7 +113,7 @@ In some cases objects or collections of objects that become Detached may
 not have all the data you need. This can be because of lazy loading.
 With lazy loading, data isn't pulled from the database and into the
 PersistenceContext/Cache until it is requested in code. In many cases
-the Collections of persistent objects returned from an
+the Collections of persistent objects returned from a
 jakarta.persistence.Query.getResultList() call are completely empty until
 you iterate over them. A side effect of this is that if the Collection
 becomes Detached before it's been fully read it will be permanently

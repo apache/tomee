@@ -4,8 +4,8 @@
 :jbake-type: page
 :jbake-status: published
 
-== The following instructions are written using Eclipse 3.2. We
-will refer to the install location of OpenEJB as OPENEJB_HOME
+== The following instructions are written using Eclipse 3.2.
+We will refer to the installation location of OpenEJB as OPENEJB_HOME
 
 Here are some basic steps you need to perform to get started with
 OpenEJB 1. Download and install OpenEJB 1. Setup your development

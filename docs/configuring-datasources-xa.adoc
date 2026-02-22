@@ -8,7 +8,7 @@
 
 XA datasources are able to participate in global transactions involving
 more than one resource - for example, scenarios where a transaction needs 
-to encompass connections to two different databases,, or a database and
+to encompass connections to two different databases, or a database and
 a JMS resource. 
 
 The global transaction manager will provide a two phase commit for all

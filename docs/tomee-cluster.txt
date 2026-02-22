@@ -1,8 +1,8 @@
-The scope of this document to to define how Apache TomEE can be configured for HA (High Availability) clustering.  
+The scope of this document to define how Apache TomEE can be configured for HA (High Availability) clustering.
 
-The configuration will focus on two local instances, with a view to an open ended remote configuration.  
+The configuration will focus on two local instances, with a view to an open-ended remote configuration.
 
-It is beyond the scope of this documentation to discuss Tomcat CLustering in depth.
+It is beyond the scope of this documentation to discuss Tomcat clustering in depth.
 Please read the [Apache Tomcat Clustering Howto](http://tomcat.apache.org/tomcat-7.0-doc/cluster-howto.html) for more information.
 
 ###Local cluster
