@@ -9,7 +9,7 @@ align=right, hspace=15! # Accessing EJBs Locally
 
 When OpenEJB embedded in your app, server, IDE, or JUnit, you can use
 what we call the Local Server and avoid the network overhead and enjoy
-an easy way to embedd OpenEJB. Instead of putting the app in the server,
+an easy way to embed OpenEJB. Instead of putting the app in the server,
 put the server in the app!
 
 = Say what?! A local server?
@@ -17,7 +17,7 @@ put the server in the app!
 Yes, you read correctly. OpenEJB can be embedded and treated as your
 very own personal EJB container.
 
-If they can have Local and Remote EJB's, why not Local and Remote EJB
+If they can have Local and Remote EJBs, why not Local and Remote EJB
 Servers too?
 
 Haven't you ever wanted EJBs without the heavy? I mean you need the
@@ -45,7 +45,7 @@ intents purposes, your application an IntraVM Client.
 There are some interesting differences though. The IntraVM Server isn't
 a heavyweight server as one normally associates with EJB. It doesn't
 open connections, launch threads for processing requests, introduce
-complex classloading heirarchies, or any of those "heavy" kind of
+complex classloading hierarchies, or any of those "heavy" kind of
 things. All it does is dish out proxies to your app that can be used to
 shoot calls right into the EJB Container. Very light, very fast, very
 easy for testing, debugging, developing, etc.

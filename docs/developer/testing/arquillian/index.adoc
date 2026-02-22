@@ -9,7 +9,7 @@ TomEE has several arquillian adapter flavors:
 - openejb-embedded: a plain embedded OpenEJB supporting most of EE features
 - tomee-embedded: a full TomEE running in the same JVM
 - tomee-remote: a standard TomEE running in its own process as in production
-- tomee-webapp (not recommanded): an adapter starting from a Tomcat and installing tomee-webapp
+- tomee-webapp (not recommended): an adapter starting from a Tomcat and installing tomee-webapp
 
 == Embedded or Remote?
 

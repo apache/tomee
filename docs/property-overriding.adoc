@@ -28,7 +28,7 @@ details.
 
 == What properties are available?
 
-To know what properties can be overriden the './bin/openejb properties'
+To know what properties can be overridden the './bin/openejb properties'
 command is very useful: see link:properties-tool.html[Properties Tool]
 
 Its function is to connect to a running server and print a canonical

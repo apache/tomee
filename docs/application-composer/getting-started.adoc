@@ -171,7 +171,7 @@ ApplicationComposerRule(this); }
 
 Tip: since TomEE 2.x ApplicationComposerRule is decomposed in 2 rules if
 you need: `ContainerRule` and `DeployApplication`. Using JUnit
-`RuleChain` you can chain them to get the samebehavior as
+`RuleChain` you can chain them to get the same behavior as
 `ApplicationComposerRule` or better deploy multiple ApplicationComposer
 models and controlling their deployment ordering (to mock a remote
 service for instance).

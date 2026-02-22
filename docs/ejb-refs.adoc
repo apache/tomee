@@ -175,7 +175,7 @@ Note the above also works with the various forms of failover that TomEE
 supports.
 
 If say, there are two servers that have the `OrangeBeanRemote` bean, you
-could expand the `<JndiProvider>` delcaration like so:
+could expand the `<JndiProvider>` declaration like so:
 
 [source,xml]
 ----
@@ -188,7 +188,7 @@ could expand the `<JndiProvider>` delcaration like so:
 In the event that the `ejbd://192.168.1.20:4201` server cannot be
 contacted, the second server will be tried.
 
-This sort of arangement can also happen dynamicall against a list of
+This sort of arrangement can also happen dynamically against a list of
 servers that continuously grows and shrinks. The server list is
 maintained behind the scenes using server discovery logic that can
 function on either UDP or TCP. See these docs for more details on

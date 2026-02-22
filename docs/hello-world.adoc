@@ -50,7 +50,7 @@ server will automatically deploy all the EJB's contained in this JAR. -
 _conf_: This directory contains all the configuration files. Although
 you may not see any file except for a README.txt file right now, but
 after you start the server, the required configuration files will be
-automatically created. It is highly recommeded to read the README.txt
+automatically created. It is highly recommended to read the README.txt
 file under this directory - _logs_: Contains log files.
 
 == Setup your development environment
@@ -73,7 +73,7 @@ karan@poweredge:~$ cd projects
 We will do all our work in this directory. ### Install Java Download and
 install Java (version 5 or higher). Also set it up so that you can run
 the java and javac commands from any directory ### Set OPENEJB_HOME We
-will setup this variable to refer to the openejb install location.
+will set up this variable to refer to the openejb install location.
 
 [source,bash]
 ----
@@ -253,7 +253,7 @@ The above should give you the following output:
 Hello World!!!!
 ----
 
-== Help! , it didn't work for me!!. No problem, we are here to help.
+== Help! It didn't work for me!!. No problem, we are here to help.
 Just send us an email at users@tomee.apache.org. If possible, send us
 the contents of logs/openejb.log file in the email.
 

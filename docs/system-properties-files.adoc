@@ -21,5 +21,5 @@ Here how it works:
 $\{user.home}/.openejb/system.properties
 * instance system.properties: conf/system.properties
 
-Note: generally you place in the user system properties file the contant
+Note: generally you place in the user system properties file the constant
 configuration (check my openejb version for instance).

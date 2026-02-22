@@ -187,7 +187,7 @@ boolean
 
 true
 
-Determines wether or not this data source should be JTA managed or user
+Determines whether or not this data source should be JTA managed or user
 managed.
 
 maxActive
@@ -236,7 +236,7 @@ time
 30 minutes
 
 The minimum amount of time a connection may sit idle in the pool before
-it is eligable for eviction by the idle connection evictor (if any).
+it is eligible for eviction by the idle connection evictor (if any).
 
 minIdle
 
@@ -253,7 +253,7 @@ int
 
 3
 
-The number of connectionss to examine during each run of the idle
+The number of connections to examine during each run of the idle
 connection evictor thread (if any).
 
 password
@@ -289,7 +289,7 @@ true
 
 If true connections will be validated before being returned from the
 pool. If the validation fails, the connection is destroyed, and a new
-conection will be retrieved from the pool (and validated).
+connection will be retrieved from the pool (and validated).
 
 testOnReturn
 
@@ -343,7 +343,7 @@ boolean
 
 false
 
-Wether SQL queries should be logged or not
+Whether SQL queries should be logged or not
 
 == accessToUnderlyingConnectionAllowed
 
@@ -358,8 +358,8 @@ Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
 conn.close()
 ----
 
-Default is false, because misbehaving programs can do harmfull things to
-the raw connection shuch as closing the raw connection or continuing to
+Default is `false`, because misbehaving programs can do harmful things to
+the raw connection such as closing the raw connection or continuing to
 use the raw connection after it has been assigned to another logical
 connection. Be careful and only use when you need direct access to
 driver specific extensions.
@@ -399,7 +399,7 @@ The initial size to initialize the pool of connections.
 
 == jtaManaged
 
-Determines wether or not this data source should be JTA managed or user
+Determines whether or not this data source should be JTA managed or user
 managed.
 
 If set to 'true' it will automatically be enrolled in any ongoing
@@ -434,9 +434,9 @@ public PreparedStatement prepareStatement(String sql, int resultSetType, int res
 
 == testOnBorrow
 
-If true connections will be validated before being returned from the
+If `true` connections will be validated before being returned from the
 pool. If the validation fails, the connection is destroyed, and a new
-conection will be retrieved from the pool (and validated).
+connection will be retrieved from the pool (and validated).
 
 NOTE - for a true value to have any effect, the ValidationQuery
 parameter must be set.

@@ -4,8 +4,9 @@
 :jbake-type: page
 :jbake-status: published
 
-= Singleton Overview For the first time in years EJB has a new
-bean type, the _`@Singleton_`. In my opinion, the jakarta.ejb.Singleton will
+= Singleton Overview
+
+For the first time in years EJB has a new bean type, the `@Singleton`. In my opinion, the jakarta.ejb.Singleton will
 replace a lot of what people are using `@Stateless` for today.
 
 The Singleton is essentially what you get if you take a Stateless bean
@@ -18,9 +19,9 @@ Additionally, the Singleton can have its `@PostConstruct` method called
 with the application starts up and its `@PreDestroy` method called when
 the application shuts down. This allows it to serve as an application
 lifecycle listener which is something only Servlets could do before. It
-has an _`@Startup_` annotation which is similar in concept to the servlet
+has an `@Startup` annotation which is similar in concept to the servlet
 , but unlike servlets it doesn't take a number as an argument. Instead,
-you can use an _`@DependsOn_` annotation to say which other Singletons you
+you can use an `@DependsOn` annotation to say which other Singletons you
 need and the container will ensure they start before you.
 
 See the link:singleton-example.html[Singleton Example] for sample bean
@@ -107,7 +108,7 @@ downgrading, and
 
 ==== Acquiring the Lock
 
-The _`@AccessTimetout_` annotation can configure how long a thread will
+The `@AccessTimeout` annotation can configure how long a thread will
 wait to acquire the read or write lock. This annotation can be used on
 the bean class or individual methods. The annotation maps directly to
 the
@@ -148,7 +149,7 @@ _jakarta.ejb.ConcurrentAccessTimeoutException_ will be thrown.
 
 ==== Default Timeout
 
-The default value of _`@AccessTimeout_` annotation is vendor specific. In
+The default value of `@AccessTimeout` annotation is vendor specific. In
 OpenEJB, it defaults to the value of the _AccessTimeout_ property which
 can be configured in many different scopes. Here is the order of
 preference:
@@ -167,16 +168,16 @@ link:configuring-durations.html[Configuring Durations] for details.
 
 == Startup and Startup Ordering
 
-Singletons have an _`@Startup_` annotation which can be applied to the
+Singletons have an `@Startup` annotation which can be applied to the
 bean class. When used, the Container will instantiate the Singleton
 instance _eagerly_ when the application starts up, otherwise the
 Container will instantiate the Singleton instance _lazily_ when the bean
 is first accessed.
 
 If one Singleton refers to another Singleton in the `@PostConstruct` or
-@PreDestroy method, there must be some measure taken to ensure the other
+`@PreDestroy` method, there must be some measure taken to ensure the other
 Singleton exists and is started. This sort of ordering is achieved with
-the _`@DependsOn_` annotation which can be used to list the names of
+the `@DependsOn` annotation which can be used to list the names of
 Singleton beans that must be started before the Singleton bean using the
 annotation.
 
