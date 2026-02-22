@@ -407,7 +407,7 @@ transactions. Calling begin/commit/rollback or setAutoCommit on the
 datasource or connection will not be allowed. If you need to perform
 these functions yourself, set `JtaManaged` to `false`
 
-In terms of JPA persistence.xml:
+In terms of JPA `persistence.xml`:
 
 * `JtaManaged=true` can be used as a 'jta-data-source'
 * `JtaManaged=false` can be used as a 'non-jta-data-source'

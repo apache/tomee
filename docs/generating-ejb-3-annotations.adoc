@@ -7,7 +7,7 @@
 = Generating EJB 3 annotations
 
 The OpenEJB Eclipse plugin is able to provide some assistance in helping
-you migrate EJB 2.x projects to EJB 3.0, by analyzing your ejb-jar.xml
+you migrate EJB 2.x projects to EJB 3.0, by analyzing your `ejb-jar.xml`
 file, and adding EJB annotations to your source code. This page will
 show you how to use this functionality.
 
@@ -42,7 +42,7 @@ selected. Click 'Next'.
 
 !http://www.jrg.me.uk/openejb/annotations_step_2.jpg!
 
-Select your ejb-jar.xml and (optionally) your openejb-jar.xml files.
+Select your `ejb-jar.xml` and (optionally) your `openejb-jar.xml` files.
 Select or deselect the other options as appropriate, and select 'Next'.
 
 Options:

@@ -8,11 +8,11 @@
 
 As noted in the link:injection-of-env-entry-example.html[Injection of
 env-entry Example] , the EJB 3.0 supported env-entry types are fairly
-limited. Also the use of several tags in an ejb-jar.xml can get a bit
+limited. Also the use of several tags in an `ejb-jar.xml` can get a bit
 verbose.
 
 OpenEJB does not restrict you to just these data types or require you to
-use an ejb-jar.xml to declare them.
+use an `ejb-jar.xml` to declare them.
 
 * `@Resource` can be used on any type for which there is
 `java.beans.PropertyEditor`
@@ -20,7 +20,7 @@ use an ejb-jar.xml to declare them.
 app.
 * Java Generics are supported (e.g. List myURIs)
 * You may use a `META-INF/env-entries.properties` file as an alternative
-to an ejb-jar.xml
+to an `ejb-jar.xml`
 
 See link:built-in-type-converters.html[Built-in Type Converters] for a
 full list of supported env-entry types.

@@ -30,7 +30,7 @@ ApplicationComposer "test" (browsing other pages you'll see it is much
 more than test today) is composed of mainly 2 parts:
 
 * modules: methods describing a module of an application. It can be a
-persistence.xml, an ejb-jar.xml, a web.xml...but all programmatically.
+persistence.xml, an `ejb-jar.xml`, a `web.xml`...but all programmatically.
 * configuration: container configuration allowing to interact with
 container (creating resources for instance)
 

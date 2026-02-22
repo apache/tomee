@@ -11,7 +11,7 @@ Referencing a bean in another jar (with annotations)
 
 When using annotations to reference a bean from another ejb in your ear
 you have to supplement the `@EJB` reference with a small chunk of xml in
-the ejb-jar.xml of the referring bean.
+the `ejb-jar.xml` of the referring bean.
 
 So in ejb app A colorsApp.jar you have this bean:
 
@@ -43,7 +43,7 @@ public class SquareBean implements SquareRemote {
 ----
 
 To hook this reference up you need to override this ref and add more
-info in the ejb-jar.xml of shapesApp.jar as follows:
+info in the `ejb-jar.xml` of shapesApp.jar as follows:
 
 [source,xml]
 ----
@@ -96,7 +96,7 @@ public class SquareBean implements SquareRemote {
 ----
 
 Here's how you would hook this reference up, injection and all, with
-just xml. The following would be added to the ejb-jar.xml of
+just xml. The following would be added to the `ejb-jar.xml` of
 shapesApp.jar:
 
 [source,xml]

@@ -7,7 +7,7 @@
 = Overview
 
 This example shows how to configure JNDI to lookup other EJBs using
-either the _`@EJB_` annotation or the _ejb-jar.xml_ deployment descriptor.
+either the _`@EJB_` annotation or the `ejb-jar.xml` deployment descriptor.
 
 There are a couple interesting aspects in this example intended to flush
 out some of the more confusing, and perhaps frustrating, aspects of
@@ -82,7 +82,7 @@ _java:comp/env/myFriend_ name has been configured to point to _BlueBean_
 == Alternative to annotations
 
 If there is a desire to not use annotations, the above annotation usage
-is equivalent to the following ejb-jar.xml
+is equivalent to the following `ejb-jar.xml`
 \{snippet:url=openejb3/examples/lookup-of-ejbs-with-descriptor/src/main/resources/META-INF/ejb-jar.xml|lang=xml}
 
 = Writing a unit test for the example

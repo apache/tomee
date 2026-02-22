@@ -66,7 +66,7 @@ The ejb-name as specified in xml or via the 'name' attribute in an
 deploymentId
 
 The unique system id for the ejb. Typically the ejbName unless specified
-in the openejb-jar.xml or via changing the openejb.deploymentId.format
+in the `openejb-jar.xml` or via changing the `openejb.deploymentId.format`
 
 interfaceType
 
@@ -85,7 +85,7 @@ This is the same as interfaceType.annotationName, but all in lower case.
 
 interfaceType.xmlName
 
-Following the ejb-jar.xml descriptor elements , , , , and : home (EJB 2
+Following the `ejb-jar.xml` descriptor elements , , , , and : home (EJB 2
 EJBHome) local-home (EJB 2 EJBLocalHome) business-remote (EJB 3 Business
 Remote) business-local (EJB 3 Business Local) service-endpoint (EJB
 webservice endpoint)
@@ -150,7 +150,7 @@ InitialContext properties when embedded.
 == Via properties in the openejb-jar.xml
 
 It's possible to set the openejb.jndiname.format for an ejb-jar jar in a
-META-INF/openejb-jar.xml file as follows:
+`META-INF/openejb-jar.xml` file as follows:
 
 [source,xml]
 ----

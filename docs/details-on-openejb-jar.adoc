@@ -8,39 +8,39 @@
 = What is an openejb-jar.xml?
 
 This is the file created by the Deploy Tool that maps your bean's
-deployment descriptor (ejb-jar.xml) to actual containers and resources
+deployment descriptor (`ejb-jar.xml`) to actual containers and resources
 declared in your OpenEJB configuration (openejb.conf). In fact, the
 Deploy tool really does nothing more than create this file and put it in
 your jar, that's it.
 
 = When is the openejb-jar.xml used?
 
-At startup, any jar containing a openejb-jar.xml is loaded by the
+At startup, any jar containing an `openejb-jar.xml` is loaded by the
 container system. The configuration tools will go looking in all the
 directories and jars you have declared in your openejb.conf with the
 element. For every jar file it finds, it will look inside for an
-openejb-jar.xml. If it finds one, it will attempt to load and deploy it
+`openejb-jar.xml`. If it finds one, it will attempt to load and deploy it
 into the container system.
 
 = Do I even need the deploy tool then?
 
 Nope. Typically you would only use the deploy tool to create your
-openejb-jar.xml, then just keep your openejb-jar.xml in your CVS (or
-other repository). If you learn how to maintain this openejb-jar.xml
+`openejb-jar.xml`, then just keep your `openejb-jar.xml` in your CVS (or
+other repository). If you learn how to maintain this `openejb-jar.xml`
 file, you'll never need the deploy tool again! You can do all your
 builds and deploys automatically.
 
 = Where do I put the openejb-jar.xml in my jar?
 
-The openejb-jar.xml file just goes in the META-INF directory of your jar
-next to the ejb-jar.xml file.
+The `openejb-jar.xml` file just goes in the `META-INF` directory of your jar
+next to the `ejb-jar.xml` file.
 
 = Is the file format easy?
 
-If you can understand the ejb-jar.xml, the openejb-jar.xml should be a
+If you can understand the `ejb-jar.xml`, the `openejb-jar.xml` should be a
 breeze.
 
-This is the openejb-jar.xml that is created by the Deploy tool in the
+This is the `openejb-jar.xml` that is created by the Deploy tool in the
 Hello World example. As you can see, the file format is extremely
 simple.
 
@@ -55,7 +55,7 @@ simple.
 ----
 
 The _ejb-name_ attribute is the name you gave the bean in your
-ejb-jar.xml. The _deployment-id_ is the name you want to use to lookup
+`ejb-jar.xml`. The _deployment-id_ is the name you want to use to lookup
 the bean in your client's JNDI namespace. The _container-id_ is the name
 of the container in your openejb.conf file that you would like the bean
 to run in. There MUST be one _ejb-deployment_ element for each EJB in
@@ -83,14 +83,14 @@ Then you simply add a element to your element like this
 ----
 
 The _res-ref-name_ attribute refers to the element of the bean's
-declaration in the ejb-jar.xml. The _res-id_ attribute refers to the id
+declaration in the `ejb-jar.xml`. The _res-id_ attribute refers to the id
 of the declared in your openejb.conf that will handle the connections
 and provide access to the desired resource.
 
 = How many resource-link elements will I need?
 
-You will need one element for every element in your ejb-jar.xml. So if
-you had an ejb-jar.xml like the following
+You will need one element for every element in your `ejb-jar.xml`. So if
+you had an `ejb-jar.xml` like the following
 
 [source,xml]
 ----
@@ -128,7 +128,7 @@ you had an ejb-jar.xml like the following
 </ejb-jar>
 ----
 
-Then you would need two elements for that bean in your openejb-jar.xml
+Then you would need two elements for that bean in your `openejb-jar.xml`
 file as such.
 
 [source,xml]

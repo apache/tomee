@@ -127,7 +127,7 @@ public class EmbeddedServer {
 
 This class sets up an embedded instance of Jetty, running on port 9091.
 You'll notice the setupJndi() method. This looks through the ejb-ref
-entries in web.xml (which we deserialize using the openejb-jee library),
+entries in `web.xml` (which we deserialize using the openejb-jee library),
 and adds relevant LinkRefs to the JNDI tree, so you can lookup beans
 using the java:comp/env/bean format. I've added a main() method here for
 convenience, so you can run this straight from an IDE, and record tests

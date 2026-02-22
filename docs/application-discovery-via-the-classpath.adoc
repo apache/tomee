@@ -11,7 +11,7 @@ like deployed while in an embedded mode.
 = Empty ejb-jar.xml approach (recommended)
 
 Simplify the issue of searching for annotated applications by adding an
-ejb-jar.xml like this to your app:
+`ejb-jar.xml` like this to your app:
 
 [source,xml]
 ----
@@ -21,7 +21,7 @@ ejb-jar.xml like this to your app:
 OpenEJB will find the app in the classpath and deploy it along with any
 annotated beans it may contain.
 
-The ejb-jar.xml can contain more than just "" as usual.
+The `ejb-jar.xml` can contain more than just "" as usual.
 
 This is the recommended approach for people using OpenEJB for unit
 testing as it allows OpenEJB to find your application in the classpath
@@ -30,10 +30,10 @@ complicate builds.
 
 == Including/Excluding paths (advanced)
 
-If you do not like the idea of having the ejb-jar.xml in your app or an
+If you do not like the idea of having the `ejb-jar.xml` in your app or an
 openejb.xml, we can search the classpath for annotated beans
 (`@Stateless`, `@Stateful`, `@MessageDriven`) and load them automatically just
-as if they contained an ejb-jar.xml.
+as if they contained an `ejb-jar.xml`.
 
 This form of searching, however, is very expensive as it involves
 iterating over every path in the classpath and reading in each class
@@ -95,7 +95,7 @@ reversing the order to __openejb.exclude-include.order__=exclude-include
 There are a number internal filters that may result in an unexpected
 exclusion.
 
-If you're having trouble determining if the META-INF/ejb-jar.xml file
+If you're having trouble determining if the `META-INF/ejb-jar.xml` file
 for your ejb module is in the classpath, a little debug code like this
 in your test setup will help you see what OpenEJB sees (which may be
 nothing):

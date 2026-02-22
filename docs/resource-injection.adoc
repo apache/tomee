@@ -58,7 +58,7 @@ The _maxLineItem_ field in _PurchaseOrderBean_ class is annotated with
 the code the injection of a simple environment entry should take place.
 The default value of 10 is assigned. You can modify the value of the
 environment entries at deployment time using deployment descriptor
-(*ejb-jar.xml*).
+(`ejb-jar.xml`).
 
 === @Resource annotation of a field
 

@@ -6,7 +6,7 @@
 
 
 If for whatever reason you want to define the global default concurrency
-add this to your META-INF/ejb-jar.xml:
+add this to your `META-INF/ejb-jar.xml`:
 
 [source,xml]
 ----

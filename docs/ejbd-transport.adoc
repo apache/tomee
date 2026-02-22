@@ -37,7 +37,7 @@ servlet.
 
 Finally you can move this servlet in your own webapp if you want to use
 a provider url containing your webapp context. Simply copy paste the
-servlet definition in your web.xml and set the url mapping to what you
+servlet definition in your `web.xml` and set the url mapping to what you
 want (let say /foo/*). Then use the provider url
 http://<host>:<port>/<webapp context name>/foo
 
@@ -175,7 +175,7 @@ running on TomEE do not package the `ServerServlet` themselves ensure
 that the URL http://<host>:<port>/tomee/ejb is not accessible from
 untrusted sources.
 
-If your applications package declare it in their own web.xml make sure
+If your applications package declare it in their own `web.xml` make sure
 that the respective URL is not accessible from untrusted sources.
 
 === Revert to behavior of TomEE 1.7.2

@@ -9,10 +9,10 @@
 The basic idea of this approach is that your Servlets and EJBs are
 together in your WAR file as one app.
 
-* No classloader boundries between Servlets and EJBs
+* No classloader boundaries between Servlets and EJBs
 * EJBs and Servlets can share all third-party libraries (like Spring!) -
 no EAR required.
-* Can put the web.xml and ejb-jar.xml in the same archive (the WAR
+* Can put the `web.xml` and `ejb-jar.xml` in the same archive (the WAR
 file).
 * EJBs can see Servlet classes and vice versa.
 

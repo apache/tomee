@@ -105,10 +105,10 @@ the changes to take effect.
 === JSP Hot Deployment
 
 If jsp changes are not being hot deployed then this is because the jsp
-servlet is set to development=false in the web.xml file. To allow jsp
+servlet is set to `development=false` in the `web.xml` file. To allow jsp
 hot deployment alter this value to true and restart Tomee.
 
-This is the relevant snippet of the web.xml file.
+This is the relevant snippet of the `web.xml` file.
 
 [source,xml]
 ----

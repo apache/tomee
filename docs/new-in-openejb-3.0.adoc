@@ -72,7 +72,7 @@ public class MyBean {
 == The META-INF/env-entries.properties
 
 Along the lines of injection, one of the last remaining things in EJB 3
-that people need an ejb-jar.xml file for is to supply the value of
+that people need an `ejb-jar.xml` file for is to supply the value of
 env-entries. Env Entries are the source of data for all user supplied
 data injected into your bean; the afore mentioned String, Boolean,
 Integer, etc. This is a very big burden as each env-entry is going to
@@ -83,10 +83,10 @@ all you want is to supply the value of a few `@Resource` String fields in
 you bean class.
 
 To fix this, OpenEJB supports the idea of a
-META-INF/env-entries.properties file where we will look for the value of
+`META-INF/env-entries.properties` file where we will look for the value of
 things that need injection that are not container controlled resources
 (i.e. datasources and things of that nature). You can configure you ejbs
-via a properties file and skip the need for an ejb-jar.xml and it's 5
+via a properties file and skip the need for an `ejb-jar.xml` and it's 5
 lines per property madness.
 
 [source,properties]

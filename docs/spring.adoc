@@ -127,7 +127,7 @@ any error message(s) and the following information:
 _JavaAgent_ - OpenEJB uses OpenJPA to provide JPA and CMP persistence,
 and OpenJPA currently requires a JavaAgent to function properly in a
 Java 1.5 environment. OpenJPA does not require a JavaAgent in Java 1.6.
-Use Hibernate as your the provider in your persistence.xml files if you
+Use Hibernate as your the provider in your `persistence.xml` files if you
 wish to avoid this requirement.
 
 _EntityManager_ - Having an OpenEJB created EntityManager or

@@ -127,6 +127,6 @@ You can either:
 `TransactionAttributeType.NOT_REQUIRED` or
 `TransactionAttributeType.NEVER` which will guarantee it will not be
 invoked in a JTA transaction.
-. Change your persistence.xml so the persistence-unit uses
+. Change your `persistence.xml` so the persistence-unit uses
 `transaction-type="TRANSACTION"` making it capable of participating in a
 JTA transaction.

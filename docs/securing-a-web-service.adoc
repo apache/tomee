@@ -66,7 +66,7 @@ provides a common and highly configurable way to configure WS-Security
 in association with the JAX-WS usage without vendor dependence.
 Internally, OpenEJB integrates Apache WSS4J as the WS-Security
 implementation. To use the integration, you will need to configure WSS4J
-using the _openejb-jar.xml_.
+using the `openejb-jar.xml`.
 
 _Warning: the proposed WS-Security integration is only used at server
 side. Currently, WS-Security client configuration is not managed by
@@ -81,8 +81,8 @@ messages (response).
 
 = Configuration principles
 
-The configuration is made in the
-_openejb-jar.xml_. Each endpoint web service can provide a set of
+The configuration is made in the `openejb-jar.xml`.
+Each endpoint web service can provide a set of
 properties to customize WS-Security behavior through the element. The
 content of this element is consistent with the overall structure of
 _openejb.xml_. The format for properties is the same as if you would use
@@ -104,7 +104,7 @@ For example : _wss4j.in.action = UsernameToken_
 
 = Username Token (Password digest) example 
 
-Excerpt from _openejb-jar.xml_.
+Excerpt from `openejb-jar.xml`.
 
 [source,xml]
 ----
