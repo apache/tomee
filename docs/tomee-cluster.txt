@@ -3,7 +3,7 @@ The scope of this document is to define how Apache TomEE can be configured for H
 The configuration will focus on two local instances, with a view to an open-ended remote configuration.
 
 It is beyond the scope of this documentation to discuss Tomcat clustering in depth.
-Please read the [Apache Tomcat Clustering Howto](http://tomcat.apache.org/tomcat-7.0-doc/cluster-howto.html) for more information.
+Please read the [Apache Tomcat Clustering Howto](http://tomcat.apache.org/tomcat-11.0-doc/cluster-howto.html) for more information.
 
 ###Local cluster
 To test clustering locally (on the same physical machine) the default ports need to be modified on the second TomEE server.
