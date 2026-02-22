@@ -302,7 +302,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.4</version>
+          <version>3.5.5</version>
         </plugin>
         <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
           <groupId>org.apache.geronimo.buildsupport</groupId>
