@@ -65,7 +65,7 @@ really, the database) with persistent _Movie_ objects
 
 # Required jars
 
-To setup the integration you'll need:
+To set up the integration you'll need:
 
 [arabic]
 . The standard OpenEJB 3.1 libraries

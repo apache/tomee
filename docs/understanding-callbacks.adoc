@@ -9,7 +9,7 @@ examples.
 
 When they say one AroundInvoke per class they mean that in the most
 literal sense as in one individual java class definition, not including
-it's parent class or classes, may exactly one AroundInvoke method. The
+its parent class or classes, may exactly one AroundInvoke method. The
 bean or interceptor class may have an AroundInvoke method, its parent
 class may have an AroundInvoke method, the parent's parent class may
 have an AroundInvoke method and so on.

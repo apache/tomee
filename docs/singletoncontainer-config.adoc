@@ -31,7 +31,7 @@ mySingletonContainer.accessTimeout = 30 seconds
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style
-variable substitution. Properties are not case sensitive. If a property
+variable substitution. Properties are not case-sensitive. If a property
 is specified that is not supported by the declared SingletonContainer a
 warning will be logged. If a SingletonContainer is needed by the
 application and one is not declared, TomEE will create one dynamically

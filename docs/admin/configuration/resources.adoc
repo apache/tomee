@@ -5,8 +5,7 @@
 :jbake-tomeepdf:
 
 In TomEE resources are mainly "singleton" (understood as defined once per server or application). Technically
-it can be anything but you will probably meet more Datasources than other type of resources.
-
+it can be anything, but you will probably meet more Datasources than other type of resources.
 
 Most resources will be created automatically if there is no matching resources - by name and type -
 when an injection will be found. To avoid that use `openejb.offline` property and set it to `true`.
@@ -18,9 +17,9 @@ Before all let see how properties syntax is equivalent to XML one (system.proper
 
 Properties syntax uses dot notation to represent setters/properties which are plain properties in XML syntax
 and a URL syntax with query parameters to define the resource where it is directly the resource and tag attributes in XML.
-Finally the id is an attribute in XML and the key of the resource definition in properties.
+Finally, the id is an attribute in XML and the key of the resource definition in properties.
 
-Let see it with a sample, both delcarations are the same:
+Let see it with a sample, both declarations are the same:
 
 [source,properties]
 ----
@@ -63,7 +62,7 @@ Here are the attributes of a resource:
 | Lazy | true | for resources set them to be created when first accessed and not when deployed
 |===
 
-TomEE supports some implicit properties for resources but sometimes you just want to fully control the
+TomEE supports some implicit properties for resources, but sometimes you just want to fully control the
 resource and not use implicit properties which can be affected to a property which doesn't expect such a value (typically the case
 if you create a custom Oracle datasource). For such case you can set `SkipImplicitAttributes` property to `true` and your resource
 will ignore implicit properties.
@@ -83,7 +82,7 @@ In Oracle case for instance it matches the connection properties which can have 
 
 === Value ciphering
 
-The propertie values support ciphering using the syntax `cipher:{algorithm}:{cipheredValue}`, for instance `cipher:Static3DES:xMH5uM1V9vQzVUv5LG7YLA==` will
+The property values support ciphering using the syntax `cipher:{algorithm}:{cipheredValue}`, for instance `cipher:Static3DES:xMH5uM1V9vQzVUv5LG7YLA==` will
 be read as `Passw0rd`. Ciphers can be computed using `tomee.sh` script: `${tomee.home}/bin/tomee.sh cipher Passw0rd`.
 
 == Common Resources
@@ -95,7 +94,8 @@ configure it here are the common properties:
 
 You can set the boolean `JtaManaged` to false if you don't want your datasource to be using JTA - if you manage transactions yourself.
 
-Then other configurations are linked the pool the datasource is using. By default TomEE uses https://tomcat.apache.org/tomcat-11.0-doc/jdbc-pool.html[tomcat-jdbc] but we also provide
+Then other configurations are linked the pool the datasource is using.
+By default, TomEE uses https://tomcat.apache.org/tomcat-11.0-doc/jdbc-pool.html[tomcat-jdbc] but we also provide
 https://commons.apache.org/proper/commons-dbcp/configuration.html[commons-dbcp] (2 for TomEE 7.x and 1 for TomEE 1.x).
 The properties are then the related configurations with these particular
 entries we try to keep in sync for both:
@@ -134,7 +134,7 @@ TomEE also provides few utilities you can add in DataSource properties:
 | Name | Description
 | LogSql | Should SQL be logged (using TomEE logger)
 | LogSqlPackages | if set the logging will show the matching packages (separated by comma) inline when logging the query, allows to know where a query comes from
-| Flushable| if true the datasource can be casted as a Flushable to recreate the pool
+| Flushable| if true the datasource can be cast as a Flushable to recreate the pool
 | ResetOnError | if a `SQLException` happens the pool is automatically recreated. Configuration is either "true" to do it each time an exception occurs, `x` or `retry(x)` to do it and retry until maximum `x` times
 | ResetOnErrorMethods | which methods are handled by ResetOnError
 | TomEEProxyHandler | Custom `InvocationHandler` wrapping the datasource calls

@@ -49,7 +49,7 @@ methods of the bean class.
 
 ==== Lock type
 
-The first and the default is a "write" lock, annotated as
+The first and the default are a "write" lock, annotated as
 _@Lock(WRITE)_. Essentially, with a write lock the caller holds an
 exclusive lock on the bean for the duration of the method call and all
 other threads for that or any other method must wait.
@@ -88,7 +88,7 @@ public interface ReadWriteLock {
 ----
 
 Literally 100% of the Singleton locking we're talking about is taken
-from this interface and its javadoc is a great source of information.
+from this interface and its Javadoc is a great source of information.
 It's safe to imagine that under the covers the Singleton Container has
 an instance of ReadWriteLock which it uses to enforce the locking for
 all the Singleton bean's methods. Essentially:
@@ -149,7 +149,7 @@ _jakarta.ejb.ConcurrentAccessTimeoutException_ will be thrown.
 ==== Default Timeout
 
 The default value of _`@AccessTimeout_` annotation is vendor specific. In
-OpenEJB it defaults to the value of the _AccessTimeout_ property which
+OpenEJB, it defaults to the value of the _AccessTimeout_ property which
 can be configured in many different scopes. Here is the order of
 preference:
 

@@ -93,7 +93,7 @@ set to 'C:' as shown below.
 
 Note that this syntax is the same as the directory syntax above. If
 TomEE finds a META-INF directory with an 'ejb-jar.xml' fine inside,
-then TomEE will treat the directory as an unpacked ejb jar. Otherwise
+then TomEE will treat the directory as an unpacked ejb jar. Otherwise,
 TomEE will look for ejb jar files to load as detailed in the above
 section.
 
@@ -124,7 +124,7 @@ Jar failed validation.  Use the validation tool for more details
 
 Additionally, all the successfully loaded ejbs are individually listed
 in the log file at startup. The Deployment ID listed is the JNDI name
-used to lookup the ejb from a client of the Local or Remote Servers. The
+used to look up the ejb from a client of the Local or Remote Servers. The
 beans listed below are from our test suite.
 
 [source,properties]

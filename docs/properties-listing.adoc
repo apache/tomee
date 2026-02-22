@@ -33,7 +33,7 @@ LOGOUT or DESTROY
 
 configure the hook called when closing the initial context. Useful when
 starting OpenEJB from a new InitialContext([properties]) instantiation.
-By default it simply logs out the logged user if it exists. DESTROY
+By default, it simply logs out the logged user if it exists. DESTROY
 means clean the container.
 
 jakarta.persistence.provider
@@ -98,7 +98,7 @@ openejb.debuggable-vm-hackery
 
 bool
 
-remove JMS informations from deployment
+remove JMS information from deployment
 
 openejb.validation.skip
 
@@ -643,7 +643,7 @@ openejb.crosscontext
 bool
 
 set the cross context property on tomcat context (can be done in the
-traditionnal way if the deployment is don through the webapp discovery
+traditional way if the deployment is done through the webapp discovery
 and not the OpenEJB Deployer EJB)
 
 openejb.jsessionid-support

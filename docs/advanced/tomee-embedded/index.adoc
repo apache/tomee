@@ -52,7 +52,7 @@ The default configuration allows to start tomee without issue but you can desire
 |deployOpenEjbApp|false|should internal openejb application be delpoyed
 |users|-|a map of user/password
 |roles|-|a map of role/users
-|tempDir|${java.io.tmpdir}/tomee-embedded_${timestamp}|tomcat needs a docBase, in case you don't provide one one will be created there
+|tempDir|${java.io.tmpdir}/tomee-embedded_${timestamp}|tomcat needs a docBase, in case you don't provide one, one will be created there
 |webResourceCached |true|should web resources be cached by tomcat (set false in frontend dev)
 |configuration-location|-|location (classpath or file) to a .properties to configure the server
 [pre-task|-|Runnable or org.apache.tomee.embedded.LifecycleTask implementations to execute before the container starts

@@ -32,7 +32,7 @@ here to download TomEE 1.7.1 Source code]
 == Build the Source Code
 
 First extract the zip file named *openejb-4.7.1-source-release.zip* to
-any location. Lets assume it is your home folder.
+any location. Let's assume it is your home folder.
 
 _______________________________________
 unzip openejb-4.7.1-source-release -d ~
@@ -57,7 +57,7 @@ http://tomee.apache.org/dev/source-code.html[here].
 == Deploy TomEE
 
 The TomEE build builds several distributions (zip & war files) to cater
-the different needs of different users. Here we discuss about the tomee
+the different needs of different users. Here we discuss the tomee
 plus distribution & TomEE war distribution only. TomEE+ is the full
 feature packed distribution from TomEE.
 
@@ -76,7 +76,7 @@ unzip
 ________________________________________________________________________________
 
 You will find the directory *apache-tomee-plus-1.7.1* in your home
-folder. Lets run the TomEE.
+folder. Let's run the TomEE.
 
 __________________________________________________
 cd ~/apache-tomee-plus-1.7.1/bin ./catalina.sh run
@@ -86,7 +86,7 @@ __________________________________________________
 
 == Prepare your IDE
 
-Lets prepare our IntelliJ IDEA for the debugging session.
+Let's prepare our IntelliJ IDEA for the debugging session.
 
 Start IntelliJ IDEA and Click the Import Project link
 
@@ -123,7 +123,7 @@ Now your IDE will load the project.
 == First Breakpoint
 
 Next step is to put a breakpoint at the place where the code is
-triggered. Lets understand how the code is triggered.
+triggered. Let's understand how the code is triggered.
 
 TomEE+ is created on top of Tomcat. TomEE registers a Tomcat Lifecycle
 Listener *"org.apache.tomee.catalina.ServerListener"* on *server.xml*
@@ -139,7 +139,7 @@ first breakpoint should be on the lifecycleEvent method.
 == Run TomEE+ in debug mode
 
 If you simply run *catalina.sh jpda run* in the bin folder of tomee
-deployment, the server starts in the debug mode but it will quckly pass
+deployment, the server starts in the debug mode, but it will quickly pass
 your breakpoint before you attach your IDE to the server process.
 
 So we set** JPDA_SUSPEND="y"** before we start our debugging. This will
@@ -165,7 +165,7 @@ dt_socket at address: 8000"*
 == Attach IntelliJ IDEA debugger
 
 * Menu Bar > Run > Edit Configurations
-* Press the "*+*" button on the top left corner to get the Add new
+* Press the "*+*" button in the top left corner to get the Add new
 configuration menu
 * Select "Remote" from the Add new configuration menu
 * Give a name (I gave "TomEE DEBUG") to this new configuration and set

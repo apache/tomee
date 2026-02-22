@@ -31,7 +31,7 @@ link:[http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples]
 * The entire project source from
 http://svn.apache.org/repos/asf/tomee/tomee/trunk
 
-Use http://subversion.apache.org/[Subversion] to checkout the example
+Use http://subversion.apache.org/[Subversion] to check out the example
 sources from a console like so:
 
 [source,bash]

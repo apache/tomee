@@ -9,7 +9,7 @@
 
 The goal of OpenEJB 3 is to merge our past, present, and future into one
 codebase. OpenEJB 3 will take the excellent features in OpenEJB 1.0
-(tomcat integration, testability, embeddibility, ease of use, etc), move
+(tomcat integration, testability, embeddability, ease of use, etc.), move
 towards an IoC architecture based on Gbean.org and Spring, bring in the
 OpenEJB 2 code, and implement the EJB 3.0 specification.
 

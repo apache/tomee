@@ -37,7 +37,7 @@ myMessageDrivenContainer.resourceAdapter = Default JMS Resource Adapter
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style
-variable substitution. Properties are not case sensitive. If a property
+variable substitution. Properties are not case-sensitive. If a property
 is specified that is not supported by the declared
 MessageDrivenContainer a warning will be logged. If a
 MessageDrivenContainer is needed by the application and one is not

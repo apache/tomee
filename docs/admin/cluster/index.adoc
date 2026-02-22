@@ -14,11 +14,11 @@ through the session.
 
 Hazelcast did a post on this topic on https://hazelcast.com/use-cases/web-session-clustering/session-clustering-tomee/[Session Clustering With TomEE].
 
-Tomitribe also demonstrated you can distributed `@Stateful` beans easily relying on hazelcast: https://github.com/tomitribe/hazelcast-tomee-poc[Hazelcast TomEE PoC].
+Tomitribe also demonstrated you can distribute `@Stateful` beans easily relying on hazelcast: https://github.com/tomitribe/hazelcast-tomee-poc[Hazelcast TomEE PoC].
 
 == Load balancing
 
-TomEE being a HTTP server all HTTP load balancer such as HTTPd (a.k.a. Apache2), ngnix, F5 etc... will work.
+TomEE being an HTTP server all HTTP load balancer such as HTTPd (a.k.a. Apache2), ngnix, F5 etc... will work.
 
 More documentation on HTTPd link can be found on https://tomcat.apache.org/connectors-doc/webserver_howto/apache.html[Tomcat] website.
 
@@ -183,7 +183,7 @@ disabled    = false
 initialServers = 192.168.1.20:4212, 192.168.1.30:4212, 192.168.1.40:4212
 ----
 
-The above configuration shows the server has an port 4212 open for connections by other servers for multipoint communication. The initialServers list should be a comma separated list of other similar servers on the network. Only one of the servers listed is required to be running when this server starts up -- it is not required to list all servers in the network.
+The above configuration shows the server has port 4212 open for connections by other servers for multipoint communication. The initialServers list should be a comma separated list of other similar servers on the network. Only one of the servers listed is required to be running when this server starts up -- it is not required to list all servers in the network.
 
 ===== Client Configuration
 
@@ -227,6 +227,6 @@ It is possible in this process that two servers learn of each other at the same 
 
 As mentioned the initialServers is only used for bootstrapping the multipoint network. Once running, all servers will dynamically establish direct connections with each other and there is no single point of failure.
 
-However to ensure that the bootstrapping process can occur successfully, the initialServers property of the conf/multipoint.properties file must be set carefully and with a specific server start order in mind. Each server consults its initialServers list exactly once in the bootstrapping phase at startup, after that time connections are made dynamically.
+However, to ensure that the bootstrapping process can occur successfully, the initialServers property of the conf/multipoint.properties file must be set carefully and with a specific server start order in mind. Each server consults its initialServers list exactly once in the bootstrapping phase at startup, after that time connections are made dynamically.
 
 This means that at least one of the servers listed in initialServers must already be running when the server starts or the server might never become introduced and connected to all the other servers in the network.

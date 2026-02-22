@@ -19,7 +19,7 @@ the License.
 
 There are two forms of the `tomee` webapp to consider:
 
-* from an *tomee-1.x.x.war* that has been downloaded and added to a
+* from a *tomee-1.x.x.war* that has been downloaded and added to a
 Tomcat 7 install. This `tomee` webapp will contain all the necessary
 libraries to add the missing Java EE functionality to Tomcat as well as
 a small console.
@@ -41,7 +41,7 @@ Deleting the `tomee` webapp from a TomEE install is safe as the needed
 libraries have been moved into `<tomcat-home>/lib/`
 
 The only loss of functionality would be the ability to remotely execute
-EJBs over HTTP. However this can easily be added to a different webapp
+EJBs over HTTP. However, this can easily be added to a different webapp
 like so:
 
 [source,xml]

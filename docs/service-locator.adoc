@@ -105,7 +105,7 @@ Usable with JNDI name formats comprised of the interfaceClass and
 ejbClass
 
 For variation, the interface class is the prefix and the ejb class is
-the suffix. This is neat as the the prefix (the interface class name)
+the suffix. This is neat as the prefix (the interface class name)
 becomes a jndi context with one binding in it for each implementing ejb
 class.
 
@@ -137,7 +137,7 @@ Store store = locator.lookup(Store.class, StoreBean.class);
 == Interface class and ejb class with simple names
 
 Similar to the above example but using the simple name of the classes
-resulting in a JNDI tree that's a bit more human readable. -
+resulting in a JNDI tree that's a bit more human-readable. -
 \{ejbClass.simpleName}/\{interfaceClass.simpleName}
 
 [source,java]

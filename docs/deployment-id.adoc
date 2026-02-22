@@ -21,7 +21,7 @@ required to be unique across all beans and jars in OpenEJB. This is a
 subtle, but important, distinction.
 
 Remember that the EJB specification was designed so that enterprise
-beans could be create, packaged, and sold by vendors (EJB Providers).
+beans could be created, packaged, and sold by vendors (EJB Providers).
 Furthermore, users should be able to buy a packaged set of beans (a jar
 with an ejb-jar.xml in it) and deploy it into an EJB Container without
 modification.
@@ -35,7 +35,7 @@ respect. The EJB spec says, this is fine, ejb-names only have to unique
 within the jar and that jar's ejb-jar.xml file. It's ridiculous to
 expect EJB Providers to call each other up and ask, "Are you already
 using the name 'PurchaseOrder' in your jar?" Remember that the EJB
-specification was designed so that enterprise beans could be create,
+specification was designed so that enterprise beans could be created,
 packaged, and sold by vendors (EJB Providers). Furthermore, users should
 be able to buy a packaged set of beans (a jar with an ejb-jar.xml in it)
 and deploy it into an EJB Container without modification. This is all
@@ -97,7 +97,7 @@ made by clients that the Local Server cannot identify go to the public,
 global namespace. The public, global JNDI namespace contains all beans
 and resources in the container system. name.
 
-Each bean is added to the public, global namespace using it's deployment
+Each bean is added to the public, global namespace using its deployment
 id as its JNDI lookup. For example, if a bean had a deployment-id of
 "/my/bean/foo", a non-bean client could lookup that bean as follows.
 
@@ -117,7 +117,7 @@ javax.naming.NameNotFoundException.
 
 In short...
 
-For beans: - Each bean has it's own private, personalized JNDI namespace
+For beans: - Each bean has its own private, personalized JNDI namespace
 - The names in it are the same names it uses in its ejb-jar.xml - Beans
 can only access their private namespace, period
 
@@ -135,7 +135,7 @@ clients. As a result, the Remote Server only has the one public, global
 JNDI namespace. Just as in the Local Server, the names in this namespace
 consist of the deployment ids of the beans in the container system.
 
-Just as before, clients can lookup beans from the Remote Server using
+Just as before, clients can look up beans from the Remote Server using
 the bean's deployment id. For example, if a bean had a deployment-id of
 "/my/bean/foo", a client could lookup that bean as follows.
 
@@ -152,9 +152,9 @@ The deployment ID uniquely identifies the bean in the OpenEJB container
 system. Therefore, no two beans can share the same deployment ID.
 
 If a bean attempts to use a deployment ID that is already in use by
-another bean, the second bean and all beans in it's jar will not be
+another bean, the second bean and all beans in its jar will not be
 loaded. In addition, the system will log a warning like the following
-one asking you to redeploy the jar and choose an different deployment ID
+one asking you to redeploy the jar and choose a different deployment ID
 for the bean.
 
 [source,properties]
@@ -163,11 +163,11 @@ WARN : Jar C:\openejb\beans\fooEjbs.jar cannot be loaded.  The Deployment ID "/m
 ----
 
 For example, the acmeEjbs.jar contains a bean with the ejb-name
-"DaffyDuckBean". The disneyEjbs.jar contains contains a bean with the
+"DaffyDuckBean". The disneyEjbs.jar contains a bean with the
 ejb-name "DonaldDuckBean".
 
 We deploy the acmeEjbs.jar and give the "DaffyDuckBean" the deployment
-ID of "/my/favorite/duck". Sometime afterwards, we deploy the
+ID of "/my/favorite/duck". Sometime afterward, we deploy the
 disneyEjbs.jar and assign the "DonaldDuckBean" the deployment ID
 "/my/favorite/duck", having forgotten that we already gave that unique
 ID to the "DaffyDuckBean" in the acmeEjbs.jar.

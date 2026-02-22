@@ -174,7 +174,7 @@ public class MyTest {
 Note: you can generate this way multiple ports. The value is the name of the service it will apply on (being said http is an alias for httpejbd which is our embedded http layer).
 
 === Nice logs
-@SimpleLog annotation allows you to have one liner logs
+@SimpleLog annotation allows you to have one-liner logs
 
 === @JaxrsProvider
 @JaxrsProvider allows you to specify on a `@Module` method the list of JAXRS provider you want to use.

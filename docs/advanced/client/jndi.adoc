@@ -70,7 +70,7 @@ final InitialContext remoteContext = new InitialContext(p);
 ctx.lookup("java:....");
 ----
 
-Contrarly to local one, the remote factory supports `Context.SECURITY_*` options in a thread safe manner and you can do lookups at runtime using them.
+Contrarly to local one, the remote factory supports `Context.SECURITY_*` options in a thread safe manner, and you can do lookups at runtime using them.
 
 See link:../../admin/cluster/index.html[Cluster] page for more details on the options.
 

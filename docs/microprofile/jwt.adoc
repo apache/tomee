@@ -62,7 +62,7 @@ Specifying the keys for verifying or decrypting JWTs is done via a `META-INF/mic
 | When `mp.jwt.token.header=Cookie` the value of `mp.jwt.token.cookie` specifies the exact cookie name holding the JWT.  The default is `Bearer`.
 | `mp.jwt.verify.audiences`
 | String
-| A comma delimited list of allowable values for the JWT `aud` claim.  When specified, a JWT with an `aud` that does not apper in the allowed list will result in an HTTP `401`. When not specified, all `aud` values are accepted including no `aud` at all.
+| A comma-delimited list of allowable values for the JWT `aud` claim.  When specified, a JWT with an `aud` that does not apper in the allowed list will result in an HTTP `401`. When not specified, all `aud` values are accepted including no `aud` at all.
 | `mp.jwt.verify.issuer`
 | String
 | The expected value of the `iss` JWT claim. When specified, a JWT with an `iss` that does not match the configured value will result in an HTTP `401`. When not specified, any `iss` values are accepted including no `iss` at all.
@@ -96,7 +96,7 @@ In addition to the standard MicroProfile JWT configuration properties above, the
 | Allows the retry attempts to eventually reach a fixed rate after a certain maximum delay is reached.  This property disables the exponential backoff once the specified maximum delay is reached.  All subsequent retries will happen at the interval specifed.  To disable exponential backoff entirely, set `initialRetryDelay` and `maxRetryDelay` to the same value.   The default value is `1 hour`
 | `tomee.jwt.verify.publickey.cache.accessTimeout`
 | link:../configuring-durations.html[Duration]
-| Specifies the maximum time incoming HTTP Requests with JWTs will block and wait for keys when no keys are available.  If specified time is reached, callers will recieve a HTTP `401`.  The default value is `30 seconds`
+| Specifies the maximum time incoming HTTP Requests with JWTs will block and wait for keys when no keys are available.  If specified time is reached, callers will receive an HTTP `401`.  The default value is `30 seconds`
 | `tomee.jwt.verify.publickey.cache.refreshInterval`
 | link:../configuring-durations.html[Duration]
 | Specifies how frequently TomEE should check the configured location for new keys.  Should any refresh fail or result in no valid keys, the keys currently in use are not replaced and no subsequent attempts are made until the next refresh interval.  The default value is `1 day`
@@ -111,7 +111,7 @@ In addition to the standard MicroProfile JWT configuration properties above, the
 | Allows the retry attempts to eventually reach a fixed rate after a certain maximum delay is reached.  This property disables the exponential backoff once the specified maximum delay is reached.  All subsequent retries will happen at the interval specifed.  To disable exponential backoff entirely, set `initialRetryDelay` and `maxRetryDelay` to the same value.   The default value is `1 hour`
 | `tomee.jwt.decrypt.key.cache.accessTimeout`
 | link:../configuring-durations.html[Duration]
-| Specifies the maximum time incoming HTTP Requests with JWTs will block and wait for keys when no keys are available.  If specified time is reached, callers will recieve a HTTP `401`.  The default value is `30 seconds`
+| Specifies the maximum time incoming HTTP Requests with JWTs will block and wait for keys when no keys are available.  If specified time is reached, callers will receive an HTTP `401`.  The default value is `30 seconds`
 | `tomee.jwt.decrypt.key.cache.refreshInterval`
 | link:../configuring-durations.html[Duration]
 | Specifies how frequently TomEE should check the configured location for new keys.  Should any refresh fail or result in no valid keys, the keys currently in use are not replaced and no subsequent attempts are made until the next refresh interval.  The default value is `1 day`

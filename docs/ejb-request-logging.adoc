@@ -76,7 +76,7 @@ network. Calls on `@Remote` or `@Local` interfaces between two
 components in the same server are not logged.
 
 However, *all* EJB invocations to business methods _or_ callbacks like
-`@PostConstruct` are tracked for statistical analysis. By default a
+`@PostConstruct` are tracked for statistical analysis. By default, a
 floating window of 2000 samples are kept. The time tracked is purely
 *bean time* which includes interceptors, decorators and the bean itself,
 but does not include other container services like transactions or

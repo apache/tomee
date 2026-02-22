@@ -5,7 +5,7 @@
 :jbake-status: published
 
 The _`@LocalClient_` annotation (org.apache.openejb.api.LocalClient) is an
-innovation that crosses concepts of an Java EE Application Client with a
+innovation that crosses concepts of a Java EE Application Client with a
 plain Java SE client. This particular annotation is focused on clients
 of an Embeddable EJB container, i.e. local clients. There is another
 annotation in development called `@RemoteClient` that will be focused on
