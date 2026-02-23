@@ -6584,7 +6584,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("when");
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.core.WhenTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that includes its body if its \tcondition evalutes to 'true'");
+                    tag.setInfo("Subtag of <choose> that includes its body if its \tcondition evaluates to 'true'");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("test", true, "boolean", true, false, "The test condition that determines whether or not the body content should be processed.", false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6630,7 +6630,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("if");
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.core.IfTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Simple conditional tag, which evalutes its body if the \tsupplied condition is true and optionally exposes a Boolean \tscripting variable representing the evaluation of this condition");
+                    tag.setInfo("Simple conditional tag, which evaluates its body if the \tsupplied condition is true and optionally exposes a Boolean \tscripting variable representing the evaluation of this condition");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("test", true, "boolean", true, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6888,7 +6888,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("when");
                     tag.setTagClass("org.apache.taglibs.standard.tag.rt.core.WhenTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that includes its body if its \tcondition evalutes to 'true'");
+                    tag.setInfo("Subtag of <choose> that includes its body if its \tcondition evaluates to 'true'");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("test", true, "boolean", true, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -6938,7 +6938,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("if");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.xml.IfTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("XML conditional tag, which evalutes its body if the         supplied XPath expression evalutes to 'true' as a boolean");
+                    tag.setInfo("XML conditional tag, which evaluates its body if the supplied XPath expression evaluates to 'true' as a boolean");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("select", true, "java.lang.String", false, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);
@@ -7092,7 +7092,7 @@ public class TomEETldScanner extends TldScanner {
                     tag.setName("when");
                     tag.setTagClass("org.apache.taglibs.standard.tag.common.xml.WhenTag");
                     tag.setBodyContent("JSP");
-                    tag.setInfo("Subtag of <choose> that includes its body if its         expression evalutes to 'true'");
+                    tag.setInfo("Subtag of <choose> that includes its body if its expression evaluates to 'true'");
                     {
                         final TagAttributeInfo attr = new TagAttributeInfo("select", true, "java.lang.String", false, false, null, false, false, null, null);
                         tag.getAttributes().add(attr);

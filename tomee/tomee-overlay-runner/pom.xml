@@ -27,7 +27,7 @@
 
   <artifactId>tomee-overlay-runner</artifactId>
   <name>TomEE :: TomEE :: Overlay Runner</name>
-  <description>This jar is intended to be embed in a war overlay of one TomEE war to start TomEE from a webapp</description>
+  <description>This jar is intended to be embedded in a war overlay of one TomEE war to start TomEE from a webapp</description>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.overlay.runner</tomee.build.name>

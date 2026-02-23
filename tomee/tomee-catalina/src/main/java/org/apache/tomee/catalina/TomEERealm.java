@@ -85,7 +85,7 @@ public class TomEERealm extends CombinedRealm {
             return ((GenericPrincipal) principal).hasRole(role);
         }
 
-        for (final Realm realm : realms) { // when used implicitely (always?) realms.size == 1 so no need of a strategy
+        for (final Realm realm : realms) { // when used implicitly (always?) realms.size == 1 so no need of a strategy
             if (realm.hasRole(wrapper, principal, rawRole)) {
                 return true;
             }
@@ -101,7 +101,7 @@ public class TomEERealm extends CombinedRealm {
             securityService = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
         }
 
-        // normally we don't care about oldstate because the listener already contains one
+        // normally we don't care about old state because the listener already contains one
         // which is the previous one
         // so no need to clean twice here
         final Request request = OpenEJBSecurityListener.requests.get();

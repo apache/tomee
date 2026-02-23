@@ -50,7 +50,7 @@ public class OpenEJBSecurityListener implements AsyncListener {
 
     @Override
     public void onStartAsync(final AsyncEvent asyncEvent) throws IOException {
-        asyncEvent.getAsyncContext().addListener(this); // super vicious isnt it? that's in servlet spec, start != end events.
+        asyncEvent.getAsyncContext().addListener(this); // super vicious isn't it? that's in servlet spec, start != end events.
         requests.set(request);
         enter();
     }

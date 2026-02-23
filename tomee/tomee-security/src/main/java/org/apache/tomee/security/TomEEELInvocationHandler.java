@@ -74,7 +74,7 @@ public class TomEEELInvocationHandler implements InvocationHandler {
 
                 // if there is an expression, it takes precedence over the static one
                 if (!expression.trim().isEmpty()) {
-                    // make sure to pass in the return type of the initial method, otherwith it would be String all the time
+                    // make sure to pass in the return type of the initial method, otherwise it would be String all the time
                     return eval(processor, sanitizeExpression(expression), method.getReturnType());
 
                 } else {

@@ -511,7 +511,7 @@ public class Container implements AutoCloseable {
 
         final String catalinaBase = base.getAbsolutePath();
 
-        // set the env before calling anoything on tomcat or Catalina!!
+        // set the env before calling anything on tomcat or Catalina!!
         // TODO: save previous value and restore in stop
         System.setProperty("catalina.base", catalinaBase);
         System.setProperty("openejb.deployments.classpath", "false");

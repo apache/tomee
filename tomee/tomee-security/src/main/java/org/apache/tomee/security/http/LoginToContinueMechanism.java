@@ -28,7 +28,7 @@ public interface LoginToContinueMechanism {
 
     String ORIGINAL_REQUEST = "org.apache.tomee.security.request.original";
     String AUTHENTICATION = "org.apache.tomee.security.request.authentication";
-    String CALLER_AUTHENICATION = "org.apache.tomee.security.request.caller.authentication";
+    String CALLER_AUTHENTICATION = "org.apache.tomee.security.request.caller.authentication";
 
     LoginToContinue getLoginToContinue();
 

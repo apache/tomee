@@ -260,7 +260,7 @@ public class TomEEDataSourceCreator extends PoolDataSourceCreator {
         }
 
         public void setXaDataSource(final String jndi) {
-            // we should do setDataSourceJNDI(jndi); but ATM tomcat doesnt do the lookup so using this as correct impl
+            // we should do setDataSourceJNDI(jndi); but ATM tomcat doesn't do the lookup so using this as correct impl
             try {
                 setDataSource(SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext().lookup("openejb:Resource/" + jndi));
             } catch (final NamingException e) {

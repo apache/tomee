@@ -388,7 +388,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
         @Override
         public void addFilterMapping(final FilterMap filterMap) {
-            // we need to add this one before the mapping cause of tomcat validation (ie dont make deployment fail)
+            // we need to add this one before the mapping cause of tomcat validation (ie don't make deployment fail)
             if ("CDI Conversation Filter".equals(filterMap.getFilterName()) && !cdiConversation) {
                 final FilterDef conversationFilter = new FilterDef();
                 conversationFilter.setAsyncSupported("true");

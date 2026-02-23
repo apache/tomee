@@ -76,7 +76,7 @@ public class LoaderServlet extends HttpServlet {
     }
 
     /**
-     * Retrieves all intialization parameters for this servlet and stores them in a java.util.Properties object.
+     * Retrieves all initialization parameters for this servlet and stores them in a java.util.Properties object.
      *
      * @param config jakarta.servlet.ServletConfig
      * @return java.util.Properties

@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
  * <p>
  * This is an alternate way to load the Tomcat integration
- * This approach is mutually exclussive to the {@link LoaderServlet}
+ * This approach is mutually exclusive to the {@link LoaderServlet}
  * </p>
  * <p>
  * This class does nothing more than scrape around in

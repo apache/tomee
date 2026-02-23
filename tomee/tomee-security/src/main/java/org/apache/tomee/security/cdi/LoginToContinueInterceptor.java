@@ -36,7 +36,7 @@ import static jakarta.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
 import static jakarta.security.enterprise.AuthenticationStatus.SEND_FAILURE;
 import static jakarta.security.enterprise.AuthenticationStatus.SUCCESS;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.AUTHENTICATION;
-import static org.apache.tomee.security.http.LoginToContinueMechanism.CALLER_AUTHENICATION;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.CALLER_AUTHENTICATION;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.ORIGINAL_REQUEST;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.clearRequestAndAuthentication;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.getAuthentication;
@@ -87,11 +87,11 @@ public class LoginToContinueInterceptor {
             !httpMessageContext.getRequest().getRequestURI().endsWith("j_security_check")) {
 
             httpMessageContext.getRequest().getSession().removeAttribute(ORIGINAL_REQUEST);
-            httpMessageContext.getRequest().getSession().removeAttribute(CALLER_AUTHENICATION);
+            httpMessageContext.getRequest().getSession().removeAttribute(CALLER_AUTHENTICATION);
         }
 
         if (httpMessageContext.getAuthParameters().isNewAuthentication()) {
-            httpMessageContext.getRequest().getSession().setAttribute(CALLER_AUTHENICATION, true);
+            httpMessageContext.getRequest().getSession().setAttribute(CALLER_AUTHENTICATION, true);
             httpMessageContext.getRequest().getSession().removeAttribute(ORIGINAL_REQUEST);
             httpMessageContext.getRequest().getSession().removeAttribute(AUTHENTICATION);
         }
