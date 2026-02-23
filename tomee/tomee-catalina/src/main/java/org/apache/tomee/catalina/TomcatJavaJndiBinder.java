@@ -25,8 +25,7 @@ public class TomcatJavaJndiBinder implements LifecycleListener {
     @Override
     public void lifecycleEvent(final LifecycleEvent event) {
         final Object source = event.getSource();
-        if (source instanceof StandardContext) {
-            final StandardContext context = (StandardContext) source;
+        if (source instanceof StandardContext context) {
             if (Lifecycle.CONFIGURE_START_EVENT.equals(event.getType())) {
                 TomcatJndiBuilder.mergeJava(context);
             }

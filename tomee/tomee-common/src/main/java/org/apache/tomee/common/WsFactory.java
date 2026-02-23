@@ -41,11 +41,9 @@ public class WsFactory extends AbstractObjectFactory {
     @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // ignore non resource-refs
-        if (!(object instanceof ResourceRef)) {
+        if (!(object instanceof ResourceRef ref)) {
             return null;
         }
-
-        final Reference ref = (Reference) object;
 
         final Object value;
         if (NamingUtil.getProperty(ref, NamingUtil.JNDI_NAME) != null) {

@@ -34,8 +34,7 @@ class UncheckedItem {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof UncheckedItem) {
-            UncheckedItem item = (UncheckedItem) o;
+        if (o instanceof UncheckedItem item) {
             return item.transportType == transportType && item.name.equals(this.name);
         }
         return false;

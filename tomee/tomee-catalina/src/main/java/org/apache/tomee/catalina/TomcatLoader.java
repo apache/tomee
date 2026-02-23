@@ -400,14 +400,12 @@ public class TomcatLoader implements Loader {
     private void processRunningApplications(final TomcatWebAppBuilder tomcatWebAppBuilder, final StandardServer standardServer) {
         for (final org.apache.catalina.Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
-                final Engine engine = (Engine) service.getContainer();
+                final Engine engine = service.getContainer();
                 for (final Container engineChild : engine.findChildren()) {
-                    if (engineChild instanceof Host) {
-                        final Host host = (Host) engineChild;
+                    if (engineChild instanceof Host host) {
                         for (final Container hostChild : host.findChildren()) {
-                            if (hostChild instanceof StandardContext) {
-                                final StandardContext standardContext = (StandardContext) hostChild;
-                                final int state = TomcatHelper.getContextState(standardContext);
+                            if (hostChild instanceof StandardContext standardContext) {
+                              final int state = TomcatHelper.getContextState(standardContext);
                                 if (state == 0) {
                                     // context only initialized
                                     tomcatWebAppBuilder.init(standardContext);

@@ -58,12 +58,11 @@ public class ServerListener implements LifecycleListener {
             if (listenerInstalled.get() || !Lifecycle.AFTER_INIT_EVENT.equals(event.getType())) {
                 return;
             }
-            if (!(event.getSource() instanceof StandardServer)) {
+            if (!(event.getSource() instanceof StandardServer server)) {
                 return;
             }
 
             try {
-                final StandardServer server = (StandardServer) event.getSource();
 
                 TomcatHelper.setServer(server);
 
