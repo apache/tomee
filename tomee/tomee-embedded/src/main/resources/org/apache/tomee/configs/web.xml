@@ -158,7 +158,7 @@
     <!--                                                                        -->
     <!--    enablePooling       Determines whether tag handler pooling is       -->
     <!--                        enabled. This is a compilation option. It will  -->
-    <!--                        not alter the behaviour of JSPs that have       -->
+    <!--                        not alter the behavior of JSPs that have       -->
     <!--                        already been compiled. [true]                   -->
     <!--                                                                        -->
     <!--    engineOptionsClass  Allows specifying the Options class used to     -->
@@ -411,7 +411,7 @@
     </servlet>
  -->
     <!--  ================ Built In Servlet Mappings =========================  -->
-    <!--  The servlet mappings for the built in servlets defined above.  Note   -->
+    <!--  The servlet mappings for the built-in servlets defined above.  Note   -->
     <!--  that, by default, the CGI and SSI servlets are *not* mapped.  You     -->
     <!--  must uncomment these mappings (or add them to your application's own  -->
     <!--  web.xml deployment descriptor) to enable these services               -->

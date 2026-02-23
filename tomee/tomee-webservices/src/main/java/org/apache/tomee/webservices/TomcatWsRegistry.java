@@ -118,7 +118,7 @@ public class TomcatWsRegistry implements WsRegistry {
         wrapper.setServletClass(WsServlet.class.getName());
         if (wrapper.getServlet() != null) {
             wrapper.unload(); // deallocate previous one
-            wrapper.load(); // reload this one withuot unloading it to keep the instance - unload is called during stop()
+            wrapper.load(); // reload this one without unloading it to keep the instance - unload is called during stop()
             // boolean controlling this method call can't be set to false through API so let do it ourself
             wrapper.getServlet().init(StandardWrapper.class.cast(wrapper)); // or Reflections.set(wrapper, "instanceInitialized", false);
         }
@@ -192,7 +192,7 @@ public class TomcatWsRegistry implements WsRegistry {
         }
         final Container host = engine.findChild(virtualHost);
         if (host == null) {
-            throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matchiing Host entry in the server.xml?");
+            throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
         }
 
         final List<String> addresses = new ArrayList<>();

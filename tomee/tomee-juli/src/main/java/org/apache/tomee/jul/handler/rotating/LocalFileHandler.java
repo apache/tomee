@@ -437,7 +437,7 @@ public class LocalFileHandler extends Handler {
                         final BasicFileAttributes attr = Files.readAttributes(archive.toPath(), BasicFileAttributes.class);
                         if (now - attr.creationTime().toMillis() > purgeExpiryDuration) {
                             if (!Files.deleteIfExists(archive.toPath())) {
-                                // dont try to delete on exit cause we will find it again
+                                // don't try to delete on exit cause we will find it again
                                 reportError("Can't delete " + archive.getAbsolutePath() + ".", null, ErrorManager.GENERIC_FAILURE);
                             }
                         }

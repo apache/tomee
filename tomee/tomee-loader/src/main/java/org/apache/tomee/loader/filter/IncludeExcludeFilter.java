@@ -19,7 +19,7 @@ package org.apache.tomee.loader.filter;
 /**
  * First, all Include directives are evaluated; at least one must match, or the className is rejected.
  * Next, all Exclude directives are evaluated. If any matches, the className is rejected.
- * Last, any classNames which do not match an Include or a Exclude directive are denied by default.
+ * Last, any classNames which do not match an Include or an Exclude directive are denied by default.
  */
 public class IncludeExcludeFilter implements Filter {
 

@@ -178,7 +178,7 @@ public class TomcatRsRegistry implements RsRegistry {
             final URI address;
             try {
                 address = new URI(connector.getScheme(), null, host, connector.getPort(), path, null, null);
-            } catch (final Exception e) { // just an URI problem normally...shouldn't occur
+            } catch (final Exception e) { // just a URI problem normally...shouldn't occur
                 LOGGER.error("can't add container for path " + path, e);
                 continue;
             }
@@ -207,7 +207,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     private static final class Key implements Comparable<Key> {
-        private final String appId; // can be versionned so context is not enough
+        private final String appId; // can be versioned so context is not enough
         private final String path;
         private final int hash; // hashmap key so compute only once the hash for perf
 

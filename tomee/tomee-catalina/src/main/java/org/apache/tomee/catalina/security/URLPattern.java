@@ -67,11 +67,11 @@ public class URLPattern {
     }
 
     /**
-     * Get a qualifed URL pattern relative to a particular set of URL patterns.  This algorithm is described in
-     * JSR 115, section 3.1.3.1 "Qualified URL Pattern Names".
+     * Get a qualified URL pattern relative to a particular set of URL patterns.
+     * This algorithm is described in JSR 115, section 3.1.3.1 "Qualified URL Pattern Names".
      *
      * @param patterns the set of possible URL patterns that could be used to qualify this pattern
-     * @return a qualifed URL pattern
+     * @return a qualified URL pattern
      */
     public String getQualifiedPattern(Set<URLPattern> patterns) {
         if (type == EXACT) {
@@ -256,7 +256,7 @@ public class URLPattern {
         }
 
         /**
-         * This pattern is an extension pattern (that is, it startswith "*.") and the argument pattern ends with
+         * This pattern is an extension pattern (that is, it starts with "*.") and the argument pattern ends with
          * this pattern.
          *
          * @param base the base pattern

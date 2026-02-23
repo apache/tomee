@@ -16,4 +16,4 @@
 #    limitations under the License.
 #
 ################################################################################
-This file causes the jar containing it to be loaded into the Tomcat server classloader rather than the commom classloader
+This file causes the jar containing it to be loaded into the Tomcat server classloader rather than the common classloader
