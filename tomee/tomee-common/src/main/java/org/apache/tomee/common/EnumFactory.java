@@ -31,11 +31,9 @@ public class EnumFactory implements ObjectFactory {
 
     @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
-        if (!(object instanceof Reference)) {
+        if (!(object instanceof Reference reference)) {
             return null;
         }
-
-        final Reference reference = ((Reference) object);
 
         final String typeName = reference.getClassName();
 

@@ -51,8 +51,7 @@ public class TomEEWebappLoader extends WebappLoader {
         }
 
         final ClassLoader classloader = super.getClassLoader();
-        if (classloader instanceof TomEEWebappClassLoader) {
-            final TomEEWebappClassLoader tomEEWebappClassLoader = (TomEEWebappClassLoader) classloader;
+        if (classloader instanceof TomEEWebappClassLoader tomEEWebappClassLoader) {
             tomEEWebappClassLoader.restarting();
             try {
                 super.backgroundProcess();
