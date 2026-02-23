@@ -130,8 +130,7 @@ public class Filters {
      * @return
      */
     public static Filter invert(final Filter filter) {
-        if (filter instanceof NegativeFilter) {
-            final NegativeFilter negativeFilter = (NegativeFilter) filter;
+        if (filter instanceof NegativeFilter negativeFilter) {
             return negativeFilter.getFilter();
         }
 
@@ -140,8 +139,7 @@ public class Filters {
 
     private static void unwrap(final List<Filter> filters, final Set<Filter> unwrapped) {
         for (final Filter filter : filters) {
-            if (filter instanceof FilterList) {
-                final FilterList filterList = (FilterList) filter;
+            if (filter instanceof FilterList filterList) {
                 unwrap(filterList.getFilters(), unwrapped);
             } else {
                 unwrapped.add(filter);
