@@ -140,7 +140,7 @@ public class TomcatHelper {
      * @param realm
      * @param tomcatPrincipal
      * @param logicalRole
-     * @return true the the principle has the specified role
+     * @return true the principle has the specified role
      */
     public static boolean hasRole(final Realm realm, final Principal tomcatPrincipal, final String logicalRole) {
         try {

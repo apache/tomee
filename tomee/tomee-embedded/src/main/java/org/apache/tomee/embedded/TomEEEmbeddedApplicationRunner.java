@@ -140,7 +140,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
         final Class<?> appClass = app.getClass();
         final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(ancestors(appClass)));
 
-        // setup the container config reading class annotation, using a randome http port and deploying the classpath
+        // setup the container config reading class annotation, using a random http port and deploying the classpath
         final Configuration configuration = new Configuration();
         final ContainerProperties props = appClass.getAnnotation(ContainerProperties.class);
         if (props != null) {

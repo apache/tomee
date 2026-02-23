@@ -260,11 +260,11 @@ public class TomcatSecurityConstaintsToJaccPermissionsTransformer {
          * pattern "/", that is not combined by the
          * <tt>web-resource-collection</tt> elements of the deployment
          * descriptor with ever HTTP method value. The permission objects must
-         * be contructed using the qualified pattern as their name and with
+         * be constructed using the qualified pattern as their name and with
          * actions defined by the subset of the HTTP methods that do not occur
          * in combination with the pattern. The resulting permissions that must
          * be added to the unchecked policy statements by calling the
-         * <code>addToUncheckedPolcy</code> method on the
+         * <code>addToUncheckedPolicy</code> method on the
          * <code>PolicyConfiguration</code> object.
          */
         for (URLPattern pattern : allSet) {

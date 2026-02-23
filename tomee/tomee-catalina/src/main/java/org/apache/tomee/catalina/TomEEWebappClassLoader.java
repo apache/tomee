@@ -297,7 +297,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         if (stopped) {
             return;
         }
-        // reset classloader because of tomcat classloaderlogmanager
+        // reset classloader because of tomcat classloader logmanager
         // to be sure we reset the right loggers
         final Thread thread = Thread.currentThread();
         final ClassLoader loader = thread.getContextClassLoader();
@@ -359,7 +359,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         }
     }
 
-    // embeddeding implementation of sthg (JPA, JSF) can lead to classloading issues if we don't enrich the webapp
+    // embedding implementation of sthg (JPA, JSF) can lead to classloading issues if we don't enrich the webapp
     // with our integration jars
     // typically the class will try to be loaded by the common classloader
     // but the interface implemented or the parent class

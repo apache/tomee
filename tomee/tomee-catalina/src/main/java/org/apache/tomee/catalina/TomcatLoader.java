@@ -178,7 +178,7 @@ public class TomcatLoader implements Loader {
             final Class<?> creatorClass = TomcatLoader.class.getClassLoader().loadClass("org.apache.tomee.jdbc.TomEEDataSourceCreator");
             SystemInstance.get().setProperty(ConfigurationFactory.OPENEJB_JDBC_DATASOURCE_CREATOR, creatorClass.getName());
         } catch (final Throwable ignored) {
-            // will use the defaul tone
+            // will use the default tone
         }
 
         // tomcat default behavior is webapp, simply keep it, it is overridable by system property too

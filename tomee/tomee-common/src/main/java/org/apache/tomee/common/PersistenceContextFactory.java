@@ -43,7 +43,7 @@ public class PersistenceContextFactory extends AbstractObjectFactory {
             // lookup the value in JNDI
             value = super.getObjectInstance(object, name, context, environment);
         } else {
-            // value is hard hard coded in the properties
+            // value is hard coded in the properties
             value = getStaticValue(ref);
         }
 

@@ -29,7 +29,7 @@ import java.net.URLClassLoader;
 import java.util.Properties;
 
 /**
- * This class should only be loadded and used via reflection from TomcatEmbedder.
+ * This class should only be loaded and used via reflection from TomcatEmbedder.
  *
  * Everything that happens up to the point of calling this particular method
  * (except setting tomee.war) ultimately means nothing and does not matter
@@ -180,12 +180,12 @@ class TomcatHook {
             // create the loader
 
             // This init call affects only this WebappClassloader and is just required
-            // for runnig the Embedder.  The SystemInstance will be initialized more permanently
+            // for running the Embedder.  The SystemInstance will be initialized more permanently
             // in the parent classloader once the required libraries are added.
             SystemInstance.init(properties);
 
             // This guy does the magic of squishing the openejb libraries into the parent classloader
-            // and kicking off the reall integration.
+            // and kicking off the real integration.
             embedder.init(properties);
         } catch (final Exception e) {
             e.printStackTrace();

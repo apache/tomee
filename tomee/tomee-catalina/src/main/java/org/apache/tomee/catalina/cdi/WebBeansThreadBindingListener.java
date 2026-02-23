@@ -23,12 +23,12 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
 
 /**
- * For Tomcat we need to implement a ThreadBindingListener to
+ * For Tomcat, we need to implement a ThreadBindingListener to
  * release the ServletRequest in case of Async requests.
  * Tomcat only sends the requestDestroyed event only when the 'final'
  * detached response gets rendered. But this happens on a totally
  * different Thread.
- * Thus in order to release e.g. locks on Conversations and prevent mem leaks
+ * Thus, in order to release e.g. locks on Conversations and prevent mem leaks
  * we need to end the request on unbind() as well.
  * Note that the ContextsService will do nothing if the Request was already
  * properly destroyed in standard synchronous Servlet Requests.

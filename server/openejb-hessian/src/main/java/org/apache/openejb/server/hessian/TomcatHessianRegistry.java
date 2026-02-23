@@ -82,7 +82,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
         if (host == null) {
             host = engine.findChild(engine.getDefaultHost());
             if (host == null) {
-                throw new IllegalArgumentException("Invalid virtual host '" + engine.getDefaultHost() + "'.  Do you have a matchiing Host entry in the server.xml?");
+                throw new IllegalArgumentException("Invalid virtual host '" + engine.getDefaultHost() + "'.  Do you have a matching Host entry in the server.xml?");
             }
         }
 
@@ -243,7 +243,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
         if (host == null) {
             host = engine.findChild(engine.getDefaultHost());
             if (host == null) {
-                throw new IllegalArgumentException("Invalid virtual host '" + engine.getDefaultHost() + "'.  Do you have a matchiing Host entry in the server.xml?");
+                throw new IllegalArgumentException("Invalid virtual host '" + engine.getDefaultHost() + "'.  Do you have a matching Host entry in the server.xml?");
             }
         }
 

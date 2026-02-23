@@ -75,7 +75,7 @@ public class TomcatWebappDeployer implements WebAppDeployer {
         }
 
         if (info == null || info.appInfo == null) {
-            LOGGER.error("Can't find of appInfo for " + (file != null ? file.getAbsolutePath() : null) + ", availables: " + tomcatWebAppBuilder.availableApps());
+            LOGGER.error("Can't find appInfo for " + (file != null ? file.getAbsolutePath() : null) + ", available apps: " + tomcatWebAppBuilder.availableApps());
         }
 
         if (info == null) { // error
