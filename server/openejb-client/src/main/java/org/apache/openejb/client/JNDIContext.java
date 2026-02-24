@@ -651,8 +651,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     @Override
     public NamingEnumeration<Binding> listBindings(final String name) throws NamingException {
         final Object o = lookup(name);
-        if (o instanceof Context) {
-            final Context context = (Context) o;
+        if (o instanceof Context context) {
             final NamingEnumeration<NameClassPair> enumeration = context.list("");
             final List<NameClassPair> bindings = new ArrayList<NameClassPair>();
 

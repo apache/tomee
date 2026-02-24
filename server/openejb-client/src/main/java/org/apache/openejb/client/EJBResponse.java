@@ -178,8 +178,7 @@ public class EJBResponse implements ClusterableResponse {
             case ResponseCodes.EJB_APP_EXCEPTION:
             case ResponseCodes.EJB_ERROR:
             case ResponseCodes.EJB_SYS_EXCEPTION:
-                if (result instanceof Throwable) {
-                    final Throwable throwable = (Throwable) result;
+                if (result instanceof Throwable throwable) {
                     result = new ThrowableArtifact(throwable);
                 }
                 break;

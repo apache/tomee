@@ -171,8 +171,7 @@ public abstract class ServiceManager {
 
                 service.init(serviceProperties);
 
-                if (service instanceof DiscoveryAgent) {
-                    final DiscoveryAgent agent = (DiscoveryAgent) service;
+                if (service instanceof DiscoveryAgent agent) {
                     registry.addDiscoveryAgent(agent);
                 }
 
