@@ -92,8 +92,7 @@ public class Logs {
     public static String name(final Type type) {
         if (type instanceof Class<?>) {
             return ((Class) type).getSimpleName().replace("java.lang.", "").replace("java.util", "");
-        } else if (type instanceof ParameterizedType) {
-            final ParameterizedType pt = (ParameterizedType) type;
+        } else if (type instanceof ParameterizedType pt) {
             final StringBuilder builder = new StringBuilder();
             builder.append(name(pt.getRawType()));
             final Type[] args = pt.getActualTypeArguments();

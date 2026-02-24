@@ -59,10 +59,9 @@ public class SingletonEJBObjectHandler extends EJBObjectHandler {
 
         final Object arg = (args.length == 1) ? args[0] : null;
 
-        if (arg == null || !(arg instanceof EJBObjectProxy)) {
+        if (arg == null || !(arg instanceof EJBObjectProxy proxy2)) {
             return Boolean.FALSE;
         }
-        final EJBObjectProxy proxy2 = (EJBObjectProxy) arg;
         final EJBObjectHandler that = proxy2.getEJBObjectHandler();
         return this.ejb.deploymentID.equals(that.ejb.deploymentID);
     }

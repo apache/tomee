@@ -336,10 +336,8 @@ public class Client {
             }
 
             if (retryConditions.size() > 0) {
-                if (res instanceof EJBResponse) {
-                    final EJBResponse ejbResponse = (EJBResponse) res;
-                    if (ejbResponse.getResult() instanceof ThrowableArtifact) {
-                        final ThrowableArtifact artifact = (ThrowableArtifact) ejbResponse.getResult();
+                if (res instanceof EJBResponse ejbResponse) {
+                    if (ejbResponse.getResult() instanceof ThrowableArtifact artifact) {
                         //noinspection ThrowableResultOfMethodCallIgnored
                         if (retryConditions.contains(artifact.getThrowable().getClass())) {
 

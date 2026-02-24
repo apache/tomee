@@ -350,8 +350,7 @@ public class EJBMetaDataImpl implements jakarta.ejb.EJBMetaData, java.io.Externa
 
     public void loadProperties(final Properties properties) {
         for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
-            if (entry.getKey() instanceof String) {
-                final String key = (String) entry.getKey();
+            if (entry.getKey() instanceof String key) {
                 if (key.startsWith("openejb.client.")) {
                     this.properties.put(key, entry.getValue());
                 }
