@@ -205,8 +205,7 @@ public class OpenEJBAsyncContext implements AsyncContext {
         String path;
         final String pathInfo;
         ServletRequest servletRequest = getRequest();
-        if (servletRequest instanceof HttpServletRequest) {
-            HttpServletRequest sr = (HttpServletRequest) servletRequest;
+        if (servletRequest instanceof HttpServletRequest sr) {
             path = sr.getServletPath();
             pathInfo = sr.getPathInfo();
         } else {

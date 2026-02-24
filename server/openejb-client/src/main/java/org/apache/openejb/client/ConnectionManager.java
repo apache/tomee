@@ -69,8 +69,7 @@ public class ConnectionManager {
 
         String name = cluster.getConnectionStrategy();
 
-        if (req instanceof EJBRequest) {
-            final EJBRequest ejbRequest = (EJBRequest) req;
+        if (req instanceof EJBRequest ejbRequest) {
             final Properties p = ejbRequest.getEjbMetaData().getProperties();
             name = p.getProperty("openejb.client.connection.strategy", name);
         }

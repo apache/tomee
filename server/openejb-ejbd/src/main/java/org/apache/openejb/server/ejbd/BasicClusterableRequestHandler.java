@@ -32,8 +32,7 @@ public class BasicClusterableRequestHandler implements ClusterableRequestHandler
 
         final Container container = beanContext.getContainer();
 
-        if (container instanceof ClusteredRPCContainer) {
-            final ClusteredRPCContainer clusteredContainer = (ClusteredRPCContainer) container;
+        if (container instanceof ClusteredRPCContainer clusteredContainer) {
             final URI[] locations = clusteredContainer.getLocations(beanContext);
             if (null != locations) {
                 final ServerMetaData server = new ServerMetaData(locations);

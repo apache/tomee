@@ -365,11 +365,10 @@ public class ClientInjectionProcessor<T> {
     }
 
     private Object convert(final Class type, Object value) {
-        if (type == Object.class || !(value instanceof String)) {
+        if (type == Object.class || !(value instanceof String stringValue)) {
             return value;
         }
 
-        final String stringValue = (String) value;
         final PropertyEditor editor = findEditor(type);
         if (editor != null) {
             editor.setAsText(stringValue);

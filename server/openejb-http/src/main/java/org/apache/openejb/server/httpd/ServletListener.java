@@ -29,8 +29,7 @@ public class ServletListener implements HttpListener {
 
     @Override
     public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
-        if (request instanceof HttpRequestImpl) {
-            final HttpRequestImpl req = (HttpRequestImpl) request;
+        if (request instanceof HttpRequestImpl req) {
             req.initPathFromContext((!context.startsWith("/") ? "/" : "") + context);
         }
         delegate.service(request, response);
