@@ -165,15 +165,13 @@ public class AbsoluteOrdering$JAXB
         List<Object> nameOrOthers = absoluteOrdering.nameOrOthers;
         if (nameOrOthers!= null) {
             for (Object nameOrOthersItem: nameOrOthers) {
-                if (nameOrOthersItem instanceof org.apache.openejb.jee.OrderingOthers) {
-                    org.apache.openejb.jee.OrderingOthers OrderingOthers = ((org.apache.openejb.jee.OrderingOthers) nameOrOthersItem);
+                if (nameOrOthersItem instanceof OrderingOthers oOthers) {
                     writer.writeStartElement(prefix, "others", "http://java.sun.com/xml/ns/javaee");
-                    writeOrderingOthers(writer, OrderingOthers, context);
+                    writeOrderingOthers(writer, oOthers, context);
                     writer.writeEndElement();
-                } else if (nameOrOthersItem instanceof java.lang.String) {
-                    java.lang.String String = ((java.lang.String) nameOrOthersItem);
+                } else if (nameOrOthersItem instanceof String s) {
                     writer.writeStartElement(prefix, "name", "http://java.sun.com/xml/ns/javaee");
-                    writer.writeCharacters(String);
+                    writer.writeCharacters(s);
                     writer.writeEndElement();
                 } else if (nameOrOthersItem == null) {
                     context.unexpectedNullValue(absoluteOrdering, "nameOrOthers");

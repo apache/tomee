@@ -393,8 +393,7 @@ public class EntityContainer implements RpcContainer {
                 proxies.addElement(new ProxyInfo(beanContext, primaryKey));
             }
             returnValue = proxies;
-        } else if (returnValue instanceof Enumeration) {
-            final Enumeration keys = (Enumeration) returnValue;
+        } else if (returnValue instanceof Enumeration keys) {
             final Vector<ProxyInfo> proxies = new Vector<>();
             while (keys.hasMoreElements()) {
                 final Object primaryKey = keys.nextElement();

@@ -64,10 +64,9 @@ public class FileUtils {
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof FileUtils)) {
+        if (!(obj instanceof FileUtils that)) {
             return false;
         }
-        final FileUtils that = (FileUtils) obj;
         return this.getDirectory().equals(that.getDirectory());
     }
 

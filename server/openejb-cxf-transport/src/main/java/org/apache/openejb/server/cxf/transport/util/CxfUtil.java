@@ -150,8 +150,7 @@ public final class CxfUtil {
 
                         final Object fieldValue = field.get(o);
 
-                        if (fieldValue instanceof DefaultInterceptorHandler) {
-                            final DefaultInterceptorHandler handler = (DefaultInterceptorHandler) fieldValue;
+                        if (fieldValue instanceof DefaultInterceptorHandler handler) {
                             return handler.getTarget();
                         } else {
                             throw new IllegalStateException("Expected OwbInterceptorProxy handler to be an instance of Default Interceptor Handler.");

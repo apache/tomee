@@ -55,11 +55,9 @@ class RemoveWebServices implements DynamicDeployer {
                 // Clear any <service-ref> references from ejbs
                 bean.getServiceRef().clear();
 
-                if (!(bean instanceof SessionBean)) {
+                if (!(bean instanceof SessionBean sessionBean)) {
                     continue;
                 }
-
-                final SessionBean sessionBean = (SessionBean) bean;
 
                 if (sessionBean.getServiceEndpoint() == null) {
                     continue;

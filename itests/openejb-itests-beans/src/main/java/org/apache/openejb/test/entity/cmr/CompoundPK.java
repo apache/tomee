@@ -36,10 +36,9 @@ public class CompoundPK implements Serializable {
     }
 
     public boolean equals(final Object other) {
-        if (!(other instanceof CompoundPK)) {
+        if (!(other instanceof CompoundPK otherPK)) {
             return false;
         }
-        final CompoundPK otherPK = (CompoundPK) other;
         return field1.equals(otherPK.field1) && field2.equals(otherPK.field2);
     }
 

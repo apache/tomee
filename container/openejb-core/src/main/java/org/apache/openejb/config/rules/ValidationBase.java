@@ -160,8 +160,7 @@ public abstract class ValidationBase implements ValidationRule {
 
     public boolean isCmp(final EnterpriseBean b) {
 
-        if (b instanceof EntityBean) {
-            final EntityBean entityBean = (EntityBean) b;
+        if (b instanceof EntityBean entityBean) {
             final PersistenceType persistenceType = entityBean.getPersistenceType();
             return persistenceType == PersistenceType.CONTAINER;
         }

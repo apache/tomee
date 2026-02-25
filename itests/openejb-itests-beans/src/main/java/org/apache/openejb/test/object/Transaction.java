@@ -34,9 +34,8 @@ public class Transaction implements java.io.Externalizable {
     }
 
     public boolean equals(final Object object) {
-        if (!(object instanceof Transaction)) return false;
+        if (!(object instanceof Transaction that)) return false;
 
-        final Transaction that = (Transaction) object;
         return this.instance.equals(that.instance);
     }
 

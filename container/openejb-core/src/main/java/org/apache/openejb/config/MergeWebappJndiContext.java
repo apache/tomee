@@ -157,9 +157,7 @@ public class MergeWebappJndiContext implements DynamicDeployer {
             b.getInjectionTarget().addAll(a.getInjectionTarget());
 
             // merge env-entry values
-            if (b instanceof EnvEntry && a instanceof EnvEntry) {
-                final EnvEntry eb = (EnvEntry) b;
-                final EnvEntry ea = (EnvEntry) a;
+            if (b instanceof EnvEntry eb && a instanceof EnvEntry ea) {
 
                 if (eb.getEnvEntryValue() == null) {
                     eb.setEnvEntryValue(ea.getEnvEntryValue());
@@ -198,8 +196,7 @@ public class MergeWebappJndiContext implements DynamicDeployer {
     }
 
     private <R extends JndiReference> void mergeUserTransaction(final Map<String, R> from, final Map<String, R> to, final JndiConsumer consumer) {
-        if (consumer instanceof EnterpriseBean) {
-            final EnterpriseBean enterpriseBean = (EnterpriseBean) consumer;
+        if (consumer instanceof EnterpriseBean enterpriseBean) {
             if (enterpriseBean.getTransactionType() != TransactionType.BEAN) {
                 return;
             }

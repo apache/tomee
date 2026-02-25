@@ -137,8 +137,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             }
 
             // Add WS Security
-            if (enterpriseBean instanceof SessionBeanType) {
-                final SessionBeanType sessionBean = (SessionBeanType) enterpriseBean;
+            if (enterpriseBean instanceof SessionBeanType sessionBean) {
                 final WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
 
                 if (webServiceSecurityType != null) {
@@ -254,10 +253,9 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             mdbs.put(enterpriseBean.getEjbName(), (MessageDrivenBean) enterpriseBean);
         }
         for (final org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
-            if (!(enterpriseBean instanceof MessageDrivenBeanType)) {
+            if (!(enterpriseBean instanceof MessageDrivenBeanType bean)) {
                 continue;
             }
-            final MessageDrivenBeanType bean = (MessageDrivenBeanType) enterpriseBean;
             final MessageDrivenBean mdb = mdbs.get(bean.getEjbName());
             if (mdb == null) {
                 // todo warn no such ejb in the ejb-jar.xml
@@ -292,10 +290,9 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             }
         }
         for (final org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
-            if (!(enterpriseBean instanceof EntityBeanType)) {
+            if (!(enterpriseBean instanceof EntityBeanType bean)) {
                 continue;
             }
-            final EntityBeanType bean = (EntityBeanType) enterpriseBean;
             final EntityData entityData = entities.get(moduleId + "#" + bean.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
@@ -400,8 +397,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
 
                 // For one-to-one, make sure that the field to recieve the FK
                 // is marked as the owning field
-                if (field instanceof OneToOne) {
-                    final OneToOne left = (OneToOne) field;
+                if (field instanceof OneToOne left) {
                     final OneToOne right = (OneToOne) left.getRelatedField();
                     if (right != null) {
                         left.setMappedBy(null);
@@ -512,15 +508,13 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             g2.getResourceRef().addAll(bean.getResourceRef());
             g2.getServiceRef().addAll(bean.getServiceRef());
 
-            if (bean instanceof RpcBean) {
-                final RpcBean rpcBean = (RpcBean) bean;
+            if (bean instanceof RpcBean rpcBean) {
                 if (rpcBean.getTssLink() != null) {
                     g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
                 }
             }
 
-            if (bean instanceof SessionBeanType) {
-                final SessionBeanType sb = (SessionBeanType) bean;
+            if (bean instanceof SessionBeanType sb) {
                 final WebServiceBindingType b = new WebServiceBindingType();
                 b.setEjbName(sb.getEjbName());
                 b.setWebServiceAddress(sb.getWebServiceAddress());

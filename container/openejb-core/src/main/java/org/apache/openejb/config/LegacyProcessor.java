@@ -60,8 +60,7 @@ public class LegacyProcessor implements DynamicDeployer {
 
     public static void process(final Class<?> clazz, final EnterpriseBean bean) {
 
-        if (bean instanceof SessionBean) {
-            final SessionBean sessionBean = (SessionBean) bean;
+        if (bean instanceof SessionBean sessionBean) {
 
             if (sessionBean.getSessionType() == STATEFUL && SessionSynchronization.class.isAssignableFrom(clazz)) {
                 try {
@@ -84,8 +83,7 @@ public class LegacyProcessor implements DynamicDeployer {
             }
         }
 
-        if (bean instanceof MessageDrivenBean) {
-            final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
+        if (bean instanceof MessageDrivenBean messageDrivenBean) {
 
             if (jakarta.ejb.MessageDrivenBean.class.isAssignableFrom(clazz)) {
                 final ResourceEnvRef ref = new ResourceEnvRef("jakarta.ejb.MessageDrivenBean/messageDrivenContext", MessageDrivenContext.class);

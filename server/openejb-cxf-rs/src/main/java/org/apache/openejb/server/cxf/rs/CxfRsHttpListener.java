@@ -495,8 +495,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final List<Object> instances = new ArrayList<>();
         final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
         for (final Object o : additionalProviders) {
-            if (o instanceof Class<?>) {
-                final Class<?> clazz = (Class<?>) o;
+            if (o instanceof Class<?> clazz) {
                 if (isNotServerProvider(clazz)) {
                     continue;
                 }
@@ -832,8 +831,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Set<Class<?>> declaredClasses = new HashSet<>();
         final Set<Object> declaredSingletons = new HashSet<>();
 
-        if (application instanceof InternalApplication && ((InternalApplication) application).getOriginal() != null) {
-            final InternalApplication internalApplication = (InternalApplication) application;
+        if (application instanceof InternalApplication internalApplication && internalApplication.getOriginal() != null) {
             declaredClasses.addAll(internalApplication.getOriginal().getClasses());
             declaredSingletons.addAll(internalApplication.getOriginal().getSingletons());
         } else {
@@ -937,8 +935,7 @@ public class CxfRsHttpListener implements RsHttpListener {
          * We may have wrapped the Application instance in an InternalApplication.  If so, unwrap
          * it and do the injection on that instance.
          */
-        if (application instanceof InternalApplication) {
-            final InternalApplication internalApplication = (InternalApplication) application;
+        if (application instanceof InternalApplication internalApplication) {
             final Application original = internalApplication.getOriginal();
             injectApplication(original, factory);
             return;

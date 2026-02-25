@@ -112,8 +112,7 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     private synchronized void registerListener(final EntityManager entityManager) {
-        if (entityManager instanceof OpenJPAEntityManagerSPI) {
-            final OpenJPAEntityManagerSPI openjpaEM = (OpenJPAEntityManagerSPI) entityManager;
+        if (entityManager instanceof OpenJPAEntityManagerSPI openjpaEM) {
             final OpenJPAEntityManagerFactorySPI openjpaEMF = (OpenJPAEntityManagerFactorySPI) openjpaEM.getEntityManagerFactory();
 
             if (entityManagerListener == null) {
@@ -279,9 +278,8 @@ public class JpaCmpEngine implements CmpEngine {
         // perform all work in a wrapper list on demand by the application code
         final List results = query.getResultList();
         for (final Object value : results) {
-            if (value instanceof EntityBean) {
+            if (value instanceof EntityBean entity) {
                 // todo don't activate beans already activated
-                final EntityBean entity = (EntityBean) value;
                 cmpCallback.setEntityContext(entity);
                 cmpCallback.ejbActivate(entity);
             }

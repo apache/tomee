@@ -50,10 +50,9 @@ public class Cmp2Util {
         if (handler.container == null) {
             return null;
         }
-        if (!(handler.container instanceof CmpContainer)) {
+        if (!(handler.container instanceof CmpContainer container)) {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
         }
-        final CmpContainer container = (CmpContainer) handler.container;
         final Bean entity = (Bean) container.getEjbInstance(handler.getBeanContext(), handler.primaryKey);
         return entity;
     }
@@ -67,10 +66,9 @@ public class Cmp2Util {
         if (handler.container == null) {
             return null;
         }
-        if (!(handler.container instanceof CmpContainer)) {
+        if (!(handler.container instanceof CmpContainer container)) {
             throw new IllegalArgumentException("Proxy is not connected to a CMP container but is conect to " + handler.container.getClass().getName());
         }
-        final CmpContainer container = (CmpContainer) handler.container;
         final Bean entity = (Bean) container.getEjbInstance(handler.getBeanContext(), handler.primaryKey);
         return entity;
     }

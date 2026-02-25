@@ -56,8 +56,7 @@ public class ModuleProperties implements DynamicDeployer {
     private static void readProperties(final DeploymentModule module) throws OpenEJBException {
         final Object o = module.getAltDDs().get("module.properties");
 
-        if (o instanceof URL) {
-            final URL url = (URL) o;
+        if (o instanceof URL url) {
             try {
                 final Properties properties = IO.readProperties(url);
                 module.getProperties().putAll(properties);

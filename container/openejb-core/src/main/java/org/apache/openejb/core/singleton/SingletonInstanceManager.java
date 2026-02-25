@@ -164,8 +164,7 @@ public class SingletonInstanceManager {
 
             // Bean may not be a singleton or may be a singleton
             // managed by a different container implementation
-            if (containerData instanceof Data) {
-                final Data data = (Data) containerData;
+            if (containerData instanceof Data data) {
 
                 data.initialize();
             }

@@ -103,15 +103,13 @@ public class CheckClasses extends ValidationBase {
                     continue;
                 }
 
-                if (!(bean instanceof RemoteBean)) {
+                if (!(bean instanceof RemoteBean b)) {
                     continue;
                 }
 
                 if (bean instanceof SessionBean && ((SessionBean) bean).getProxy() != null) {
                     continue;
                 }
-
-                final RemoteBean b = (RemoteBean) bean;
 
                 check_isEjbClass(b);
                 check_hasDependentClasses(b, b.getEjbClass(), "ejb-class");
@@ -133,8 +131,7 @@ public class CheckClasses extends ValidationBase {
                     checkInterface(loader, b, beanClass, "local-home", b.getLocalHome());
                 }
 
-                if (b instanceof SessionBean) {
-                    final SessionBean sessionBean = (SessionBean) b;
+                if (b instanceof SessionBean sessionBean) {
 
                     for (final String interfce : sessionBean.getBusinessLocal()) {
                         checkInterface(loader, b, beanClass, "business-local", interfce);

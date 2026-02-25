@@ -842,8 +842,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             final Object o = webModule.getAltDDs().get("persistence.xml");
 
-            if (o instanceof URL) {
-                final URL url = (URL) o;
+            if (o instanceof URL url) {
                 persistenceXmls.add(url);
             }
 
@@ -1330,10 +1329,9 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // get location of webservices.xml file
         final Object webservicesObject = wsModule.getAltDDs().get("webservices.xml");
-        if (webservicesObject == null || !(webservicesObject instanceof URL)) {
+        if (webservicesObject == null || !(webservicesObject instanceof URL webservicesUrl)) {
             return;
         }
-        final URL webservicesUrl = (URL) webservicesObject;
 
         // determine the base url for this module (either file: or jar:)
         URL moduleUrl;

@@ -75,12 +75,10 @@ public class FinderFactory {
 
     public IAnnotationFinder create(final DeploymentModule module) throws Exception {
         OpenEJBAnnotationFinder finder;
-        if (module instanceof WebModule) {
-            final WebModule webModule = (WebModule) module;
+        if (module instanceof WebModule webModule) {
             finder = newFinder(new WebappAggregatedArchive(webModule, webModule.getScannableUrls()));
             finder = useFallbackFinderIfNeededOrLink(module, finder);
-        } else if (module instanceof ConnectorModule) {
-            final ConnectorModule connectorModule = (ConnectorModule) module;
+        } else if (module instanceof ConnectorModule connectorModule) {
             finder = newFinder(new ConfigurableClasspathArchive(connectorModule, connectorModule.getLibraries()));
             finder = useFallbackFinderIfNeededOrLink(module, finder);
         } else if (module instanceof AppModule) {
@@ -356,8 +354,7 @@ public class FinderFactory {
                 mtd.setAccessible(true);
                 final List<?> infos = (List<?>) mtd.invoke(delegate);
                 for (final Object info : infos) {
-                    if (info instanceof AnnotationFinder.ClassInfo) {
-                        final AnnotationFinder.ClassInfo classInfo = (AnnotationFinder.ClassInfo) info;
+                    if (info instanceof AnnotationFinder.ClassInfo classInfo) {
                         try {
                             // can throw the exception
                             classInfo.get().isAnnotationPresent(annotation);

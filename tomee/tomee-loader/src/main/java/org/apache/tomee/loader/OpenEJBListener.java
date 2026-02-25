@@ -74,8 +74,7 @@ public class OpenEJBListener implements LifecycleListener {
 
         try {
             File webappDir = findOpenEjbWar();
-            if (webappDir == null && event.getSource() instanceof StandardServer) {
-                final StandardServer server = (StandardServer) event.getSource();
+            if (webappDir == null && event.getSource() instanceof StandardServer server) {
                 webappDir = tryToFindAndExtractWar(server);
                 if (webappDir != null) { // we are using webapp startup
                     final File exploded = extractDirectory(webappDir);
@@ -119,11 +118,9 @@ public class OpenEJBListener implements LifecycleListener {
 
         for (final Service service : source.findServices()) {
             final Container container = service.getContainer();
-            if (container instanceof StandardEngine) {
-                final StandardEngine engine = (StandardEngine) container;
+            if (container instanceof StandardEngine engine) {
                 for (final Container child : engine.findChildren()) {
-                    if (child instanceof StandardHost) {
-                        final StandardHost host = (StandardHost) child;
+                    if (child instanceof StandardHost host) {
                         final File base = hostDir(System.getProperty("catalina.base"), host.getAppBase());
 
                         final File[] files = base.listFiles();
@@ -167,11 +164,9 @@ public class OpenEJBListener implements LifecycleListener {
             // scan all hosts directories
             for (final Service service : TomcatHelper.getServer().findServices()) {
                 final Container container = service.getContainer();
-                if (container instanceof StandardEngine) {
-                    final StandardEngine engine = (StandardEngine) container;
+                if (container instanceof StandardEngine engine) {
                     for (final Container child : engine.findChildren()) {
-                        if (child instanceof StandardHost) {
-                            final StandardHost host = (StandardHost) child;
+                        if (child instanceof StandardHost host) {
                             final File hostDir = hostDir(catalinaBase, host.getAppBase());
 
                             openEjbWar = findOpenEjbWar(hostDir);
@@ -202,8 +197,7 @@ public class OpenEJBListener implements LifecycleListener {
     private static File findOpenEjbWar(final StandardHost standardHost) {
         //look for openejb war in a Tomcat context
         for (final Container container : standardHost.findChildren()) {
-            if (container instanceof StandardContext) {
-                final StandardContext standardContext = (StandardContext) container;
+            if (container instanceof StandardContext standardContext) {
                 File contextDocBase = new File(standardContext.getDocBase());
                 if (!contextDocBase.isDirectory() && standardContext.getOriginalDocBase() != null) {
                     contextDocBase = new File(standardContext.getOriginalDocBase());

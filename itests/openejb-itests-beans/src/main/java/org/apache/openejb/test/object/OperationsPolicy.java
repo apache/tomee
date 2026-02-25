@@ -51,9 +51,8 @@ public class OperationsPolicy implements java.io.Externalizable {
     }
 
     public boolean equals(final Object object) {
-        if (!(object instanceof OperationsPolicy)) return false;
+        if (!(object instanceof OperationsPolicy that)) return false;
 
-        final OperationsPolicy that = (OperationsPolicy) object;
         for (int i = 0; i < allowedOperations.length; i++) {
             if (this.allowedOperations[i] != that.allowedOperations[i]) return false;
         }

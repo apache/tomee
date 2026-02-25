@@ -375,11 +375,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         public AppModule deploy(final AppModule appModule) throws OpenEJBException {
             for (final EjbModule module : appModule.getEjbModules()) {
                 for (final EnterpriseBean eb : module.getEjbJar().getEnterpriseBeans()) {
-                    if (!(eb instanceof SessionBean)) {
+                    if (!(eb instanceof SessionBean bean)) {
                         continue;
                     }
 
-                    final SessionBean bean = (SessionBean) eb;
                     final Class<?> ejbClass;
                     try {
                         ejbClass = module.getClassLoader().loadClass(bean.getEjbClass());
@@ -790,8 +789,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 throw new OpenEJBException("Unable to parse URI parameters '" + uri + "'. URISyntaxException: " + e.getMessage());
             }
 
-            if (object instanceof AbstractService) {
-                final AbstractService service = (AbstractService) object;
+            if (object instanceof AbstractService service) {
                 service.setId(id);
                 service.setType(map.remove("type"));
                 service.setProvider(map.remove("provider"));
@@ -824,8 +822,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 }
 
                 service.getProperties().putAll(map);
-            } else if (object instanceof Deployments) {
-                final Deployments deployments = (Deployments) object;
+            } else if (object instanceof Deployments deployments) {
                 deployments.setDir(map.remove("dir"));
                 deployments.setFile(map.remove("jar"));
                 final String cp = map.remove("classpath");
@@ -946,13 +943,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     if (existingValue == null) {
                         altDDs.put(entry.getKey(), entry.getValue());
                     } else if (entry.getValue() instanceof Collection) {
-                        if (existingValue instanceof Collection) {
-                            final Collection values = (Collection) existingValue;
+                        if (existingValue instanceof Collection values) {
                             values.addAll((Collection) entry.getValue());
                         }
                     } else if (entry.getValue() instanceof Map) {
-                        if (existingValue instanceof Map) {
-                            final Map values = (Map) existingValue;
+                        if (existingValue instanceof Map values) {
                             values.putAll((Map) entry.getValue());
                         }
                     }
@@ -1434,8 +1429,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private static Properties trim(final Properties properties) {
         for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final Object o = entry.getValue();
-            if (o instanceof String) {
-                final String value = (String) o;
+            if (o instanceof String value) {
                 final String trimmed = value.trim();
                 if (value.length() != trimmed.length()) {
                     properties.put(entry.getKey(), trimmed);

@@ -148,8 +148,7 @@ public final class PropertyPlaceHolderHelper {
 
         for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final Object rawValue = entry.getValue();
-            if (rawValue instanceof String) {
-                final String value = (String) rawValue;
+            if (rawValue instanceof String value) {
                 updated.put(entry.getKey(), cache ? value(value) : simpleValueAsStringOrCharArray(value));
             } else {
                 updated.put(entry.getKey(), rawValue);

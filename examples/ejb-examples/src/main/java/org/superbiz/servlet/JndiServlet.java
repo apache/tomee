@@ -64,8 +64,7 @@ public class JndiServlet extends HttpServlet {
                 } else {
                     try {
                         Object value = context.lookup(name);
-                        if (value instanceof Context) {
-                            Context nextedContext = (Context) value;
+                        if (value instanceof Context nextedContext) {
                             bindings.put(path + name, "");
                             addBindings(path + name + "/", bindings, nextedContext);
                         } else {

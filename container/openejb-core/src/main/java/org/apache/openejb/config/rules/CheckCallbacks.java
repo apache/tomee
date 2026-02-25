@@ -62,8 +62,7 @@ public class CheckCallbacks extends ValidationBase {
                 continue;
             }
 
-            if (bean instanceof Invokable) {
-                final Invokable invokable = (Invokable) bean;
+            if (bean instanceof Invokable invokable) {
 
                 for (final AroundInvoke aroundInvoke : invokable.getAroundInvoke()) {
                     checkAroundInvoke(ejbClass, aroundInvoke, bean.getEjbName());

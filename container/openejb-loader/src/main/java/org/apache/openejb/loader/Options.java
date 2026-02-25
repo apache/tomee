@@ -296,8 +296,7 @@ public class Options {
             return value;
         }
 
-        if (value instanceof Class) {
-            final Class clazz = (Class) value;
+        if (value instanceof Class clazz) {
             getLogger().info("Using \'" + property + "=" + clazz.getName() + "\'");
         } else {
             getLogger().info("Using \'" + property + "=" + value + "\'");
@@ -441,11 +440,9 @@ public class Options {
 
         private <V> V log(final String property, final V value) {
             if (getLogger().isDebugEnabled()) {
-                if (value instanceof Enum) {
-                    final Enum anEnum = (Enum) value;
+                if (value instanceof Enum anEnum) {
                     getLogger().debug("Using default \'" + property + "=" + anEnum.name().toLowerCase() + "\'.  Possible values are: " + possibleValues(anEnum));
-                } else if (value instanceof Class) {
-                    final Class clazz = (Class) value;
+                } else if (value instanceof Class clazz) {
                     getLogger().debug("Using default \'" + property + "=" + clazz.getName() + "\'");
                 } else if (value != null) {
                     logger.debug("Using default \'" + property + "=" + value + "\'");

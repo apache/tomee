@@ -121,8 +121,7 @@ public class LocalInitialContextFactory implements InitialContextFactory {
             final Constructor constructor = localInitialContext.getConstructor(Hashtable.class, LocalInitialContextFactory.class);
             context = (Context) constructor.newInstance(env, this);
         } catch (Throwable e) {
-            if (e instanceof InvocationTargetException) {
-                final InvocationTargetException ite = (InvocationTargetException) e;
+            if (e instanceof InvocationTargetException ite) {
                 if (ite.getTargetException() != null) {
                     e = ite.getTargetException();
                 }
