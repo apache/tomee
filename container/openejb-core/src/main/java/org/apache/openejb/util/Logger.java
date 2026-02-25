@@ -420,19 +420,14 @@ public class Logger {
     @SuppressWarnings("UnusedDeclaration")
     public boolean isLevelEnable(final String level) {
         final String levelLowerCase = level.toLowerCase(Locale.ENGLISH);
-        switch (levelLowerCase) {
-            case "info":
-                return isInfoEnabled();
-            case "debug":
-                return isDebugEnabled();
-            case "warning":
-                return isWarningEnabled();
-            case "fatal":
-                return isFatalEnabled();
-            case "error":
-                return isErrorEnabled();
-        }
-        return false;
+        return switch (levelLowerCase) {
+            case "info" -> isInfoEnabled();
+            case "debug" -> isDebugEnabled();
+            case "warning" -> isWarningEnabled();
+            case "fatal" -> isFatalEnabled();
+            case "error" -> isErrorEnabled();
+            default -> false;
+        };
     }
 
     public void log(final String level, final String message) {

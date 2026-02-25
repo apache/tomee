@@ -163,25 +163,17 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public static InterfaceType convert(final org.apache.openejb.InterfaceType type) {
-        switch (type) {
-            case EJB_HOME:
-                return InterfaceType.EJB_HOME;
-            case EJB_OBJECT:
-                return InterfaceType.EJB_OBJECT;
-            case EJB_LOCAL_HOME:
-                return InterfaceType.EJB_LOCAL_HOME;
-            case EJB_LOCAL:
-                return InterfaceType.EJB_LOCAL;
-            case BUSINESS_LOCAL:
-                return InterfaceType.BUSINESS_LOCAL;
-            case BUSINESS_LOCAL_HOME:
-                return InterfaceType.BUSINESS_LOCAL_HOME;
-            case BUSINESS_REMOTE:
-                return InterfaceType.BUSINESS_REMOTE;
-            case BUSINESS_REMOTE_HOME:
-                return InterfaceType.BUSINESS_REMOTE_HOME;
-        }
-        return null;
+        return switch (type) {
+            case EJB_HOME -> InterfaceType.EJB_HOME;
+            case EJB_OBJECT -> InterfaceType.EJB_OBJECT;
+            case EJB_LOCAL_HOME -> InterfaceType.EJB_LOCAL_HOME;
+            case EJB_LOCAL -> InterfaceType.EJB_LOCAL;
+            case BUSINESS_LOCAL -> InterfaceType.BUSINESS_LOCAL;
+            case BUSINESS_LOCAL_HOME -> InterfaceType.BUSINESS_LOCAL_HOME;
+            case BUSINESS_REMOTE -> InterfaceType.BUSINESS_REMOTE;
+            case BUSINESS_REMOTE_HOME -> InterfaceType.BUSINESS_REMOTE_HOME;
+            default -> null;
+        };
     }
 
     @Override

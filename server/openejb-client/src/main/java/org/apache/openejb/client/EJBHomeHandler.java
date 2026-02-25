@@ -55,26 +55,14 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
                                                       final ServerMetaData server,
                                                       final ClientMetaData client,
                                                       final JNDIContext.AuthenticationInfo auth) {
-        switch (ejb.type) {
-            case EJBMetaDataImpl.BMP_ENTITY:
-            case EJBMetaDataImpl.CMP_ENTITY:
-
-                return new EntityEJBHomeHandler(executor, ejb, server, client, auth);
-
-            case EJBMetaDataImpl.STATEFUL:
-
-                return new StatefulEJBHomeHandler(executor, ejb, server, client, auth);
-
-            case EJBMetaDataImpl.STATELESS:
-
-                return new StatelessEJBHomeHandler(executor, ejb, server, client, auth);
-
-            case EJBMetaDataImpl.SINGLETON:
-
-                return new SingletonEJBHomeHandler(executor, ejb, server, client, auth);
-        }
-
-        throw new IllegalStateException("Uknown bean type code '" + ejb.type + "' : " + ejb.toString());
+        return switch (ejb.type) {
+            case EJBMetaDataImpl.BMP_ENTITY, EJBMetaDataImpl.CMP_ENTITY ->
+                    new EntityEJBHomeHandler(executor, ejb, server, client, auth);
+            case EJBMetaDataImpl.STATEFUL -> new StatefulEJBHomeHandler(executor, ejb, server, client, auth);
+            case EJBMetaDataImpl.STATELESS -> new StatelessEJBHomeHandler(executor, ejb, server, client, auth);
+            case EJBMetaDataImpl.SINGLETON -> new SingletonEJBHomeHandler(executor, ejb, server, client, auth);
+            default -> throw new IllegalStateException("Unknown bean type code '" + ejb.type + "' : " + ejb.toString());
+        };
 
     }
 
@@ -193,19 +181,14 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
         final EJBResponse res = request(req);
 
-        switch (res.getResponseCode()) {
-            case ResponseCodes.EJB_ERROR:
-                throw new SystemError((ThrowableArtifact) res.getResult());
-            case ResponseCodes.EJB_SYS_EXCEPTION:
-                throw new SystemException((ThrowableArtifact) res.getResult());
-            case ResponseCodes.EJB_APP_EXCEPTION:
-                throw new ApplicationException((ThrowableArtifact) res.getResult());
-            case ResponseCodes.EJB_OK:
-
-                return res.getResult();
-            default:
-                throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
-        }
+        return switch (res.getResponseCode()) {
+            case ResponseCodes.EJB_ERROR -> throw new SystemError((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_SYS_EXCEPTION -> throw new SystemException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_APP_EXCEPTION -> throw new ApplicationException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_OK -> res.getResult();
+            default ->
+                    throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
+        };
     }
 
     /*-------------------------------------------------*/

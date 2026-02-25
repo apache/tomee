@@ -80,15 +80,11 @@ public class LazyEjbReference extends Reference {
             throw new NameNotFoundException(message);
         }
 
-        InterfaceType type = null;
-        switch (info.getRefType()) {
-            case LOCAL:
-                type = InterfaceType.BUSINESS_LOCAL;
-                break;
-            case REMOTE:
-                type = InterfaceType.BUSINESS_REMOTE;
-                break;
-        }
+        InterfaceType type = switch (info.getRefType()) {
+            case LOCAL -> InterfaceType.BUSINESS_LOCAL;
+            case REMOTE -> InterfaceType.BUSINESS_REMOTE;
+            default -> null;
+        };
 
         final String jndiName = "openejb/Deployment/" + JndiBuilder.format(deploymentId, info.getInterface(), type);
 

@@ -33,23 +33,15 @@ public class JtaTransactionPolicyFactory implements TransactionPolicyFactory {
     }
 
     public TransactionPolicy createTransactionPolicy(final TransactionType type) throws SystemException, ApplicationException {
-        switch (type) {
-            case Required:
-                return new TxRequired(transactionManager);
-            case RequiresNew:
-                return new TxRequiresNew(transactionManager);
-            case Supports:
-                return new TxSupports(transactionManager);
-            case NotSupported:
-                return new TxNotSupported(transactionManager);
-            case Mandatory:
-                return new TxMandatory(transactionManager);
-            case Never:
-                return new TxNever(transactionManager);
-            case BeanManaged:
-                return new TxBeanManaged(transactionManager);
-            default:
-                throw new SystemException(new IllegalArgumentException("Unknown transaction type " + type));
-        }
+        return switch (type) {
+            case Required -> new TxRequired(transactionManager);
+            case RequiresNew -> new TxRequiresNew(transactionManager);
+            case Supports -> new TxSupports(transactionManager);
+            case NotSupported -> new TxNotSupported(transactionManager);
+            case Mandatory -> new TxMandatory(transactionManager);
+            case Never -> new TxNever(transactionManager);
+            case BeanManaged -> new TxBeanManaged(transactionManager);
+            default -> throw new SystemException(new IllegalArgumentException("Unknown transaction type " + type));
+        };
     }
 }

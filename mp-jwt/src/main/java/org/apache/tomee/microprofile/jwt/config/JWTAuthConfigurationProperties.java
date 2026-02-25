@@ -155,15 +155,11 @@ public class JWTAuthConfigurationProperties {
 
             if (contents.isEmpty() && location.isEmpty()) return new Unset();
 
-            final Supplier<Map<String, Key>> supplier;
-
-            switch (this) {
-                case VERIFY: supplier = new PublicKeys(contents, location);
-                    break;
-                case DECRYPT: supplier = new DecryptKeys(contents, location);
-                    break;
-                default: throw new IllegalArgumentException("Unsupported enum value: " + this);
-            }
+            final Supplier<Map<String, Key>> supplier = switch (this) {
+                case VERIFY -> new PublicKeys(contents, location);
+                case DECRYPT -> new DecryptKeys(contents, location);
+                default -> throw new IllegalArgumentException("Unsupported enum value: " + this);
+            };
 
             if (options.cached()) {
                 return CachedSupplier.builder(supplier)

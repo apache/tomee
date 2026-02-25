@@ -374,34 +374,21 @@ public class BeanContext extends DeploymentContext {
     private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<>();
 
     public Class getInterface(final InterfaceType interfaceType) {
-        switch (interfaceType) {
-            case EJB_HOME:
-                return getHomeInterface();
-            case EJB_OBJECT:
-                return getRemoteInterface();
-            case EJB_LOCAL_HOME:
-                return getLocalHomeInterface();
-            case EJB_LOCAL:
-                return getLocalInterface();
-            case BUSINESS_LOCAL:
-                return getBusinessLocalInterface();
-            case BUSINESS_REMOTE:
-                return getBusinessRemoteInterface();
-            case TIMEOUT:
-                return BeanContext.Timeout.class;
-            case BUSINESS_REMOTE_HOME:
-                return BeanContext.BusinessRemoteHome.class;
-            case BUSINESS_LOCAL_HOME:
-                return BeanContext.BusinessLocalHome.class;
-            case SERVICE_ENDPOINT:
-                return getServiceEndpointInterface();
-            case LOCALBEAN:
-                return getBeanClass();
-            case BUSINESS_LOCALBEAN_HOME:
-                return BeanContext.BusinessLocalBeanHome.class;
-            default:
-                throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
-        }
+        return switch (interfaceType) {
+            case EJB_HOME -> getHomeInterface();
+            case EJB_OBJECT -> getRemoteInterface();
+            case EJB_LOCAL_HOME -> getLocalHomeInterface();
+            case EJB_LOCAL -> getLocalInterface();
+            case BUSINESS_LOCAL -> getBusinessLocalInterface();
+            case BUSINESS_REMOTE -> getBusinessRemoteInterface();
+            case TIMEOUT -> Timeout.class;
+            case BUSINESS_REMOTE_HOME -> BusinessRemoteHome.class;
+            case BUSINESS_LOCAL_HOME -> BusinessLocalHome.class;
+            case SERVICE_ENDPOINT -> getServiceEndpointInterface();
+            case LOCALBEAN -> getBeanClass();
+            case BUSINESS_LOCALBEAN_HOME -> BusinessLocalBeanHome.class;
+            default -> throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
+        };
     }
 
     public List<Class> getInterfaces(final InterfaceType interfaceType) {
