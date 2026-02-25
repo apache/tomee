@@ -642,14 +642,12 @@ public class EJBCronTrigger extends CronTriggerImpl {
             }
 
             // Try converting a textual value to numeric
-            switch (field) {
-                case Calendar.MONTH:
-                    return MONTHS_MAP.get(value);
-                case Calendar.DAY_OF_WEEK:
-                    return WEEKDAYS_MAP.get(value);
-            }
+            return switch (field) {
+                case Calendar.MONTH -> MONTHS_MAP.get(value);
+                case Calendar.DAY_OF_WEEK -> WEEKDAYS_MAP.get(value);
+                default -> throw new ParseException(field, value, "Unparseable value");
+            };
 
-            throw new ParseException(field, value, "Unparseable value");
         }
 
         public final int field;

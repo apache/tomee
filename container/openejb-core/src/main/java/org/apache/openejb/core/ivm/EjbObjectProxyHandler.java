@@ -88,28 +88,15 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             if (operation == null || !interfaceType.isComponent()) {
                 retValue = businessMethod(interfce, m, a, p);
             } else {
-                switch (operation) {
-                    case 1:
-                        retValue = getHandle(m, a, p);
-                        break;
-                    case 2:
-                        retValue = getPrimaryKey(m, a, p);
-                        break;
-                    case 3:
-                        retValue = isIdentical(m, a, p);
-                        break;
-                    case 4:
-                        retValue = remove(interfce, m, a, p);
-                        break;
-                    case 5:
-                        retValue = getEJBHome(m, a, p);
-                        break;
-                    case 6:
-                        retValue = getEJBLocalHome(m, a, p);
-                        break;
-                    default:
-                        throw new OpenEJBRuntimeException("Inconsistent internal state");
-                }
+                retValue = switch (operation) {
+                    case 1 -> getHandle(m, a, p);
+                    case 2 -> getPrimaryKey(m, a, p);
+                    case 3 -> isIdentical(m, a, p);
+                    case 4 -> remove(interfce, m, a, p);
+                    case 5 -> getEJBHome(m, a, p);
+                    case 6 -> getEJBLocalHome(m, a, p);
+                    default -> throw new OpenEJBRuntimeException("Inconsistent internal state");
+                };
             }
 
             return retValue;

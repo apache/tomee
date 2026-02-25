@@ -25,15 +25,11 @@ public class LogFactory {
 
     @Produces
     public LogHandler getLogHandler() {
-        switch (type) {
-            case 1:
-                return new FileHandler("@Produces created FileHandler!");
-            case 2:
-                return new DatabaseHandler("@Produces created DatabaseHandler!");
-            case 3:
-            default:
-                return new ConsoleHandler("@Produces created ConsoleHandler!");
-        }
+        return switch (type) {
+            case 1 -> new FileHandler("@Produces created FileHandler!");
+            case 2 -> new DatabaseHandler("@Produces created DatabaseHandler!");
+            default -> new ConsoleHandler("@Produces created ConsoleHandler!");
+        };
 
     }
 

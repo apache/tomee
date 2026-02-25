@@ -128,13 +128,11 @@ public class MethodInfoUtil {
 
     private static List<Method> filterByView(final MethodInfo mi, final List<Method> filtered) {
         final View view = view(mi);
-        switch (view) {
-            case CLASS: {
-                return filterByClass(mi, filtered);
-            }
-        }
+        return switch (view) {
+            case CLASS -> filterByClass(mi, filtered);
+            default -> filtered;
+        };
 
-        return filtered;
     }
 
     private static List<Method> filterByClass(final MethodInfo mi, final List<Method> methods) {
@@ -151,20 +149,12 @@ public class MethodInfoUtil {
     private static List<Method> filterByLevel(final MethodInfo mi, final Method[] methods) {
         final Level level = level(mi);
 
-        switch (level) {
-            case BEAN:
-            case PACKAGE: {
-                return asList(methods);
-            }
-            case OVERLOADED_METHOD: {
-                return filterByName(methods, mi.methodName);
-            }
-            case EXACT_METHOD: {
-                return filterByNameAndParams(methods, mi);
-            }
-        }
+        return switch (level) {
+            case BEAN, PACKAGE -> asList(methods);
+            case OVERLOADED_METHOD -> filterByName(methods, mi.methodName);
+            case EXACT_METHOD -> filterByNameAndParams(methods, mi);
+        };
 
-        return Collections.EMPTY_LIST;
     }
 
     public static Method getMethod(final Class clazz, final MethodInfo info) {
@@ -245,26 +235,17 @@ public class MethodInfoUtil {
 
     private static Class getClassForParam(final String className, final ClassLoader cl) throws ClassNotFoundException {
 
-        switch (className) {
-            case "int":
-                return Integer.TYPE;
-            case "double":
-                return Double.TYPE;
-            case "long":
-                return Long.TYPE;
-            case "boolean":
-                return Boolean.TYPE;
-            case "float":
-                return Float.TYPE;
-            case "char":
-                return Character.TYPE;
-            case "short":
-                return Short.TYPE;
-            case "byte":
-                return Byte.TYPE;
-            default:
-                return Class.forName(className, false, cl);
-        }
+        return switch (className) {
+            case "int" -> Integer.TYPE;
+            case "double" -> Double.TYPE;
+            case "long" -> Long.TYPE;
+            case "boolean" -> Boolean.TYPE;
+            case "float" -> Float.TYPE;
+            case "char" -> Character.TYPE;
+            case "short" -> Short.TYPE;
+            case "byte" -> Byte.TYPE;
+            default -> Class.forName(className, false, cl);
+        };
 
     }
 

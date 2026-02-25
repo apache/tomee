@@ -75,42 +75,20 @@ public class OperationsPolicy implements java.io.Externalizable {
     public String toString() {
         String str = "";
         for (int i = 0; i < allowedOperations.length; i++) {
-            String operation = "(empty)";
-            switch (i) {
-                case Context_getEJBHome:
-                    operation = "Context_getEJBHome";
-                    break;
-                case Context_getCallerPrincipal:
-                    operation = "Context_getCallerPrincipal";
-                    break;
-                case Context_isCallerInRole:
-                    operation = "Context_isCallerInRole";
-                    break;
-                case Context_getRollbackOnly:
-                    operation = "Context_getRollbackOnly";
-                    break;
-                case Context_setRollbackOnly:
-                    operation = "Context_setRollbackOnly";
-                    break;
-                case Context_getUserTransaction:
-                    operation = "Context_getUserTransaction";
-                    break;
-                case Context_getEJBObject:
-                    operation = "Context_getEJBObject";
-                    break;
-                case Context_getPrimaryKey:
-                    operation = "Context_getPrimaryKey";
-                    break;
-                case JNDI_access_to_java_comp_env:
-                    operation = "JNDI_access_to_java_comp_env";
-                    break;
-                case Context_lookup:
-                    operation = "Context_lookup";
-                    break;
-                case Context_getTimerService:
-                    operation = "Context_getTimerService";
-                    break;
-            }
+            String operation = switch (i) {
+                case Context_getEJBHome -> "Context_getEJBHome";
+                case Context_getCallerPrincipal -> "Context_getCallerPrincipal";
+                case Context_isCallerInRole -> "Context_isCallerInRole";
+                case Context_getRollbackOnly -> "Context_getRollbackOnly";
+                case Context_setRollbackOnly -> "Context_setRollbackOnly";
+                case Context_getUserTransaction -> "Context_getUserTransaction";
+                case Context_getEJBObject -> "Context_getEJBObject";
+                case Context_getPrimaryKey -> "Context_getPrimaryKey";
+                case JNDI_access_to_java_comp_env -> "JNDI_access_to_java_comp_env";
+                case Context_lookup -> "Context_lookup";
+                case Context_getTimerService -> "Context_getTimerService";
+                default -> "(empty)";
+            };
             str += allowedOperations[i] ? "TRUE   " : "FALSE  ";
             str += operation + "\n";
 

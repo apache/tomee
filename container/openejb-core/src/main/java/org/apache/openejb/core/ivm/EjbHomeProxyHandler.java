@@ -100,21 +100,16 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                                                            final InterfaceType interfaceType,
                                                            final List<Class> interfaces,
                                                            final Class mainInterface) {
-        switch (beanContext.getComponentType()) {
-            case STATEFUL:
-                return new StatefulEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
-            case STATELESS:
-                return new StatelessEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
-            case SINGLETON:
-                return new SingletonEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
-            case MANAGED:
-                return new ManagedHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
-            case CMP_ENTITY:
-            case BMP_ENTITY:
-                return new EntityEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
-            default:
-                throw new IllegalStateException("Component type does not support rpc interfaces: " + beanContext.getComponentType());
-        }
+        return switch (beanContext.getComponentType()) {
+            case STATEFUL -> new StatefulEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
+            case STATELESS -> new StatelessEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
+            case SINGLETON -> new SingletonEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
+            case MANAGED -> new ManagedHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
+            case CMP_ENTITY, BMP_ENTITY ->
+                    new EntityEjbHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
+            default ->
+                    throw new IllegalStateException("Component type does not support rpc interfaces: " + beanContext.getComponentType());
+        };
     }
 
     public static Object createHomeProxy(final BeanContext beanContext, final InterfaceType interfaceType) {

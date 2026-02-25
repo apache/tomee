@@ -134,26 +134,16 @@ public class ExecutorBuilder {
         SYNCHRONOUS;
 
         public BlockingQueue<Runnable> create(final Options options, final String prefix, final int queueSize) {
-            switch (this) {
-                case ARRAY: {
-                    return new ArrayBlockingQueue<>(queueSize > 0 ? queueSize : 1);
-                }
-                case LINKED: {
-                    return new LinkedBlockingQueue<>(queueSize > 0 ? queueSize : 1);
-                }
-                case PRIORITY: {
-                    return new PriorityBlockingQueue<>();
-                }
-                case SYNCHRONOUS: {
-                    return new SynchronousQueue<>(options.get(prefix + ".QueueFair", false));
-                }
-                default: {
-                    // The Options class will throw an error if the user supplies an unknown enum string
-                    // The only way we can reach this is if we add a new QueueType element and forget to
-                    // implement it in the above switch statement.
-                    throw new IllegalArgumentException("Unknown QueueType type: " + this);
-                }
-            }
+            return switch (this) {
+                case ARRAY -> new ArrayBlockingQueue<>(queueSize > 0 ? queueSize : 1);
+                case LINKED -> new LinkedBlockingQueue<>(queueSize > 0 ? queueSize : 1);
+                case PRIORITY -> new PriorityBlockingQueue<>();
+                case SYNCHRONOUS -> new SynchronousQueue<>(options.get(prefix + ".QueueFair", false));
+                // The Options class will throw an error if the user supplies an unknown enum string
+                // The only way we can reach this is if we add a new QueueType element and forget to
+                // implement it in the above switch statement.
+                default -> throw new IllegalArgumentException("Unknown QueueType type: " + this);
+            };
         }
     }
 }

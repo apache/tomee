@@ -370,14 +370,11 @@ public class StatefulContainer implements RpcContainer {
         MethodType methodType = data.getMethodIndex().get(callMethod);
         methodType = methodType != null ? methodType : MethodType.BUSINESS;
 
-        switch (methodType) {
-            case CREATE:
-                return createEJBObject(beanContext, callMethod, args, type);
-            case REMOVE:
-                return removeEJBObject(beanContext, primKey, callInterface, callMethod, args, type);
-            default:
-                return businessMethod(beanContext, primKey, callInterface, callMethod, args, type);
-        }
+        return switch (methodType) {
+            case CREATE -> createEJBObject(beanContext, callMethod, args, type);
+            case REMOVE -> removeEJBObject(beanContext, primKey, callInterface, callMethod, args, type);
+            default -> businessMethod(beanContext, primKey, callInterface, callMethod, args, type);
+        };
     }
 
     private boolean isPassivable(final BeanContext beanContext) {

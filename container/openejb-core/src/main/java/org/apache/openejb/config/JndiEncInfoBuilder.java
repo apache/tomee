@@ -557,16 +557,12 @@ public class JndiEncInfoBuilder {
         public EjbResolver.Type getRefType() {
             // Could have used EjbResolver.Type.valueOf(..)
             // but this protects against an renaming
-            switch (ref.getRefType()) {
-                case LOCAL:
-                    return EjbResolver.Type.LOCAL;
-                case REMOTE:
-                    return EjbResolver.Type.REMOTE;
-                case UNKNOWN:
-                    return EjbResolver.Type.UNKNOWN;
-                default:
-                    return EjbResolver.Type.UNKNOWN;
-            }
+            return switch (ref.getRefType()) {
+                case LOCAL -> EjbResolver.Type.LOCAL;
+                case REMOTE -> EjbResolver.Type.REMOTE;
+                case UNKNOWN -> EjbResolver.Type.UNKNOWN;
+                default -> EjbResolver.Type.UNKNOWN;
+            };
         }
     }
 

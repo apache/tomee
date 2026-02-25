@@ -386,15 +386,13 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
     @Override
     public Object getContext(final String key, final Object data) throws PolicyContextException {
-        switch (key) {
-            case KEY_REQUEST:
-                return OpenEJBSecurityListener.requests.get();
-            case KEY_SUBJECT:
+        return switch (key) {
+            case KEY_REQUEST -> OpenEJBSecurityListener.requests.get();
+            case KEY_SUBJECT ->
                 // quite obvious as internally we keep track of it
                 // but we could also grab the request and the principals and build a new Subject with the principals
-                return getSubject();
-            default:
-                throw new PolicyContextException("Handler does not support key: " + key);
-        }
+                    getSubject();
+            default -> throw new PolicyContextException("Handler does not support key: " + key);
+        };
     }
 }

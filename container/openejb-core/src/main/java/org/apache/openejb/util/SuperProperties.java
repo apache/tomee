@@ -588,26 +588,15 @@ public class SuperProperties extends Properties {
             }
 
             // Decode encoded separator characters
-            switch (nextByte) {
-                case ENCODED_EQUALS:
-                    nextChar = '=';
-                    break;
-                case ENCODED_COLON:
-                    nextChar = ':';
-                    break;
-                case ENCODED_SPACE:
-                    nextChar = ' ';
-                    break;
-                case ENCODED_TAB:
-                    nextChar = '\t';
-                    break;
-                case ENCODED_NEWLINE:
-                    nextChar = '\n';
-                    break;
-                case ENCODED_CARRIAGE_RETURN:
-                    nextChar = '\r';
-                    break;
-            }
+            nextChar = switch (nextByte) {
+                case ENCODED_EQUALS -> '=';
+                case ENCODED_COLON -> ':';
+                case ENCODED_SPACE -> ' ';
+                case ENCODED_TAB -> '\t';
+                case ENCODED_NEWLINE -> '\n';
+                case ENCODED_CARRIAGE_RETURN -> '\r';
+                default -> nextChar;
+            };
 
             inSeparator = false;
             if (value == null) {
@@ -728,22 +717,15 @@ public class SuperProperties extends Properties {
     }
 
     private char decodeEscapeChar(final char nextChar) {
-        switch (nextChar) {
-            case 'b':
-                return '\b';
-            case 'f':
-                return '\f';
-            case 'n':
-                return '\n';
-            case 'r':
-                return '\r';
-            case 't':
-                return '\t';
-            case 'u':
-                throw new IllegalArgumentException("decodeEscapeChar can not decode an unicode sequence");
-            default:
-                return nextChar;
-        }
+        return switch (nextChar) {
+            case 'b' -> '\b';
+            case 'f' -> '\f';
+            case 'n' -> '\n';
+            case 'r' -> '\r';
+            case 't' -> '\t';
+            case 'u' -> throw new IllegalArgumentException("decodeEscapeChar can not decode an unicode sequence");
+            default -> nextChar;
+        };
     }
 
     private char readUnicode(final InputStream in) throws IOException {

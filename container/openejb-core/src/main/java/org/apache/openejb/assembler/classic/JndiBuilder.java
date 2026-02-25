@@ -364,17 +364,13 @@ public class JndiBuilder {
                 id = id.substring(1);
             }
 
-            switch (type) {
-                case REMOTE_HOME:
-                    return id;
-                case LOCAL_HOME:
-                    return id + "Local";
-                case BUSINESS_LOCAL:
-                    return id + "BusinessLocal";
-                case BUSINESS_REMOTE:
-                    return id + "BusinessRemote";
-            }
-            return id;
+            return switch (type) {
+                case REMOTE_HOME -> id;
+                case LOCAL_HOME -> id + "Local";
+                case BUSINESS_LOCAL -> id + "BusinessLocal";
+                case BUSINESS_REMOTE -> id + "BusinessRemote";
+                default -> id;
+            };
         }
 
         @Override

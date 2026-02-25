@@ -77,35 +77,17 @@ public class Log4j2Logger extends AbstractDelegatingLogger {
 
 
     private Level fromL4J(final org.apache.logging.log4j.Level l) {
-        Level l2 = null;
-        switch (l.getStandardLevel()) {
-            case ALL:
-                l2 = Level.ALL;
-                break;
-            case FATAL:
-                l2 = Level.SEVERE;
-                break;
-            case ERROR:
-                l2 = Level.SEVERE;
-                break;
-            case WARN:
-                l2 = Level.WARNING;
-                break;
-            case INFO:
-                l2 = Level.INFO;
-                break;
-            case DEBUG:
-                l2 = Level.FINE;
-                break;
-            case OFF:
-                l2 = Level.OFF;
-                break;
-            case TRACE:
-                l2 = Level.FINEST;
-                break;
-            default:
-                l2 = Level.FINE;
-        }
+        Level l2 = switch (l.getStandardLevel()) {
+            case ALL -> Level.ALL;
+            case FATAL -> Level.SEVERE;
+            case ERROR -> Level.SEVERE;
+            case WARN -> Level.WARNING;
+            case INFO -> Level.INFO;
+            case DEBUG -> Level.FINE;
+            case OFF -> Level.OFF;
+            case TRACE -> Level.FINEST;
+            default -> Level.FINE;
+        };
         return l2;
     }
 }

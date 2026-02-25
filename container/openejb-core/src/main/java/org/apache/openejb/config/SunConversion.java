@@ -1173,28 +1173,18 @@ public class SunConversion implements DynamicDeployer {
         for (Object bit1 : bits) {
             final TokenType tokenType;
             final String bit = (String) bit1;
-            switch (bit.charAt(0)) {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\r':
-                case '\f':
+            tokenType = switch (bit.charAt(0)) {
+                case ' ', '\t', '\n', '\r', '\f' -> {
                     inWitespace = true;
-                    tokenType = TokenType.WHITESPACE;
-                    break;
-                case '&':
-                case '|':
-                case '=':
-                case '>':
-                case '<':
-                case '!':
+                    yield TokenType.WHITESPACE;
+                }
+                case '&', '|', '=', '>', '<', '!' -> {
                     // symbols are blindly coalesced so you can end up with nonsence like +-=+
                     currentSymbol.append(bit.charAt(0));
-                    tokenType = TokenType.SYMBOL;
-                    break;
-                default:
-                    tokenType = TokenType.NORMAL;
-            }
+                    yield TokenType.SYMBOL;
+                }
+                default -> TokenType.NORMAL;
+            };
             if (tokenType != TokenType.WHITESPACE && inWitespace) {
                 // sequences of white space are simply removed
                 inWitespace = false;

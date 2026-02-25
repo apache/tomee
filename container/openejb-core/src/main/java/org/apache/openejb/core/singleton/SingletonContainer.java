@@ -417,7 +417,7 @@ public class SingletonContainer implements RpcContainer {
             ThreadContext.getThreadContext().set(jakarta.xml.ws.handler.MessageContext.class, (jakarta.xml.ws.handler.MessageContext) messageContext);
             return interceptorStack.invoke((jakarta.xml.ws.handler.MessageContext) messageContext, params);
         }
-        throw new IllegalArgumentException("Uknown MessageContext type: " + messageContext.getClass().getName());
+        throw new IllegalArgumentException("Unknown MessageContext type: " + messageContext.getClass().getName());
     }
 
     protected ProxyInfo createEJBObject(final BeanContext beanContext, final Method callMethod) {

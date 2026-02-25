@@ -163,14 +163,11 @@ public class ObserverManager {
             }
         }
 
-        switch (list.getInvocations().size()) {
-            case 0:
-                return IGNORE;
-            case 1:
-                return list.getInvocations().get(0);
-            default:
-                return list;
-        }
+        return switch (list.getInvocations().size()) {
+            case 0 -> IGNORE;
+            case 1 -> list.getInvocations().get(0);
+            default -> list;
+        };
     }
 
     /**
@@ -294,16 +291,12 @@ public class ObserverManager {
         }
 
         private Map<Class, Invocation> map(final Phase event) {
-            switch (event) {
-                case AFTER:
-                    return after;
-                case BEFORE:
-                    return before;
-                case INVOKE:
-                    return methods;
-                default:
-                    throw new IllegalStateException("Unknown Event style " + event);
-            }
+            return switch (event) {
+                case AFTER -> after;
+                case BEFORE -> before;
+                case INVOKE -> methods;
+                default -> throw new IllegalStateException("Unknown Event style " + event);
+            };
         }
 
         public Invocation get(final Phase event, final Class eventType) {

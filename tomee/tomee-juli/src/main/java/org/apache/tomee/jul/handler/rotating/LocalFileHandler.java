@@ -235,16 +235,12 @@ public class LocalFileHandler extends Handler {
 
         final String[] split = str.split("_", -1);
         final int occurrences = split.length -1;
-        switch (occurrences) {
-            case 0:
-                return new Locale(str.toUpperCase(Locale.ENGLISH));
-            case 1:
-                return new Locale(split[0], split[1]);
-            case 2:
-                return new Locale(split[0], split[1], split[2]);
-            default:
-                throw new IllegalArgumentException("Invalid locale format: " + str);
-        }
+        return switch (occurrences) {
+            case 0 -> new Locale(str.toUpperCase(Locale.ENGLISH));
+            case 1 -> new Locale(split[0], split[1]);
+            case 2 -> new Locale(split[0], split[1], split[2]);
+            default -> throw new IllegalArgumentException("Invalid locale format: " + str);
+        };
     }
 
     protected String currentDate() {
