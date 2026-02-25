@@ -48,34 +48,28 @@ public class IsDifferentXaDataSourceWrapper implements XADataSource {
     }
 
     private XAConnection wrap(final XAConnection xaConnection) {
-        return XAConnection.class.cast(Proxy.newProxyInstance(xaConnection.getClass().getClassLoader(), API_CONNECTION, new InvocationHandler() {
-            @Override
-            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                if ("getXAResource".equals(method.getName())) {
-                    try {
-                        final Object xaResource = method.invoke(xaConnection, args);
-                        return Proxy.newProxyInstance(xaResource.getClass().getClassLoader(), API_RESOURCE, new InvocationHandler() {
-                            @Override
-                            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                                if ("isSameRM".equals(method.getName())) {
-                                    return false; // that's the goal!
-                                }
-                                try {
-                                    return method.invoke(xaResource, args);
-                                } catch (final InvocationTargetException ite) {
-                                    throw ite.getCause();
-                                }
-                            }
-                        });
-                    } catch (final InvocationTargetException ite) {
-                        throw ite.getCause();
-                    }
-                }
+        return XAConnection.class.cast(Proxy.newProxyInstance(xaConnection.getClass().getClassLoader(), API_CONNECTION, (proxy, method, args) -> {
+            if ("getXAResource".equals(method.getName())) {
                 try {
-                    return method.invoke(xaConnection, args);
+                    final Object xaResource = method.invoke(xaConnection, args);
+                    return Proxy.newProxyInstance(xaResource.getClass().getClassLoader(), API_RESOURCE, (proxy1, method1, args1) -> {
+                        if ("isSameRM".equals(method1.getName())) {
+                            return false; // that's the goal!
+                        }
+                        try {
+                            return method1.invoke(xaResource, args1);
+                        } catch (final InvocationTargetException ite) {
+                            throw ite.getCause();
+                        }
+                    });
                 } catch (final InvocationTargetException ite) {
                     throw ite.getCause();
                 }
+            }
+            try {
+                return method.invoke(xaConnection, args);
+            } catch (final InvocationTargetException ite) {
+                throw ite.getCause();
             }
         }));
     }

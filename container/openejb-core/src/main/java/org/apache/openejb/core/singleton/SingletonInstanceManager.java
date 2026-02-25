@@ -115,11 +115,7 @@ public class SingletonInstanceManager {
             // The singleton has not been created nor is being created
             // We will construct this FutureTask and compete with the
             // other threads for the right to create the singleton
-            final FutureTask<Instance> task = new FutureTask<Instance>(new Callable<Instance>() {
-                public Instance call() throws Exception {
-                    return createInstance(callContext, beanContext);
-                }
-            });
+            final FutureTask<Instance> task = new FutureTask<Instance>(() -> createInstance(callContext, beanContext));
 
             do {
                 // If our FutureTask was the one to win the slot

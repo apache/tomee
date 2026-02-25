@@ -66,11 +66,7 @@ public class JpaCmpEngine implements CmpEngine {
     /**
      * Thread local to track the beans we are creating to avoid an extra ejbStore callback
      */
-    private final ThreadLocal<Set<EntityBean>> creating = new ThreadLocal<Set<EntityBean>>() {
-        protected Set<EntityBean> initialValue() {
-            return new HashSet<>();
-        }
-    };
+    private final ThreadLocal<Set<EntityBean>> creating = ThreadLocal.withInitial(HashSet::new);
 
     /**
      * Listener added to entity managers.

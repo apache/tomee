@@ -65,43 +65,40 @@ public class FileWatcher {
             final Path path = file.getAbsoluteFile().toPath();
             final WatchService watchService = path.getFileSystem().newWatchService();
             path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            final Thread watcherThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (again.get()) {
-                        try {
-                            final WatchKey key = watchService.poll(1, TimeUnit.SECONDS); // don't use take to not block forever
-                            if (key == null) {
+            final Thread watcherThread = new Thread(() -> {
+                while (again.get()) {
+                    try {
+                        final WatchKey key = watchService.poll(1, TimeUnit.SECONDS); // don't use take to not block forever
+                        if (key == null) {
+                            continue;
+                        }
+
+                        for (final WatchEvent<?> event : key.pollEvents()) {
+                            final WatchEvent.Kind<?> kind = event.kind();
+                            if (kind != StandardWatchEventKinds.ENTRY_CREATE
+                                && kind != StandardWatchEventKinds.ENTRY_DELETE
+                                && kind != StandardWatchEventKinds.ENTRY_MODIFY) {
                                 continue;
                             }
 
-                            for (final WatchEvent<?> event : key.pollEvents()) {
-                                final WatchEvent.Kind<?> kind = event.kind();
-                                if (kind != StandardWatchEventKinds.ENTRY_CREATE
-                                    && kind != StandardWatchEventKinds.ENTRY_DELETE
-                                    && kind != StandardWatchEventKinds.ENTRY_MODIFY) {
+                            final Path updatedPath = Path.class.cast(event.context());
+                            if (kind == StandardWatchEventKinds.ENTRY_DELETE || updatedPath.toFile().isFile()) {
+                                final String path1 = updatedPath.toString();
+                                if (path1.endsWith("___jb_tmp___") || path1.endsWith("___jb_old___")) {
                                     continue;
-                                }
-
-                                final Path updatedPath = Path.class.cast(event.context());
-                                if (kind == StandardWatchEventKinds.ENTRY_DELETE || updatedPath.toFile().isFile()) {
-                                    final String path = updatedPath.toString();
-                                    if (path.endsWith("___jb_tmp___") || path.endsWith("___jb_old___")) {
-                                        continue;
-                                    } else if (path.endsWith("~")) {
-                                        onChange(path.replace(File.pathSeparatorChar, '/').substring(0, path.length() - 1));
-                                    } else {
-                                        onChange(path.replace(File.pathSeparatorChar, '/'));
-                                    }
+                                } else if (path1.endsWith("~")) {
+                                    onChange(path1.replace(File.pathSeparatorChar, '/').substring(0, path1.length() - 1));
+                                } else {
+                                    onChange(path1.replace(File.pathSeparatorChar, '/'));
                                 }
                             }
-                            key.reset();
-                        } catch (final InterruptedException e) {
-                            Thread.interrupted();
-                            again.set(false);
-                        } catch (final ClosedWatchServiceException cwse) {
-                            // ok, we finished there
                         }
+                        key.reset();
+                    } catch (final InterruptedException e) {
+                        Thread.interrupted();
+                        again.set(false);
+                    } catch (final ClosedWatchServiceException cwse) {
+                        // ok, we finished there
                     }
                 }
             });

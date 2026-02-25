@@ -271,15 +271,12 @@ public class EEFilter implements Filter {
 
         @Override
         public void start(final Runnable runnable) {
-            delegate.start(new Runnable() {
-                @Override
-                public void run() {
-                    startRequestScope();
-                    try {
-                        runnable.run();
-                    } finally {
-                        stopRequestScope();
-                    }
+            delegate.start(() -> {
+                startRequestScope();
+                try {
+                    runnable.run();
+                } finally {
+                    stopRequestScope();
                 }
             });
         }

@@ -123,12 +123,7 @@ public class JtaQuery implements Query {
     public Query setMaxResults(final int i) {
         query.setMaxResults(i);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setMaxResults(i);
-                }
-            });
+            appliedOperations.add(query -> query.setMaxResults(i));
         }
         return this;
     }
@@ -136,12 +131,7 @@ public class JtaQuery implements Query {
     public Query setFirstResult(final int i) {
         query.setFirstResult(i);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setFirstResult(i);
-                }
-            });
+            appliedOperations.add(query -> query.setFirstResult(i));
         }
         return this;
     }
@@ -149,12 +139,7 @@ public class JtaQuery implements Query {
     public Query setFlushMode(final FlushModeType flushModeType) {
         query.setFlushMode(flushModeType);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setFlushMode(flushModeType);
-                }
-            });
+            appliedOperations.add(query -> query.setFlushMode(flushModeType));
         }
         return this;
     }
@@ -162,12 +147,7 @@ public class JtaQuery implements Query {
     public Query setHint(final String s, final Object o) {
         query.setHint(s, o);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setHint(s, o);
-                }
-            });
+            appliedOperations.add(query -> query.setHint(s, o));
         }
         return this;
     }
@@ -175,12 +155,7 @@ public class JtaQuery implements Query {
     public Query setParameter(final String s, final Object o) {
         query.setParameter(s, o);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(s, o);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(s, o));
         }
         return this;
     }
@@ -188,12 +163,7 @@ public class JtaQuery implements Query {
     public Query setParameter(final String s, final Date date, final TemporalType temporalType) {
         query.setParameter(s, date, temporalType);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(s, date, temporalType);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(s, date, temporalType));
         }
         return this;
     }
@@ -201,12 +171,7 @@ public class JtaQuery implements Query {
     public Query setParameter(final String s, final Calendar calendar, final TemporalType temporalType) {
         query.setParameter(s, calendar, temporalType);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(s, calendar, temporalType);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(s, calendar, temporalType));
         }
         return this;
     }
@@ -214,12 +179,7 @@ public class JtaQuery implements Query {
     public Query setParameter(final int i, final Object o) {
         query.setParameter(i, o);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(i, o);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(i, o));
         }
         return this;
     }
@@ -227,12 +187,7 @@ public class JtaQuery implements Query {
     public Query setParameter(final int i, final Date date, final TemporalType temporalType) {
         query.setParameter(i, date, temporalType);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(i, date, temporalType);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(i, date, temporalType));
         }
         return this;
     }
@@ -240,12 +195,7 @@ public class JtaQuery implements Query {
     public Query setParameter(final int i, final Calendar calendar, final TemporalType temporalType) {
         query.setParameter(i, calendar, temporalType);
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(i, calendar, temporalType);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(i, calendar, temporalType));
         }
         return this;
     }
@@ -378,12 +328,7 @@ public class JtaQuery implements Query {
      */
     public Query setLockMode(final LockModeType lockMode) {
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setLockMode(lockMode);
-                }
-            });
+            appliedOperations.add(query -> query.setLockMode(lockMode));
         }
         return query.setLockMode(lockMode);
     }
@@ -393,12 +338,7 @@ public class JtaQuery implements Query {
      */
     public <T> Query setParameter(final Parameter<T> param, final T value) {
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(param, value);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(param, value));
         }
         return query.setParameter(param, value);
     }
@@ -408,12 +348,7 @@ public class JtaQuery implements Query {
      */
     public Query setParameter(final Parameter<Calendar> param, final Calendar value, final TemporalType temporalType) {
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(param, value, temporalType);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(param, value, temporalType));
         }
         return query.setParameter(param, value, temporalType);
     }
@@ -423,12 +358,7 @@ public class JtaQuery implements Query {
      */
     public Query setParameter(final Parameter<Date> param, final Date value, final TemporalType temporalType) {
         if (!underTx) {
-            appliedOperations.add(new QueryOperation() {
-                @Override
-                public Query apply(final Query query) {
-                    return query.setParameter(param, value, temporalType);
-                }
-            });
+            appliedOperations.add(query -> query.setParameter(param, value, temporalType));
         }
         return query.setParameter(param, value, temporalType);
     }

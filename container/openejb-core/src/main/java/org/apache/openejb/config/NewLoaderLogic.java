@@ -244,32 +244,17 @@ public class NewLoaderLogic {
         if (excluded != null && included != null) {
             synchronized (NewLoaderLogic.class) {
                 final Filter builtIn = new OptimizedExclusionFilter(getExclusions());
-                NewLoaderLogic.filter = new Filter() {
-                    @Override
-                    public boolean accept(final String name) {
-                        return !included.accept(name) && (builtIn.accept(name) || excluded.accept(name));
-                    }
-                };
+                NewLoaderLogic.filter = name -> !included.accept(name) && (builtIn.accept(name) || excluded.accept(name));
             }
         } else if (excluded != null) {
             synchronized (NewLoaderLogic.class) {
                 final Filter builtIn = new OptimizedExclusionFilter(getExclusions());
-                NewLoaderLogic.filter = new Filter() {
-                    @Override
-                    public boolean accept(final String name) {
-                        return builtIn.accept(name) || excluded.accept(name);
-                    }
-                };
+                NewLoaderLogic.filter = name -> builtIn.accept(name) || excluded.accept(name);
             }
         } else if (included != null) {
             synchronized (NewLoaderLogic.class) {
                 final Filter builtIn = new OptimizedExclusionFilter(getExclusions());
-                NewLoaderLogic.filter = new Filter() {
-                    @Override
-                    public boolean accept(final String name) {
-                        return !included.accept(name) && builtIn.accept(name);
-                    }
-                };
+                NewLoaderLogic.filter = name -> !included.accept(name) && builtIn.accept(name);
             }
         }
 

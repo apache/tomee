@@ -172,18 +172,15 @@ public class Main {
                 }
             }
 
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        container.stop();
-                    } catch (final Exception e) {
-                        e.printStackTrace(); // just log the exception
-                    } finally {
-                        close(post);
-                    }
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    container.stop();
+                } catch (final Exception e) {
+                    e.printStackTrace(); // just log the exception
+                } finally {
+                    close(post);
                 }
-            });
+            }));
             if (line.hasOption(INTERACTIVE)) {
                 String l;
                 final Scanner scanner = new Scanner(System.in);

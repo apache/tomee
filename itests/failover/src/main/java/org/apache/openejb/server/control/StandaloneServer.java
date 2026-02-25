@@ -406,20 +406,17 @@ public class StandaloneServer {
     static final List<StandaloneServer> kill = new ArrayList<StandaloneServer>();
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                for (final StandaloneServer server : kill) {
-                    try {
-                        if (server.process != null) {
-                            server.process.destroy();
-                        }
-                    } catch (final Throwable e) {
-                        //Ignore
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            for (final StandaloneServer server : kill) {
+                try {
+                    if (server.process != null) {
+                        server.process.destroy();
                     }
+                } catch (final Throwable e) {
+                    //Ignore
                 }
             }
-        });
+        }));
     }
 
     public static class ServerException extends RuntimeException {

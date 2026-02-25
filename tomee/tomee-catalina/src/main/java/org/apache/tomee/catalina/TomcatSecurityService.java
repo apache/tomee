@@ -44,11 +44,7 @@ import java.util.concurrent.Callable;
 
 public class TomcatSecurityService extends AbstractSecurityService {
     private static final boolean ONLY_DEFAULT_REALM = "true".equals(SystemInstance.get().getProperty("tomee.realm.only-default", "false"));
-    protected static final ThreadLocal<LinkedList<Subject>> RUN_AS_STACK = new ThreadLocal<LinkedList<Subject>>() {
-        protected LinkedList<Subject> initialValue() {
-            return new LinkedList<>();
-        }
-    };
+    protected static final ThreadLocal<LinkedList<Subject>> RUN_AS_STACK = ThreadLocal.withInitial(LinkedList::new);
 
     private Realm defaultRealm;
 

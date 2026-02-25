@@ -165,12 +165,7 @@ public class TomEEMicroProfileListener {
             if (file == null) {
                 throw new IllegalArgumentException("File must not be null");
             } else if (file.isDirectory()) {
-                List<File> classFiles = Files.collect(file, new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.getName().endsWith(".class");
-                    }
-                });
+                List<File> classFiles = Files.collect(file, pathname -> pathname.getName().endsWith(".class"));
 
                 for (File classFile : classFiles) {
                     try (InputStream in = new FileInputStream(classFile)) {

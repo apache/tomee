@@ -29,12 +29,7 @@ import java.util.Locale;
 public abstract class BasicURLClassPath implements ClassPath {
 
     public static ClassLoader getContextClassLoader() {
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            @Override
-            public ClassLoader run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
+        return AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
     }
 
     private Field ucpField;
@@ -50,21 +45,17 @@ public abstract class BasicURLClassPath implements ClassPath {
     }
 
     private Method getAddURLMethod(final URLClassLoader loader) {
-        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            @Override
-            public Method run() {
-                final Object cp;
-                try {
-                    cp = getURLClassPath(loader);
-                    final Class<?> clazz = cp.getClass();
-                    return clazz.getDeclaredMethod("addURL", URL.class);
-                } catch (final Exception e) {
-                    System.err.println("Can't access addURL from URLClassPath");
-                }
-
-                return null;
+        return AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            final Object cp;
+            try {
+                cp = getURLClassPath(loader);
+                final Class<?> clazz = cp.getClass();
+                return clazz.getDeclaredMethod("addURL", URL.class);
+            } catch (final Exception e) {
+                System.err.println("Can't access addURL from URLClassPath");
             }
 
+            return null;
         });
     }
 
@@ -73,12 +64,9 @@ public abstract class BasicURLClassPath implements ClassPath {
             return;
         }
 
-        final String[] jarNames = dir.list(new java.io.FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, String name) {
-                name = name.toLowerCase(Locale.ENGLISH);
-                return name.endsWith(".jar") || name.endsWith(".zip");
-            }
+        final String[] jarNames = dir.list((dir1, name) -> {
+            name = name.toLowerCase(Locale.ENGLISH);
+            return name.endsWith(".jar") || name.endsWith(".zip");
         });
 
         final URL[] jars = new URL[jarNames.length];
@@ -122,21 +110,18 @@ public abstract class BasicURLClassPath implements ClassPath {
 
     private Field getUcpField() throws Exception {
         if (ucpField == null) {
-            ucpField = AccessController.doPrivileged(new PrivilegedAction<Field>() {
-                @Override
-                public Field run() {
-                    try {
-                        final Field ucp = URLClassLoader.class.getDeclaredField("ucp");
-                        ucp.setAccessible(true);
-                        return ucp;
-                    } catch (final Exception e2) {
-                        if (!ucpFieldErrorLogged) {
-                            System.err.println("Can't get ucp field of URLClassLoader");
-                            ucpFieldErrorLogged = true;
-                        }
+            ucpField = AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
+                try {
+                    final Field ucp = URLClassLoader.class.getDeclaredField("ucp");
+                    ucp.setAccessible(true);
+                    return ucp;
+                } catch (final Exception e2) {
+                    if (!ucpFieldErrorLogged) {
+                        System.err.println("Can't get ucp field of URLClassLoader");
+                        ucpFieldErrorLogged = true;
                     }
-                    return null;
                 }
+                return null;
             });
         }
 

@@ -286,14 +286,11 @@ public final class OpenEjbContainer extends EJBContainer {
 
                 //Single close
                 if (isSingleClose()) {
-                    Runtime.getRuntime().addShutdownHook(new Thread() {
-                        @Override
-                        public void run() {
-                            if (instance != null) {
-                                instance.doClose();
-                            }
+                    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                        if (instance != null) {
+                            instance.doClose();
                         }
-                    });
+                    }));
                 }
 
                 return openEjbContainer;

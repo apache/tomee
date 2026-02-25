@@ -43,12 +43,7 @@ public class CdiAppContextsService extends WebContextsService implements Context
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
 
-    private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = new ThreadLocal<Collection<Runnable>>() {
-        @Override
-        protected Collection<Runnable> initialValue() {
-            return new ArrayList<>();
-        }
-    };
+    private static final ThreadLocal<Collection<Runnable>> endRequestRunnables = ThreadLocal.withInitial(ArrayList::new);
 
 
     public CdiAppContextsService(final WebBeansContext wbc) {

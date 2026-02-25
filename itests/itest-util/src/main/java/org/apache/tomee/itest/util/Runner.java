@@ -59,35 +59,32 @@ public class Runner {
 
         for (int submitted = 0; submitted < threads; submitted++) {
             final int id = submitted;
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    ready.countDown();
-                    try {
-                        start.await();
-                    } catch (InterruptedException e) {
-                        return;
-                    }
+            executor.execute(() -> {
+                ready.countDown();
+                try {
+                    start.await();
+                } catch (InterruptedException e) {
+                    return;
+                }
 
-                    /*
-                     * If there's anything we'd like to execute
-                     * that shouldn't be included in the timings,
-                     * do it now.
-                     */
-                    if (before != null) before.run();
+                /*
+                 * If there's anything we'd like to execute
+                 * that shouldn't be included in the timings,
+                 * do it now.
+                 */
+                if (before != null) before.run();
 
-                    /*
-                     * Run, Forrest! Run!!
-                     */
-                    final Timer timer = Timer.start();
-                    try {
-                        runnable.run();
-                    } catch (Throwable t) {
-                        failures[id] = t;
-                    } finally {
-                        times[id] = timer.time();
-                        completed.countDown();
-                    }
+                /*
+                 * Run, Forrest! Run!!
+                 */
+                final Timer timer = Timer.start();
+                try {
+                    runnable.run();
+                } catch (Throwable t) {
+                    failures[id] = t;
+                } finally {
+                    times[id] = timer.time();
+                    completed.countDown();
                 }
             });
         }

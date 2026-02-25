@@ -38,12 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenEJBScripter {
     private static final Map<String, ScriptEngineFactory> ENGINE_FACTORIES = new ConcurrentHashMap<String, ScriptEngineFactory>();
-    private static final ThreadLocal<Map<String, ScriptEngine>> ENGINES = new ThreadLocal<Map<String, ScriptEngine>>() {
-        @Override
-        protected Map<String, ScriptEngine> initialValue() {
-            return new HashMap<>();
-        }
-    };
+    private static final ThreadLocal<Map<String, ScriptEngine>> ENGINES = ThreadLocal.withInitial(HashMap::new);
 
     static {
         final ScriptEngineManager mgr = new ScriptEngineManager();

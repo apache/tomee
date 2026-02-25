@@ -310,12 +310,7 @@ public class Paths implements PathsInterface {
             return null;
         }
 
-        final File[] files = dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return (name.startsWith(namePrefix + "-") && name.endsWith(".jar")) || name.equals(namePrefix);
-            }
-        });
+        final File[] files = dir.listFiles((dir1, name) -> (name.startsWith(namePrefix + "-") && name.endsWith(".jar")) || name.equals(namePrefix));
 
         return files != null && files.length > 0? files[0] : null;
     }

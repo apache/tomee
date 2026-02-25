@@ -187,13 +187,10 @@ public class Tracker {
         return debug && log.isDebugEnabled();
     }
 
-    private final Executor executor = new ThreadPoolExecutor(1, 2, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), new ThreadFactory() {
-        @Override
-        public Thread newThread(final Runnable runable) {
-            final Thread t = new Thread(runable, "Discovery Agent Notifier");
-            t.setDaemon(true);
-            return t;
-        }
+    private final Executor executor = new ThreadPoolExecutor(1, 2, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), runable -> {
+        final Thread t = new Thread(runable, "Discovery Agent Notifier");
+        t.setDaemon(true);
+        return t;
     });
 
     private void fireServiceRemovedEvent(final URI uri) {
@@ -207,12 +204,7 @@ public class Tracker {
             // Have the listener process the event async so that
             // he does not block this thread since we are doing time sensitive
             // processing of events.
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    discoveryListener.serviceRemoved(uri);
-                }
-            });
+            executor.execute(() -> discoveryListener.serviceRemoved(uri));
         }
     }
 
@@ -227,12 +219,7 @@ public class Tracker {
             // Have the listener process the event async so that
             // he does not block this thread since we are doing time sensitive
             // processing of events.
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    discoveryListener.serviceAdded(uri);
-                }
-            });
+            executor.execute(() -> discoveryListener.serviceAdded(uri));
         }
     }
 
