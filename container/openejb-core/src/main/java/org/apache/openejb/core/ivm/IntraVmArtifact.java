@@ -40,11 +40,7 @@ public class IntraVmArtifact implements Externalizable {
         }
     };
 
-    private static final ThreadLocal<Handles> threadHandles = new ThreadLocal<Handles>() {
-        protected Handles initialValue() {
-            return new Handles();
-        }
-    };
+    private static final ThreadLocal<Handles> threadHandles = ThreadLocal.withInitial(Handles::new);
 
     // todo why not put in message catalog?
     private static final String NO_ARTIFACT_ERROR = "The artifact this object represents could not be found.";

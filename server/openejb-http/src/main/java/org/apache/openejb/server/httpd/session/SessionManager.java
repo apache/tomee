@@ -97,16 +97,13 @@ public class SessionManager {
         }
         final Duration duration = new Duration(SystemInstance.get().getProperty("openejb.http.eviction.duration", "1 minute"));
         es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(SessionManager.class));
-        es.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                for (final SessionWrapper data : new ArrayList<>(sessions.values())) {
-                    final HttpSession session = data.session;
-                    if (session.getMaxInactiveInterval() > 0
-                            && session.getLastAccessedTime() + TimeUnit.SECONDS.toMillis(session.getMaxInactiveInterval()) < System.currentTimeMillis()) {
-                        doDestroy(data);
-                        sessions.remove(data.session.getId());
-                    }
+        es.scheduleWithFixedDelay(() -> {
+            for (final SessionWrapper data : new ArrayList<>(sessions.values())) {
+                final HttpSession session = data.session;
+                if (session.getMaxInactiveInterval() > 0
+                        && session.getLastAccessedTime() + TimeUnit.SECONDS.toMillis(session.getMaxInactiveInterval()) < System.currentTimeMillis()) {
+                    doDestroy(data);
+                    sessions.remove(data.session.getId());
                 }
             }
         }, duration.getTime(), duration.getTime(), duration.getUnit());

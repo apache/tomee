@@ -45,27 +45,21 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
     public DiscoveryRegistry(final DiscoveryAgent agent) {
 
-        executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), new ThreadFactory() {
-            @Override
-            public Thread newThread(final Runnable runable) {
-                final Thread t = new Thread(runable, DiscoveryRegistry.class.getSimpleName());
-                t.setDaemon(true);
-                return t;
-            }
+        executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), runable -> {
+            final Thread t = new Thread(runable, DiscoveryRegistry.class.getSimpleName());
+            t.setDaemon(true);
+            return t;
         });
 
-        executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-            @Override
-            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
-                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                    return;
-                }
+        executor.setRejectedExecutionHandler((r, tpe) -> {
+            if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                return;
+            }
 
-                try {
-                    tpe.getQueue().offer(r, 20, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    //Ignore
-                }
+            try {
+                tpe.getQueue().offer(r, 20, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                //Ignore
             }
         });
 

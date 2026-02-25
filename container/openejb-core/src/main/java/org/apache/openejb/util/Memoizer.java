@@ -47,11 +47,7 @@ public class Memoizer<K, V> implements Computable<K, V> {
             Future<V> future = cache.get(key);
             if (future == null) {
 
-                final Callable<V> eval = new Callable<V>() {
-                    public V call() throws Exception {
-                        return c.compute(key);
-                    }
-                };
+                final Callable<V> eval = () -> c.compute(key);
                 final FutureTask<V> futureTask = new FutureTask<>(eval);
                 future = cache.putIfAbsent(key, futureTask);
                 if (future == null) {

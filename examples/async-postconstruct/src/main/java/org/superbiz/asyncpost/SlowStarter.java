@@ -43,14 +43,11 @@ public class SlowStarter {
 
     @PostConstruct
     private void construct() throws Exception {
-        construct = executor.submit(new Callable() {
-            @Override
-            public Object call() throws Exception {
-                Thread.sleep(SECONDS.toMillis(10));
-                SlowStarter.this.color = "orange";
-                SlowStarter.this.shape = "circle";
-                return null;
-            }
+        construct = executor.submit((Callable) () -> {
+            Thread.sleep(SECONDS.toMillis(10));
+            SlowStarter.this.color = "orange";
+            SlowStarter.this.shape = "circle";
+            return null;
         });
     }
 

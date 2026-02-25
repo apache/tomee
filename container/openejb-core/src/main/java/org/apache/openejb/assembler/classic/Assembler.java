@@ -1856,13 +1856,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Sort all the singletons to the back of the list.  We want to make sure
         // all non-singletons are created first so that if a singleton refers to them
         // they are available.
-        deployments.sort(new Comparator<BeanContext>() {
-            @Override
-            public int compare(final BeanContext a, final BeanContext b) {
-                final int aa = a.getComponentType() == BeanType.SINGLETON ? 1 : 0;
-                final int bb = b.getComponentType() == BeanType.SINGLETON ? 1 : 0;
-                return aa - bb;
-            }
+        deployments.sort((a, b) -> {
+            final int aa = a.getComponentType() == BeanType.SINGLETON ? 1 : 0;
+            final int bb = b.getComponentType() == BeanType.SINGLETON ? 1 : 0;
+            return aa - bb;
         });
 
         // Sort all the beans with references to the back of the list.  Beans
@@ -1882,13 +1879,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Now Sort all the MDBs to the back of the list.  The Resource Adapter
         // may attempt to use the MDB on endpointActivation and the MDB may have
         // references to other ejbs that would need to be available first.
-        deployments.sort(new Comparator<BeanContext>() {
-            @Override
-            public int compare(final BeanContext a, final BeanContext b) {
-                final int aa = a.getComponentType() == BeanType.MESSAGE_DRIVEN ? 1 : 0;
-                final int bb = b.getComponentType() == BeanType.MESSAGE_DRIVEN ? 1 : 0;
-                return aa - bb;
-            }
+        deployments.sort((a, b) -> {
+            final int aa = a.getComponentType() == BeanType.MESSAGE_DRIVEN ? 1 : 0;
+            final int bb = b.getComponentType() == BeanType.MESSAGE_DRIVEN ? 1 : 0;
+            return aa - bb;
         });
 
         return deployments;
@@ -2048,12 +2042,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final ExecutorService es = Executors.newSingleThreadExecutor(new DaemonThreadFactory("openejb-resource-destruction-" + name));
             final Object o = object;
             try {
-                es.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        doResourceDestruction(name, className, o);
-                    }
-                }).get(d.getTime(), d.getUnit());
+                es.submit(() -> doResourceDestruction(name, className, o)).get(d.getTime(), d.getUnit());
             } catch (final InterruptedException e) {
                 Thread.interrupted();
             } catch (final ExecutionException e) {
@@ -3050,24 +3039,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private LazyResource newLazyResource(final Collection<ServiceInfo> infos, final ResourceInfo serviceInfo) {
-        return new LazyResource(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                final boolean appClassLoader = "true".equals(serviceInfo.properties.remove("UseAppClassLoader"))
-                        || serviceInfo.originAppName != null;
+        return new LazyResource(() -> {
+            final boolean appClassLoader = "true".equals(serviceInfo.properties.remove("UseAppClassLoader"))
+                    || serviceInfo.originAppName != null;
 
-                final Thread thread = Thread.currentThread();
-                final ClassLoader old = thread.getContextClassLoader();
-                if (!appClassLoader) {
-                    final ClassLoader classLoader = Assembler.class.getClassLoader();
-                    thread.setContextClassLoader(classLoader == null ? ClassLoader.getSystemClassLoader() : classLoader);
-                } // else contextually we should have the app loader
+            final Thread thread = Thread.currentThread();
+            final ClassLoader old = thread.getContextClassLoader();
+            if (!appClassLoader) {
+                final ClassLoader classLoader = Assembler.class.getClassLoader();
+                thread.setContextClassLoader(classLoader == null ? ClassLoader.getSystemClassLoader() : classLoader);
+            } // else contextually we should have the app loader
 
-                try {
-                    return doCreateResource(infos, serviceInfo);
-                } finally {
-                    thread.setContextClassLoader(old);
-                }
+            try {
+                return doCreateResource(infos, serviceInfo);
+            } finally {
+                thread.setContextClassLoader(old);
             }
         });
     }

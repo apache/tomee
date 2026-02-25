@@ -168,15 +168,12 @@ public class MPJWTFilter implements Filter {
             // this is so that the MPJWTProducer can find the function and apply it if necessary
             request.setAttribute(JsonWebToken.class.getName(), tokenFunction);
             request.setAttribute(ValidationInterceptor.JWT_SUPPLIER, tokenSupplier);
-            request.setAttribute("javax.security.auth.subject.callable", (Callable<Subject>) new Callable<Subject>() {
-                @Override
-                public Subject call() throws Exception {
-                    final Set<Principal> principals = new LinkedHashSet<>();
-                    final JsonWebToken namePrincipal = tokenFunction.apply(request);
-                    principals.add(namePrincipal);
-                    principals.addAll(namePrincipal.getGroups().stream().map(role -> (Principal) () -> role).collect(Collectors.<Principal>toList()));
-                    return new Subject(true, principals, Collections.emptySet(), Collections.emptySet());
-                }
+            request.setAttribute("javax.security.auth.subject.callable", (Callable<Subject>) () -> {
+                final Set<Principal> principals = new LinkedHashSet<>();
+                final JsonWebToken namePrincipal = tokenFunction.apply(request);
+                principals.add(namePrincipal);
+                principals.addAll(namePrincipal.getGroups().stream().map(role -> (Principal) () -> role).collect(Collectors.<Principal>toList()));
+                return new Subject(true, principals, Collections.emptySet(), Collections.emptySet());
             });
         }
 

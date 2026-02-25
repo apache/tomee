@@ -27,26 +27,20 @@ import java.util.concurrent.Semaphore;
  */
 public class Core {
     static {
-        final Thread preloadMessages = new Thread() {
-            @Override
-            public void run() {
-                new Messages("org.apache.openejb.util.resources");
-                new Messages("org.apache.openejb.config");
-                new Messages("org.apache.openejb.config.resources");
-            }
-        };
+        final Thread preloadMessages = new Thread(() -> {
+            new Messages("org.apache.openejb.util.resources");
+            new Messages("org.apache.openejb.config");
+            new Messages("org.apache.openejb.config.resources");
+        });
         preloadMessages.start();
 
-        final Thread preloadServiceProviders = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    ServiceUtils.getServiceProviders();
-                } catch (final OpenEJBException e) {
-                    // no-op
-                }
+        final Thread preloadServiceProviders = new Thread(() -> {
+            try {
+                ServiceUtils.getServiceProviders();
+            } catch (final OpenEJBException e) {
+                // no-op
             }
-        };
+        });
         preloadServiceProviders.start();
 
         final int permits = 2 * Runtime.getRuntime().availableProcessors() + 1;

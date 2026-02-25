@@ -767,13 +767,11 @@ public class ApplicationComposers {
             if (remove != null) {
                 testClassFinders.put(inputTestInstance, remove);
                 testClassFinder = remove;
-                afterRunnables.add(new Runnable() { // reset state for next test
-                    @Override
-                    public void run() {
-                        final ClassFinder classFinder = testClassFinders.remove(inputTestInstance);
-                        if (classFinder != null) {
-                            testClassFinders.put(self, classFinder);
-                        }
+                // reset state for next test
+                afterRunnables.add(() -> {
+                    final ClassFinder classFinder = testClassFinders.remove(inputTestInstance);
+                    if (classFinder != null) {
+                        testClassFinders.put(self, classFinder);
                     }
                 });
             }
@@ -1068,12 +1066,9 @@ public class ApplicationComposers {
     }
 
     public void evaluate(final Object testInstance, final Runnable next) throws Exception {
-        evaluate(testInstance, new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                next.run();
-                return null;
-            }
+        evaluate(testInstance, (Callable<Void>) () -> {
+            next.run();
+            return null;
         });
     }
 
@@ -1537,23 +1532,17 @@ public class ApplicationComposers {
 
             final CountDownLatch latch = new CountDownLatch(1);
 
-            final Thread hook = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        composer.after();
-                    } catch (final Exception e) {
-                        // no-op
-                    }
+            final Thread hook = new Thread(() -> {
+                try {
+                    composer.after();
+                } catch (final Exception e) {
+                    // no-op
                 }
-            };
+            });
             Runtime.getRuntime().addShutdownHook(hook);
-            composer.afterRunnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    Runtime.getRuntime().removeShutdownHook(hook);
-                    latch.countDown();
-                }
+            composer.afterRunnables.add(() -> {
+                Runtime.getRuntime().removeShutdownHook(hook);
+                latch.countDown();
             });
 
             // do it after having added the latch countdown hook to avoid to block if start and stop very fast
@@ -1568,42 +1557,36 @@ public class ApplicationComposers {
     }
 
     public void handleLifecycle(final Class<?> type, final Object appInstance) throws IllegalAccessException, InvocationTargetException {
-        beforeDestroyAfterRunnables.add(new Runnable() {
-            @Override
-            public void run() {
-                for (final Map.Entry<Object, ClassFinder> m : testClassFinders.entrySet()) {
-                    for (final Method mtd : m.getValue().findAnnotatedMethods(PreDestroy.class)) {
-                        if (mtd.getParameterTypes().length == 0) {
-                            if (!mtd.isAccessible()) {
-                                mtd.setAccessible(true);
-                            }
-                            try {
-                                mtd.invoke(mtd.getDeclaringClass() == type ? appInstance : m.getKey());
-                            } catch (final IllegalAccessException | InvocationTargetException e) {
-                                // no-op
-                            }
+        beforeDestroyAfterRunnables.add(() -> {
+            for (final Map.Entry<Object, ClassFinder> m : testClassFinders.entrySet()) {
+                for (final Method mtd : m.getValue().findAnnotatedMethods(PreDestroy.class)) {
+                    if (mtd.getParameterTypes().length == 0) {
+                        if (!mtd.isAccessible()) {
+                            mtd.setAccessible(true);
+                        }
+                        try {
+                            mtd.invoke(mtd.getDeclaringClass() == type ? appInstance : m.getKey());
+                        } catch (final IllegalAccessException | InvocationTargetException e) {
+                            // no-op
                         }
                     }
                 }
             }
         });
         if (!appContext.getWebContexts().isEmpty()) {
-            beforeDestroyAfterRunnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        final Object sessionManager = SystemInstance.get().getComponent(
-                                ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openejb.server.httpd.session.SessionManager")
-                        );
-                        if (sessionManager != null) {
-                            final Class<?>[] paramTypes = {WebContext.class};
-                            for (final WebContext web : appContext.getWebContexts()) {
-                                Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
-                            }
+            beforeDestroyAfterRunnables.add(() -> {
+                try {
+                    final Object sessionManager = SystemInstance.get().getComponent(
+                            ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openejb.server.httpd.session.SessionManager")
+                    );
+                    if (sessionManager != null) {
+                        final Class<?>[] paramTypes = {WebContext.class};
+                        for (final WebContext web : appContext.getWebContexts()) {
+                            Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
                         }
-                    } catch (final Throwable e) {
-                        // no-op
                     }
+                } catch (final Throwable e) {
+                    // no-op
                 }
             });
         }

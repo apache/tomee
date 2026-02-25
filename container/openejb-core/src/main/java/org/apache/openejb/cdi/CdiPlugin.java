@@ -263,14 +263,11 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
                     }
 
                     try {
-                        instance = ProxyManager.newProxyInstance(interfaces.toArray(new Class<?>[interfaces.size()]), new InvocationHandler() {
-                            @Override
-                            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                                try {
-                                    return method.invoke(provider.get(), args);
-                                } catch (final InvocationTargetException ite) {
-                                    throw ite.getCause();
-                                }
+                        instance = ProxyManager.newProxyInstance(interfaces.toArray(new Class<?>[interfaces.size()]), (proxy, method, args) -> {
+                            try {
+                                return method.invoke(provider.get(), args);
+                            } catch (final InvocationTargetException ite) {
+                                throw ite.getCause();
                             }
                         });
                     } catch (final IllegalAccessException e) {

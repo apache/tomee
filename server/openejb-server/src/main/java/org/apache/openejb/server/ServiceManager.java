@@ -234,15 +234,12 @@ public abstract class ServiceManager {
             if (null == legacy) {
                 //Legacy is not configured either way, so make an educated guess.
                 //If we find at least 2 known service.properties files then assume legacy
-                final File[] files = conf.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(final File dir, String name) {
-                        name = name.toLowerCase(Locale.ENGLISH);
-                        return name.equals("ejbd.properties")
-                            || name.equals("ejbds.properties")
-                            || name.equals("admin.properties")
-                            || name.equals("httpejbd.properties");
-                    }
+                final File[] files = conf.listFiles((dir, name) -> {
+                    name = name.toLowerCase(Locale.ENGLISH);
+                    return name.equals("ejbd.properties")
+                        || name.equals("ejbds.properties")
+                        || name.equals("admin.properties")
+                        || name.equals("httpejbd.properties");
                 });
 
                 if (null != files && files.length > 1) {

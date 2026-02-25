@@ -95,17 +95,12 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
     @Override
     protected List<MethodRule> rules(final Object test) {
         final List<MethodRule> rules = super.rules(test);
-        rules.add(new MethodRule() {
+        rules.add((base, method, target) -> new Statement() {
             @Override
-            public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-                return new Statement() {
-                    @Override
-                    public void evaluate() throws Throwable {
-                        BASE.start(test);
-                        BASE.composerInject(target);
-                        base.evaluate();
-                    }
-                };
+            public void evaluate() throws Throwable {
+                BASE.start(test);
+                BASE.composerInject(target);
+                base.evaluate();
             }
         });
         return rules;

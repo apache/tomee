@@ -309,26 +309,23 @@ public class TomEEEmbeddedTask extends DefaultTask {
             }
 
             final AutoCloseable finalContainer = container;
-            hook = new Thread() {
-                @Override
-                public void run() {
-                    if (running.compareAndSet(true, false)) {
-                        final Thread thread = Thread.currentThread();
-                        final ClassLoader old = thread.getContextClassLoader();
-                        thread.setContextClassLoader(loader);
-                        try {
-                            finalContainer.close();
-                        } catch (final NoClassDefFoundError noClassDefFoundError) {
-                            // debug cause it is too late to shutdown properly so don't pollute logs
-                            getLogger().debug("can't stop TomEE", noClassDefFoundError);
-                        } catch (final Exception e) {
-                            getLogger().error("can't stop TomEE", e);
-                        } finally {
-                            thread.setContextClassLoader(old);
-                        }
+            hook = new Thread(() -> {
+                if (running.compareAndSet(true, false)) {
+                    final Thread thread1 = Thread.currentThread();
+                    final ClassLoader old = thread1.getContextClassLoader();
+                    thread1.setContextClassLoader(loader);
+                    try {
+                        finalContainer.close();
+                    } catch (final NoClassDefFoundError noClassDefFoundError) {
+                        // debug cause it is too late to shutdown properly so don't pollute logs
+                        getLogger().debug("can't stop TomEE", noClassDefFoundError);
+                    } catch (final Exception e) {
+                        getLogger().error("can't stop TomEE", e);
+                    } finally {
+                        thread1.setContextClassLoader(old);
                     }
                 }
-            };
+            });
             hook.setName("TomEE-Embedded-ShutdownHook");
 
             running.set(true); // yes should be done after but we can't help much if we don't do it there for auto shutdown

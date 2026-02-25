@@ -411,29 +411,26 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         final Configuration config = getConfig();
         container.setup(config);
 
-        final Thread hook = new Thread() {
-            @Override
-            public void run() {
-                if (container.getTomcat() != null && container.getTomcat().getServer().getState() != LifecycleState.DESTROYED) {
-                    final Thread thread = Thread.currentThread();
-                    final ClassLoader old = thread.getContextClassLoader();
-                    thread.setContextClassLoader(ParentClassLoaderFinder.Helper.get());
-                    try {
-                        if (!classpathAsWar) {
-                            container.undeploy(warFile.getAbsolutePath());
-                        }
-                        container.stop();
-                    } catch (final NoClassDefFoundError noClassDefFoundError) {
-                        // debug cause it is too late to shutdown properly so don't pollute logs
-                        getLog().debug("can't stop TomEE", noClassDefFoundError);
-                    } catch (final Exception e) {
-                        getLog().error("can't stop TomEE", e);
-                    } finally {
-                        thread.setContextClassLoader(old);
+        final Thread hook = new Thread(() -> {
+            if (container.getTomcat() != null && container.getTomcat().getServer().getState() != LifecycleState.DESTROYED) {
+                final Thread thread1 = Thread.currentThread();
+                final ClassLoader old = thread1.getContextClassLoader();
+                thread1.setContextClassLoader(ParentClassLoaderFinder.Helper.get());
+                try {
+                    if (!classpathAsWar) {
+                        container.undeploy(warFile.getAbsolutePath());
                     }
+                    container.stop();
+                } catch (final NoClassDefFoundError noClassDefFoundError) {
+                    // debug cause it is too late to shutdown properly so don't pollute logs
+                    getLog().debug("can't stop TomEE", noClassDefFoundError);
+                } catch (final Exception e) {
+                    getLog().error("can't stop TomEE", e);
+                } finally {
+                    thread1.setContextClassLoader(old);
                 }
             }
-        };
+        });
         hook.setName("TomEE-Embedded-ShutdownHook");
 
         try {

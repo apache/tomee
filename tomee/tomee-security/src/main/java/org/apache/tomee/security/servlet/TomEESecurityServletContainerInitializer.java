@@ -56,15 +56,11 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
         }
 
         if (securityExtension.hasAuthenticationMechanisms()) {
-            final String registrationId = AccessController.doPrivileged(new PrivilegedAction<String>() {
-                public String run() {
-                    return AuthConfigFactory.getFactory().registerConfigProvider(
-                        new TomEESecurityAuthConfigProvider(new HashMap(), null), // todo we can probably do better
-                        "HttpServlet",                                              // from AuthenticatorBase.java:1245
-                        ctx.getVirtualServerName() + " " + ctx.getContextPath(),    // from AuthenticatorBase.java:1178
-                        "TomEE Security JSR-375");
-                }
-            });
+            final String registrationId = AccessController.doPrivileged((PrivilegedAction<String>) () -> AuthConfigFactory.getFactory().registerConfigProvider(
+                new TomEESecurityAuthConfigProvider(new HashMap(), null), // todo we can probably do better
+                "HttpServlet",                                              // from AuthenticatorBase.java:1245
+                ctx.getVirtualServerName() + " " + ctx.getContextPath(),    // from AuthenticatorBase.java:1178
+                "TomEE Security JSR-375"));
 
             if (registrationId != null) {
                 ctx.setAttribute(CONTEXT_REGISTRATION_ID, registrationId);
@@ -80,11 +76,7 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
     public void contextDestroyed(final ServletContextEvent sce) {
         String registrationId = (String) sce.getServletContext().getAttribute(CONTEXT_REGISTRATION_ID);
         if (registrationId != null && registrationId.length() > 0) {
-            AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
-                public Boolean run() {
-                    return AuthConfigFactory.getFactory().removeRegistration(registrationId);
-                }
-            });
+            AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> AuthConfigFactory.getFactory().removeRegistration(registrationId));
         }
     }
 }

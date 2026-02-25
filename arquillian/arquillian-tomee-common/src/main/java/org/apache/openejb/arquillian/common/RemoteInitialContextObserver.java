@@ -89,25 +89,13 @@ public class RemoteInitialContextObserver {
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             Exception err = null;
+            // then contextual context, this can start an embedded container in some cases
+            // then existing context
+            // then try to create a remote context
             for (final Callable<Context> callable : Arrays.asList( // order is important to avoid to start an embedded container for some cases
-                    new Callable<Context>() { // then try to create a remote context
-                        @Override
-                        public Context call() throws Exception {
-                            return new InitialContext(properties);
-                        }
-                    },
-                    new Callable<Context>() { // then existing context
-                        @Override
-                        public Context call() throws Exception {
-                            return context;
-                        }
-                    },
-                    new Callable<Context>() { // then contextual context, this can start an embedded container in some cases
-                        @Override
-                        public Context call() throws Exception {
-                            return new InitialContext();
-                        }
-                    }
+                    () -> new InitialContext(properties),
+                    (Callable<Context>) () -> context,
+                    InitialContext::new
 
             )) {
 

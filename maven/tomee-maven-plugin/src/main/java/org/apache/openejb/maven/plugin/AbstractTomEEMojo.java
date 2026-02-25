@@ -976,12 +976,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         File destParent = rawDestParent;
         if (lib.startsWith(REMOVE_PREFIX)) {
             final String prefix = lib.substring(REMOVE_PREFIX.length());
-            final File[] files = destParent.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(final File dir, final String name) {
-                    return name.startsWith(prefix);
-                }
-            });
+            final File[] files = destParent.listFiles((dir, name) -> name.startsWith(prefix));
             if (files != null) {
                 for (final File file : files) {
                     if (!IO.delete(file)) {
@@ -1156,12 +1151,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             if (keystorePath == null) {
                 final File conf = new File(catalinaBase, "conf");
                 if (conf.isDirectory()) {
-                    final File[] jks = conf.listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(final File dir, final String name) {
-                            return name.endsWith(".jks");
-                        }
-                    });
+                    final File[] jks = conf.listFiles((dir, name) -> name.endsWith(".jks"));
                     if (jks != null && jks.length == 1) {
                         keystorePath = "${catalina.base}/conf/" + jks[0].getName();
                     } else {
@@ -1339,12 +1329,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         if (getWaitTomEE()) {
             final CountDownLatch stopCondition = new CountDownLatch(1);
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    stopServer(stopCondition);
-                }
-            });
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> stopServer(stopCondition)));
 
             if (useConsole) {
                 final Scanner reader = new Scanner(originalIn);

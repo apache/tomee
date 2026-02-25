@@ -319,12 +319,9 @@ public class ClientInjectionProcessor<T> {
     }
 
     private static void setAccessible(final AccessibleObject accessibleObject) {
-        AccessController.doPrivileged(new PrivilegedAction<Object>() {
-            @Override
-            public Object run() {
-                accessibleObject.setAccessible(true);
-                return null;
-            }
+        AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+            accessibleObject.setAccessible(true);
+            return null;
         });
     }
 

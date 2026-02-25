@@ -41,16 +41,14 @@ public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator 
     public boolean authenticate(final String username, final String password, final ServerSession session) {
         try {
             final Subject subject = new Subject();
-            final LoginContext loginContext = new LoginContext(getDomain(), subject, new CallbackHandler() {
-                public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                    for (final Callback callback : callbacks) {
-                        if (callback instanceof NameCallback) {
-                            ((NameCallback) callback).setName(username);
-                        } else if (callback instanceof PasswordCallback) {
-                            ((PasswordCallback) callback).setPassword(password.toCharArray());
-                        } else {
-                            throw new UnsupportedCallbackException(callback);
-                        }
+            final LoginContext loginContext = new LoginContext(getDomain(), subject, callbacks -> {
+                for (final Callback callback : callbacks) {
+                    if (callback instanceof NameCallback) {
+                        ((NameCallback) callback).setName(username);
+                    } else if (callback instanceof PasswordCallback) {
+                        ((PasswordCallback) callback).setPassword(password.toCharArray());
+                    } else {
+                        throw new UnsupportedCallbackException(callback);
                     }
                 }
             });

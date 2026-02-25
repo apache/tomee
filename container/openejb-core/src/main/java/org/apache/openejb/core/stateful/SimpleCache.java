@@ -122,12 +122,10 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
     private synchronized void initScheduledExecutorService() {
         if (executor == null) {
-            executor = Executors.newScheduledThreadPool(1, new ThreadFactory() {
-                public Thread newThread(final Runnable runable) {
-                    final Thread t = new Thread(runable, "Stateful cache");
-                    t.setDaemon(true);
-                    return t;
-                }
+            executor = Executors.newScheduledThreadPool(1, runable -> {
+                final Thread t = new Thread(runable, "Stateful cache");
+                t.setDaemon(true);
+                return t;
             });
         }
     }

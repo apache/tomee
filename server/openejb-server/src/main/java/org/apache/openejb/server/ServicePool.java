@@ -115,20 +115,13 @@ public class ServicePool extends ServerServiceFilter {
                 public Thread newThread(final Runnable r) {
                     final Thread t = new Thread(r, "OpenEJB." + ServicePool.this.getName() + "." + i.incrementAndGet());
                     t.setDaemon(true);
-                    t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                        @Override
-                        public void uncaughtException(final Thread t, final Throwable e) {
-                            log.error("ServicePool '" + ServicePool.this.getName() + "': Uncaught error in: " + t.getName(), e);
-                        }
-                    });
+                    t.setUncaughtExceptionHandler((t1, e) -> log.error("ServicePool '" + ServicePool.this.getName() + "': Uncaught error in: " + t1.getName(), e));
 
                     return t;
                 }
 
             },
-            new RejectedExecutionHandler() {
-                @Override
-                public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+                (r, tpe) -> {
 
                     if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
                         return;
@@ -164,8 +157,7 @@ public class ServicePool extends ServerServiceFilter {
                                 + "\nIt is strongly advised that the 'threadCore', 'threads', 'queue' size and 'block' properties are modified to prevent data loss!");
                         }
                     }
-                }
-            });
+                });
 
         Registry registry = SystemInstance.get().getComponent(Registry.class);
         if (registry == null) {

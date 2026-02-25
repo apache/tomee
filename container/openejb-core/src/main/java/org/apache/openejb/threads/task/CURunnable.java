@@ -36,12 +36,9 @@ public class CURunnable extends CUTask<Void> implements Runnable {
     @Override
     public void run() {
         try {
-            invoke(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    delegate.run();
-                    return null;
-                }
+            invoke((Callable<Void>) () -> {
+                delegate.run();
+                return null;
             });
         } catch (final RuntimeException re) {
             throw re;

@@ -427,12 +427,7 @@ public class Setup {
 
             if (trim.startsWith("remove:")) { // like mvn plugin, needed to use plus but switch something like the jpa provider
                 final String prefix = trim.substring("remove:".length());
-                final File[] children = libFolder.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(final File dir, final String name) {
-                        return name.startsWith(prefix);
-                    }
-                });
+                final File[] children = libFolder.listFiles((dir, name) -> name.startsWith(prefix));
                 if (children != null && children.length > 0) {
                     for (final File child : children) {
                         if (!IO.delete(child) && child.getName().endsWith(".jar")) { // try to rename it to have it ignored
