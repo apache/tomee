@@ -143,8 +143,7 @@ class JMSProducerImpl implements JMSProducer {
                         message.setFloat(name, (Float) v);
                     } else if (v instanceof Byte) {
                         message.setByte(name, (Byte) v);
-                    } else if (v instanceof byte[]) {
-                        byte[] array = (byte[]) v;
+                    } else if (v instanceof byte[] array) {
                         message.setBytes(name, array, 0, array.length);
                     } else {
                         message.setObject(name, v);

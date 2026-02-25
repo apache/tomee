@@ -83,8 +83,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
                 enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return enumeration;
-        } else if (retValue instanceof Enumeration) {
-            final Enumeration enumeration = (Enumeration) retValue;
+        } else if (retValue instanceof Enumeration enumeration) {
 
             final List<Object> proxies = new ArrayList<>();
             while (enumeration.hasMoreElements()) {

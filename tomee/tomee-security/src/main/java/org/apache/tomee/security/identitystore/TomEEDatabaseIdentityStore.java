@@ -89,11 +89,10 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
 
     @Override
     public CredentialValidationResult validate(final Credential credential) {
-        if (!(credential instanceof UsernamePasswordCredential)) {
+        if (!(credential instanceof UsernamePasswordCredential usernamePasswordCredential)) {
             return CredentialValidationResult.NOT_VALIDATED_RESULT;
         }
 
-        final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
         final List<String> passwords = query(definition.callerQuery(), usernamePasswordCredential.getCaller());
 
         if (passwords.isEmpty()) {

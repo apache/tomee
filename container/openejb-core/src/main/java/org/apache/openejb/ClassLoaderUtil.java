@@ -170,9 +170,8 @@ public class ClassLoaderUtil {
 
         final List<String> files = new ArrayList<>();
 
-        if (null != cl && cl instanceof URLClassLoader) {
+        if (null != cl && cl instanceof URLClassLoader ucl) {
 
-            final URLClassLoader ucl = (URLClassLoader) cl;
             final Class clazz = URLClassLoader.class;
 
             try {
@@ -229,11 +228,10 @@ public class ClassLoaderUtil {
             //Ignore
         }
 
-        if (!(obj instanceof Vector)) {
+        if (!(obj instanceof Vector javaLangClassLoaderNativeLibrary)) {
             return false;
         }
 
-        final Vector javaLangClassLoaderNativeLibrary = (Vector) obj;
         Method finalize;
 
         for (final Object lib : javaLangClassLoaderNativeLibrary) {
@@ -394,8 +392,7 @@ public class ClassLoaderUtil {
                 final Map.Entry entry = (Map.Entry) iterator.next();
                 final Object key = entry.getKey();
 
-                if (key instanceof ZipFile) {
-                    final ZipFile zf = (ZipFile) key;
+                if (key instanceof ZipFile zf) {
                     final File file = new File(zf.getName());  //getName returns File.getPath()
                     if (isParent(jarLocation, file)) {
                         //Flag for removal

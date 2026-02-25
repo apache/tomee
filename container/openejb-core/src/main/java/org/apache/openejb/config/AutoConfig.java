@@ -380,8 +380,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         final Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
         for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            if (bean instanceof MessageDrivenBean) {
-                final MessageDrivenBean mdb = (MessageDrivenBean) bean;
+            if (bean instanceof MessageDrivenBean mdb) {
 
                 if (mdb.getActivationConfig() == null) {
                     mdb.setActivationConfig(new ActivationConfig());
@@ -520,8 +519,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 // MDB destination is deploymentId if none set
-                if (bean instanceof MessageDrivenBean) {
-                    final MessageDrivenBean mdb = (MessageDrivenBean) bean;
+                if (bean instanceof MessageDrivenBean mdb) {
 
                     final EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
                     if (ejbDeployment == null) {
@@ -634,8 +632,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 // MDB destination is deploymentId if none set
-                if (bean instanceof MessageDrivenBean) {
-                    final MessageDrivenBean mdb = (MessageDrivenBean) bean;
+                if (bean instanceof MessageDrivenBean mdb) {
 
                     if (!isJms(mdb)) {
                         continue;
@@ -911,8 +908,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             // mdb message destination id
-            if (autoCreateResources && bean instanceof MessageDrivenBean) {
-                final MessageDrivenBean mdb = (MessageDrivenBean) bean;
+            if (autoCreateResources && bean instanceof MessageDrivenBean mdb) {
 
                 final ResourceLink resourceLink = ejbDeployment.getResourceLink("openejb/destination");
                 if (resourceLink != null) {

@@ -59,8 +59,7 @@ public class EjbUserTransaction implements UserTransaction, Serializable {
         final ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext != null) {
             final TransactionPolicy txPolicy = callContext.getTransactionPolicy();
-            if (txPolicy != null && txPolicy instanceof BeanTransactionPolicy) {
-                final BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
+            if (txPolicy != null && txPolicy instanceof BeanTransactionPolicy beanTxEnv) {
                 return beanTxEnv.getUserTransaction();
             }
         }

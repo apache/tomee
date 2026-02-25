@@ -52,8 +52,7 @@ public class PrefixSessionCustomizer implements SessionCustomizer {
             }
 
             final Sequence sequence = session.getDatasourcePlatform().getDefaultSequence();
-            if (sequence instanceof TableSequence) {
-                final TableSequence ts = ((TableSequence) sequence);
+            if (sequence instanceof TableSequence ts) {
                 ts.setName(prefix + ts.getName());
             }
         }

@@ -2136,8 +2136,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final ResourceBeforeDestroyed event = new ResourceBeforeDestroyed(jndiObject, name);
         SystemInstance.get().fireEvent(event);
         final Object object = event.getReplacement() == null ? jndiObject : event.getReplacement();
-        if (object instanceof ResourceAdapterReference) {
-            final ResourceAdapterReference resourceAdapter = (ResourceAdapterReference) object;
+        if (object instanceof ResourceAdapterReference resourceAdapter) {
             try {
                 logger.info("Stopping ResourceAdapter: " + name);
 
@@ -2157,8 +2156,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             removeResourceMBean(name, "ResourceAdapter");
 
-        } else if (object instanceof ResourceAdapter) {
-            final ResourceAdapter resourceAdapter = (ResourceAdapter) object;
+        } else if (object instanceof ResourceAdapter resourceAdapter) {
             try {
                 logger.info("Stopping ResourceAdapter: " + name);
 
@@ -2181,8 +2179,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Throwable t) {
                 //Ignore
             }
-        } else if (object instanceof ConnectorReference) {
-            final ConnectorReference cr = (ConnectorReference) object;
+        } else if (object instanceof ConnectorReference cr) {
             try {
                 final ConnectionManager cm = cr.getConnectionManager();
                 if (cm != null && cm instanceof AbstractConnectionManager) {
@@ -2488,8 +2485,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
             try {
-                if (globalContext instanceof IvmContext) {
-                    final IvmContext ivmContext = (IvmContext) globalContext;
+                if (globalContext instanceof IvmContext ivmContext) {
                     ivmContext.prune("openejb/Deployment");
                     ivmContext.prune("openejb/local");
                     ivmContext.prune("openejb/remote");
@@ -2975,8 +2971,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void replaceResourceAdapterProperty(final ObjectRecipe serviceRecipe) throws OpenEJBException {
         final Object resourceAdapterId = serviceRecipe.getProperty("ResourceAdapter");
-        if (resourceAdapterId instanceof String) {
-            String id = (String) resourceAdapterId;
+        if (resourceAdapterId instanceof String id) {
             id = id.trim();
 
             Object resourceAdapter = null;
@@ -3210,8 +3205,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceInfo.unsetProperties = injectedProperties.get();
 
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
-        if (service instanceof ResourceAdapter) {
-            final ResourceAdapter resourceAdapter = (ResourceAdapter) service;
+        if (service instanceof ResourceAdapter resourceAdapter) {
 
             // Create a thead pool for work manager
             final int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
@@ -3276,8 +3270,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             registerAsMBean(serviceInfo.id, "ResourceAdapter", resourceAdapter);
             service = new ResourceAdapterReference(resourceAdapter, threadPool, OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id);
-        } else if (service instanceof ManagedConnectionFactory) {
-            final ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
+        } else if (service instanceof ManagedConnectionFactory managedConnectionFactory) {
 
             // connection manager is constructed via a recipe so we automatically expose all cmf properties
             final ObjectRecipe connectionManagerRecipe = new ObjectRecipe(GeronimoConnectionManagerFactory.class, "create");
@@ -3906,11 +3899,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof DeploymentListenerObserver)) {
+            if (!(o instanceof DeploymentListenerObserver that)) {
                 return false;
             }
-
-            final DeploymentListenerObserver that = (DeploymentListenerObserver) o;
 
             return !(!Objects.equals(delegate, that.delegate));
         }

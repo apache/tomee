@@ -56,11 +56,9 @@ public class Sxc {
 
     public static void marshal(final JAXBObject objectType, final Object object, final Result result) throws JAXBException {
         if (result == null) throw new IllegalArgumentException("result is null");
-        if (!(result instanceof StreamResult)) throw new IllegalArgumentException("result is null");
+        if (!(result instanceof StreamResult streamResult)) throw new IllegalArgumentException("result is null");
         if (object == null) throw new IllegalArgumentException("object is null");
         if (objectType == null) throw new IllegalArgumentException("jaxbObject is null");
-
-        final StreamResult streamResult = (StreamResult) result;
 
         XMLStreamWriter writer = null;
         try {

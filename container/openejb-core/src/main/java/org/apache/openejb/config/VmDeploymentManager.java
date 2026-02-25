@@ -182,8 +182,7 @@ public class VmDeploymentManager implements DeploymentManager {
         // if the module id is the same as the appInfo, then it is a standalone module
         if (infos.size() == 1) {
             final InfoObject infoObject = infos.get(0);
-            if (infoObject instanceof ClientInfo) {
-                final ClientInfo clientInfo = (ClientInfo) infoObject;
+            if (infoObject instanceof ClientInfo clientInfo) {
                 if (null != appInfo.path && appInfo.path.equals(clientInfo.path)) {
                     // are client modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.CAR)) {
@@ -194,8 +193,7 @@ public class VmDeploymentManager implements DeploymentManager {
                     }
                 }
             }
-            if (infoObject instanceof EjbJarInfo) {
-                final EjbJarInfo ejbJarInfo = (EjbJarInfo) infoObject;
+            if (infoObject instanceof EjbJarInfo ejbJarInfo) {
                 if (null != appInfo.path && appInfo.path.equals(ejbJarInfo.path)) {
                     // are ejb modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.EJB)) {
@@ -206,8 +204,7 @@ public class VmDeploymentManager implements DeploymentManager {
                     }
                 }
             }
-            if (infoObject instanceof ConnectorInfo) {
-                final ConnectorInfo connectorInfo = (ConnectorInfo) infoObject;
+            if (infoObject instanceof ConnectorInfo connectorInfo) {
                 if (null != appInfo.path && appInfo.path.equals(connectorInfo.path)) {
                     // are connector modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.RAR)) {
@@ -218,8 +215,7 @@ public class VmDeploymentManager implements DeploymentManager {
                     }
                 }
             }
-            if (infoObject instanceof WebAppInfo) {
-                final WebAppInfo webAppInfo = (WebAppInfo) infoObject;
+            if (infoObject instanceof WebAppInfo webAppInfo) {
                 if (null != appInfo.path && appInfo.path.equals(webAppInfo.path)) {
                     // are web app modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.WAR)) {
@@ -554,11 +550,10 @@ public class VmDeploymentManager implements DeploymentManager {
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof TargetImpl)) {
+            if (!(o instanceof TargetImpl target)) {
                 return false;
             }
 
-            final TargetImpl target = (TargetImpl) o;
             return name.equals(target.name);
         }
 
@@ -639,11 +634,10 @@ public class VmDeploymentManager implements DeploymentManager {
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof TargetModuleIDImpl)) {
+            if (!(o instanceof TargetModuleIDImpl targetModuleID)) {
                 return false;
             }
 
-            final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
             return target.equals(targetModuleID.target) &&
                 moduleId.equals(targetModuleID.moduleId);
         }

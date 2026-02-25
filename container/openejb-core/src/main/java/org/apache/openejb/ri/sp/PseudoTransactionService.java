@@ -128,10 +128,9 @@ public class PseudoTransactionService implements TransactionService, Transaction
         if (tx == null) {
             throw new InvalidTransactionException("Transaction is null");
         }
-        if (!(tx instanceof MyTransaction)) {
+        if (!(tx instanceof MyTransaction myTransaction)) {
             throw new InvalidTransactionException("Unknown transaction type " + tx.getClass().getName());
         }
-        final MyTransaction myTransaction = (MyTransaction) tx;
 
         if (threadTransaction.get() != null) {
             throw new IllegalStateException("A transaction is already active");

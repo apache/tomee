@@ -392,10 +392,9 @@ public class EjbJarInfoBuilder {
         if (enterpriseBeanInfo == null) {
             throw new OpenEJBException("Relation role source ejb not found " + ejbName);
         }
-        if (!(enterpriseBeanInfo instanceof EntityBeanInfo)) {
+        if (!(enterpriseBeanInfo instanceof EntityBeanInfo entityBeanInfo)) {
             throw new OpenEJBException("Relation role source ejb is not an entity bean " + ejbName);
         }
-        final EntityBeanInfo entityBeanInfo = (EntityBeanInfo) enterpriseBeanInfo;
         cmrFieldInfo.roleSource = entityBeanInfo;
 
         // RoleName: this may be null
@@ -420,10 +419,9 @@ public class EjbJarInfoBuilder {
             if (relatedEjb == null) {
                 throw new OpenEJBException("Relation role source ejb not found " + relatedEjbName);
             }
-            if (!(relatedEjb instanceof EntityBeanInfo)) {
+            if (!(relatedEjb instanceof EntityBeanInfo relatedEntity)) {
                 throw new OpenEJBException("Relation role source ejb is not an entity bean " + relatedEjbName);
             }
-            final EntityBeanInfo relatedEntity = (EntityBeanInfo) relatedEjb;
 
             relatedRole.getRelationshipRoleSource();
             cmrFieldInfo.fieldName = relatedEntity.abstractSchemaName + "_" + relatedRole.getCmrField().getCmrFieldName();
@@ -633,11 +631,9 @@ public class EjbJarInfoBuilder {
     }
 
     private void resolveRoleLinks(final EnterpriseBeanInfo bean, final JndiConsumer item) {
-        if (!(item instanceof RemoteBean)) {
+        if (!(item instanceof RemoteBean rb)) {
             return;
         }
-
-        final RemoteBean rb = (RemoteBean) item;
 
         final List<SecurityRoleRef> refs = rb.getSecurityRoleRef();
         for (final SecurityRoleRef ref : refs) {

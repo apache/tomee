@@ -76,11 +76,9 @@ public class Injection {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Injection)) {
+        if (!(o instanceof Injection injection)) {
             return false;
         }
-
-        final Injection injection = (Injection) o;
 
         if (!Objects.equals(name, injection.name)) {
             return false;

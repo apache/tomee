@@ -129,8 +129,7 @@ public class InterceptorBindingBuilder {
         toCallback(clazz, beanInfo.postConstruct, beanAsInterceptor.getPostConstruct());
         toCallback(clazz, beanInfo.preDestroy, beanAsInterceptor.getPreDestroy());
 
-        if (beanInfo instanceof StatefulBeanInfo) {
-            final StatefulBeanInfo stateful = (StatefulBeanInfo) beanInfo;
+        if (beanInfo instanceof StatefulBeanInfo stateful) {
             toCallback(clazz, stateful.postActivate, beanAsInterceptor.getPostActivate());
             toCallback(clazz, stateful.prePassivate, beanAsInterceptor.getPrePassivate());
 

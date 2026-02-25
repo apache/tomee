@@ -71,7 +71,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 final String ejbName = bean.getEjbName();
                 final EjbDeployment ejbDeployment = deployments.get(ejbName);
 
-                if (!(bean instanceof MessageDrivenBean)) {
+                if (!(bean instanceof MessageDrivenBean mdb)) {
                     continue;
                 }
 
@@ -79,8 +79,6 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 final Properties properties = new Properties();
                 properties.putAll(module);
                 properties.putAll(ejbDeployment.getProperties());
-
-                final MessageDrivenBean mdb = (MessageDrivenBean) bean;
 
                 // override with placeholding
                 if (mdb.getActivationConfig() != null) {

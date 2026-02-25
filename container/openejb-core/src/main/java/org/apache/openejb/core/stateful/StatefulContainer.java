@@ -556,12 +556,11 @@ public class StatefulContainer implements RpcContainer {
                 instance = obtainInstance(primKey, callContext, callMethod, beanContext.isPassivatingScope());
 
                 // Resume previous Bean transaction if there was one
-                if (txPolicy instanceof BeanTransactionPolicy) {
+                if (txPolicy instanceof BeanTransactionPolicy beanTxEnv) {
                     // Resume previous Bean transaction if there was one
                     final SuspendedTransaction suspendedTransaction = instance.getBeanTransaction();
                     if (suspendedTransaction != null) {
                         instance.setBeanTransaction(null);
-                        final BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
                         beanTxEnv.resumeUserTransaction(suspendedTransaction);
                     }
                 }
@@ -695,11 +694,10 @@ public class StatefulContainer implements RpcContainer {
                 instance = obtainInstance(primKey, callContext, callMethod, true);
 
                 // Resume previous Bean transaction if there was one
-                if (txPolicy instanceof BeanTransactionPolicy) {
+                if (txPolicy instanceof BeanTransactionPolicy beanTxEnv) {
                     final SuspendedTransaction suspendedTransaction = instance.getBeanTransaction();
                     if (suspendedTransaction != null) {
                         instance.setBeanTransaction(null);
-                        final BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
                         beanTxEnv.resumeUserTransaction(suspendedTransaction);
                     }
                 }
@@ -837,8 +835,7 @@ public class StatefulContainer implements RpcContainer {
         final TransactionPolicy policy = callContext.getTransactionPolicy();
 
         Transaction currentTransaction = null;
-        if (policy instanceof JtaTransactionPolicy) {
-            final JtaTransactionPolicy jtaPolicy = (JtaTransactionPolicy) policy;
+        if (policy instanceof JtaTransactionPolicy jtaPolicy) {
 
             currentTransaction = jtaPolicy.getCurrentTransaction();
         }
@@ -911,11 +908,10 @@ public class StatefulContainer implements RpcContainer {
 
     private void afterInvoke(final ThreadContext callContext, final TransactionPolicy txPolicy, final Instance instance) throws OpenEJBException {
         try {
-            if (instance != null && txPolicy instanceof BeanTransactionPolicy) {
+            if (instance != null && txPolicy instanceof BeanTransactionPolicy beanTxEnv) {
                 // suspend the currently running transaction if any
                 SuspendedTransaction suspendedTransaction = null;
                 try {
-                    final BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
                     suspendedTransaction = beanTxEnv.suspendUserTransaction();
                 } catch (final SystemException e) {
                     EjbTransactionUtil.handleSystemException(txPolicy, e, callContext);

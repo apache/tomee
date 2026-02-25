@@ -53,8 +53,7 @@ public class AppContextConfigDeployer implements DynamicDeployer {
 
         for (final DeploymentModule module : deploymentModule) {
             final Object o = module.getAltDDs().get(CONFIG_NAME);
-            if (o instanceof URL) {
-                final URL url = (URL) o;
+            if (o instanceof URL url) {
                 if (alreadyParsed.add(url.toExternalForm())) {
                     configure(appModule, url);
                 }

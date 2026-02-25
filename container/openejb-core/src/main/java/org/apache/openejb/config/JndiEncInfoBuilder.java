@@ -425,11 +425,10 @@ public class JndiEncInfoBuilder {
     }
 
     public void buildDependsOnRefs(final EnterpriseBean enterpriseBean, final EnterpriseBeanInfo beanInfo, final String moduleId) throws OpenEJBException {
-        if (!(enterpriseBean instanceof SessionBean)) {
+        if (!(enterpriseBean instanceof SessionBean sessionBean)) {
             return;
         }
 
-        final SessionBean sessionBean = (SessionBean) enterpriseBean;
         final URI moduleUri;
         if (moduleId == null) {
             moduleUri = null;

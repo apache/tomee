@@ -131,8 +131,7 @@ public class WikiGenerator {
             out.println("## Properties");
             out.println();
             for (final Object key : properties.keySet()) {
-                if (key instanceof String) {
-                    final String name = (String) key;
+                if (key instanceof String name) {
 
                     final Map<String, String> attributes = properties.getAttributes(name);
 

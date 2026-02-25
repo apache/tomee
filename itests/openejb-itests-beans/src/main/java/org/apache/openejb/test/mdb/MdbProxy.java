@@ -165,9 +165,8 @@ public class MdbProxy {
                 if (!correlationId.equals(message.getJMSCorrelationID())) {
                     throw new IllegalStateException("Received a response message with the wrong correlation id");
                 }
-                if (!(message instanceof ObjectMessage))
+                if (!(message instanceof ObjectMessage resMessage))
                     throw new IllegalArgumentException("Expected a ObjectMessage response but got a " + message.getClass().getName());
-                final ObjectMessage resMessage = (ObjectMessage) message;
                 final Serializable object = resMessage.getObject();
                 if (object == null) throw new NullPointerException("object in ObjectMessage is null");
                 if (!(object instanceof Map)) {

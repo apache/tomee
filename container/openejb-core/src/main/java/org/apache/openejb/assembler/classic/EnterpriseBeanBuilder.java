@@ -182,8 +182,7 @@ class EnterpriseBeanBuilder {
             deployment.setStatefulTimeout(new Duration(bean.statefulTimeout.time, TimeUnit.valueOf(bean.statefulTimeout.unit)));
         }
 
-        if (bean instanceof StatefulBeanInfo) {
-            final StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
+        if (bean instanceof StatefulBeanInfo statefulBeanInfo) {
 
             for (final InitMethodInfo init : statefulBeanInfo.initMethods) {
                 final Method beanMethod = MethodInfoUtil.toMethod(ejbClass, init.beanMethod);

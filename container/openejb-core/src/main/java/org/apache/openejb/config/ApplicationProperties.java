@@ -58,8 +58,7 @@ public class ApplicationProperties implements DynamicDeployer {
 
             final Object o = module.getAltDDs().get("application.properties");
 
-            if (o instanceof URL) {
-                final URL url = (URL) o;
+            if (o instanceof URL url) {
                 try {
                     final Properties properties = IO.readProperties(url);
                     appModule.getProperties().putAll(properties);

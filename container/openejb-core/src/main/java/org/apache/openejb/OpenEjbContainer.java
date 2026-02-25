@@ -502,14 +502,13 @@ public final class OpenEjbContainer extends EJBContainer {
                 final URL url = ((File) modules).toURI().toURL();
                 classLoader = new URLClassLoader(new URL[]{url}, classLoader);
                 moduleLocations = Collections.singletonList((File) modules);
-            } else if (modules instanceof File[]) {
-                final File[] files = (File[]) modules;
+            } else if (modules instanceof File[] files) {
                 final URL[] urls = new URL[files.length];
                 for (int i = 0; i < urls.length; i++) {
                     urls[i] = files[i].toURI().toURL();
                 }
                 classLoader = new URLClassLoader(urls, classLoader);
-                moduleLocations = Arrays.asList((File[]) modules);
+                moduleLocations = Arrays.asList(files);
             } else if (modules == null) {
                 moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
             } else {
@@ -535,28 +534,22 @@ public final class OpenEjbContainer extends EJBContainer {
             Application application = null;
             AppModule appModule = new AppModule(this.getClass().getClassLoader(), appId);
 
-            if (modules instanceof EjbJar) {
-                final EjbJar ejbJar = (EjbJar) modules;
+            if (modules instanceof EjbJar ejbJar) {
                 appModule.getEjbModules().add(new EjbModule(ejbJar));
-            } else if (modules instanceof EnterpriseBean) {
-                final EnterpriseBean bean = (EnterpriseBean) modules;
+            } else if (modules instanceof EnterpriseBean bean) {
                 final EjbJar ejbJar = new EjbJar();
                 ejbJar.addEnterpriseBean(bean);
                 appModule.getEjbModules().add(new EjbModule(ejbJar));
 
             } else if (modules instanceof Application) {
                 application = (Application) modules;
-            } else if (modules instanceof Connector) {
-                final Connector connector = (Connector) modules;
+            } else if (modules instanceof Connector connector) {
                 appModule.getConnectorModules().add(new ConnectorModule(connector));
-            } else if (modules instanceof org.apache.openejb.jee.jpa.unit.Persistence) {
-                final org.apache.openejb.jee.jpa.unit.Persistence persistence = (org.apache.openejb.jee.jpa.unit.Persistence) modules;
+            } else if (modules instanceof org.apache.openejb.jee.jpa.unit.Persistence persistence) {
                 appModule.addPersistenceModule(new PersistenceModule(appModule, "", persistence));
-            } else if (modules instanceof PersistenceUnit) {
-                final PersistenceUnit unit = (PersistenceUnit) modules;
+            } else if (modules instanceof PersistenceUnit unit) {
                 appModule.addPersistenceModule(new PersistenceModule(appModule, "", new org.apache.openejb.jee.jpa.unit.Persistence(unit)));
-            } else if (modules instanceof Beans) {
-                final Beans beans = (Beans) modules;
+            } else if (modules instanceof Beans beans) {
                 final EjbModule ejbModule = new EjbModule(new EjbJar());
                 ejbModule.setBeans(beans);
                 appModule.getEjbModules().add(ejbModule);

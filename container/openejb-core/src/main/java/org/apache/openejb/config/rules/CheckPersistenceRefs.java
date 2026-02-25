@@ -32,8 +32,7 @@ public class CheckPersistenceRefs extends ValidationBase {
     public void validate(final EjbModule ejbModule) {
 
         for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            if (bean instanceof SessionBean) {
-                final SessionBean sessionBean = (SessionBean) bean;
+            if (bean instanceof SessionBean sessionBean) {
                 if (sessionBean.getSessionType() == null) {
                     continue; // skipping since we don't know here what is the type
                 }
@@ -64,8 +63,7 @@ public class CheckPersistenceRefs extends ValidationBase {
     }
 
     private String getType(final EnterpriseBean bean) {
-        if (bean instanceof SessionBean) {
-            final SessionBean sessionBean = (SessionBean) bean;
+        if (bean instanceof SessionBean sessionBean) {
             switch (sessionBean.getSessionType()) {
                 case STATEFUL:
                     return "Stateful";

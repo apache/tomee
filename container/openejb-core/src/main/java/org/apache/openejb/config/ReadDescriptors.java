@@ -412,16 +412,14 @@ public class ReadDescriptors implements DynamicDeployer {
                 final Object o = JaxbOpenejbJar2.unmarshal(GeronimoEjbJarType.class, source1.get());
                 if (o instanceof GeronimoEjbJarType) {
                     geronimoEjbJarType = (GeronimoEjbJarType) o;
-                } else if (o instanceof JAXBElement) {
-                    final JAXBElement element = (JAXBElement) o;
+                } else if (o instanceof JAXBElement element) {
                     geronimoEjbJarType = (GeronimoEjbJarType) element.getValue();
                 }
                 if (geronimoEjbJarType != null) {
                     final Object nested = geronimoEjbJarType.getOpenejbJar();
-                    if (nested != null && nested instanceof OpenejbJar) {
+                    if (nested != null && nested instanceof OpenejbJar openejbJar) {
                         final OpenejbJar existingOpenejbJar = ejbModule.getOpenejbJar();
                         if (existingOpenejbJar == null || existingOpenejbJar.getEjbDeploymentCount() <= 0) {
-                            final OpenejbJar openejbJar = (OpenejbJar) nested;
                             ejbModule.getAltDDs().put("openejb-jar.xml", openejbJar);
                             ejbModule.setOpenejbJar(openejbJar);
                         }
@@ -443,8 +441,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final Object data = clientModule.getAltDDs().get("application-client.xml");
         if (data instanceof ApplicationClient) {
             clientModule.setApplicationClient((ApplicationClient) data);
-        } else if (data instanceof URL) {
-            final URL url = (URL) data;
+        } else if (data instanceof URL url) {
             final ApplicationClient applicationClient = readApplicationClient(url);
             clientModule.setApplicationClient(applicationClient);
         } else {
@@ -551,8 +548,7 @@ public class ReadDescriptors implements DynamicDeployer {
     void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
         final Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
         if (data != null && !(data instanceof EntityMappings)) {
-            if (data instanceof URL) {
-                final URL url = (URL) data;
+            if (data instanceof URL url) {
                 try {
                     final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(url));
                     ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
@@ -577,8 +573,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final Object data = connectorModule.getAltDDs().get("ra.xml");
         if (data instanceof Connector) {
             connectorModule.setConnector((Connector) data);
-        } else if (data instanceof URL) {
-            final URL url = (URL) data;
+        } else if (data instanceof URL url) {
             final Connector connector = readConnector(url);
             connectorModule.setConnector(connector);
         } else {
@@ -596,8 +591,7 @@ public class ReadDescriptors implements DynamicDeployer {
         final Object data = webModule.getAltDDs().get("web.xml");
         if (data instanceof WebApp) {
             webModule.setWebApp((WebApp) data);
-        } else if (data instanceof URL) {
-            final URL url = (URL) data;
+        } else if (data instanceof URL url) {
             final WebApp webApp = readWebApp(url);
             webModule.setWebApp(webApp);
         } else {

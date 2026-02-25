@@ -53,8 +53,7 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
 
     @SuppressWarnings({"unchecked"})
     public KeyedCollection(final Collection<? extends V> c) {
-        if (c instanceof KeyedCollection) {
-            final KeyedCollection keyedCollection = (KeyedCollection) c;
+        if (c instanceof KeyedCollection keyedCollection) {
             // NOTE: if types don't match bad things could happen
             keyExtractor = keyedCollection.keyExtractor;
         } else {

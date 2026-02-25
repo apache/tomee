@@ -125,8 +125,7 @@ public class PojoEndpoint extends CxfEndpoint {
 
                                     final Producer producer = aob.getProducer();
                                     implementor = producer.produce(creationalContext);
-                                    if (producer instanceof InjectionTarget) {
-                                        final InjectionTarget injectionTarget = (InjectionTarget) producer;
+                                    if (producer instanceof InjectionTarget injectionTarget) {
                                         injectionTarget.inject(implementor, creationalContext);
                                         injector = injectCxfResources(implementor); // we need it before postconstruct
                                         injectionTarget.postConstruct(implementor);

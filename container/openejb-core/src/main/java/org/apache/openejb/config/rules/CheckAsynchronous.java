@@ -51,8 +51,7 @@ public class CheckAsynchronous extends ValidationBase {
             } catch (final OpenEJBException e) {
                 continue;
             }
-            if (bean instanceof SessionBean) {
-                final SessionBean session = (SessionBean) bean;
+            if (bean instanceof SessionBean session) {
                 for (final AsyncMethod asyncMethod : session.getAsyncMethod()) {
                     final Method method = getMethod(ejbClass, asyncMethod);
                     if (method == null) {

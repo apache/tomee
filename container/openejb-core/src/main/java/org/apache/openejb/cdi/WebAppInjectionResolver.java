@@ -90,8 +90,7 @@ public class WebAppInjectionResolver extends InjectionResolver {
             set = super.implResolveByType(delegate, injectionPointType, injectionPointClass, qualifiers);
         }
 
-        if (context instanceof WebappWebBeansContext) {
-            final WebappWebBeansContext wwbc = (WebappWebBeansContext) context;
+        if (context instanceof WebappWebBeansContext wwbc) {
             if (set.isEmpty() && wwbc.getParent() != null) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Resolution of " + injectionPointType.getTypeName() + " from context failed, trying to resolve from parent context");

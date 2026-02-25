@@ -58,8 +58,7 @@ public class WlsConversion implements DynamicDeployer {
         if (altDD == null) {
             return null;
         }
-        if (altDD instanceof JAXBElement) {
-            final JAXBElement jaxbElement = (JAXBElement) altDD;
+        if (altDD instanceof JAXBElement jaxbElement) {
             altDD = jaxbElement.getValue();
         }
         return (T) altDD;

@@ -152,9 +152,8 @@ public class WebappDeployer implements Deployer {
 			if (service.getContainer() instanceof Engine) {
 				final Engine engine = (Engine) service.getContainer();
 				for (final Container engineChild : engine.findChildren()) {
-					if (engineChild instanceof StandardHost) {
-						final StandardHost host = (StandardHost) engineChild;
-						webappBuilder.checkHost(host);
+					if (engineChild instanceof StandardHost host) {
+                        webappBuilder.checkHost(host);
 					}
 				}
             }
