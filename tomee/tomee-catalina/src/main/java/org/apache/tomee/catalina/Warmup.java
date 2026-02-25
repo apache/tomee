@@ -164,41 +164,34 @@ public class Warmup {
             final int permits = 2 * Runtime.getRuntime().availableProcessors() + 1;
             final Semaphore semaphore = new Semaphore(0);
 
-            final Thread tld = new Thread() {
-
-                @Override
-                public void run() {
-                    try {
-                        TldScanner.scan(loader);
-                    } catch (final Throwable throwable) {
-                        // no-op
-                    }
+            final Thread tld = new Thread(() -> {
+                try {
+                    TldScanner.scan(loader);
+                } catch (final Throwable throwable) {
+                    // no-op
                 }
-            };
+            });
             tld.setDaemon(true);
             tld.start();
 
             final int part = Math.max(1, (int) Math.round(classes.length * 1. / permits));
             for (int i = 0; i < permits; i++) {
                 final int offset = i * part;
-                final Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        int max = offset + part;
-                        if (offset / part == permits - 1) { // last one
-                            max = classes.length;
-                        }
-
-                        for (int c = offset; c < max; c++) {
-                            try {
-                                Class.forName(classes[c], true, loader);
-                            } catch (final Throwable e) {
-                                // no-op
-                            }
-                        }
-                        semaphore.release();
+                final Thread thread = new Thread(() -> {
+                    int max = offset + part;
+                    if (offset / part == permits - 1) { // last one
+                        max = classes.length;
                     }
-                };
+
+                    for (int c = offset; c < max; c++) {
+                        try {
+                            Class.forName(classes[c], true, loader);
+                        } catch (final Throwable e) {
+                            // no-op
+                        }
+                    }
+                    semaphore.release();
+                });
                 thread.setName("warmup - " + (i + 1));
                 thread.setDaemon(true);
                 thread.start();

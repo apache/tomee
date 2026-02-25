@@ -112,12 +112,7 @@ public class TomEERealm extends CombinedRealm {
             final CUTask.Context context = CUTask.Context.CURRENT.get();
             if (context != null) {
                 final Object state = securityService.enterWebApp(this, pcp, null);
-                context.pushExitTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        securityService.exitWebApp(state);
-                    }
-                });
+                context.pushExitTask(() -> securityService.exitWebApp(state));
             } else {
                 final Logger instance = Logger.getInstance(LogCategory.OPENEJB_SECURITY, TomEERealm.class);
                 if (instance.isDebugEnabled()) {

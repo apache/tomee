@@ -155,12 +155,9 @@ public class ScanJarService {
         if (!directory) {
             files.add(path);
         } else {
-            final File[] children = path.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(final File pathname) {
-                    final String name = pathname.getName();
-                    return name.endsWith(".jar") || name.endsWith(".zip") || pathname.isDirectory();
-                }
+            final File[] children = path.listFiles(pathname -> {
+                final String name = pathname.getName();
+                return name.endsWith(".jar") || name.endsWith(".zip") || pathname.isDirectory();
             });
             if (children != null) {
                 Collections.addAll(files, children);

@@ -135,12 +135,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
         static {
             final LogManager mgr = LogManager.getLogManager();
             if (mgr instanceof OpenEJBLogManager) {
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        ((OpenEJBLogManager) mgr).forceReset();
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> ((OpenEJBLogManager) mgr).forceReset()));
             }
         }
 

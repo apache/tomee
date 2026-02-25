@@ -47,13 +47,9 @@ public class HeartbeatMonitor {
 
         final MulticastSearch search = new MulticastSearch(host, port);
         try {
-            search.search(new MulticastSearch.Filter() {
-                @Override
-                @SuppressWarnings("UseOfSystemOutOrSystemErr")
-                public boolean accept(final URI service) {
-                    System.out.println(service);
-                    return false;
-                }
+            search.search((MulticastSearch.Filter) service -> {
+                System.out.println(service);
+                return false;
             });
         } finally {
             search.close();

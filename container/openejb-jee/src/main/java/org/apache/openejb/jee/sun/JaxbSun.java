@@ -72,13 +72,11 @@ public class JaxbSun {
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
         // log errors?
-        unmarshaller.setEventHandler(new ValidationEventHandler() {
-            public boolean handleEvent(final ValidationEvent validationEvent) {
-                if (logErrors) {
-                    System.out.println(validationEvent);
-                }
-                return false;
+        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
+            if (logErrors) {
+                System.out.println(validationEvent);
             }
+            return false;
         });
 
         // add our XMLFilter which disables dtd downloading

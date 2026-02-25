@@ -124,34 +124,30 @@ public class RiTestServer implements TestServer {
                 }
             }
 
-            final Thread t = new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        try {
-                            final String line = in.readLine();
-                            if (line == null) break;
-                            System.out.println(line);
-                        } catch (final Exception e) {
-                            break;
-                        }
+            final Thread t = new Thread(() -> {
+                while (true) {
+                    try {
+                        final String line = in.readLine();
+                        if (line == null) break;
+                        System.out.println(line);
+                    } catch (final Exception e) {
+                        break;
                     }
-
                 }
+
             });
             t.start();
-            final Thread t2 = new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        try {
-                            final String line = err.readLine();
-                            if (line == null) break;
+            final Thread t2 = new Thread(() -> {
+                while (true) {
+                    try {
+                        final String line = err.readLine();
+                        if (line == null) break;
 //                                System.out.println(line);
-                        } catch (final Exception e) {
-                            break;
-                        }
+                    } catch (final Exception e) {
+                        break;
                     }
-
                 }
+
             });
             t2.start();
         } catch (final Exception e) {

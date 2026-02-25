@@ -76,21 +76,18 @@ public class OpenEJBAsyncContext implements AsyncContext {
             return;
         }
         es = Executors.newScheduledThreadPool(1, new DaemonThreadFactory(OpenEJBAsyncContext.class));
-        es.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                for (final OpenEJBAsyncContext ctx : new ArrayList<>(INITIALIZED)) {
-                    if (ctx.lastTouch + ctx.getTimeout() < System.currentTimeMillis()) {
-                        INITIALIZED.remove(ctx);
-                        for (final AsyncListener listener : ctx.listeners) {
-                            try {
-                                listener.onTimeout(ctx.event);
-                            } catch (final IOException t) {
-                                throw new OpenEJBRuntimeException(t);
-                            }
+        es.scheduleWithFixedDelay(() -> {
+            for (final OpenEJBAsyncContext ctx : new ArrayList<>(INITIALIZED)) {
+                if (ctx.lastTouch + ctx.getTimeout() < System.currentTimeMillis()) {
+                    INITIALIZED.remove(ctx);
+                    for (final AsyncListener listener : ctx.listeners) {
+                        try {
+                            listener.onTimeout(ctx.event);
+                        } catch (final IOException t) {
+                            throw new OpenEJBRuntimeException(t);
                         }
-                        ctx.complete();
                     }
+                    ctx.complete();
                 }
             }
         }, 1, 1, TimeUnit.MINUTES);

@@ -423,19 +423,16 @@ public class RemoteServer {
 
     private void waitFor(final Process p) {
         final CountDownLatch latch = new CountDownLatch(1);
-        final Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    p.waitFor();
-                    synchronized (kill) {
-                        kill.remove(p);
-                    }
-                } catch (final InterruptedException e) {
-                    Thread.interrupted();
-                } finally {
-                    latch.countDown();
+        final Thread t = new Thread(() -> {
+            try {
+                p.waitFor();
+                synchronized (kill) {
+                    kill.remove(p);
                 }
+            } catch (final InterruptedException e) {
+                Thread.interrupted();
+            } finally {
+                latch.countDown();
             }
         }, "process-waitFor");
 

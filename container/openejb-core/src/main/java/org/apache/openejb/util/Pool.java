@@ -180,22 +180,19 @@ public class Pool<T> {
                 60L, SECONDS,
                 new LinkedBlockingQueue<>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
 
-        threadPoolExecutor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-            @Override
-            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+        threadPoolExecutor.setRejectedExecutionHandler((r, tpe) -> {
 
-                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                    return;
-                }
+            if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                return;
+            }
 
-                try {
-                    if (!tpe.getQueue().offer(r, 20, SECONDS)) {
-                        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
-                                .warning("Default pool executor failed to run asynchronous process: " + r);
-                    }
-                } catch (final InterruptedException e) {
-                    //Ignore
+            try {
+                if (!tpe.getQueue().offer(r, 20, SECONDS)) {
+                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
+                            .warning("Default pool executor failed to run asynchronous process: " + r);
                 }
+            } catch (final InterruptedException e) {
+                //Ignore
             }
         });
 

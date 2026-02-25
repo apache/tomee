@@ -27,11 +27,7 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class Filters {
-    private static final Filter NONE = new Filter() {
-        public boolean accept(final String name) {
-            return false;
-        }
-    };
+    private static final Filter NONE = name -> false;
 
     public static Filter packages(final String... packages) {
         final List<Filter> filters = new ArrayList<>();

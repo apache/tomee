@@ -69,24 +69,14 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
         @Override
         public Enumeration<Object> keys() {
             final List<Object> list = new ArrayList<>(Collections.list(super.keys()));
-            Collections.sort(list, new Comparator<Object>() {
-                @Override
-                public int compare(final Object o1, final Object o2) {
-                    return String.valueOf(o1).compareTo(String.valueOf(o2));
-                }
-            });
+            Collections.sort(list, (o1, o2) -> String.valueOf(o1).compareTo(String.valueOf(o2)));
             return Collections.enumeration(list);
         }
 
         @Override
         public Set<Map.Entry<Object, Object>> entrySet() {
             final Set<Map.Entry<Object, Object>> entrySet = super.entrySet();
-            final Set<Map.Entry<Object, Object>> entries = new TreeSet<>(new Comparator<Map.Entry<Object, Object>>() {
-                @Override
-                public int compare(final Map.Entry<Object, Object> o1, final Map.Entry<Object, Object> o2) {
-                    return String.valueOf(o1.getKey()).compareTo(String.valueOf(o2.getKey()));
-                }
-            });
+            final Set<Map.Entry<Object, Object>> entries = new TreeSet<>((o1, o2) -> String.valueOf(o1.getKey()).compareTo(String.valueOf(o2.getKey())));
             entries.addAll(entrySet);
             return entries;
         }

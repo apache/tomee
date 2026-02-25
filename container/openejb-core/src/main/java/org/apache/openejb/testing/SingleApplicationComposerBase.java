@@ -89,17 +89,14 @@ public class SingleApplicationComposerBase {
                     if (!started) {
                         final ThreadContext previous = ThreadContext.getThreadContext(); // done here for logging
                         final ApplicationComposers comp = this;
-                        final Thread hook = new Thread() {
-                            @Override
-                            public void run() {
-                                try {
-                                    comp.after();
-                                } catch (final Exception e) {
-                                    ThreadContext.exit(previous);
-                                    throw new IllegalStateException(e);
-                                }
+                        final Thread hook = new Thread(() -> {
+                            try {
+                                comp.after();
+                            } catch (final Exception e) {
+                                ThreadContext.exit(previous);
+                                throw new IllegalStateException(e);
                             }
-                        };
+                        });
                         HOOK.set(hook);
                         Runtime.getRuntime().addShutdownHook(hook);
                         started = true;

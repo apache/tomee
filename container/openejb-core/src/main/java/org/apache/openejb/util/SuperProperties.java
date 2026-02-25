@@ -1067,16 +1067,13 @@ public class SuperProperties extends Properties {
                 }
             });
 
-            builder.setEntityResolver(new EntityResolver() {
-                public InputSource resolveEntity(final String publicId,
-                                                 final String systemId) throws SAXException, IOException {
-                    if (systemId.equals(PROP_DTD_NAME)) {
-                        final InputSource result = new InputSource(new StringReader(PROP_DTD));
-                        result.setSystemId(PROP_DTD_NAME);
-                        return result;
-                    }
-                    throw new SAXException("Invalid DOCTYPE declaration: " + systemId);
+            builder.setEntityResolver((publicId, systemId) -> {
+                if (systemId.equals(PROP_DTD_NAME)) {
+                    final InputSource result = new InputSource(new StringReader(PROP_DTD));
+                    result.setSystemId(PROP_DTD_NAME);
+                    return result;
                 }
+                throw new SAXException("Invalid DOCTYPE declaration: " + systemId);
             });
         }
         return builder;

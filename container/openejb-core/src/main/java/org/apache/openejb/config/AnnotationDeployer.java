@@ -5790,32 +5790,17 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static List<Annotated<Class<?>>> sortClasses(final List<Annotated<Class<?>>> list) {
-        list.sort(new Comparator<Annotated<Class<?>>>() {
-            @Override
-            public int compare(final Annotated<Class<?>> o1, final Annotated<Class<?>> o2) {
-                return compareClasses(o1.get(), o2.get());
-            }
-        });
+        list.sort((o1, o2) -> compareClasses(o1.get(), o2.get()));
         return list;
     }
 
     public static List<Class<?>> sortClassesParentFirst(final List<Class<?>> list) {
-        list.sort(new Comparator<Class<?>>() {
-            @Override
-            public int compare(final Class<?> o1, final Class<?> o2) {
-                return compareClasses(o2, o1);
-            }
-        });
+        list.sort((o1, o2) -> compareClasses(o2, o1));
         return list;
     }
 
     public static List<Annotated<Method>> sortMethods(final List<Annotated<Method>> list) {
-        list.sort(new Comparator<Annotated<Method>>() {
-            @Override
-            public int compare(final Annotated<Method> o1, final Annotated<Method> o2) {
-                return compareClasses(o1.get().getDeclaringClass(), o2.get().getDeclaringClass());
-            }
-        });
+        list.sort((o1, o2) -> compareClasses(o1.get().getDeclaringClass(), o2.get().getDeclaringClass()));
         return list;
     }
 

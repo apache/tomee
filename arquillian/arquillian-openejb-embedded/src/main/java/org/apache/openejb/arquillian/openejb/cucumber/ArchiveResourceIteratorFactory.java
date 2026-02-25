@@ -50,15 +50,12 @@ public class ArchiveResourceIteratorFactory implements ResourceIteratorFactory {
             final Collection<Archive<?>> archives = SWClassLoader.class.cast(loader).getArchives();
             final ClassLoader parent = loader.getParent();
             for (final Archive<?> archive : archives) {
-                final Map<ArchivePath, Node> content = archive.getContent(new Filter<ArchivePath>() {
-                    @Override
-                    public boolean include(final ArchivePath object) {
-                        final String currentPath = classloaderPath(object);
+                final Map<ArchivePath, Node> content = archive.getContent(object -> {
+                    final String currentPath = classloaderPath(object);
 
-                        return !(parent != null && parent.getResource(currentPath) != null)
-                                && currentPath.startsWith('/' + path) && currentPath.endsWith(suffix);
+                    return !(parent != null && parent.getResource(currentPath) != null)
+                            && currentPath.startsWith('/' + path) && currentPath.endsWith(suffix);
 
-                    }
                 });
 
                 for (final Map.Entry<ArchivePath, Node> entry : content.entrySet()) {

@@ -21,6 +21,7 @@ import org.apache.openejb.test.beans.DatabaseHome;
 
 import javax.naming.InitialContext;
 import java.rmi.RemoteException;
+import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -153,11 +154,7 @@ public class PostgreSqlTestDatabase implements TestDatabase {
     public static void main(final String[] args) {
         System.out.println("Checking if driver is registered with DriverManager.");
         try {
-            final ClassLoader cl = (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-                public Object run() {
-                    return Thread.currentThread().getContextClassLoader();
-                }
-            });
+            final ClassLoader cl = (ClassLoader) java.security.AccessController.doPrivileged((PrivilegedAction) () -> Thread.currentThread().getContextClassLoader());
             Class.forName("org.postgresql.Driver", true, cl);
         } catch (final ClassNotFoundException e) {
             System.out.println("Couldn't find the driver!");

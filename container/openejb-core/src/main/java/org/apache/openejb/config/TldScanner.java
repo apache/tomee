@@ -152,12 +152,7 @@ public class TldScanner {
                     continue;
                 }
 
-                futures.add(es.submit(new Callable<Set<URL>>() {
-                    @Override
-                    public Set<URL> call() throws Exception {
-                        return scanForTagLibs(file);
-                    }
-                }));
+                futures.add(es.submit(() -> scanForTagLibs(file)));
             }
 
             es.shutdown();
@@ -199,12 +194,7 @@ public class TldScanner {
         final File webInfMetaInf = new File(webInfDir, "classes/META-INF");
         if (webInfMetaInf.exists()) {
             // filter directly to let it be faster in next loop
-            files.addAll(asList(webInfMetaInf.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(final File dir, final String name) {
-                    return name.endsWith(".tld");
-                }
-            })));
+            files.addAll(asList(webInfMetaInf.listFiles((dir, name) -> name.endsWith(".tld"))));
         }
 
         if (files.isEmpty()) {

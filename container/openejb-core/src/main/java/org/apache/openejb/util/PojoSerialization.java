@@ -56,16 +56,14 @@ public class PojoSerialization implements Serializable {
     static {
         final Class<?> unsafeClass;
         try {
-            unsafeClass = AccessController.doPrivileged(new PrivilegedAction<Class<?>>() {
-                public Class<?> run() {
+            unsafeClass = AccessController.doPrivileged((PrivilegedAction<Class<?>>) () -> {
+                try {
+                    return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
+                } catch (final Exception e) {
                     try {
-                        return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
-                    } catch (final Exception e) {
-                        try {
-                            return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
-                        } catch (final ClassNotFoundException e1) {
-                            throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
-                        }
+                        return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
+                    } catch (final ClassNotFoundException e1) {
+                        throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
                     }
                 }
             });
@@ -73,136 +71,112 @@ public class PojoSerialization implements Serializable {
             throw new IllegalStateException("Cannot get sun.misc.Unsafe class", e);
         }
 
-        unsafe = AccessController.doPrivileged(new PrivilegedAction<Object>() {
-            public Object run() {
-                try {
-                    final Field field = unsafeClass.getDeclaredField("theUnsafe");
-                    field.setAccessible(true);
-                    return field.get(null);
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
-                }
+        unsafe = AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+            try {
+                final Field field = unsafeClass.getDeclaredField("theUnsafe");
+                field.setAccessible(true);
+                return field.get(null);
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
             }
         });
-        allocateInstance = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
-                }
+        allocateInstance = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
             }
         });
-        objectFieldOffset = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
-                }
+        objectFieldOffset = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
             }
         });
-        putInt = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putInt", e);
-                }
+        putInt = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putInt", e);
             }
         });
-        putLong = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putLong", Object.class, long.class, long.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putLong", e);
-                }
+        putLong = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putLong", Object.class, long.class, long.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putLong", e);
             }
         });
-        putShort = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putShort", Object.class, long.class, short.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putShort", e);
-                }
+        putShort = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putShort", Object.class, long.class, short.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putShort", e);
             }
         });
-        putChar = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putChar", Object.class, long.class, char.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putChar", e);
-                }
+        putChar = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putChar", Object.class, long.class, char.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putChar", e);
             }
         });
-        putByte = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putByte", Object.class, long.class, byte.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putByte", e);
-                }
+        putByte = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putByte", Object.class, long.class, byte.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putByte", e);
             }
         });
-        putFloat = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putFloat", Object.class, long.class, float.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putFloat", e);
-                }
+        putFloat = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putFloat", Object.class, long.class, float.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putFloat", e);
             }
         });
-        putDouble = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putDouble", Object.class, long.class, double.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putDouble", e);
-                }
+        putDouble = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putDouble", Object.class, long.class, double.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putDouble", e);
             }
         });
-        putBoolean = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putBoolean", Object.class, long.class, boolean.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putBoolean", e);
-                }
+        putBoolean = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putBoolean", Object.class, long.class, boolean.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putBoolean", e);
             }
         });
-        putObject = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-            public Method run() {
-                try {
-                    final Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
-                    mtd.setAccessible(true);
-                    return mtd;
-                } catch (final Exception e) {
-                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
-                }
+        putObject = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
+                mtd.setAccessible(true);
+                return mtd;
+            } catch (final Exception e) {
+                throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
             }
         });
     }

@@ -88,29 +88,23 @@ public class TestSecurityTemplateInvocationContextProvider implements TestTempla
             public List<Extension> getAdditionalExtensions() {
                 List<Extension> extensions = new ArrayList<>();
 
-                extensions.add(new TestExecutionExceptionHandler() {
-                    @Override
-                    public void handleTestExecutionException(ExtensionContext extensionContext, Throwable throwable) throws Throwable {
-                        if (!authorized) {
-                            if (throwable instanceof EJBAccessException) {
-                                //ok - this would be expected here, do not fail the test!
-                                ejbAccessThrown = true;
-                                return;
-                            } else {
-                                throw throwable;
-                            }
+                extensions.add((TestExecutionExceptionHandler) (extensionContext, throwable) -> {
+                    if (!authorized) {
+                        if (throwable instanceof EJBAccessException) {
+                            //ok - this would be expected here, do not fail the test!
+                            ejbAccessThrown = true;
+                            return;
+                        } else {
+                            throw throwable;
                         }
-                        throw throwable;
                     }
+                    throw throwable;
                 });
 
-                extensions.add(new AfterEachCallback() {
-                    @Override
-                    public void afterEach(ExtensionContext extensionContext) throws Exception {
-                        if (!authorized) {
-                            if (!ejbAccessThrown) {
-                                throw new RuntimeException("Expected 'EJBAccessException' but caught none.");
-                            }
+                extensions.add((AfterEachCallback) extensionContext -> {
+                    if (!authorized) {
+                        if (!ejbAccessThrown) {
+                            throw new RuntimeException("Expected 'EJBAccessException' but caught none.");
                         }
                     }
                 });

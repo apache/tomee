@@ -64,12 +64,8 @@ public class TomEEListener implements LifecycleListener {
     private boolean tomeeLibAreInTomcatLibs() {
         final File lib = new File(System.getProperty("catalina.home"), "lib");
         if (lib.exists()) {
-            final File[] files = lib.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(final File dir, final String name) {
-                    return name != null && name.startsWith("openejb-core") && name.endsWith(".jar");
-                }
-            });
+            final File[] files = lib.listFiles(
+                    (dir, name) -> name != null && name.startsWith("openejb-core") && name.endsWith(".jar"));
             return files != null && files.length > 0; // == 1 in fact
         }
         return false;

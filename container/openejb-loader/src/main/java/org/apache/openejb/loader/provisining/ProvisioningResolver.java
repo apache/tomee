@@ -93,12 +93,7 @@ public class ProvisioningResolver {
         if (rawLocation.endsWith("*.jar")) {
             final File dir = new File(rawLocation.substring(0, rawLocation.length() - "*.jar".length()));
             if (dir.exists()) {
-                final File[] files = dir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(final File dir, final String name) {
-                        return name.endsWith(".jar") || name.endsWith(".zip");
-                    }
-                });
+                final File[] files = dir.listFiles((dir1, name) -> name.endsWith(".jar") || name.endsWith(".zip"));
                 final Set<String> paths = new HashSet<>(files == null ? 1 : files.length + 1);
                 if (files != null) {
                     for (final File f : files) {

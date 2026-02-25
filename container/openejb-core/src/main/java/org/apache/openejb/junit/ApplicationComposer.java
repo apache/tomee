@@ -40,11 +40,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
     @Override
     protected List<MethodRule> rules(final Object test) {
         final List<MethodRule> rules = super.rules(test);
-        rules.add(new MethodRule() {
-            public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-                return new DeployApplication(target, base, delegate);
-            }
-        });
+        rules.add((base, method, target) -> new DeployApplication(target, base, delegate));
         return rules;
     }
 }

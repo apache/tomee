@@ -713,17 +713,14 @@ public class LocalBeanProxyFactory implements Opcodes {
         static {
             final Class<?> unsafeClass;
             try {
-                unsafeClass = AccessController.doPrivileged(new PrivilegedAction<Class<?>>() {
-                    @Override
-                    public Class<?> run() {
+                unsafeClass = AccessController.doPrivileged((PrivilegedAction<Class<?>>) () -> {
+                    try {
+                        return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
+                    } catch (final Exception e) {
                         try {
-                            return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
-                        } catch (final Exception e) {
-                            try {
-                                return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
-                            } catch (final ClassNotFoundException e1) {
-                                throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
-                            }
+                            return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
+                        } catch (final ClassNotFoundException e1) {
+                            throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
                         }
                     }
                 });
@@ -731,65 +728,50 @@ public class LocalBeanProxyFactory implements Opcodes {
                 throw new IllegalStateException("Cannot get sun.misc.Unsafe class", e);
             }
 
-            unsafe = AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                @Override
-                public Object run() {
-                    try {
-                        final Field field = unsafeClass.getDeclaredField("theUnsafe");
-                        field.setAccessible(true);
-                        return field.get(null);
-                    } catch (final Exception e) {
-                        throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
-                    }
+            unsafe = AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                try {
+                    final Field field = unsafeClass.getDeclaredField("theUnsafe");
+                    field.setAccessible(true);
+                    return field.get(null);
+                } catch (final Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
                 }
             });
-            allocateInstance = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-                @Override
-                public Method run() {
-                    try {
-                        final Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
-                        mtd.setAccessible(true);
-                        return mtd;
-                    } catch (final Exception e) {
-                        throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
-                    }
+            allocateInstance = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+                try {
+                    final Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (final Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
                 }
             });
-            objectFieldOffset = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-                @Override
-                public Method run() {
-                    try {
-                        final Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
-                        mtd.setAccessible(true);
-                        return mtd;
-                    } catch (final Exception e) {
-                        throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
-                    }
+            objectFieldOffset = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+                try {
+                    final Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (final Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
                 }
             });
-            putObject = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-                @Override
-                public Method run() {
-                    try {
-                        final Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
-                        mtd.setAccessible(true);
-                        return mtd;
-                    } catch (final Exception e) {
-                        throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
-                    }
+            putObject = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+                try {
+                    final Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (final Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
                 }
             });
-            unsafeDefineClass = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-                @Override
-                public Method run() {
-                    try {
-                        final Method mtd = unsafeClass.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ClassLoader.class, ProtectionDomain.class);
-                        mtd.setAccessible(true);
-                        return mtd;
-                    } catch (final Exception e) {
-                        LOGGER.debug("Unsafe's defineClass not available, will use classloader's defineClass");
-                        return null;
-                    }
+            unsafeDefineClass = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+                try {
+                    final Method mtd = unsafeClass.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ClassLoader.class, ProtectionDomain.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (final Exception e) {
+                    LOGGER.debug("Unsafe's defineClass not available, will use classloader's defineClass");
+                    return null;
                 }
             });
         }

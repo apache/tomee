@@ -51,15 +51,12 @@ public class HTMLReporter extends TestHTMLReporter {
         for (final ITestResult result : raw) {
             wrapped.add(ITestResult.class.cast(
                 Proxy.newProxyInstance(loader, API,
-                    new InvocationHandler() {
-                        @Override
-                        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                        (proxy, method, args) -> {
                             if (method.getName().equals("getParameters")) {
                                 return new Object[method.getParameterTypes().length];
                             }
                             return method.invoke(result, args);
-                        }
-                    })
+                        })
             ));
         }
         return wrapped;

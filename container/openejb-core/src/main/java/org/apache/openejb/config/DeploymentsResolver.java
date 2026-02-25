@@ -154,14 +154,11 @@ public class DeploymentsResolver implements DeploymentFilterable {
         Files.notHidden(dir);
 
         final Map<String, File> files = new LinkedHashMap<>();
-        final File[] list = dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File f) {
-                if (f.isDirectory()) {
-                    return DeploymentsResolver.isValidDirectory(f) && !DeploymentsResolver.isExtractedDir(f);
-                }
-                return true;
+        final File[] list = dir.listFiles(f -> {
+            if (f.isDirectory()) {
+                return DeploymentsResolver.isValidDirectory(f) && !DeploymentsResolver.isExtractedDir(f);
             }
+            return true;
         });
 
         if (list != null) {

@@ -2095,19 +2095,17 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return null;
         }
 
-        return Collections.min(resourceIds, new Comparator<String>() { // sort from webapp to global resources
-            @Override
-            public int compare(final String o1, final String o2) { // don't change global order, just put app scoped resource before others
-                if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
-                    return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
-                } else if (o1.startsWith(prefix)) {
-                    return -1;
-                } else if (o2.startsWith(prefix)) {
-                    return 1;
-                }
-                // make it stable with prefixed comparison + keep existing ordering (bck compat)
+        // sort from webapp to global resources
+        return Collections.min(resourceIds, (o1, o2) -> { // don't change global order, just put app scoped resource before others
+            if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
                 return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
+            } else if (o1.startsWith(prefix)) {
+                return -1;
+            } else if (o2.startsWith(prefix)) {
+                return 1;
             }
+            // make it stable with prefixed comparison + keep existing ordering (bck compat)
+            return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
         });
     }
 

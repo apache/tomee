@@ -213,32 +213,26 @@ public class Logger {
      * Computes the parent of a resource name. E.g. if we pass in a key of
      * a.b.c, it returns the value a.b
      */
-    private static final Computable<String, String> heirarchyResolver = new Computable<String, String>() {
-        @Override
-        public String compute(final String key) throws InterruptedException {
-            final int index = key.lastIndexOf('.');
-            if (index == -1) {
-                return null;
-            }
-            final String parent = key.substring(0, index);
-            if (parent.contains(OPENEJB)) {
-                return parent;
-            }
+    private static final Computable<String, String> heirarchyResolver = key -> {
+        final int index = key.lastIndexOf('.');
+        if (index == -1) {
             return null;
         }
+        final String parent = key.substring(0, index);
+        if (parent.contains(OPENEJB)) {
+            return parent;
+        }
+        return null;
     };
 
     /**
      * Simply returns the ResourceBundle for a given baseName
      */
-    private static final Computable<String, ResourceBundle> bundleResolver = new Computable<String, ResourceBundle>() {
-        @Override
-        public ResourceBundle compute(final String baseName) throws InterruptedException {
-            try {
-                return ResourceBundle.getBundle(baseName + SUFFIX);
-            } catch (final MissingResourceException e) {
-                return null;
-            }
+    private static final Computable<String, ResourceBundle> bundleResolver = baseName -> {
+        try {
+            return ResourceBundle.getBundle(baseName + SUFFIX);
+        } catch (final MissingResourceException e) {
+            return null;
         }
     };
 

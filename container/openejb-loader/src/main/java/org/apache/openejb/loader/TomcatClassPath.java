@@ -102,12 +102,7 @@ public class TomcatClassPath extends BasicURLClassPath {
 
     @Override
     public void addJarsToPath(final File dir) throws Exception {
-        final String[] jarNames = dir.list(new java.io.FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return (name.endsWith(".jar") || name.endsWith(".zip"));
-            }
-        });
+        final String[] jarNames = dir.list((dir1, name) -> (name.endsWith(".jar") || name.endsWith(".zip")));
 
         if (jarNames == null) {
             return;
@@ -146,18 +141,13 @@ public class TomcatClassPath extends BasicURLClassPath {
 
     private Method getGetURLsMethod() {
 
-        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
-
-            @Override
-            public Method run() {
-                try {
-                    final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
-                    final Class<?> clazz = cp.getClass();
-                    return clazz.getDeclaredMethod("getURLs");
-                } catch (final Exception e) {
-                    throw new LoaderRuntimeException(e);
-                }
-
+        return AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+            try {
+                final Object cp = getURLClassPath((URLClassLoader) getClassLoader());
+                final Class<?> clazz = cp.getClass();
+                return clazz.getDeclaredMethod("getURLs");
+            } catch (final Exception e) {
+                throw new LoaderRuntimeException(e);
             }
 
         });
@@ -208,18 +198,15 @@ public class TomcatClassPath extends BasicURLClassPath {
     private Method getAddRepositoryMethod() throws Exception {
         if (addRepositoryMethod == null) {
             try {
-                addRepositoryMethod = AccessController.doPrivileged(new PrivilegedAction<Method>() {
-                    @Override
-                    public Method run() {
-                        try {
-                            final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                            if (!method.isAccessible()) {
-                                method.setAccessible(true);
-                            }
-                            return method;
-                        } catch (final Exception e2) {
-                            throw new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader", e2);
+                addRepositoryMethod = AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
+                    try {
+                        final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                        if (!method.isAccessible()) {
+                            method.setAccessible(true);
                         }
+                        return method;
+                    } catch (final Exception e2) {
+                        throw new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader", e2);
                     }
                 });
             } catch (final Exception e) {

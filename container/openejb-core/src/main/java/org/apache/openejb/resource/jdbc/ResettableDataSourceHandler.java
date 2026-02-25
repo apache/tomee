@@ -45,14 +45,11 @@ public class ResettableDataSourceHandler implements DelegatableHandler {
             this.retryMethods.addAll(asList(methods == null ? new String[]{"getConnection", "getXAConnection"} : methods.split(" *, *")));
         }
 
-        final Runnable recreate = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Flushable.class.cast(delegate.get()).flush();
-                } catch (final IOException ioe) {
-                    LOGGER.error("Can't flush connection pool: " + ioe.getMessage());
-                }
+        final Runnable recreate = () -> {
+            try {
+                Flushable.class.cast(delegate.get()).flush();
+            } catch (final IOException ioe) {
+                LOGGER.error("Can't flush connection pool: " + ioe.getMessage());
             }
         };
 

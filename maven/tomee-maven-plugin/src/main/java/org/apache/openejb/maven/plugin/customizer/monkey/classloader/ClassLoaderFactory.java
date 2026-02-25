@@ -39,12 +39,7 @@ public class ClassLoaderFactory {
      */
     public ClassLoader create(final File libFolder) {
         final Collection<URL> urls = new ArrayList<>();
-        final File[] children = libFolder.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".jar") || name.endsWith(".zip");
-            }
-        });
+        final File[] children = libFolder.listFiles((dir, name) -> name.endsWith(".jar") || name.endsWith(".zip"));
         if (children == null) {
             throw new IllegalArgumentException("No library found in " + libFolder);
         }

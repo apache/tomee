@@ -312,29 +312,21 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                     for (final WebModule w : module.getWebModules()) {
                         final String moduleId = w.getModuleId();
                         lightweightWebAppBuilder.setClassLoader(moduleId, w.getClassLoader());
-                        cls.add(new Closeable() {
-                            @Override
-                            public void close() throws IOException {
-                                lightweightWebAppBuilder.removeClassLoader(moduleId);
-                            }
-                        });
+                        cls.add(() -> lightweightWebAppBuilder.removeClassLoader(moduleId));
                     }
                 }
                 final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
                 if (isEmbeddedWebAppBuilder && PROPERTIES.containsKey(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE) && !appCtx.getWebContexts().isEmpty()) {
-                    cls.add(new Closeable() {
-                        @Override
-                        public void close() throws IOException {
-                            try {
-                                final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
-                                if (sessionManager != null) {
-                                    for (final WebContext web : appCtx.getWebContexts()) {
-                                        sessionManager.destroy(web);
-                                    }
+                    cls.add(() -> {
+                        try {
+                            final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
+                            if (sessionManager != null) {
+                                for (final WebContext web : appCtx.getWebContexts()) {
+                                    sessionManager.destroy(web);
                                 }
-                            } catch (final Throwable e) {
-                                // no-op
                             }
+                        } catch (final Throwable e) {
+                            // no-op
                         }
                     });
                 }

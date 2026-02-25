@@ -18,6 +18,7 @@ package org.apache.openejb.client.proxy;
 
 import org.apache.openejb.client.ClientRuntimeException;
 
+import java.security.PrivilegedAction;
 import java.util.Properties;
 
 public class ProxyManager {
@@ -120,12 +121,7 @@ public class ProxyManager {
     }
 
     public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-                                                                             @Override
-                                                                             public Object run() {
-                                                                                 return Thread.currentThread().getContextClassLoader();
-                                                                             }
-                                                                         }
+        return (ClassLoader) java.security.AccessController.doPrivileged((PrivilegedAction) () -> Thread.currentThread().getContextClassLoader()
         );
     }
 }

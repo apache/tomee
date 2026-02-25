@@ -93,36 +93,23 @@ public class JNDIContext implements InitialContextFactory, Context {
             container = Class.forName("org.apache.openejb.OpenEJB", false, classLoader);
             final Class<?> propertyPlaceHolderHelper  = Class.forName("org.apache.openejb.util.PropertyPlaceHolderHelper", false, classLoader);
             final Method simpleValue = propertyPlaceHolderHelper.getMethod("simpleValue", String.class);
-            decipher = new Decipher() {
-                @Override
-                public String decipher(final String from) {
-                    try {
-                        return String.class.cast(simpleValue.invoke(null, from));
-                    } catch (final IllegalAccessException e) {
-                        throw new IllegalStateException(e);
-                    } catch (final InvocationTargetException e) {
-                        throw new IllegalStateException(e.getCause());
-                    }
+            decipher = from -> {
+                try {
+                    return String.class.cast(simpleValue.invoke(null, from));
+                } catch (final IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                } catch (final InvocationTargetException e) {
+                    throw new IllegalStateException(e.getCause());
                 }
             };
         } catch (final Throwable e) {
             container = null;
-            decipher = new Decipher() {
-                @Override
-                public String decipher(final String from) {
-                    return from;
-                }
-            };
+            decipher = from -> from;
         }
         DECIPHER = decipher;
         if (classLoader == ClassLoader.getSystemClassLoader() || Boolean.getBoolean("openejb.client.flus-tasks")
             || (container != null && container.getClassLoader() == classLoader)) {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    waitEndOfTasks(GLOBAL_CLIENT_POOL);
-                }
-            });
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> waitEndOfTasks(GLOBAL_CLIENT_POOL)));
         }
     }
 
@@ -173,42 +160,34 @@ public class JNDIContext implements InitialContextFactory, Context {
             public Thread newThread(final Runnable r) {
                 final Thread t = new Thread(r, "OpenEJB.Client." + i.incrementAndGet());
                 t.setDaemon(true);
-                t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(final Thread t, final Throwable e) {
-                        Logger.getLogger(EJBObjectHandler.class.getName()).log(Level.SEVERE, "Uncaught error in: " + t.getName(), e);
-                    }
-                });
+                t.setUncaughtExceptionHandler((t1, e) -> Logger.getLogger(EJBObjectHandler.class.getName()).log(Level.SEVERE, "Uncaught error in: " + t1.getName(), e));
 
                 return t;
             }
 
         });
 
-        executorService.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-            @Override
-            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
+        executorService.setRejectedExecutionHandler((r, tpe) -> {
 
-                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                    return;
-                }
+            if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                return;
+            }
 
-                final Logger log = Logger.getLogger(EJBObjectHandler.class.getName());
+            final Logger log = Logger.getLogger(EJBObjectHandler.class.getName());
 
-                if (log.isLoggable(Level.WARNING)) {
-                    log.log(Level.WARNING, "EJBObjectHandler ExecutorService at capicity for process: " + r);
-                }
+            if (log.isLoggable(Level.WARNING)) {
+                log.log(Level.WARNING, "EJBObjectHandler ExecutorService at capicity for process: " + r);
+            }
 
-                boolean offer = false;
-                try {
-                    offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    //Ignore
-                }
+            boolean offer = false;
+            try {
+                offer = tpe.getQueue().offer(r, 10, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                //Ignore
+            }
 
-                if (!offer) {
-                    log.log(Level.SEVERE, "EJBObjectHandler ExecutorService failed to run asynchronous process: " + r);
-                }
+            if (!offer) {
+                log.log(Level.SEVERE, "EJBObjectHandler ExecutorService failed to run asynchronous process: " + r);
             }
         });
         return executorService;

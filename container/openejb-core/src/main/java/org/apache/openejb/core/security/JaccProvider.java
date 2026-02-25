@@ -69,17 +69,15 @@ public abstract class JaccProvider {
 
         final String[] factoryClassName = {null};
         try {
-            jaccProvider = (JaccProvider) AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                public Object run() throws Exception {
-                    factoryClassName[0] = System.getProperty(FACTORY_NAME);
+            jaccProvider = (JaccProvider) AccessController.doPrivileged((PrivilegedExceptionAction) () -> {
+                factoryClassName[0] = System.getProperty(FACTORY_NAME);
 
-                    if (factoryClassName[0] == null) {
-                        throw new ClassNotFoundException("Property " + FACTORY_NAME + " not set");
-                    }
-                    final Thread currentThread = Thread.currentThread();
-                    final ClassLoader tccl = currentThread.getContextClassLoader();
-                    return Class.forName(factoryClassName[0], true, tccl).newInstance();
+                if (factoryClassName[0] == null) {
+                    throw new ClassNotFoundException("Property " + FACTORY_NAME + " not set");
                 }
+                final Thread currentThread = Thread.currentThread();
+                final ClassLoader tccl = currentThread.getContextClassLoader();
+                return Class.forName(factoryClassName[0], true, tccl).newInstance();
             });
         } catch (final PrivilegedActionException pae) {
             if (pae.getException() instanceof ClassNotFoundException) {

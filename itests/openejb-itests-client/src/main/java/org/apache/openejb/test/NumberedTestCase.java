@@ -112,11 +112,7 @@ public class NumberedTestCase extends Assert implements Test {
     protected void run(final TestResult result, final Method testMethod) {
         final Test test = createTest(testMethod);
         result.startTest(test);
-        final Protectable p = new Protectable() {
-            public void protect() throws Throwable {
-                runTestMethod(testMethod);
-            }
-        };
+        final Protectable p = () -> runTestMethod(testMethod);
         //System.out.println(">>" + NumberedTestCase.class.getName() + "> started: " + testMethod.toGenericString());
         result.runProtected(test, p);
         result.endTest(test);
