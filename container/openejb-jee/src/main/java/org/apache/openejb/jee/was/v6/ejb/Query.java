@@ -132,7 +132,7 @@ public class Query {
      */
     public List<QueryMethod> getQueryMethods() {
         if (queryMethods == null) {
-            queryMethods = new ArrayList<QueryMethod>();
+            queryMethods = new ArrayList<>();
         }
         return this.queryMethods;
     }
@@ -160,7 +160,7 @@ public class Query {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -188,7 +188,7 @@ public class Query {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

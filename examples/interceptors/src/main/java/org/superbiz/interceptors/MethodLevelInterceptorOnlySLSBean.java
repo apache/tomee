@@ -28,7 +28,7 @@ public class MethodLevelInterceptorOnlySLSBean implements MethodLevelInterceptor
 
     @Interceptors(MethodLevelInterceptorOne.class)
     public List<String> makePersistent(String entity) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("makePersistent");
         return list;
     }

@@ -31,7 +31,7 @@ public class OneOneFinders {
 
     public List<Finder> getFinder() {
         if (finder == null) {
-            finder = new ArrayList<Finder>();
+            finder = new ArrayList<>();
         }
         return this.finder;
     }

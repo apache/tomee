@@ -27,8 +27,8 @@ public class HandlerChainMetaData implements Serializable {
     private static final long serialVersionUID = -2861396042527297097L;
     private QName serviceNamePattern;
     private QName portNamePattern;
-    private final List<String> protocolBindings = new ArrayList<String>();
-    private final List<HandlerMetaData> handlers = new ArrayList<HandlerMetaData>();
+    private final List<String> protocolBindings = new ArrayList<>();
+    private final List<HandlerMetaData> handlers = new ArrayList<>();
 
     public QName getServiceNamePattern() {
         return serviceNamePattern;

@@ -117,7 +117,7 @@ public class FacesListEntries {
      */
     public List<Object> getNullValueOrValue() {
         if (nullValueOrValue == null) {
-            nullValueOrValue = new ArrayList<Object>();
+            nullValueOrValue = new ArrayList<>();
         }
         return this.nullValueOrValue;
     }

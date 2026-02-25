@@ -85,7 +85,7 @@ public class Listener extends CompatibilityDescriptionGroup {
      */
     public List<JavaClass> getListenerClasses() {
         if (listenerClasses == null) {
-            listenerClasses = new ArrayList<JavaClass>();
+            listenerClasses = new ArrayList<>();
         }
         return this.listenerClasses;
     }

@@ -93,7 +93,7 @@ public class Replace extends Difference {
      */
     public List<Object> getReplacements() {
         if (replacements == null) {
-            replacements = new ArrayList<Object>();
+            replacements = new ArrayList<>();
         }
         return this.replacements;
     }

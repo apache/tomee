@@ -63,21 +63,21 @@ public class EntityMapping {
 
     public List<CmpFieldMapping> getCmpFieldMapping() {
         if (cmpFieldMapping == null) {
-            cmpFieldMapping = new ArrayList<CmpFieldMapping>();
+            cmpFieldMapping = new ArrayList<>();
         }
         return this.cmpFieldMapping;
     }
 
     public List<CmrFieldMapping> getCmrFieldMapping() {
         if (cmrFieldMapping == null) {
-            cmrFieldMapping = new ArrayList<CmrFieldMapping>();
+            cmrFieldMapping = new ArrayList<>();
         }
         return this.cmrFieldMapping;
     }
 
     public List<SecondaryTable> getSecondaryTable() {
         if (secondaryTable == null) {
-            secondaryTable = new ArrayList<SecondaryTable>();
+            secondaryTable = new ArrayList<>();
         }
         return this.secondaryTable;
     }

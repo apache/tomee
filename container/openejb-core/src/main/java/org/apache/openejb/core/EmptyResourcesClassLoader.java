@@ -33,7 +33,7 @@ public class EmptyResourcesClassLoader extends ClassLoader {
 
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
-        return new Enumeration<URL>() {
+        return new Enumeration<>() {
             @Override
             public boolean hasMoreElements() {
                 return false;

@@ -105,7 +105,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openejb.org/openejb-jar/1.1", name = "method-param")
     public JAXBElement<String> createMethodParam(final String value) {
-        return new JAXBElement<String>(_MethodParam_QNAME, String.class, null, value);
+        return new JAXBElement<>(_MethodParam_QNAME, String.class, null, value);
     }
 
     /**
@@ -113,7 +113,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openejb.org/openejb-jar/1.1", name = "method-name")
     public JAXBElement<String> createMethodName(final String value) {
-        return new JAXBElement<String>(_MethodName_QNAME, String.class, null, value);
+        return new JAXBElement<>(_MethodName_QNAME, String.class, null, value);
     }
 
     /**
@@ -121,7 +121,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openejb.org/openejb-jar/1.1", name = "object-ql")
     public JAXBElement<String> createObjectQl(final String value) {
-        return new JAXBElement<String>(_ObjectQl_QNAME, String.class, null, value);
+        return new JAXBElement<>(_ObjectQl_QNAME, String.class, null, value);
     }
 
     /**
@@ -129,7 +129,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openejb.org/openejb-jar/1.1", name = "description")
     public JAXBElement<String> createDescription(final String value) {
-        return new JAXBElement<String>(_Description_QNAME, String.class, null, value);
+        return new JAXBElement<>(_Description_QNAME, String.class, null, value);
     }
 
 }

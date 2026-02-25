@@ -101,7 +101,7 @@ public class FacesConfigFlowDefinitionSwitchCase {
      */
     public List<Description> getDescription() {
         if (description == null) {
-            description = new ArrayList<Description>();
+            description = new ArrayList<>();
         }
         return this.description;
     }
@@ -128,7 +128,7 @@ public class FacesConfigFlowDefinitionSwitchCase {
      */
     public List<DisplayName> getDisplayName() {
         if (displayName == null) {
-            displayName = new ArrayList<DisplayName>();
+            displayName = new ArrayList<>();
         }
         return this.displayName;
     }
@@ -155,7 +155,7 @@ public class FacesConfigFlowDefinitionSwitchCase {
      */
     public List<Icon> getIcon() {
         if (icon == null) {
-            icon = new ArrayList<Icon>();
+            icon = new ArrayList<>();
         }
         return this.icon;
     }

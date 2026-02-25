@@ -144,7 +144,7 @@ public class Documentation {
      */
     public List<String> getContacts() {
         if (contacts == null) {
-            contacts = new ArrayList<String>();
+            contacts = new ArrayList<>();
         }
         return this.contacts;
     }
@@ -171,7 +171,7 @@ public class Documentation {
      */
     public List<String> getExporters() {
         if (exporters == null) {
-            exporters = new ArrayList<String>();
+            exporters = new ArrayList<>();
         }
         return this.exporters;
     }
@@ -198,7 +198,7 @@ public class Documentation {
      */
     public List<String> getExporterVersions() {
         if (exporterVersions == null) {
-            exporterVersions = new ArrayList<String>();
+            exporterVersions = new ArrayList<>();
         }
         return this.exporterVersions;
     }
@@ -225,7 +225,7 @@ public class Documentation {
      */
     public List<String> getLongDescriptions() {
         if (longDescriptions == null) {
-            longDescriptions = new ArrayList<String>();
+            longDescriptions = new ArrayList<>();
         }
         return this.longDescriptions;
     }
@@ -252,7 +252,7 @@ public class Documentation {
      */
     public List<String> getShortDescriptions() {
         if (shortDescriptions == null) {
-            shortDescriptions = new ArrayList<String>();
+            shortDescriptions = new ArrayList<>();
         }
         return this.shortDescriptions;
     }
@@ -279,7 +279,7 @@ public class Documentation {
      */
     public List<String> getNotices() {
         if (notices == null) {
-            notices = new ArrayList<String>();
+            notices = new ArrayList<>();
         }
         return this.notices;
     }
@@ -306,7 +306,7 @@ public class Documentation {
      */
     public List<String> getOwners() {
         if (owners == null) {
-            owners = new ArrayList<String>();
+            owners = new ArrayList<>();
         }
         return this.owners;
     }

@@ -36,7 +36,7 @@ public class JndiServlet extends HttpServlet {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();
 
-        Map<String, Object> bindings = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, Object> bindings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         try {
             Context context = (Context) new InitialContext().lookup("java:comp/");
             addBindings("", bindings, context);

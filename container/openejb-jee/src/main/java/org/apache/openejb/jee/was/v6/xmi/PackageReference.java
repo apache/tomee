@@ -99,7 +99,7 @@ public class PackageReference {
      */
     public List<String> getNames() {
         if (names == null) {
-            names = new ArrayList<String>();
+            names = new ArrayList<>();
         }
         return this.names;
     }
@@ -126,7 +126,7 @@ public class PackageReference {
      */
     public List<String> getVersions() {
         if (versions == null) {
-            versions = new ArrayList<String>();
+            versions = new ArrayList<>();
         }
         return this.versions;
     }

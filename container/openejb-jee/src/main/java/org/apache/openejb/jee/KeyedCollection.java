@@ -43,12 +43,12 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
     public KeyedCollection() {
         // NOTE: V must implement Keyable or class cast exception will be thrown on add
         keyExtractor = null;
-        map = new LinkedHashMap<K, V>();
+        map = new LinkedHashMap<>();
     }
 
     public KeyedCollection(final KeyExtractor<? extends K, ? super V> keyExtractor) {
         this.keyExtractor = keyExtractor;
-        map = new LinkedHashMap<K, V>();
+        map = new LinkedHashMap<>();
     }
 
     @SuppressWarnings({"unchecked"})
@@ -60,7 +60,7 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
             // NOTE: V must implement Keyable or class cast exception will be thrown on add
             keyExtractor = null;
         }
-        map = new LinkedHashMap<K, V>();
+        map = new LinkedHashMap<>();
         addAll(c);
     }
 
@@ -68,7 +68,7 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
     public KeyedCollection(final int initialCapacity) {
         // NOTE: V must implement Keyable or class cast exception will be thrown on add
         keyExtractor = null;
-        map = new LinkedHashMap<K, V>(initialCapacity);
+        map = new LinkedHashMap<>(initialCapacity);
     }
 
     /**

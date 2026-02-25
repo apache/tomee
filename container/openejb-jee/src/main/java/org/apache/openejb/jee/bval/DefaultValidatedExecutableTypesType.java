@@ -89,7 +89,7 @@ public class DefaultValidatedExecutableTypesType {
      */
     public List<ExecutableType> getExecutableType() {
         if (executableType == null) {
-            executableType = new ArrayList<ExecutableType>();
+            executableType = new ArrayList<>();
         }
         return this.executableType;
     }

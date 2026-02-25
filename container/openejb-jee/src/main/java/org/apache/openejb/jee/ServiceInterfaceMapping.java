@@ -70,7 +70,7 @@ public class ServiceInterfaceMapping {
 
     public List<PortMapping> getPortMapping() {
         if (portMapping == null) {
-            portMapping = new ArrayList<PortMapping>();
+            portMapping = new ArrayList<>();
         }
         return this.portMapping;
     }

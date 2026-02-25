@@ -66,7 +66,7 @@ public class DependsOn {
 
     public List<String> getEjbName() {
         if (ejbName == null) {
-            ejbName = new ArrayList<String>();
+            ejbName = new ArrayList<>();
         }
         return this.ejbName;
     }

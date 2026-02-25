@@ -50,7 +50,7 @@ public class ThreadLocalContextManager {
     public static final ThreadLocalConfiguration CONFIGURATION = new ThreadLocalConfiguration();
     public static final ThreadLocalResourceInfo RESOURCE_INFO = new ThreadLocalResourceInfo();
     public static final ThreadLocalResourceContext RESOURCE_CONTEXT = new ThreadLocalResourceContext();
-    public static final ThreadLocal<Map<String, Object>> OTHERS = new ThreadLocal<Map<String, Object>>();
+    public static final ThreadLocal<Map<String, Object>> OTHERS = new ThreadLocal<>();
 
     public static void reset() {
         REQUEST.remove();

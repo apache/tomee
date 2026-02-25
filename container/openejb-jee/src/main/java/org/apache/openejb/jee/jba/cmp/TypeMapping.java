@@ -415,7 +415,7 @@ public class TypeMapping {
      */
     public List<FunctionMapping> getFunctionMapping() {
         if (functionMapping == null) {
-            functionMapping = new ArrayList<FunctionMapping>();
+            functionMapping = new ArrayList<>();
         }
         return this.functionMapping;
     }
@@ -442,7 +442,7 @@ public class TypeMapping {
      */
     public List<Mapping> getMapping() {
         if (mapping == null) {
-            mapping = new ArrayList<Mapping>();
+            mapping = new ArrayList<>();
         }
         return this.mapping;
     }

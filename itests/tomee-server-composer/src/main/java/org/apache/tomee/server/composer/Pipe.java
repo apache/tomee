@@ -36,7 +36,7 @@ public final class Pipe implements Runnable {
     public static Future<Pipe> pipe(final InputStream in, final OutputStream... copy) {
         final Pipe target = new Pipe(in, copy);
 
-        final FutureTask<Pipe> task = new FutureTask<Pipe>(target, target);
+        final FutureTask<Pipe> task = new FutureTask<>(target, target);
         final Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();

@@ -85,7 +85,7 @@ public class DataSourceFactory {
     private static final Map<CommonDataSource, AlternativeDriver> driverByDataSource = new HashMap<>();
 
     private static final Map<CommonDataSource, DataSourceCreator> creatorByDataSource = new HashMap<>();
-    private static final Map<String, String> KNOWN_CREATORS = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER) {{
+    private static final Map<String, String> KNOWN_CREATORS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER) {{
         put("simple", "org.apache.openejb.resource.jdbc.SimpleDataSourceCreator"); // use user provided DS, pooling not supported
         put("dbcp", "org.apache.openejb.resource.jdbc.pool.DefaultDataSourceCreator"); // the original one
         put("dbcp-alternative", "org.apache.openejb.resource.jdbc.dbcp.DbcpDataSourceCreator"); // dbcp for the ds pool only

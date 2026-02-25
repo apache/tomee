@@ -239,7 +239,7 @@ public class Logger {
     /**
      * Builds a Logger object and returns it
      */
-    private static final Computable<LoggerKey, Logger> loggerResolver = new Computable<LoggerKey, Logger>() {
+    private static final Computable<LoggerKey, Logger> loggerResolver = new Computable<>() {
         @Override
         public Logger compute(final LoggerKey args) throws InterruptedException {
             return new Logger(args.category, logStreamFactory.createLogStream(args.category), args.baseName);

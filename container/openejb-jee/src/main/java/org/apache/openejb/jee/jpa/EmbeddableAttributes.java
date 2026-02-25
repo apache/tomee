@@ -99,7 +99,7 @@ public class EmbeddableAttributes {
      */
     public List<Basic> getBasic() {
         if (basic == null) {
-            basic = new ArrayList<Basic>();
+            basic = new ArrayList<>();
         }
         return this.basic;
     }
@@ -126,7 +126,7 @@ public class EmbeddableAttributes {
      */
     public List<ManyToOne> getManyToOne() {
         if (manyToOne == null) {
-            manyToOne = new ArrayList<ManyToOne>();
+            manyToOne = new ArrayList<>();
         }
         return this.manyToOne;
     }
@@ -153,7 +153,7 @@ public class EmbeddableAttributes {
      */
     public List<OneToMany> getOneToMany() {
         if (oneToMany == null) {
-            oneToMany = new ArrayList<OneToMany>();
+            oneToMany = new ArrayList<>();
         }
         return this.oneToMany;
     }
@@ -180,7 +180,7 @@ public class EmbeddableAttributes {
      */
     public List<OneToOne> getOneToOne() {
         if (oneToOne == null) {
-            oneToOne = new ArrayList<OneToOne>();
+            oneToOne = new ArrayList<>();
         }
         return this.oneToOne;
     }
@@ -207,7 +207,7 @@ public class EmbeddableAttributes {
      */
     public List<ManyToMany> getManyToMany() {
         if (manyToMany == null) {
-            manyToMany = new ArrayList<ManyToMany>();
+            manyToMany = new ArrayList<>();
         }
         return this.manyToMany;
     }
@@ -234,7 +234,7 @@ public class EmbeddableAttributes {
      */
     public List<ElementCollection> getElementCollection() {
         if (elementCollection == null) {
-            elementCollection = new ArrayList<ElementCollection>();
+            elementCollection = new ArrayList<>();
         }
         return this.elementCollection;
     }
@@ -261,7 +261,7 @@ public class EmbeddableAttributes {
      */
     public List<Embedded> getEmbedded() {
         if (embedded == null) {
-            embedded = new ArrayList<Embedded>();
+            embedded = new ArrayList<>();
         }
         return this.embedded;
     }
@@ -288,7 +288,7 @@ public class EmbeddableAttributes {
      */
     public List<Transient> getTransient() {
         if (_transient == null) {
-            _transient = new ArrayList<Transient>();
+            _transient = new ArrayList<>();
         }
         return this._transient;
     }

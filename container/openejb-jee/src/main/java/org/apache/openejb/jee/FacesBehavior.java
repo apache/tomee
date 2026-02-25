@@ -71,7 +71,7 @@ public class FacesBehavior {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "behavior-id", required = true)
     protected String behaviorId;
     @XmlElement(name = "behavior-class", required = true)
@@ -112,14 +112,14 @@ public class FacesBehavior {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -190,7 +190,7 @@ public class FacesBehavior {
      */
     public List<FacesAttribute> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<FacesAttribute>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }
@@ -217,7 +217,7 @@ public class FacesBehavior {
      */
     public List<FacesProperty> getProperty() {
         if (property == null) {
-            property = new ArrayList<FacesProperty>();
+            property = new ArrayList<>();
         }
         return this.property;
     }
@@ -244,7 +244,7 @@ public class FacesBehavior {
      */
     public List<FacesBehaviorExtension> getBehaviorExtension() {
         if (behaviorExtension == null) {
-            behaviorExtension = new ArrayList<FacesBehaviorExtension>();
+            behaviorExtension = new ArrayList<>();
         }
         return this.behaviorExtension;
     }

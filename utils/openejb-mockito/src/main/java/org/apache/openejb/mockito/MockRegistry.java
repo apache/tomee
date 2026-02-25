@@ -33,8 +33,8 @@ import java.util.Map;
  */
 public class MockRegistry {
     private static boolean initialized = false;
-    private static final Map<Class<?>, Object> mockInstancesByType = new HashMap<Class<?>, Object>();
-    private static final Map<String, Object> mockInstancesByName = new HashMap<String, Object>();
+    private static final Map<Class<?>, Object> mockInstancesByType = new HashMap<>();
+    private static final Map<String, Object> mockInstancesByName = new HashMap<>();
 
     public static void reset() {
         initialized = false;

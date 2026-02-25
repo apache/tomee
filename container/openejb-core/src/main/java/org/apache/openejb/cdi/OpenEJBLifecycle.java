@@ -78,7 +78,7 @@ import java.util.Set;
  * @version $Rev:$ $Date:$
  */
 public class OpenEJBLifecycle implements ContainerLifecycle {
-    public static final ThreadLocal<AppInfo> CURRENT_APP_INFO = new ThreadLocal<AppInfo>();
+    public static final ThreadLocal<AppInfo> CURRENT_APP_INFO = new ThreadLocal<>();
 
     //Logger instance
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBLifecycle.class);
@@ -452,7 +452,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         protected InternalBean(final WebBeansContext webBeansContext, final Class<T> api, final Class<?> type) {
             super(webBeansContext, WebBeansType.MANAGED, api,
-                    new SimpleProducerFactory<T>(
+                    new SimpleProducerFactory<>(
                             new ProviderBasedProducer<>(webBeansContext, type, new OpenEJBComponentProvider(webBeansContext, type), false)));
             this.id = "openejb#container#" + api.getName();
         }

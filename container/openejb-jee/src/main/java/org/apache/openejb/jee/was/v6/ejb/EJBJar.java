@@ -101,7 +101,7 @@ public class EJBJar extends CompatibilityDescriptionGroup {
      */
     public List<AssemblyDescriptor> getAssemblyDescriptors() {
         if (assemblyDescriptors == null) {
-            assemblyDescriptors = new ArrayList<AssemblyDescriptor>();
+            assemblyDescriptors = new ArrayList<>();
         }
         return this.assemblyDescriptors;
     }
@@ -129,7 +129,7 @@ public class EJBJar extends CompatibilityDescriptionGroup {
      */
     public List<EnterpriseBean> getEnterpriseBeans() {
         if (enterpriseBeans == null) {
-            enterpriseBeans = new ArrayList<EnterpriseBean>();
+            enterpriseBeans = new ArrayList<>();
         }
         return this.enterpriseBeans;
     }
@@ -157,7 +157,7 @@ public class EJBJar extends CompatibilityDescriptionGroup {
      */
     public List<Relationships> getRelationshipList() {
         if (relationshipList == null) {
-            relationshipList = new ArrayList<Relationships>();
+            relationshipList = new ArrayList<>();
         }
         return this.relationshipList;
     }

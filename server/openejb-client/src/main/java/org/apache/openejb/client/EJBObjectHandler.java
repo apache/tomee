@@ -122,7 +122,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         EJBObjectProxy ejbObject = null;
 
         try {
-            final List<Class> interfaces = new ArrayList<Class>();
+            final List<Class> interfaces = new ArrayList<>();
             // Interface class must be listed first, before EJBObjectProxy,
             // otherwise the proxy code will select the openejb system class
             // loader for proxy creation instead of the application class loader

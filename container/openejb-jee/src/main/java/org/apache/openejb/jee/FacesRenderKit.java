@@ -77,7 +77,7 @@ public class FacesRenderKit {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "render-kit-id")
     protected java.lang.String renderKitId;
     @XmlElement(name = "render-kit-class")
@@ -125,14 +125,14 @@ public class FacesRenderKit {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -203,14 +203,14 @@ public class FacesRenderKit {
      */
     public List<FacesRenderer> getRenderer() {
         if (renderer == null) {
-            renderer = new ArrayList<FacesRenderer>();
+            renderer = new ArrayList<>();
         }
         return this.renderer;
     }
 
     public List<FacesClientBehaviorRenderer> getClientBehaviorRenderer() {
         if (clientBehaviorRenderer == null) {
-            clientBehaviorRenderer = new ArrayList<FacesClientBehaviorRenderer>();
+            clientBehaviorRenderer = new ArrayList<>();
         }
         return this.clientBehaviorRenderer;
     }
@@ -237,7 +237,7 @@ public class FacesRenderKit {
      */
     public List<FacesRenderKitExtension> getRenderKitExtension() {
         if (renderKitExtension == null) {
-            renderKitExtension = new ArrayList<FacesRenderKitExtension>();
+            renderKitExtension = new ArrayList<>();
         }
         return this.renderKitExtension;
     }

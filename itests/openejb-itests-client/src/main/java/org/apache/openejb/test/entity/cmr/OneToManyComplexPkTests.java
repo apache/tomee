@@ -100,7 +100,7 @@ public class OneToManyComplexPkTests extends AbstractCMRTest {
         beginTransaction();
         try {
             final ArtistLocal artist = findArtist(1);
-            artist.setPerformed(new HashSet<SongLocal>());
+            artist.setPerformed(new HashSet<>());
         } finally {
             completeTransaction();
         }
@@ -129,7 +129,7 @@ public class OneToManyComplexPkTests extends AbstractCMRTest {
         try {
             final ArtistLocal artist = findArtist(2);
             final SongLocal song = findSong(22);
-            final Set<SongLocal> songSets = new HashSet<SongLocal>();
+            final Set<SongLocal> songSets = new HashSet<>();
             songSets.add(song);
             artist.setPerformed(songSets);
         } finally {
@@ -263,9 +263,9 @@ public class OneToManyComplexPkTests extends AbstractCMRTest {
         beginTransaction();
         try {
             final ArtistLocal artist = findArtist(1);
-            artist.setPerformed(new HashSet<SongLocal>());
+            artist.setPerformed(new HashSet<>());
             final Set<SongLocal> songs = artist.getComposed();
-            final Set<SongLocal> bsCopies = new HashSet<SongLocal>(songs);
+            final Set<SongLocal> bsCopies = new HashSet<>(songs);
             assertFalse(songs.isEmpty());
             artist.remove();
             assertTrue(songs.isEmpty());

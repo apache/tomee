@@ -52,7 +52,7 @@ public final class ArquillianUtil {
     }
 
     public static Collection<Archive<?>> toDeploy(final Properties properties) {
-        final Collection<Archive<?>> list = new ArrayList<Archive<?>>();
+        final Collection<Archive<?>> list = new ArrayList<>();
         if (properties.containsKey(ArquillianUtil.PREDEPLOYING_KEY)) {
             final String toSplit = properties.getProperty(PREDEPLOYING_KEY).trim();
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();

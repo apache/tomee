@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Hosts implements Iterable<Host> {
-    private final Map<String, Host> hosts = new TreeMap<String, Host>();
+    private final Map<String, Host> hosts = new TreeMap<>();
     private String defaultHost = "localhost";
 
     public void add(final Host host) {
@@ -53,6 +53,6 @@ public class Hosts implements Iterable<Host> {
 
     @Override
     public Iterator<Host> iterator() {
-        return new ArrayList<Host>(hosts.values()).iterator();
+        return new ArrayList<>(hosts.values()).iterator();
     }
 }

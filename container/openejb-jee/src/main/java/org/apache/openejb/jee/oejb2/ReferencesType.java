@@ -77,7 +77,7 @@ public class ReferencesType {
      */
     public List<DepPatternType> getPattern() {
         if (pattern == null) {
-            pattern = new ArrayList<DepPatternType>();
+            pattern = new ArrayList<>();
         }
         return this.pattern;
     }

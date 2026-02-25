@@ -105,7 +105,7 @@ public class ContextRequestClass {
      */
     public List<ContextCase> getContextCase() {
         if (contextCase == null) {
-            contextCase = new ArrayList<ContextCase>();
+            contextCase = new ArrayList<>();
         }
         return this.contextCase;
     }

@@ -353,7 +353,7 @@ public class Entity {
      */
     public List<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRef>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }
@@ -380,7 +380,7 @@ public class Entity {
      */
     public List<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new ArrayList<EjbLocalRef>();
+            ejbLocalRef = new ArrayList<>();
         }
         return this.ejbLocalRef;
     }
@@ -407,7 +407,7 @@ public class Entity {
      */
     public List<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRef>();
+            serviceRef = new ArrayList<>();
         }
         return this.serviceRef;
     }
@@ -454,7 +454,7 @@ public class Entity {
      */
     public List<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRef>();
+            resourceRef = new ArrayList<>();
         }
         return this.resourceRef;
     }
@@ -481,7 +481,7 @@ public class Entity {
      */
     public List<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRef>();
+            resourceEnvRef = new ArrayList<>();
         }
         return this.resourceEnvRef;
     }
@@ -508,7 +508,7 @@ public class Entity {
      */
     public List<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new ArrayList<MessageDestinationRef>();
+            messageDestinationRef = new ArrayList<>();
         }
         return this.messageDestinationRef;
     }
@@ -635,7 +635,7 @@ public class Entity {
      */
     public List<Depends> getDepends() {
         if (depends == null) {
-            depends = new ArrayList<Depends>();
+            depends = new ArrayList<>();
         }
         return this.depends;
     }

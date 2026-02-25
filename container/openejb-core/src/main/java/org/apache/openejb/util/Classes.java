@@ -28,8 +28,8 @@ import java.util.Map;
  */
 public class Classes {
 
-    private static final Map<Class<?>, Class<?>> primitiveWrappers = new HashMap<Class<?>, Class<?>>();
-    private static final HashMap<String, Class> primitives = new HashMap<String, Class>();
+    private static final Map<Class<?>, Class<?>> primitiveWrappers = new HashMap<>();
+    private static final HashMap<String, Class> primitives = new HashMap<>();
 
     static {
         primitives.put("boolean", boolean.class);

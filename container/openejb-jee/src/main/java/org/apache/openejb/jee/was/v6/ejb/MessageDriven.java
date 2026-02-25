@@ -133,7 +133,7 @@ public class MessageDriven extends EnterpriseBean {
      */
     public List<MessageDrivenDestination> getDestinations() {
         if (destinations == null) {
-            destinations = new ArrayList<MessageDrivenDestination>();
+            destinations = new ArrayList<>();
         }
         return this.destinations;
     }
@@ -161,7 +161,7 @@ public class MessageDriven extends EnterpriseBean {
      */
     public List<ActivationConfig> getActivationConfigs() {
         if (activationConfigs == null) {
-            activationConfigs = new ArrayList<ActivationConfig>();
+            activationConfigs = new ArrayList<>();
         }
         return this.activationConfigs;
     }
@@ -189,7 +189,7 @@ public class MessageDriven extends EnterpriseBean {
      */
     public List<JavaClass> getMessageDestinations() {
         if (messageDestinations == null) {
-            messageDestinations = new ArrayList<JavaClass>();
+            messageDestinations = new ArrayList<>();
         }
         return this.messageDestinations;
     }
@@ -217,7 +217,7 @@ public class MessageDriven extends EnterpriseBean {
      */
     public List<JavaClass> getMessagingTypes() {
         if (messagingTypes == null) {
-            messagingTypes = new ArrayList<JavaClass>();
+            messagingTypes = new ArrayList<>();
         }
         return this.messagingTypes;
     }

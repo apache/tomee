@@ -63,7 +63,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
     private static Properties properties;
-    protected static final Map<URI, BrokerService> brokers = new HashMap<URI, BrokerService>();
+    protected static final Map<URI, BrokerService> brokers = new HashMap<>();
     private static Throwable throwable;
     private static final AtomicBoolean started = new AtomicBoolean(false);
     private static PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry().registerDefaults();

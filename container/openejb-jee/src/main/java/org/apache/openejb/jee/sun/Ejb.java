@@ -143,35 +143,35 @@ public class Ejb {
 
     public List<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRef>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }
 
     public List<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRef>();
+            resourceRef = new ArrayList<>();
         }
         return this.resourceRef;
     }
 
     public List<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRef>();
+            resourceEnvRef = new ArrayList<>();
         }
         return this.resourceEnvRef;
     }
 
     public List<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRef>();
+            serviceRef = new ArrayList<>();
         }
         return this.serviceRef;
     }
 
     public List<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new ArrayList<MessageDestinationRef>();
+            messageDestinationRef = new ArrayList<>();
         }
         return this.messageDestinationRef;
     }
@@ -306,14 +306,14 @@ public class Ejb {
 
     public Collection<WebserviceEndpoint> getWebserviceEndpoint() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<>();
         }
         return this.webserviceEndpoint;
     }
 
     public Map<String, WebserviceEndpoint> getWebserviceEndpointMap() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<>();
         }
         return this.webserviceEndpoint.toMap();
     }

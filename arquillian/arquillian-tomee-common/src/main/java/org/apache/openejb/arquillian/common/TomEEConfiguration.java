@@ -176,7 +176,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     }
 
     public int[] portsAlreadySet() {
-        final List<Integer> value = new ArrayList<Integer>();
+        final List<Integer> value = new ArrayList<>();
         if (stopPort > 0) {
             value.add(stopPort);
         }
@@ -251,7 +251,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
 
     public void setSingleDeploymentByArchiveName(final String singleDeploymentByArchiveName) {
         this.singleDeploymentByArchiveName = singleDeploymentByArchiveName == null || singleDeploymentByArchiveName.trim().isEmpty() ?
-                Collections.<String>emptyList() : new HashSet<String>(asList(singleDeploymentByArchiveName.split(" *, *")));
+                Collections.<String>emptyList() : new HashSet<>(asList(singleDeploymentByArchiveName.split(" *, *")));
         this.singleDumpByArchiveName = true; // implied otherwise what would be the sense?
     }
 }

@@ -67,14 +67,14 @@ public class JspConfig {
 
     public List<Taglib> getTaglib() {
         if (taglib == null) {
-            taglib = new ArrayList<Taglib>();
+            taglib = new ArrayList<>();
         }
         return this.taglib;
     }
 
     public List<JspPropertyGroup> getJspPropertyGroup() {
         if (jspPropertyGroup == null) {
-            jspPropertyGroup = new ArrayList<JspPropertyGroup>();
+            jspPropertyGroup = new ArrayList<>();
         }
         return this.jspPropertyGroup;
     }

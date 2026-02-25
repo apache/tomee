@@ -82,7 +82,7 @@ public class DatabaseGeneratedType {
      */
     public List<String> getIdentityColumn() {
         if (identityColumn == null) {
-            identityColumn = new ArrayList<String>();
+            identityColumn = new ArrayList<>();
         }
         return this.identityColumn;
     }

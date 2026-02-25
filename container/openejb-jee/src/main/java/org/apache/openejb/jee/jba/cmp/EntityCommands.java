@@ -75,7 +75,7 @@ public class EntityCommands {
      */
     public List<EntityCommand> getEntityCommand() {
         if (entityCommand == null) {
-            entityCommand = new ArrayList<EntityCommand>();
+            entityCommand = new ArrayList<>();
         }
         return this.entityCommand;
     }

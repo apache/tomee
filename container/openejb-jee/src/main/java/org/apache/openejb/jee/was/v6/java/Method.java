@@ -115,7 +115,7 @@ public class Method extends EOperation {
      */
     public List<JavaParameter> getParameters() {
         if (parameters == null) {
-            parameters = new ArrayList<JavaParameter>();
+            parameters = new ArrayList<>();
         }
         return this.parameters;
     }
@@ -143,7 +143,7 @@ public class Method extends EOperation {
      */
     public List<JavaClass> getJavaClassJavaExceptions() {
         if (javaClassJavaExceptions == null) {
-            javaClassJavaExceptions = new ArrayList<JavaClass>();
+            javaClassJavaExceptions = new ArrayList<>();
         }
         return this.javaClassJavaExceptions;
     }
@@ -170,7 +170,7 @@ public class Method extends EOperation {
      */
     public List<Block> getSources() {
         if (sources == null) {
-            sources = new ArrayList<Block>();
+            sources = new ArrayList<>();
         }
         return this.sources;
     }

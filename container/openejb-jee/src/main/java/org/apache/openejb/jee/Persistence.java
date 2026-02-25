@@ -122,7 +122,7 @@ public class Persistence {
      */
     public List<Persistence.PersistenceUnit> getPersistenceUnit() {
         if (persistenceUnit == null) {
-            persistenceUnit = new ArrayList<Persistence.PersistenceUnit>();
+            persistenceUnit = new ArrayList<>();
         }
         return this.persistenceUnit;
     }
@@ -348,7 +348,7 @@ public class Persistence {
          */
         public List<java.lang.String> getMappingFile() {
             if (mappingFile == null) {
-                mappingFile = new ArrayList<java.lang.String>();
+                mappingFile = new ArrayList<>();
             }
             return this.mappingFile;
         }
@@ -375,7 +375,7 @@ public class Persistence {
          */
         public List<java.lang.String> getJarFile() {
             if (jarFile == null) {
-                jarFile = new ArrayList<java.lang.String>();
+                jarFile = new ArrayList<>();
             }
             return this.jarFile;
         }
@@ -401,7 +401,7 @@ public class Persistence {
          */
         public List<java.lang.String> getClazz() {
             if (clazz == null) {
-                clazz = new ArrayList<java.lang.String>();
+                clazz = new ArrayList<>();
             }
             return this.clazz;
         }
@@ -584,7 +584,7 @@ public class Persistence {
              */
             public List<Persistence.PersistenceUnit.Properties.Property> getProperty() {
                 if (property == null) {
-                    property = new ArrayList<Persistence.PersistenceUnit.Properties.Property>();
+                    property = new ArrayList<>();
                 }
                 return this.property;
             }

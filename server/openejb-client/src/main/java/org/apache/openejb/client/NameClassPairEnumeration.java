@@ -96,7 +96,7 @@ public class NameClassPairEnumeration<T extends NameClassPair> implements Naming
 
         int size = in.readInt();
 
-        list = new ArrayList<NameClassPair>(size);
+        list = new ArrayList<>(size);
 
         for (; size > 0; size--) {
             final String name = (String) in.readObject();

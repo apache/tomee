@@ -97,7 +97,7 @@ public class ServiceCompletionType {
      */
     public List<PortCompletionType> getPortCompletion() {
         if (portCompletion == null) {
-            portCompletion = new ArrayList<PortCompletionType>();
+            portCompletion = new ArrayList<>();
         }
         return this.portCompletion;
     }

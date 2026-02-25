@@ -115,13 +115,13 @@ public class AutoConnectionTracker implements ConnectionTracker {
                     Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry
                             .getResource(KEY);
                     if (txConnections == null) {
-                        txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
+                        txConnections = new HashMap<>();
                         registry.putResource(KEY, txConnections);
                     }
 
                     Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
                     if (connectionObjects == null) {
-                        connectionObjects = new HashMap<ConnectionInfo, Object>();
+                        connectionObjects = new HashMap<>();
                         txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
                     }
 

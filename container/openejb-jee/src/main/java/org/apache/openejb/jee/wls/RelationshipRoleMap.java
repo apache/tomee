@@ -129,7 +129,7 @@ public class RelationshipRoleMap {
      */
     public List<ColumnMap> getColumnMap() {
         if (columnMap == null) {
-            columnMap = new ArrayList<ColumnMap>();
+            columnMap = new ArrayList<>();
         }
         return this.columnMap;
     }

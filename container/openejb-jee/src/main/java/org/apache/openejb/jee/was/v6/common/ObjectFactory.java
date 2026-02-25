@@ -247,9 +247,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "QName")
     public JAXBElement<org.apache.openejb.jee.was.v6.common.QName> createQName(
         final org.apache.openejb.jee.was.v6.common.QName value) {
-        return new JAXBElement<org.apache.openejb.jee.was.v6.common.QName>(
-            _QName_QNAME, org.apache.openejb.jee.was.v6.common.QName.class,
-            null, value);
+        return new JAXBElement<>(
+                _QName_QNAME, org.apache.openejb.jee.was.v6.common.QName.class,
+                null, value);
     }
 
     /**
@@ -258,8 +258,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "Listener")
     public JAXBElement<Listener> createListener(final Listener value) {
-        return new JAXBElement<Listener>(_Listener_QNAME, Listener.class, null,
-            value);
+        return new JAXBElement<>(_Listener_QNAME, Listener.class, null,
+                value);
     }
 
     /**
@@ -269,8 +269,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "SecurityRoleRef")
     public JAXBElement<SecurityRoleRef> createSecurityRoleRef(
         final SecurityRoleRef value) {
-        return new JAXBElement<SecurityRoleRef>(_SecurityRoleRef_QNAME,
-            SecurityRoleRef.class, null, value);
+        return new JAXBElement<>(_SecurityRoleRef_QNAME,
+                SecurityRoleRef.class, null, value);
     }
 
     /**
@@ -279,8 +279,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "Identity")
     public JAXBElement<Identity> createIdentity(final Identity value) {
-        return new JAXBElement<Identity>(_Identity_QNAME, Identity.class, null,
-            value);
+        return new JAXBElement<>(_Identity_QNAME, Identity.class, null,
+                value);
     }
 
     /**
@@ -289,8 +289,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "Description")
     public JAXBElement<Description> createDescription(final Description value) {
-        return new JAXBElement<Description>(_Description_QNAME,
-            Description.class, null, value);
+        return new JAXBElement<>(_Description_QNAME,
+                Description.class, null, value);
     }
 
     /**
@@ -299,8 +299,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "EnvEntry")
     public JAXBElement<EnvEntry> createEnvEntry(final EnvEntry value) {
-        return new JAXBElement<EnvEntry>(_EnvEntry_QNAME, EnvEntry.class, null,
-            value);
+        return new JAXBElement<>(_EnvEntry_QNAME, EnvEntry.class, null,
+                value);
     }
 
     /**
@@ -309,8 +309,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "DisplayName")
     public JAXBElement<DisplayName> createDisplayName(final DisplayName value) {
-        return new JAXBElement<DisplayName>(_DisplayName_QNAME,
-            DisplayName.class, null, value);
+        return new JAXBElement<>(_DisplayName_QNAME,
+                DisplayName.class, null, value);
     }
 
     /**
@@ -319,8 +319,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "ResourceEnvRef")
     public JAXBElement<ResourceEnvRef> createResourceEnvRef(final ResourceEnvRef value) {
-        return new JAXBElement<ResourceEnvRef>(_ResourceEnvRef_QNAME,
-            ResourceEnvRef.class, null, value);
+        return new JAXBElement<>(_ResourceEnvRef_QNAME,
+                ResourceEnvRef.class, null, value);
     }
 
     /**
@@ -330,8 +330,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "DescriptionGroup")
     public JAXBElement<DescriptionGroup> createDescriptionGroup(
         final DescriptionGroup value) {
-        return new JAXBElement<DescriptionGroup>(_DescriptionGroup_QNAME,
-            DescriptionGroup.class, null, value);
+        return new JAXBElement<>(_DescriptionGroup_QNAME,
+                DescriptionGroup.class, null, value);
     }
 
     /**
@@ -341,8 +341,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "SecurityIdentity")
     public JAXBElement<SecurityIdentity> createSecurityIdentity(
         final SecurityIdentity value) {
-        return new JAXBElement<SecurityIdentity>(_SecurityIdentity_QNAME,
-            SecurityIdentity.class, null, value);
+        return new JAXBElement<>(_SecurityIdentity_QNAME,
+                SecurityIdentity.class, null, value);
     }
 
     /**
@@ -352,9 +352,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "RunAsSpecifiedIdentity")
     public JAXBElement<RunAsSpecifiedIdentity> createRunAsSpecifiedIdentity(
         final RunAsSpecifiedIdentity value) {
-        return new JAXBElement<RunAsSpecifiedIdentity>(
-            _RunAsSpecifiedIdentity_QNAME, RunAsSpecifiedIdentity.class,
-            null, value);
+        return new JAXBElement<>(
+                _RunAsSpecifiedIdentity_QNAME, RunAsSpecifiedIdentity.class,
+                null, value);
     }
 
     /**
@@ -363,8 +363,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "IconType")
     public JAXBElement<IconType> createIconType(final IconType value) {
-        return new JAXBElement<IconType>(_IconType_QNAME, IconType.class, null,
-            value);
+        return new JAXBElement<>(_IconType_QNAME, IconType.class, null,
+                value);
     }
 
     /**
@@ -374,8 +374,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "UseCallerIdentity")
     public JAXBElement<UseCallerIdentity> createUseCallerIdentity(
         final UseCallerIdentity value) {
-        return new JAXBElement<UseCallerIdentity>(_UseCallerIdentity_QNAME,
-            UseCallerIdentity.class, null, value);
+        return new JAXBElement<>(_UseCallerIdentity_QNAME,
+                UseCallerIdentity.class, null, value);
     }
 
     /**
@@ -385,8 +385,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "MessageDestination")
     public JAXBElement<MessageDestination> createMessageDestination(
         final MessageDestination value) {
-        return new JAXBElement<MessageDestination>(_MessageDestination_QNAME,
-            MessageDestination.class, null, value);
+        return new JAXBElement<>(_MessageDestination_QNAME,
+                MessageDestination.class, null, value);
     }
 
     /**
@@ -396,9 +396,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "MessageDestinationRef")
     public JAXBElement<MessageDestinationRef> createMessageDestinationRef(
         final MessageDestinationRef value) {
-        return new JAXBElement<MessageDestinationRef>(
-            _MessageDestinationRef_QNAME, MessageDestinationRef.class,
-            null, value);
+        return new JAXBElement<>(
+                _MessageDestinationRef_QNAME, MessageDestinationRef.class,
+                null, value);
     }
 
     /**
@@ -408,9 +408,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "CompatibilityDescriptionGroup")
     public JAXBElement<CompatibilityDescriptionGroup> createCompatibilityDescriptionGroup(
         final CompatibilityDescriptionGroup value) {
-        return new JAXBElement<CompatibilityDescriptionGroup>(
-            _CompatibilityDescriptionGroup_QNAME,
-            CompatibilityDescriptionGroup.class, null, value);
+        return new JAXBElement<>(
+                _CompatibilityDescriptionGroup_QNAME,
+                CompatibilityDescriptionGroup.class, null, value);
     }
 
     /**
@@ -419,8 +419,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "ResourceRef")
     public JAXBElement<ResourceRef> createResourceRef(final ResourceRef value) {
-        return new JAXBElement<ResourceRef>(_ResourceRef_QNAME,
-            ResourceRef.class, null, value);
+        return new JAXBElement<>(_ResourceRef_QNAME,
+                ResourceRef.class, null, value);
     }
 
     /**
@@ -429,8 +429,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "ParamValue")
     public JAXBElement<ParamValue> createParamValue(final ParamValue value) {
-        return new JAXBElement<ParamValue>(_ParamValue_QNAME, ParamValue.class,
-            null, value);
+        return new JAXBElement<>(_ParamValue_QNAME, ParamValue.class,
+                null, value);
     }
 
     /**
@@ -438,7 +438,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "EjbRef")
     public JAXBElement<EjbRef> createEjbRef(final EjbRef value) {
-        return new JAXBElement<EjbRef>(_EjbRef_QNAME, EjbRef.class, null, value);
+        return new JAXBElement<>(_EjbRef_QNAME, EjbRef.class, null, value);
     }
 
     /**
@@ -447,8 +447,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "EJBLocalRef")
     public JAXBElement<EJBLocalRef> createEJBLocalRef(final EJBLocalRef value) {
-        return new JAXBElement<EJBLocalRef>(_EJBLocalRef_QNAME,
-            EJBLocalRef.class, null, value);
+        return new JAXBElement<>(_EJBLocalRef_QNAME,
+                EJBLocalRef.class, null, value);
     }
 
     /**
@@ -457,8 +457,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "common.xmi", name = "SecurityRole")
     public JAXBElement<SecurityRole> createSecurityRole(final SecurityRole value) {
-        return new JAXBElement<SecurityRole>(_SecurityRole_QNAME,
-            SecurityRole.class, null, value);
+        return new JAXBElement<>(_SecurityRole_QNAME,
+                SecurityRole.class, null, value);
     }
 
     /**
@@ -468,8 +468,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "common.xmi", name = "JNDIEnvRefsGroup")
     public JAXBElement<JNDIEnvRefsGroup> createJNDIEnvRefsGroup(
         final JNDIEnvRefsGroup value) {
-        return new JAXBElement<JNDIEnvRefsGroup>(_JNDIEnvRefsGroup_QNAME,
-            JNDIEnvRefsGroup.class, null, value);
+        return new JAXBElement<>(_JNDIEnvRefsGroup_QNAME,
+                JNDIEnvRefsGroup.class, null, value);
     }
 
 }

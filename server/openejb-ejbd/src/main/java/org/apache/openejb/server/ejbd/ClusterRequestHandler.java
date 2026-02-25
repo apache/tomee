@@ -154,7 +154,7 @@ public class ClusterRequestHandler extends RequestHandler implements DiscoveryLi
 
     private static class Data {
 
-        private final AtomicReference<ClusterMetaData> current = new AtomicReference<ClusterMetaData>();
+        private final AtomicReference<ClusterMetaData> current = new AtomicReference<>();
         private final ReadWriteLock sync = new ReentrantReadWriteLock();
         private final java.util.Set set = new LinkedHashSet();
 

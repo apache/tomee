@@ -121,7 +121,7 @@ public class PortComponentRef {
      */
     public List<JavaClass> getServiceEndpointInterfaces() {
         if (serviceEndpointInterfaces == null) {
-            serviceEndpointInterfaces = new ArrayList<JavaClass>();
+            serviceEndpointInterfaces = new ArrayList<>();
         }
         return this.serviceEndpointInterfaces;
     }
@@ -149,7 +149,7 @@ public class PortComponentRef {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

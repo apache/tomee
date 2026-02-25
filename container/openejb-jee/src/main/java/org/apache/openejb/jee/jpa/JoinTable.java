@@ -103,7 +103,7 @@ public class JoinTable {
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
-            joinColumn = new ArrayList<JoinColumn>();
+            joinColumn = new ArrayList<>();
         }
         return this.joinColumn;
     }
@@ -130,7 +130,7 @@ public class JoinTable {
      */
     public List<JoinColumn> getInverseJoinColumn() {
         if (inverseJoinColumn == null) {
-            inverseJoinColumn = new ArrayList<JoinColumn>();
+            inverseJoinColumn = new ArrayList<>();
         }
         return this.inverseJoinColumn;
     }
@@ -157,7 +157,7 @@ public class JoinTable {
      */
     public List<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new ArrayList<>();
         }
         return this.uniqueConstraint;
     }

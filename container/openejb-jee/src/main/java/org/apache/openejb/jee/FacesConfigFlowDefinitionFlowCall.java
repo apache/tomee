@@ -119,7 +119,7 @@ public class FacesConfigFlowDefinitionFlowCall {
      */
     public List<FacesConfigFlowDefinitionFlowCallOutboundParameter> getOutboundParameter() {
         if (outboundParameter == null) {
-            outboundParameter = new ArrayList<FacesConfigFlowDefinitionFlowCallOutboundParameter>();
+            outboundParameter = new ArrayList<>();
         }
         return this.outboundParameter;
     }

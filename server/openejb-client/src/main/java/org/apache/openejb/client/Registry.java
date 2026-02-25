@@ -26,14 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Registry<T> {
 
-    private final Map<String, T> components = new ConcurrentHashMap<String, T>();
+    private final Map<String, T> components = new ConcurrentHashMap<>();
 
     private Map<String, Class> available;
 
     private final String componentType;
 
     public static <T> Registry<T> create(final Class<T> type) {
-        return new Registry<T>(type);
+        return new Registry<>(type);
     }
 
     private Registry(final Class<T> type) {
@@ -43,7 +43,7 @@ public class Registry<T> {
             final ResourceFinder resourceFinder = new ResourceFinder("META-INF/");
             available = resourceFinder.mapAvailableImplementations(type);
         } catch (IOException e) {
-            available = new HashMap<String, Class>();
+            available = new HashMap<>();
         }
     }
 

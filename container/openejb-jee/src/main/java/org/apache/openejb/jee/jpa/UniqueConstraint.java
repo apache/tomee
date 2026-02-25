@@ -85,7 +85,7 @@ public class UniqueConstraint {
      */
     public List<String> getColumnName() {
         if (columnName == null) {
-            columnName = new ArrayList<String>();
+            columnName = new ArrayList<>();
         }
         return this.columnName;
     }

@@ -30,7 +30,7 @@ import java.util.List;
 @XmlRootElement(name = "additional-deployments")
 public class AdditionalDeployments {
     @XmlElement(name = "deployments")
-    protected List<Deployments> deployments = new ArrayList<Deployments>();
+    protected List<Deployments> deployments = new ArrayList<>();
 
     public List<Deployments> getDeployments() {
         return deployments;

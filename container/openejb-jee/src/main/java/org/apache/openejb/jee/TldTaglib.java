@@ -84,7 +84,7 @@ public class TldTaglib {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(name = "tlib-version", required = true)
     protected String tlibVersion;
@@ -136,14 +136,14 @@ public class TldTaglib {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -194,35 +194,35 @@ public class TldTaglib {
 
     public List<Listener> getListener() {
         if (listener == null) {
-            listener = new ArrayList<Listener>();
+            listener = new ArrayList<>();
         }
         return this.listener;
     }
 
     public List<Tag> getTag() {
         if (tag == null) {
-            tag = new ArrayList<Tag>();
+            tag = new ArrayList<>();
         }
         return this.tag;
     }
 
     public List<TagFile> getTagFile() {
         if (tagFile == null) {
-            tagFile = new ArrayList<TagFile>();
+            tagFile = new ArrayList<>();
         }
         return this.tagFile;
     }
 
     public List<Function> getFunction() {
         if (function == null) {
-            function = new ArrayList<Function>();
+            function = new ArrayList<>();
         }
         return this.function;
     }
 
     public List<TldExtension> getTaglibExtension() {
         if (taglibExtension == null) {
-            taglibExtension = new ArrayList<TldExtension>();
+            taglibExtension = new ArrayList<>();
         }
         return this.taglibExtension;
     }

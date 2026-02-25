@@ -91,7 +91,7 @@ public class EAnnotation extends EModelElement {
      */
     public List<EStringToStringMapEntry> getDetails() {
         if (details == null) {
-            details = new ArrayList<EStringToStringMapEntry>();
+            details = new ArrayList<>();
         }
         return this.details;
     }
@@ -118,7 +118,7 @@ public class EAnnotation extends EModelElement {
      */
     public List<EObject> getContents() {
         if (contents == null) {
-            contents = new ArrayList<EObject>();
+            contents = new ArrayList<>();
         }
         return this.contents;
     }
@@ -145,7 +145,7 @@ public class EAnnotation extends EModelElement {
      */
     public List<EObject> getEObjectReferences() {
         if (eObjectReferences == null) {
-            eObjectReferences = new ArrayList<EObject>();
+            eObjectReferences = new ArrayList<>();
         }
         return this.eObjectReferences;
     }

@@ -75,7 +75,7 @@ public class LazyLoadGroups {
      */
     public List<LoadGroupName> getLoadGroupName() {
         if (loadGroupName == null) {
-            loadGroupName = new ArrayList<LoadGroupName>();
+            loadGroupName = new ArrayList<>();
         }
         return this.loadGroupName;
     }

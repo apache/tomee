@@ -56,14 +56,14 @@ public class ServiceRef {
 
     public List<PortInfo> getPortInfo() {
         if (portInfo == null) {
-            portInfo = new ArrayList<PortInfo>();
+            portInfo = new ArrayList<>();
         }
         return this.portInfo;
     }
 
     public List<CallProperty> getCallProperty() {
         if (callProperty == null) {
-            callProperty = new ArrayList<CallProperty>();
+            callProperty = new ArrayList<>();
         }
         return this.callProperty;
     }

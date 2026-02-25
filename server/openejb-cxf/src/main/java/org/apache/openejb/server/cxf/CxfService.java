@@ -45,7 +45,7 @@ import java.util.TreeMap;
 public class CxfService extends WsService {
     public static final String OPENEJB_JAXWS_CXF_FEATURES = "features";
 
-    private final Map<String, CxfWsContainer> wsContainers = new TreeMap<String, CxfWsContainer>();
+    private final Map<String, CxfWsContainer> wsContainers = new TreeMap<>();
 
     private SoapTransportFactory transportFactory;
     private boolean factoryByListener;

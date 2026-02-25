@@ -85,7 +85,7 @@ public class EmbeddedId {
      */
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
-            attributeOverride = new ArrayList<AttributeOverride>();
+            attributeOverride = new ArrayList<>();
         }
         return this.attributeOverride;
     }

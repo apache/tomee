@@ -77,7 +77,7 @@ public class URLPattern {
         if (type == EXACT) {
             return pattern;
         } else {
-            HashSet<String> bucket = new HashSet<String>();
+            HashSet<String> bucket = new HashSet<>();
             StringBuilder result = new StringBuilder(pattern);
 
             // Collect a set of qualifying patterns, depending on the type of this pattern.

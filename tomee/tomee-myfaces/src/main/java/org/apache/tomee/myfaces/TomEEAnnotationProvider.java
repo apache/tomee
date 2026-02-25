@@ -45,7 +45,7 @@ public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
             );
         }
 
-        final Map<Class<? extends Annotation>, Set<Class<?>>> map = new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
+        final Map<Class<? extends Annotation>, Set<Class<?>>> map = new HashMap<>();
 
         final Map<ClassLoader, Map<String, Set<String>>> jsfClasses = builder.getJsfClasses();
         if (jsfClasses == null) {
@@ -66,7 +66,7 @@ public class TomEEAnnotationProvider extends DefaultAnnotationProvider {
             }
 
             final Set<String> list = entry.getValue();
-            final Set<Class<?>> annotated = new HashSet<Class<?>>(list.size());
+            final Set<Class<?>> annotated = new HashSet<>(list.size());
             for (final String name : list) {
                 try {
                     annotated.add(cl.loadClass(name));

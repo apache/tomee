@@ -32,7 +32,7 @@ import java.util.Properties;
 
 public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageListener {
     private MessageDrivenContext mdbContext = null;
-    private static final HashMap<String, OperationsPolicy> allowedOperationsTable = new HashMap<String, OperationsPolicy>();
+    private static final HashMap<String, OperationsPolicy> allowedOperationsTable = new HashMap<>();
     protected MdbInvoker mdbInvoker;
 
     @Override

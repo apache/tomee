@@ -28,7 +28,7 @@ import java.util.Properties;
 
 // kind of php to java
 public class HerokuDatabasePropertiesProvider implements PropertiesResourceProvider {
-    private final Map<String, String> jdbcMapping = new HashMap<String, String>() {{
+    private final Map<String, String> jdbcMapping = new HashMap<>() {{
         put("postgres", "postgresql");
         put("hsql", "hsqldb:hsql");
     }};

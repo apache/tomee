@@ -183,7 +183,7 @@ public class EnvironmentType {
      */
     public List<String> getBundleClassPath() {
         if (bundleClassPath == null) {
-            bundleClassPath = new ArrayList<String>();
+            bundleClassPath = new ArrayList<>();
         }
         return this.bundleClassPath;
     }
@@ -210,7 +210,7 @@ public class EnvironmentType {
      */
     public List<String> getImportPackage() {
         if (importPackage == null) {
-            importPackage = new ArrayList<String>();
+            importPackage = new ArrayList<>();
         }
         return this.importPackage;
     }
@@ -237,7 +237,7 @@ public class EnvironmentType {
      */
     public List<String> getExportPackage() {
         if (exportPackage == null) {
-            exportPackage = new ArrayList<String>();
+            exportPackage = new ArrayList<>();
         }
         return this.exportPackage;
     }
@@ -264,7 +264,7 @@ public class EnvironmentType {
      */
     public List<String> getRequireBundle() {
         if (requireBundle == null) {
-            requireBundle = new ArrayList<String>();
+            requireBundle = new ArrayList<>();
         }
         return this.requireBundle;
     }
@@ -291,7 +291,7 @@ public class EnvironmentType {
      */
     public List<String> getDynamicImportPackage() {
         if (dynamicImportPackage == null) {
-            dynamicImportPackage = new ArrayList<String>();
+            dynamicImportPackage = new ArrayList<>();
         }
         return this.dynamicImportPackage;
     }

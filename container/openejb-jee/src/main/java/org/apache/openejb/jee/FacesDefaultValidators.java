@@ -85,7 +85,7 @@ public class FacesDefaultValidators {
      */
     public List<String> getValidatorId() {
         if (validatorId == null) {
-            validatorId = new ArrayList<String>();
+            validatorId = new ArrayList<>();
         }
         return this.validatorId;
     }

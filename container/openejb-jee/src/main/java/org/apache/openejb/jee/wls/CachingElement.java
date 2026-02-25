@@ -129,7 +129,7 @@ public class CachingElement {
      */
     public List<CachingElement> getCachingElement() {
         if (cachingElement == null) {
-            cachingElement = new ArrayList<CachingElement>();
+            cachingElement = new ArrayList<>();
         }
         return this.cachingElement;
     }

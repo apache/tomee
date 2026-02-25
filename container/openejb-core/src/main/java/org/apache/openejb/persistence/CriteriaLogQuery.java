@@ -37,8 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CriteriaLogQuery<T> implements TypedQuery<T> {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_JPA, CriteriaLogQuery.class);
-    private static final Map<Class<?>, Method> methodsCache = new ConcurrentHashMap<Class<?>, Method>();
-    private static final Map<Class<?>, Class<?>> unwrapCache = new ConcurrentHashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Method> methodsCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Class<?>> unwrapCache = new ConcurrentHashMap<>();
     private static final String GET_QUERY_STRING_MTD = "getQueryString";
 
     private final TypedQuery<T> delegate;

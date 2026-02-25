@@ -123,7 +123,7 @@ public class Scan {
      */
     public List<Scan.Exclude> getExclude() {
         if (exclude == null) {
-            exclude = new ArrayList<Scan.Exclude>();
+            exclude = new ArrayList<>();
         }
         return this.exclude;
     }
@@ -223,7 +223,7 @@ public class Scan {
          */
         public List<Object> getIfClassAvailableOrIfClassNotAvailableOrIfSystemProperty() {
             if (ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty == null) {
-                ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty = new ArrayList<Object>();
+                ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty = new ArrayList<>();
             }
             return this.ifClassAvailableOrIfClassNotAvailableOrIfSystemProperty;
         }

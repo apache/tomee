@@ -117,7 +117,7 @@ public class ActionServlet extends HttpServlet {
         session.setAttribute("movies.collection", movies);
         session.setAttribute("movies.iterator", listIterator);
 
-        final List<Movie> moviesToShow = new ArrayList<Movie>();
+        final List<Movie> moviesToShow = new ArrayList<>();
 
         final boolean hasPrevious = listIterator.hasPrevious();
 

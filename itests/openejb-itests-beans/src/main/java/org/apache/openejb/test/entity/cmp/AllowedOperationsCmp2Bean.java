@@ -32,7 +32,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
 public abstract class AllowedOperationsCmp2Bean implements EntityBean {
     private static int nextId;
     public EntityContext ejbContext;
-    public static final Map<String, OperationsPolicy> allowedOperationsTable = new TreeMap<String, OperationsPolicy>();
+    public static final Map<String, OperationsPolicy> allowedOperationsTable = new TreeMap<>();
 
     public abstract Integer getId();
 

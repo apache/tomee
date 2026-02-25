@@ -121,7 +121,7 @@ public class EjbRelationType {
      */
     public List<EjbRelationshipRoleType> getEjbRelationshipRole() {
         if (ejbRelationshipRole == null) {
-            ejbRelationshipRole = new ArrayList<EjbRelationshipRoleType>();
+            ejbRelationshipRole = new ArrayList<>();
         }
         return this.ejbRelationshipRole;
     }

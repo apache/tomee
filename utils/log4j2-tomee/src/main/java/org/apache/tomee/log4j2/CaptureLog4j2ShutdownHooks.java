@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class CaptureLog4j2ShutdownHooks implements ShutdownCallbackRegistry {
-    static final Collection<Runnable> HOOKS = new CopyOnWriteArraySet<Runnable>();
+    static final Collection<Runnable> HOOKS = new CopyOnWriteArraySet<>();
 
     public Cancellable addShutdownCallback(final Runnable callback) {
         HOOKS.add(callback);

@@ -145,7 +145,7 @@ public class Attributes {
      */
     public List<Id> getId() {
         if (id == null) {
-            id = new ArrayList<Id>();
+            id = new ArrayList<>();
         }
         return this.id;
     }
@@ -192,7 +192,7 @@ public class Attributes {
      */
     public List<Basic> getBasic() {
         if (basic == null) {
-            basic = new ArrayList<Basic>();
+            basic = new ArrayList<>();
         }
         return this.basic;
     }
@@ -219,7 +219,7 @@ public class Attributes {
      */
     public List<Version> getVersion() {
         if (version == null) {
-            version = new ArrayList<Version>();
+            version = new ArrayList<>();
         }
         return this.version;
     }
@@ -246,7 +246,7 @@ public class Attributes {
      */
     public List<ManyToOne> getManyToOne() {
         if (manyToOne == null) {
-            manyToOne = new ArrayList<ManyToOne>();
+            manyToOne = new ArrayList<>();
         }
         return this.manyToOne;
     }
@@ -273,7 +273,7 @@ public class Attributes {
      */
     public List<OneToMany> getOneToMany() {
         if (oneToMany == null) {
-            oneToMany = new ArrayList<OneToMany>();
+            oneToMany = new ArrayList<>();
         }
         return this.oneToMany;
     }
@@ -300,7 +300,7 @@ public class Attributes {
      */
     public List<OneToOne> getOneToOne() {
         if (oneToOne == null) {
-            oneToOne = new ArrayList<OneToOne>();
+            oneToOne = new ArrayList<>();
         }
         return this.oneToOne;
     }
@@ -327,13 +327,13 @@ public class Attributes {
      */
     public List<ManyToMany> getManyToMany() {
         if (manyToMany == null) {
-            manyToMany = new ArrayList<ManyToMany>();
+            manyToMany = new ArrayList<>();
         }
         return this.manyToMany;
     }
 
     public Map<String, RelationField> getRelationshipFieldMap() {
-        final KeyedCollection<String, RelationField> fields = new KeyedCollection<String, RelationField>();
+        final KeyedCollection<String, RelationField> fields = new KeyedCollection<>();
         if (oneToOne != null) fields.addAll(oneToOne);
         if (oneToMany != null) fields.addAll(oneToMany);
         if (manyToMany != null) fields.addAll(manyToMany);
@@ -363,7 +363,7 @@ public class Attributes {
      */
     public List<ElementCollection> getElementCollection() {
         if (elementCollection == null) {
-            elementCollection = new ArrayList<ElementCollection>();
+            elementCollection = new ArrayList<>();
         }
         return this.elementCollection;
     }
@@ -390,7 +390,7 @@ public class Attributes {
      */
     public List<Embedded> getEmbedded() {
         if (embedded == null) {
-            embedded = new ArrayList<Embedded>();
+            embedded = new ArrayList<>();
         }
         return this.embedded;
     }
@@ -417,7 +417,7 @@ public class Attributes {
      */
     public List<Transient> getTransient() {
         if (_transient == null) {
-            _transient = new ArrayList<Transient>();
+            _transient = new ArrayList<>();
         }
         return this._transient;
     }

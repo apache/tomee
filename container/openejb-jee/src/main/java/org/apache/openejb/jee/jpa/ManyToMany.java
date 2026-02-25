@@ -273,7 +273,7 @@ public class ManyToMany implements RelationField {
      */
     public List<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
-            mapKeyAttributeOverride = new ArrayList<AttributeOverride>();
+            mapKeyAttributeOverride = new ArrayList<>();
         }
         return this.mapKeyAttributeOverride;
     }
@@ -320,7 +320,7 @@ public class ManyToMany implements RelationField {
      */
     public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
-            mapKeyJoinColumn = new ArrayList<MapKeyJoinColumn>();
+            mapKeyJoinColumn = new ArrayList<>();
         }
         return this.mapKeyJoinColumn;
     }

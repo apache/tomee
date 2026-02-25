@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class EJBObjectProxyHandle implements Externalizable {
 
     private static final long serialVersionUID = -8325446328982364608L;
-    public static final ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<Resolver>(new ClientSideResovler());
+    public static final ThreadLocal<Resolver> resolver = new DefaultedThreadLocal<>(new ClientSideResovler());
 
     private transient EJBObjectHandler handler;
     private transient ProtocolMetaData metaData;
@@ -78,7 +78,7 @@ public class EJBObjectProxyHandle implements Externalizable {
         if (version > 1) {
             if (in.readBoolean()) {
                 final int queue = in.readInt();
-                final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
+                final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>((queue < 2 ? 2 : queue));
                 final int threads = in.readInt();
                 executorService = JNDIContext.newExecutor(threads, blockingQueue);
             } else {

@@ -114,7 +114,7 @@ public class Session extends EnterpriseBean {
      */
     public List<JavaClass> getServiceEndpoints() {
         if (serviceEndpoints == null) {
-            serviceEndpoints = new ArrayList<JavaClass>();
+            serviceEndpoints = new ArrayList<>();
         }
         return this.serviceEndpoints;
     }

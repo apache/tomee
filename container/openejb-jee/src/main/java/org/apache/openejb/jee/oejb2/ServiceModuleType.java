@@ -100,7 +100,7 @@ public class ServiceModuleType {
      */
     public List<JAXBElement<? extends AbstractServiceType>> getService() {
         if (service == null) {
-            service = new ArrayList<JAXBElement<? extends AbstractServiceType>>();
+            service = new ArrayList<>();
         }
         return this.service;
     }

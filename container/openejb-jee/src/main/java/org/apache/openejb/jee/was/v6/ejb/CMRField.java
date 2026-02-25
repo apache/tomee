@@ -89,7 +89,7 @@ public class CMRField extends CMPAttribute {
      */
     public List<JavaClass> getCollectionTypes() {
         if (collectionTypes == null) {
-            collectionTypes = new ArrayList<JavaClass>();
+            collectionTypes = new ArrayList<>();
         }
         return this.collectionTypes;
     }

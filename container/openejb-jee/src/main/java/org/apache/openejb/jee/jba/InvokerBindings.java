@@ -58,7 +58,7 @@ public class InvokerBindings {
      */
     public List<Invoker> getInvoker() {
         if (invoker == null) {
-            invoker = new ArrayList<Invoker>();
+            invoker = new ArrayList<>();
         }
         return this.invoker;
     }

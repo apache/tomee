@@ -84,9 +84,9 @@ public class EjbJar implements NamedModule {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlTransient
-    protected Map<String, EnterpriseBean> enterpriseBeans = new LinkedHashMap<String, EnterpriseBean>();
+    protected Map<String, EnterpriseBean> enterpriseBeans = new LinkedHashMap<>();
 
     protected Interceptors interceptors;
     protected Relationships relationships;
@@ -147,14 +147,14 @@ public class EjbJar implements NamedModule {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }

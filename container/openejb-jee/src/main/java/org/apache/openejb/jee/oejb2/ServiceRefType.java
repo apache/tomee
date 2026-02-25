@@ -126,7 +126,7 @@ public class ServiceRefType {
      */
     public List<PortType> getPort() {
         if (port == null) {
-            port = new ArrayList<PortType>();
+            port = new ArrayList<>();
         }
         return this.port;
     }

@@ -61,7 +61,7 @@ public class AssemblyDescriptor {
      */
     public List<SecurityRole> getSecurityRole() {
         if (securityRole == null) {
-            securityRole = new ArrayList<SecurityRole>();
+            securityRole = new ArrayList<>();
         }
         return this.securityRole;
     }
@@ -88,7 +88,7 @@ public class AssemblyDescriptor {
      */
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new ArrayList<MessageDestination>();
+            messageDestination = new ArrayList<>();
         }
         return this.messageDestination;
     }

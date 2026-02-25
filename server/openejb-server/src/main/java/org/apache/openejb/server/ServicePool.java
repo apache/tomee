@@ -107,7 +107,7 @@ public class ServicePool extends ServerServiceFilter {
         final int t = threads;
         final int q = queue;
 
-        threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(queue),
+        threadPool = new ThreadPoolExecutor(threadCore, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(queue),
             new ThreadFactory() {
                 private final AtomicInteger i = new AtomicInteger(0);
 

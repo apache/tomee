@@ -43,7 +43,7 @@ public class EjbJarInfo extends CommonInfoObject {
         @XmlElement(name = "message-driven", type = MessageDrivenBeanInfo.class),
         @XmlElement(name = "managed-bean", type = ManagedBeanInfo.class)
     })
-    public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
+    public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<>();
 
     public final List<SecurityRoleInfo> securityRoles = new ArrayList<>();
     public final List<MethodPermissionInfo> methodPermissions = new ArrayList<>();

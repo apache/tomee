@@ -153,35 +153,35 @@ public class FacesConfig {
      */
     public List<FacesApplication> getApplication() {
         if (application == null) {
-            application = new ArrayList<FacesApplication>();
+            application = new ArrayList<>();
         }
         return this.application;
     }
 
     public List<FacesConfigFlowDefinition> getFlowDefinitions() {
         if (flowDefinitions == null) {
-            flowDefinitions = new ArrayList<FacesConfigFlowDefinition>();
+            flowDefinitions = new ArrayList<>();
         }
         return flowDefinitions;
     }
 
     public List<FacesConfigProtectedViews> getProtectedViews() {
         if (protectedViews == null) {
-            protectedViews = new ArrayList<FacesConfigProtectedViews>();
+            protectedViews = new ArrayList<>();
         }
         return protectedViews;
     }
 
     public List<FacesOrdering> getOrdering() {
         if (ordering == null) {
-            ordering = new ArrayList<FacesOrdering>();
+            ordering = new ArrayList<>();
         }
         return ordering;
     }
 
     public List<FacesAbsoluteOrdering> getAbsoluteOrdering() {
         if (absoluteOrdering == null) {
-            absoluteOrdering = new ArrayList<FacesAbsoluteOrdering>();
+            absoluteOrdering = new ArrayList<>();
         }
         return absoluteOrdering;
     }
@@ -208,7 +208,7 @@ public class FacesConfig {
      */
     public List<FacesFactory> getFactory() {
         if (factory == null) {
-            factory = new ArrayList<FacesFactory>();
+            factory = new ArrayList<>();
         }
         return this.factory;
     }
@@ -235,7 +235,7 @@ public class FacesConfig {
      */
     public List<FacesComponent> getComponent() {
         if (component == null) {
-            component = new ArrayList<FacesComponent>();
+            component = new ArrayList<>();
         }
         return this.component;
     }
@@ -262,7 +262,7 @@ public class FacesConfig {
      */
     public List<FacesConverter> getConverter() {
         if (converter == null) {
-            converter = new ArrayList<FacesConverter>();
+            converter = new ArrayList<>();
         }
         return this.converter;
     }
@@ -289,14 +289,14 @@ public class FacesConfig {
      */
     public List<FacesManagedBean> getManagedBean() {
         if (managedBean == null) {
-            managedBean = new ArrayList<FacesManagedBean>();
+            managedBean = new ArrayList<>();
         }
         return this.managedBean;
     }
 
     public List<String> getName() {
         if (name == null) {
-            name = new ArrayList<String>();
+            name = new ArrayList<>();
         }
         return name;
     }
@@ -323,7 +323,7 @@ public class FacesConfig {
      */
     public List<FacesNavigationRule> getNavigationRule() {
         if (navigationRule == null) {
-            navigationRule = new ArrayList<FacesNavigationRule>();
+            navigationRule = new ArrayList<>();
         }
         return this.navigationRule;
     }
@@ -350,7 +350,7 @@ public class FacesConfig {
      */
     public List<FacesReferencedBean> getReferencedBean() {
         if (referencedBean == null) {
-            referencedBean = new ArrayList<FacesReferencedBean>();
+            referencedBean = new ArrayList<>();
         }
         return this.referencedBean;
     }
@@ -377,7 +377,7 @@ public class FacesConfig {
      */
     public List<FacesRenderKit> getRenderKit() {
         if (renderKit == null) {
-            renderKit = new ArrayList<FacesRenderKit>();
+            renderKit = new ArrayList<>();
         }
         return this.renderKit;
     }
@@ -404,7 +404,7 @@ public class FacesConfig {
      */
     public List<FacesLifecycle> getLifecycle() {
         if (lifecycle == null) {
-            lifecycle = new ArrayList<FacesLifecycle>();
+            lifecycle = new ArrayList<>();
         }
         return this.lifecycle;
     }
@@ -431,14 +431,14 @@ public class FacesConfig {
      */
     public List<FacesValidator> getValidator() {
         if (validator == null) {
-            validator = new ArrayList<FacesValidator>();
+            validator = new ArrayList<>();
         }
         return this.validator;
     }
 
     public List<FacesBehavior> getBehavior() {
         if (behavior == null) {
-            behavior = new ArrayList<FacesBehavior>();
+            behavior = new ArrayList<>();
         }
         return behavior;
     }
@@ -465,7 +465,7 @@ public class FacesConfig {
      */
     public List<FacesExtension> getFacesConfigExtension() {
         if (facesConfigExtension == null) {
-            facesConfigExtension = new ArrayList<FacesExtension>();
+            facesConfigExtension = new ArrayList<>();
         }
         return this.facesConfigExtension;
     }

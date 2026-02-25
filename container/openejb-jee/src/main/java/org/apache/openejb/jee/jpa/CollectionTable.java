@@ -98,7 +98,7 @@ public class CollectionTable {
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
-            joinColumn = new ArrayList<JoinColumn>();
+            joinColumn = new ArrayList<>();
         }
         return this.joinColumn;
     }
@@ -125,7 +125,7 @@ public class CollectionTable {
      */
     public List<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new ArrayList<>();
         }
         return this.uniqueConstraint;
     }

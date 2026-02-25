@@ -26,6 +26,6 @@ import java.util.Set;
 public class ApplicationConfig extends Application {
 
     public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(SimpleRESTPojo.class, SimpleRESTEJB.class));
+        return new HashSet<>(Arrays.asList(SimpleRESTPojo.class, SimpleRESTEJB.class));
     }
 }

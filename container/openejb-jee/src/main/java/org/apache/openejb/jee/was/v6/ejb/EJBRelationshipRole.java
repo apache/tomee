@@ -180,7 +180,7 @@ public class EJBRelationshipRole {
      */
     public List<RoleSource> getSources() {
         if (sources == null) {
-            sources = new ArrayList<RoleSource>();
+            sources = new ArrayList<>();
         }
         return this.sources;
     }
@@ -207,7 +207,7 @@ public class EJBRelationshipRole {
      */
     public List<CMRField> getCmrFields() {
         if (cmrFields == null) {
-            cmrFields = new ArrayList<CMRField>();
+            cmrFields = new ArrayList<>();
         }
         return this.cmrFields;
     }
@@ -235,7 +235,7 @@ public class EJBRelationshipRole {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -263,7 +263,7 @@ public class EJBRelationshipRole {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

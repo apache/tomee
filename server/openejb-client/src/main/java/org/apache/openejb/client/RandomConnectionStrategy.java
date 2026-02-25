@@ -48,7 +48,7 @@ public class RandomConnectionStrategy extends AbstractConnectionStrategy {
 
         @Override
         public Iterator<URI> iterator() {
-            return new RandomIterator<URI>(locations);
+            return new RandomIterator<>(locations);
         }
     }
 

@@ -84,7 +84,7 @@ public class EOperation extends ETypedElement {
      */
     public List<EParameter> getEParameters() {
         if (eParameters == null) {
-            eParameters = new ArrayList<EParameter>();
+            eParameters = new ArrayList<>();
         }
         return this.eParameters;
     }
@@ -112,7 +112,7 @@ public class EOperation extends ETypedElement {
      */
     public List<EClassifier> getEClassifierEExceptions() {
         if (eClassifierEExceptions == null) {
-            eClassifierEExceptions = new ArrayList<EClassifier>();
+            eClassifierEExceptions = new ArrayList<>();
         }
         return this.eClassifierEExceptions;
     }

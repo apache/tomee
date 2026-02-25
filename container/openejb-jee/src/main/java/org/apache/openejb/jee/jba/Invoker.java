@@ -104,7 +104,7 @@ public class Invoker {
      */
     public List<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRef>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }

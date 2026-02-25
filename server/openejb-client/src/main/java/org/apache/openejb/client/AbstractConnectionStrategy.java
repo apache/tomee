@@ -41,7 +41,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy {
 
         try {
             final Set<URI> failed = Client.getFailed();
-            final Set<URI> remaining = new HashSet<URI>();
+            final Set<URI> remaining = new HashSet<>();
 
             boolean failover = false;
 

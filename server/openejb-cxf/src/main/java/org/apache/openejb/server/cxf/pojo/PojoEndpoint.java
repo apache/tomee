@@ -166,7 +166,7 @@ public class PojoEndpoint extends CxfEndpoint {
                 }
             }
             if (implementor == null) { // old pojo style
-                final InjectionProcessor<Object> injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, unwrap(context), bindings);
+                final InjectionProcessor<Object> injectionProcessor = new InjectionProcessor<>(instance, port.getInjections(), null, null, unwrap(context), bindings);
                 injectionProcessor.createInstance();
                 implementor = injectionProcessor.getInstance();
                 injector = injectCxfResources(implementor);

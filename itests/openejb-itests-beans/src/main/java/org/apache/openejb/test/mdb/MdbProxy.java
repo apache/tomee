@@ -127,7 +127,7 @@ public class MdbProxy {
             if (tempSession == null) throw new IllegalStateException("Proxy has been destroyed");
 
             // create request
-            final Map<String, Object> request = new TreeMap<String, Object>();
+            final Map<String, Object> request = new TreeMap<>();
             final String signature = MdbUtil.getSignature(method);
             request.put("method", signature);
             request.put("args", args);

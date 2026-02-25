@@ -31,7 +31,7 @@ import java.util.HashMap;
 public abstract class BasicCmp2Bean implements EntityBean {
     private static int nextId;
     public EntityContext ejbContext;
-    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<String, OperationsPolicy>();
+    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<>();
 
     public abstract Integer getId();
 

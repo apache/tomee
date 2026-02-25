@@ -23,7 +23,7 @@ import java.util.HashMap;
  */
 public class Context {
 
-    private final HashMap<Class, Object> components = new HashMap<Class, Object>();
+    private final HashMap<Class, Object> components = new HashMap<>();
 
     @SuppressWarnings({"unchecked"})
     public <T> T getComponent(final Class<T> type) {

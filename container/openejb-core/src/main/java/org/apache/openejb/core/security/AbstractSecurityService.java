@@ -78,8 +78,8 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     protected static final String KEY_REQUEST = "jakarta.servlet.http.HttpServletRequest";
     protected static final Set<String> KEYS = new HashSet<>(asList(KEY_REQUEST, KEY_SUBJECT));
 
-    private static final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
-    protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
+    private static final Map<Object, Identity> identities = new ConcurrentHashMap<>();
+    protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<>();
     protected String defaultUser = "guest";
     private String realmName = "PropertiesLogin";
     protected Subject defaultSubject;

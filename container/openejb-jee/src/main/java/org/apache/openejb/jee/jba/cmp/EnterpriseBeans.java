@@ -75,7 +75,7 @@ public class EnterpriseBeans {
      */
     public List<Entity> getEntity() {
         if (entity == null) {
-            entity = new ArrayList<Entity>();
+            entity = new ArrayList<>();
         }
         return this.entity;
     }

@@ -141,7 +141,7 @@ public class InterceptorBinding {
 
     public List<String> getInterceptorClass() {
         if (interceptorClass == null) {
-            interceptorClass = new ArrayList<String>();
+            interceptorClass = new ArrayList<>();
         }
         return this.interceptorClass;
     }

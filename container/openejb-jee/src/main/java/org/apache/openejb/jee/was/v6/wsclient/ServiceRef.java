@@ -114,7 +114,7 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
      */
     public List<JavaClass> getServiceInterfaces() {
         if (serviceInterfaces == null) {
-            serviceInterfaces = new ArrayList<JavaClass>();
+            serviceInterfaces = new ArrayList<>();
         }
         return this.serviceInterfaces;
     }
@@ -142,7 +142,7 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
      */
     public List<PortComponentRef> getPortComponentRefs() {
         if (portComponentRefs == null) {
-            portComponentRefs = new ArrayList<PortComponentRef>();
+            portComponentRefs = new ArrayList<>();
         }
         return this.portComponentRefs;
     }
@@ -169,7 +169,7 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
      */
     public List<Handler> getHandlers() {
         if (handlers == null) {
-            handlers = new ArrayList<Handler>();
+            handlers = new ArrayList<>();
         }
         return this.handlers;
     }
@@ -196,7 +196,7 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
      */
     public List<QName> getServiceQnames() {
         if (serviceQnames == null) {
-            serviceQnames = new ArrayList<QName>();
+            serviceQnames = new ArrayList<>();
         }
         return this.serviceQnames;
     }

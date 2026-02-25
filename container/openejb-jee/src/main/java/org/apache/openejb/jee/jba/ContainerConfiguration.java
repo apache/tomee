@@ -520,7 +520,7 @@ public class ContainerConfiguration {
      */
     public List<Depends> getDepends() {
         if (depends == null) {
-            depends = new ArrayList<Depends>();
+            depends = new ArrayList<>();
         }
         return this.depends;
     }

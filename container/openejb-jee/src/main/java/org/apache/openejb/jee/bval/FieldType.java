@@ -117,7 +117,7 @@ public class FieldType {
      */
     public List<GroupConversionType> getConvertGroup() {
         if (convertGroup == null) {
-            convertGroup = new ArrayList<GroupConversionType>();
+            convertGroup = new ArrayList<>();
         }
         return this.convertGroup;
     }
@@ -146,7 +146,7 @@ public class FieldType {
      */
     public List<ConstraintType> getConstraint() {
         if (constraint == null) {
-            constraint = new ArrayList<ConstraintType>();
+            constraint = new ArrayList<>();
         }
         return this.constraint;
     }

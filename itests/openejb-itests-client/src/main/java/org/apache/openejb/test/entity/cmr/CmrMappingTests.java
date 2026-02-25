@@ -46,9 +46,9 @@ public class CmrMappingTests extends AbstractCMRTest {
     private Integer compoundPK_20_20;
     private Integer compoundPK_20_20_field1;
 
-    private Set<Integer> oneOwningCreated = new HashSet<Integer>();
-    private Set<Integer> oneInverseCreated = new HashSet<Integer>();
-    private Set<Integer> manyCreated = new HashSet<Integer>();
+    private Set<Integer> oneOwningCreated = new HashSet<>();
+    private Set<Integer> oneInverseCreated = new HashSet<>();
+    private Set<Integer> manyCreated = new HashSet<>();
 
     private OneInverseSideLocalHome oneInverseHome;
     private OneOwningSideLocalHome oneOwningHome;

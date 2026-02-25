@@ -83,7 +83,7 @@ public class EReference extends EStructuralFeature {
      */
     public List<EReference> getEReferenceEOpposites() {
         if (eReferenceEOpposites == null) {
-            eReferenceEOpposites = new ArrayList<EReference>();
+            eReferenceEOpposites = new ArrayList<>();
         }
         return this.eReferenceEOpposites;
     }

@@ -308,7 +308,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             return beanContext.getModuleContext()
                 .getAppContext()
                 .getAsynchronousPool()
-                .invoke(new CUCallable<Object>((Callable<Object>) () -> {
+                .invoke(new CUCallable<>((Callable<Object>) () -> {
                     try {
                         return homeMethodInvoke(interfce, method, args);
                     } catch (final ApplicationException ae) {

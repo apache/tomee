@@ -37,7 +37,7 @@ public class PrefixSessionCustomizer implements SessionCustomizer {
     public void customize(final Session session) throws Exception {
         if (JPAThreadContext.infos.containsKey("properties")) {
             final String prefix = ((Properties) JPAThreadContext.infos.get("properties")).getProperty("openejb.jpa.table_prefix");
-            final List<DatabaseTable> tables = new ArrayList<DatabaseTable>();
+            final List<DatabaseTable> tables = new ArrayList<>();
             for (final ClassDescriptor cd : session.getDescriptors().values()) {
                 for (final DatabaseTable table : cd.getTables()) {
                     update(prefix, tables, table);

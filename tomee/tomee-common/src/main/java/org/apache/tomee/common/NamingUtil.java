@@ -50,11 +50,11 @@ public class NamingUtil {
     public static final String WSDL_URL = "wsdlurl";
 
     private static final AtomicInteger ID = new AtomicInteger(31);
-    private static final Map<String,Object> REGISTRY = new ConcurrentHashMap<String, Object>();
+    private static final Map<String,Object> REGISTRY = new ConcurrentHashMap<>();
 
     // these two attributes are used to be able to cleanup quickly the registry (otherwise we need to duplicate a lot of logic)
     private static StandardContext currentContext;
-    private static Map<StandardContext, Collection<String>> ID_BY_CONTEXT = new HashMap<StandardContext, Collection<String>>();
+    private static Map<StandardContext, Collection<String>> ID_BY_CONTEXT = new HashMap<>();
 
     public static String getProperty(final Reference ref, final String name) {
         final RefAddr addr = ref.get(name);

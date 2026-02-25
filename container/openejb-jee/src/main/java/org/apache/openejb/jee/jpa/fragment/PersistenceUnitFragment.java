@@ -64,14 +64,14 @@ public class PersistenceUnitFragment {
 
     public List<String> getMappingFile() {
         if (mappingFile == null) {
-            mappingFile = new ArrayList<String>();
+            mappingFile = new ArrayList<>();
         }
         return this.mappingFile;
     }
 
     public List<String> getClazz() {
         if (clazz == null) {
-            clazz = new ArrayList<String>();
+            clazz = new ArrayList<>();
         }
         return this.clazz;
     }
@@ -102,7 +102,7 @@ public class PersistenceUnitFragment {
 
     public List<String> getJarFile() {
         if (jarFile == null) {
-            jarFile = new ArrayList<String>();
+            jarFile = new ArrayList<>();
         }
         return this.jarFile;
     }

@@ -56,7 +56,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
     private MBeanInfo info;
     private final Map<String, PropertyDescriptor> attributeMap = new HashMap<>();
 
-    private static final Set<Class<?>> SUPPORTED_PROPERTY_TYPES = new HashSet<Class<?>>() {
+    private static final Set<Class<?>> SUPPORTED_PROPERTY_TYPES = new HashSet<>() {
         {
             add(Integer.class);
             add(Boolean.class);

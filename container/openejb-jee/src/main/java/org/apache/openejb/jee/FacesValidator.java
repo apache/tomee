@@ -77,7 +77,7 @@ public class FacesValidator {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "validator-id", required = true)
     protected java.lang.String validatorId;
     @XmlElement(name = "validator-class", required = true)
@@ -123,14 +123,14 @@ public class FacesValidator {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -201,7 +201,7 @@ public class FacesValidator {
      */
     public List<FacesAttribute> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<FacesAttribute>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }
@@ -228,7 +228,7 @@ public class FacesValidator {
      */
     public List<FacesProperty> getProperty() {
         if (property == null) {
-            property = new ArrayList<FacesProperty>();
+            property = new ArrayList<>();
         }
         return this.property;
     }
@@ -255,7 +255,7 @@ public class FacesValidator {
      */
     public List<FacesValidatorExtension> getValidatorExtension() {
         if (validatorExtension == null) {
-            validatorExtension = new ArrayList<FacesValidatorExtension>();
+            validatorExtension = new ArrayList<>();
         }
         return this.validatorExtension;
     }

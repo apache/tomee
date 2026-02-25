@@ -109,7 +109,7 @@ public class FacesLocaleConfig {
      */
     public List<FacesSupportedLocale> getSupportedLocale() {
         if (supportedLocale == null) {
-            supportedLocale = new ArrayList<FacesSupportedLocale>();
+            supportedLocale = new ArrayList<>();
         }
         return this.supportedLocale;
     }

@@ -75,7 +75,7 @@ public class UserTypeMappings {
      */
     public List<UserTypeMapping> getUserTypeMapping() {
         if (userTypeMapping == null) {
-            userTypeMapping = new ArrayList<UserTypeMapping>();
+            userTypeMapping = new ArrayList<>();
         }
         return this.userTypeMapping;
     }

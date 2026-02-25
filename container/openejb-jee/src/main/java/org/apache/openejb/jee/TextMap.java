@@ -28,10 +28,10 @@ import java.util.Map;
  */
 public class TextMap {
 
-    protected Map<String, String> string = new LinkedHashMap<String, String>();
+    protected Map<String, String> string = new LinkedHashMap<>();
 
     public Text[] toArray() {
-        final List<Text> list = new ArrayList<Text>();
+        final List<Text> list = new ArrayList<>();
         for (final Map.Entry<String, String> entry : string.entrySet()) {
             list.add(new Text(entry.getKey(), entry.getValue()));
         }

@@ -180,8 +180,8 @@ public class OpenEJBArchiveProcessor {
 
                         final List<URL> webappAdditionalPaths = new LinkedList<>();
                         final CompositeBeans webAppBeansXml = new CompositeBeans();
-                        final List<Archive> webAppArchives = new LinkedList<Archive>();
-                        final Map<URL, List<String>> webAppClassesByUrl = new HashMap<URL, List<String>>();
+                        final List<Archive> webAppArchives = new LinkedList<>();
+                        final Map<URL, List<String>> webAppClassesByUrl = new HashMap<>();
                         final CompositeArchive webAppArchive = analyzeLibs(parent,
                                 webappAdditionalPaths, webAppClassesByUrl,
                                 webAppArchives, webAppBeansXml,
@@ -216,7 +216,7 @@ public class OpenEJBArchiveProcessor {
 
                         addPersistenceXml(archive, WEB_INF, appModule);
                         addOpenEJbJarXml(archive, WEB_INF, ejbModule);
-                        addValidationXml(archive, WEB_INF, new HashMap<String, Object>(), ejbModule);
+                        addValidationXml(archive, WEB_INF, new HashMap<>(), ejbModule);
                         addResourcesXml(archive, WEB_INF, ejbModule);
                         addEnvEntries(archive, WEB_INF, appModule, ejbModule);
                     }
@@ -384,7 +384,7 @@ public class OpenEJBArchiveProcessor {
             } if (UrlAsset.class.isInstance(asset) || FileAsset.class.isInstance(asset)) {
                 try {
                     final URL url = UrlAsset.class.isInstance(asset) ? get(URL.class, "url", asset) : get(File.class, "file", asset).toURI().toURL();
-                    final List<String> classes = new ArrayList<String>();
+                    final List<String> classes = new ArrayList<>();
                     archives.add(new FilteredArchive(
                             new JarArchive(parent, url),
                             new WebappAggregatedArchive.ScanXmlSaverFilter(false, null, classes, null)));
@@ -596,7 +596,7 @@ public class OpenEJBArchiveProcessor {
         private final Map<URL, List<String>> classesMap;
 
         public SimpleWebappAggregatedArchive(final ClassLoader cl, final CompositeArchive archive, final Map<URL, List<String>> map) {
-            super(cl, new HashMap<String, Object>(), new ArrayList<URL>());
+            super(cl, new HashMap<>(), new ArrayList<>());
 
             delegate = archive;
             classesMap = map;

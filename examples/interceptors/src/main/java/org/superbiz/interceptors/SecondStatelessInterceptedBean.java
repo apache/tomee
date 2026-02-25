@@ -32,7 +32,7 @@ public class SecondStatelessInterceptedBean implements SecondStatelessIntercepte
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> methodWithDefaultInterceptorsExcluded() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("methodWithDefaultInterceptorsExcluded");
         return list;
 

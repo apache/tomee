@@ -36,7 +36,7 @@ public enum RequestType {
     STOP_REQUEST_stop((byte) 's');
 
     private final byte code;
-    private final static Map<Byte, RequestType> ENUM_MAP = new HashMap<Byte, RequestType>();
+    private final static Map<Byte, RequestType> ENUM_MAP = new HashMap<>();
 
     static {
         for (final RequestType e : RequestType.values()) {

@@ -121,11 +121,11 @@ public class ManyToManyTests extends AbstractCMRTest {
         beginTransaction();
         try {
             PlatformLocal platform = findPlatform(new Integer(1));
-            platform.setGames(new HashSet<GameLocal>());
+            platform.setGames(new HashSet<>());
             platform = findPlatform(new Integer(2));
-            platform.setGames(new HashSet<GameLocal>());
+            platform.setGames(new HashSet<>());
             platform = findPlatform(new Integer(3));
-            platform.setGames(new HashSet<GameLocal>());
+            platform.setGames(new HashSet<>());
         } finally {
             completeTransaction();
         }
@@ -138,9 +138,9 @@ public class ManyToManyTests extends AbstractCMRTest {
         beginTransaction();
         try {
             GameLocal game = findGame(new Integer(11));
-            game.setPlatforms(new HashSet<PlatformLocal>());
+            game.setPlatforms(new HashSet<>());
             game = findGame(new Integer(22));
-            game.setPlatforms(new HashSet<PlatformLocal>());
+            game.setPlatforms(new HashSet<>());
         } finally {
             completeTransaction();
         }

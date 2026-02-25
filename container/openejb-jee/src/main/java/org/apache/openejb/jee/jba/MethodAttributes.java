@@ -56,7 +56,7 @@ public class MethodAttributes {
      */
     public List<Method> getMethod() {
         if (method == null) {
-            method = new ArrayList<Method>();
+            method = new ArrayList<>();
         }
         return this.method;
     }

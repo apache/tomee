@@ -464,7 +464,7 @@ public class Entity {
      */
     public List<CmpField> getCmpField() {
         if (cmpField == null) {
-            cmpField = new ArrayList<CmpField>();
+            cmpField = new ArrayList<>();
         }
         return this.cmpField;
     }
@@ -551,7 +551,7 @@ public class Entity {
      */
     public List<Query> getQuery() {
         if (query == null) {
-            query = new ArrayList<Query>();
+            query = new ArrayList<>();
         }
         return this.query;
     }

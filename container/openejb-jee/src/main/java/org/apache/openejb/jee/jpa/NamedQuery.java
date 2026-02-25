@@ -157,7 +157,7 @@ public class NamedQuery {
      */
     public List<QueryHint> getHint() {
         if (hint == null) {
-            hint = new ArrayList<QueryHint>();
+            hint = new ArrayList<>();
         }
         return this.hint;
     }

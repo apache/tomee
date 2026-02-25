@@ -41,7 +41,7 @@ import org.apache.openejb.jee.JAXBContextFactory;
  */
 public class JaxbOpenejbJar2 {
 
-    private static final Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
+    private static final Map<Class<?>, JAXBContext> contexts = new HashMap<>();
 
     private static JAXBContext getContext(final Class<?> type) throws JAXBException {
         JAXBContext jaxbContext = contexts.get(type);

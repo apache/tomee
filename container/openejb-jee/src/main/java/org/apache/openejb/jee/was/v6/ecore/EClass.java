@@ -93,7 +93,7 @@ public class EClass extends EClassifier {
      */
     public List<EClass> getEClassESuperTypes() {
         if (eClassESuperTypes == null) {
-            eClassESuperTypes = new ArrayList<EClass>();
+            eClassESuperTypes = new ArrayList<>();
         }
         return this.eClassESuperTypes;
     }
@@ -121,7 +121,7 @@ public class EClass extends EClassifier {
      */
     public List<EOperation> getEOperations() {
         if (eOperations == null) {
-            eOperations = new ArrayList<EOperation>();
+            eOperations = new ArrayList<>();
         }
         return this.eOperations;
     }
@@ -149,7 +149,7 @@ public class EClass extends EClassifier {
      */
     public List<EStructuralFeature> getEStructuralFeatures() {
         if (eStructuralFeatures == null) {
-            eStructuralFeatures = new ArrayList<EStructuralFeature>();
+            eStructuralFeatures = new ArrayList<>();
         }
         return this.eStructuralFeatures;
     }

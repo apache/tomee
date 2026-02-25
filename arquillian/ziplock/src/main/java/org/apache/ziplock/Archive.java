@@ -35,8 +35,8 @@ import java.util.zip.ZipOutputStream;
  */
 public class Archive {
 
-    final Map<String, String> manifest = new HashMap<String, String>();
-    final Map<String, byte[]> entries = new HashMap<String, byte[]>();
+    final Map<String, String> manifest = new HashMap<>();
+    final Map<String, byte[]> entries = new HashMap<>();
 
     public static Archive archive() {
         return new Archive();
@@ -175,7 +175,7 @@ public class Archive {
     }
 
     private HashMap<String, byte[]> entries() {
-        final HashMap<String, byte[]> entries = new HashMap<String, byte[]>(this.entries);
+        final HashMap<String, byte[]> entries = new HashMap<>(this.entries);
         entries.put("META-INF/MANIFEST.MF", buildManifest().getBytes());
         return entries;
     }

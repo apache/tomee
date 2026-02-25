@@ -26,7 +26,7 @@ import jakarta.servlet.ServletRequestListener;
  * @deprecated this features is imo highly questionable. We should rather fix the root of the issue
  */
 public final class WebBeansListenerHelper {
-    private static final ThreadLocal<Boolean> FAKE_REQUEST = new ThreadLocal<Boolean>();
+    private static final ThreadLocal<Boolean> FAKE_REQUEST = new ThreadLocal<>();
 
     public static void destroyFakedRequest(final ServletRequestListener listener) {
         final Boolean faked = FAKE_REQUEST.get();

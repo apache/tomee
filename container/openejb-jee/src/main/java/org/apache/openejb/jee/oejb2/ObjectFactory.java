@@ -512,7 +512,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "references", scope = GbeanType.class)
     public JAXBElement<ReferencesType> createGbeanTypeReferences(final ReferencesType value) {
-        return new JAXBElement<ReferencesType>(_GbeanTypeReferences_QNAME, ReferencesType.class, GbeanType.class, value);
+        return new JAXBElement<>(_GbeanTypeReferences_QNAME, ReferencesType.class, GbeanType.class, value);
     }
 
     /**
@@ -520,7 +520,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "xml-reference", scope = GbeanType.class)
     public JAXBElement<XmlAttributeType> createGbeanTypeXmlReference(final XmlAttributeType value) {
-        return new JAXBElement<XmlAttributeType>(_GbeanTypeXmlReference_QNAME, XmlAttributeType.class, GbeanType.class, value);
+        return new JAXBElement<>(_GbeanTypeXmlReference_QNAME, XmlAttributeType.class, GbeanType.class, value);
     }
 
     /**
@@ -528,7 +528,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "dependency", scope = GbeanType.class)
     public JAXBElement<PatternType> createGbeanTypeDependency(final PatternType value) {
-        return new JAXBElement<PatternType>(_GbeanTypeDependency_QNAME, PatternType.class, GbeanType.class, value);
+        return new JAXBElement<>(_GbeanTypeDependency_QNAME, PatternType.class, GbeanType.class, value);
     }
 
     /**
@@ -536,7 +536,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "attribute", scope = GbeanType.class)
     public JAXBElement<AttributeType> createGbeanTypeAttribute(final AttributeType value) {
-        return new JAXBElement<AttributeType>(_GbeanTypeAttribute_QNAME, AttributeType.class, GbeanType.class, value);
+        return new JAXBElement<>(_GbeanTypeAttribute_QNAME, AttributeType.class, GbeanType.class, value);
     }
 
     /**
@@ -544,7 +544,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "reference", scope = GbeanType.class)
     public JAXBElement<ReferenceType> createGbeanTypeReference(final ReferenceType value) {
-        return new JAXBElement<ReferenceType>(_GbeanTypeReference_QNAME, ReferenceType.class, GbeanType.class, value);
+        return new JAXBElement<>(_GbeanTypeReference_QNAME, ReferenceType.class, GbeanType.class, value);
     }
 
     /**
@@ -552,7 +552,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "xml-attribute", scope = GbeanType.class)
     public JAXBElement<XmlAttributeType> createGbeanTypeXmlAttribute(final XmlAttributeType value) {
-        return new JAXBElement<XmlAttributeType>(_GbeanTypeXmlAttribute_QNAME, XmlAttributeType.class, GbeanType.class, value);
+        return new JAXBElement<>(_GbeanTypeXmlAttribute_QNAME, XmlAttributeType.class, GbeanType.class, value);
     }
 
     /**
@@ -560,7 +560,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "resource-env-ref")
     public JAXBElement<ResourceEnvRefType> createResourceEnvRef(final ResourceEnvRefType value) {
-        return new JAXBElement<ResourceEnvRefType>(_ResourceEnvRef_QNAME, ResourceEnvRefType.class, null, value);
+        return new JAXBElement<>(_ResourceEnvRef_QNAME, ResourceEnvRefType.class, null, value);
     }
 
     /**
@@ -568,7 +568,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "resource-ref")
     public JAXBElement<ResourceRefType> createResourceRef(final ResourceRefType value) {
-        return new JAXBElement<ResourceRefType>(_ResourceRef_QNAME, ResourceRefType.class, null, value);
+        return new JAXBElement<>(_ResourceRef_QNAME, ResourceRefType.class, null, value);
     }
 
     /**
@@ -576,7 +576,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "entity-manager-factory-ref", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/naming-1.2", substitutionHeadName = "abstract-naming-entry")
     public JAXBElement<PersistenceUnitRefType> createEntityManagerFactoryRef(final PersistenceUnitRefType value) {
-        return new JAXBElement<PersistenceUnitRefType>(_EntityManagerFactoryRef_QNAME, PersistenceUnitRefType.class, null, value);
+        return new JAXBElement<>(_EntityManagerFactoryRef_QNAME, PersistenceUnitRefType.class, null, value);
     }
 
     /**
@@ -584,7 +584,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "abstract-naming-entry")
     public JAXBElement<AbstractNamingEntryType> createAbstractNamingEntry(final AbstractNamingEntryType value) {
-        return new JAXBElement<AbstractNamingEntryType>(_AbstractNamingEntry_QNAME, AbstractNamingEntryType.class, null, value);
+        return new JAXBElement<>(_AbstractNamingEntry_QNAME, AbstractNamingEntryType.class, null, value);
     }
 
     /**
@@ -592,7 +592,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "dependencies")
     public JAXBElement<DependenciesType> createDependencies(final DependenciesType value) {
-        return new JAXBElement<DependenciesType>(_Dependencies_QNAME, DependenciesType.class, null, value);
+        return new JAXBElement<>(_Dependencies_QNAME, DependenciesType.class, null, value);
     }
 
     /**
@@ -600,7 +600,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", name = "application")
     public JAXBElement<ApplicationType> createApplication(final ApplicationType value) {
-        return new JAXBElement<ApplicationType>(_Application_QNAME, ApplicationType.class, null, value);
+        return new JAXBElement<>(_Application_QNAME, ApplicationType.class, null, value);
     }
 
     /**
@@ -608,7 +608,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "message-destination")
     public JAXBElement<MessageDestinationType> createMessageDestination(final MessageDestinationType value) {
-        return new JAXBElement<MessageDestinationType>(_MessageDestination_QNAME, MessageDestinationType.class, null, value);
+        return new JAXBElement<>(_MessageDestination_QNAME, MessageDestinationType.class, null, value);
     }
 
     /**
@@ -616,7 +616,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "module")
     public JAXBElement<ServiceModuleType> createModule(final ServiceModuleType value) {
-        return new JAXBElement<ServiceModuleType>(_Module_QNAME, ServiceModuleType.class, null, value);
+        return new JAXBElement<>(_Module_QNAME, ServiceModuleType.class, null, value);
     }
 
     /**
@@ -624,7 +624,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", name = "clustering")
     public JAXBElement<AbstractClusteringType> createClustering(final AbstractClusteringType value) {
-        return new JAXBElement<AbstractClusteringType>(_Clustering_QNAME, AbstractClusteringType.class, null, value);
+        return new JAXBElement<>(_Clustering_QNAME, AbstractClusteringType.class, null, value);
     }
 
     /**
@@ -632,7 +632,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://tomee.apache.org/xml/ns/pkgen-2.1", name = "key-generator")
     public JAXBElement<KeyGeneratorType> createKeyGenerator(final KeyGeneratorType value) {
-        return new JAXBElement<KeyGeneratorType>(_KeyGenerator_QNAME, KeyGeneratorType.class, null, value);
+        return new JAXBElement<>(_KeyGenerator_QNAME, KeyGeneratorType.class, null, value);
     }
 
     /**
@@ -640,7 +640,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "environment")
     public JAXBElement<EnvironmentType> createEnvironment(final EnvironmentType value) {
-        return new JAXBElement<EnvironmentType>(_Environment_QNAME, EnvironmentType.class, null, value);
+        return new JAXBElement<>(_Environment_QNAME, EnvironmentType.class, null, value);
     }
 
     /**
@@ -648,7 +648,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", name = "security")
     public JAXBElement<AbstractSecurityType> createSecurity(final AbstractSecurityType value) {
-        return new JAXBElement<AbstractSecurityType>(_Security_QNAME, AbstractSecurityType.class, null, value);
+        return new JAXBElement<>(_Security_QNAME, AbstractSecurityType.class, null, value);
     }
 
     /**
@@ -656,7 +656,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "resource-adapter")
     public JAXBElement<ResourceLocatorType> createResourceAdapter(final ResourceLocatorType value) {
-        return new JAXBElement<ResourceLocatorType>(_ResourceAdapter_QNAME, ResourceLocatorType.class, null, value);
+        return new JAXBElement<>(_ResourceAdapter_QNAME, ResourceLocatorType.class, null, value);
     }
 
     /**
@@ -664,7 +664,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "ejb-local-ref")
     public JAXBElement<EjbLocalRefType> createEjbLocalRef(final EjbLocalRefType value) {
-        return new JAXBElement<EjbLocalRefType>(_EjbLocalRef_QNAME, EjbLocalRefType.class, null, value);
+        return new JAXBElement<>(_EjbLocalRef_QNAME, EjbLocalRefType.class, null, value);
     }
 
     /**
@@ -672,7 +672,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "server-environment")
     public JAXBElement<EnvironmentType> createServerEnvironment(final EnvironmentType value) {
-        return new JAXBElement<EnvironmentType>(_ServerEnvironment_QNAME, EnvironmentType.class, null, value);
+        return new JAXBElement<>(_ServerEnvironment_QNAME, EnvironmentType.class, null, value);
     }
 
     /**
@@ -680,7 +680,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "service")
     public JAXBElement<AbstractServiceType> createService(final AbstractServiceType value) {
-        return new JAXBElement<AbstractServiceType>(_Service_QNAME, AbstractServiceType.class, null, value);
+        return new JAXBElement<>(_Service_QNAME, AbstractServiceType.class, null, value);
     }
 
     /**
@@ -697,12 +697,12 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "gbean", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", substitutionHeadName = "service")
     public JAXBElement<GbeanType> createGbean(final GbeanType value) {
-        return new JAXBElement<GbeanType>(_Gbean_QNAME, GbeanType.class, null, value);
+        return new JAXBElement<>(_Gbean_QNAME, GbeanType.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/security-2.0", name = "security", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", substitutionHeadName = "security")
     public JAXBElement<SecurityType> createSecurity(final SecurityType value) {
-        return new JAXBElement<SecurityType>(_Security2_QNAME, SecurityType.class, null, value);
+        return new JAXBElement<>(_Security2_QNAME, SecurityType.class, null, value);
     }
 
     /**
@@ -710,7 +710,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "workmanager")
     public JAXBElement<GbeanLocatorType> createWorkmanager(final GbeanLocatorType value) {
-        return new JAXBElement<GbeanLocatorType>(_Workmanager_QNAME, GbeanLocatorType.class, null, value);
+        return new JAXBElement<>(_Workmanager_QNAME, GbeanLocatorType.class, null, value);
     }
 
     /**
@@ -718,7 +718,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "service-ref")
     public JAXBElement<ServiceRefType> createServiceRef(final ServiceRefType value) {
-        return new JAXBElement<ServiceRefType>(_ServiceRef_QNAME, ServiceRefType.class, null, value);
+        return new JAXBElement<>(_ServiceRef_QNAME, ServiceRefType.class, null, value);
     }
 
     /**
@@ -726,7 +726,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "cmp-connection-factory")
     public JAXBElement<ResourceLocatorType> createCmpConnectionFactory(final ResourceLocatorType value) {
-        return new JAXBElement<ResourceLocatorType>(_CmpConnectionFactory_QNAME, ResourceLocatorType.class, null, value);
+        return new JAXBElement<>(_CmpConnectionFactory_QNAME, ResourceLocatorType.class, null, value);
     }
 
     /**
@@ -734,7 +734,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", name = "client-environment")
     public JAXBElement<EnvironmentType> createClientEnvironment(final EnvironmentType value) {
-        return new JAXBElement<EnvironmentType>(_ClientEnvironment_QNAME, EnvironmentType.class, null, value);
+        return new JAXBElement<>(_ClientEnvironment_QNAME, EnvironmentType.class, null, value);
     }
 
     /**
@@ -742,7 +742,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "gbean-ref", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/naming-1.2", substitutionHeadName = "abstract-naming-entry")
     public JAXBElement<GbeanRefType> createGbeanRef(final GbeanRefType value) {
-        return new JAXBElement<GbeanRefType>(_GbeanRef_QNAME, GbeanRefType.class, null, value);
+        return new JAXBElement<>(_GbeanRef_QNAME, GbeanRefType.class, null, value);
     }
 
     /**
@@ -750,7 +750,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://tomee.apache.org/xml/ns/openejb-jar-2.2", name = "openejb-jar")
     public JAXBElement<OpenejbJarType> createOpenejbJar(final OpenejbJarType value) {
-        return new JAXBElement<OpenejbJarType>(_OpenejbJar_QNAME, OpenejbJarType.class, null, value);
+        return new JAXBElement<>(_OpenejbJar_QNAME, OpenejbJarType.class, null, value);
     }
 
     /**
@@ -758,7 +758,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "ejb-ref")
     public JAXBElement<EjbRefType> createEjbRef(final EjbRefType value) {
-        return new JAXBElement<EjbRefType>(_EjbRef_QNAME, EjbRefType.class, null, value);
+        return new JAXBElement<>(_EjbRef_QNAME, EjbRefType.class, null, value);
     }
 
     /**
@@ -766,14 +766,14 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "web-container")
     public JAXBElement<GbeanLocatorType> createWebContainer(final GbeanLocatorType value) {
-        return new JAXBElement<GbeanLocatorType>(_WebContainer_QNAME, GbeanLocatorType.class, null, value);
+        return new JAXBElement<>(_WebContainer_QNAME, GbeanLocatorType.class, null, value);
     }
 
     private final static QName _EjbJar_QNAME = new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", "ejb-jar");
 
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", name = "ejb-jar")
     public JAXBElement<GeronimoEjbJarType> createEjbJar(final GeronimoEjbJarType value) {
-        return new JAXBElement<GeronimoEjbJarType>(_EjbJar_QNAME, GeronimoEjbJarType.class, null, value);
+        return new JAXBElement<>(_EjbJar_QNAME, GeronimoEjbJarType.class, null, value);
     }
 
     /**
@@ -788,7 +788,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/openejb-clustering-wadi-1.2", name = "openejb-clustering-wadi", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", substitutionHeadName = "clustering")
     public JAXBElement<OpenejbClusteringWadiType> createOpenejbClusteringWadi(final OpenejbClusteringWadiType value) {
-        return new JAXBElement<OpenejbClusteringWadiType>(_OpenejbClusteringWadi_QNAME, OpenejbClusteringWadiType.class, null, value);
+        return new JAXBElement<>(_OpenejbClusteringWadi_QNAME, OpenejbClusteringWadiType.class, null, value);
     }
 
 }

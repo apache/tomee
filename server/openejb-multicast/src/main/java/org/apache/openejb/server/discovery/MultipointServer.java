@@ -111,7 +111,7 @@ public class MultipointServer {
     private final Condition stopped = lock.newCondition();
 
     public MultipointServer(final int port, final Tracker tracker) throws IOException {
-        this("localhost", "localhost", port, tracker, randomColor(), true, new HashSet<URI>(0), new Duration(30, TimeUnit.SECONDS));
+        this("localhost", "localhost", port, tracker, randomColor(), true, new HashSet<>(0), new Duration(30, TimeUnit.SECONDS));
     }
 
     public MultipointServer(final String bindHost, String broadcastHost, final int port, final Tracker tracker, final String name, final boolean debug, final Set<URI> roots, Duration reconnectDelay) throws IOException {
@@ -1009,8 +1009,9 @@ public class MultipointServer {
                 } else {
                     // Case 2 -- We called each other at the same time
 
-                    Arrays.sort(sessions, new Comparator<Session>() {
+                    Arrays.sort(sessions, new Comparator<>() {
                         // Goal: Keep the connection with the lowest port number
+
                         ///
                         // Low vs high is not very significant.  The critical
                         // part is that they both choose the same connection.
@@ -1208,7 +1209,7 @@ public class MultipointServer {
 
         private Host(final URI uri) {
             this.uri = uri;
-            this.address = new FutureTask<InetAddress>(() -> InetAddress.getByName(Host.this.uri.getHost()));
+            this.address = new FutureTask<>(() -> InetAddress.getByName(Host.this.uri.getHost()));
         }
 
         public void resolveDns() {

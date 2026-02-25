@@ -62,7 +62,7 @@ public class UnknownHomeIntfcTests extends UnknownCmpTestClient {
     }
 
     public void test03_findByLastName() {
-        final Set<Object> keys = new HashSet<Object>();
+        final Set<Object> keys = new HashSet<>();
         try {
             ejbObject = ejbHome.createObject("David Blevins");
             ejbPrimaryKey = ejbObject.getPrimaryKey();
@@ -84,7 +84,7 @@ public class UnknownHomeIntfcTests extends UnknownCmpTestClient {
 
         try {
             final Collection objects = ejbHome.findByLastName("Blevins");
-            final Set<Object> foundKeys = new HashSet<Object>();
+            final Set<Object> foundKeys = new HashSet<>();
             assertNotNull("The Collection is null", objects);
             assertEquals("The Collection is not the right size.", keys.size(), objects.size());
             for (final Object object : objects) {

@@ -62,7 +62,7 @@ public class MockitoExtension implements Extension {
     }
 
     private static class MockBean<T> implements Bean<T>, Prioritized {
-        protected static final Set<Annotation> QUALIFIERS = new HashSet<Annotation>(2) {{
+        protected static final Set<Annotation> QUALIFIERS = new HashSet<>(2) {{
             add(DEFAULT_ANNOTATION);
             add(ANY_ANNOTATION);
         }};
@@ -75,7 +75,7 @@ public class MockitoExtension implements Extension {
             clazz = key;
             instance = value;
 
-            types = new HashSet<Type>();
+            types = new HashSet<>();
             Class<?> current = clazz;
             if (clazz != null) {
                 if (!Proxy.isProxyClass(current)) {
@@ -159,7 +159,7 @@ public class MockitoExtension implements Extension {
                 types.remove(clazz);
             }
 
-            qualifiers = new HashSet<Annotation>(2);
+            qualifiers = new HashSet<>(2);
             qualifiers.add(ANY_ANNOTATION);
             qualifiers.add(new NamedLiteral(name));
         }

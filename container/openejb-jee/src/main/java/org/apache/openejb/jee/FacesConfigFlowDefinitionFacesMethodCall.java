@@ -126,7 +126,7 @@ public class FacesConfigFlowDefinitionFacesMethodCall {
      */
     public List<FacesConfigFlowDefinitionFlowCallParameter> getParameter() {
         if (parameter == null) {
-            parameter = new ArrayList<FacesConfigFlowDefinitionFlowCallParameter>();
+            parameter = new ArrayList<>();
         }
         return this.parameter;
     }

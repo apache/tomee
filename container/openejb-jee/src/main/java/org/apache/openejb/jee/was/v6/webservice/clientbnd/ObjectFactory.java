@@ -60,8 +60,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "webservice_clientbnd.xmi", name = "ServiceRefBinding")
     public JAXBElement<ServiceRefBinding> createServiceRefBinding(
         final ServiceRefBinding value) {
-        return new JAXBElement<ServiceRefBinding>(_ServiceRefBinding_QNAME,
-            ServiceRefBinding.class, null, value);
+        return new JAXBElement<>(_ServiceRefBinding_QNAME,
+                ServiceRefBinding.class, null, value);
     }
 
 }

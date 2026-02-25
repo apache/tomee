@@ -92,7 +92,7 @@ public class EJBObjectHandle implements java.io.Externalizable, jakarta.ejb.Hand
         if (version > 1) {
             if (in.readBoolean()) {
                 final int queue = in.readInt();
-                final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
+                final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>((queue < 2 ? 2 : queue));
                 final int threads = in.readInt();
                 executorService = JNDIContext.newExecutor(threads, blockingQueue);
             } else {

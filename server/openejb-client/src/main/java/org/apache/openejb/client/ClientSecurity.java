@@ -29,7 +29,7 @@ public class ClientSecurity {
     private static ServerMetaData server;
     private static IdentityResolver identityResolver;
     private static Object staticClientIdentity;
-    private static final InheritableThreadLocal<Object> threadClientIdentity = new InheritableThreadLocal<Object>();
+    private static final InheritableThreadLocal<Object> threadClientIdentity = new InheritableThreadLocal<>();
 
     static {
         // determine the server uri

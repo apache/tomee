@@ -625,7 +625,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private static String getHosts(final Set<String> ignore) {
 
-        final Set<String> hosts = new TreeSet<String>(new Comparator<String>() {
+        final Set<String> hosts = new TreeSet<>(new Comparator<>() {
             private boolean isIPv4LiteralAddress(final InetAddress val) {
                 return Inet4Address.class.isInstance(val);
             }
@@ -645,7 +645,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     try {
                         address1 = InetAddress.getByName(h1);
                         address2 = InetAddress.getByName(h2);
-                    } catch(final UnknownHostException e) {
+                    } catch (final UnknownHostException e) {
                         // no-op
                     }
 

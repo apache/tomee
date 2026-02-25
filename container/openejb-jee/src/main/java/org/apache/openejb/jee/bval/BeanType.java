@@ -122,7 +122,7 @@ public class BeanType {
      */
     public List<FieldType> getField() {
         if (field == null) {
-            field = new ArrayList<FieldType>();
+            field = new ArrayList<>();
         }
         return this.field;
     }
@@ -151,7 +151,7 @@ public class BeanType {
      */
     public List<GetterType> getGetter() {
         if (getter == null) {
-            getter = new ArrayList<GetterType>();
+            getter = new ArrayList<>();
         }
         return this.getter;
     }
@@ -180,7 +180,7 @@ public class BeanType {
      */
     public List<ConstructorType> getConstructor() {
         if (constructor == null) {
-            constructor = new ArrayList<ConstructorType>();
+            constructor = new ArrayList<>();
         }
         return this.constructor;
     }
@@ -209,7 +209,7 @@ public class BeanType {
      */
     public List<MethodType> getMethod() {
         if (method == null) {
-            method = new ArrayList<MethodType>();
+            method = new ArrayList<>();
         }
         return this.method;
     }

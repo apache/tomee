@@ -84,28 +84,28 @@ public class EjbDeployment {
 
     public List<EjbLink> getEjbLink() {
         if (ejbLink == null) {
-            ejbLink = new ArrayList<EjbLink>();
+            ejbLink = new ArrayList<>();
         }
         return this.ejbLink;
     }
 
     public List<Jndi> getJndi() {
         if (jndi == null) {
-            jndi = new ArrayList<Jndi>();
+            jndi = new ArrayList<>();
         }
         return jndi;
     }
 
     public List<ResourceLink> getResourceLink() {
         if (resourceLink == null) {
-            resourceLink = new ArrayList<ResourceLink>();
+            resourceLink = new ArrayList<>();
         }
         return this.resourceLink;
     }
 
     public List<Query> getQuery() {
         if (query == null) {
-            query = new ArrayList<Query>();
+            query = new ArrayList<>();
         }
         return this.query;
     }
@@ -115,7 +115,7 @@ public class EjbDeployment {
     }
 
     public Map<String, ResourceLink> getResourceLinksMap() {
-        final Map<String, ResourceLink> map = new LinkedHashMap<String, ResourceLink>();
+        final Map<String, ResourceLink> map = new LinkedHashMap<>();
         for (final ResourceLink link : getResourceLink()) {
             map.put(link.getResRefName(), link);
         }
@@ -127,7 +127,7 @@ public class EjbDeployment {
     }
 
     public Map<String, EjbLink> getEjbLinksMap() {
-        final Map<String, EjbLink> map = new LinkedHashMap<String, EjbLink>();
+        final Map<String, EjbLink> map = new LinkedHashMap<>();
         for (final EjbLink link : getEjbLink()) {
             map.put(link.getEjbRefName(), link);
         }
@@ -188,7 +188,7 @@ public class EjbDeployment {
 
     public List<RoleMapping> getRoleMapping() {
         if (roleMapping == null) {
-            roleMapping = new ArrayList<RoleMapping>();
+            roleMapping = new ArrayList<>();
         }
         return roleMapping;
     }

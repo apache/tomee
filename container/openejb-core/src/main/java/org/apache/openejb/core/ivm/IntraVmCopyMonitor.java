@@ -36,7 +36,7 @@ public final class IntraVmCopyMonitor {
         }
     }
 
-    private static final ThreadLocal<IntraVmCopyMonitor> threadMonitor = new ThreadLocal<IntraVmCopyMonitor>();
+    private static final ThreadLocal<IntraVmCopyMonitor> threadMonitor = new ThreadLocal<>();
 
     private State state = State.NONE;
 

@@ -89,7 +89,7 @@ public class ServiceEndpointInterfaceMapping implements Keyable<String> {
 
     public List<ServiceEndpointMethodMapping> getServiceEndpointMethodMapping() {
         if (serviceEndpointMethodMapping == null) {
-            serviceEndpointMethodMapping = new ArrayList<ServiceEndpointMethodMapping>();
+            serviceEndpointMethodMapping = new ArrayList<>();
         }
         return this.serviceEndpointMethodMapping;
     }

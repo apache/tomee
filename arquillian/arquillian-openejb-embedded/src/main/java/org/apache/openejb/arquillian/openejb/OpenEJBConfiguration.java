@@ -68,6 +68,6 @@ public class OpenEJBConfiguration implements ContainerConfiguration {
 
     public void setSingleDeploymentByArchiveName(final String singleDeploymentByArchiveName) {
         this.singleDeploymentByArchiveName = singleDeploymentByArchiveName == null || singleDeploymentByArchiveName.trim().isEmpty() ?
-                Collections.<String>emptyList() : new HashSet<String>(asList(singleDeploymentByArchiveName.split(" *, *")));
+                Collections.<String>emptyList() : new HashSet<>(asList(singleDeploymentByArchiveName.split(" *, *")));
     }
 }

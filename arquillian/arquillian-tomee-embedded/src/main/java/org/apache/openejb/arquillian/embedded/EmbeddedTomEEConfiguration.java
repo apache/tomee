@@ -185,7 +185,7 @@ public class EmbeddedTomEEConfiguration extends TomEEConfiguration {
 
     @Override
     public int[] portsAlreadySet() {
-        final List<Integer> value = new ArrayList<Integer>();
+        final List<Integer> value = new ArrayList<>();
         if (getStopPort() > 0) {
             value.add(getStopPort());
         }

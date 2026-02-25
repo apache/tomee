@@ -83,7 +83,7 @@ public class Connector implements NamedModule {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(name = "vendor-name")
     protected String vendorName = "";
@@ -164,14 +164,14 @@ public class Connector implements NamedModule {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -222,7 +222,7 @@ public class Connector implements NamedModule {
 
     public List<String> getRequiredWorkContext() {
         if (requiredWorkContext == null) {
-            requiredWorkContext = new ArrayList<String>();
+            requiredWorkContext = new ArrayList<>();
         }
         return requiredWorkContext;
     }

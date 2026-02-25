@@ -48,14 +48,14 @@ public class CacheMapping {
 
     public List<Object> getServletNameOrUrlPattern() {
         if (servletNameOrUrlPattern == null) {
-            servletNameOrUrlPattern = new ArrayList<Object>();
+            servletNameOrUrlPattern = new ArrayList<>();
         }
         return this.servletNameOrUrlPattern;
     }
 
     public List<Object> getCacheHelperRefOrDispatcherOrTimeoutOrRefreshFieldOrHttpMethodOrKeyFieldOrConstraintField() {
         if (cacheHelperRefOrDispatcherOrTimeoutOrRefreshFieldOrHttpMethodOrKeyFieldOrConstraintField == null) {
-            cacheHelperRefOrDispatcherOrTimeoutOrRefreshFieldOrHttpMethodOrKeyFieldOrConstraintField = new ArrayList<Object>();
+            cacheHelperRefOrDispatcherOrTimeoutOrRefreshFieldOrHttpMethodOrKeyFieldOrConstraintField = new ArrayList<>();
         }
         return this.cacheHelperRefOrDispatcherOrTimeoutOrRefreshFieldOrHttpMethodOrKeyFieldOrConstraintField;
     }
