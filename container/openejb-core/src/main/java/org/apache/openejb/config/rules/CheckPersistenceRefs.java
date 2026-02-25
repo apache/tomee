@@ -64,24 +64,19 @@ public class CheckPersistenceRefs extends ValidationBase {
 
     private String getType(final EnterpriseBean bean) {
         if (bean instanceof SessionBean sessionBean) {
-            switch (sessionBean.getSessionType()) {
-                case STATEFUL:
-                    return "Stateful";
-                case STATELESS:
-                    return "Stateless";
-                case SINGLETON:
-                    return "Singleton";
-                case MANAGED:
-                    return "Managed";
-                default:
-                    throw new IllegalArgumentException("Uknown SessionBean type " + bean.getClass());
-            }
+            return switch (sessionBean.getSessionType()) {
+                case STATEFUL -> "Stateful";
+                case STATELESS -> "Stateless";
+                case SINGLETON -> "Singleton";
+                case MANAGED -> "Managed";
+                default -> throw new IllegalArgumentException("Unknown SessionBean type " + bean.getClass());
+            };
         } else if (bean instanceof MessageDrivenBean) {
             return "MessageDriven";
         } else if (bean instanceof EntityBean) {
             return "EJB 2.1 Entity";
         } else {
-            throw new IllegalArgumentException("Uknown bean type " + bean.getClass());
+            throw new IllegalArgumentException("Unknown bean type " + bean.getClass());
         }
     }
 }

@@ -1361,16 +1361,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     private static String unaliasPropertiesProvider(final String propertiesProvider) {
-        switch (propertiesProvider.toLowerCase(Locale.ENGLISH)) {
-            case "heroku":
-                return "org.apache.openejb.resource.heroku.HerokuDatabasePropertiesProvider";
-            case "openshift:mysql":
-                return "org.apache.openejb.resource.openshift.OpenshiftMySQLPropertiesProvider";
-            case "openshift:postgresql":
-                return "org.apache.openejb.resource.openshift.OpenshiftPostgreSQLPropertiesProvider";
-            default:
-                return propertiesProvider;
-        }
+        return switch (propertiesProvider.toLowerCase(Locale.ENGLISH)) {
+            case "heroku" -> "org.apache.openejb.resource.heroku.HerokuDatabasePropertiesProvider";
+            case "openshift:mysql" -> "org.apache.openejb.resource.openshift.OpenshiftMySQLPropertiesProvider";
+            case "openshift:postgresql" -> "org.apache.openejb.resource.openshift.OpenshiftPostgreSQLPropertiesProvider";
+            default -> propertiesProvider;
+        };
     }
 
     private static String unaliasTemplate(final String value) {

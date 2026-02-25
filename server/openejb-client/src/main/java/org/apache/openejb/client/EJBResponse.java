@@ -80,42 +80,19 @@ public class EJBResponse implements ClusterableResponse {
 
     public String toString() {
 
-        final StringBuffer s;
-
-        switch (responseCode) {
-            case ResponseCodes.EJB_APP_EXCEPTION:
-                s = new StringBuffer("EJB_APP_EXCEPTION");
-                break;
-            case ResponseCodes.EJB_ERROR:
-                s = new StringBuffer("EJB_ERROR");
-                break;
-            case ResponseCodes.EJB_OK:
-                s = new StringBuffer("EJB_OK");
-                break;
-            case ResponseCodes.EJB_OK_CREATE:
-                s = new StringBuffer("EJB_OK_CREATE");
-                break;
-            case ResponseCodes.EJB_OK_FOUND:
-                s = new StringBuffer("EJB_OK_FOUND");
-                break;
-            case ResponseCodes.EJB_OK_FOUND_COLLECTION:
-                s = new StringBuffer("EJB_OK_FOUND_COLLECTION");
-                break;
-            case ResponseCodes.EJB_OK_FOUND_ENUMERATION:
-                s = new StringBuffer("EJB_OK_FOUND_ENUMERATION");
-                break;
-            case ResponseCodes.EJB_OK_NOT_FOUND:
-                s = new StringBuffer("EJB_OK_NOT_FOUND");
-                break;
-            case ResponseCodes.EJB_SYS_EXCEPTION:
-                s = new StringBuffer("EJB_SYS_EXCEPTION");
-                break;
-            case ResponseCodes.AUTH_DENIED:
-                s = new StringBuffer("AUTH_DENIED");
-                break;
-            default:
-                s = new StringBuffer("UNKNOWN_RESPONSE");
-        }
+        final StringBuffer s = switch (responseCode) {
+            case ResponseCodes.EJB_APP_EXCEPTION -> new StringBuffer("EJB_APP_EXCEPTION");
+            case ResponseCodes.EJB_ERROR -> new StringBuffer("EJB_ERROR");
+            case ResponseCodes.EJB_OK -> new StringBuffer("EJB_OK");
+            case ResponseCodes.EJB_OK_CREATE -> new StringBuffer("EJB_OK_CREATE");
+            case ResponseCodes.EJB_OK_FOUND -> new StringBuffer("EJB_OK_FOUND");
+            case ResponseCodes.EJB_OK_FOUND_COLLECTION -> new StringBuffer("EJB_OK_FOUND_COLLECTION");
+            case ResponseCodes.EJB_OK_FOUND_ENUMERATION -> new StringBuffer("EJB_OK_FOUND_ENUMERATION");
+            case ResponseCodes.EJB_OK_NOT_FOUND -> new StringBuffer("EJB_OK_NOT_FOUND");
+            case ResponseCodes.EJB_SYS_EXCEPTION -> new StringBuffer("EJB_SYS_EXCEPTION");
+            case ResponseCodes.AUTH_DENIED -> new StringBuffer("AUTH_DENIED");
+            default -> new StringBuffer("UNKNOWN_RESPONSE");
+        };
 
         s.append(", serverTime=").append(times[Time.TOTAL.ordinal()]).append("ns");
         s.append(", containerTime").append(times[Time.CONTAINER.ordinal()]).append("ns");

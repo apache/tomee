@@ -118,16 +118,11 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
     }
 
     private AuthStatus mapToAuthStatus(final AuthenticationStatus authenticationStatus) {
-        switch (authenticationStatus) {
-            case SUCCESS:
-            case NOT_DONE:
-                return AuthStatus.SUCCESS;
-            case SEND_FAILURE:
-                return AuthStatus.SEND_FAILURE;
-            case SEND_CONTINUE:
-                return AuthStatus.SEND_CONTINUE;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (authenticationStatus) {
+            case SUCCESS, NOT_DONE -> AuthStatus.SUCCESS;
+            case SEND_FAILURE -> AuthStatus.SEND_FAILURE;
+            case SEND_CONTINUE -> AuthStatus.SEND_CONTINUE;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

@@ -546,17 +546,11 @@ class AppInfoBuilder {
                 String transactionSupport = "none";
                 final TransactionSupportType transactionSupportType = outbound.getTransactionSupport();
                 if (transactionSupportType != null) {
-                    switch (transactionSupportType) {
-                        case LOCAL_TRANSACTION:
-                            transactionSupport = "local";
-                            break;
-                        case NO_TRANSACTION:
-                            transactionSupport = "none";
-                            break;
-                        case XA_TRANSACTION:
-                            transactionSupport = "xa";
-                            break;
-                    }
+                    transactionSupport = switch (transactionSupportType) {
+                        case LOCAL_TRANSACTION -> "local";
+                        case NO_TRANSACTION -> "none";
+                        case XA_TRANSACTION -> "xa";
+                    };
                 }
                 for (final ConnectionDefinition connection : outbound.getConnectionDefinition()) {
 

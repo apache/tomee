@@ -284,16 +284,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (method.getDeclaringClass() == Object.class) {
             final String methodName = method.getName();
 
-            switch (methodName) {
-                case "toString":
-                    return toString();
-                case "equals":
-                    return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
-                case "hashCode":
-                    return hashCode();
-                default:
-                    throw new UnsupportedOperationException("Unknown method: " + method);
-            }
+            return switch (methodName) {
+                case "toString" -> toString();
+                case "equals" -> equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+                case "hashCode" -> hashCode();
+                default -> throw new UnsupportedOperationException("Unknown method: " + method);
+            };
         } else if (method.getDeclaringClass() == IntraVmProxy.class) {
             final String methodName = method.getName();
 

@@ -579,22 +579,15 @@ public abstract class WsService implements ServerService, SelfManaging {
     }
 
     public static String getEjbType(final int type) {
-        switch (type) {
-            case EnterpriseBeanInfo.STATEFUL:
-                return "StatefulBean";
-            case EnterpriseBeanInfo.STATELESS:
-                return "StatelessBean";
-            case EnterpriseBeanInfo.SINGLETON:
-                return "SingletonBean";
-            case EnterpriseBeanInfo.MANAGED:
-                return "ManagedBean";
-            case EnterpriseBeanInfo.MESSAGE:
-                return "MessageDrivenBean";
-            case EnterpriseBeanInfo.ENTITY:
-                return "EntityBean";
-            default:
-                return "UnknownBean";
-        }
+        return switch (type) {
+            case EnterpriseBeanInfo.STATEFUL -> "StatefulBean";
+            case EnterpriseBeanInfo.STATELESS -> "StatelessBean";
+            case EnterpriseBeanInfo.SINGLETON -> "SingletonBean";
+            case EnterpriseBeanInfo.MANAGED -> "ManagedBean";
+            case EnterpriseBeanInfo.MESSAGE -> "MessageDrivenBean";
+            case EnterpriseBeanInfo.ENTITY -> "EntityBean";
+            default -> "UnknownBean";
+        };
     }
 
     @Override

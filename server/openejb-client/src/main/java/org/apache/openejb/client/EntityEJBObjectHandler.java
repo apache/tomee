@@ -75,19 +75,17 @@ public class EntityEJBObjectHandler extends EJBObjectHandler {
 
         final EJBResponse res = request(req);
 
-        switch (res.getResponseCode()) {
-            case ResponseCodes.EJB_ERROR:
-                throw new SystemError((ThrowableArtifact) res.getResult());
-            case ResponseCodes.EJB_SYS_EXCEPTION:
-                throw new SystemException((ThrowableArtifact) res.getResult());
-            case ResponseCodes.EJB_APP_EXCEPTION:
-                throw new ApplicationException((ThrowableArtifact) res.getResult());
-            case ResponseCodes.EJB_OK:
+        return switch (res.getResponseCode()) {
+            case ResponseCodes.EJB_ERROR -> throw new SystemError((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_SYS_EXCEPTION -> throw new SystemException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_APP_EXCEPTION -> throw new ApplicationException((ThrowableArtifact) res.getResult());
+            case ResponseCodes.EJB_OK -> {
                 invalidateAllHandlers(getRegistryId());
-                return null;
-            default:
-                throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
-        }
+                yield null;
+            }
+            default ->
+                    throw new RemoteException("Received invalid response code from server: " + res.getResponseCode());
+        };
     }
 
     @Override

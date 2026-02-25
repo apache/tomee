@@ -149,33 +149,21 @@ public class InterceptorData {
     }
 
     public Set<Method> getMethods(final Operation operation) {
-        switch (operation) {
-            case BUSINESS:
-                return getAroundInvoke();
-            case BUSINESS_WS:
-                return getAroundInvoke();
-            case REMOVE:
-                return getAroundInvoke();
-            case AROUND_CONSTRUCT:
-                return getAroundConstruct();
-            case POST_CONSTRUCT:
-                return getPostConstruct();
-            case PRE_DESTROY:
-                return getPreDestroy();
-            case ACTIVATE:
-                return getPostActivate();
-            case PASSIVATE:
-                return getPrePassivate();
-            case AFTER_BEGIN:
-                return getAfterBegin();
-            case AFTER_COMPLETION:
-                return getAfterCompletion();
-            case BEFORE_COMPLETION:
-                return getBeforeCompletion();
-            case TIMEOUT:
-                return getAroundTimeout();
-        }
-        return Collections.EMPTY_SET;
+        return switch (operation) {
+            case BUSINESS -> getAroundInvoke();
+            case BUSINESS_WS -> getAroundInvoke();
+            case REMOVE -> getAroundInvoke();
+            case AROUND_CONSTRUCT -> getAroundConstruct();
+            case POST_CONSTRUCT -> getPostConstruct();
+            case PRE_DESTROY -> getPreDestroy();
+            case ACTIVATE -> getPostActivate();
+            case PASSIVATE -> getPrePassivate();
+            case AFTER_BEGIN -> getAfterBegin();
+            case AFTER_COMPLETION -> getAfterCompletion();
+            case BEFORE_COMPLETION -> getBeforeCompletion();
+            case TIMEOUT -> getAroundTimeout();
+            default -> Collections.EMPTY_SET;
+        };
     }
 
     public boolean equals(final Object o) {

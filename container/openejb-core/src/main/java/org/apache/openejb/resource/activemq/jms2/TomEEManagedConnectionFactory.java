@@ -77,16 +77,12 @@ public class TomEEManagedConnectionFactory extends ActiveMQManagedConnectionFact
     }
 
     public String getTransactionSupport() {
-        switch (transactionSupportLevel) {
-            case XATransaction:
-                return "xa";
-            case LocalTransaction:
-                return "local";
-            case NoTransaction:
-                return "none";
-            default:
-                return null;
-        }
+        return switch (transactionSupportLevel) {
+            case XATransaction -> "xa";
+            case LocalTransaction -> "local";
+            case NoTransaction -> "none";
+            default -> null;
+        };
     }
 
     public void setTransactionSupport(String transactionSupport) {

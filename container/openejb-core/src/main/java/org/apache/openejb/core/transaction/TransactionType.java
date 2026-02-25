@@ -29,22 +29,15 @@ public enum TransactionType {
     BeanManaged;
 
     public static TransactionType get(final TransactionAttributeType type) {
-        switch (type) {
-            case REQUIRED:
-                return Required;
-            case REQUIRES_NEW:
-                return RequiresNew;
-            case MANDATORY:
-                return Mandatory;
-            case NEVER:
-                return Never;
-            case NOT_SUPPORTED:
-                return NotSupported;
-            case SUPPORTS:
-                return Supports;
-            default:
-                throw new IllegalArgumentException("Uknown TransactionAttributeType." + type);
-        }
+        return switch (type) {
+            case REQUIRED -> Required;
+            case REQUIRES_NEW -> RequiresNew;
+            case MANDATORY -> Mandatory;
+            case NEVER -> Never;
+            case NOT_SUPPORTED -> NotSupported;
+            case SUPPORTS -> Supports;
+            default -> throw new IllegalArgumentException("Unknown TransactionAttributeType." + type);
+        };
     }
 
     public static TransactionType get(final String name) {
@@ -54,6 +47,6 @@ public enum TransactionType {
             }
         }
 
-        throw new IllegalArgumentException("Uknown TransactionType " + name);
+        throw new IllegalArgumentException("Unknown TransactionType " + name);
     }
 }
