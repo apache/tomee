@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 @OpenIdAuthenticationMechanismDefinition(
         providerURI = "#{openIdConfig.providerUri}",
@@ -44,5 +45,9 @@ public class SecuredServlet extends HttpServlet {
         if (req.isUserInRole("admin")) {
             resp.getWriter().print("\nYou're an admin!");
         }
+
+        resp.getWriter().print("\nRequest parameters: " + req.getParameterMap().entrySet().stream()
+                .map(e -> e.getKey() + "=" + String.join(",", e.getValue()))
+                .collect(Collectors.joining(";")));
     }
 }
