@@ -496,7 +496,7 @@ public class Interceptor implements JndiConsumer, Session {
     @Override
     public Map<String, ManagedExecutor> getManagedExecutorMap() {
         if (managedExecutor == null) {
-            managedExecutor = new KeyedCollection();
+            managedExecutor = new KeyedCollection<>();
         }
         return this.managedExecutor.toMap();
     }

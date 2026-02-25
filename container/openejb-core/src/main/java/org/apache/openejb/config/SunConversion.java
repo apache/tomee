@@ -1089,7 +1089,7 @@ public class SunConversion implements DynamicDeployer {
             return Collections.emptyList();
         }
 
-        final List bits = Collections.list(new StringTokenizer(queryParams, " \t\n\r\f,", false));
+        final List<Object> bits = Collections.list(new StringTokenizer(queryParams, " \t\n\r\f,", false));
         final List<List<String>> params = new ArrayList<>(bits.size() / 2);
         for (int i = 0; i < bits.size(); i++) {
             final String type = resolveType((String) bits.get(i));
@@ -1166,7 +1166,7 @@ public class SunConversion implements DynamicDeployer {
 
     private List<String> tokenize(final String queryFilter) {
         final LinkedList<String> tokens = new LinkedList<>();
-        final List bits = Collections.list(new StringTokenizer(queryFilter, " \t\n\r\f()&|<>=!~+-/*", true));
+        final List<Object> bits = Collections.list(new StringTokenizer(queryFilter, " \t\n\r\f()&|<>=!~+-/*", true));
 
         boolean inWitespace = false;
         StringBuilder currentSymbol = new StringBuilder();

@@ -76,7 +76,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
 
     @Override
     protected void visit(Output output) {
-        Map outputParts = output.getMessage().getParts();
+        Map<String, Part> outputParts = output.getMessage().getParts();
         if (outputParts.size() != 0 && outputParts.size() != 1) {
             context.addFailure(new ValidationFailure("The output message must contain zero or one parts: " + output.getName()));
         }

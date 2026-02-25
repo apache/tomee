@@ -58,14 +58,13 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(1);
             final Set<GameLocal> gameSets = platform.getGames();
             assertEquals(2, gameSets.size());
-            for (final Iterator iter = gameSets.iterator(); iter.hasNext(); ) {
-                final GameLocal game = (GameLocal) iter.next();
-                if (game.getId().equals(new Integer(11))) {
+            for (final GameLocal game : gameSets) {
+                if (game.getId().equals(11)) {
                     assertEquals("value11", game.getName());
-                } else if (game.getId().equals(new Integer(22))) {
+                } else if (game.getId().equals(22)) {
                     assertEquals("value22", game.getName());
                 } else {
                     fail();
@@ -80,7 +79,7 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(1);
             try {
                 platform.setGames(null);
                 fail("expected platform.setGames(null) to throw an IllegalArgumentException");
@@ -98,16 +97,15 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final GameLocal game = findGame(new Integer(22));
-            final Set aSet = game.getPlatforms();
+            final GameLocal game = findGame(22);
+            final Set<PlatformLocal> aSet = game.getPlatforms();
             assertEquals(3, aSet.size());
-            for (final Iterator iter = aSet.iterator(); iter.hasNext(); ) {
-                final PlatformLocal platform = (PlatformLocal) iter.next();
-                if (platform.getId().equals(new Integer(1))) {
+            for (final PlatformLocal platform : aSet) {
+                if (platform.getId().equals(1)) {
                     assertEquals("value1", platform.getName());
-                } else if (platform.getId().equals(new Integer(2))) {
+                } else if (platform.getId().equals(2)) {
                     assertEquals("value2", platform.getName());
-                } else if (platform.getId().equals(new Integer(3))) {
+                } else if (platform.getId().equals(3)) {
                     assertEquals("value3", platform.getName());
                 } else {
                     fail();
@@ -122,11 +120,11 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            PlatformLocal platform = findPlatform(new Integer(1));
+            PlatformLocal platform = findPlatform(1);
             platform.setGames(new HashSet<>());
-            platform = findPlatform(new Integer(2));
+            platform = findPlatform(2);
             platform.setGames(new HashSet<>());
-            platform = findPlatform(new Integer(3));
+            platform = findPlatform(3);
             platform.setGames(new HashSet<>());
         } finally {
             completeTransaction();
@@ -139,9 +137,9 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            GameLocal game = findGame(new Integer(11));
+            GameLocal game = findGame(11);
             game.setPlatforms(new HashSet<>());
-            game = findGame(new Integer(22));
+            game = findGame(22);
             game.setPlatforms(new HashSet<>());
         } finally {
             completeTransaction();
@@ -154,8 +152,8 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = createPlatform(new Integer(4));
-            final GameLocal game = createGame(new Integer(33));
+            final PlatformLocal platform = createPlatform(4);
+            final GameLocal game = createGame(33);
             final Set<GameLocal> gameSets = platform.getGames();
             gameSets.add(game);
         } finally {
@@ -169,8 +167,8 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = createPlatform(new Integer(4));
-            final GameLocal game = createGame(new Integer(33));
+            final PlatformLocal platform = createPlatform(4);
+            final GameLocal game = createGame(33);
             final Set<PlatformLocal> platformSets = game.getPlatforms();
             platformSets.add(platform);
         } finally {
@@ -184,8 +182,8 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = createPlatform(new Integer(4));
-            final GameLocal game = findGame(new Integer(11));
+            final PlatformLocal platform = createPlatform(4);
+            final GameLocal game = findGame(11);
             final Set<GameLocal> gameSets = platform.getGames();
             gameSets.add(game);
         } finally {
@@ -199,8 +197,8 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = createPlatform(new Integer(4));
-            final GameLocal game = findGame(new Integer(11));
+            final PlatformLocal platform = createPlatform(4);
+            final GameLocal game = findGame(11);
             final Set<PlatformLocal> platformSets = game.getPlatforms();
             platformSets.add(platform);
         } finally {
@@ -214,8 +212,8 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
-            final GameLocal game = createGame(new Integer(33));
+            final PlatformLocal platform = findPlatform(1);
+            final GameLocal game = createGame(33);
             final Set<GameLocal> gameSets = platform.getGames();
             gameSets.add(game);
         } finally {
@@ -229,8 +227,8 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
-            final GameLocal game = createGame(new Integer(33));
+            final PlatformLocal platform = findPlatform(1);
+            final GameLocal game = createGame(33);
             final Set<PlatformLocal> platformSets = game.getPlatforms();
             platformSets.add(platform);
         } finally {
@@ -244,7 +242,7 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(1);
             platform.remove();
         } finally {
             completeTransaction();
@@ -257,7 +255,7 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
+            final PlatformLocal platform = findPlatform(1);
             final Set games = platform.getGames();
 
             try {
@@ -279,11 +277,11 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
     public void testModifyCmrCollectionOusideTx() throws Exception {
         resetDB();
         beginTransaction();
-        Set games;
+        Set<GameLocal> games;
         GameLocal newGame;
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
-            newGame = createGame(new Integer(33));
+            final PlatformLocal platform = findPlatform(1);
+            newGame = createGame(33);
             games = platform.getGames();
         } finally {
             completeTransaction();
@@ -292,11 +290,10 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
         // CMR collections should still be readable
         assertFalse(games.isEmpty());
         assertEquals(2, games.size());
-        for (final Iterator iter = games.iterator(); iter.hasNext(); ) {
-            final GameLocal game = (GameLocal) iter.next();
-            if (game.getId().equals(new Integer(11))) {
+        for (final GameLocal game : games) {
+            if (game.getId().equals(11)) {
                 assertEquals("value11", game.getName());
-            } else if (game.getId().equals(new Integer(22))) {
+            } else if (game.getId().equals(22)) {
                 assertEquals("value22", game.getName());
             } else {
                 fail();
@@ -324,7 +321,7 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
             fail("expected games.removeAll(game) to throw an IllegalStateException");
         } catch (final IllegalStateException expected) {
         }
-        final Iterator iterator = games.iterator();
+        final Iterator<GameLocal> iterator = games.iterator();
         try {
             iterator.remove();
             fail("expected iterator.remove() to throw an ConcurrentModificationException");
@@ -335,11 +332,11 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
     public void testModifyCmrCollectionInNewTx() throws Exception {
         resetDB();
         beginTransaction();
-        Set games;
+        Set<GameLocal> games;
         GameLocal newGame;
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
-            newGame = createGame(new Integer(33));
+            final PlatformLocal platform = findPlatform(1);
+            newGame = createGame(33);
             games = platform.getGames();
         } finally {
             completeTransaction();
@@ -350,11 +347,10 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
             // CMR collections should still be readable
             assertFalse(games.isEmpty());
             assertEquals(2, games.size());
-            for (final Iterator iter = games.iterator(); iter.hasNext(); ) {
-                final GameLocal game = (GameLocal) iter.next();
-                if (game.getId().equals(new Integer(11))) {
+            for (final GameLocal game : games) {
+                if (game.getId().equals(11)) {
                     assertEquals("value11", game.getName());
-                } else if (game.getId().equals(new Integer(22))) {
+                } else if (game.getId().equals(22)) {
                     assertEquals("value22", game.getName());
                 } else {
                     fail();
@@ -382,7 +378,7 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
                 fail("expected games.removeAll(game) to throw an IllegalStateException");
             } catch (final IllegalStateException expected) {
             }
-            final Iterator iterator = games.iterator();
+            final Iterator<GameLocal> iterator = games.iterator();
             try {
                 iterator.remove();
                 fail("expected iterator.remove() to throw an ConcurrentModificationException");
@@ -396,15 +392,15 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
     public void testIteratorConcurrentModification() throws Exception {
         resetDB();
         beginTransaction();
-        final Set games;
+        final Set<GameLocal> games;
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
-            final GameLocal game = findGame(new Integer(11));
+            final PlatformLocal platform = findPlatform(1);
+            final GameLocal game = findGame(11);
             games = platform.getGames();
             assertFalse(games.isEmpty());
             assertEquals(2, games.size());
 
-            final Iterator iterator = games.iterator();
+            final Iterator<GameLocal> iterator = games.iterator();
 
             games.remove(game);
             assertEquals(1, games.size());
@@ -422,15 +418,15 @@ public class ManyToManyComplexPkTests extends AbstractCMRTest {
     public void testIteratorAndRemove() throws Exception {
         resetDB();
         beginTransaction();
-        final Set games;
+        final Set<GameLocal> games;
         try {
-            final PlatformLocal platform = findPlatform(new Integer(1));
-            final GameLocal game = findGame(new Integer(11));
+            final PlatformLocal platform = findPlatform(1);
+            final GameLocal game = findGame(11);
             games = platform.getGames();
             assertFalse(games.isEmpty());
             assertEquals(2, games.size());
 
-            final Iterator iterator = games.iterator();
+            final Iterator<GameLocal> iterator = games.iterator();
 
             assertTrue(games.contains(game));
             platform.remove();

@@ -57,10 +57,11 @@ public class FriendlyPerson implements FriendlyPersonLocal, FriendlyPersonRemote
     private String defaultLanguage;
 
     public FriendlyPerson() {
-        greetings = new HashMap();
+        greetings = new HashMap<>();
         languagePreferences = new Properties();
         defaultLanguage = Locale.getDefault().getLanguage();
 
+        addGreeting("de", "Hallo {0}!");
         addGreeting("en", "Hello {0}!");
         addGreeting("es", "Hola {0}!");
         addGreeting("fr", "Bonjour {0}!");

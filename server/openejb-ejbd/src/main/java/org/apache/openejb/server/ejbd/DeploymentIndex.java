@@ -30,16 +30,15 @@ public class DeploymentIndex {
 
     BeanContext[] deployments = null;
 
-    Map index = null;
+    Map<Object, Integer> index = null;
 
-    @SuppressWarnings("unchecked")
     public DeploymentIndex(final BeanContext[] beanContexts) {
 
         deployments = new BeanContext[beanContexts.length + 1];
 
         System.arraycopy(beanContexts, 0, deployments, 1, beanContexts.length);
 
-        index = new HashMap(deployments.length);
+        index = new HashMap<>(deployments.length);
         for (int i = 1; i < deployments.length; i++) {
             index.put(deployments[i].getDeploymentID(), i);
         }

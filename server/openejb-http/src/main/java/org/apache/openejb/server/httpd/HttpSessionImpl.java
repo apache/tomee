@@ -119,7 +119,7 @@ public class HttpSessionImpl implements HttpSession {
     @Override
     public Enumeration<String> getAttributeNames() {
         touch();
-        return new ArrayEnumeration(new ArrayList(attributes.keySet()));
+        return new ArrayEnumeration(new ArrayList<>(attributes.keySet()));
     }
 
     @Override
