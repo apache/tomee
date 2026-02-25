@@ -1196,8 +1196,7 @@ public class SuperProperties extends Properties {
 
     public Object put(Object key, final Object value) {
         key = normalize(key);
-        if (key instanceof String) {
-            final String name = (String) key;
+        if (key instanceof String name) {
             if (!attributes.containsKey(name)) {
                 attributes.put(name, new LinkedHashMap<>());
             }
@@ -1216,8 +1215,7 @@ public class SuperProperties extends Properties {
         for (final Map.Entry<?, ?> entry : t.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
-        if (t instanceof SuperProperties) {
-            final SuperProperties superProperties = (SuperProperties) t;
+        if (t instanceof SuperProperties superProperties) {
             for (final Map.Entry<String, String> entry : superProperties.comments.entrySet()) {
                 comments.put(normalize(entry.getKey()), entry.getValue());
             }
@@ -1326,8 +1324,7 @@ public class SuperProperties extends Properties {
         }
 
         for (final Object o : keySet()) {
-            if (o instanceof String) {
-                final String key = (String) o;
+            if (o instanceof String key) {
                 if (key.equalsIgnoreCase(property)) {
                     return key;
                 }
@@ -1336,8 +1333,7 @@ public class SuperProperties extends Properties {
 
         if (defaults != null) {
             for (final Object o : defaults.keySet()) {
-                if (o instanceof String) {
-                    final String key = (String) o;
+                if (o instanceof String key) {
                     if (key.equalsIgnoreCase(property)) {
                         return key;
                     }

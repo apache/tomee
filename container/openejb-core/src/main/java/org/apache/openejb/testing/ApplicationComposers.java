@@ -473,10 +473,8 @@ public class ApplicationComposers {
                             globalJarsAnnotation, jarsAnnotation,
                             classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdiStereotypes, cdi, innerClassesAsBean,
                             defaultConfig);
-                } else if (obj instanceof WebModule) { // will add the ejbmodule too
+                } else if (obj instanceof WebModule webModule) { // will add the ejbmodule too
                     webModulesNb++;
-
-                    final WebModule webModule = (WebModule) obj;
 
                     webModule.getAltDDs().putAll(additionalDescriptors);
                     webModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
@@ -493,8 +491,7 @@ public class ApplicationComposers {
                     }
                     webModule.setFinder(finderFromClasses(webModule, classes, files, excludes));
                     ejbModule.setFinder(webModule.getFinder());
-                } else if (obj instanceof EjbModule) {
-                    final EjbModule ejbModule = (EjbModule) obj;
+                } else if (obj instanceof EjbModule ejbModule) {
 
                     ejbModule.getAltDDs().putAll(additionalDescriptors);
                     ejbModule.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
@@ -510,9 +507,8 @@ public class ApplicationComposers {
                         (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
                     }
                     ejbModule.setFinder(finderFromClasses(ejbModule, classes, files, excludes));
-                } else if (obj instanceof EjbJar) {
+                } else if (obj instanceof EjbJar ejbJar) {
 
-                    final EjbJar ejbJar = (EjbJar) obj;
                     setId(ejbJar, method);
 
                     final EjbModule ejbModule = new EjbModule(ejbJar);
@@ -530,9 +526,8 @@ public class ApplicationComposers {
                         (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
                     }
                     ejbModule.setFinder(finderFromClasses(ejbModule, classes, files, excludes));
-                } else if (obj instanceof EnterpriseBean) {
+                } else if (obj instanceof EnterpriseBean bean) {
 
-                    final EnterpriseBean bean = (EnterpriseBean) obj;
                     final EjbJar ejbJar = new EjbJar(method.getName());
                     ejbJar.addEnterpriseBean(bean);
                     final EjbModule ejbModule = new EjbModule(ejbJar);
@@ -553,27 +548,23 @@ public class ApplicationComposers {
                     application = (Application) obj;
                     setId(application, method);
 
-                } else if (obj instanceof Connector) {
+                } else if (obj instanceof Connector connector) {
 
-                    final Connector connector = (Connector) obj;
                     setId(connector, method);
                     appModule.getConnectorModules().add(new ConnectorModule(connector));
 
-                } else if (obj instanceof Persistence) {
+                } else if (obj instanceof Persistence persistence) {
 
-                    final Persistence persistence = (Persistence) obj;
                     appModule.addPersistenceModule(
                             new PersistenceModule(appModule, implicitRootUrl(method.getAnnotation(PersistenceRootUrl.class)), persistence));
                     notBusinessModuleNumber++;
-                } else if (obj instanceof PersistenceUnit) {
+                } else if (obj instanceof PersistenceUnit unit) {
 
-                    final PersistenceUnit unit = (PersistenceUnit) obj;
                     appModule.addPersistenceModule(
                             new PersistenceModule(appModule, implicitRootUrl(method.getAnnotation(PersistenceRootUrl.class)), new Persistence(unit)));
                     notBusinessModuleNumber++;
-                } else if (obj instanceof Beans) {
+                } else if (obj instanceof Beans beans) {
 
-                    final Beans beans = (Beans) obj;
                     final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
                     ejbModule.setBeans(beans);
                     appModule.getEjbModules().add(ejbModule);
@@ -585,16 +576,14 @@ public class ApplicationComposers {
                         (files == null ? files = new LinkedList<>() : files).add(jarLocation(testClass));
                     }
                     ejbModule.setFinder(finderFromClasses(ejbModule, classes, files, excludes));
-                } else if (obj instanceof Class[]) {
+                } else if (obj instanceof Class[] beans) {
 
-                    final Class[] beans = (Class[]) obj;
                     final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
                     ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(beans)).link());
                     ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
-                } else if (obj instanceof Class) {
+                } else if (obj instanceof Class bean) {
 
-                    final Class bean = (Class) obj;
                     final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
                     ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(bean)).link());
                     ejbModule.setBeans(new Beans());
@@ -616,9 +605,8 @@ public class ApplicationComposers {
                     appModule.getResources().addAll(asResources.getResource());
                     appModule.getContainers().addAll(asResources.getContainer());
                     notBusinessModuleNumber++;
-                } else if (obj instanceof AppModule) {
+                } else if (obj instanceof AppModule module) {
                     // we can probably go further here
-                    final AppModule module = (AppModule) obj;
 
                     module.getAltDDs().putAll(additionalDescriptors);
                     module.getAltDDs().putAll(descriptorsToMap(method.getAnnotation(Descriptors.class)));
@@ -1345,8 +1333,7 @@ public class ApplicationComposers {
         for (final Map.Entry<Object, List<Method>> method : configs.entrySet()) {
             for (final Method m : method.getValue()) {
                 final Object o = m.invoke(method.getKey());
-                if (o instanceof Properties) {
-                    final Properties properties = (Properties) o;
+                if (o instanceof Properties properties) {
                     configuration.putAll(properties);
                 } else if (Openejb.class.isInstance(o)) {
                     openejb = Openejb.class.cast(o);

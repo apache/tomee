@@ -391,18 +391,15 @@ public class EjbJar$JAXB
         writer.writeStartElement(prefix, "enterprise-beans", "http://java.sun.com/xml/ns/javaee");
         if (enterpriseBeans!= null) {
             for (EnterpriseBean enterpriseBeansItem: enterpriseBeans) {
-                if (enterpriseBeansItem instanceof org.apache.openejb.jee.EntityBean) {
-                    org.apache.openejb.jee.EntityBean EntityBean = ((org.apache.openejb.jee.EntityBean) enterpriseBeansItem);
+                if (enterpriseBeansItem instanceof EntityBean EntityBean) {
                     writer.writeStartElement(prefix, "entity", "http://java.sun.com/xml/ns/javaee");
                     writeEntityBean(writer, EntityBean, context);
                     writer.writeEndElement();
-                } else if (enterpriseBeansItem instanceof org.apache.openejb.jee.SessionBean) {
-                    org.apache.openejb.jee.SessionBean SessionBean = ((org.apache.openejb.jee.SessionBean) enterpriseBeansItem);
+                } else if (enterpriseBeansItem instanceof SessionBean SessionBean) {
                     writer.writeStartElement(prefix, "session", "http://java.sun.com/xml/ns/javaee");
                     writeSessionBean(writer, SessionBean, context);
                     writer.writeEndElement();
-                } else if (enterpriseBeansItem instanceof org.apache.openejb.jee.MessageDrivenBean) {
-                    org.apache.openejb.jee.MessageDrivenBean MessageDrivenBean = ((org.apache.openejb.jee.MessageDrivenBean) enterpriseBeansItem);
+                } else if (enterpriseBeansItem instanceof MessageDrivenBean MessageDrivenBean) {
                     writer.writeStartElement(prefix, "message-driven", "http://java.sun.com/xml/ns/javaee");
                     writeMessageDrivenBean(writer, MessageDrivenBean, context);
                     writer.writeEndElement();

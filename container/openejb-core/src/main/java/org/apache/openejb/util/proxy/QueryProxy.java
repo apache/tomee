@@ -297,8 +297,7 @@ public class QueryProxy implements InvocationHandler {
     }
 
     private Class<?> getGenericType(final Type type) {
-        if (type instanceof ParameterizedType) {
-            final ParameterizedType pt = (ParameterizedType) type;
+        if (type instanceof ParameterizedType pt) {
             if (pt.getActualTypeArguments().length == 1) {
                 return (Class<?>) pt.getActualTypeArguments()[0];
             }

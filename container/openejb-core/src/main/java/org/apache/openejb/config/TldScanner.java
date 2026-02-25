@@ -306,9 +306,8 @@ public class TldScanner {
     private static List<URL> urls(final ClassLoader classLoader) {
         UrlSet urlSet = new UrlSet();
 
-        if (classLoader instanceof URLClassLoader) {
+        if (classLoader instanceof URLClassLoader urlClassLoader) {
 
-            final URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
             try {
                 urlSet = new UrlSet(urlClassLoader.getURLs());
             } catch (final NullPointerException npe) { // happen for closeable classloaders like WebappClassLoader when already clean up

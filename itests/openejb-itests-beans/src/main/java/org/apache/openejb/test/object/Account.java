@@ -34,9 +34,7 @@ public class Account implements java.io.Serializable {
     }
 
     public boolean equals(final Object object) {
-        if (!(object instanceof Account)) return false;
-
-        final Account that = (Account) object;
+        if (!(object instanceof Account that)) return false;
 
         return (this.ssn.equals(that.ssn) &&
             this.firstName.equals(that.firstName) &&

@@ -53,8 +53,7 @@ public class ManagedObjectHandler extends EjbObjectProxyHandler {
         final Object that = args[0];
         final Object invocationHandler = ProxyManager.getInvocationHandler(that);
 
-        if (invocationHandler instanceof ManagedObjectHandler) {
-            final ManagedObjectHandler handler = (ManagedObjectHandler) invocationHandler;
+        if (invocationHandler instanceof ManagedObjectHandler handler) {
 
             /*
             * The registry id is a compound key composed of the bean's primary key, deployment id, and

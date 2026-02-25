@@ -61,11 +61,9 @@ public class CheckDependsOn extends ValidationBase {
         for (final Bean bean : app.values()) {
             final EnterpriseBean enterpriseBean = bean.bean;
 
-            if (!(enterpriseBean instanceof SessionBean)) {
+            if (!(enterpriseBean instanceof SessionBean sessionBean)) {
                 continue;
             }
-
-            final SessionBean sessionBean = (SessionBean) enterpriseBean;
 
             if (sessionBean.getSessionType() != SessionType.SINGLETON) {
                 continue;

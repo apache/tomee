@@ -319,11 +319,9 @@ public class TomcatJndiBuilder {
     private static Object normalize(final Object value) {
         try {
 
-            if (!(value instanceof LinkRef)) {
+            if (!(value instanceof LinkRef ref)) {
                 return value;
             }
-
-            final LinkRef ref = (LinkRef) value;
 
             final RefAddr refAddr = ref.getAll().nextElement();
 

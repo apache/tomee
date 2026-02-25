@@ -303,8 +303,7 @@ public class JWTCallerPrincipal implements JsonWebToken {
 
     private JsonValue wrapValue(final Object value) {
         JsonValue jsonValue = null;
-        if (value instanceof Number) {
-            final Number number = (Number) value;
+        if (value instanceof Number number) {
             if ((number instanceof Long) || (number instanceof Integer)) {
                 jsonValue = Json.createObjectBuilder()
                         .add("tmp", number.longValue())
@@ -318,13 +317,11 @@ public class JWTCallerPrincipal implements JsonWebToken {
                         .getJsonNumber("tmp");
             }
 
-        } else if (value instanceof Boolean) {
-            final Boolean flag = (Boolean) value;
+        } else if (value instanceof Boolean flag) {
             jsonValue = flag ? JsonValue.TRUE : JsonValue.FALSE;
 
-        } else if (value instanceof List) {
+        } else if (value instanceof List list) {
             final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-            final List list = (List) value;
             for (Object element : list) {
                 if (element instanceof String) {
                     arrayBuilder.add(element.toString());

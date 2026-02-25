@@ -784,8 +784,7 @@ public class CmpContainer implements RpcContainer {
                 }
 
                 // if we have an EntityBean, we need to proxy it
-                if (value instanceof EntityBean) {
-                    final EntityBean entityBean = (EntityBean) value;
+                if (value instanceof EntityBean entityBean) {
                     if (proxyFactory == null) {
                         final BeanContext result = getBeanContextByClass(entityBean.getClass());
                         if (result != null) {

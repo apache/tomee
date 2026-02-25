@@ -34,8 +34,7 @@ public class ContextClassPath extends BasicURLClassPath {
     @Override
     public void addJarsToPath(final File dir) throws Exception {
         final ClassLoader contextClassLoader = getContextClassLoader();
-        if (contextClassLoader instanceof URLClassLoader) {
-            final URLClassLoader loader = (URLClassLoader) contextClassLoader;
+        if (contextClassLoader instanceof URLClassLoader loader) {
             this.addJarsToPath(dir, loader);
         }
     }
@@ -43,8 +42,7 @@ public class ContextClassPath extends BasicURLClassPath {
     @Override
     public void addJarToPath(final URL jar) throws Exception {
         final ClassLoader contextClassLoader = getContextClassLoader();
-        if (contextClassLoader instanceof URLClassLoader) {
-            final URLClassLoader loader = (URLClassLoader) contextClassLoader;
+        if (contextClassLoader instanceof URLClassLoader loader) {
             this.addJarToPath(jar, loader);
         }
     }

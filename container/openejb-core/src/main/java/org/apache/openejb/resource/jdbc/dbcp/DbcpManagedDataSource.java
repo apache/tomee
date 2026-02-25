@@ -54,10 +54,9 @@ public class DbcpManagedDataSource extends BasicManagedDataSource {
 
     @Override
     protected ConnectionFactory createConnectionFactory() throws SQLException {
-        if (ds instanceof XADataSource) {
+        if (ds instanceof XADataSource xaDataSourceInstance) {
 
             // Create the XAConectionFactory using the XA data source
-            final XADataSource xaDataSourceInstance = (XADataSource) ds;
             final XAConnectionFactory xaConnectionFactory = new DataSourceXAConnectionFactory(getTransactionManager(), xaDataSourceInstance, getUsername(), getPassword());
             setTransactionRegistry(xaConnectionFactory, new DbcpTransactionRegistry(getTransactionManager()));
             setTransactionRegistry(xaConnectionFactory.getTransactionRegistry());

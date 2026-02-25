@@ -558,11 +558,9 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     public static Method doResolveViewMethod(final Bean<?> component, final Method declaredMethod) {
-        if (!(component instanceof CdiEjbBean)) {
+        if (!(component instanceof CdiEjbBean cdiEjbBean)) {
             return declaredMethod;
         }
-
-        final CdiEjbBean cdiEjbBean = (CdiEjbBean) component;
 
         final BeanContext beanContext = cdiEjbBean.getBeanContext();
 

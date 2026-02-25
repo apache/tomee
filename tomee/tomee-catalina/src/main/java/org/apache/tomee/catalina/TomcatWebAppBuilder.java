@@ -311,15 +311,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 addTomEERealm(engine);
 
                 for (final Container engineChild : engine.findChildren()) {
-                    if (engineChild instanceof StandardHost) {
-                        final StandardHost host = (StandardHost) engineChild;
+                    if (engineChild instanceof StandardHost host) {
                         manageCluster(host.getCluster());
                         addTomEERealm(host);
                         host.getPipeline().addValve(new OpenEJBSecurityListener.RequestCapturer());
                         hosts.add(host);
                         for (final LifecycleListener listener : host.findLifecycleListeners()) {
-                            if (listener instanceof HostConfig) {
-                                final HostConfig hostConfig = (HostConfig) listener;
+                            if (listener instanceof HostConfig hostConfig) {
                                 deployers.put(host.getName(), hostConfig);
                             }
                         }
@@ -375,8 +373,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             container.setCluster(current);
         }
 
-        if (current instanceof CatalinaCluster) {
-            final CatalinaCluster haCluster = (CatalinaCluster) current;
+        if (current instanceof CatalinaCluster haCluster) {
             TomEEClusterListener listener = SystemInstance.get().getComponent(TomEEClusterListener.class);
             if (listener == null) {
                 listener = new TomEEClusterListener();
@@ -437,11 +434,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 final NamingResourcesImpl resources = server.getGlobalNamingResources();
                 final ContextResource userDataBaseResource = resources.findResource("UserDatabase");
                 final UserDatabase db = (UserDatabase) server.getGlobalNamingContext().lookup(userDataBaseResource.getName());
-                if (!db.getUsers().hasNext() && db instanceof MemoryUserDatabase) {
-                    final MemoryUserDatabase mudb = (MemoryUserDatabase) db;
+                if (!db.getUsers().hasNext() && db instanceof MemoryUserDatabase mudb) {
                     final boolean oldRo = mudb.getReadonly();
                     try {
-                        ((MemoryUserDatabase) db).setReadonly(false);
+                        mudb.setReadonly(false);
 
                         db.createRole("tomee-admin", "tomee admin role");
                         db.createUser("tomee", "tomee", "TomEE");
@@ -1322,8 +1318,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         classLoader = appModule.getClassLoader();
                     } else {
                         final ClassLoader loader = standardContext.getLoader().getClassLoader();
-                        if (loader instanceof TomEEWebappClassLoader) {
-                            final TomEEWebappClassLoader tomEEWebappClassLoader = (TomEEWebappClassLoader) loader;
+                        if (loader instanceof TomEEWebappClassLoader tomEEWebappClassLoader) {
                             for (final URL url : appModule.getWebModules().iterator().next().getAddedUrls()) {
                                 tomEEWebappClassLoader.addURL(url);
                             }
@@ -1604,8 +1599,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     private static Reference createReference(final ResourceBase resource) {
         final Reference ref;
-        if (resource instanceof ContextResource) {
-            final ContextResource cr = (ContextResource) resource;
+        if (resource instanceof ContextResource cr) {
             ref = new ResourceRef(resource.getType(), resource.getDescription(), cr.getScope(), cr.getAuth(), cr.getSingleton());
         } else {
             ref = new ResourceEnvRef(resource.getType());

@@ -87,11 +87,10 @@ public class MethodSpec implements Comparable, Serializable {
             return true;
         }
 
-        if (!(obj instanceof MethodSpec)) {
+        if (!(obj instanceof MethodSpec methodSpec)) {
             return false;
         }
 
-        final MethodSpec methodSpec = (MethodSpec) obj;
         return methodIntf.equals(methodSpec.methodIntf) &&
             methodName.equals(methodSpec.methodName) &&
             Arrays.equals(parameterTypes, methodSpec.parameterTypes);
@@ -142,13 +141,12 @@ public class MethodSpec implements Comparable, Serializable {
     }
 
     public int compareTo(final Object o) {
-        if (!(o instanceof MethodSpec)) {
+        if (!(o instanceof MethodSpec other)) {
             return -1;
         }
         if (this == o) {
             return 0;
         }
-        final MethodSpec other = (MethodSpec) o;
         if (parameterTypes != null) {
             if (other.parameterTypes == null) {
                 //parameter types always come before no param types

@@ -112,9 +112,8 @@ public class AsynchronousPool {
 
                 final Object value = callable.call();
 
-                if (value instanceof Future<?>) {
+                if (value instanceof Future<?> future) {
                     // This is the Future object returned by the bean code
-                    final Future<?> future = (Future<?>) value;
 
                     return future.get();
 

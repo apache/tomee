@@ -1309,11 +1309,9 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Fill in default sessionType for xml declared EJBs
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                if (!(bean instanceof SessionBean)) {
+                if (!(bean instanceof SessionBean sessionBean)) {
                     continue;
                 }
-
-                final SessionBean sessionBean = (SessionBean) bean;
 
                 if (sessionBean.getSessionType() != null) {
                     continue;
@@ -1363,8 +1361,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.get());
                 }
-                if (enterpriseBean instanceof SessionBean) {
-                    final SessionBean sessionBean = (SessionBean) enterpriseBean;
+                if (enterpriseBean instanceof SessionBean sessionBean) {
                     sessionBean.setSessionType(SessionType.SINGLETON);
 
                     if (singleton.mappedName() != null) {
@@ -1390,8 +1387,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.get());
                 }
-                if (enterpriseBean instanceof SessionBean) {
-                    final SessionBean sessionBean = (SessionBean) enterpriseBean;
+                if (enterpriseBean instanceof SessionBean sessionBean) {
                     sessionBean.setSessionType(SessionType.STATELESS);
 
                     if (stateless.mappedName() != null) {
@@ -1424,8 +1420,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.get());
                 }
-                if (enterpriseBean instanceof SessionBean) {
-                    final SessionBean sessionBean = (SessionBean) enterpriseBean;
+                if (enterpriseBean instanceof SessionBean sessionBean) {
                     // TODO: We might be stepping on an xml override here
                     sessionBean.setSessionType(SessionType.STATEFUL);
                     if (stateful.mappedName() != null) {
@@ -1608,8 +1603,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private String getEjbName(final EnterpriseBean bean, final Class<?> clazz) {
 
-            if (bean instanceof SessionBean) {
-                final SessionBean sessionBean = (SessionBean) bean;
+            if (bean instanceof SessionBean sessionBean) {
                 switch (sessionBean.getSessionType()) {
                     case STATEFUL: {
                         final Stateful annotation = clazz.getAnnotation(Stateful.class);
@@ -2500,8 +2494,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 AnnotationFinder finder = null; // created lazily since not always needed
                 final AnnotationFinder annotationFinder;
-                if (ejbModule.getFinder() instanceof AnnotationFinder) {
-                    AnnotationFinder af = (AnnotationFinder) ejbModule.getFinder();
+                if (ejbModule.getFinder() instanceof AnnotationFinder af) {
 
                     final List<Class<?>> ancestors = Classes.ancestors(clazz);
                     ancestors.addAll(asList(clazz.getInterfaces()));
@@ -2691,8 +2684,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /**
                  * All beans except MDBs have remoting capabilities (busines or legacy interfaces)
                  */
-                if (bean instanceof RemoteBean) {
-                    final RemoteBean remoteBean = (RemoteBean) bean;
+                if (bean instanceof RemoteBean remoteBean) {
 
                     /*
                      * @RemoteHome
@@ -2753,8 +2745,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     /*
                      * Annotations specific to @Stateless, @Stateful and @Singleton beans
                      */
-                    if (remoteBean instanceof SessionBean) {
-                        final SessionBean sessionBean = (SessionBean) remoteBean;
+                    if (remoteBean instanceof SessionBean sessionBean) {
 
                         // add parents
                         sessionBean.getParents().add(clazz.getName());
@@ -2877,11 +2868,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                if (bean instanceof MessageDrivenBean) {
+                if (bean instanceof MessageDrivenBean mdb) {
                     /*
                      * @ActivationConfigProperty
                      */
-                    final MessageDrivenBean mdb = (MessageDrivenBean) bean;
                     final MessageDriven messageDriven = clazz.getAnnotation(MessageDriven.class);
                     if (messageDriven != null) {
                         ActivationConfig activationConfig = mdb.getActivationConfig();
@@ -3043,11 +3033,9 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void processAsynchronous(final EnterpriseBean bean, final AnnotationFinder annotationFinder) {
-            if (!(bean instanceof SessionBean)) {
+            if (!(bean instanceof SessionBean sessionBean)) {
                 return;
             }
-
-            final SessionBean sessionBean = (SessionBean) bean;
 
             for (final Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(Asynchronous.class)) {
                 sessionBean.getAsyncMethod().add(new AsyncMethod(method.get()));
@@ -3486,8 +3474,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             String value = SystemInstance.get().getOptions().get(key, defaultValue);
             final DeploymentModule module = getModule();
 
-            if (module instanceof EjbModule) {
-                final EjbModule ejbModule = (EjbModule) module;
+            if (module instanceof EjbModule ejbModule) {
 
                 final OpenejbJar openejbJar = ejbModule.getOpenejbJar();
                 if (openejbJar != null && openejbJar.getProperties() != null) {
@@ -3569,8 +3556,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @DeclareRoles
                  */
                 final DeclareRoles declareRoles = clazz.getAnnotation(DeclareRoles.class);
-                if (declareRoles != null && bean instanceof RemoteBean) {
-                    final RemoteBean remoteBean = (RemoteBean) bean;
+                if (declareRoles != null && bean instanceof RemoteBean remoteBean) {
                     final List<SecurityRoleRef> securityRoleRefs = remoteBean.getSecurityRoleRef();
                     for (final String role : declareRoles.value()) {
                         securityRoleRefs.add(new SecurityRoleRef(role));
@@ -3654,10 +3640,9 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void processSchedules(final EnterpriseBean bean, final AnnotationFinder annotationFinder) {
-            if (!(bean instanceof TimerConsumer)) {
+            if (!(bean instanceof TimerConsumer timerConsumer)) {
                 return;
             }
-            final TimerConsumer timerConsumer = (TimerConsumer) bean;
             final Set<Annotated<Method>> scheduleMethods = new HashSet<>();
             scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(Schedules.class));
             scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(Schedule.class));
@@ -3736,8 +3721,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (bean instanceof Invokable) {
-                final Invokable invokable = (Invokable) bean;
+            if (bean instanceof Invokable invokable) {
 
                 /*
                  * @AroundInvoke
@@ -3761,8 +3745,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             /*
              * @Timeout
              */
-            if (bean instanceof TimerConsumer) {
-                final TimerConsumer timerConsumer = (TimerConsumer) bean;
+            if (bean instanceof TimerConsumer timerConsumer) {
                 if (timerConsumer.getTimeoutMethod() == null) {
                     final List<Annotated<Method>> timeoutMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(jakarta.ejb.Timeout.class));
                     //Validation Logic is moved to CheckCallback class.
@@ -3774,8 +3757,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (bean instanceof Session) {
-                final Session session = (Session) bean;
+            if (bean instanceof Session session) {
 
                 /*
                  * @AfterBegin

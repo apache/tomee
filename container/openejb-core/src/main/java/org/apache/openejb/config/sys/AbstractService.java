@@ -272,11 +272,9 @@ public abstract class AbstractService implements Service {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof AbstractService)) {
+        if (!(o instanceof AbstractService that)) {
             return false;
         }
-
-        final AbstractService that = (AbstractService) o;
 
         if (!Objects.equals(id, that.id)) {
             return false;

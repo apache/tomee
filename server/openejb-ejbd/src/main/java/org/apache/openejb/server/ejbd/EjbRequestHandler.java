@@ -427,8 +427,7 @@ class EjbRequestHandler extends RequestHandler {
             req.getPrimaryKey()
         );
 
-        if (result instanceof ProxyInfo) {
-            final ProxyInfo info = (ProxyInfo) result;
+        if (result instanceof ProxyInfo info) {
             res.setResponse(req.getVersion(), ResponseCodes.EJB_OK, info.getPrimaryKey());
         } else {
 
@@ -468,9 +467,8 @@ class EjbRequestHandler extends RequestHandler {
 
             res.setResponse(req.getVersion(), ResponseCodes.EJB_OK_FOUND_COLLECTION, primaryKeys);
 
-        } else if (result instanceof java.util.Enumeration) {
+        } else if (result instanceof java.util.Enumeration resultAsEnum) {
 
-            final java.util.Enumeration resultAsEnum = (java.util.Enumeration) result;
             final java.util.List<Object> listOfPKs = new ArrayList<>();
             while (resultAsEnum.hasMoreElements()) {
                 final ProxyInfo proxyInfo = ((ProxyInfo) resultAsEnum.nextElement());
@@ -483,8 +481,7 @@ class EjbRequestHandler extends RequestHandler {
 
             res.setResponse(req.getVersion(), ResponseCodes.EJB_OK_FOUND_ENUMERATION, listOfPKs.toArray(new Object[listOfPKs.size()]));
             /* Single instance found */
-        } else if (result instanceof ProxyInfo) {
-            final ProxyInfo proxyInfo = ((ProxyInfo) result);
+        } else if (result instanceof ProxyInfo proxyInfo) {
             result = proxyInfo.getPrimaryKey();
             res.setResponse(req.getVersion(), ResponseCodes.EJB_OK_FOUND, result);
         } else if (result == null) {

@@ -58,8 +58,7 @@ public class ConnectorCallbackHandler implements CallbackHandler {
                 callerPrincipal = ((CallerPrincipalCallback) callback).getPrincipal();
             } else if (callback instanceof GroupPrincipalCallback) {
                 groupsArray = ((GroupPrincipalCallback) callback).getGroups();
-            } else if (callback instanceof PasswordValidationCallback) {
-                final PasswordValidationCallback passwordValidationCallback = (PasswordValidationCallback) callback;
+            } else if (callback instanceof PasswordValidationCallback passwordValidationCallback) {
                 final String userName = passwordValidationCallback.getUsername();
                 final char[] password = passwordValidationCallback.getPassword();
 

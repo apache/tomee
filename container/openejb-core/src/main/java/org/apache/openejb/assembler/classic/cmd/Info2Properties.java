@@ -223,14 +223,13 @@ public class Info2Properties {
 
     private static void copyOpenEjbProperties(final Properties source, final Properties dest) {
         for (final Map.Entry<Object, Object> entry : source.entrySet()) {
-            if (!(entry.getKey() instanceof String)) {
+            if (!(entry.getKey() instanceof String key)) {
                 continue;
             }
             if (!(entry.getValue() instanceof String)) {
                 continue;
             }
 
-            final String key = (String) entry.getKey();
             if (key.startsWith("openejb.")) {
                 dest.put(entry.getKey(), entry.getValue());
             }

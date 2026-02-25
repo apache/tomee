@@ -132,8 +132,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             subject.getPrincipals().add(p);
         }
 
-        if (p instanceof GenericPrincipal) {
-            final GenericPrincipal genericPrincipal = (GenericPrincipal) p;
+        if (p instanceof GenericPrincipal genericPrincipal) {
             subject.getPrincipals().add(genericPrincipal.getUserPrincipal());
 
             // todo should we create credentials with the roles? groups?
@@ -148,8 +147,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         final Set<String> roles = new LinkedHashSet<>(logicalRoles.size());
         for (final String logicalRole : logicalRoles) {
             for (final Principal principal : principals) {
-                if (principal instanceof TomcatUser) {
-                    final TomcatUser user = (TomcatUser) principal;
+                if (principal instanceof TomcatUser user) {
                     if (TomcatHelper.hasRole(user.getRealm(), user.getTomcatPrincipal(), logicalRole)) {
                         roles.add(logicalRole);
                         break;
@@ -213,8 +211,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
     public void exitWebApp(final Object state) {
-        if (state instanceof WebAppState) {
-            final WebAppState webAppState = (WebAppState) state;
+        if (state instanceof WebAppState webAppState) {
             if (webAppState.oldIdentity == null) {
                 clientIdentity.remove();
             } else {

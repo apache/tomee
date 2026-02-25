@@ -184,9 +184,7 @@ public class URLPattern {
      * @return if this equals obj
      */
     public boolean equals(Object obj) {
-        if (!(obj instanceof URLPattern)) return false;
-
-        URLPattern test = (URLPattern) obj;
+        if (!(obj instanceof URLPattern test)) return false;
 
         return pattern.equals(test.pattern);
     }

@@ -268,10 +268,9 @@ public class WsDeployer implements DynamicDeployer {
         WebserviceDescription webserviceDescription;
         for (final EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             // skip if this is not a webservices endpoint
-            if (!(enterpriseBean instanceof SessionBean)) {
+            if (!(enterpriseBean instanceof SessionBean sessionBean)) {
                 continue;
             }
-            final SessionBean sessionBean = (SessionBean) enterpriseBean;
             if (sessionBean.getSessionType() == SessionType.STATEFUL) {
                 continue;
             }
@@ -484,12 +483,10 @@ public class WsDeployer implements DynamicDeployer {
             }
 
             for (final Object element : port.getExtensibilityElements()) {
-                if (element instanceof SOAPAddress) {
-                    final SOAPAddress soapAddress = (SOAPAddress) element;
+                if (element instanceof SOAPAddress soapAddress) {
                     final URI uri = URLs.uri(soapAddress.getLocationURI());
                     return uri.getPath();
-                } else if (element instanceof HTTPAddress) {
-                    final HTTPAddress httpAddress = (HTTPAddress) element;
+                } else if (element instanceof HTTPAddress httpAddress) {
                     final URI uri = URLs.uri(httpAddress.getLocationURI());
                     return uri.getPath();
                 }

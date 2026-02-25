@@ -38,10 +38,9 @@ public class CheckMethods extends ValidationBase {
     public void validate(final EjbModule ejbModule) {
 
         for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            if (!(bean instanceof RemoteBean)) {
+            if (!(bean instanceof RemoteBean b)) {
                 continue;
             }
-            final RemoteBean b = (RemoteBean) bean;
 
             if (b.getHome() != null) {
                 check_remoteInterfaceMethods(b);
@@ -249,14 +248,12 @@ public class CheckMethods extends ValidationBase {
 
                 final String paramString = getParameters(create);
 
-                if (b instanceof EntityBean) {
-                    final EntityBean entity = (EntityBean) b;
+                if (b instanceof EntityBean entity) {
 
                     fail(b, "entity.no.ejb.create", b.getEjbClass(), entity.getPrimKeyClass(), ejbCreateName.toString(), paramString);
 
                 } else {
-                    if (b instanceof SessionBean) {
-                        final SessionBean sb = (SessionBean) b;
+                    if (b instanceof SessionBean sb) {
                         // Under EJB 3.1, it is not required that a stateless session bean have an ejbCreate method, even when it has a home interface
                         if (!sb.getSessionType().equals(SessionType.STATELESS)) {
                             fail(b, "session.no.ejb.create", b.getEjbClass(), ejbCreateName.toString(), paramString);

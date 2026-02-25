@@ -188,8 +188,7 @@ public class Agent {
         }
 
         final URLConnection urlConnection = resource.openConnection();
-        if (urlConnection instanceof JarURLConnection) {
-            final JarURLConnection jarURLConnection = (JarURLConnection) urlConnection;
+        if (urlConnection instanceof JarURLConnection jarURLConnection) {
             return jarURLConnection.getJarFile().getName();
         }
 

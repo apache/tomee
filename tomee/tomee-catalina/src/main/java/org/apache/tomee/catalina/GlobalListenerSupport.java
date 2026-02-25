@@ -93,8 +93,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     @Override
     public void lifecycleEvent(final LifecycleEvent event) {
         final Object source = event.getSource();
-        if (source instanceof StandardContext) {
-            final StandardContext standardContext = (StandardContext) source;
+        if (source instanceof StandardContext standardContext) {
             if (standardContext instanceof IgnoredStandardContext) {
                 return;
             }
@@ -208,8 +207,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      */
     private void serviceAdded(final Service service) {
         final Container container = service.getContainer();
-        if (container instanceof StandardEngine) {
-            final StandardEngine engine = (StandardEngine) container;
+        if (container instanceof StandardEngine engine) {
             engineAdded(engine);
         }
     }
@@ -221,8 +219,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      */
     private void serviceRemoved(final Service service) {
         final Container container = service.getContainer();
-        if (container instanceof StandardEngine) {
-            final StandardEngine engine = (StandardEngine) container;
+        if (container instanceof StandardEngine engine) {
             engineRemoved(engine);
         }
     }
@@ -235,8 +232,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     private void engineAdded(final StandardEngine engine) {
         addContextListener(engine);
         for (final Container child : engine.findChildren()) {
-            if (child instanceof StandardHost) {
-                final StandardHost host = (StandardHost) child;
+            if (child instanceof StandardHost host) {
                 hostAdded(host);
             }
         }
@@ -249,8 +245,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      */
     private void engineRemoved(final StandardEngine engine) {
         for (final Container child : engine.findChildren()) {
-            if (child instanceof StandardHost) {
-                final StandardHost host = (StandardHost) child;
+            if (child instanceof StandardHost host) {
                 hostRemoved(host);
             }
         }
@@ -265,8 +260,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         addContextListener(host);
         host.addLifecycleListener(this);
         for (final Container child : host.findChildren()) {
-            if (child instanceof StandardContext) {
-                final StandardContext context = (StandardContext) child;
+            if (child instanceof StandardContext context) {
                 contextAdded(context);
             }
         }
@@ -279,8 +273,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
      */
     private void hostRemoved(final StandardHost host) {
         for (final Container child : host.findChildren()) {
-            if (child instanceof StandardContext) {
-                final StandardContext context = (StandardContext) child;
+            if (child instanceof StandardContext context) {
                 contextRemoved(context);
             }
         }

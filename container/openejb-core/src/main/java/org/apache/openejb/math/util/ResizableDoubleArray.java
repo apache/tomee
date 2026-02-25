@@ -863,13 +863,12 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof ResizableDoubleArray)) {
+        if (!(object instanceof ResizableDoubleArray other)) {
             return false;
         }
         synchronized (this) {
             synchronized (object) {
                 boolean result = true;
-                final ResizableDoubleArray other = (ResizableDoubleArray) object;
                 result = result && other.initialCapacity == initialCapacity;
                 result = result && other.contractionCriteria == contractionCriteria;
                 result = result && other.expansionFactor == expansionFactor;

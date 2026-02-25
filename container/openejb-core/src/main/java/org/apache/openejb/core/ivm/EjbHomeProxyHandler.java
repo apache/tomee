@@ -243,8 +243,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
         } catch (final InvalidateReferenceException ire) {
             Throwable cause = ire.getRootCause();
-            if (cause instanceof RemoteException && interfaceType.isLocal()) {
-                final RemoteException re = (RemoteException) cause;
+            if (cause instanceof RemoteException re && interfaceType.isLocal()) {
                 final Throwable detail = re.detail != null ? re.detail : re;
                 cause = new EJBException(re.getMessage()).initCause(detail);
             }

@@ -178,13 +178,11 @@ public class FacesAbsoluteOrdering$JAXB
         List<Object> nameOrOthers = facesAbsoluteOrdering.nameOrOthers;
         if (nameOrOthers!= null) {
             for (Object nameOrOthersItem: nameOrOthers) {
-                if (nameOrOthersItem instanceof java.lang.String) {
-                    java.lang.String String = ((java.lang.String) nameOrOthersItem);
+                if (nameOrOthersItem instanceof String String) {
                     writer.writeStartElement(prefix, "name", "http://java.sun.com/xml/ns/javaee");
                     writer.writeCharacters(String);
                     writer.writeEndElement();
-                } else if (nameOrOthersItem instanceof org.apache.openejb.jee.FacesOrderingOthers) {
-                    org.apache.openejb.jee.FacesOrderingOthers FacesOrderingOthers = ((org.apache.openejb.jee.FacesOrderingOthers) nameOrOthersItem);
+                } else if (nameOrOthersItem instanceof FacesOrderingOthers FacesOrderingOthers) {
                     writer.writeStartElement(prefix, "others", "http://java.sun.com/xml/ns/javaee");
                     writeFacesOrderingOthers(writer, FacesOrderingOthers, context);
                     writer.writeEndElement();

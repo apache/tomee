@@ -431,11 +431,10 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof TargetImpl)) {
+            if (!(o instanceof TargetImpl target)) {
                 return false;
             }
 
-            final TargetImpl target = (TargetImpl) o;
             return name.equals(target.name);
         }
 
@@ -507,11 +506,10 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof TargetModuleIDImpl)) {
+            if (!(o instanceof TargetModuleIDImpl targetModuleID)) {
                 return false;
             }
 
-            final TargetModuleIDImpl targetModuleID = (TargetModuleIDImpl) o;
             return target.equals(targetModuleID.target) &&
                 moduleId.equals(targetModuleID.moduleId);
         }

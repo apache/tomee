@@ -210,13 +210,11 @@ public class FacesListEntries$JAXB
         List<Object> nullValueOrValue = facesListEntries.nullValueOrValue;
         if (nullValueOrValue!= null) {
             for (Object nullValueOrValueItem: nullValueOrValue) {
-                if (nullValueOrValueItem instanceof org.apache.openejb.jee.FacesNullValue) {
-                    org.apache.openejb.jee.FacesNullValue FacesNullValue = ((org.apache.openejb.jee.FacesNullValue) nullValueOrValueItem);
+                if (nullValueOrValueItem instanceof FacesNullValue FacesNullValue) {
                     writer.writeStartElement(prefix, "null-value", "http://java.sun.com/xml/ns/javaee");
                     writeFacesNullValue(writer, FacesNullValue, context);
                     writer.writeEndElement();
-                } else if (nullValueOrValueItem instanceof java.lang.String) {
-                    java.lang.String String = ((java.lang.String) nullValueOrValueItem);
+                } else if (nullValueOrValueItem instanceof String String) {
                     writer.writeStartElement(prefix, "value", "http://java.sun.com/xml/ns/javaee");
                     writer.writeCharacters(String);
                     writer.writeEndElement();

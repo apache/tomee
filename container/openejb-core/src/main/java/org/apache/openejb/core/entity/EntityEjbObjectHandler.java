@@ -77,8 +77,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
         final Object that = args[0];
         final Object invocationHandler = ProxyManager.getInvocationHandler(that);
 
-        if (invocationHandler instanceof EntityEjbObjectHandler) {
-            final EntityEjbObjectHandler handler = (EntityEjbObjectHandler) invocationHandler;
+        if (invocationHandler instanceof EntityEjbObjectHandler handler) {
 
             /*
             * The registry id is a compound key composed of the bean's primary key, deployment id, and

@@ -32,11 +32,10 @@ public class TestIdentityStore implements IdentityStore {
 
     public CredentialValidationResult validate(Credential credential) {
 
-        if (!(credential instanceof UsernamePasswordCredential)) {
+        if (!(credential instanceof UsernamePasswordCredential usernamePasswordCredential)) {
             return INVALID_RESULT;
         }
 
-        final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
         if (usernamePasswordCredential.compareTo("jon", "doe")) {
             return new CredentialValidationResult("jon", new HashSet<>(asList("foo", "bar")));
         }

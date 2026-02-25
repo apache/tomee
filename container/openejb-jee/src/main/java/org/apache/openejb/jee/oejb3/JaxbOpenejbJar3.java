@@ -93,8 +93,7 @@ public class JaxbOpenejbJar3 {
         final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
         final Object o = unmarshaller.unmarshal(source);
-        if (o instanceof JAXBElement) {
-            final JAXBElement element = (JAXBElement) o;
+        if (o instanceof JAXBElement element) {
             return (T) element.getValue();
         }
         return (T) o;

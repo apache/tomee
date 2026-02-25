@@ -839,11 +839,10 @@ public class SunConversion implements DynamicDeployer {
 
             // skip all non-CMP beans
             final EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejb.getEjbName());
-            if (!(enterpriseBean instanceof EntityBean) ||
-                ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
+            if (!(enterpriseBean instanceof EntityBean bean) ||
+                bean.getPersistenceType() != PersistenceType.CONTAINER) {
                 continue;
             }
-            final EntityBean bean = (EntityBean) enterpriseBean;
             final EntityData entityData = entities.get(moduleId + "#" + ejb.getEjbName());
             if (entityData == null) {
                 // todo warn no such ejb in the ejb-jar.xml
