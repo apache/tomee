@@ -108,7 +108,7 @@
     <!--                                                                      -->
     <!--   showServerInfo      Should server information be presented in the  -->
     <!--                       response sent to clients when directory        -->
-    <!--                       listings is enabled? [true]                    -->
+    <!--                       listings are enabled? [true]                    -->
     <!--                                                                      -->
     <!--   allowPartialPut     Should the server treat an HTTP PUT request    -->
     <!--                       with a Range header as a partial PUT? Note     -->
@@ -174,7 +174,7 @@
     <!--                                                                      -->
     <!--   enablePooling       Determines whether tag handler pooling is      -->
     <!--                       enabled. This is a compilation option. It will -->
-    <!--                       not alter the behaviour of JSPs that have      -->
+    <!--                       not alter the behavior of JSPs that have      -->
     <!--                       already been compiled. [true]                  -->
     <!--                                                                      -->
     <!--   engineOptionsClass  Allows specifying the Options class used to    -->
@@ -434,7 +434,7 @@
     <!-- ================ Built In Servlet Mappings ========================= -->
 
 
-    <!-- The servlet mappings for the built in servlets defined above.  Note  -->
+    <!-- The servlet mappings for the built-in servlets defined above.  Note  -->
     <!-- that, by default, the CGI and SSI servlets are *not* mapped.  You    -->
     <!-- must uncomment these mappings (or add them to your application's own -->
     <!-- web.xml deployment descriptor) to enable these services              -->
