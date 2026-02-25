@@ -176,7 +176,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
             );
         }
 
-        final List<String> splitOnSpace = new ArrayList<String>();
+        final List<String> splitOnSpace = new ArrayList<>();
 
         final Iterator<String> it = new ArgsIterator(opts);
         while (it.hasNext()) {
@@ -282,7 +282,7 @@ public class RemoteTomEEContainer extends TomEEContainer<RemoteTomEEConfiguratio
         }
 
         if (logger.isLoggable(Level.FINE)) {
-            final Map<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
+            final Map<Object, Object> map = new TreeMap<>(System.getProperties());
             for (final Map.Entry<Object, Object> entry : map.entrySet()) {
                 logger.log(Level.FINE, String.format("%s = %s\n", entry.getKey(), entry.getValue()));
             }

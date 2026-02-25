@@ -287,7 +287,7 @@ public class HttpListenerRegistry implements HttpListener {
     public void addHttpFilter(HttpListener listener, String regex) {
         synchronized (filterRegistry) {
             if (!filterRegistry.containsKey(regex)) {
-                filterRegistry.put(regex, new ArrayList<HttpListener>());
+                filterRegistry.put(regex, new ArrayList<>());
             }
             filterRegistry.get(regex).add(listener);
         }

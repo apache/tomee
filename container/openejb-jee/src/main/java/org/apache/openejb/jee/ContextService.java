@@ -162,7 +162,7 @@ public class ContextService implements Keyable<String>{
      */
     public List<String> getCleared() {
         if (cleared == null) {
-            cleared = new ArrayList<String>();
+            cleared = new ArrayList<>();
         }
         return this.cleared;
     }
@@ -191,7 +191,7 @@ public class ContextService implements Keyable<String>{
      */
     public List<String> getPropagated() {
         if (propagated == null) {
-            propagated = new ArrayList<String>();
+            propagated = new ArrayList<>();
         }
         return this.propagated;
     }
@@ -220,7 +220,7 @@ public class ContextService implements Keyable<String>{
      */
     public List<String> getUnchanged() {
         if (unchanged == null) {
-            unchanged = new ArrayList<String>();
+            unchanged = new ArrayList<>();
         }
         return this.unchanged;
     }
@@ -249,7 +249,7 @@ public class ContextService implements Keyable<String>{
      */
     public List<Property> getProperty() {
         if (property == null) {
-            property = new ArrayList<Property>();
+            property = new ArrayList<>();
         }
         return this.property;
     }

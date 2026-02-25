@@ -55,7 +55,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     public static final String PROPERTY_KEEPALIVE = "openejb.client.keepalive";
     public static final String ENABLED_CIPHER_SUITES = "openejb.client.enabledCipherSuites";
 
-    private static final Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
+    private static final Map<URI, Pool> connections = new ConcurrentHashMap<>();
     private int size = 5;
     private long timeoutPool = 1000;
     private int timeoutConnect = 1000;
@@ -450,7 +450,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             this.uri = uri;
             this.size = size;
             this.semaphore = new Semaphore(size);
-            this.pool = new Stack<SocketConnection>();
+            this.pool = new Stack<>();
             this.timeout = timeout;
             this.timeUnit = TimeUnit.MILLISECONDS;
 

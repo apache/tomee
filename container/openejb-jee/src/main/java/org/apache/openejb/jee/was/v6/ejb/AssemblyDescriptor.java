@@ -136,7 +136,7 @@ public class AssemblyDescriptor {
      */
     public List<MethodPermission> getMethodPermissions() {
         if (methodPermissions == null) {
-            methodPermissions = new ArrayList<MethodPermission>();
+            methodPermissions = new ArrayList<>();
         }
         return this.methodPermissions;
     }
@@ -164,7 +164,7 @@ public class AssemblyDescriptor {
      */
     public List<MethodTransaction> getMethodTransactions() {
         if (methodTransactions == null) {
-            methodTransactions = new ArrayList<MethodTransaction>();
+            methodTransactions = new ArrayList<>();
         }
         return this.methodTransactions;
     }
@@ -192,7 +192,7 @@ public class AssemblyDescriptor {
      */
     public List<SecurityRole> getSecurityRoles() {
         if (securityRoles == null) {
-            securityRoles = new ArrayList<SecurityRole>();
+            securityRoles = new ArrayList<>();
         }
         return this.securityRoles;
     }
@@ -220,7 +220,7 @@ public class AssemblyDescriptor {
      */
     public List<ExcludeList> getExcludeList() {
         if (excludeList == null) {
-            excludeList = new ArrayList<ExcludeList>();
+            excludeList = new ArrayList<>();
         }
         return this.excludeList;
     }
@@ -248,7 +248,7 @@ public class AssemblyDescriptor {
      */
     public List<MessageDestination> getMessageDestinations() {
         if (messageDestinations == null) {
-            messageDestinations = new ArrayList<MessageDestination>();
+            messageDestinations = new ArrayList<>();
         }
         return this.messageDestinations;
     }
@@ -276,7 +276,7 @@ public class AssemblyDescriptor {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

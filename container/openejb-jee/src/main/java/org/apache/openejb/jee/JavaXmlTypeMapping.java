@@ -94,7 +94,7 @@ public class JavaXmlTypeMapping {
 
     public List<VariableMapping> getVariableMapping() {
         if (variableMapping == null) {
-            variableMapping = new ArrayList<VariableMapping>();
+            variableMapping = new ArrayList<>();
         }
         return this.variableMapping;
     }

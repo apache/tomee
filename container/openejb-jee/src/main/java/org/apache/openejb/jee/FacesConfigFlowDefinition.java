@@ -137,7 +137,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<Description> getDescription() {
         if (description == null) {
-            description = new ArrayList<Description>();
+            description = new ArrayList<>();
         }
         return this.description;
     }
@@ -164,7 +164,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<DisplayName> getDisplayName() {
         if (displayName == null) {
-            displayName = new ArrayList<DisplayName>();
+            displayName = new ArrayList<>();
         }
         return this.displayName;
     }
@@ -191,7 +191,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<Icon> getIcon() {
         if (icon == null) {
-            icon = new ArrayList<Icon>();
+            icon = new ArrayList<>();
         }
         return this.icon;
     }
@@ -238,7 +238,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<FacesConfigFlowDefinitionView> getView() {
         if (view == null) {
-            view = new ArrayList<FacesConfigFlowDefinitionView>();
+            view = new ArrayList<>();
         }
         return this.view;
     }
@@ -265,7 +265,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<FacesConfigFlowDefinitionSwitch> getSwitch() {
         if (_switch == null) {
-            _switch = new ArrayList<FacesConfigFlowDefinitionSwitch>();
+            _switch = new ArrayList<>();
         }
         return this._switch;
     }
@@ -292,7 +292,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<FacesConfigFlowDefinitionFlowReturn> getFlowReturn() {
         if (flowReturn == null) {
-            flowReturn = new ArrayList<FacesConfigFlowDefinitionFlowReturn>();
+            flowReturn = new ArrayList<>();
         }
         return this.flowReturn;
     }
@@ -319,7 +319,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<FacesNavigationRule> getNavigationRule() {
         if (navigationRule == null) {
-            navigationRule = new ArrayList<FacesNavigationRule>();
+            navigationRule = new ArrayList<>();
         }
         return this.navigationRule;
     }
@@ -346,7 +346,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<FacesConfigFlowDefinitionFlowCall> getFlowCall() {
         if (flowCall == null) {
-            flowCall = new ArrayList<FacesConfigFlowDefinitionFlowCall>();
+            flowCall = new ArrayList<>();
         }
         return this.flowCall;
     }
@@ -373,7 +373,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<FacesConfigFlowDefinitionFacesMethodCall> getMethodCall() {
         if (methodCall == null) {
-            methodCall = new ArrayList<FacesConfigFlowDefinitionFacesMethodCall>();
+            methodCall = new ArrayList<>();
         }
         return this.methodCall;
     }
@@ -440,7 +440,7 @@ public class FacesConfigFlowDefinition {
      */
     public List<FacesConfigFlowDefinitionInboundParameter> getInboundParameter() {
         if (inboundParameter == null) {
-            inboundParameter = new ArrayList<FacesConfigFlowDefinitionInboundParameter>();
+            inboundParameter = new ArrayList<>();
         }
         return this.inboundParameter;
     }

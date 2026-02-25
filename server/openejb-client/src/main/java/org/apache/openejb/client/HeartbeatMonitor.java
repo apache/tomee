@@ -23,7 +23,7 @@ import java.util.Stack;
 public class HeartbeatMonitor {
 
     public static void main(final String[] args) throws Exception {
-        final Stack<String> stack = new Stack<String>();
+        final Stack<String> stack = new Stack<>();
         for (final String s : args) {
             stack.push(s);
         }

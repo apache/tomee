@@ -72,7 +72,7 @@ public class PersistenceFragment {
      */
     public List<PersistenceUnitFragment> getPersistenceUnitFragment() {
         if (persistenceUnitFragment == null) {
-            persistenceUnitFragment = new ArrayList<PersistenceUnitFragment>();
+            persistenceUnitFragment = new ArrayList<>();
         }
         return persistenceUnitFragment;
     }

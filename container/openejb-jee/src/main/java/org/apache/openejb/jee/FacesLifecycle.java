@@ -94,7 +94,7 @@ public class FacesLifecycle {
      */
     public List<java.lang.String> getPhaseListener() {
         if (phaseListener == null) {
-            phaseListener = new ArrayList<java.lang.String>();
+            phaseListener = new ArrayList<>();
         }
         return this.phaseListener;
     }
@@ -121,7 +121,7 @@ public class FacesLifecycle {
      */
     public List<FacesLifecycleExtension> getLifecycleExtension() {
         if (lifecycleExtension == null) {
-            lifecycleExtension = new ArrayList<FacesLifecycleExtension>();
+            lifecycleExtension = new ArrayList<>();
         }
         return this.lifecycleExtension;
     }

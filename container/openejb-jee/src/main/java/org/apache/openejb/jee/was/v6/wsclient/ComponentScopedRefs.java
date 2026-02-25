@@ -112,7 +112,7 @@ public class ComponentScopedRefs {
      */
     public List<ServiceRef> getServiceRefs() {
         if (serviceRefs == null) {
-            serviceRefs = new ArrayList<ServiceRef>();
+            serviceRefs = new ArrayList<>();
         }
         return this.serviceRefs;
     }
@@ -140,7 +140,7 @@ public class ComponentScopedRefs {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

@@ -80,7 +80,7 @@ public class Interceptor {
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> profile(final SuperInterceptedBean bean, final String interceptorName) {
-        final Map<String, Object> ctxData = new HashMap<String, Object>();
+        final Map<String, Object> ctxData = new HashMap<>();
 
         final String KEY = bean.getClass().getSimpleName();
 
@@ -99,12 +99,12 @@ public class Interceptor {
     @SuppressWarnings("unchecked")
     private static Map<String, Object> updateInterceptorsList(Map<String, Object> innerMap, final String interceptorName) {
         if (innerMap == null) {
-            innerMap = new HashMap<String, Object>();
+            innerMap = new HashMap<>();
         }
 
         ArrayList<String> interceptorsList = (ArrayList<String>) innerMap.get("INTERCEPTORS");
         if (interceptorsList == null) {
-            interceptorsList = new ArrayList<String>();
+            interceptorsList = new ArrayList<>();
         }
         interceptorsList.add(interceptorName);
         innerMap.put("INTERCEPTORS", interceptorsList);

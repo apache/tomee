@@ -270,7 +270,7 @@ public final class OpenEJBEnricher {
             types.add(getBaseType());
             types.add(Object.class);
 
-            annotations = new HashSet<Annotation>(asList(method.getParameterAnnotations()[position]));
+            annotations = new HashSet<>(asList(method.getParameterAnnotations()[position]));
         }
 
         @Override

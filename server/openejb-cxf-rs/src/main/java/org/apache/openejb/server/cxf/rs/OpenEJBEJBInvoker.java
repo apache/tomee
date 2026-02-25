@@ -40,7 +40,7 @@ import java.util.Map;
 import jakarta.ejb.EJBException;
 
 public class OpenEJBEJBInvoker extends JAXRSInvoker {
-    private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<Class<?>, Collection<Class<?>>>();
+    private final Map<Class<?>, Collection<Class<?>>> contextTypes = new HashMap<>();
 
     public OpenEJBEJBInvoker(final Collection<BeanContext> restEjbs) {
         for (final BeanContext context : restEjbs) {

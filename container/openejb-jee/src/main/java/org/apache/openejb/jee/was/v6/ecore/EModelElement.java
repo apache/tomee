@@ -71,7 +71,7 @@ public class EModelElement extends EObject {
      */
     public List<EAnnotation> getEAnnotations() {
         if (eAnnotations == null) {
-            eAnnotations = new ArrayList<EAnnotation>();
+            eAnnotations = new ArrayList<>();
         }
         return this.eAnnotations;
     }

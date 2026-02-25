@@ -80,7 +80,7 @@ public class WebserviceEndpoint implements Keyable<String> {
 
     public List<Object> getLoginConfigOrMessageSecurityBinding() {
         if (loginConfigOrMessageSecurityBinding == null) {
-            loginConfigOrMessageSecurityBinding = new ArrayList<Object>();
+            loginConfigOrMessageSecurityBinding = new ArrayList<>();
         }
         return this.loginConfigOrMessageSecurityBinding;
     }

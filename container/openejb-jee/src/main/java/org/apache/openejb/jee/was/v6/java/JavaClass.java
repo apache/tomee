@@ -140,7 +140,7 @@ public class JavaClass extends EClass {
      */
     public List<JavaClass> getJavaClassImplementsInterfaces() {
         if (javaClassImplementsInterfaces == null) {
-            javaClassImplementsInterfaces = new ArrayList<JavaClass>();
+            javaClassImplementsInterfaces = new ArrayList<>();
         }
         return this.javaClassImplementsInterfaces;
     }
@@ -168,7 +168,7 @@ public class JavaClass extends EClass {
      */
     public List<JavaClass> getJavaClassImports() {
         if (javaClassImports == null) {
-            javaClassImports = new ArrayList<JavaClass>();
+            javaClassImports = new ArrayList<>();
         }
         return this.javaClassImports;
     }
@@ -196,7 +196,7 @@ public class JavaClass extends EClass {
      */
     public List<JavaPackage> getJavaPackageImports() {
         if (javaPackageImports == null) {
-            javaPackageImports = new ArrayList<JavaPackage>();
+            javaPackageImports = new ArrayList<>();
         }
         return this.javaPackageImports;
     }
@@ -223,7 +223,7 @@ public class JavaClass extends EClass {
      */
     public List<Field> getFields() {
         if (fields == null) {
-            fields = new ArrayList<Field>();
+            fields = new ArrayList<>();
         }
         return this.fields;
     }
@@ -250,7 +250,7 @@ public class JavaClass extends EClass {
      */
     public List<Method> getMethods() {
         if (methods == null) {
-            methods = new ArrayList<Method>();
+            methods = new ArrayList<>();
         }
         return this.methods;
     }
@@ -278,7 +278,7 @@ public class JavaClass extends EClass {
      */
     public List<Initializer> getInitializers() {
         if (initializers == null) {
-            initializers = new ArrayList<Initializer>();
+            initializers = new ArrayList<>();
         }
         return this.initializers;
     }
@@ -306,7 +306,7 @@ public class JavaClass extends EClass {
      */
     public List<JavaClass> getJavaDeclaredClasses() {
         if (javaDeclaredClasses == null) {
-            javaDeclaredClasses = new ArrayList<JavaClass>();
+            javaDeclaredClasses = new ArrayList<>();
         }
         return this.javaDeclaredClasses;
     }
@@ -334,7 +334,7 @@ public class JavaClass extends EClass {
      */
     public List<JavaClass> getJavaDeclaringClasses() {
         if (javaDeclaringClasses == null) {
-            javaDeclaringClasses = new ArrayList<JavaClass>();
+            javaDeclaringClasses = new ArrayList<>();
         }
         return this.javaDeclaringClasses;
     }
@@ -362,7 +362,7 @@ public class JavaClass extends EClass {
      */
     public List<JavaEvent> getEvents() {
         if (events == null) {
-            events = new ArrayList<JavaEvent>();
+            events = new ArrayList<>();
         }
         return this.events;
     }

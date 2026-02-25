@@ -38,7 +38,7 @@ public class ClientInstance {
     private final HashMap<Class, Object> components;
 
     private ClientInstance(final Properties properties) throws Exception {
-        this.components = new HashMap<Class, Object>();
+        this.components = new HashMap<>();
 
         this.internalProperties.putAll(System.getProperties());
         this.internalProperties.putAll(properties);

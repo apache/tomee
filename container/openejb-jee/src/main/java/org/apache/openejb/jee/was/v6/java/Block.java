@@ -111,7 +111,7 @@ public class Block {
      */
     public List<Block> getContents() {
         if (contents == null) {
-            contents = new ArrayList<Block>();
+            contents = new ArrayList<>();
         }
         return this.contents;
     }
@@ -139,7 +139,7 @@ public class Block {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

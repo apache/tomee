@@ -55,7 +55,7 @@ public class OrderingOrdering {
 
     public List<String> getName() {
         if (name == null) {
-            name = new ArrayList<String>();
+            name = new ArrayList<>();
         }
         return this.name;
     }

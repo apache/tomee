@@ -83,7 +83,7 @@ public class Relationships {
 
     public List<EjbRelation> getEjbRelation() {
         if (ejbRelation == null) {
-            ejbRelation = new ArrayList<EjbRelation>();
+            ejbRelation = new ArrayList<>();
         }
         return this.ejbRelation;
     }

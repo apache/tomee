@@ -23,7 +23,7 @@ public class ExecutionChannel {
 
     private static final ExecutionChannel INSTANCE = new ExecutionChannel();
 
-    private final List<ExecutionObserver> observers = new ArrayList<ExecutionObserver>();
+    private final List<ExecutionObserver> observers = new ArrayList<>();
 
     public static ExecutionChannel getInstance() {
         return INSTANCE;

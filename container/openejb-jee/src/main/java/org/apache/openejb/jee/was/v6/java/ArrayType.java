@@ -94,7 +94,7 @@ public class ArrayType extends JavaClass {
      */
     public List<EClassifier> getComponentTypes() {
         if (componentTypes == null) {
-            componentTypes = new ArrayList<EClassifier>();
+            componentTypes = new ArrayList<>();
         }
         return this.componentTypes;
     }

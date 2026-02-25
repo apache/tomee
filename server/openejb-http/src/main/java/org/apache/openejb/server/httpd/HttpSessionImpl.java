@@ -33,7 +33,7 @@ import jakarta.servlet.http.HttpSessionListener;
 public class HttpSessionImpl implements HttpSession {
     private Collection<HttpSessionListener> listeners;
     private String sessionId = UUID.randomUUID().toString();
-    private Map<String, Object> attributes = new HashMap<String, Object>();
+    private Map<String, Object> attributes = new HashMap<>();
     private final long created = System.currentTimeMillis();
     private volatile long timeout;
     private volatile long lastAccessed = created;

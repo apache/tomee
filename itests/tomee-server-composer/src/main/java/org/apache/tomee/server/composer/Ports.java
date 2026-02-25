@@ -72,7 +72,7 @@ public class Ports {
         // again for at least a minute
         allocated.addAll(ports);
 
-        return () -> new Iterator<Integer>() {
+        return () -> new Iterator<>() {
             @Override
             public boolean hasNext() {
                 return ports.size() > 0;

@@ -109,7 +109,7 @@ public class ContainerManagedEntity extends Entity {
      */
     public List<CMPAttribute> getPersistentAttributes() {
         if (persistentAttributes == null) {
-            persistentAttributes = new ArrayList<CMPAttribute>();
+            persistentAttributes = new ArrayList<>();
         }
         return this.persistentAttributes;
     }
@@ -137,7 +137,7 @@ public class ContainerManagedEntity extends Entity {
      */
     public List<CMPAttribute> getKeyAttributes() {
         if (keyAttributes == null) {
-            keyAttributes = new ArrayList<CMPAttribute>();
+            keyAttributes = new ArrayList<>();
         }
         return this.keyAttributes;
     }
@@ -164,7 +164,7 @@ public class ContainerManagedEntity extends Entity {
      */
     public List<Query> getQueries() {
         if (queries == null) {
-            queries = new ArrayList<Query>();
+            queries = new ArrayList<>();
         }
         return this.queries;
     }
@@ -192,7 +192,7 @@ public class ContainerManagedEntity extends Entity {
      */
     public List<CMPAttribute> getCMPAttributes() {
         if (cmpAttributes == null) {
-            cmpAttributes = new ArrayList<CMPAttribute>();
+            cmpAttributes = new ArrayList<>();
         }
         return this.cmpAttributes;
     }
@@ -220,7 +220,7 @@ public class ContainerManagedEntity extends Entity {
      */
     public List<CMPAttribute> getPrimKeyFields() {
         if (primKeyFields == null) {
-            primKeyFields = new ArrayList<CMPAttribute>();
+            primKeyFields = new ArrayList<>();
         }
         return this.primKeyFields;
     }

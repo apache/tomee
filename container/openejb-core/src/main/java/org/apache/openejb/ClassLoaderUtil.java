@@ -62,8 +62,8 @@ import java.util.zip.ZipFile;
 public class ClassLoaderUtil {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ClassLoaderUtil.class);
-    private static final Map<String, List<ClassLoader>> classLoadersByApp = new HashMap<String, List<ClassLoader>>();
-    private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader, Set<String>>();
+    private static final Map<String, List<ClassLoader>> classLoadersByApp = new HashMap<>();
+    private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<>();
     private static final UrlCache localUrlCache = new UrlCache();
     private static final AtomicBoolean skipClearSunJarFile = new AtomicBoolean();
 

@@ -109,7 +109,7 @@ public class ResourceAdapter {
 
     public List<ConfigProperty> getConfigProperty() {
         if (configProperty == null) {
-            configProperty = new ArrayList<ConfigProperty>();
+            configProperty = new ArrayList<>();
         }
         return this.configProperty;
     }
@@ -134,14 +134,14 @@ public class ResourceAdapter {
 
     public List<AdminObject> getAdminObject() {
         if (adminObject == null) {
-            adminObject = new ArrayList<AdminObject>();
+            adminObject = new ArrayList<>();
         }
         return this.adminObject;
     }
 
     public List<SecurityPermission> getSecurityPermission() {
         if (securityPermission == null) {
-            securityPermission = new ArrayList<SecurityPermission>();
+            securityPermission = new ArrayList<>();
         }
         return this.securityPermission;
     }

@@ -31,7 +31,7 @@ public class PrefetchDisabled {
 
     public List<QueryMethod> getQueryMethod() {
         if (queryMethod == null) {
-            queryMethod = new ArrayList<QueryMethod>();
+            queryMethod = new ArrayList<>();
         }
         return this.queryMethod;
     }

@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class DeploymentExceptionObserver {
-    private static final Map<Class<?>, Exception> EXCEPTIONS = new HashMap<Class<?>, Exception>();
-    private static final Map<Class<?>, Exception> PARENT_EXCEPTIONS = new HashMap<Class<?>, Exception>();
+    private static final Map<Class<?>, Exception> EXCEPTIONS = new HashMap<>();
+    private static final Map<Class<?>, Exception> PARENT_EXCEPTIONS = new HashMap<>();
 
     public void observes(@Observes final DeploymentException t) throws Exception {
         EXCEPTIONS.put(t.getClass(), t);
@@ -54,7 +54,7 @@ public class DeploymentExceptionObserver {
     }
 
     public static Set<Class<?>> availableExceptionTypes() {
-        final Set<Class<?>> set = new HashSet<Class<?>>(EXCEPTIONS.keySet());
+        final Set<Class<?>> set = new HashSet<>(EXCEPTIONS.keySet());
         set.addAll(PARENT_EXCEPTIONS.keySet());
         return set;
     }

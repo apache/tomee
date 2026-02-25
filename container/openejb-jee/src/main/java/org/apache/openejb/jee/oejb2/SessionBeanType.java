@@ -183,7 +183,7 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
      */
     public List<String> getJndiName() {
         if (jndiName == null) {
-            jndiName = new ArrayList<String>();
+            jndiName = new ArrayList<>();
         }
         return this.jndiName;
     }
@@ -210,14 +210,14 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
      */
     public List<String> getLocalJndiName() {
         if (localJndiName == null) {
-            localJndiName = new ArrayList<String>();
+            localJndiName = new ArrayList<>();
         }
         return this.localJndiName;
     }
 
     public List<Jndi> getJndi() {
         if (jndi == null) {
-            jndi = new ArrayList<Jndi>();
+            jndi = new ArrayList<>();
         }
         return this.jndi;
     }
@@ -284,56 +284,56 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
 
     public List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry() {
         if (abstractNamingEntry == null) {
-            abstractNamingEntry = new ArrayList<JAXBElement<? extends AbstractNamingEntryType>>();
+            abstractNamingEntry = new ArrayList<>();
         }
         return this.abstractNamingEntry;
     }
 
     public List<PersistenceContextRefType> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new ArrayList<PersistenceContextRefType>();
+            persistenceContextRef = new ArrayList<>();
         }
         return persistenceContextRef;
     }
 
     public List<PersistenceUnitRefType> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new ArrayList<PersistenceUnitRefType>();
+            persistenceUnitRef = new ArrayList<>();
         }
         return persistenceUnitRef;
     }
 
     public List<EjbRefType> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRefType>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }
 
     public List<EjbLocalRefType> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new ArrayList<EjbLocalRefType>();
+            ejbLocalRef = new ArrayList<>();
         }
         return this.ejbLocalRef;
     }
 
     public List<ServiceRefType> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRefType>();
+            serviceRef = new ArrayList<>();
         }
         return this.serviceRef;
     }
 
     public List<ResourceRefType> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRefType>();
+            resourceRef = new ArrayList<>();
         }
         return this.resourceRef;
     }
 
     public List<ResourceEnvRefType> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRefType>();
+            resourceEnvRef = new ArrayList<>();
         }
         return this.resourceEnvRef;
     }
@@ -380,7 +380,7 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
      */
     public List<String> getWebServiceVirtualHost() {
         if (webServiceVirtualHost == null) {
-            webServiceVirtualHost = new ArrayList<String>();
+            webServiceVirtualHost = new ArrayList<>();
         }
         return this.webServiceVirtualHost;
     }

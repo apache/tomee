@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class HTTPMethods {
 
-    private final Set<String> methods = new HashSet<String>();
+    private final Set<String> methods = new HashSet<>();
 
     private boolean isExcluded = false;
 
@@ -78,7 +78,7 @@ public class HTTPMethods {
         } else {
             if (addedMethodsExcluded) {
                 //List + ExceptionList
-                Set<String> tempHttpMethods = new HashSet<String>(httpMethods);
+                Set<String> tempHttpMethods = new HashSet<>(httpMethods);
                 tempHttpMethods.removeAll(methods);
                 methods.clear();
                 methods.addAll(tempHttpMethods);
@@ -108,7 +108,7 @@ public class HTTPMethods {
             if (httpMethods.isExcluded) {
                 //TODO questionable
                 isExcluded = false;
-                Set<String> toRemove = new HashSet<String>(methods);
+                Set<String> toRemove = new HashSet<>(methods);
                 methods.clear();
                 methods.addAll(httpMethods.methods);
                 methods.removeAll(toRemove);

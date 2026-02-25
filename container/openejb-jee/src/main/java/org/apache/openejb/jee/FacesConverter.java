@@ -81,7 +81,7 @@ public class FacesConverter {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "converter-id")
     protected java.lang.String converterId;
     @XmlElement(name = "converter-for-class")
@@ -129,14 +129,14 @@ public class FacesConverter {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -227,7 +227,7 @@ public class FacesConverter {
      */
     public List<FacesAttribute> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<FacesAttribute>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }
@@ -254,7 +254,7 @@ public class FacesConverter {
      */
     public List<FacesProperty> getProperty() {
         if (property == null) {
-            property = new ArrayList<FacesProperty>();
+            property = new ArrayList<>();
         }
         return this.property;
     }
@@ -281,7 +281,7 @@ public class FacesConverter {
      */
     public List<FacesConverterExtension> getConverterExtension() {
         if (converterExtension == null) {
-            converterExtension = new ArrayList<FacesConverterExtension>();
+            converterExtension = new ArrayList<>();
         }
         return this.converterExtension;
     }

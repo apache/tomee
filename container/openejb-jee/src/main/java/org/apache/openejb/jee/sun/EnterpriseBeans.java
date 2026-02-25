@@ -69,7 +69,7 @@ public class EnterpriseBeans {
 
     public List<Ejb> getEjb() {
         if (ejb == null) {
-            ejb = new ArrayList<Ejb>();
+            ejb = new ArrayList<>();
         }
         return this.ejb;
     }
@@ -92,21 +92,21 @@ public class EnterpriseBeans {
 
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new ArrayList<MessageDestination>();
+            messageDestination = new ArrayList<>();
         }
         return this.messageDestination;
     }
 
     public Collection<WebserviceDescription> getWebserviceDescription() {
         if (webserviceDescription == null) {
-            webserviceDescription = new KeyedCollection<String, WebserviceDescription>();
+            webserviceDescription = new KeyedCollection<>();
         }
         return this.webserviceDescription;
     }
 
     public Map<String, WebserviceDescription> getWebserviceDescriptionMap() {
         if (webserviceDescription == null) {
-            webserviceDescription = new KeyedCollection<String, WebserviceDescription>();
+            webserviceDescription = new KeyedCollection<>();
         }
         return this.webserviceDescription.toMap();
     }

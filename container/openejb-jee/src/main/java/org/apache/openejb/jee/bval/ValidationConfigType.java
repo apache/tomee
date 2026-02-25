@@ -269,7 +269,7 @@ public class ValidationConfigType {
      */
     public List<String> getValueExtractor() {
         if (valueExtractor == null) {
-            valueExtractor = new ArrayList<String>();
+            valueExtractor = new ArrayList<>();
         }
         return this.valueExtractor;
     }
@@ -322,7 +322,7 @@ public class ValidationConfigType {
      */
     public List<String> getConstraintMapping() {
         if (constraintMapping == null) {
-            constraintMapping = new ArrayList<String>();
+            constraintMapping = new ArrayList<>();
         }
         return this.constraintMapping;
     }
@@ -351,7 +351,7 @@ public class ValidationConfigType {
      */
     public List<PropertyType> getProperty() {
         if (property == null) {
-            property = new ArrayList<PropertyType>();
+            property = new ArrayList<>();
         }
         return this.property;
     }

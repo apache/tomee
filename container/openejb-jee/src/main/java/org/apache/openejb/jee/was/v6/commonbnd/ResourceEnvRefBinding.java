@@ -115,7 +115,7 @@ public class ResourceEnvRefBinding {
      */
     public List<ResourceEnvRef> getBindingResourceEnvRefs() {
         if (bindingResourceEnvRefs == null) {
-            bindingResourceEnvRefs = new ArrayList<ResourceEnvRef>();
+            bindingResourceEnvRefs = new ArrayList<>();
         }
         return this.bindingResourceEnvRefs;
     }
@@ -143,7 +143,7 @@ public class ResourceEnvRefBinding {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

@@ -25,7 +25,7 @@ import java.util.HashMap;
 @SuppressWarnings("unchecked")
 public class CallContext {
 
-    private static final ThreadLocal<CallContext> THREADS = new ThreadLocal<CallContext>();
+    private static final ThreadLocal<CallContext> THREADS = new ThreadLocal<>();
     private final HashMap data = new HashMap();
 
     public CallContext() {

@@ -61,14 +61,14 @@ public class PortInfo {
 
     public List<StubProperty> getStubProperty() {
         if (stubProperty == null) {
-            stubProperty = new ArrayList<StubProperty>();
+            stubProperty = new ArrayList<>();
         }
         return this.stubProperty;
     }
 
     public List<CallProperty> getCallProperty() {
         if (callProperty == null) {
-            callProperty = new ArrayList<CallProperty>();
+            callProperty = new ArrayList<>();
         }
         return this.callProperty;
     }

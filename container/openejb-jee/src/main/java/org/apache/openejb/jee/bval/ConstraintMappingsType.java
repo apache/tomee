@@ -114,7 +114,7 @@ public class ConstraintMappingsType {
      */
     public List<BeanType> getBean() {
         if (bean == null) {
-            bean = new ArrayList<BeanType>();
+            bean = new ArrayList<>();
         }
         return this.bean;
     }
@@ -143,7 +143,7 @@ public class ConstraintMappingsType {
      */
     public List<ConstraintDefinitionType> getConstraintDefinition() {
         if (constraintDefinition == null) {
-            constraintDefinition = new ArrayList<ConstraintDefinitionType>();
+            constraintDefinition = new ArrayList<>();
         }
         return this.constraintDefinition;
     }

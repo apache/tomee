@@ -104,7 +104,7 @@ public class FacesConfigFlowDefinitionSwitch {
      */
     public List<FacesConfigFlowDefinitionSwitchCase> getCase() {
         if (_case == null) {
-            _case = new ArrayList<FacesConfigFlowDefinitionSwitchCase>();
+            _case = new ArrayList<>();
         }
         return this._case;
     }

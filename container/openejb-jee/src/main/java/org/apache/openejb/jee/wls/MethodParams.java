@@ -81,7 +81,7 @@ public class MethodParams {
      */
     public List<String> getMethodParam() {
         if (methodParam == null) {
-            methodParam = new ArrayList<String>();
+            methodParam = new ArrayList<>();
         }
         return this.methodParam;
     }

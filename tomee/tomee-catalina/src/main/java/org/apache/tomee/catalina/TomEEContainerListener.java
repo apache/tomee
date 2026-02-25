@@ -22,7 +22,7 @@ import org.apache.catalina.core.StandardContext;
 
 
 public class TomEEContainerListener implements ContainerListener {
-    private static final ThreadLocal<StandardContext> CONTEXT = new ThreadLocal<StandardContext>();
+    private static final ThreadLocal<StandardContext> CONTEXT = new ThreadLocal<>();
 
     @Override
     public void containerEvent(final ContainerEvent event) {

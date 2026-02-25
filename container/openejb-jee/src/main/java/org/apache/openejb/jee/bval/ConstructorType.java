@@ -87,7 +87,7 @@ public class ConstructorType {
      */
     public List<ParameterType> getParameter() {
         if (parameter == null) {
-            parameter = new ArrayList<ParameterType>();
+            parameter = new ArrayList<>();
         }
         return this.parameter;
     }

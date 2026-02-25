@@ -47,7 +47,7 @@ public class LocaleCharsetInfo {
 
     public List<LocaleCharsetMap> getLocaleCharsetMap() {
         if (localeCharsetMap == null) {
-            localeCharsetMap = new ArrayList<LocaleCharsetMap>();
+            localeCharsetMap = new ArrayList<>();
         }
         return this.localeCharsetMap;
     }

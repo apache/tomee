@@ -88,7 +88,7 @@ public class FacesRedirect {
      */
     public List<FacesRedirectViewParam> getViewParam() {
         if (viewParam == null) {
-            viewParam = new ArrayList<FacesRedirectViewParam>();
+            viewParam = new ArrayList<>();
         }
         return this.viewParam;
     }

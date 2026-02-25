@@ -39,7 +39,7 @@ public abstract class BasicCmp2PojoBean implements EntityBean {
     private static int nextId;
     private String firstName;     // This is directly implemented rather than generated
     public EntityContext ejbContext;
-    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<String, OperationsPolicy>();
+    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<>();
 
     public abstract Integer getId();
 

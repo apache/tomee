@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Connector(description = "Sample Resource Adapter", displayName = "Sample Resource Adapter", eisType = "Sample Resource Adapter", version = "1.0")
 public class SampleResourceAdapter implements ResourceAdapter {
 
-    final Map<SampleActivationSpec, EndpointTarget> targets = new ConcurrentHashMap<SampleActivationSpec, EndpointTarget>();
+    final Map<SampleActivationSpec, EndpointTarget> targets = new ConcurrentHashMap<>();
 
     public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
     }

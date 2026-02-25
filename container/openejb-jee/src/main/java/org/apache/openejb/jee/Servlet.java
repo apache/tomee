@@ -87,7 +87,7 @@ public class Servlet {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(name = "servlet-name", required = true)
     protected String servletName;
@@ -150,14 +150,14 @@ public class Servlet {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -192,7 +192,7 @@ public class Servlet {
 
     public List<ParamValue> getInitParam() {
         if (initParam == null) {
-            initParam = new ArrayList<ParamValue>();
+            initParam = new ArrayList<>();
         }
         return this.initParam;
     }
@@ -231,7 +231,7 @@ public class Servlet {
 
     public List<SecurityRoleRef> getSecurityRoleRef() {
         if (securityRoleRef == null) {
-            securityRoleRef = new ArrayList<SecurityRoleRef>();
+            securityRoleRef = new ArrayList<>();
         }
         return this.securityRoleRef;
     }

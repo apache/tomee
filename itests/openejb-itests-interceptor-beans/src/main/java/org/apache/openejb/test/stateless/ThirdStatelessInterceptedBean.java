@@ -41,7 +41,7 @@ import org.apache.openejb.test.interceptor.SecondClassInterceptor;
 public class ThirdStatelessInterceptedBean extends SuperInterceptedBean
     implements BasicStatelessInterceptedLocal, BasicStatelessInterceptedRemote {
 
-    private static Map<String, Object> contextData = new LinkedHashMap<String, Object>();
+    private static Map<String, Object> contextData = new LinkedHashMap<>();
 
     /**
      * A simple dummy business method to concat 2 strings

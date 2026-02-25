@@ -73,7 +73,7 @@ public class Filter {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(name = "filter-name", required = true)
     protected String filterName;
@@ -124,14 +124,14 @@ public class Filter {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -166,7 +166,7 @@ public class Filter {
 
     public List<ParamValue> getInitParam() {
         if (initParam == null) {
-            initParam = new ArrayList<ParamValue>();
+            initParam = new ArrayList<>();
         }
         return this.initParam;
     }

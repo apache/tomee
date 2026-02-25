@@ -75,7 +75,7 @@ public class LoadGroups {
      */
     public List<LoadGroup> getLoadGroup() {
         if (loadGroup == null) {
-            loadGroup = new ArrayList<LoadGroup>();
+            loadGroup = new ArrayList<>();
         }
         return this.loadGroup;
     }

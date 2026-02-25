@@ -89,7 +89,7 @@ public class Embedded {
      */
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
-            attributeOverride = new ArrayList<AttributeOverride>();
+            attributeOverride = new ArrayList<>();
         }
         return this.attributeOverride;
     }
@@ -116,7 +116,7 @@ public class Embedded {
      */
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
-            associationOverride = new ArrayList<AssociationOverride>();
+            associationOverride = new ArrayList<>();
         }
         return this.associationOverride;
     }

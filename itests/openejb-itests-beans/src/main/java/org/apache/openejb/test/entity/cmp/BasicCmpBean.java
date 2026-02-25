@@ -35,7 +35,7 @@ public class BasicCmpBean implements jakarta.ejb.EntityBean {
     public String firstName;
     public String lastName;
     public EntityContext ejbContext;
-    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<String, OperationsPolicy>();
+    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<>();
 
 
     //=============================

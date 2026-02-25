@@ -46,7 +46,7 @@ public class ObjectMap extends AbstractMap<String, Object> {
     public ObjectMap(final Class<?> clazz, final Object object) {
         this.object = object;
 
-        attributes = new HashMap<String, Entry<String, Object>>();
+        attributes = new HashMap<>();
 
         for (final Field field : clazz.getFields()) {
             final FieldEntry entry = new FieldEntry(field);
@@ -74,7 +74,7 @@ public class ObjectMap extends AbstractMap<String, Object> {
             }
         }
 
-        entries = Collections.unmodifiableSet(new HashSet<Entry<String, Object>>(attributes.values()));
+        entries = Collections.unmodifiableSet(new HashSet<>(attributes.values()));
     }
 
     @Override

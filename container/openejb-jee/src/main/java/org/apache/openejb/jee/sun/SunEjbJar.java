@@ -38,7 +38,7 @@ public class SunEjbJar {
 
     public List<SecurityRoleMapping> getSecurityRoleMapping() {
         if (securityRoleMapping == null) {
-            securityRoleMapping = new ArrayList<SecurityRoleMapping>();
+            securityRoleMapping = new ArrayList<>();
         }
         return this.securityRoleMapping;
     }

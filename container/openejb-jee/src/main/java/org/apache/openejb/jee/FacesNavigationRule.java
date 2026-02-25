@@ -73,7 +73,7 @@ public class FacesNavigationRule {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "from-view-id")
     protected java.lang.String fromViewId;
     @XmlElement(name = "navigation-case")
@@ -117,14 +117,14 @@ public class FacesNavigationRule {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -175,7 +175,7 @@ public class FacesNavigationRule {
      */
     public List<FacesNavigationCase> getNavigationCase() {
         if (navigationCase == null) {
-            navigationCase = new ArrayList<FacesNavigationCase>();
+            navigationCase = new ArrayList<>();
         }
         return this.navigationCase;
     }
@@ -202,7 +202,7 @@ public class FacesNavigationRule {
      */
     public List<FacesNavigationRuleExtension> getNavigationRuleExtension() {
         if (navigationRuleExtension == null) {
-            navigationRuleExtension = new ArrayList<FacesNavigationRuleExtension>();
+            navigationRuleExtension = new ArrayList<>();
         }
         return this.navigationRuleExtension;
     }

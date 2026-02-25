@@ -71,7 +71,7 @@ public class EEnum extends EDataType {
      */
     public List<EEnumLiteral> getELiterals() {
         if (eLiterals == null) {
-            eLiterals = new ArrayList<EEnumLiteral>();
+            eLiterals = new ArrayList<>();
         }
         return this.eLiterals;
     }

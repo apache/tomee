@@ -58,7 +58,7 @@ public class ContainerConfigurations {
      */
     public List<ContainerConfiguration> getContainerConfiguration() {
         if (containerConfiguration == null) {
-            containerConfiguration = new ArrayList<ContainerConfiguration>();
+            containerConfiguration = new ArrayList<>();
         }
         return this.containerConfiguration;
     }

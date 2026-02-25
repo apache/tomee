@@ -62,7 +62,7 @@ public class TldExtension {
 
     public List<String> getExtensionElement() {
         if (extensionElement == null) {
-            extensionElement = new ArrayList<String>();
+            extensionElement = new ArrayList<>();
         }
         return this.extensionElement;
     }

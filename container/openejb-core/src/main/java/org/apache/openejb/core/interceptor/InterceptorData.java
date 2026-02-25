@@ -50,7 +50,7 @@ import static java.util.Arrays.asList;
  * @version $Rev$ $Date$
  */
 public class InterceptorData {
-    private static final Map<Class<?>, InterceptorData> CACHE = new ConcurrentHashMap<Class<?>, InterceptorData>();
+    private static final Map<Class<?>, InterceptorData> CACHE = new ConcurrentHashMap<>();
 
     private final Class clazz;
     private final CdiInterceptorBean cdiInterceptorBean;

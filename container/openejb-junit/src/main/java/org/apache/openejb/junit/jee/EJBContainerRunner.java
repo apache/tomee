@@ -57,7 +57,7 @@ public class EJBContainerRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<TestRule> getTestRules(final Object target) {
-        final List<TestRule> rules = new ArrayList<TestRule>();
+        final List<TestRule> rules = new ArrayList<>();
         rules.add(new InjectRule(target, startingStatement));
         rules.add(new TransactionRule());
         rules.addAll(getTestClass().getAnnotatedFieldValues(target, Rule.class, TestRule.class));

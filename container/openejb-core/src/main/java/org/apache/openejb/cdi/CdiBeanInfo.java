@@ -333,7 +333,7 @@ public class CdiBeanInfo implements JndiConsumer {
     @Override
     public Map<String, ContextService> getContextServiceMap() {
         if (contextService == null) {
-            contextService = new KeyedCollection<String, ContextService>();
+            contextService = new KeyedCollection<>();
         }
         return this.contextService.toMap();
     }

@@ -75,7 +75,7 @@ public class ReservedWords {
      */
     public List<Word> getWord() {
         if (word == null) {
-            word = new ArrayList<Word>();
+            word = new ArrayList<>();
         }
         return this.word;
     }

@@ -57,7 +57,7 @@ public class MessageSecurityBinding {
 
     public List<MessageSecurity> getMessageSecurity() {
         if (messageSecurity == null) {
-            messageSecurity = new ArrayList<MessageSecurity>();
+            messageSecurity = new ArrayList<>();
         }
         return this.messageSecurity;
     }

@@ -163,7 +163,7 @@ public class ConstraintType {
      */
     public List<ElementType> getElement() {
         if (element == null) {
-            element = new ArrayList<ElementType>();
+            element = new ArrayList<>();
         }
         return this.element;
     }

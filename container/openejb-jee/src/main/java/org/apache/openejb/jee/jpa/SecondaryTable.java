@@ -98,7 +98,7 @@ public class SecondaryTable {
      */
     public List<PrimaryKeyJoinColumn> getPrimaryKeyJoinColumn() {
         if (primaryKeyJoinColumn == null) {
-            primaryKeyJoinColumn = new ArrayList<PrimaryKeyJoinColumn>();
+            primaryKeyJoinColumn = new ArrayList<>();
         }
         return this.primaryKeyJoinColumn;
     }
@@ -125,7 +125,7 @@ public class SecondaryTable {
      */
     public List<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new ArrayList<>();
         }
         return this.uniqueConstraint;
     }

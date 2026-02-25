@@ -112,7 +112,7 @@ public class Handler extends CompatibilityDescriptionGroup {
      */
     public List<String> getSoapRoles() {
         if (soapRoles == null) {
-            soapRoles = new ArrayList<String>();
+            soapRoles = new ArrayList<>();
         }
         return this.soapRoles;
     }
@@ -139,7 +139,7 @@ public class Handler extends CompatibilityDescriptionGroup {
      */
     public List<String> getPortNames() {
         if (portNames == null) {
-            portNames = new ArrayList<String>();
+            portNames = new ArrayList<>();
         }
         return this.portNames;
     }
@@ -167,7 +167,7 @@ public class Handler extends CompatibilityDescriptionGroup {
      */
     public List<JavaClass> getHandlerClasses() {
         if (handlerClasses == null) {
-            handlerClasses = new ArrayList<JavaClass>();
+            handlerClasses = new ArrayList<>();
         }
         return this.handlerClasses;
     }
@@ -195,7 +195,7 @@ public class Handler extends CompatibilityDescriptionGroup {
      */
     public List<ParamValue> getInitParams() {
         if (initParams == null) {
-            initParams = new ArrayList<ParamValue>();
+            initParams = new ArrayList<>();
         }
         return this.initParams;
     }
@@ -222,7 +222,7 @@ public class Handler extends CompatibilityDescriptionGroup {
      */
     public List<QName> getSoapHeaders() {
         if (soapHeaders == null) {
-            soapHeaders = new ArrayList<QName>();
+            soapHeaders = new ArrayList<>();
         }
         return this.soapHeaders;
     }

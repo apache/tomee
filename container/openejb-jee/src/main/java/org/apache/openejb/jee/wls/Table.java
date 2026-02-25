@@ -100,7 +100,7 @@ public class Table {
      */
     public List<String> getDbmsColumn() {
         if (dbmsColumn == null) {
-            dbmsColumn = new ArrayList<String>();
+            dbmsColumn = new ArrayList<>();
         }
         return this.dbmsColumn;
     }

@@ -75,7 +75,7 @@ public class DependentValueClasses {
      */
     public List<DependentValueClass> getDependentValueClass() {
         if (dependentValueClass == null) {
-            dependentValueClass = new ArrayList<DependentValueClass>();
+            dependentValueClass = new ArrayList<>();
         }
         return this.dependentValueClass;
     }

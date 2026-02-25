@@ -75,7 +75,7 @@ public class TypeMappings {
      */
     public List<TypeMapping> getTypeMapping() {
         if (typeMapping == null) {
-            typeMapping = new ArrayList<TypeMapping>();
+            typeMapping = new ArrayList<>();
         }
         return this.typeMapping;
     }

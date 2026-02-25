@@ -74,7 +74,7 @@ public class OutboundResourceAdapter {
 
     public List<ConnectionDefinition> getConnectionDefinition() {
         if (connectionDefinition == null) {
-            connectionDefinition = new ArrayList<ConnectionDefinition>();
+            connectionDefinition = new ArrayList<>();
         }
         return this.connectionDefinition;
     }
@@ -89,7 +89,7 @@ public class OutboundResourceAdapter {
 
     public List<AuthenticationMechanism> getAuthenticationMechanism() {
         if (authenticationMechanism == null) {
-            authenticationMechanism = new ArrayList<AuthenticationMechanism>();
+            authenticationMechanism = new ArrayList<>();
         }
         return this.authenticationMechanism;
     }

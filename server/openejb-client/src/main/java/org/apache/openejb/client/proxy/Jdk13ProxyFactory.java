@@ -142,7 +142,7 @@ public class Jdk13ProxyFactory implements ProxyFactory {
     }
 
     private static ClassLoader reconciliate(final Class<?>... interfaces) {
-        final Set<ClassLoader> classloaders = new LinkedHashSet<ClassLoader>();
+        final Set<ClassLoader> classloaders = new LinkedHashSet<>();
         for (final Class<?> clazz : interfaces) {
             classloaders.add(clazz.getClassLoader());
         }

@@ -51,7 +51,7 @@ public class ProxyInfo {
      * @param pk
      */
     public ProxyInfo(final BeanContext depInfo, final Object pk) {
-        this(depInfo, pk, new ArrayList<Class>(), InterfaceType.UNKNOWN, null);
+        this(depInfo, pk, new ArrayList<>(), InterfaceType.UNKNOWN, null);
     }
 
     public InterfaceType getInterfaceType() {

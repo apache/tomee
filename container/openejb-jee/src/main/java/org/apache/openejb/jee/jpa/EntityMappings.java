@@ -278,7 +278,7 @@ public class EntityMappings {
      */
     public List<SequenceGenerator> getSequenceGenerator() {
         if (sequenceGenerator == null) {
-            sequenceGenerator = new ArrayList<SequenceGenerator>();
+            sequenceGenerator = new ArrayList<>();
         }
         return this.sequenceGenerator;
     }
@@ -305,7 +305,7 @@ public class EntityMappings {
      */
     public List<TableGenerator> getTableGenerator() {
         if (tableGenerator == null) {
-            tableGenerator = new ArrayList<TableGenerator>();
+            tableGenerator = new ArrayList<>();
         }
         return this.tableGenerator;
     }
@@ -332,7 +332,7 @@ public class EntityMappings {
      */
     public List<NamedQuery> getNamedQuery() {
         if (namedQuery == null) {
-            namedQuery = new ArrayList<NamedQuery>();
+            namedQuery = new ArrayList<>();
         }
         return this.namedQuery;
     }
@@ -359,7 +359,7 @@ public class EntityMappings {
      */
     public List<NamedNativeQuery> getNamedNativeQuery() {
         if (namedNativeQuery == null) {
-            namedNativeQuery = new ArrayList<NamedNativeQuery>();
+            namedNativeQuery = new ArrayList<>();
         }
         return this.namedNativeQuery;
     }
@@ -386,7 +386,7 @@ public class EntityMappings {
      */
     public List<SqlResultSetMapping> getSqlResultSetMapping() {
         if (sqlResultSetMapping == null) {
-            sqlResultSetMapping = new ArrayList<SqlResultSetMapping>();
+            sqlResultSetMapping = new ArrayList<>();
         }
         return this.sqlResultSetMapping;
     }
@@ -413,7 +413,7 @@ public class EntityMappings {
      */
     public Collection<MappedSuperclass> getMappedSuperclass() {
         if (mappedSuperclass == null) {
-            mappedSuperclass = new KeyedCollection<String, MappedSuperclass>();
+            mappedSuperclass = new KeyedCollection<>();
         }
         return this.mappedSuperclass;
     }
@@ -444,7 +444,7 @@ public class EntityMappings {
      */
     public Collection<Entity> getEntity() {
         if (entity == null) {
-            entity = new KeyedCollection<String, Entity>();
+            entity = new KeyedCollection<>();
         }
         return this.entity;
     }
@@ -475,7 +475,7 @@ public class EntityMappings {
      */
     public List<Embeddable> getEmbeddable() {
         if (embeddable == null) {
-            embeddable = new ArrayList<Embeddable>();
+            embeddable = new ArrayList<>();
         }
         return this.embeddable;
     }

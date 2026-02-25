@@ -127,7 +127,7 @@ public class ResourceRefBinding {
      */
     public List<AbstractAuthData> getDefaultAuths() {
         if (defaultAuths == null) {
-            defaultAuths = new ArrayList<AbstractAuthData>();
+            defaultAuths = new ArrayList<>();
         }
         return this.defaultAuths;
     }
@@ -155,7 +155,7 @@ public class ResourceRefBinding {
      */
     public List<ResourceRef> getBindingResourceRefs() {
         if (bindingResourceRefs == null) {
-            bindingResourceRefs = new ArrayList<ResourceRef>();
+            bindingResourceRefs = new ArrayList<>();
         }
         return this.bindingResourceRefs;
     }
@@ -182,7 +182,7 @@ public class ResourceRefBinding {
      */
     public List<Property> getProperties() {
         if (properties == null) {
-            properties = new ArrayList<Property>();
+            properties = new ArrayList<>();
         }
         return this.properties;
     }
@@ -210,7 +210,7 @@ public class ResourceRefBinding {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

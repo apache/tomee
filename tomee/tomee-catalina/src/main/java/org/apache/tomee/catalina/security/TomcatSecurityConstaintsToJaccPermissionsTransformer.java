@@ -109,7 +109,7 @@ public class TomcatSecurityConstaintsToJaccPermissionsTransformer {
                     currentPatterns = excludedPatterns;
 
                 } else {
-                    roleNames = new HashSet<String>(Arrays.asList(securityConstraint.findAuthRoles()));
+                    roleNames = new HashSet<>(Arrays.asList(securityConstraint.findAuthRoles()));
                     if (roleNames.remove("*")) {
                         roleNames.addAll(securityRoles);
                     }
@@ -233,7 +233,7 @@ public class TomcatSecurityConstaintsToJaccPermissionsTransformer {
         }
 
         for (Map.Entry<String, Map<String, URLPattern>> entry : rolesPatterns.entrySet()) {
-            Set<URLPattern> currentRolePatterns = new HashSet<URLPattern>(entry.getValue().values());
+            Set<URLPattern> currentRolePatterns = new HashSet<>(entry.getValue().values());
             for (URLPattern pattern : entry.getValue().values()) {
                 String name = pattern.getQualifiedPattern(currentRolePatterns);
                 String actions = pattern.getMethods();

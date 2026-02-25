@@ -118,7 +118,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private static final int MAX_IMPLICIT_POOL_SIZE = 5;
 
-    private static final Set<String> ignoredReferenceTypes = new TreeSet<String>();
+    private static final Set<String> ignoredReferenceTypes = new TreeSet<>();
     public static final String AUTOCREATE_JTA_DATASOURCE_FROM_NON_JTA_ONE_KEY = "openejb.autocreate.jta-datasource-from-non-jta-one";
 
     static {
@@ -2338,7 +2338,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String getContainerIds(final Collection<ContainerInfo> containerInfos) {
-        final Set<String> containerIds = new HashSet<String>();
+        final Set<String> containerIds = new HashSet<>();
 
         for (final ContainerInfo containerInfo : containerInfos) {
             containerIds.add(containerInfo.id);

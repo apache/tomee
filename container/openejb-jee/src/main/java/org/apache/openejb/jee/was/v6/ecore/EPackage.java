@@ -84,7 +84,7 @@ public class EPackage extends ENamedElement {
      */
     public List<EClassifier> getEClassifiers() {
         if (eClassifiers == null) {
-            eClassifiers = new ArrayList<EClassifier>();
+            eClassifiers = new ArrayList<>();
         }
         return this.eClassifiers;
     }
@@ -111,7 +111,7 @@ public class EPackage extends ENamedElement {
      */
     public List<EPackage> getESubpackages() {
         if (eSubpackages == null) {
-            eSubpackages = new ArrayList<EPackage>();
+            eSubpackages = new ArrayList<>();
         }
         return this.eSubpackages;
     }

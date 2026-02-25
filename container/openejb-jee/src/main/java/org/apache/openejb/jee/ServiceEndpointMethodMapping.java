@@ -92,7 +92,7 @@ public class ServiceEndpointMethodMapping {
 
     public List<MethodParamPartsMapping> getMethodParamPartsMapping() {
         if (methodParamPartsMapping == null) {
-            methodParamPartsMapping = new ArrayList<MethodParamPartsMapping>();
+            methodParamPartsMapping = new ArrayList<>();
         }
         return this.methodParamPartsMapping;
     }

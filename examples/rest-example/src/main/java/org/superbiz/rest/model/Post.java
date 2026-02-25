@@ -51,7 +51,7 @@ public class Post extends DatedModel {
     private User user;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
-    private List<Comment> comments = new ArrayList<Comment>();
+    private List<Comment> comments = new ArrayList<>();
 
     public void setTitle(final String title) {
         this.title = title;

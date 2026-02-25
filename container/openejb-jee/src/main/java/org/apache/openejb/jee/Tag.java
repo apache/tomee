@@ -80,7 +80,7 @@ public class Tag {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(required = true)
     protected String name;
@@ -130,14 +130,14 @@ public class Tag {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -180,14 +180,14 @@ public class Tag {
 
     public List<Variable> getVariable() {
         if (variable == null) {
-            variable = new ArrayList<Variable>();
+            variable = new ArrayList<>();
         }
         return this.variable;
     }
 
     public List<TldAttribute> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<TldAttribute>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }
@@ -210,7 +210,7 @@ public class Tag {
 
     public List<TldExtension> getTagExtension() {
         if (tagExtension == null) {
-            tagExtension = new ArrayList<TldExtension>();
+            tagExtension = new ArrayList<>();
         }
         return this.tagExtension;
     }

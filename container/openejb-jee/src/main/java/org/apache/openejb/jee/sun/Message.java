@@ -37,7 +37,7 @@ public class Message {
 
     public List<Object> getJavaMethodOrOperationName() {
         if (javaMethodOrOperationName == null) {
-            javaMethodOrOperationName = new ArrayList<Object>();
+            javaMethodOrOperationName = new ArrayList<>();
         }
         return this.javaMethodOrOperationName;
     }

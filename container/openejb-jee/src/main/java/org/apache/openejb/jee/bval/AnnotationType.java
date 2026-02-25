@@ -74,7 +74,7 @@ public class AnnotationType {
      */
     public List<ElementType> getElement() {
         if (element == null) {
-            element = new ArrayList<ElementType>();
+            element = new ArrayList<>();
         }
         return this.element;
     }

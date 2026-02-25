@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LogStreamAsync implements LogStream, Closeable {
 
-    private static final LinkedBlockingQueue<Message> log = new LinkedBlockingQueue<Message>();
+    private static final LinkedBlockingQueue<Message> log = new LinkedBlockingQueue<>();
     private static final Thread t = new Thread(new Consumer(LogStreamAsync.log), "LogStreamAsync.Thread");
     private static final AtomicBoolean started = new AtomicBoolean(false);
     private final LogStream ls;

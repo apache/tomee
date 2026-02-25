@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 @Stateless
 public class TimerSyncBean implements TimerSync {
-    private static Map<String, CountDownLatch> latches = new TreeMap<String, CountDownLatch>();
+    private static Map<String, CountDownLatch> latches = new TreeMap<>();
 
     public boolean waitFor(final String name) {
         final CountDownLatch latch = getLatch(name);

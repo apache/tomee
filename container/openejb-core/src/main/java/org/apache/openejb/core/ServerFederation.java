@@ -30,7 +30,7 @@ import jakarta.ejb.HomeHandle;
 public class ServerFederation implements ApplicationServer {
     private static final IntraVmServer localServer = new IntraVmServer();
 
-    private static final ThreadLocal<ApplicationServer> applicationServer = new ThreadLocal<ApplicationServer>();
+    private static final ThreadLocal<ApplicationServer> applicationServer = new ThreadLocal<>();
 
     public Handle getHandle(final ProxyInfo proxyInfo) {
         return getApplicationServer().getHandle(proxyInfo);

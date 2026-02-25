@@ -49,13 +49,13 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     }
 
     private static Object getConstraintViolationErrors(final ConstraintViolationException ex) {
-        final List<ErrorResponse> errors = new ArrayList<ErrorResponse>();
+        final List<ErrorResponse> errors = new ArrayList<>();
         for (final ConstraintViolation violation : ex.getConstraintViolations()) {
             final ErrorResponse error = new ErrorResponse();
             error.setMessage(violation.getMessage());
             errors.add(error);
         }
-        return new ErrorList<ErrorResponse>(errors);
+        return new ErrorList<>(errors);
     }
 
 }

@@ -85,7 +85,7 @@ public class FacesAbsoluteOrdering {
      */
     public List<Object> getNameOrOthers() {
         if (nameOrOthers == null) {
-            nameOrOthers = new ArrayList<Object>();
+            nameOrOthers = new ArrayList<>();
         }
         return this.nameOrOthers;
     }

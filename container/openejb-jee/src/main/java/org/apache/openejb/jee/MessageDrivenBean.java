@@ -116,7 +116,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
@@ -238,14 +238,14 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -323,7 +323,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public List<Timer> getTimer() {
         if (timer == null) {
-            timer = new ArrayList<Timer>();
+            timer = new ArrayList<>();
         }
         return this.timer;
     }
@@ -420,7 +420,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public List<AroundInvoke> getAroundInvoke() {
         if (aroundInvoke == null) {
-            aroundInvoke = new ArrayList<AroundInvoke>();
+            aroundInvoke = new ArrayList<>();
         }
         return this.aroundInvoke;
     }
@@ -432,133 +432,133 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public List<AroundTimeout> getAroundTimeout() {
         if (aroundTimeout == null) {
-            aroundTimeout = new ArrayList<AroundTimeout>();
+            aroundTimeout = new ArrayList<>();
         }
         return this.aroundTimeout;
     }
 
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String, EnvEntry>();
+            envEntry = new KeyedCollection<>();
         }
         return this.envEntry;
     }
 
     public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String, EnvEntry>();
+            envEntry = new KeyedCollection<>();
         }
         return this.envEntry.toMap();
     }
 
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String, EjbRef>();
+            ejbRef = new KeyedCollection<>();
         }
         return this.ejbRef;
     }
 
     public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String, EjbRef>();
+            ejbRef = new KeyedCollection<>();
         }
         return this.ejbRef.toMap();
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<>();
         }
         return this.ejbLocalRef;
     }
 
     public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<>();
         }
         return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String, ServiceRef>();
+            serviceRef = new KeyedCollection<>();
         }
         return this.serviceRef;
     }
 
     public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String, ServiceRef>();
+            serviceRef = new KeyedCollection<>();
         }
         return this.serviceRef.toMap();
     }
 
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String, ResourceRef>();
+            resourceRef = new KeyedCollection<>();
         }
         return this.resourceRef;
     }
 
     public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String, ResourceRef>();
+            resourceRef = new KeyedCollection<>();
         }
         return this.resourceRef.toMap();
     }
 
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<>();
         }
         return this.resourceEnvRef;
     }
 
     public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<>();
         }
         return this.resourceEnvRef.toMap();
     }
 
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<>();
         }
         return this.messageDestinationRef;
     }
 
     public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<>();
         }
         return this.messageDestinationRef.toMap();
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<>();
         }
         return this.persistenceContextRef;
     }
 
     public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<>();
         }
         return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<>();
         }
         return this.persistenceUnitRef;
     }
 
     public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<>();
         }
         return this.persistenceUnitRef.toMap();
     }
@@ -566,14 +566,14 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String, DataSource>();
+            dataSource = new KeyedCollection<>();
         }
         return this.dataSource;
     }
 
     public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String, DataSource>();
+            dataSource = new KeyedCollection<>();
         }
         return this.dataSource.toMap();
     }
@@ -601,7 +601,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
-            postConstruct = new ArrayList<LifecycleCallback>();
+            postConstruct = new ArrayList<>();
         }
         return this.postConstruct;
     }
@@ -613,7 +613,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
-            preDestroy = new ArrayList<LifecycleCallback>();
+            preDestroy = new ArrayList<>();
         }
         return this.preDestroy;
     }
@@ -625,7 +625,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
 
     public List<SecurityRoleRef> getSecurityRoleRef() {
         if (securityRoleRef == null) {
-            securityRoleRef = new ArrayList<SecurityRoleRef>();
+            securityRoleRef = new ArrayList<>();
         }
         return this.securityRoleRef;
     }
@@ -659,7 +659,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @Override
     public Map<String, ContextService> getContextServiceMap() {
         if (contextService == null) {
-            contextService = new KeyedCollection<String, ContextService>();
+            contextService = new KeyedCollection<>();
         }
         return this.contextService.toMap();
     }

@@ -119,7 +119,7 @@ public class SqlQuery {
      */
     public List<DatabaseSpecificSql> getDatabaseSpecificSql() {
         if (databaseSpecificSql == null) {
-            databaseSpecificSql = new ArrayList<DatabaseSpecificSql>();
+            databaseSpecificSql = new ArrayList<>();
         }
         return this.databaseSpecificSql;
     }

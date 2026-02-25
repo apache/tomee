@@ -78,7 +78,7 @@ public class RunAsSpecifiedIdentity extends SecurityIdentity {
      */
     public List<Identity> getIdentities() {
         if (identities == null) {
-            identities = new ArrayList<Identity>();
+            identities = new ArrayList<>();
         }
         return this.identities;
     }

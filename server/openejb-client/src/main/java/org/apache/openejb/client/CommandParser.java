@@ -31,7 +31,7 @@ import java.util.Properties;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class CommandParser {
 
-    private final Map<String, Option> opts = new LinkedHashMap<String, Option>();
+    private final Map<String, Option> opts = new LinkedHashMap<>();
 
     public CommandParser() {
         init();
@@ -41,11 +41,11 @@ public class CommandParser {
     }
 
     protected List<String> validate(final Arguments arguments) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     protected List<String> usage() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     public void category(final String name) {
@@ -80,7 +80,7 @@ public class CommandParser {
             System.out.println("  or   " + usage.next());
         }
 
-        final List<Option> seen = new ArrayList<Option>();
+        final List<Option> seen = new ArrayList<>();
 
         for (final Option option : opts.values()) {
             if (seen.contains(option)) {
@@ -136,7 +136,7 @@ public class CommandParser {
     }
 
     public Arguments parse(final String[] args) throws HelpException, InvalidOptionsException {
-        final List<String> list = new ArrayList<String>(Arrays.asList(args));
+        final List<String> list = new ArrayList<>(Arrays.asList(args));
 
         final ListIterator<String> items = list.listIterator();
 

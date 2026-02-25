@@ -136,8 +136,8 @@ public class EjbWsContainer extends CxfWsContainer {
         @ManagedAttribute
         @Description("The handler list")
         public TabularData getHandlers() {
-            final List<String> names = new ArrayList<String>();
-            final List<String> values = new ArrayList<String>();
+            final List<String> names = new ArrayList<>();
+            final List<String> values = new ArrayList<>();
 
             for (final HandlerChainData handlerChainData : port.getHandlerChains()) {
                 for (final HandlerData handlerData : handlerChainData.getHandlers()) {

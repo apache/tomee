@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MulticastConnectionFactory implements ConnectionFactory {
 
-    private final Set<String> defaultSchemes = new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https"));
+    private final Set<String> defaultSchemes = new HashSet<>(Arrays.asList("ejbd", "ejbds", "http", "https"));
 
     protected Set<String> getDefaultSchemes() {
         return defaultSchemes;
@@ -95,7 +95,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
     }
 
     public static Set<String> getSet(final Map<String, String> params, final String param, final Set<String> defaultSet) {
-        Set<String> set = new LinkedHashSet<String>();
+        Set<String> set = new LinkedHashSet<>();
         if (params.containsKey(param)) {
             final String value = params.get(param);
             if (value != null) {
@@ -112,7 +112,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
 
         public static Map<String, String> parseQuery(final String uri) throws URISyntaxException {
             try {
-                final Map<String, String> rc = new LinkedHashMap<String, String>();
+                final Map<String, String> rc = new LinkedHashMap<>();
                 if (uri != null) {
                     final String[] parameters = uri.split("&");
                     for (final String parameter : parameters) {
@@ -133,7 +133,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         }
 
         public static Map<String, String> parseParamters(final URI uri) throws URISyntaxException {
-            return uri.getRawQuery() == null ? new HashMap<String, String>(0) : parseQuery(stripPrefix(uri.getRawQuery(), "?"));
+            return uri.getRawQuery() == null ? new HashMap<>(0) : parseQuery(stripPrefix(uri.getRawQuery(), "?"));
         }
 
         public static String stripPrefix(final String value, final String prefix) {

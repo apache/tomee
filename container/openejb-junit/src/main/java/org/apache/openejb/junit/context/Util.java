@@ -117,7 +117,7 @@ public final class Util {
 
         final String setterName = "set" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
 
-        final List<Method> methods = new ArrayList<Method>(Arrays.asList(testClazz.getMethods()));
+        final List<Method> methods = new ArrayList<>(Arrays.asList(testClazz.getMethods()));
         methods.addAll(Arrays.asList(testClazz.getDeclaredMethods()));
         Method unpreferredValidMethod = null;
         for (final Method clazzMethod : methods) {

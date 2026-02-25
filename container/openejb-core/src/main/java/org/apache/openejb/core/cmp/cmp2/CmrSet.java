@@ -159,7 +159,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     }
 
     public Iterator<Proxy> iterator() {
-        return new Iterator<Proxy>() {
+        return new Iterator<>() {
             private Bean currentEntity;
             private final Iterator<Bean> iterator = getRelatedBeans(true, false).iterator();
 

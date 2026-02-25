@@ -23,7 +23,7 @@ import java.util.List;
 @Singleton
 public class MessagesReceived {
 
-    private final List<String> messagesReceived = new ArrayList<String>();
+    private final List<String> messagesReceived = new ArrayList<>();
 
     public List<String> getMessagesReceived() {
         return messagesReceived;

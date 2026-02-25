@@ -147,7 +147,7 @@ public class ReadAhead {
      */
     public List<LeftJoin> getLeftJoin() {
         if (leftJoin == null) {
-            leftJoin = new ArrayList<LeftJoin>();
+            leftJoin = new ArrayList<>();
         }
         return this.leftJoin;
     }

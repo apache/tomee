@@ -161,7 +161,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
     }
 
     public static class MultiStatementExecutor extends Statement {
-        private final List<Statement> statements = new ArrayList<Statement>();
+        private final List<Statement> statements = new ArrayList<>();
 
         @Override
         public void evaluate() throws Throwable {

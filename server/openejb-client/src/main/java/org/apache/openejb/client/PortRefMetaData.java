@@ -31,7 +31,7 @@ public class PortRefMetaData implements Serializable {
     private String serviceEndpointInterface;
     private boolean enableMtom;
     private final Properties properties = new Properties();
-    private final List<String> addresses = new ArrayList<String>(1);
+    private final List<String> addresses = new ArrayList<>(1);
 
     public QName getQName() {
         return qname;

@@ -84,14 +84,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
     public CdiEjbBean(final BeanContext beanContext, final WebBeansContext webBeansContext, final AnnotatedType<T> at,
                       final BeanAttributes<T> attributes) {
-        this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<T>(beanContext, at, webBeansContext), attributes);
+        this(beanContext, webBeansContext, beanContext.getManagedClass(), at, new EjbInjectionTargetFactory<>(beanContext, at, webBeansContext), attributes);
         EjbInjectionTargetImpl.class.cast(getInjectionTarget()).setCdiEjbBean(this);
     }
 
     public CdiEjbBean(final BeanContext bc, final WebBeansContext webBeansContext, final Class beanClass, final AnnotatedType<T> at,
                       final InjectionTargetFactoryImpl<T> factory, final BeanAttributes<T> attributes) {
         super(webBeansContext, toSessionType(bc.getComponentType()), at,
-                new EJBBeanAttributesImpl<T>(bc, attributes),
+                new EJBBeanAttributesImpl<>(bc, attributes),
                 beanClass, factory);
         this.beanContext = bc;
         bc.set(Bean.class, this);

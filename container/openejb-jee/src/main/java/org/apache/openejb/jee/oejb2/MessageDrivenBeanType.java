@@ -215,7 +215,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      */
     public List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry() {
         if (abstractNamingEntry == null) {
-            abstractNamingEntry = new ArrayList<JAXBElement<? extends AbstractNamingEntryType>>();
+            abstractNamingEntry = new ArrayList<>();
         }
         return this.abstractNamingEntry;
     }
@@ -223,14 +223,14 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     public List<PersistenceContextRefType> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new ArrayList<PersistenceContextRefType>();
+            persistenceContextRef = new ArrayList<>();
         }
         return persistenceContextRef;
     }
 
     public List<PersistenceUnitRefType> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new ArrayList<PersistenceUnitRefType>();
+            persistenceUnitRef = new ArrayList<>();
         }
         return persistenceUnitRef;
     }
@@ -257,7 +257,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      */
     public List<EjbRefType> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRefType>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }
@@ -284,7 +284,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      */
     public List<EjbLocalRefType> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new ArrayList<EjbLocalRefType>();
+            ejbLocalRef = new ArrayList<>();
         }
         return this.ejbLocalRef;
     }
@@ -311,7 +311,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      */
     public List<ServiceRefType> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRefType>();
+            serviceRef = new ArrayList<>();
         }
         return this.serviceRef;
     }
@@ -338,7 +338,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      */
     public List<ResourceRefType> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRefType>();
+            resourceRef = new ArrayList<>();
         }
         return this.resourceRef;
     }
@@ -365,7 +365,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      */
     public List<ResourceEnvRefType> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRefType>();
+            resourceEnvRef = new ArrayList<>();
         }
         return this.resourceEnvRef;
     }

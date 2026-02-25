@@ -25,7 +25,6 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -66,11 +64,11 @@ import static org.apache.openejb.util.URLs.toFile;
 public class TldScanner {
 
     // first cache, it is the faster one but not relevant between temp and runtime phases
-    private static final Map<ClassLoader, Set<URL>> cache = new WeakHashMap<ClassLoader, Set<URL>>();
+    private static final Map<ClassLoader, Set<URL>> cache = new WeakHashMap<>();
 
     // tld by classloader identified by hash on urls (same hash for temp and runtime classloaders)
     // a bit longer to compute but let scanning be reused over temp and runtime classloaders
-    private static final Map<Integer, Set<URL>> cacheByhashCode = new WeakHashMap<Integer, Set<URL>>();
+    private static final Map<Integer, Set<URL>> cacheByhashCode = new WeakHashMap<>();
 
     public static Set<URL> scan(final ClassLoader classLoader) throws OpenEJBException {
         if (skip()) {

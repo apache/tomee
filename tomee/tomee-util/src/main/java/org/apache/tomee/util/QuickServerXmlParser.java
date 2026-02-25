@@ -53,7 +53,7 @@ public class QuickServerXmlParser extends DefaultHandler {
     public static final String DEFAULT_APP_BASE = "webapps";
     public static final String DEFAULT_KEYSTORE = null;
 
-    private final Map<String, String> values = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+    private final Map<String, String> values = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     public QuickServerXmlParser() { // ensure defaults are present
         this(true);

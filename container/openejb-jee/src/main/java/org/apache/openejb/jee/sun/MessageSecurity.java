@@ -39,7 +39,7 @@ public class MessageSecurity {
 
     public List<Message> getMessage() {
         if (message == null) {
-            message = new ArrayList<Message>();
+            message = new ArrayList<>();
         }
         return this.message;
     }

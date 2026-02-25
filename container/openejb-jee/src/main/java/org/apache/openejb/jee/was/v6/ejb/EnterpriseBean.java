@@ -142,7 +142,7 @@ public class EnterpriseBean extends JNDIEnvRefsGroup {
      */
     public List<SecurityRoleRef> getSecurityRoleRefs() {
         if (securityRoleRefs == null) {
-            securityRoleRefs = new ArrayList<SecurityRoleRef>();
+            securityRoleRefs = new ArrayList<>();
         }
         return this.securityRoleRefs;
     }
@@ -170,7 +170,7 @@ public class EnterpriseBean extends JNDIEnvRefsGroup {
      */
     public List<JavaClass> getEjbClasses() {
         if (ejbClasses == null) {
-            ejbClasses = new ArrayList<JavaClass>();
+            ejbClasses = new ArrayList<>();
         }
         return this.ejbClasses;
     }
@@ -198,7 +198,7 @@ public class EnterpriseBean extends JNDIEnvRefsGroup {
      */
     public List<JavaClass> getHomeInterfaces() {
         if (homeInterfaces == null) {
-            homeInterfaces = new ArrayList<JavaClass>();
+            homeInterfaces = new ArrayList<>();
         }
         return this.homeInterfaces;
     }
@@ -226,7 +226,7 @@ public class EnterpriseBean extends JNDIEnvRefsGroup {
      */
     public List<JavaClass> getRemoteInterfaces() {
         if (remoteInterfaces == null) {
-            remoteInterfaces = new ArrayList<JavaClass>();
+            remoteInterfaces = new ArrayList<>();
         }
         return this.remoteInterfaces;
     }
@@ -254,7 +254,7 @@ public class EnterpriseBean extends JNDIEnvRefsGroup {
      */
     public List<SecurityIdentity> getSecurityIdentities() {
         if (securityIdentities == null) {
-            securityIdentities = new ArrayList<SecurityIdentity>();
+            securityIdentities = new ArrayList<>();
         }
         return this.securityIdentities;
     }
@@ -282,7 +282,7 @@ public class EnterpriseBean extends JNDIEnvRefsGroup {
      */
     public List<JavaClass> getLocalHomeInterfaces() {
         if (localHomeInterfaces == null) {
-            localHomeInterfaces = new ArrayList<JavaClass>();
+            localHomeInterfaces = new ArrayList<>();
         }
         return this.localHomeInterfaces;
     }
@@ -310,7 +310,7 @@ public class EnterpriseBean extends JNDIEnvRefsGroup {
      */
     public List<JavaClass> getLocalInterfaces() {
         if (localInterfaces == null) {
-            localInterfaces = new ArrayList<JavaClass>();
+            localInterfaces = new ArrayList<>();
         }
         return this.localInterfaces;
     }

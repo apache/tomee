@@ -64,7 +64,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     protected static final Logger LOGGER = Logger.getLogger(TomEEContainer.class.getName());
 
     protected Configuration configuration;
-    protected Map<String, DeployedApp> moduleIds = new HashMap<String, DeployedApp>();
+    protected Map<String, DeployedApp> moduleIds = new HashMap<>();
     private final Options options;
 
     @Inject
@@ -164,7 +164,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         //
         // Set ports if they are unspecified
         //
-        final Collection<Integer> randomPorts = new ArrayList<Integer>();
+        final Collection<Integer> randomPorts = new ArrayList<>();
         for (final int i : configuration.portsAlreadySet()) { // ensure we don't use already initialized port (fixed ones)
             randomPorts.add(i);
         }
@@ -425,7 +425,7 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
     }
 
     private Collection<String> apps() {
-        final Collection<String> paths = new ArrayList<String>();
+        final Collection<String> paths = new ArrayList<>();
         try {
             final Collection<AppInfo> appInfos = getDeployedApps();
             for (final AppInfo info : appInfos) {

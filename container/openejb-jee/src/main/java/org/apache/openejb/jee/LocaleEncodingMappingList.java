@@ -64,7 +64,7 @@ public class LocaleEncodingMappingList {
 
     public List<LocaleEncodingMapping> getLocaleEncodingMapping() {
         if (localeEncodingMapping == null) {
-            localeEncodingMapping = new ArrayList<LocaleEncodingMapping>();
+            localeEncodingMapping = new ArrayList<>();
         }
         return this.localeEncodingMapping;
     }

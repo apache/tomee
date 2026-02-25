@@ -75,7 +75,7 @@ public class MethodParams {
      */
     public List<MethodParam> getMethodParam() {
         if (methodParam == null) {
-            methodParam = new ArrayList<MethodParam>();
+            methodParam = new ArrayList<>();
         }
         return this.methodParam;
     }

@@ -194,7 +194,7 @@ public class Interceptor implements JndiConsumer, Session {
 
     public List<AroundInvoke> getAroundInvoke() {
         if (aroundInvoke == null) {
-            aroundInvoke = new ArrayList<AroundInvoke>();
+            aroundInvoke = new ArrayList<>();
         }
         return this.aroundInvoke;
     }
@@ -206,133 +206,133 @@ public class Interceptor implements JndiConsumer, Session {
 
     public List<AroundTimeout> getAroundTimeout() {
         if (aroundTimeout == null) {
-            aroundTimeout = new ArrayList<AroundTimeout>();
+            aroundTimeout = new ArrayList<>();
         }
         return this.aroundTimeout;
     }
 
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String, EnvEntry>();
+            envEntry = new KeyedCollection<>();
         }
         return this.envEntry;
     }
 
     public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String, EnvEntry>();
+            envEntry = new KeyedCollection<>();
         }
         return this.envEntry.toMap();
     }
 
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String, EjbRef>();
+            ejbRef = new KeyedCollection<>();
         }
         return this.ejbRef;
     }
 
     public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String, EjbRef>();
+            ejbRef = new KeyedCollection<>();
         }
         return this.ejbRef.toMap();
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<>();
         }
         return this.ejbLocalRef;
     }
 
     public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<>();
         }
         return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String, ServiceRef>();
+            serviceRef = new KeyedCollection<>();
         }
         return this.serviceRef;
     }
 
     public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String, ServiceRef>();
+            serviceRef = new KeyedCollection<>();
         }
         return this.serviceRef.toMap();
     }
 
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String, ResourceRef>();
+            resourceRef = new KeyedCollection<>();
         }
         return this.resourceRef;
     }
 
     public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String, ResourceRef>();
+            resourceRef = new KeyedCollection<>();
         }
         return this.resourceRef.toMap();
     }
 
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<>();
         }
         return this.resourceEnvRef;
     }
 
     public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<>();
         }
         return this.resourceEnvRef.toMap();
     }
 
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<>();
         }
         return this.messageDestinationRef;
     }
 
     public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<>();
         }
         return this.messageDestinationRef.toMap();
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<>();
         }
         return this.persistenceContextRef;
     }
 
     public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<>();
         }
         return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<>();
         }
         return this.persistenceUnitRef;
     }
 
     public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<>();
         }
         return this.persistenceUnitRef.toMap();
     }
@@ -340,7 +340,7 @@ public class Interceptor implements JndiConsumer, Session {
     @Override
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String, DataSource>();
+            dataSource = new KeyedCollection<>();
         }
         return this.dataSource;
     }
@@ -348,21 +348,21 @@ public class Interceptor implements JndiConsumer, Session {
     @Override
     public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String, DataSource>();
+            dataSource = new KeyedCollection<>();
         }
         return this.dataSource.toMap();
     }
 
     public List<LifecycleCallback> getAroundConstruct() {
         if (aroundConstruct == null) {
-            aroundConstruct = new ArrayList<LifecycleCallback>();
+            aroundConstruct = new ArrayList<>();
         }
         return this.aroundConstruct;
     }
 
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
-            postConstruct = new ArrayList<LifecycleCallback>();
+            postConstruct = new ArrayList<>();
         }
         return this.postConstruct;
     }
@@ -374,7 +374,7 @@ public class Interceptor implements JndiConsumer, Session {
 
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
-            preDestroy = new ArrayList<LifecycleCallback>();
+            preDestroy = new ArrayList<>();
         }
         return this.preDestroy;
     }
@@ -386,7 +386,7 @@ public class Interceptor implements JndiConsumer, Session {
 
     public List<LifecycleCallback> getPostActivate() {
         if (postActivate == null) {
-            postActivate = new ArrayList<LifecycleCallback>();
+            postActivate = new ArrayList<>();
         }
         return this.postActivate;
     }
@@ -398,7 +398,7 @@ public class Interceptor implements JndiConsumer, Session {
 
     public List<LifecycleCallback> getPrePassivate() {
         if (prePassivate == null) {
-            prePassivate = new ArrayList<LifecycleCallback>();
+            prePassivate = new ArrayList<>();
         }
         return this.prePassivate;
     }
@@ -425,31 +425,31 @@ public class Interceptor implements JndiConsumer, Session {
 
     public List<LifecycleCallback> getAfterBegin() {
         if (afterBegin == null) {
-            afterBegin = new ArrayList<LifecycleCallback>();
+            afterBegin = new ArrayList<>();
         }
         return this.afterBegin;
     }
 
     public List<LifecycleCallback> getAfterCompletion() {
         if (afterCompletion == null) {
-            afterCompletion = new ArrayList<LifecycleCallback>();
+            afterCompletion = new ArrayList<>();
         }
         return this.afterCompletion;
     }
 
     public List<LifecycleCallback> getBeforeCompletion() {
         if (beforeCompletion == null) {
-            beforeCompletion = new ArrayList<LifecycleCallback>();
+            beforeCompletion = new ArrayList<>();
         }
         return this.beforeCompletion;
     }
 
     public List<InitMethod> getInitMethod() {
-        return new ArrayList<InitMethod>();
+        return new ArrayList<>();
     }
 
     public List<RemoveMethod> getRemoveMethod() {
-        return new ArrayList<RemoveMethod>();
+        return new ArrayList<>();
     }
 
     public String getId() {
@@ -488,7 +488,7 @@ public class Interceptor implements JndiConsumer, Session {
     @Override
     public Map<String, ContextService> getContextServiceMap() {
         if (contextService == null) {
-            contextService = new KeyedCollection<String, ContextService>();
+            contextService = new KeyedCollection<>();
         }
         return this.contextService.toMap();
     }

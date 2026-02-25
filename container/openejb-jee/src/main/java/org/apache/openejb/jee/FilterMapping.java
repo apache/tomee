@@ -85,21 +85,21 @@ public class FilterMapping {
 
     public List<String> getUrlPattern() {
         if (urlPattern == null) {
-            urlPattern = new ArrayList<String>();
+            urlPattern = new ArrayList<>();
         }
         return this.urlPattern;
     }
 
     public List<String> getServletName() {
         if (servletName == null) {
-            servletName = new ArrayList<String>();
+            servletName = new ArrayList<>();
         }
         return this.servletName;
     }
 
     public List<Dispatcher> getDispatcher() {
         if (dispatcher == null) {
-            dispatcher = new ArrayList<Dispatcher>();
+            dispatcher = new ArrayList<>();
         }
         return this.dispatcher;
     }

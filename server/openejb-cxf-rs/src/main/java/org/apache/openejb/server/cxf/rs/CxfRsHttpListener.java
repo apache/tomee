@@ -472,7 +472,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private void fireServerCreated(final ClassLoader oldLoader) {
-        final Object ctx = AppFinder.findAppContextOrWeb(oldLoader, new AppFinder.Transformer<Object>() {
+        final Object ctx = AppFinder.findAppContextOrWeb(oldLoader, new AppFinder.Transformer<>() {
             @Override
             public Object from(final AppContext appCtx) {
                 return appCtx;

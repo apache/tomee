@@ -100,7 +100,7 @@ public class GbeanType
      */
     public List<JAXBElement<?>> getAttributeOrXmlAttributeOrReference() {
         if (attributeOrXmlAttributeOrReference == null) {
-            attributeOrXmlAttributeOrReference = new ArrayList<JAXBElement<?>>();
+            attributeOrXmlAttributeOrReference = new ArrayList<>();
         }
         return this.attributeOrXmlAttributeOrReference;
     }

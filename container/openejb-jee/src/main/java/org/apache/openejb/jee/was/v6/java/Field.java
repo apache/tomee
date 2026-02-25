@@ -90,7 +90,7 @@ public class Field extends ETypedElement {
      */
     public List<Block> getInitializers() {
         if (initializers == null) {
-            initializers = new ArrayList<Block>();
+            initializers = new ArrayList<>();
         }
         return this.initializers;
     }

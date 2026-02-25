@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class Route {
     private static final String[] EMPTY_CONTEXT = new String[0];
 
-    private final ThreadLocal<Matcher> matcher = new ThreadLocal<Matcher>();
+    private final ThreadLocal<Matcher> matcher = new ThreadLocal<>();
 
     private Pattern originPattern;
     private String origin;
@@ -85,7 +85,7 @@ public class Route {
     }
 
     private String[] buildContext(final Matcher matcher) {
-        final Collection<String> values = new ArrayList<String>();
+        final Collection<String> values = new ArrayList<>();
         for (int i = 1; i < matcher.groupCount() + 1; i++) {
             values.add(matcher.group(i));
         }

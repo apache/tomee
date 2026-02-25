@@ -36,7 +36,7 @@ public class WSS4JInterceptorFactoryBase {
     }
 
     protected Map<String, Object> getAndDestroyMap() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             map.put(entry.getKey().toString(), entry.getValue());
         }

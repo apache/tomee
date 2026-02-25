@@ -51,7 +51,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected static final Method HASHCODE = getMethod(Object.class, "hashCode");
     protected static final Method TOSTRING = getMethod(Object.class, "toString");
 
-    protected static final ConcurrentMap<Object, Set<WeakReference<EJBInvocationHandler>>> liveHandleRegistry = new ConcurrentHashMap<Object, Set<WeakReference<EJBInvocationHandler>>>();
+    protected static final ConcurrentMap<Object, Set<WeakReference<EJBInvocationHandler>>> liveHandleRegistry = new ConcurrentHashMap<>();
 
     protected transient boolean inProxyMap = false;
 
@@ -205,7 +205,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         Set<WeakReference<EJBInvocationHandler>> set = liveHandleRegistry.get(key);
 
         if (set == null) {
-            set = new HashSet<WeakReference<EJBInvocationHandler>>();
+            set = new HashSet<>();
             final Set<WeakReference<EJBInvocationHandler>> current = liveHandleRegistry.putIfAbsent(key, set);
             // someone else added the set
             if (current != null) {
@@ -217,7 +217,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         l.lock();
 
         try {
-            set.add(new WeakReference<EJBInvocationHandler>(handler));
+            set.add(new WeakReference<>(handler));
         } finally {
             l.unlock();
         }

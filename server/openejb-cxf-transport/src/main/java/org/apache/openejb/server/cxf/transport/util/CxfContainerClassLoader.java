@@ -26,7 +26,7 @@ public class CxfContainerClassLoader extends ClassLoader implements Unwrappable 
     private static final ClassLoader CONTAINER_LOADER = CxfUtil.class.getClassLoader();
     public static final String CXF_PACKAGE = "org.apache.cxf.";
 
-    private final ThreadLocal<ClassLoader> tccl = new ThreadLocal<ClassLoader>();
+    private final ThreadLocal<ClassLoader> tccl = new ThreadLocal<>();
 
     public CxfContainerClassLoader() {
         super(CONTAINER_LOADER);

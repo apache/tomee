@@ -290,8 +290,8 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static final String OPENEJB_JPA_AUTO_SCAN = "openejb.jpa.auto-scan";
     public static final String OPENEJB_JPA_AUTO_SCAN_PACKAGE = "openejb.jpa.auto-scan.package";
 
-    private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
-    private static final Set<String> lookupMissing = new HashSet<String>(2);
+    private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<>();
+    private static final Set<String> lookupMissing = new HashSet<>(2);
     private static final String[] JSF_CLASSES = new String[]{
         "jakarta.faces.application.ResourceDependencies",
         "jakarta.faces.application.ResourceDependency",
@@ -322,39 +322,39 @@ public class AnnotationDeployer implements DynamicDeployer {
         "jakarta.websocket.Endpoint"
     };
 
-    private static final Collection<String> API_CLASSES = new ArrayList<String>(WEB_CLASSES.length + JSF_CLASSES.length);
+    private static final Collection<String> API_CLASSES = new ArrayList<>(WEB_CLASSES.length + JSF_CLASSES.length);
 
     static {
         API_CLASSES.addAll(Arrays.asList(JSF_CLASSES));
         API_CLASSES.addAll(Arrays.asList(WEB_CLASSES));
     }
 
-    public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
-        "jakarta.ejb.EJBContext",
-        "jakarta.ejb.SessionContext",
-        "jakarta.ejb.EntityContext",
-        "jakarta.ejb.MessageDrivenContext",
-        "jakarta.transaction.UserTransaction",
-        "jakarta.jms.Queue",
-        "jakarta.jms.Topic",
-        "jakarta.xml.ws.WebServiceContext",
-        "jakarta.ejb.TimerService",
-        "jakarta.enterprise.inject.spi.BeanManager",
-        "jakarta.validation.Validator",
-        "jakarta.validation.ValidatorFactory"
+    public static final Set<String> knownResourceEnvTypes = new TreeSet<>(Arrays.asList(
+            "jakarta.ejb.EJBContext",
+            "jakarta.ejb.SessionContext",
+            "jakarta.ejb.EntityContext",
+            "jakarta.ejb.MessageDrivenContext",
+            "jakarta.transaction.UserTransaction",
+            "jakarta.jms.Queue",
+            "jakarta.jms.Topic",
+            "jakarta.xml.ws.WebServiceContext",
+            "jakarta.ejb.TimerService",
+            "jakarta.enterprise.inject.spi.BeanManager",
+            "jakarta.validation.Validator",
+            "jakarta.validation.ValidatorFactory"
     ));
 
-    public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(Arrays.asList(
-        "boolean", "java.lang.Boolean",
-        "char", "java.lang.Character",
-        "byte", "java.lang.Byte",
-        "short", "java.lang.Short",
-        "int", "java.lang.Integer",
-        "long", "java.lang.Long",
-        "float", "java.lang.Float",
-        "double", "java.lang.Double",
-        "java.lang.String",
-        "java.lang.Class"
+    public static final Set<String> knownEnvironmentEntries = new TreeSet<>(Arrays.asList(
+            "boolean", "java.lang.Boolean",
+            "char", "java.lang.Character",
+            "byte", "java.lang.Byte",
+            "short", "java.lang.Short",
+            "int", "java.lang.Integer",
+            "long", "java.lang.Long",
+            "float", "java.lang.Float",
+            "double", "java.lang.Double",
+            "java.lang.String",
+            "java.lang.Class"
     ));
 
     private final DiscoverAnnotatedBeans discoverAnnotatedBeans;
@@ -5353,7 +5353,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             public LockHandler(final AssemblyDescriptor assemblyDescriptor,
                                final SessionBean bean) {
-                this(assemblyDescriptor, bean, new HashMap<Object, ContainerConcurrency>());
+                this(assemblyDescriptor, bean, new HashMap<>());
             }
 
             public LockHandler(final AssemblyDescriptor assemblyDescriptor,
@@ -5392,7 +5392,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             public AccessTimeoutHandler(final AssemblyDescriptor assemblyDescriptor,
                                         final SessionBean bean) {
-                this(assemblyDescriptor, bean, new HashMap<Object, ContainerConcurrency>());
+                this(assemblyDescriptor, bean, new HashMap<>());
             }
 
             public AccessTimeoutHandler(final AssemblyDescriptor assemblyDescriptor,

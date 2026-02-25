@@ -62,7 +62,7 @@ public class HandlerChains {
 
     public List<HandlerChain> getHandlerChain() {
         if (handlerChain == null) {
-            handlerChain = new ArrayList<HandlerChain>();
+            handlerChain = new ArrayList<>();
         }
         return this.handlerChain;
     }

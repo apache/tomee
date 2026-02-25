@@ -263,7 +263,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<String> getJndiName() {
         if (jndiName == null) {
-            jndiName = new ArrayList<String>();
+            jndiName = new ArrayList<>();
         }
         return this.jndiName;
     }
@@ -290,14 +290,14 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<String> getLocalJndiName() {
         if (localJndiName == null) {
-            localJndiName = new ArrayList<String>();
+            localJndiName = new ArrayList<>();
         }
         return this.localJndiName;
     }
 
     public List<Jndi> getJndi() {
         if (jndi == null) {
-            jndi = new ArrayList<Jndi>();
+            jndi = new ArrayList<>();
         }
         return this.jndi;
     }
@@ -404,7 +404,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<EntityBeanType.CmpFieldMapping> getCmpFieldMapping() {
         if (cmpFieldMapping == null) {
-            cmpFieldMapping = new ArrayList<EntityBeanType.CmpFieldMapping>();
+            cmpFieldMapping = new ArrayList<>();
         }
         return this.cmpFieldMapping;
     }
@@ -534,21 +534,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry() {
         if (abstractNamingEntry == null) {
-            abstractNamingEntry = new ArrayList<JAXBElement<? extends AbstractNamingEntryType>>();
+            abstractNamingEntry = new ArrayList<>();
         }
         return this.abstractNamingEntry;
     }
 
     public List<PersistenceContextRefType> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new ArrayList<PersistenceContextRefType>();
+            persistenceContextRef = new ArrayList<>();
         }
         return persistenceContextRef;
     }
 
     public List<PersistenceUnitRefType> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new ArrayList<PersistenceUnitRefType>();
+            persistenceUnitRef = new ArrayList<>();
         }
         return persistenceUnitRef;
     }
@@ -575,7 +575,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<EjbRefType> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRefType>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }
@@ -602,7 +602,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<EjbLocalRefType> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new ArrayList<EjbLocalRefType>();
+            ejbLocalRef = new ArrayList<>();
         }
         return this.ejbLocalRef;
     }
@@ -629,7 +629,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<ServiceRefType> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRefType>();
+            serviceRef = new ArrayList<>();
         }
         return this.serviceRef;
     }
@@ -656,7 +656,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<ResourceRefType> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRefType>();
+            resourceRef = new ArrayList<>();
         }
         return this.resourceRef;
     }
@@ -683,7 +683,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<ResourceEnvRefType> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRefType>();
+            resourceEnvRef = new ArrayList<>();
         }
         return this.resourceEnvRef;
     }
@@ -710,7 +710,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      */
     public List<QueryType> getQuery() {
         if (query == null) {
-            query = new ArrayList<QueryType>();
+            query = new ArrayList<>();
         }
         return this.query;
     }
@@ -1016,7 +1016,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
          */
         public List<GroupType> getGroup() {
             if (group == null) {
-                group = new ArrayList<GroupType>();
+                group = new ArrayList<>();
             }
             return this.group;
         }
@@ -1063,7 +1063,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
          */
         public List<CmpFieldGroupMappingType> getCmpFieldGroupMapping() {
             if (cmpFieldGroupMapping == null) {
-                cmpFieldGroupMapping = new ArrayList<CmpFieldGroupMappingType>();
+                cmpFieldGroupMapping = new ArrayList<>();
             }
             return this.cmpFieldGroupMapping;
         }
@@ -1090,7 +1090,7 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
          */
         public List<CmrFieldGroupMappingType> getCmrFieldGroupMapping() {
             if (cmrFieldGroupMapping == null) {
-                cmrFieldGroupMapping = new ArrayList<CmrFieldGroupMappingType>();
+                cmrFieldGroupMapping = new ArrayList<>();
             }
             return this.cmrFieldGroupMapping;
         }

@@ -51,9 +51,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfiguration> {
 
-    private static final Map<Archive<?>, File> ARCHIVES = new ConcurrentHashMap<Archive<?>, File>();
+    private static final Map<Archive<?>, File> ARCHIVES = new ConcurrentHashMap<>();
 
-    private static final Map<String, MockHttpSession> SESSIONS = new ConcurrentHashMap<String, MockHttpSession>();
+    private static final Map<String, MockHttpSession> SESSIONS = new ConcurrentHashMap<>();
 
     private Container container;
 

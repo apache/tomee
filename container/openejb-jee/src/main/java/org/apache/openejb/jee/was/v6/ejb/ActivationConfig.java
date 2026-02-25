@@ -124,7 +124,7 @@ public class ActivationConfig {
      */
     public List<ActivationConfigProperty> getConfigProperties() {
         if (configProperties == null) {
-            configProperties = new ArrayList<ActivationConfigProperty>();
+            configProperties = new ArrayList<>();
         }
         return this.configProperties;
     }
@@ -152,7 +152,7 @@ public class ActivationConfig {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -180,7 +180,7 @@ public class ActivationConfig {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

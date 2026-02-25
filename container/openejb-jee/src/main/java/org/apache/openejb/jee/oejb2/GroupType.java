@@ -112,7 +112,7 @@ public class GroupType {
      */
     public List<String> getCmpFieldName() {
         if (cmpFieldName == null) {
-            cmpFieldName = new ArrayList<String>();
+            cmpFieldName = new ArrayList<>();
         }
         return this.cmpFieldName;
     }
@@ -139,7 +139,7 @@ public class GroupType {
      */
     public List<GroupType.CmrField> getCmrField() {
         if (cmrField == null) {
-            cmrField = new ArrayList<GroupType.CmrField>();
+            cmrField = new ArrayList<>();
         }
         return this.cmrField;
     }

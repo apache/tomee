@@ -91,7 +91,7 @@ public class SessionConfig {
 
     public List<TrackingMode> getTrackingMode() {
         if (trackingMode == null) {
-            trackingMode = new ArrayList<TrackingMode>();
+            trackingMode = new ArrayList<>();
         }
         return this.trackingMode;
     }

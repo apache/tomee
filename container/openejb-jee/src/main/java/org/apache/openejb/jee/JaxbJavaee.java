@@ -61,9 +61,9 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @version $Rev$ $Date$
  */
 public class JaxbJavaee {
-    public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
+    public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<>();
 
-    private static final Map<Class<?>, JAXBContext> jaxbContexts = new HashMap<Class<?>, JAXBContext>();
+    private static final Map<Class<?>, JAXBContext> jaxbContexts = new HashMap<>();
 
     public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -120,7 +120,7 @@ public class JaxbJavaee {
         }
 
 
-        currentPublicId.set(new TreeSet<String>());
+        currentPublicId.set(new TreeSet<>());
         try {
             final JAXBElement<T> element = unmarshaller.unmarshal(source, type);
             return element.getValue();
@@ -192,7 +192,7 @@ public class JaxbJavaee {
 
         final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        currentPublicId.set(new TreeSet<String>());
+        currentPublicId.set(new TreeSet<>());
         try {
             return unmarshaller.unmarshal(source);
         } finally {
@@ -232,7 +232,7 @@ public class JaxbJavaee {
 
         final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        currentPublicId.set(new TreeSet<String>());
+        currentPublicId.set(new TreeSet<>());
         try {
             return unmarshaller.unmarshal(source);
         } finally {
@@ -272,7 +272,7 @@ public class JaxbJavaee {
 
         final SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        currentPublicId.set(new TreeSet<String>());
+        currentPublicId.set(new TreeSet<>());
         try {
             return unmarshaller.unmarshal(source);
         } finally {
@@ -374,7 +374,7 @@ public class JaxbJavaee {
 
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-        private final Stack<Map.Entry<String, String>> effectiveNamespaces = new Stack<Map.Entry<String, String>>();
+        private final Stack<Map.Entry<String, String>> effectiveNamespaces = new Stack<>();
 
         public HandlerChainsNamespaceFilter(final XMLReader xmlReader) {
             super(xmlReader);
@@ -407,7 +407,7 @@ public class JaxbJavaee {
 
         @Override
         public void startPrefixMapping(final String prefix, final String uri) throws SAXException {
-            effectiveNamespaces.push(new AbstractMap.SimpleEntry<String, String>(prefix, uri));
+            effectiveNamespaces.push(new AbstractMap.SimpleEntry<>(prefix, uri));
             super.startPrefixMapping(prefix, uri);
         }
 

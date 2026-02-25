@@ -92,7 +92,7 @@ public class ActivationSpec {
 
     public List<RequiredConfigProperty> getRequiredConfigProperty() {
         if (requiredConfigProperty == null) {
-            requiredConfigProperty = new ArrayList<RequiredConfigProperty>();
+            requiredConfigProperty = new ArrayList<>();
         }
         return this.requiredConfigProperty;
     }
@@ -105,7 +105,7 @@ public class ActivationSpec {
 
     public List<ConfigProperty> getConfigProperty() {
         if (configProperty == null) {
-            configProperty = new ArrayList<ConfigProperty>();
+            configProperty = new ArrayList<>();
         }
         return configProperty;
     }

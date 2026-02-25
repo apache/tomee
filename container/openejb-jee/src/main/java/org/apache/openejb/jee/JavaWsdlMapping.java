@@ -60,56 +60,56 @@ public class JavaWsdlMapping {
 
     public Collection<PackageMapping> getPackageMapping() {
         if (packageMapping == null) {
-            packageMapping = new KeyedCollection<String, PackageMapping>();
+            packageMapping = new KeyedCollection<>();
         }
         return this.packageMapping;
     }
 
     public Map<String, PackageMapping> getPackageMappingMap() {
         if (packageMapping == null) {
-            packageMapping = new KeyedCollection<String, PackageMapping>();
+            packageMapping = new KeyedCollection<>();
         }
         return this.packageMapping.toMap();
     }
 
     public List<JavaXmlTypeMapping> getJavaXmlTypeMapping() {
         if (javaXmlTypeMapping == null) {
-            javaXmlTypeMapping = new ArrayList<JavaXmlTypeMapping>();
+            javaXmlTypeMapping = new ArrayList<>();
         }
         return this.javaXmlTypeMapping;
     }
 
     public Collection<ExceptionMapping> getExceptionMapping() {
         if (exceptionMapping == null) {
-            exceptionMapping = new KeyedCollection<QName, ExceptionMapping>();
+            exceptionMapping = new KeyedCollection<>();
         }
         return this.exceptionMapping;
     }
 
     public Map<QName, ExceptionMapping> getExceptionMappingMap() {
         if (exceptionMapping == null) {
-            exceptionMapping = new KeyedCollection<QName, ExceptionMapping>();
+            exceptionMapping = new KeyedCollection<>();
         }
         return this.exceptionMapping.toMap();
     }
 
     public List<ServiceInterfaceMapping> getServiceInterfaceMapping() {
         if (serviceInterfaceMapping == null) {
-            serviceInterfaceMapping = new ArrayList<ServiceInterfaceMapping>();
+            serviceInterfaceMapping = new ArrayList<>();
         }
         return this.serviceInterfaceMapping;
     }
 
     public Collection<ServiceEndpointInterfaceMapping> getServiceEndpointInterfaceMapping() {
         if (serviceEndpointInterfaceMapping == null) {
-            serviceEndpointInterfaceMapping = new KeyedCollection<String, ServiceEndpointInterfaceMapping>();
+            serviceEndpointInterfaceMapping = new KeyedCollection<>();
         }
         return this.serviceEndpointInterfaceMapping;
     }
 
     public Map<String, ServiceEndpointInterfaceMapping> getServiceEndpointInterfaceMappingMap() {
         if (serviceEndpointInterfaceMapping == null) {
-            serviceEndpointInterfaceMapping = new KeyedCollection<String, ServiceEndpointInterfaceMapping>();
+            serviceEndpointInterfaceMapping = new KeyedCollection<>();
         }
         return this.serviceEndpointInterfaceMapping.toMap();
     }

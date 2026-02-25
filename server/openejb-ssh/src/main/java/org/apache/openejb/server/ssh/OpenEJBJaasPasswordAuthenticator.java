@@ -34,8 +34,8 @@ import java.io.IOException;
 public class OpenEJBJaasPasswordAuthenticator extends JaasPasswordAuthenticator {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER, OpenEJBJaasPasswordAuthenticator.class);
 
-    public static final Session.AttributeKey<String> USERNAME_KEY = new Session.AttributeKey<String>();
-    public static final Session.AttributeKey<LoginContext> LOGIN_CONTEXT_KEY = new Session.AttributeKey<LoginContext>();
+    public static final Session.AttributeKey<String> USERNAME_KEY = new Session.AttributeKey<>();
+    public static final Session.AttributeKey<LoginContext> LOGIN_CONTEXT_KEY = new Session.AttributeKey<>();
 
     @Override
     public boolean authenticate(final String username, final String password, final ServerSession session) {

@@ -77,7 +77,7 @@ public class ServletMapping {
 
     public List<String> getUrlPattern() {
         if (urlPattern == null) {
-            urlPattern = new ArrayList<String>();
+            urlPattern = new ArrayList<>();
         }
         return this.urlPattern;
     }

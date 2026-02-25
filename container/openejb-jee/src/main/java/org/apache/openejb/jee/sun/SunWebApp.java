@@ -120,21 +120,21 @@ public class SunWebApp {
 
     public List<SecurityRoleMapping> getSecurityRoleMapping() {
         if (securityRoleMapping == null) {
-            securityRoleMapping = new ArrayList<SecurityRoleMapping>();
+            securityRoleMapping = new ArrayList<>();
         }
         return this.securityRoleMapping;
     }
 
     public List<Servlet> getServlet() {
         if (servlet == null) {
-            servlet = new ArrayList<Servlet>();
+            servlet = new ArrayList<>();
         }
         return this.servlet;
     }
 
     public List<IdempotentUrlPattern> getIdempotentUrlPattern() {
         if (idempotentUrlPattern == null) {
-            idempotentUrlPattern = new ArrayList<IdempotentUrlPattern>();
+            idempotentUrlPattern = new ArrayList<>();
         }
         return this.idempotentUrlPattern;
     }
@@ -149,35 +149,35 @@ public class SunWebApp {
 
     public List<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRef>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }
 
     public List<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRef>();
+            resourceRef = new ArrayList<>();
         }
         return this.resourceRef;
     }
 
     public List<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRef>();
+            resourceEnvRef = new ArrayList<>();
         }
         return this.resourceEnvRef;
     }
 
     public List<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRef>();
+            serviceRef = new ArrayList<>();
         }
         return this.serviceRef;
     }
 
     public List<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new ArrayList<MessageDestinationRef>();
+            messageDestinationRef = new ArrayList<>();
         }
         return this.messageDestinationRef;
     }
@@ -224,21 +224,21 @@ public class SunWebApp {
 
     public List<Property> getProperty() {
         if (property == null) {
-            property = new ArrayList<Property>();
+            property = new ArrayList<>();
         }
         return this.property;
     }
 
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new ArrayList<MessageDestination>();
+            messageDestination = new ArrayList<>();
         }
         return this.messageDestination;
     }
 
     public List<WebserviceDescription> getWebserviceDescription() {
         if (webserviceDescription == null) {
-            webserviceDescription = new ArrayList<WebserviceDescription>();
+            webserviceDescription = new ArrayList<>();
         }
         return this.webserviceDescription;
     }

@@ -90,7 +90,7 @@ public class Cache {
 
     public List<CacheHelper> getCacheHelper() {
         if (cacheHelper == null) {
-            cacheHelper = new ArrayList<CacheHelper>();
+            cacheHelper = new ArrayList<>();
         }
         return this.cacheHelper;
     }
@@ -105,14 +105,14 @@ public class Cache {
 
     public List<Property> getProperty() {
         if (property == null) {
-            property = new ArrayList<Property>();
+            property = new ArrayList<>();
         }
         return this.property;
     }
 
     public List<CacheMapping> getCacheMapping() {
         if (cacheMapping == null) {
-            cacheMapping = new ArrayList<CacheMapping>();
+            cacheMapping = new ArrayList<>();
         }
         return this.cacheMapping;
     }

@@ -46,7 +46,7 @@ public class ThrowableArtifact implements Externalizable {
 
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
-        final Stack<MockThrowable> stack = new Stack<MockThrowable>();
+        final Stack<MockThrowable> stack = new Stack<>();
 
         for (Throwable cause = throwable; cause != null; cause = cause.getCause()) {
             stack.add(new MockThrowable(cause));

@@ -63,7 +63,7 @@ public class MessageAdapter {
 
     public List<MessageListener> getMessageListener() {
         if (messageListener == null) {
-            messageListener = new ArrayList<MessageListener>();
+            messageListener = new ArrayList<>();
         }
         return this.messageListener;
     }

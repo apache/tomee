@@ -133,7 +133,7 @@ public class FacesMapEntries {
      */
     public List<FacesMapEntry> getMapEntry() {
         if (mapEntry == null) {
-            mapEntry = new ArrayList<FacesMapEntry>();
+            mapEntry = new ArrayList<>();
         }
         return this.mapEntry;
     }

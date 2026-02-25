@@ -34,8 +34,8 @@ public class WsMetaData implements Serializable {
     private String referenceClassName;
     private String wsdlUrl;
     private String serviceQName;
-    private final List<HandlerChainMetaData> handlerChains = new ArrayList<HandlerChainMetaData>();
-    private final List<PortRefMetaData> portRefs = new ArrayList<PortRefMetaData>();
+    private final List<HandlerChainMetaData> handlerChains = new ArrayList<>();
+    private final List<PortRefMetaData> portRefs = new ArrayList<>();
 
     public String getServiceClassName() {
         return serviceClassName;

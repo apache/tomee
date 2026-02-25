@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 public class ServiceRefData {
-    private static final WeakHashMap<Object, ServiceRefData> registry = new WeakHashMap<Object, ServiceRefData>();
+    private static final WeakHashMap<Object, ServiceRefData> registry = new WeakHashMap<>();
 
     public static ServiceRefData getServiceRefData(final Object key) {
         return registry.get(key);

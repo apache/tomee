@@ -122,7 +122,7 @@ public class ExcludeList {
      */
     public List<MethodElement> getMethodElements() {
         if (methodElements == null) {
-            methodElements = new ArrayList<MethodElement>();
+            methodElements = new ArrayList<>();
         }
         return this.methodElements;
     }
@@ -150,7 +150,7 @@ public class ExcludeList {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -178,7 +178,7 @@ public class ExcludeList {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

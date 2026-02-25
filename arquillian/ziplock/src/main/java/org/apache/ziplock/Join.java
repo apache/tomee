@@ -73,7 +73,7 @@ public class Join {
     }
 
     public static <T> List<String> strings(final Collection<T> collection, final NameCallback<T> callback) {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
 
         for (final T t : collection) {
             final String name = callback.getName(t);

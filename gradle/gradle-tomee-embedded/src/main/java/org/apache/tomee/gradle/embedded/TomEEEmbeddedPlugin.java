@@ -95,7 +95,7 @@ public class TomEEEmbeddedPlugin implements Plugin<Project> {
             dependencies.add(dependencyHandler.create("org.apache.tomee:tomee-embedded:" + tomeeVersion));
         });
 
-        project.task(new HashMap<String, Object>() {{
+        project.task(new HashMap<>() {{
             put("type", TomEEEmbeddedTask.class);
             put("group", "Embedded Application Server");
             put("description", "Start an embedded Apache TomEE server deploying application classpath");

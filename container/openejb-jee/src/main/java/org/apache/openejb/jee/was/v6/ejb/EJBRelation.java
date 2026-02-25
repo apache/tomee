@@ -134,7 +134,7 @@ public class EJBRelation {
      */
     public List<EJBRelationshipRole> getRelationshipRoles() {
         if (relationshipRoles == null) {
-            relationshipRoles = new ArrayList<EJBRelationshipRole>();
+            relationshipRoles = new ArrayList<>();
         }
         return this.relationshipRoles;
     }
@@ -162,7 +162,7 @@ public class EJBRelation {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -190,7 +190,7 @@ public class EJBRelation {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

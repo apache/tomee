@@ -59,7 +59,7 @@ public class WikiGenerator {
 
         // generate containers
         final List<ServiceProvider> serviceProvider = servicesJar.getServiceProvider();
-        serviceProvider.sort(new Comparator<ServiceProvider>() {
+        serviceProvider.sort(new Comparator<>() {
             @Override
             public int compare(final ServiceProvider o1, final ServiceProvider o2) {
                 return grade(o2) - grade(o1);

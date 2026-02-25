@@ -44,7 +44,7 @@ import java.util.Set;
  */
 public class BasicJaccProvider extends JaccProvider {
 
-    private static final Set<Class> JACC_PERMISSIONS = new HashSet<Class>() {
+    private static final Set<Class> JACC_PERMISSIONS = new HashSet<>() {
         {
             add(EJBMethodPermission.class);
             add(EJBRoleRefPermission.class);

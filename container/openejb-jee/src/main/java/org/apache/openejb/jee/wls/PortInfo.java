@@ -100,7 +100,7 @@ public class PortInfo {
      */
     public List<PropertyNamevalue> getStubProperty() {
         if (stubProperty == null) {
-            stubProperty = new ArrayList<PropertyNamevalue>();
+            stubProperty = new ArrayList<>();
         }
         return this.stubProperty;
     }
@@ -127,7 +127,7 @@ public class PortInfo {
      */
     public List<PropertyNamevalue> getCallProperty() {
         if (callProperty == null) {
-            callProperty = new ArrayList<PropertyNamevalue>();
+            callProperty = new ArrayList<>();
         }
         return this.callProperty;
     }

@@ -76,7 +76,7 @@ public class Handler {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon")
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "handler-name", required = true)
     protected String handlerName;
     @XmlElement(name = "handler-class", required = true)
@@ -123,14 +123,14 @@ public class Handler {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -157,28 +157,28 @@ public class Handler {
 
     public List<ParamValue> getInitParam() {
         if (initParam == null) {
-            initParam = new ArrayList<ParamValue>();
+            initParam = new ArrayList<>();
         }
         return this.initParam;
     }
 
     public List<QName> getSoapHeader() {
         if (soapHeader == null) {
-            soapHeader = new ArrayList<QName>();
+            soapHeader = new ArrayList<>();
         }
         return this.soapHeader;
     }
 
     public List<String> getSoapRole() {
         if (soapRole == null) {
-            soapRole = new ArrayList<String>();
+            soapRole = new ArrayList<>();
         }
         return this.soapRole;
     }
 
     public List<String> getPortName() {
         if (portName == null) {
-            portName = new ArrayList<String>();
+            portName = new ArrayList<>();
         }
         return this.portName;
     }

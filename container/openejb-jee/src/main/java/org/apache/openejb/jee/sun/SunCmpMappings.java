@@ -35,7 +35,7 @@ public class SunCmpMappings {
 
     public List<SunCmpMapping> getSunCmpMapping() {
         if (sunCmpMapping == null) {
-            sunCmpMapping = new ArrayList<SunCmpMapping>();
+            sunCmpMapping = new ArrayList<>();
         }
         return this.sunCmpMapping;
     }

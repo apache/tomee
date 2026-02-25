@@ -39,7 +39,7 @@ public class FetchedWith {
 
     public List<Object> getDefaultOrLevelOrNamedGroupOrNone() {
         if (defaultOrLevelOrNamedGroupOrNone == null) {
-            defaultOrLevelOrNamedGroupOrNone = new ArrayList<Object>();
+            defaultOrLevelOrNamedGroupOrNone = new ArrayList<>();
         }
         return this.defaultOrLevelOrNamedGroupOrNone;
     }

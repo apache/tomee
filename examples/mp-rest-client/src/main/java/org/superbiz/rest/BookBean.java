@@ -53,7 +53,7 @@ public class BookBean {
 
     public List getBooks() {
         Collection<Book> books = bookStore.values();
-        return new ArrayList<Book>(books);
+        return new ArrayList<>(books);
 
     }
 

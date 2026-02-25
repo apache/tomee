@@ -116,7 +116,7 @@ public class CMPConnectionFactoryBinding {
      */
     public List<Property> getProperties() {
         if (properties == null) {
-            properties = new ArrayList<Property>();
+            properties = new ArrayList<>();
         }
         return this.properties;
     }
@@ -144,7 +144,7 @@ public class CMPConnectionFactoryBinding {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

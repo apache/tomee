@@ -121,7 +121,7 @@ public class Relationships {
      */
     public List<EJBRelation> getEjbRelations() {
         if (ejbRelations == null) {
-            ejbRelations = new ArrayList<EJBRelation>();
+            ejbRelations = new ArrayList<>();
         }
         return this.ejbRelations;
     }
@@ -149,7 +149,7 @@ public class Relationships {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -177,7 +177,7 @@ public class Relationships {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

@@ -345,8 +345,8 @@ public class CxfRSService extends RESTService {
             this.type = type;
             this.proxy =
                 (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{type, Serializable.class}, new DelegateHandler(proxy));
-            this.types = new HashSet<Type>(asList(Object.class, type));
-            this.qualifiers = new HashSet<Annotation>(asList(ContextLiteral.INSTANCE, AnyLiteral.INSTANCE));
+            this.types = new HashSet<>(asList(Object.class, type));
+            this.qualifiers = new HashSet<>(asList(ContextLiteral.INSTANCE, AnyLiteral.INSTANCE));
             this.id = ContextBean.class.getName() + "#" + type.getName();
         }
 

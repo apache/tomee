@@ -83,7 +83,7 @@ public class Movies {
     }
 
     public List<Movie> getMovies() throws Exception {
-        ArrayList<Movie> movies = new ArrayList<Movie>();
+        ArrayList<Movie> movies = new ArrayList<>();
         Connection conn = movieDatabase.getConnection();
         try {
             PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");

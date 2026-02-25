@@ -81,7 +81,7 @@ public class SecurityRole {
      */
     public List<PrincipalName> getPrincipalName() {
         if (principalName == null) {
-            principalName = new ArrayList<PrincipalName>();
+            principalName = new ArrayList<>();
         }
         return this.principalName;
     }

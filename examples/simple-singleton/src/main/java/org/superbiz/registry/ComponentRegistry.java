@@ -30,7 +30,7 @@ import static jakarta.ejb.LockType.WRITE;
 @Lock(READ)
 public class ComponentRegistry {
 
-    private final Map<Class, Object> components = new HashMap<Class, Object>();
+    private final Map<Class, Object> components = new HashMap<>();
 
     public <T> T getComponent(final Class<T> type) {
         return (T) components.get(type);

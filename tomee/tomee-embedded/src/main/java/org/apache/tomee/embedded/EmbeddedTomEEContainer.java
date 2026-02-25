@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class EmbeddedTomEEContainer extends EJBContainer {
     public static final String TOMEE_EJBCONTAINER_HTTP_PORT = "tomee.ejbcontainer.http.port";
-    private static final AtomicReference<EmbeddedTomEEContainer> tomEEContainer = new AtomicReference<EmbeddedTomEEContainer>();
+    private static final AtomicReference<EmbeddedTomEEContainer> tomEEContainer = new AtomicReference<>();
     private static final List<String> CONTAINER_NAMES = Arrays.asList(EmbeddedTomEEContainer.class.getName(), "tomee-embedded", "embedded-tomee");
 
     private final Container container = new Container();

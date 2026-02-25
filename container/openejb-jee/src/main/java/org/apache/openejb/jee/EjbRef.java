@@ -258,7 +258,7 @@ public class EjbRef implements EjbReference {
 
     public Set<InjectionTarget> getInjectionTarget() {
         if (injectionTarget == null) {
-            injectionTarget = new HashSet<InjectionTarget>();
+            injectionTarget = new HashSet<>();
         }
         return this.injectionTarget;
     }

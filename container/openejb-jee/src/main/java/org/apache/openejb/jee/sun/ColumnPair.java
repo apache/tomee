@@ -31,7 +31,7 @@ public class ColumnPair {
 
     public List<ColumnName> getColumnName() {
         if (columnName == null) {
-            columnName = new ArrayList<ColumnName>();
+            columnName = new ArrayList<>();
         }
         return this.columnName;
     }

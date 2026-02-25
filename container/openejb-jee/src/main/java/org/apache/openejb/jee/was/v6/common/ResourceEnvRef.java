@@ -148,7 +148,7 @@ public class ResourceEnvRef {
      */
     public List<JavaClass> getResourceEnvRefTypes() {
         if (resourceEnvRefTypes == null) {
-            resourceEnvRefTypes = new ArrayList<JavaClass>();
+            resourceEnvRefTypes = new ArrayList<>();
         }
         return this.resourceEnvRefTypes;
     }
@@ -176,7 +176,7 @@ public class ResourceEnvRef {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -204,7 +204,7 @@ public class ResourceEnvRef {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

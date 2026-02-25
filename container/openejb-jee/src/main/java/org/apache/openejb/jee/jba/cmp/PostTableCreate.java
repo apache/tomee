@@ -75,7 +75,7 @@ public class PostTableCreate {
      */
     public List<SqlStatement> getSqlStatement() {
         if (sqlStatement == null) {
-            sqlStatement = new ArrayList<SqlStatement>();
+            sqlStatement = new ArrayList<>();
         }
         return this.sqlStatement;
     }

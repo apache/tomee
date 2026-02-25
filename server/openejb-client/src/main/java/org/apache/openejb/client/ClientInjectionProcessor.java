@@ -78,7 +78,7 @@ public class ClientInjectionProcessor<T> {
     }
 
     private void construct() {
-        final Map<Injection, Object> values = new HashMap<Injection, Object>();
+        final Map<Injection, Object> values = new HashMap<>();
         for (final Injection injection : injections) {
             // only process injections for this class
             final Class<?> targetClass = loadClass(injection.getTargetClass());
@@ -109,7 +109,7 @@ public class ClientInjectionProcessor<T> {
             throw new IllegalStateException("Error while creating bean " + beanClass.getName(), e);
         }
 
-        final List<String> unsetProperties = new ArrayList<String>();
+        final List<String> unsetProperties = new ArrayList<>();
         for (final Map.Entry<Injection, Object> entry : values.entrySet()) {
             final Injection injection = entry.getKey();
             final Object value = entry.getValue();
@@ -167,8 +167,8 @@ public class ClientInjectionProcessor<T> {
     }
 
     private List<Method> toMethod(final List<CallbackMetaData> callbacks) {
-        final List<String> methodsNotFound = new ArrayList<String>(1);
-        final List<Method> methods = new ArrayList<Method>(callbacks.size());
+        final List<String> methodsNotFound = new ArrayList<>(1);
+        final List<Method> methods = new ArrayList<>(callbacks.size());
         for (final CallbackMetaData callback : callbacks) {
             final Method method = toMethod(callback);
             if (method != null) {
@@ -232,7 +232,7 @@ public class ClientInjectionProcessor<T> {
             setterName += propertyName.substring(1);
         }
 
-        final List<Method> methods = new ArrayList<Method>(Arrays.asList(typeClass.getMethods()));
+        final List<Method> methods = new ArrayList<>(Arrays.asList(typeClass.getMethods()));
         methods.addAll(Arrays.asList(typeClass.getDeclaredMethods()));
         for (final Method method : methods) {
             if (method.getName().equals(setterName)) {
@@ -284,7 +284,7 @@ public class ClientInjectionProcessor<T> {
             throw new IllegalArgumentException("name is an empty string");
         }
 
-        final List<Field> fields = new ArrayList<Field>(Arrays.asList(typeClass.getDeclaredFields()));
+        final List<Field> fields = new ArrayList<>(Arrays.asList(typeClass.getDeclaredFields()));
         Class parent = typeClass.getSuperclass();
         while (parent != null) {
             fields.addAll(Arrays.asList(parent.getDeclaredFields()));

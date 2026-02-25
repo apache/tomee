@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DynamicMBeanHandler implements InvocationHandler {
 
-    private final Map<Method, ConnectionInfo> infos = new ConcurrentHashMap<Method, ConnectionInfo>();
+    private final Map<Method, ConnectionInfo> infos = new ConcurrentHashMap<>();
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -136,7 +136,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
                         ((LocalConnectionInfo) info).server = ManagementFactory.getPlatformMBeanServer(); // could use an id...
                     } else {
                         info = new RemoteConnectionInfo();
-                        final Map<String, String[]> environment = new HashMap<String, String[]>();
+                        final Map<String, String[]> environment = new HashMap<>();
                         if (!on.user().isEmpty()) {
                             environment.put(JMXConnector.CREDENTIALS, new String[]{on.user(), on.password()});
                         }

@@ -69,7 +69,7 @@ public class FacesFacet {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "facet-name", required = true)
     protected java.lang.String facetName;
     @XmlElement(name = "facet-extension")
@@ -108,14 +108,14 @@ public class FacesFacet {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -166,7 +166,7 @@ public class FacesFacet {
      */
     public List<FacesFacetExtension> getFacetExtension() {
         if (facetExtension == null) {
-            facetExtension = new ArrayList<FacesFacetExtension>();
+            facetExtension = new ArrayList<>();
         }
         return this.facetExtension;
     }

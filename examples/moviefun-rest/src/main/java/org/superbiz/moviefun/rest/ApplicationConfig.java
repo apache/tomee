@@ -28,6 +28,6 @@ public class ApplicationConfig extends Application {
     @Override
     @SuppressWarnings("unchecked")
     public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(LoadRest.class, MoviesRest.class));
+        return new HashSet<>(Arrays.asList(LoadRest.class, MoviesRest.class));
     }
 }

@@ -53,11 +53,11 @@ public class EJBMetaDataImpl implements jakarta.ejb.EJBMetaData, java.io.Externa
 
     protected transient Class remoteClass;
 
-    protected final transient List<Class> businessClasses = new ArrayList<Class>();
+    protected final transient List<Class> businessClasses = new ArrayList<>();
 
     protected transient Class mainInterface;
 
-    protected final transient Set<String> asynchronousMethods = new HashSet<String>();
+    protected final transient Set<String> asynchronousMethods = new HashSet<>();
 
     protected final transient Properties properties = new Properties();
 
