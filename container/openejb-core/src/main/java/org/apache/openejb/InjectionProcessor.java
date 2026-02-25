@@ -132,7 +132,7 @@ public class InjectionProcessor<T> {
             throw new OpenEJBException("Error while creating bean " + clazz.getName(), e);
         }
 
-        final Map unsetProperties = objectRecipe.getUnsetProperties();
+        final Map<String, Object> unsetProperties = objectRecipe.getUnsetProperties();
         if (unsetProperties.size() > 0) {
             for (final Object property : unsetProperties.keySet()) {
                 logger.warning("Injection: No such property '" + property + "' in class " + clazz.getName());

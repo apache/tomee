@@ -36,6 +36,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Types;
+import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import java.util.Collection;
@@ -56,54 +57,54 @@ public class WsdlVisitor {
         begin();
         try {
             visit(definition);
-            for (Iterator iterator = definition.getImports().entrySet().iterator(); iterator.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String namespaceURI = (String) entry.getKey();
-                List importsForNamespace = (List) entry.getValue();
-                for (Iterator iterator1 = importsForNamespace.iterator(); iterator1.hasNext(); ) {
-                    Import anImport = (Import) iterator1.next();
+            for (Iterator<Map.Entry<String, List<Import>>> iterator = definition.getImports().entrySet().iterator(); iterator.hasNext(); ) {
+                Map.Entry<String, List<Import>> entry = iterator.next();
+                String namespaceURI = entry.getKey();
+                List<Import> importsForNamespace = entry.getValue();
+                for (Iterator<Import> iterator1 = importsForNamespace.iterator(); iterator1.hasNext(); ) {
+                    Import anImport = iterator1.next();
                     visit(anImport);
                 }
             }
             visit(definition.getTypes());
-            Collection messages = definition.getMessages().values();
-            for (Iterator iterator = messages.iterator(); iterator.hasNext(); ) {
-                Message message = (Message) iterator.next();
+            Collection<Message> messages = definition.getMessages().values();
+            for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext(); ) {
+                Message message = iterator.next();
                 visit(message);
-                Collection parts = message.getParts().values();
-                for (Iterator iterator2 = parts.iterator(); iterator2.hasNext(); ) {
-                    Part part = (Part) iterator2.next();
+                Collection<Part> parts = message.getParts().values();
+                for (Iterator<Part> iterator2 = parts.iterator(); iterator2.hasNext(); ) {
+                    Part part = iterator2.next();
                     visit(part);
                 }
             }
-            Collection services = definition.getServices().values();
-            for (Iterator iterator = services.iterator(); iterator.hasNext(); ) {
-                Service service = (Service) iterator.next();
+            Collection<Service> services = definition.getServices().values();
+            for (Iterator<Service> iterator = services.iterator(); iterator.hasNext(); ) {
+                Service service = iterator.next();
                 visit(service);
-                Collection ports = service.getPorts().values();
-                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext(); ) {
-                    Port port = (Port) iterator1.next();
+                Collection<Port> ports = service.getPorts().values();
+                for (Iterator<Port> iterator1 = ports.iterator(); iterator1.hasNext(); ) {
+                    Port port = iterator1.next();
                     visit(port);
                     Binding binding = port.getBinding();
                     visit(binding);
-                    List bindingOperations = binding.getBindingOperations();
+                    List<BindingOperation> bindingOperations = binding.getBindingOperations();
                     for (int i = 0; i < bindingOperations.size(); i++) {
-                        BindingOperation bindingOperation = (BindingOperation) bindingOperations.get(i);
+                        BindingOperation bindingOperation = bindingOperations.get(i);
                         visit(bindingOperation);
                         visit(bindingOperation.getBindingInput());
                         visit(bindingOperation.getBindingOutput());
-                        Collection bindingFaults = bindingOperation.getBindingFaults().values();
-                        for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext(); ) {
-                            BindingFault bindingFault = (BindingFault) iterator2.next();
+                        Collection<BindingFault> bindingFaults = bindingOperation.getBindingFaults().values();
+                        for (Iterator<BindingFault> iterator2 = bindingFaults.iterator(); iterator2.hasNext(); ) {
+                            BindingFault bindingFault = iterator2.next();
                             visit(bindingFault);
                         }
 
                     }
                     PortType portType = binding.getPortType();
                     visit(portType);
-                    List operations = portType.getOperations();
+                    List<Operation> operations = portType.getOperations();
                     for (int i = 0; i < operations.size(); i++) {
-                        Operation operation = (Operation) operations.get(i);
+                        Operation operation = operations.get(i);
                         visit(operation);
                         {
                             Input input = operation.getInput();
@@ -113,9 +114,9 @@ public class WsdlVisitor {
                             Output output = operation.getOutput();
                             visit(output);
                         }
-                        Collection faults = operation.getFaults().values();
-                        for (Iterator iterator2 = faults.iterator(); iterator2.hasNext(); ) {
-                            Fault fault = (Fault) iterator2.next();
+                        Collection<Fault> faults = operation.getFaults().values();
+                        for (Iterator<Fault> iterator2 = faults.iterator(); iterator2.hasNext(); ) {
+                            Fault fault = iterator2.next();
                             visit(fault);
                         }
 
@@ -200,7 +201,7 @@ public class WsdlVisitor {
 
     protected SOAPBinding getSOAPBinding(Binding binding) {
         SOAPBinding soapBinding = null;
-        List extensibilityElements = binding.getExtensibilityElements();
+        List<ExtensibilityElement> extensibilityElements = binding.getExtensibilityElements();
         for (int i = 0; i < extensibilityElements.size(); i++) {
             Object element = extensibilityElements.get(i);
             if (element instanceof SOAPBinding) {

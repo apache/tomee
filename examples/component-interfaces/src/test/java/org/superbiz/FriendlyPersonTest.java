@@ -60,6 +60,9 @@ public class FriendlyPersonTest extends TestCase {
         // Dave should take some Polish and if he had, he could say Hi in Polish
         assertEquals("Witaj Dave!", friendlyPerson.greet("pl", "Dave"));
 
+        // Richard is a native speaker of German, so let's salute him
+        assertEquals("Hallo Richard!", friendlyPerson.greet("de", "Richard"));
+
         // Let's see if I speak Portuguese
         assertEquals("Sorry, I don't speak " + new Locale("pt").getDisplayLanguage() + ".", friendlyPerson.greet("pt", "David"));
 

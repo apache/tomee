@@ -58,8 +58,7 @@ public abstract class TestClient extends NamedTestCase {
 
         finder = new ClassFinder(getClassPath());
         fieldList = finder.findAnnotatedFields(EJB.class);
-        for (final Iterator fields = fieldList.iterator(); fields.hasNext(); ) {
-            final Field field = (Field) fields.next();
+        for (final Field field : fieldList) {
             final EJB ejbAnnotation = field.getAnnotation(EJB.class);
             if ((ejbAnnotation.name() != null) && (ejbAnnotation.name() != "") && (ejbAnnotation.beanInterface() != null)) {
                 try {
@@ -83,8 +82,7 @@ public abstract class TestClient extends NamedTestCase {
 
         finder = new ClassFinder(getClassPath());
         methodList = finder.findAnnotatedMethods(EJB.class);
-        for (final Iterator methods = methodList.iterator(); methods.hasNext(); ) {
-            final Method method = (Method) methods.next();
+        for (final Method method : methodList) {
             final EJB ejbAnnotation = method.getAnnotation(EJB.class);
             if ((ejbAnnotation.name() != null) && (ejbAnnotation.name() != "") && (ejbAnnotation.beanInterface() != null)) {
                 try {

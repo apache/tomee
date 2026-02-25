@@ -269,7 +269,7 @@ public class Info2Properties {
             String uri = "new://" + info.service;
             if (info.service.matches("Container|Resource|Connector")) {
                 try {
-                    final Map query = new HashMap();
+                    final Map<String, String> query = new HashMap<>();
                     query.put("type", info.types.get(0));
                     uri += "?" + URISupport.createQueryString(query);
                 } catch (final Exception e) {

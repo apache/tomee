@@ -187,7 +187,7 @@ public class EjbResolver {
 
     private List<Interfaces> filter(final List<Interfaces> list, final String name) {
         final String shortName = name.replaceAll(".*/", "");
-        final List<Interfaces> matches = new ArrayList();
+        final List<Interfaces> matches = new ArrayList<>();
         for (final Interfaces entry : list) {
             if (name.equalsIgnoreCase(entry.getId())) {
                 matches.add(entry);
@@ -199,7 +199,7 @@ public class EjbResolver {
     }
 
     private List<Interfaces> filter(final List<Interfaces> list, final Type type) {
-        final List<Interfaces> matches = new ArrayList();
+        final List<Interfaces> matches = new ArrayList<>();
         for (final Interfaces entry : list) {
             if (type == Type.UNKNOWN || type == entry.type) {
                 matches.add(entry);

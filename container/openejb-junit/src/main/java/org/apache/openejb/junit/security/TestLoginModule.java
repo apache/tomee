@@ -29,6 +29,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -45,13 +46,15 @@ public class TestLoginModule implements LoginModule {
 
     private String user;
 
-    private final Set principals = new HashSet();
+    private final Set<Principal> principals = new HashSet<>();
 
+    @Override
     public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState, final Map options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
     }
 
+    @Override
     public boolean login() throws LoginException {
         final Callback[] callbacks = new Callback[2];
 
@@ -67,7 +70,8 @@ public class TestLoginModule implements LoginModule {
 
         return true;
     }
-
+    
+    @Override
     public boolean commit() throws LoginException {
         principals.add(new UserPrincipal(user));
         principals.add(new GroupPrincipal(user));
@@ -78,11 +82,13 @@ public class TestLoginModule implements LoginModule {
         return true;
     }
 
+    @Override
     public boolean abort() throws LoginException {
         user = null;
         return true;
     }
 
+    @Override
     public boolean logout() throws LoginException {
         subject.getPrincipals().removeAll(principals);
         principals.clear();
