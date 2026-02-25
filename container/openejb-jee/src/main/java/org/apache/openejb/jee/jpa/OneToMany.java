@@ -280,7 +280,7 @@ public class OneToMany implements RelationField {
      */
     public List<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
-            mapKeyAttributeOverride = new ArrayList<AttributeOverride>();
+            mapKeyAttributeOverride = new ArrayList<>();
         }
         return this.mapKeyAttributeOverride;
     }
@@ -327,7 +327,7 @@ public class OneToMany implements RelationField {
      */
     public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
-            mapKeyJoinColumn = new ArrayList<MapKeyJoinColumn>();
+            mapKeyJoinColumn = new ArrayList<>();
         }
         return this.mapKeyJoinColumn;
     }
@@ -374,7 +374,7 @@ public class OneToMany implements RelationField {
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
-            joinColumn = new ArrayList<JoinColumn>();
+            joinColumn = new ArrayList<>();
         }
         return this.joinColumn;
     }

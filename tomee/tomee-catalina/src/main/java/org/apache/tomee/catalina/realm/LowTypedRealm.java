@@ -194,7 +194,7 @@ public class LowTypedRealm implements Realm {
     @Override
     public SecurityConstraint[] findSecurityConstraints(final Request request, final Context context) {
         final Map<String, ServletSecurityElement> map = (Map<String, ServletSecurityElement>) invoke(findSecurityConstraintsMethod, request.getRequest(), context.getPath());
-        final List<SecurityConstraint> constraints = new ArrayList<SecurityConstraint>();
+        final List<SecurityConstraint> constraints = new ArrayList<>();
         for (final Map.Entry<String, ServletSecurityElement> entry : map.entrySet()) {
             constraints.addAll(Arrays.asList(SecurityConstraint.createConstraints(entry.getValue(), entry.getKey())));
         }

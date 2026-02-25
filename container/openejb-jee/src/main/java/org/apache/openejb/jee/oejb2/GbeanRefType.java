@@ -103,7 +103,7 @@ public class GbeanRefType
      */
     public List<String> getRefType() {
         if (refType == null) {
-            refType = new ArrayList<String>();
+            refType = new ArrayList<>();
         }
         return this.refType;
     }
@@ -130,7 +130,7 @@ public class GbeanRefType
      */
     public List<PatternType> getPattern() {
         if (pattern == null) {
-            pattern = new ArrayList<PatternType>();
+            pattern = new ArrayList<>();
         }
         return this.pattern;
     }

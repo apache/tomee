@@ -133,7 +133,7 @@ public class ServiceReferenceDescription {
      */
     public List<PropertyNamevalue> getCallProperty() {
         if (callProperty == null) {
-            callProperty = new ArrayList<PropertyNamevalue>();
+            callProperty = new ArrayList<>();
         }
         return this.callProperty;
     }
@@ -160,7 +160,7 @@ public class ServiceReferenceDescription {
      */
     public List<PortInfo> getPortInfo() {
         if (portInfo == null) {
-            portInfo = new ArrayList<PortInfo>();
+            portInfo = new ArrayList<>();
         }
         return this.portInfo;
     }

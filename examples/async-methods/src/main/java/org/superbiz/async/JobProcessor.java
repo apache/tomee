@@ -41,7 +41,7 @@ public class JobProcessor {
         doSomeHeavyLifting();
 
         // Return our result
-        return new AsyncResult<String>(jobName);
+        return new AsyncResult<>(jobName);
     }
 
     private void doSomeHeavyLifting() {

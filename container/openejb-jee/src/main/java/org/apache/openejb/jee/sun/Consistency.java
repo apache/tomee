@@ -41,7 +41,7 @@ public class Consistency {
 
     public List<Object> getNoneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances() {
         if (noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances == null) {
-            noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances = new ArrayList<Object>();
+            noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances = new ArrayList<>();
         }
         return this.noneOrCheckModifiedAtCommitOrLockWhenLoadedOrCheckAllAtCommitOrLockWhenModifiedOrCheckVersionOfAccessedInstances;
     }

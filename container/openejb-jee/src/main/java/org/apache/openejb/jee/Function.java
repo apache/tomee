@@ -73,7 +73,7 @@ public class Function {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(required = true)
     protected String name;
@@ -117,14 +117,14 @@ public class Function {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -167,7 +167,7 @@ public class Function {
 
     public List<TldExtension> getFunctionExtension() {
         if (functionExtension == null) {
-            functionExtension = new ArrayList<TldExtension>();
+            functionExtension = new ArrayList<>();
         }
         return this.functionExtension;
     }

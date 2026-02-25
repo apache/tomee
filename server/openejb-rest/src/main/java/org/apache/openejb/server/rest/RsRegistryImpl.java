@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
-    private Map<String, String> addresses = new HashMap<String, String>();
+    private Map<String, String> addresses = new HashMap<>();
 
     @Override
     public AddressInfo createRsHttpListener(final String appId, final String webContext, 

@@ -274,9 +274,9 @@ public abstract class JaxbOpenejb {
         return new Messages("org.apache.openejb.util.resources");
     }
 
-    public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
+    public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<>();
 
-    private static final Map<Class, JAXBContext> jaxbContexts = new HashMap<Class, JAXBContext>();
+    private static final Map<Class, JAXBContext> jaxbContexts = new HashMap<>();
 
     public static <T> String marshal(final Class<T> type, final Object object) throws JAXBException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -81,7 +81,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             // forcing classes to not be empty
             Set<Class<?>> passedClasses = classes;
             if (passedClasses == null) {
-                passedClasses = new HashSet<Class<?>>();
+                passedClasses = new HashSet<>();
             }
             if (passedClasses.isEmpty()) {
                 passedClasses.add(TomEEMyFacesContainerInitializer.class);

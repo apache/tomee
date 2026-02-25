@@ -89,7 +89,7 @@ public class MethodSchedule {
 
     public List<TimerSchedule> getSchedule() {
         if (schedule == null) {
-            schedule = new ArrayList<TimerSchedule>();
+            schedule = new ArrayList<>();
         }
         return this.schedule;
     }

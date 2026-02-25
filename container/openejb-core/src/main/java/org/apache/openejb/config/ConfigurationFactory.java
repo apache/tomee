@@ -1075,9 +1075,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    private static final Map<Class<? extends ServiceInfo>, DefaultService> defaultProviders = new HashMap<Class<? extends ServiceInfo>, DefaultService>();
+    private static final Map<Class<? extends ServiceInfo>, DefaultService> defaultProviders = new HashMap<>();
 
-    private static final Map<Class<? extends ServiceInfo>, Class<? extends org.apache.openejb.config.Service>> types = new HashMap<Class<? extends ServiceInfo>, Class<? extends org.apache.openejb.config.Service>>();
+    private static final Map<Class<? extends ServiceInfo>, Class<? extends org.apache.openejb.config.Service>> types = new HashMap<>();
 
     /**
      * This is the magic that allows people to be really vague in their openejb.xml and not specify
@@ -1582,7 +1582,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return overrides;
     }
 
-    private static final Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<String, Class<? extends ContainerInfo>>();
+    private static final Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<>();
 
     static {
         containerTypes.put(BeanTypes.SINGLETON, SingletonSessionContainerInfo.class);
@@ -1760,7 +1760,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public static List<ResourceInfo> sort(final List<ResourceInfo> infos, final String prefix) {
         final Collection<String> ids = new HashSet<>();
-        return References.sort(infos, new References.Visitor<ResourceInfo>() {
+        return References.sort(infos, new References.Visitor<>() {
             @Override // called first so we can rely on it to ensure we have ids full before any getReferences call
             public String getName(final ResourceInfo resourceInfo) {
                 final String name = prefix != null && resourceInfo.id.startsWith(prefix) ? resourceInfo.id.substring(prefix.length()) : resourceInfo.id;

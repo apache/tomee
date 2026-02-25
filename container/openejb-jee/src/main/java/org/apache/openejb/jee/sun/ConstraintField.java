@@ -91,7 +91,7 @@ public class ConstraintField {
 
     public List<ConstraintFieldValue> getConstraintFieldValue() {
         if (constraintFieldValue == null) {
-            constraintFieldValue = new ArrayList<ConstraintFieldValue>();
+            constraintFieldValue = new ArrayList<>();
         }
         return this.constraintFieldValue;
     }

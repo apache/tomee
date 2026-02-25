@@ -81,7 +81,7 @@ public class FacesManagedBean {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "managed-bean-name", required = true)
     protected java.lang.String managedBeanName;
     @XmlElement(name = "managed-bean-class", required = true)
@@ -130,14 +130,14 @@ public class FacesManagedBean {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -228,7 +228,7 @@ public class FacesManagedBean {
      */
     public List<FacesManagedProperty> getManagedProperty() {
         if (managedProperty == null) {
-            managedProperty = new ArrayList<FacesManagedProperty>();
+            managedProperty = new ArrayList<>();
         }
         return this.managedProperty;
     }
@@ -295,7 +295,7 @@ public class FacesManagedBean {
      */
     public List<FacesManagedBeanExtension> getManagedBeanExtension() {
         if (managedBeanExtension == null) {
-            managedBeanExtension = new ArrayList<FacesManagedBeanExtension>();
+            managedBeanExtension = new ArrayList<>();
         }
         return this.managedBeanExtension;
     }

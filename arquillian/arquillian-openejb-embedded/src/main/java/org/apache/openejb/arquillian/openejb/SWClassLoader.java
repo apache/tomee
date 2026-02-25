@@ -67,7 +67,7 @@ public class SWClassLoader extends ClassLoader implements Closeable {
     }
 
     private final Collection<Archive<?>> archives;
-    private final Collection<Closeable> closeables = new ArrayList<Closeable>();
+    private final Collection<Closeable> closeables = new ArrayList<>();
 
     public SWClassLoader(final ClassLoader parent, final Archive<?>... ar) {
         super(parent);
@@ -115,7 +115,7 @@ public class SWClassLoader extends ClassLoader implements Closeable {
                 if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.arquillian.cdi.extension.skip-externals", "false"))) {
                     return enumerator(Collections.<URL>emptyList());
                 }
-                return enumerator(addContainerExtensions(name, new ArrayList<URL>(2)));
+                return enumerator(addContainerExtensions(name, new ArrayList<>(2)));
             }
         }
         return super.getResources(name);
@@ -193,8 +193,8 @@ public class SWClassLoader extends ClassLoader implements Closeable {
     }
 
     private static class ArchiveStreamHandler extends URLStreamHandler {
-        public static final Map<String, Archive<?>> archives = new HashMap<String, Archive<?>>();
-        public static final Map<String, Collection<Closeable>> closeables = new HashMap<String, Collection<Closeable>>();
+        public static final Map<String, Archive<?>> archives = new HashMap<>();
+        public static final Map<String, Collection<Closeable>> closeables = new HashMap<>();
 
         public static void set(final Archive<?> ar, final Collection<Closeable> c) {
             final String archiveName = ar.getName();

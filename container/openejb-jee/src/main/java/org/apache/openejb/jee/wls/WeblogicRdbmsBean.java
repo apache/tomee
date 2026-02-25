@@ -201,7 +201,7 @@ public class WeblogicRdbmsBean {
      */
     public List<TableMap> getTableMap() {
         if (tableMap == null) {
-            tableMap = new ArrayList<TableMap>();
+            tableMap = new ArrayList<>();
         }
         return this.tableMap;
     }
@@ -228,7 +228,7 @@ public class WeblogicRdbmsBean {
      */
     public List<FieldGroup> getFieldGroup() {
         if (fieldGroup == null) {
-            fieldGroup = new ArrayList<FieldGroup>();
+            fieldGroup = new ArrayList<>();
         }
         return this.fieldGroup;
     }
@@ -255,7 +255,7 @@ public class WeblogicRdbmsBean {
      */
     public List<RelationshipCaching> getRelationshipCaching() {
         if (relationshipCaching == null) {
-            relationshipCaching = new ArrayList<RelationshipCaching>();
+            relationshipCaching = new ArrayList<>();
         }
         return this.relationshipCaching;
     }
@@ -282,7 +282,7 @@ public class WeblogicRdbmsBean {
      */
     public List<SqlShape> getSqlShape() {
         if (sqlShape == null) {
-            sqlShape = new ArrayList<SqlShape>();
+            sqlShape = new ArrayList<>();
         }
         return this.sqlShape;
     }
@@ -309,7 +309,7 @@ public class WeblogicRdbmsBean {
      */
     public List<WeblogicQuery> getWeblogicQuery() {
         if (weblogicQuery == null) {
-            weblogicQuery = new ArrayList<WeblogicQuery>();
+            weblogicQuery = new ArrayList<>();
         }
         return this.weblogicQuery;
     }

@@ -117,7 +117,7 @@ public class MethodPermission {
 
     public List<String> getRoleName() {
         if (roleName == null) {
-            roleName = new ArrayList<String>();
+            roleName = new ArrayList<>();
         }
         return this.roleName;
     }
@@ -132,7 +132,7 @@ public class MethodPermission {
 
     public List<Method> getMethod() {
         if (method == null) {
-            method = new ArrayList<Method>();
+            method = new ArrayList<>();
         }
         return this.method;
     }

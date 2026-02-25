@@ -77,7 +77,7 @@ public class FacesRenderer {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "component-family", required = true)
     protected java.lang.String componentFamily;
     @XmlElement(name = "renderer-type", required = true)
@@ -122,14 +122,14 @@ public class FacesRenderer {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -220,7 +220,7 @@ public class FacesRenderer {
      */
     public List<FacesFacet> getFacet() {
         if (facet == null) {
-            facet = new ArrayList<FacesFacet>();
+            facet = new ArrayList<>();
         }
         return this.facet;
     }
@@ -247,7 +247,7 @@ public class FacesRenderer {
      */
     public List<FacesAttribute> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<FacesAttribute>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }
@@ -274,7 +274,7 @@ public class FacesRenderer {
      */
     public List<FacesRendererExtension> getRendererExtension() {
         if (rendererExtension == null) {
-            rendererExtension = new ArrayList<FacesRendererExtension>();
+            rendererExtension = new ArrayList<>();
         }
         return this.rendererExtension;
     }

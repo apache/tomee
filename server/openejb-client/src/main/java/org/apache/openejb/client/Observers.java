@@ -36,7 +36,7 @@ public class Observers {
 
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
 
-    private final List<Observer> observers = new ArrayList<Observer>();
+    private final List<Observer> observers = new ArrayList<>();
 
     public boolean addObserver(final Object observer) {
         if (observer == null) {
@@ -77,7 +77,7 @@ public class Observers {
      */
     public static class Observer {
 
-        private final Map<Class, Method> methods = new HashMap<Class, Method>();
+        private final Map<Class, Method> methods = new HashMap<>();
         private final Object observer;
         private final Method defaultMethod;
 

@@ -149,7 +149,7 @@ public class WeblogicEjbJar {
      */
     public List<WeblogicEnterpriseBean> getWeblogicEnterpriseBean() {
         if (weblogicEnterpriseBean == null) {
-            weblogicEnterpriseBean = new ArrayList<WeblogicEnterpriseBean>();
+            weblogicEnterpriseBean = new ArrayList<>();
         }
         return this.weblogicEnterpriseBean;
     }
@@ -176,7 +176,7 @@ public class WeblogicEjbJar {
      */
     public List<SecurityRoleAssignment> getSecurityRoleAssignment() {
         if (securityRoleAssignment == null) {
-            securityRoleAssignment = new ArrayList<SecurityRoleAssignment>();
+            securityRoleAssignment = new ArrayList<>();
         }
         return this.securityRoleAssignment;
     }
@@ -203,7 +203,7 @@ public class WeblogicEjbJar {
      */
     public List<RunAsRoleAssignment> getRunAsRoleAssignment() {
         if (runAsRoleAssignment == null) {
-            runAsRoleAssignment = new ArrayList<RunAsRoleAssignment>();
+            runAsRoleAssignment = new ArrayList<>();
         }
         return this.runAsRoleAssignment;
     }
@@ -250,7 +250,7 @@ public class WeblogicEjbJar {
      */
     public List<TransactionIsolation> getTransactionIsolation() {
         if (transactionIsolation == null) {
-            transactionIsolation = new ArrayList<TransactionIsolation>();
+            transactionIsolation = new ArrayList<>();
         }
         return this.transactionIsolation;
     }
@@ -277,7 +277,7 @@ public class WeblogicEjbJar {
      */
     public List<MessageDestinationDescriptor> getMessageDestinationDescriptor() {
         if (messageDestinationDescriptor == null) {
-            messageDestinationDescriptor = new ArrayList<MessageDestinationDescriptor>();
+            messageDestinationDescriptor = new ArrayList<>();
         }
         return this.messageDestinationDescriptor;
     }
@@ -324,7 +324,7 @@ public class WeblogicEjbJar {
      */
     public List<RetryMethodsOnRollback> getRetryMethodsOnRollback() {
         if (retryMethodsOnRollback == null) {
-            retryMethodsOnRollback = new ArrayList<RetryMethodsOnRollback>();
+            retryMethodsOnRollback = new ArrayList<>();
         }
         return this.retryMethodsOnRollback;
     }
@@ -371,7 +371,7 @@ public class WeblogicEjbJar {
      */
     public List<String> getDisableWarning() {
         if (disableWarning == null) {
-            disableWarning = new ArrayList<String>();
+            disableWarning = new ArrayList<>();
         }
         return this.disableWarning;
     }
@@ -398,7 +398,7 @@ public class WeblogicEjbJar {
      */
     public List<WorkManager> getWorkManager() {
         if (workManager == null) {
-            workManager = new ArrayList<WorkManager>();
+            workManager = new ArrayList<>();
         }
         return this.workManager;
     }

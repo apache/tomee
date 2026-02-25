@@ -61,7 +61,7 @@ public class Resource extends AbstractService {
 
     @XmlAttribute(name = "aliases")
     @XmlJavaTypeAdapter(ListAdapter.class)
-    protected List<String> aliases = new ArrayList<String>();
+    protected List<String> aliases = new ArrayList<>();
 
     @XmlAttribute(name = "depends-on")
     @XmlJavaTypeAdapter(ListAdapter.class)

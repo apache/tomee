@@ -54,7 +54,7 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy {
 
         private class RoundRobinIterator implements Iterator<URI> {
 
-            private final Set<URI> seen = new HashSet<URI>();
+            private final Set<URI> seen = new HashSet<>();
 
             @Override
             public boolean hasNext() {

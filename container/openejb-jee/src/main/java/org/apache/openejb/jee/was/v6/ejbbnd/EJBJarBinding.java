@@ -130,7 +130,7 @@ public class EJBJarBinding {
      */
     public List<ResourceRefBinding> getDefaultDatasources() {
         if (defaultDatasources == null) {
-            defaultDatasources = new ArrayList<ResourceRefBinding>();
+            defaultDatasources = new ArrayList<>();
         }
         return this.defaultDatasources;
     }
@@ -157,7 +157,7 @@ public class EJBJarBinding {
      */
     public List<EJBJar> getEjbJars() {
         if (ejbJars == null) {
-            ejbJars = new ArrayList<EJBJar>();
+            ejbJars = new ArrayList<>();
         }
         return this.ejbJars;
     }
@@ -185,7 +185,7 @@ public class EJBJarBinding {
      */
     public List<EnterpriseBeanBinding> getEjbBindings() {
         if (ejbBindings == null) {
-            ejbBindings = new ArrayList<EnterpriseBeanBinding>();
+            ejbBindings = new ArrayList<>();
         }
         return this.ejbBindings;
     }
@@ -213,7 +213,7 @@ public class EJBJarBinding {
      */
     public List<CMPConnectionFactoryBinding> getDefaultCMPConnectionFactories() {
         if (defaultCMPConnectionFactories == null) {
-            defaultCMPConnectionFactories = new ArrayList<CMPConnectionFactoryBinding>();
+            defaultCMPConnectionFactories = new ArrayList<>();
         }
         return this.defaultCMPConnectionFactories;
     }
@@ -241,7 +241,7 @@ public class EJBJarBinding {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

@@ -50,7 +50,7 @@ public class MdbConnectionFactoryTests extends MdbTestClient {
         try {
 
             // create request
-            final Map<String, Object> request = new TreeMap<String, Object>();
+            final Map<String, Object> request = new TreeMap<>();
             request.put("method", "businessMethod(java.lang.String)");
             request.put("args", new Object[]{"cheese"});
 

@@ -67,7 +67,7 @@ public class Synch extends AbstractSynchronizable {
     @Override
     public Map<File, File> updates() {
         if (updates == null) {
-            updates = new HashMap<File, File>();
+            updates = new HashMap<>();
             if (source != null && target != null) {
                 updates.put(source, target);
             }

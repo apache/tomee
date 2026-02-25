@@ -68,7 +68,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final int TTL = Integer.parseInt(System.getProperty(ORG_APACHE_OPENEJB_MULTIPULSE_TTL, "32"));
     private static final int LIMIT = Integer.parseInt(System.getProperty(ORG_APACHE_OPENEJB_MULTIPULSE_URI_LIMIT, "50000"));
-    private static final Map<URI, Set<URI>> knownUris = new HashMap<URI, Set<URI>>();
+    private static final Map<URI, Set<URI>> knownUris = new HashMap<>();
     private static NetworkInterface[] interfaces = getNetworkInterfaces();
     private static ExecutorService executor = null;
 
@@ -210,7 +210,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
         final DatagramPacket request = new DatagramPacket(bytes, bytes.length, new InetSocketAddress(ia, port));
 
         final AtomicBoolean running = new AtomicBoolean(true);
-        final List<Future> futures = Collections.synchronizedList(new ArrayList<Future>());
+        final List<Future> futures = Collections.synchronizedList(new ArrayList<>());
 
         MulticastSocket[] clientSockets = null;
 
@@ -220,7 +220,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
             final Timer timer = new Timer(true);
 
-            final Set<URI> set = new TreeSet<URI>(new Comparator<URI>() {
+            final Set<URI> set = new TreeSet<>(new Comparator<>() {
                 @Override
                 public int compare(final URI uri1, final URI uri2) {
 
@@ -251,7 +251,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                         try {
                             address1 = InetAddress.getByName(h1);
                             address2 = InetAddress.getByName(h2);
-                        } catch(final UnknownHostException e) {
+                        } catch (final UnknownHostException e) {
                             // no-op
                         }
 
@@ -477,7 +477,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
             setLock.lock();
             try {
-                return new TreeSet<URI>(set);
+                return new TreeSet<>(set);
             } finally {
                 setLock.unlock();
             }
@@ -565,7 +565,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
     public static MulticastSocket[] getSockets(final InetAddress ia, final int port) throws Exception {
 
-        final ArrayList<MulticastSocket> list = new ArrayList<MulticastSocket>();
+        final ArrayList<MulticastSocket> list = new ArrayList<>();
 
         for (final NetworkInterface ni : getInterfaces()) {
 
@@ -602,7 +602,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
     private static NetworkInterface[] getNetworkInterfaces() {
 
-        final HashSet<NetworkInterface> list = new HashSet<NetworkInterface>();
+        final HashSet<NetworkInterface> list = new HashSet<>();
 
         try {
             final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -676,7 +676,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
                 Set<URI> uriSet = null;
                 try {
-                    uriSet = MulticastPulseClient.discoverURIs(discover, new HashSet<String>(Arrays.asList("ejbd", "ejbds", "http", "https")), mchost, mcport, timeout);
+                    uriSet = MulticastPulseClient.discoverURIs(discover, new HashSet<>(Arrays.asList("ejbd", "ejbds", "http", "https")), mchost, mcport, timeout);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }

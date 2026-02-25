@@ -698,7 +698,7 @@ public class RemoteServer {
     }
 
     // Shutdown hook for processes
-    private static final List<Process> kill = new ArrayList<Process>();
+    private static final List<Process> kill = new ArrayList<>();
 
     static {
         Runtime.getRuntime().addShutdownHook(new CleanUpThread());

@@ -33,7 +33,7 @@ import java.util.Properties;
 
 class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
-    public static final ThreadLocal<ServerMetaData> SERVER_META_DATA = new ThreadLocal<ServerMetaData>();
+    public static final ThreadLocal<ServerMetaData> SERVER_META_DATA = new ThreadLocal<>();
 
     protected ServerMetaData defaultServerMetaData;
 

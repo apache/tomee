@@ -78,7 +78,7 @@ public class CrossParameterType {
      */
     public List<ConstraintType> getConstraint() {
         if (constraint == null) {
-            constraint = new ArrayList<ConstraintType>();
+            constraint = new ArrayList<>();
         }
         return this.constraint;
     }

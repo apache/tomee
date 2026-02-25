@@ -91,7 +91,7 @@ class CmpJpaConversion implements DynamicDeployer {
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
 
     // A specific set of fields that get marked as transient in the superclass mappings 
-    private static final Set<String> ENHANCED_FIELDS = Collections.unmodifiableSet(new TreeSet<String>(Arrays.asList(
+    private static final Set<String> ENHANCED_FIELDS = Collections.unmodifiableSet(new TreeSet<>(Arrays.asList(
             "pcInheritedFieldCount",
             "pcFieldNames",
             "pcFieldTypes",

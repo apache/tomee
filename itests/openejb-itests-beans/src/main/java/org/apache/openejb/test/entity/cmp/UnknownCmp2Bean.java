@@ -30,7 +30,7 @@ import java.util.Properties;
 
 public abstract class UnknownCmp2Bean implements EntityBean {
     public EntityContext ejbContext;
-    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<String, OperationsPolicy>();
+    public Map<String, OperationsPolicy> allowedOperationsTable = new HashMap<>();
 
     public abstract String getFirstName();
 

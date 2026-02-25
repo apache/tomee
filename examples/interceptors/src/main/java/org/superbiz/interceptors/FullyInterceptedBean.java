@@ -34,14 +34,14 @@ public class FullyInterceptedBean extends FullyInterceptedSuperClass implements 
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> businessMethod() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("businessMethod");
         return list;
     }
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> methodWithDefaultInterceptorsExcluded() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("methodWithDefaultInterceptorsExcluded");
         return list;
     }

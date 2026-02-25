@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class InternalApplication extends Application {
-    private final Set<Class<?>> classes = new HashSet<Class<?>>();
-    private final Set<Object> singletons = new HashSet<Object>();
+    private final Set<Class<?>> classes = new HashSet<>();
+    private final Set<Object> singletons = new HashSet<>();
     private final Application original;
 
     public InternalApplication(final Application original) {

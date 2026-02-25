@@ -255,7 +255,7 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public List<SecondaryTable> getSecondaryTable() {
         if (secondaryTable == null) {
-            secondaryTable = new ArrayList<SecondaryTable>();
+            secondaryTable = new ArrayList<>();
         }
         return this.secondaryTable;
     }
@@ -282,7 +282,7 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public List<PrimaryKeyJoinColumn> getPrimaryKeyJoinColumn() {
         if (primaryKeyJoinColumn == null) {
-            primaryKeyJoinColumn = new ArrayList<PrimaryKeyJoinColumn>();
+            primaryKeyJoinColumn = new ArrayList<>();
         }
         return this.primaryKeyJoinColumn;
     }
@@ -429,7 +429,7 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public List<NamedQuery> getNamedQuery() {
         if (namedQuery == null) {
-            namedQuery = new ArrayList<NamedQuery>();
+            namedQuery = new ArrayList<>();
         }
         return this.namedQuery;
     }
@@ -456,7 +456,7 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public List<NamedNativeQuery> getNamedNativeQuery() {
         if (namedNativeQuery == null) {
-            namedNativeQuery = new ArrayList<NamedNativeQuery>();
+            namedNativeQuery = new ArrayList<>();
         }
         return this.namedNativeQuery;
     }
@@ -483,7 +483,7 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public List<SqlResultSetMapping> getSqlResultSetMapping() {
         if (sqlResultSetMapping == null) {
-            sqlResultSetMapping = new ArrayList<SqlResultSetMapping>();
+            sqlResultSetMapping = new ArrayList<>();
         }
         return this.sqlResultSetMapping;
     }
@@ -710,7 +710,7 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
-            attributeOverride = new ArrayList<AttributeOverride>();
+            attributeOverride = new ArrayList<>();
         }
         return this.attributeOverride;
     }
@@ -737,7 +737,7 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
-            associationOverride = new ArrayList<AssociationOverride>();
+            associationOverride = new ArrayList<>();
         }
         return this.associationOverride;
     }

@@ -57,7 +57,7 @@ public class Complex2HomeIntfcTests extends ComplexCmp2TestClient {
     }
 
     public void test03_findByLastName() throws Exception {
-        final Set<ComplexCmpBeanPk> keys = new HashSet<ComplexCmpBeanPk>();
+        final Set<ComplexCmpBeanPk> keys = new HashSet<>();
         try {
             ejbObject = ejbHome.createObject("David Blevins");
             ejbPrimaryKey = ejbObject.getPrimaryKey();
@@ -79,7 +79,7 @@ public class Complex2HomeIntfcTests extends ComplexCmp2TestClient {
 
         try {
             final Collection objects = ejbHome.findByLastName("Blevins");
-            final Set<ComplexCmpBeanPk> foundKeys = new HashSet<ComplexCmpBeanPk>();
+            final Set<ComplexCmpBeanPk> foundKeys = new HashSet<>();
             assertNotNull("The Collection is null", objects);
             assertEquals("The Collection is not the right size.", keys.size(), objects.size());
             for (final Object object : objects) {

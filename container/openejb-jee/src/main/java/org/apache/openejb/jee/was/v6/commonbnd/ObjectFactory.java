@@ -113,8 +113,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "commonbnd.xmi", name = "Property")
     public JAXBElement<Property> createProperty(final Property value) {
-        return new JAXBElement<Property>(_Property_QNAME, Property.class, null,
-            value);
+        return new JAXBElement<>(_Property_QNAME, Property.class, null,
+                value);
     }
 
     /**
@@ -124,8 +124,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "commonbnd.xmi", name = "AbstractAuthData")
     public JAXBElement<AbstractAuthData> createAbstractAuthData(
         final AbstractAuthData value) {
-        return new JAXBElement<AbstractAuthData>(_AbstractAuthData_QNAME,
-            AbstractAuthData.class, null, value);
+        return new JAXBElement<>(_AbstractAuthData_QNAME,
+                AbstractAuthData.class, null, value);
     }
 
     /**
@@ -135,9 +135,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "commonbnd.xmi", name = "ResourceEnvRefBinding")
     public JAXBElement<ResourceEnvRefBinding> createResourceEnvRefBinding(
         final ResourceEnvRefBinding value) {
-        return new JAXBElement<ResourceEnvRefBinding>(
-            _ResourceEnvRefBinding_QNAME, ResourceEnvRefBinding.class,
-            null, value);
+        return new JAXBElement<>(
+                _ResourceEnvRefBinding_QNAME, ResourceEnvRefBinding.class,
+                null, value);
     }
 
     /**
@@ -147,8 +147,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "commonbnd.xmi", name = "ResourceRefBinding")
     public JAXBElement<ResourceRefBinding> createResourceRefBinding(
         final ResourceRefBinding value) {
-        return new JAXBElement<ResourceRefBinding>(_ResourceRefBinding_QNAME,
-            ResourceRefBinding.class, null, value);
+        return new JAXBElement<>(_ResourceRefBinding_QNAME,
+                ResourceRefBinding.class, null, value);
     }
 
     /**
@@ -157,8 +157,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "commonbnd.xmi", name = "BasicAuthData")
     public JAXBElement<BasicAuthData> createBasicAuthData(final BasicAuthData value) {
-        return new JAXBElement<BasicAuthData>(_BasicAuthData_QNAME,
-            BasicAuthData.class, null, value);
+        return new JAXBElement<>(_BasicAuthData_QNAME,
+                BasicAuthData.class, null, value);
     }
 
     /**
@@ -168,9 +168,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "commonbnd.xmi", name = "MessageDestinationRefBinding")
     public JAXBElement<MessageDestinationRefBinding> createMessageDestinationRefBinding(
         final MessageDestinationRefBinding value) {
-        return new JAXBElement<MessageDestinationRefBinding>(
-            _MessageDestinationRefBinding_QNAME,
-            MessageDestinationRefBinding.class, null, value);
+        return new JAXBElement<>(
+                _MessageDestinationRefBinding_QNAME,
+                MessageDestinationRefBinding.class, null, value);
     }
 
     /**
@@ -179,8 +179,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "commonbnd.xmi", name = "EjbRefBinding")
     public JAXBElement<EjbRefBinding> createEjbRefBinding(final EjbRefBinding value) {
-        return new JAXBElement<EjbRefBinding>(_EjbRefBinding_QNAME,
-            EjbRefBinding.class, null, value);
+        return new JAXBElement<>(_EjbRefBinding_QNAME,
+                EjbRefBinding.class, null, value);
     }
 
 }

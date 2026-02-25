@@ -135,7 +135,7 @@ public class MethodPermission {
      */
     public List<SecurityRole> getRoles() {
         if (roles == null) {
-            roles = new ArrayList<SecurityRole>();
+            roles = new ArrayList<>();
         }
         return this.roles;
     }
@@ -163,7 +163,7 @@ public class MethodPermission {
      */
     public List<MethodElement> getMethodElements() {
         if (methodElements == null) {
-            methodElements = new ArrayList<MethodElement>();
+            methodElements = new ArrayList<>();
         }
         return this.methodElements;
     }
@@ -191,7 +191,7 @@ public class MethodPermission {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -219,7 +219,7 @@ public class MethodPermission {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

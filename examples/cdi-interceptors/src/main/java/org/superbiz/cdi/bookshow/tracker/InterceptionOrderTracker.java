@@ -29,11 +29,11 @@ public class InterceptionOrderTracker {
     /*
      * Contains method names that were intercepted by the interceptors
      */
-    private static List<String> methodsInterceptedList = new ArrayList<String>();
+    private static List<String> methodsInterceptedList = new ArrayList<>();
     /*
      * Contains the name of the interceptor class that intercepted a method
      */
-    private static List<String> interceptedByList = new ArrayList<String>();
+    private static List<String> interceptedByList = new ArrayList<>();
 
     public static List<String> getInterceptedByList() {
         return interceptedByList;

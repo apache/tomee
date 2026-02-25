@@ -28,7 +28,7 @@ public class ExampleDataProducer {
     @Produces
     @Examples
     public List<Movie> createSampleMovies() {
-        final List<Movie> sampleMovies = new ArrayList<Movie>();
+        final List<Movie> sampleMovies = new ArrayList<>();
         sampleMovies.add(new Movie("Wedding Crashers", "David Dobkin", "Comedy", 7, 2005));
         sampleMovies.add(new Movie("Starsky & Hutch", "Todd Phillips", "Action", 6, 2004));
         sampleMovies.add(new Movie("Shanghai Knights", "David Dobkin", "Action", 6, 2003));

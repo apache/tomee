@@ -88,7 +88,7 @@ public class ResourceRef {
      */
     public List<Object> getResourceNameOrJndiNameOrResUrl() {
         if (resourceNameOrJndiNameOrResUrl == null) {
-            resourceNameOrJndiNameOrResUrl = new ArrayList<Object>();
+            resourceNameOrJndiNameOrResUrl = new ArrayList<>();
         }
         return this.resourceNameOrJndiNameOrResUrl;
     }

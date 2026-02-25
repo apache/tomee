@@ -44,7 +44,7 @@ public class SunCmpMapping {
 
     public List<EntityMapping> getEntityMapping() {
         if (entityMapping == null) {
-            entityMapping = new ArrayList<EntityMapping>();
+            entityMapping = new ArrayList<>();
         }
         return this.entityMapping;
     }

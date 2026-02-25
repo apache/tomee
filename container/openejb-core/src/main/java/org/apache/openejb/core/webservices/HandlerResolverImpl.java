@@ -101,7 +101,7 @@ public class HandlerResolverImpl implements HandlerResolver {
 
                             // hack for destroyHandlers()
                             handlers.add(instance);
-                            handlerInstances.add(new InjectionProcessor<Handler>(instance, Collections.<Injection>emptySet(), null) {
+                            handlerInstances.add(new InjectionProcessor<>(instance, Collections.<Injection>emptySet(), null) {
                                 @Override
                                 public void preDestroy() {
                                     if (!normalScoped) {

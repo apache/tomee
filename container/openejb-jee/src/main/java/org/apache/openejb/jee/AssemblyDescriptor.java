@@ -99,21 +99,21 @@ public class AssemblyDescriptor {
 
     public List<SecurityRole> getSecurityRole() {
         if (securityRole == null) {
-            securityRole = new ArrayList<SecurityRole>();
+            securityRole = new ArrayList<>();
         }
         return this.securityRole;
     }
 
     public List<MethodPermission> getMethodPermission() {
         if (methodPermission == null) {
-            methodPermission = new ArrayList<MethodPermission>();
+            methodPermission = new ArrayList<>();
         }
         return this.methodPermission;
     }
 
     public List<ContainerTransaction> getContainerTransaction() {
         if (containerTransaction == null) {
-            containerTransaction = new ArrayList<ContainerTransaction>();
+            containerTransaction = new ArrayList<>();
         }
         return this.containerTransaction;
     }
@@ -126,7 +126,7 @@ public class AssemblyDescriptor {
 
     public List<ContainerConcurrency> getContainerConcurrency() {
         if (containerConcurrency == null) {
-            containerConcurrency = new ArrayList<ContainerConcurrency>();
+            containerConcurrency = new ArrayList<>();
         }
         return this.containerConcurrency;
     }
@@ -138,14 +138,14 @@ public class AssemblyDescriptor {
 
     private Map<String, List<MethodAttribute>> getMethodAttributes(final String ejbName, final List<? extends AttributeBinding> bindings) {
 
-        final Map<String, List<MethodAttribute>> methods = new LinkedHashMap<String, List<MethodAttribute>>();
+        final Map<String, List<MethodAttribute>> methods = new LinkedHashMap<>();
 
         for (final AttributeBinding<?> binding : bindings) {
 
             for (final Method method : binding.getMethod()) {
                 if (method.getEjbName().equals(ejbName)) {
                     final String methodName = method.getMethodName();
-                    List<MethodAttribute> list = methods.computeIfAbsent(methodName, k -> new ArrayList<MethodAttribute>());
+                    List<MethodAttribute> list = methods.computeIfAbsent(methodName, k -> new ArrayList<>());
                     list.add(new MethodAttribute(binding.getAttribute(), method));
                 }
             }
@@ -155,7 +155,7 @@ public class AssemblyDescriptor {
 
     public List<InterceptorBinding> getInterceptorBinding() {
         if (interceptorBinding == null) {
-            interceptorBinding = new ArrayList<InterceptorBinding>();
+            interceptorBinding = new ArrayList<>();
         }
         return this.interceptorBinding;
     }
@@ -167,7 +167,7 @@ public class AssemblyDescriptor {
 
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new ArrayList<MessageDestination>();
+            messageDestination = new ArrayList<>();
         }
         return this.messageDestination;
     }
@@ -185,7 +185,7 @@ public class AssemblyDescriptor {
 
     public Collection<ApplicationException> getApplicationException() {
         if (applicationException == null) {
-            applicationException = new KeyedCollection<String, ApplicationException>();
+            applicationException = new KeyedCollection<>();
         }
         return this.applicationException;
     }

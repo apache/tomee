@@ -47,7 +47,7 @@ public enum RequestMethodCode {
     FUTURE_CANCEL(35);
 
     private final int code;
-    private final static Map<Integer, RequestMethodCode> ENUM_MAP = new HashMap<Integer, RequestMethodCode>();
+    private final static Map<Integer, RequestMethodCode> ENUM_MAP = new HashMap<>();
 
     static {
         for (final RequestMethodCode e : RequestMethodCode.values()) {

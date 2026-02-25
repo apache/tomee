@@ -64,7 +64,7 @@ public class WelcomeFileList {
 
     public List<String> getWelcomeFile() {
         if (welcomeFile == null) {
-            welcomeFile = new ArrayList<String>();
+            welcomeFile = new ArrayList<>();
         }
         return this.welcomeFile;
     }

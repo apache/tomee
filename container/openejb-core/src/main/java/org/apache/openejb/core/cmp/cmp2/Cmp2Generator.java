@@ -1157,7 +1157,7 @@ public class Cmp2Generator implements Opcodes {
             }
         }
 
-        private static final Map<Class, Convert> conversionsByPrimitive = new HashMap<Class, Convert>();
+        private static final Map<Class, Convert> conversionsByPrimitive = new HashMap<>();
 
         public static Convert getConversion(final Class primitive) {
             if (!primitive.isPrimitive()) {

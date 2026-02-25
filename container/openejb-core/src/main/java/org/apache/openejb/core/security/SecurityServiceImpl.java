@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SecurityServiceImpl extends AbstractSecurityService {
 
-    private static final Map<Object, LoginContext> contexts = new ConcurrentHashMap<Object, LoginContext>();
+    private static final Map<Object, LoginContext> contexts = new ConcurrentHashMap<>();
 
     public SecurityServiceImpl() {
         this(autoJaccProvider());

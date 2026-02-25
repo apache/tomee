@@ -39,7 +39,7 @@ public class ConstructorParameterOrder {
 
     public List<String> getElementName() {
         if (elementName == null) {
-            elementName = new ArrayList<String>();
+            elementName = new ArrayList<>();
         }
         return this.elementName;
     }

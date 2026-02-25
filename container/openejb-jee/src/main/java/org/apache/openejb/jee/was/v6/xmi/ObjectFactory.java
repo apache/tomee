@@ -160,7 +160,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Model")
     public JAXBElement<Model> createModel(final Model value) {
-        return new JAXBElement<Model>(_Model_QNAME, Model.class, null, value);
+        return new JAXBElement<>(_Model_QNAME, Model.class, null, value);
     }
 
     /**
@@ -170,8 +170,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "PackageReference")
     public JAXBElement<PackageReference> createPackageReference(
         final PackageReference value) {
-        return new JAXBElement<PackageReference>(_PackageReference_QNAME,
-            PackageReference.class, null, value);
+        return new JAXBElement<>(_PackageReference_QNAME,
+                PackageReference.class, null, value);
     }
 
     /**
@@ -180,8 +180,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Difference")
     public JAXBElement<Difference> createDifference(final Difference value) {
-        return new JAXBElement<Difference>(_Difference_QNAME, Difference.class,
-            null, value);
+        return new JAXBElement<>(_Difference_QNAME, Difference.class,
+                null, value);
     }
 
     /**
@@ -189,7 +189,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "XMI")
     public JAXBElement<XMI> createXMI(final XMI value) {
-        return new JAXBElement<XMI>(_XMI_QNAME, XMI.class, null, value);
+        return new JAXBElement<>(_XMI_QNAME, XMI.class, null, value);
     }
 
     /**
@@ -198,8 +198,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "MetaModel")
     public JAXBElement<MetaModel> createMetaModel(final MetaModel value) {
-        return new JAXBElement<MetaModel>(_MetaModel_QNAME, MetaModel.class,
-            null, value);
+        return new JAXBElement<>(_MetaModel_QNAME, MetaModel.class,
+                null, value);
     }
 
     /**
@@ -208,8 +208,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Extension")
     public JAXBElement<Extension> createExtension(final Extension value) {
-        return new JAXBElement<Extension>(_Extension_QNAME, Extension.class,
-            null, value);
+        return new JAXBElement<>(_Extension_QNAME, Extension.class,
+                null, value);
     }
 
     /**
@@ -217,7 +217,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Delete")
     public JAXBElement<Delete> createDelete(final Delete value) {
-        return new JAXBElement<Delete>(_Delete_QNAME, Delete.class, null, value);
+        return new JAXBElement<>(_Delete_QNAME, Delete.class, null, value);
     }
 
     /**
@@ -225,7 +225,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Add")
     public JAXBElement<Add> createAdd(final Add value) {
-        return new JAXBElement<Add>(_Add_QNAME, Add.class, null, value);
+        return new JAXBElement<>(_Add_QNAME, Add.class, null, value);
     }
 
     /**
@@ -233,7 +233,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Import")
     public JAXBElement<Import> createImport(final Import value) {
-        return new JAXBElement<Import>(_Import_QNAME, Import.class, null, value);
+        return new JAXBElement<>(_Import_QNAME, Import.class, null, value);
     }
 
     /**
@@ -242,8 +242,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Documentation")
     public JAXBElement<Documentation> createDocumentation(final Documentation value) {
-        return new JAXBElement<Documentation>(_Documentation_QNAME,
-            Documentation.class, null, value);
+        return new JAXBElement<>(_Documentation_QNAME,
+                Documentation.class, null, value);
     }
 
     /**
@@ -252,8 +252,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Replace")
     public JAXBElement<Replace> createReplace(final Replace value) {
-        return new JAXBElement<Replace>(_Replace_QNAME, Replace.class, null,
-            value);
+        return new JAXBElement<>(_Replace_QNAME, Replace.class, null,
+                value);
     }
 
 }

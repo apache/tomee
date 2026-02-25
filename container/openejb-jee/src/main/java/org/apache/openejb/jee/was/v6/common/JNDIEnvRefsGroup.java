@@ -104,7 +104,7 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
      */
     public List<EnvEntry> getEnvironmentProperties() {
         if (environmentProperties == null) {
-            environmentProperties = new ArrayList<EnvEntry>();
+            environmentProperties = new ArrayList<>();
         }
         return this.environmentProperties;
     }
@@ -132,7 +132,7 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
      */
     public List<ResourceRef> getResourceRefs() {
         if (resourceRefs == null) {
-            resourceRefs = new ArrayList<ResourceRef>();
+            resourceRefs = new ArrayList<>();
         }
         return this.resourceRefs;
     }
@@ -159,7 +159,7 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
      */
     public List<EjbRef> getEjbRefs() {
         if (ejbRefs == null) {
-            ejbRefs = new ArrayList<EjbRef>();
+            ejbRefs = new ArrayList<>();
         }
         return this.ejbRefs;
     }
@@ -187,7 +187,7 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
      */
     public List<ResourceEnvRef> getResourceEnvRefs() {
         if (resourceEnvRefs == null) {
-            resourceEnvRefs = new ArrayList<ResourceEnvRef>();
+            resourceEnvRefs = new ArrayList<>();
         }
         return this.resourceEnvRefs;
     }
@@ -215,7 +215,7 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
      */
     public List<EJBLocalRef> getEjbLocalRefs() {
         if (ejbLocalRefs == null) {
-            ejbLocalRefs = new ArrayList<EJBLocalRef>();
+            ejbLocalRefs = new ArrayList<>();
         }
         return this.ejbLocalRefs;
     }
@@ -243,7 +243,7 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
      */
     public List<MessageDestinationRef> getMessageDestinationRefs() {
         if (messageDestinationRefs == null) {
-            messageDestinationRefs = new ArrayList<MessageDestinationRef>();
+            messageDestinationRefs = new ArrayList<>();
         }
         return this.messageDestinationRefs;
     }
@@ -271,7 +271,7 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
      */
     public List<ServiceRef> getServiceRefs() {
         if (serviceRefs == null) {
-            serviceRefs = new ArrayList<ServiceRef>();
+            serviceRefs = new ArrayList<>();
         }
         return this.serviceRefs;
     }

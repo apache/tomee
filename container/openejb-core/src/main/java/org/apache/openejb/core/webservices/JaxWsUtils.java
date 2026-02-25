@@ -31,7 +31,7 @@ import java.util.StringTokenizer;
 
 public final class JaxWsUtils {
 
-    private static final Map<String, String> BINDING_MAP = new HashMap<String, String>();
+    private static final Map<String, String> BINDING_MAP = new HashMap<>();
 
     static {
         BINDING_MAP.put("##SOAP11_HTTP", "http://schemas.xmlsoap.org/wsdl/soap/http");

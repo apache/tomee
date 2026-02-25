@@ -75,7 +75,7 @@ public class KeyFields {
      */
     public List<KeyField> getKeyField() {
         if (keyField == null) {
-            keyField = new ArrayList<KeyField>();
+            keyField = new ArrayList<>();
         }
         return this.keyField;
     }

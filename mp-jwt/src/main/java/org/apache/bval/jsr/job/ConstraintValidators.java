@@ -35,7 +35,7 @@ public class ConstraintValidators {
     private final ConstraintCached constraintsCache = new ConstraintCached();
 
     public <A extends Annotation> boolean canValidate(final ConstraintD<A> descriptor, final Class<?> validatedType) {
-        final ComputeConstraintValidatorClass<A> aComputeConstraintValidatorClass = new ComputeConstraintValidatorClass<A>(
+        final ComputeConstraintValidatorClass<A> aComputeConstraintValidatorClass = new ComputeConstraintValidatorClass<>(
                 constraintsCache,
                 descriptor,
                 ValidationTarget.ANNOTATED_ELEMENT,

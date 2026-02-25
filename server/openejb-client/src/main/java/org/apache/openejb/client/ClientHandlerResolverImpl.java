@@ -35,7 +35,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
     private final List<HandlerChainMetaData> handlerChains;
     private final List<Injection> injections;
     private final Context context;
-    private final List<ClientInjectionProcessor<Handler>> handlerInstances = new ArrayList<ClientInjectionProcessor<Handler>>();
+    private final List<ClientInjectionProcessor<Handler>> handlerInstances = new ArrayList<>();
 
     public ClientHandlerResolverImpl(final List<HandlerChainMetaData> handlerChains, final List<Injection> injections, final Context context) {
         this.handlerChains = handlerChains;
@@ -44,7 +44,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
     }
 
     public void destroyHandlers() {
-        final List<ClientInjectionProcessor<Handler>> handlerInstances = new ArrayList<ClientInjectionProcessor<Handler>>(this.handlerInstances);
+        final List<ClientInjectionProcessor<Handler>> handlerInstances = new ArrayList<>(this.handlerInstances);
         this.handlerInstances.clear();
         for (final ClientInjectionProcessor<Handler> handlerInstance : handlerInstances) {
             handlerInstance.preDestroy();
@@ -53,7 +53,7 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
 
     @Override
     public List<Handler> getHandlerChain(final jakarta.xml.ws.handler.PortInfo portInfo) {
-        List<Handler> chain = new ArrayList<Handler>();
+        List<Handler> chain = new ArrayList<>();
         for (final HandlerChainMetaData handlerChain : handlerChains) {
             List<Handler> handlers = buildHandlers(portInfo, handlerChain);
             handlers = sortHandlers(handlers);
@@ -69,15 +69,15 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
             return Collections.emptyList();
         }
 
-        final List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
+        final List<Handler> handlers = new ArrayList<>(handlerChain.getHandlers().size());
         for (final HandlerMetaData handler : handlerChain.getHandlers()) {
             try {
                 final Class<? extends Handler> handlerClass = loadClass(handler.getHandlerClass()).asSubclass(Handler.class);
-                final ClientInjectionProcessor<Handler> processor = new ClientInjectionProcessor<Handler>(handlerClass,
-                    injections,
-                    handler.getPostConstruct(),
-                    handler.getPreDestroy(),
-                    context);
+                final ClientInjectionProcessor<Handler> processor = new ClientInjectionProcessor<>(handlerClass,
+                        injections,
+                        handler.getPostConstruct(),
+                        handler.getPreDestroy(),
+                        context);
                 processor.createInstance();
                 processor.postConstruct();
                 final Handler handlerInstance = processor.getInstance();
@@ -159,8 +159,8 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
      * @return sorted list of handlers
      */
     private List<Handler> sortHandlers(final List<Handler> handlers) {
-        final List<LogicalHandler> logicalHandlers = new ArrayList<LogicalHandler>();
-        final List<Handler> protocolHandlers = new ArrayList<Handler>();
+        final List<LogicalHandler> logicalHandlers = new ArrayList<>();
+        final List<Handler> protocolHandlers = new ArrayList<>();
 
         for (final Handler handler : handlers) {
             if (handler instanceof LogicalHandler) {
@@ -170,13 +170,13 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
             }
         }
 
-        final List<Handler> sortedHandlers = new ArrayList<Handler>();
+        final List<Handler> sortedHandlers = new ArrayList<>();
         sortedHandlers.addAll(logicalHandlers);
         sortedHandlers.addAll(protocolHandlers);
         return sortedHandlers;
     }
 
-    private static final Map<String, String> BINDING_MAP = new HashMap<String, String>();
+    private static final Map<String, String> BINDING_MAP = new HashMap<>();
 
     static {
         BINDING_MAP.put("##SOAP11_HTTP", "http://schemas.xmlsoap.org/wsdl/soap/http");

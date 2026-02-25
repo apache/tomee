@@ -1443,14 +1443,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 webContext.setId(webAppInfo.moduleId);
                 webContext.setContextRoot(webAppInfo.contextRoot);
                 webContext.setHost(webAppInfo.host);
-                webContext.setBindings(new HashMap<String, Object>());
+                webContext.setBindings(new HashMap<>());
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
                 cs.addWebContext(webContext);
                 standardContext.getServletContext().setAttribute("openejb.web.context", webContext);
 
                 if (!contextInfo.appInfo.webAppAlone) {
-                    final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
+                    final List<BeanContext> beanContexts = assembler.initEjbs(classLoader, contextInfo.appInfo, appContext, injections, new ArrayList<>(), webAppInfo.moduleId);
                     OpenEJBLifecycle.CURRENT_APP_INFO.set(contextInfo.appInfo);
                     CONTEXTS.put(classLoader, standardContext.getServletContext());
                     try {

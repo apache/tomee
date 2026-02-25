@@ -147,14 +147,14 @@ public class WebserviceDescription implements Keyable<String> {
 
     public Collection<PortComponent> getPortComponent() {
         if (portComponent == null) {
-            portComponent = new KeyedCollection<String, PortComponent>();
+            portComponent = new KeyedCollection<>();
         }
         return this.portComponent;
     }
 
     public Map<String, PortComponent> getPortComponentMap() {
         if (portComponent == null) {
-            portComponent = new KeyedCollection<String, PortComponent>();
+            portComponent = new KeyedCollection<>();
         }
         return this.portComponent.toMap();
     }

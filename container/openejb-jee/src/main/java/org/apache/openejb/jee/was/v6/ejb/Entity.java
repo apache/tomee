@@ -120,7 +120,7 @@ public class Entity extends EnterpriseBean {
      */
     public List<JavaClass> getPrimaryKeys() {
         if (primaryKeys == null) {
-            primaryKeys = new ArrayList<JavaClass>();
+            primaryKeys = new ArrayList<>();
         }
         return this.primaryKeys;
     }

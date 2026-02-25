@@ -89,7 +89,7 @@ public class ETypedElement extends ENamedElement {
      */
     public List<EClassifier> getEClassifierETypes() {
         if (eClassifierETypes == null) {
-            eClassifierETypes = new ArrayList<EClassifier>();
+            eClassifierETypes = new ArrayList<>();
         }
         return this.eClassifierETypes;
     }

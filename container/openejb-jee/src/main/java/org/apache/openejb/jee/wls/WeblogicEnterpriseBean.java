@@ -341,7 +341,7 @@ public class WeblogicEnterpriseBean {
      */
     public List<ResourceDescription> getResourceDescription() {
         if (resourceDescription == null) {
-            resourceDescription = new ArrayList<ResourceDescription>();
+            resourceDescription = new ArrayList<>();
         }
         return this.resourceDescription;
     }
@@ -368,7 +368,7 @@ public class WeblogicEnterpriseBean {
      */
     public List<ResourceEnvDescription> getResourceEnvDescription() {
         if (resourceEnvDescription == null) {
-            resourceEnvDescription = new ArrayList<ResourceEnvDescription>();
+            resourceEnvDescription = new ArrayList<>();
         }
         return this.resourceEnvDescription;
     }
@@ -395,7 +395,7 @@ public class WeblogicEnterpriseBean {
      */
     public List<EjbReferenceDescription> getEjbReferenceDescription() {
         if (ejbReferenceDescription == null) {
-            ejbReferenceDescription = new ArrayList<EjbReferenceDescription>();
+            ejbReferenceDescription = new ArrayList<>();
         }
         return this.ejbReferenceDescription;
     }
@@ -422,7 +422,7 @@ public class WeblogicEnterpriseBean {
      */
     public List<ServiceReferenceDescription> getServiceReferenceDescription() {
         if (serviceReferenceDescription == null) {
-            serviceReferenceDescription = new ArrayList<ServiceReferenceDescription>();
+            serviceReferenceDescription = new ArrayList<>();
         }
         return this.serviceReferenceDescription;
     }

@@ -53,7 +53,7 @@ public class StandaloneServer {
     private int debugPort = 5005;
     private boolean profile;
     private volatile Process process;
-    private final List<String> jvmOpts = new ArrayList<String>();
+    private final List<String> jvmOpts = new ArrayList<>();
     private final Properties properties = new Properties();
     private boolean verbose = false;
     private OutputStream out = System.out;
@@ -275,7 +275,7 @@ public class StandaloneServer {
         }
 
         try {
-            final List<String> args = new ArrayList<String>();
+            final List<String> args = new ArrayList<>();
             args.add(java.getAbsolutePath());
             args.addAll(jvmOpts);
             final Set<Map.Entry<Object, Object>> collection = properties.entrySet();
@@ -355,7 +355,7 @@ public class StandaloneServer {
         }
 
         try {
-            final List<String> args = new ArrayList<String>();
+            final List<String> args = new ArrayList<>();
             args.add(java.getAbsolutePath());
             args.add("-jar");
             args.add(openejbJar.getAbsolutePath());
@@ -403,7 +403,7 @@ public class StandaloneServer {
     }
 
     // Shutdown hook for recursive delete on tmp directories
-    static final List<StandaloneServer> kill = new ArrayList<StandaloneServer>();
+    static final List<StandaloneServer> kill = new ArrayList<>();
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

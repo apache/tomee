@@ -82,7 +82,7 @@ public class CMPAttribute extends EAttribute {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }

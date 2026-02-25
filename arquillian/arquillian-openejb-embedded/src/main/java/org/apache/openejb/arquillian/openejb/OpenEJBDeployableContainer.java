@@ -98,7 +98,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
         }
     }
 
-    private static final ConcurrentMap<String, DeploymentInfo> DEPLOYMENT_INFO = new ConcurrentHashMap<String, DeploymentInfo>();
+    private static final ConcurrentMap<String, DeploymentInfo> DEPLOYMENT_INFO = new ConcurrentHashMap<>();
     public static final AppContext NO_APP_CTX = new AppContext(null, SystemInstance.get(), null, null, null, false);
 
     // config

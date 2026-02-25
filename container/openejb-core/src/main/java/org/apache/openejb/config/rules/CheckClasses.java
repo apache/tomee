@@ -68,7 +68,7 @@ import static java.lang.reflect.Modifier.isAbstract;
  */
 public class CheckClasses extends ValidationBase {
 
-    private static final List<Class<? extends Annotation>> beanOnlyAnnotations = new ArrayList<Class<? extends Annotation>>();
+    private static final List<Class<? extends Annotation>> beanOnlyAnnotations = new ArrayList<>();
 
     static {
         beanOnlyAnnotations.add(PostConstruct.class);

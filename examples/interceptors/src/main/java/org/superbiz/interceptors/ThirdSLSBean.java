@@ -35,7 +35,7 @@ public class ThirdSLSBean implements ThirdSLSBeanLocal {
 
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     public List<String> businessMethod() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("businessMethod");
         return list;
     }
@@ -43,7 +43,7 @@ public class ThirdSLSBean implements ThirdSLSBeanLocal {
     @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     @ExcludeClassInterceptors
     public List<String> anotherBusinessMethod() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("anotherBusinessMethod");
         return list;
     }

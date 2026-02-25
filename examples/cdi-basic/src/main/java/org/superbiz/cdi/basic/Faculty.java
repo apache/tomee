@@ -28,7 +28,7 @@ public class Faculty {
 
     @PostConstruct
     public void initialize() {
-        this.facultyMembers = new ArrayList<String>();
+        this.facultyMembers = new ArrayList<>();
         facultyMembers.add("Ian Schultz");
         facultyMembers.add("Diane Reyes");
         facultyName = "Computer Science";

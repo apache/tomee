@@ -93,7 +93,7 @@ public class ServiceRef implements JndiReference {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "service-ref-name", required = true)
     protected String serviceRefName;
     @XmlElement(name = "service-interface", required = true)
@@ -226,14 +226,14 @@ public class ServiceRef implements JndiReference {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -298,7 +298,7 @@ public class ServiceRef implements JndiReference {
 
     public List<PortComponentRef> getPortComponentRef() {
         if (portComponentRef == null) {
-            portComponentRef = new ArrayList<PortComponentRef>();
+            portComponentRef = new ArrayList<>();
         }
         return this.portComponentRef;
     }
@@ -313,7 +313,7 @@ public class ServiceRef implements JndiReference {
 
     public List<Handler> getHandler() {
         if (handler == null) {
-            handler = new ArrayList<Handler>();
+            handler = new ArrayList<>();
         }
         return this.handler;
     }
@@ -349,7 +349,7 @@ public class ServiceRef implements JndiReference {
 
     public Set<InjectionTarget> getInjectionTarget() {
         if (injectionTarget == null) {
-            injectionTarget = new HashSet<InjectionTarget>();
+            injectionTarget = new HashSet<>();
         }
         return this.injectionTarget;
     }

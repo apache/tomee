@@ -115,7 +115,7 @@ public class FieldGroup {
      */
     public List<JAXBElement<String>> getCmpFieldOrCmrField() {
         if (cmpFieldOrCmrField == null) {
-            cmpFieldOrCmrField = new ArrayList<JAXBElement<String>>();
+            cmpFieldOrCmrField = new ArrayList<>();
         }
         return this.cmpFieldOrCmrField;
     }

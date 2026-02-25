@@ -30,7 +30,7 @@ public class Executor {
 
     @Asynchronous
     public <T> Future<T> submit(Callable<T> task) throws Exception {
-        return new AsyncResult<T>(task.call());
+        return new AsyncResult<>(task.call());
     }
 
 }

@@ -58,7 +58,7 @@ public class ResourceManagers {
      */
     public List<ResourceManager> getResourceManager() {
         if (resourceManager == null) {
-            resourceManager = new ArrayList<ResourceManager>();
+            resourceManager = new ArrayList<>();
         }
         return this.resourceManager;
     }

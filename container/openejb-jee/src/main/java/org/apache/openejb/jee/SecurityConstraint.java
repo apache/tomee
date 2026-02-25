@@ -76,14 +76,14 @@ public class SecurityConstraint {
 
     public List<String> getDisplayName() {
         if (displayName == null) {
-            displayName = new ArrayList<String>();
+            displayName = new ArrayList<>();
         }
         return this.displayName;
     }
 
     public List<WebResourceCollection> getWebResourceCollection() {
         if (webResourceCollection == null) {
-            webResourceCollection = new ArrayList<WebResourceCollection>();
+            webResourceCollection = new ArrayList<>();
         }
         return this.webResourceCollection;
     }

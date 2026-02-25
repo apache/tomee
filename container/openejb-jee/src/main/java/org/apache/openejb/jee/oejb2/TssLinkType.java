@@ -70,7 +70,7 @@ public class TssLinkType {
 
     public List<String> getJndiName() {
         if (jndiName == null) {
-            jndiName = new ArrayList<String>();
+            jndiName = new ArrayList<>();
         }
         return jndiName;
     }

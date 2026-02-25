@@ -108,21 +108,21 @@ public class WebResourceCollection {
 
     public List<String> getUrlPattern() {
         if (urlPattern == null) {
-            urlPattern = new ArrayList<String>();
+            urlPattern = new ArrayList<>();
         }
         return this.urlPattern;
     }
 
     public List<String> getHttpMethod() {
         if (httpMethod == null) {
-            httpMethod = new ArrayList<String>();
+            httpMethod = new ArrayList<>();
         }
         return this.httpMethod;
     }
 
     public List<String> getHttpMethodOmission() {
         if (httpMethodOmission == null) {
-            httpMethodOmission = new ArrayList<String>();
+            httpMethodOmission = new ArrayList<>();
         }
         return this.httpMethodOmission;
     }

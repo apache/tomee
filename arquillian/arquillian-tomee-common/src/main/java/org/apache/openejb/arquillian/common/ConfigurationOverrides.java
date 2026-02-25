@@ -83,7 +83,7 @@ public class ConfigurationOverrides {
     }
 
     private static List<Properties> read(final List<URL> urls) {
-        final List<Properties> propertiesList = new ArrayList<Properties>();
+        final List<Properties> propertiesList = new ArrayList<>();
         for (final URL url : urls) {
             try {
                 propertiesList.add(IO.readProperties(url));
@@ -95,7 +95,7 @@ public class ConfigurationOverrides {
     }
 
     public static List<URL> findPropertiesFiles(final String name, final String... prefixes) {
-        final List<URL> urls = new ArrayList<URL>();
+        final List<URL> urls = new ArrayList<>();
 
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 

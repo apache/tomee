@@ -73,7 +73,7 @@ public class ClassFilterType {
      */
     public List<String> getFilter() {
         if (filter == null) {
-            filter = new ArrayList<String>();
+            filter = new ArrayList<>();
         }
         return this.filter;
     }

@@ -151,7 +151,7 @@ public class JNDIContext implements InitialContextFactory, Context {
          is true then a final attempt is made to run the process in the current thread (the service thread).
          */
 
-        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(3, (threads < 3 ? 3 : threads), 1, TimeUnit.MINUTES, blockingQueue == null ? new LinkedBlockingDeque<Runnable>(Integer.parseInt(getProperty(null, POOL_QUEUE_SIZE, "2"))) : blockingQueue);
+        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(3, (threads < 3 ? 3 : threads), 1, TimeUnit.MINUTES, blockingQueue == null ? new LinkedBlockingDeque<>(Integer.parseInt(getProperty(null, POOL_QUEUE_SIZE, "2"))) : blockingQueue);
         executorService.setThreadFactory(new ThreadFactory() {
 
             private final AtomicInteger i = new AtomicInteger(0);
@@ -282,7 +282,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
 
         final int queue = Integer.parseInt(getProperty(env, JNDIContext.POOL_QUEUE_SIZE, "2"));
-        blockingQueue = new LinkedBlockingQueue<Runnable>((queue < 2 ? 2 : queue));
+        blockingQueue = new LinkedBlockingQueue<>((queue < 2 ? 2 : queue));
         threads = Integer.parseInt(getProperty(env, "openejb.client.invoker.threads", "-1"));
 
         return this;
@@ -632,7 +632,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         final Object o = lookup(name);
         if (o instanceof Context context) {
             final NamingEnumeration<NameClassPair> enumeration = context.list("");
-            final List<NameClassPair> bindings = new ArrayList<NameClassPair>();
+            final List<NameClassPair> bindings = new ArrayList<>();
 
             while (enumeration.hasMoreElements()) {
                 final NameClassPair pair = enumeration.nextElement();

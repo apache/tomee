@@ -115,7 +115,7 @@ public class ApplicationType {
      */
     public List<ModuleType> getModule() {
         if (module == null) {
-            module = new ArrayList<ModuleType>();
+            module = new ArrayList<>();
         }
         return this.module;
     }
@@ -142,7 +142,7 @@ public class ApplicationType {
      */
     public List<ExtModuleType> getExtModule() {
         if (extModule == null) {
-            extModule = new ArrayList<ExtModuleType>();
+            extModule = new ArrayList<>();
         }
         return this.extModule;
     }
@@ -190,7 +190,7 @@ public class ApplicationType {
      */
     public List<JAXBElement<? extends AbstractServiceType>> getService() {
         if (service == null) {
-            service = new ArrayList<JAXBElement<? extends AbstractServiceType>>();
+            service = new ArrayList<>();
         }
         return this.service;
     }

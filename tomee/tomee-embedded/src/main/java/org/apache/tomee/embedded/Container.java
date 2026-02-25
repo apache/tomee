@@ -547,7 +547,7 @@ public class Container implements AutoCloseable {
                 configuration.setHttpPort(Integer.parseInt(ports.http()));
                 configuration.setStopPort(Integer.parseInt(ports.stop()));
             } else {
-                final Map<String, String> replacements = new HashMap<String, String>();
+                final Map<String, String> replacements = new HashMap<>();
                 replacements.put(ports.http(), String.valueOf(configuration.getHttpPort()));
                 replacements.put(ports.https(), String.valueOf(configuration.getHttpsPort()));
                 replacements.put(ports.stop(), String.valueOf(configuration.getStopPort()));

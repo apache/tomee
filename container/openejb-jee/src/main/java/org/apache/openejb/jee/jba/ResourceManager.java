@@ -86,7 +86,7 @@ public class ResourceManager {
      */
     public List<Object> getResJndiNameOrResUrl() {
         if (resJndiNameOrResUrl == null) {
-            resJndiNameOrResUrl = new ArrayList<Object>();
+            resJndiNameOrResUrl = new ArrayList<>();
         }
         return this.resJndiNameOrResUrl;
     }

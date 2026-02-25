@@ -79,7 +79,7 @@ public class FacesComponent {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "component-type", required = true)
     protected java.lang.String componentType;
     @XmlElement(name = "component-class", required = true)
@@ -126,14 +126,14 @@ public class FacesComponent {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -204,7 +204,7 @@ public class FacesComponent {
      */
     public List<FacesFacet> getFacet() {
         if (facet == null) {
-            facet = new ArrayList<FacesFacet>();
+            facet = new ArrayList<>();
         }
         return this.facet;
     }
@@ -231,7 +231,7 @@ public class FacesComponent {
      */
     public List<FacesAttribute> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<FacesAttribute>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }
@@ -258,7 +258,7 @@ public class FacesComponent {
      */
     public List<FacesProperty> getProperty() {
         if (property == null) {
-            property = new ArrayList<FacesProperty>();
+            property = new ArrayList<>();
         }
         return this.property;
     }
@@ -285,7 +285,7 @@ public class FacesComponent {
      */
     public List<FacesComponentExtension> getComponentExtension() {
         if (componentExtension == null) {
-            componentExtension = new ArrayList<FacesComponentExtension>();
+            componentExtension = new ArrayList<>();
         }
         return this.componentExtension;
     }

@@ -36,7 +36,7 @@ public class AllowedOperationsBmpBean implements jakarta.ejb.EntityBean {
     protected String firstName;
     protected String lastName;
     protected EntityContext ejbContext;
-    private Map<String, OperationsPolicy> allowedOperationsTable = new TreeMap<String, OperationsPolicy>();
+    private Map<String, OperationsPolicy> allowedOperationsTable = new TreeMap<>();
 
 
     //=============================

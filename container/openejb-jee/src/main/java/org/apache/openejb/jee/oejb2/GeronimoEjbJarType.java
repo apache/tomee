@@ -208,56 +208,56 @@ public class GeronimoEjbJarType {
 //    }
     public List<JAXBElement<? extends AbstractNamingEntryType>> getAbstractNamingEntry() {
         if (abstractNamingEntry == null) {
-            abstractNamingEntry = new ArrayList<JAXBElement<? extends AbstractNamingEntryType>>();
+            abstractNamingEntry = new ArrayList<>();
         }
         return this.abstractNamingEntry;
     }
 
     public List<PersistenceContextRefType> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new ArrayList<PersistenceContextRefType>();
+            persistenceContextRef = new ArrayList<>();
         }
         return persistenceContextRef;
     }
 
     public List<PersistenceUnitRefType> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new ArrayList<PersistenceUnitRefType>();
+            persistenceUnitRef = new ArrayList<>();
         }
         return persistenceUnitRef;
     }
 
     public List<EjbRefType> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new ArrayList<EjbRefType>();
+            ejbRef = new ArrayList<>();
         }
         return this.ejbRef;
     }
 
     public List<EjbLocalRefType> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new ArrayList<EjbLocalRefType>();
+            ejbLocalRef = new ArrayList<>();
         }
         return this.ejbLocalRef;
     }
 
     public List<ServiceRefType> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new ArrayList<ServiceRefType>();
+            serviceRef = new ArrayList<>();
         }
         return this.serviceRef;
     }
 
     public List<ResourceRefType> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new ArrayList<ResourceRefType>();
+            resourceRef = new ArrayList<>();
         }
         return this.resourceRef;
     }
 
     public List<ResourceEnvRefType> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new ArrayList<ResourceEnvRefType>();
+            resourceEnvRef = new ArrayList<>();
         }
         return this.resourceEnvRef;
     }
@@ -293,21 +293,21 @@ public class GeronimoEjbJarType {
      */
     public List<MessageDestinationType> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new ArrayList<MessageDestinationType>();
+            messageDestination = new ArrayList<>();
         }
         return this.messageDestination;
     }
 
     public List<TssLinkType> getTssLink() {
         if (tssLink == null) {
-            tssLink = new ArrayList<TssLinkType>();
+            tssLink = new ArrayList<>();
         }
         return tssLink;
     }
 
     public List<WebServiceBindingType> getWebServiceBinding() {
         if (webServiceBinding == null) {
-            webServiceBinding = new ArrayList<WebServiceBindingType>();
+            webServiceBinding = new ArrayList<>();
         }
         return webServiceBinding;
     }
@@ -343,14 +343,14 @@ public class GeronimoEjbJarType {
      */
     public List<JAXBElement<? extends AbstractServiceType>> getService() {
         if (service == null) {
-            service = new ArrayList<JAXBElement<? extends AbstractServiceType>>();
+            service = new ArrayList<>();
         }
         return this.service;
     }
 
     public List<Persistence> getPersistence() {
         if (persistence == null) {
-            persistence = new ArrayList<Persistence>();
+            persistence = new ArrayList<>();
         }
         return persistence;
     }

@@ -118,7 +118,7 @@ public class DescriptionGroup {
      */
     public List<IconType> getIcons() {
         if (icons == null) {
-            icons = new ArrayList<IconType>();
+            icons = new ArrayList<>();
         }
         return this.icons;
     }
@@ -146,7 +146,7 @@ public class DescriptionGroup {
      */
     public List<DisplayName> getDisplayNames() {
         if (displayNames == null) {
-            displayNames = new ArrayList<DisplayName>();
+            displayNames = new ArrayList<>();
         }
         return this.displayNames;
     }
@@ -174,7 +174,7 @@ public class DescriptionGroup {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -202,7 +202,7 @@ public class DescriptionGroup {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

@@ -58,7 +58,7 @@ public class Home {
      */
     public List<Interceptor> getInterceptor() {
         if (interceptor == null) {
-            interceptor = new ArrayList<Interceptor>();
+            interceptor = new ArrayList<>();
         }
         return this.interceptor;
     }

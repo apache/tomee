@@ -58,7 +58,7 @@ public class InvokerProxyBindings {
      */
     public List<InvokerProxyBinding> getInvokerProxyBinding() {
         if (invokerProxyBinding == null) {
-            invokerProxyBinding = new ArrayList<InvokerProxyBinding>();
+            invokerProxyBinding = new ArrayList<>();
         }
         return this.invokerProxyBinding;
     }

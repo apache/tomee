@@ -67,7 +67,7 @@ public class Webservices {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "webservice-description", required = true)
     protected KeyedCollection<String, WebserviceDescription> webserviceDescription;
     @XmlAttribute
@@ -105,14 +105,14 @@ public class Webservices {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -123,14 +123,14 @@ public class Webservices {
 
     public Collection<WebserviceDescription> getWebserviceDescription() {
         if (webserviceDescription == null) {
-            webserviceDescription = new KeyedCollection<String, WebserviceDescription>();
+            webserviceDescription = new KeyedCollection<>();
         }
         return this.webserviceDescription;
     }
 
     public Map<String, WebserviceDescription> getWebserviceDescriptionMap() {
         if (webserviceDescription == null) {
-            webserviceDescription = new KeyedCollection<String, WebserviceDescription>();
+            webserviceDescription = new KeyedCollection<>();
         }
         return webserviceDescription.toMap();
     }

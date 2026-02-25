@@ -178,7 +178,7 @@ public class WebServiceSecurityType {
      */
     public List<String> getHttpMethod() {
         if (httpMethod == null) {
-            httpMethod = new ArrayList<String>();
+            httpMethod = new ArrayList<>();
         }
         return this.httpMethod;
     }

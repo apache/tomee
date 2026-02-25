@@ -21,5 +21,5 @@ import java.util.Map;
 
 // use to store info while creating the EMF
 public class JPAThreadContext {
-    public static final Map<String, Object> infos = new HashMap<String, Object>();
+    public static final Map<String, Object> infos = new HashMap<>();
 }

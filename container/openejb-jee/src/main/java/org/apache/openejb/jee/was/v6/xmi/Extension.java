@@ -98,7 +98,7 @@ public class Extension {
      */
     public List<Object> getElements() {
         if (elements == null) {
-            elements = new ArrayList<Object>();
+            elements = new ArrayList<>();
         }
         return this.elements;
     }

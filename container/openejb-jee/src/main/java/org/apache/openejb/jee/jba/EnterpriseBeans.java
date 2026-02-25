@@ -65,7 +65,7 @@ public class EnterpriseBeans {
      */
     public List<Object> getSessionOrEntityOrMessageDriven() {
         if (sessionOrEntityOrMessageDriven == null) {
-            sessionOrEntityOrMessageDriven = new ArrayList<Object>();
+            sessionOrEntityOrMessageDriven = new ArrayList<>();
         }
         return this.sessionOrEntityOrMessageDriven;
     }

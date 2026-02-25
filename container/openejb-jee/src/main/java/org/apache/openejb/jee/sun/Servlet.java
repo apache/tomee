@@ -57,14 +57,14 @@ public class Servlet {
 
     public Collection<WebserviceEndpoint> getWebserviceEndpoint() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<>();
         }
         return this.webserviceEndpoint;
     }
 
     public Map<String, WebserviceEndpoint> getWebserviceEndpointMap() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new KeyedCollection<String, WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<>();
         }
         return this.webserviceEndpoint.toMap();
     }

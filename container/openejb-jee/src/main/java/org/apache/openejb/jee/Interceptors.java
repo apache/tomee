@@ -58,7 +58,7 @@ public class Interceptors {
     protected TextMap description = new TextMap();
 
     @XmlTransient
-    protected Map<String, Interceptor> interceptors = new LinkedHashMap<String, Interceptor>();
+    protected Map<String, Interceptor> interceptors = new LinkedHashMap<>();
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

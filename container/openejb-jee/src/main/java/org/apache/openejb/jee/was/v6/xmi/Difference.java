@@ -127,7 +127,7 @@ public class Difference {
      */
     public List<Difference.Target> getDifferenceTargets() {
         if (differenceTargets == null) {
-            differenceTargets = new ArrayList<Difference.Target>();
+            differenceTargets = new ArrayList<>();
         }
         return this.differenceTargets;
     }
@@ -155,7 +155,7 @@ public class Difference {
      */
     public List<Difference> getDifferences() {
         if (differences == null) {
-            differences = new ArrayList<Difference>();
+            differences = new ArrayList<>();
         }
         return this.differences;
     }
@@ -183,7 +183,7 @@ public class Difference {
      */
     public List<Difference> getDifferenceContainers() {
         if (differenceContainers == null) {
-            differenceContainers = new ArrayList<Difference>();
+            differenceContainers = new ArrayList<>();
         }
         return this.differenceContainers;
     }
@@ -210,7 +210,7 @@ public class Difference {
      */
     public List<Object> getContainers() {
         if (containers == null) {
-            containers = new ArrayList<Object>();
+            containers = new ArrayList<>();
         }
         return this.containers;
     }
@@ -237,7 +237,7 @@ public class Difference {
      */
     public List<Object> getTargets() {
         if (targets == null) {
-            targets = new ArrayList<Object>();
+            targets = new ArrayList<>();
         }
         return this.targets;
     }
@@ -381,7 +381,7 @@ public class Difference {
         @XmlAnyElement
         protected List<Element> elements;
         @XmlAnyAttribute
-        private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        private final Map<QName, String> otherAttributes = new HashMap<>();
 
         /**
          * Gets the value of the elements property.
@@ -406,7 +406,7 @@ public class Difference {
          */
         public List<Element> getElements() {
             if (elements == null) {
-                elements = new ArrayList<Element>();
+                elements = new ArrayList<>();
             }
             return this.elements;
         }

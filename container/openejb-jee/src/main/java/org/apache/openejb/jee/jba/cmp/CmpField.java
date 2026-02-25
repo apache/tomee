@@ -263,7 +263,7 @@ public class CmpField {
      */
     public List<Property> getProperty() {
         if (property == null) {
-            property = new ArrayList<Property>();
+            property = new ArrayList<>();
         }
         return this.property;
     }

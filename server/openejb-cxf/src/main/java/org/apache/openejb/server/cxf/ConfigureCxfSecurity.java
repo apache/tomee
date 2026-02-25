@@ -37,11 +37,11 @@ import java.util.Properties;
  */
 public class ConfigureCxfSecurity {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.CXF, ConfigureCxfSecurity.class);
-    private static final Map<QName, Object> DEFAULT_VALIDATOR_MAP = new HashMap<QName, Object>() {{
+    private static final Map<QName, Object> DEFAULT_VALIDATOR_MAP = new HashMap<>() {{
         put(new QName(
-                "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
-                "UsernameToken"),
-            new OpenEJBLoginValidator());
+                        "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+                        "UsernameToken"),
+                new OpenEJBLoginValidator());
     }};
 
     private static final String OPENEJB_ENDPOINT_CONFIGURATOR = "openejb.endpoint.configurator";
@@ -59,9 +59,9 @@ public class ConfigureCxfSecurity {
     public static Map<String, Object> getPropsFromProperties(Properties inProps, String pattern) {
         final String validatorPrefix = pattern + "validator";
         final String processorPrefix = pattern + "processor";
-        final Map<QName, Object> validatorMap = new HashMap<QName, Object>();
-        final Map<QName, Object> processorMap = new HashMap<QName, Object>();
-        final Map<String, Object> props = new HashMap<String, Object>();
+        final Map<QName, Object> validatorMap = new HashMap<>();
+        final Map<QName, Object> processorMap = new HashMap<>();
+        final Map<String, Object> props = new HashMap<>();
 
         String key, val;
         for (Map.Entry<Object, Object> entry : inProps.entrySet()) {

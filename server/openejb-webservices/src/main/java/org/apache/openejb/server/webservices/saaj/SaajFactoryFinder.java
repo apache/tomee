@@ -31,7 +31,7 @@ class SaajFactoryFinder {
 
     private static SaajUniverse.Type DEFAULT_SAAJ_UNIVERSE = null;
 
-    private static final Map<String, Map<String, String>> SAAJ_FACTORIES = new HashMap<String, Map<String, String>>();
+    private static final Map<String, Map<String, String>> SAAJ_FACTORIES = new HashMap<>();
 
     static {
         SAAJ_FACTORIES.put(SaajUniverse.Type.AXIS2.toString(), createSAAJInfo(

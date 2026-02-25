@@ -39,7 +39,7 @@ public final class ClassLoaders {
             return Collections.emptySet();
         }
 
-        final Set<URL> urls =  new HashSet<URL>();
+        final Set<URL> urls = new HashSet<>();
 
         if (URLClassLoader.class.isInstance(classLoader) && !DONT_USE_GET_URLS) {
             if (!isSurefire(classLoader)) {
@@ -156,7 +156,7 @@ public final class ClassLoaders {
 
     private static Collection<URL> fromClassPath() {
         final String[] cp = System.getProperty("java.class.path").split(System.getProperty("path.separator", ":"));
-        final Set<URL> urls = new HashSet<URL>();
+        final Set<URL> urls = new HashSet<>();
         for (final String path : cp) {
             try {
                 urls.add(new File(path).toURI().toURL()); // don't build the url in plain String since it is not portable
@@ -168,7 +168,7 @@ public final class ClassLoaders {
     }
 
     public static Set<URL> findUrlFromResources(final ClassLoader classLoader) throws IOException {
-        final Set<URL> set = new HashSet<URL>();
+        final Set<URL> set = new HashSet<>();
         for (final URL url : Collections.list(classLoader.getResources("META-INF"))) {
             final String externalForm = url.toExternalForm();
             set.add(new URL(externalForm.substring(0, externalForm.lastIndexOf("META-INF"))));

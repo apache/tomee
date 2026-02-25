@@ -115,7 +115,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     protected List<Empty> distributable;
     @XmlElement(name = "context-param")
@@ -268,7 +268,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
@@ -276,7 +276,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -289,7 +289,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<Empty> getDistributable() {
         if (distributable == null) {
-            distributable = new ArrayList<Empty>();
+            distributable = new ArrayList<>();
         }
         return this.distributable;
     }
@@ -297,7 +297,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<ParamValue> getContextParam() {
         if (contextParam == null) {
-            contextParam = new ArrayList<ParamValue>();
+            contextParam = new ArrayList<>();
         }
         return this.contextParam;
     }
@@ -305,7 +305,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<Filter> getFilter() {
         if (filter == null) {
-            filter = new ArrayList<Filter>();
+            filter = new ArrayList<>();
         }
         return this.filter;
     }
@@ -313,7 +313,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<FilterMapping> getFilterMapping() {
         if (filterMapping == null) {
-            filterMapping = new ArrayList<FilterMapping>();
+            filterMapping = new ArrayList<>();
         }
         return this.filterMapping;
     }
@@ -321,7 +321,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<Listener> getListener() {
         if (listener == null) {
-            listener = new ArrayList<Listener>();
+            listener = new ArrayList<>();
         }
         return this.listener;
     }
@@ -329,7 +329,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<Servlet> getServlet() {
         if (servlet == null) {
-            servlet = new ArrayList<Servlet>();
+            servlet = new ArrayList<>();
         }
         return this.servlet;
     }
@@ -337,7 +337,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<ServletMapping> getServletMapping() {
         if (servletMapping == null) {
-            servletMapping = new ArrayList<ServletMapping>();
+            servletMapping = new ArrayList<>();
         }
         return this.servletMapping;
     }
@@ -345,7 +345,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<SessionConfig> getSessionConfig() {
         if (sessionConfig == null) {
-            sessionConfig = new ArrayList<SessionConfig>();
+            sessionConfig = new ArrayList<>();
         }
         return this.sessionConfig;
     }
@@ -353,7 +353,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<MimeMapping> getMimeMapping() {
         if (mimeMapping == null) {
-            mimeMapping = new ArrayList<MimeMapping>();
+            mimeMapping = new ArrayList<>();
         }
         return this.mimeMapping;
     }
@@ -361,7 +361,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<WelcomeFileList> getWelcomeFileList() {
         if (welcomeFileList == null) {
-            welcomeFileList = new ArrayList<WelcomeFileList>();
+            welcomeFileList = new ArrayList<>();
         }
         return this.welcomeFileList;
     }
@@ -369,7 +369,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<ErrorPage> getErrorPage() {
         if (errorPage == null) {
-            errorPage = new ArrayList<ErrorPage>();
+            errorPage = new ArrayList<>();
         }
         return this.errorPage;
     }
@@ -377,7 +377,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<JspConfig> getJspConfig() {
         if (jspConfig == null) {
-            jspConfig = new ArrayList<JspConfig>();
+            jspConfig = new ArrayList<>();
         }
         return this.jspConfig;
     }
@@ -385,7 +385,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<SecurityConstraint> getSecurityConstraint() {
         if (securityConstraint == null) {
-            securityConstraint = new ArrayList<SecurityConstraint>();
+            securityConstraint = new ArrayList<>();
         }
         return this.securityConstraint;
     }
@@ -393,7 +393,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<LoginConfig> getLoginConfig() {
         if (loginConfig == null) {
-            loginConfig = new ArrayList<LoginConfig>();
+            loginConfig = new ArrayList<>();
         }
         return this.loginConfig;
     }
@@ -401,7 +401,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<SecurityRole> getSecurityRole() {
         if (securityRole == null) {
-            securityRole = new ArrayList<SecurityRole>();
+            securityRole = new ArrayList<>();
         }
         return this.securityRole;
     }
@@ -409,133 +409,133 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<LocaleEncodingMappingList> getLocaleEncodingMappingList() {
         if (localeEncodingMappingList == null) {
-            localeEncodingMappingList = new ArrayList<LocaleEncodingMappingList>();
+            localeEncodingMappingList = new ArrayList<>();
         }
         return this.localeEncodingMappingList;
     }
 
     public Collection<EnvEntry> getEnvEntry() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String, EnvEntry>();
+            envEntry = new KeyedCollection<>();
         }
         return this.envEntry;
     }
 
     public Map<String, EnvEntry> getEnvEntryMap() {
         if (envEntry == null) {
-            envEntry = new KeyedCollection<String, EnvEntry>();
+            envEntry = new KeyedCollection<>();
         }
         return this.envEntry.toMap();
     }
 
     public Collection<EjbRef> getEjbRef() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String, EjbRef>();
+            ejbRef = new KeyedCollection<>();
         }
         return this.ejbRef;
     }
 
     public Map<String, EjbRef> getEjbRefMap() {
         if (ejbRef == null) {
-            ejbRef = new KeyedCollection<String, EjbRef>();
+            ejbRef = new KeyedCollection<>();
         }
         return this.ejbRef.toMap();
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<>();
         }
         return this.ejbLocalRef;
     }
 
     public Map<String, EjbLocalRef> getEjbLocalRefMap() {
         if (ejbLocalRef == null) {
-            ejbLocalRef = new KeyedCollection<String, EjbLocalRef>();
+            ejbLocalRef = new KeyedCollection<>();
         }
         return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String, ServiceRef>();
+            serviceRef = new KeyedCollection<>();
         }
         return this.serviceRef;
     }
 
     public Map<String, ServiceRef> getServiceRefMap() {
         if (serviceRef == null) {
-            serviceRef = new KeyedCollection<String, ServiceRef>();
+            serviceRef = new KeyedCollection<>();
         }
         return this.serviceRef.toMap();
     }
 
     public Collection<ResourceRef> getResourceRef() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String, ResourceRef>();
+            resourceRef = new KeyedCollection<>();
         }
         return this.resourceRef;
     }
 
     public Map<String, ResourceRef> getResourceRefMap() {
         if (resourceRef == null) {
-            resourceRef = new KeyedCollection<String, ResourceRef>();
+            resourceRef = new KeyedCollection<>();
         }
         return this.resourceRef.toMap();
     }
 
     public Collection<ResourceEnvRef> getResourceEnvRef() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<>();
         }
         return this.resourceEnvRef;
     }
 
     public Map<String, ResourceEnvRef> getResourceEnvRefMap() {
         if (resourceEnvRef == null) {
-            resourceEnvRef = new KeyedCollection<String, ResourceEnvRef>();
+            resourceEnvRef = new KeyedCollection<>();
         }
         return this.resourceEnvRef.toMap();
     }
 
     public Collection<MessageDestinationRef> getMessageDestinationRef() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<>();
         }
         return this.messageDestinationRef;
     }
 
     public Map<String, MessageDestinationRef> getMessageDestinationRefMap() {
         if (messageDestinationRef == null) {
-            messageDestinationRef = new KeyedCollection<String, MessageDestinationRef>();
+            messageDestinationRef = new KeyedCollection<>();
         }
         return this.messageDestinationRef.toMap();
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<>();
         }
         return this.persistenceContextRef;
     }
 
     public Map<String, PersistenceContextRef> getPersistenceContextRefMap() {
         if (persistenceContextRef == null) {
-            persistenceContextRef = new KeyedCollection<String, PersistenceContextRef>();
+            persistenceContextRef = new KeyedCollection<>();
         }
         return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<>();
         }
         return this.persistenceUnitRef;
     }
 
     public Map<String, PersistenceUnitRef> getPersistenceUnitRefMap() {
         if (persistenceUnitRef == null) {
-            persistenceUnitRef = new KeyedCollection<String, PersistenceUnitRef>();
+            persistenceUnitRef = new KeyedCollection<>();
         }
         return this.persistenceUnitRef.toMap();
     }
@@ -547,7 +547,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
-            postConstruct = new ArrayList<LifecycleCallback>();
+            postConstruct = new ArrayList<>();
         }
         return this.postConstruct;
     }
@@ -559,7 +559,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {
-            preDestroy = new ArrayList<LifecycleCallback>();
+            preDestroy = new ArrayList<>();
         }
         return this.preDestroy;
     }
@@ -567,7 +567,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new ArrayList<MessageDestination>();
+            messageDestination = new ArrayList<>();
         }
         return this.messageDestination;
     }
@@ -619,14 +619,14 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
 
     public Collection<DataSource> getDataSource() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String, DataSource>();
+            dataSource = new KeyedCollection<>();
         }
         return this.dataSource;
     }
 
     public Map<String, DataSource> getDataSourceMap() {
         if (dataSource == null) {
-            dataSource = new KeyedCollection<String, DataSource>();
+            dataSource = new KeyedCollection<>();
         }
         return this.dataSource.toMap();
     }
@@ -662,7 +662,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     }
 
     public Map<String, String> contextParamsAsMap() {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         if (contextParam != null) {
             for (final ParamValue pv : contextParam) {
                 map.put(pv.getParamName(), pv.getParamValue());
@@ -717,7 +717,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
 
             for (final String mapping : mappings) {
                 if (servletMapping == null) {
-                    servletMapping = new ArrayList<ServletMapping>();
+                    servletMapping = new ArrayList<>();
                 }
 
                 sm.getUrlPattern().add(mapping);
@@ -766,7 +766,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
 
             for (final String mapping : mappings) {
                 if (filterMapping == null) {
-                    filterMapping = new ArrayList<FilterMapping>();
+                    filterMapping = new ArrayList<>();
                 }
 
                 sm.getUrlPattern().add(mapping);
@@ -838,7 +838,7 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public Map<String, ContextService> getContextServiceMap() {
         if (contextService == null) {
-            contextService = new KeyedCollection<String, ContextService>();
+            contextService = new KeyedCollection<>();
         }
         return this.contextService.toMap();
     }

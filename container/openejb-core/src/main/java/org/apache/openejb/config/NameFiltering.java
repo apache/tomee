@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class NameFiltering {
-    private static final List<String> INVALID = new ArrayList<String>();
+    private static final List<String> INVALID = new ArrayList<>();
     static { // for compatibility keep it
         INVALID.add("classes");
         INVALID.add("test-classes");

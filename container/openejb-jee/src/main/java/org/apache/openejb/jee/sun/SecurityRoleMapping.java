@@ -48,7 +48,7 @@ public class SecurityRoleMapping {
 
     public List<Object> getPrincipalNameOrGroupName() {
         if (principalNameOrGroupName == null) {
-            principalNameOrGroupName = new ArrayList<Object>();
+            principalNameOrGroupName = new ArrayList<>();
         }
         return this.principalNameOrGroupName;
     }

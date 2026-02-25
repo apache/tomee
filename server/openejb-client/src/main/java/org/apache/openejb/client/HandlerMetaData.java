@@ -25,8 +25,8 @@ public class HandlerMetaData implements Serializable {
 
     private static final long serialVersionUID = -297817668220375028L;
     private String handlerClass;
-    private List<CallbackMetaData> postConstruct = new ArrayList<CallbackMetaData>();
-    private List<CallbackMetaData> preDestroy = new ArrayList<CallbackMetaData>();
+    private List<CallbackMetaData> postConstruct = new ArrayList<>();
+    private List<CallbackMetaData> preDestroy = new ArrayList<>();
 
     public String getHandlerClass() {
         return handlerClass;

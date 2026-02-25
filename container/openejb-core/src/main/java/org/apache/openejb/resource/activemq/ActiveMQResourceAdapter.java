@@ -70,9 +70,11 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     private String startupTimeout = "60000";
     private BootstrapContext bootstrapContext;
     private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
-    private static final Map<String,String> PREVENT_CREATION_PARAMS = new HashMap<String, String>() { {
-        put("create", "false");
-    }};
+    private static final Map<String,String> PREVENT_CREATION_PARAMS = new HashMap<>() {
+        {
+            put("create", "false");
+        }
+    };
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.ACTIVEMQ, ActiveMQ5Factory.class);
 

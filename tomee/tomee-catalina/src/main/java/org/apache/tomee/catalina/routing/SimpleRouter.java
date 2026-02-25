@@ -56,7 +56,7 @@ public class SimpleRouter {
     private String prefix = "";
     private ObjectName objectName;
     private Route[] routes = new Route[0];
-    private final Map<String, Route> cache = new ConcurrentHashMap<String, Route>();
+    private final Map<String, Route> cache = new ConcurrentHashMap<>();
 
     public SimpleRouter readConfiguration(final URL url) {
         if (url == null) {

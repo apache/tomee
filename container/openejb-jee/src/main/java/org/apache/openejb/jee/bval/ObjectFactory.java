@@ -243,7 +243,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/configuration", name = "validation-config")
     public JAXBElement<ValidationConfigType> createValidationConfig(ValidationConfigType value) {
-        return new JAXBElement<ValidationConfigType>(_ValidationConfig_QNAME, ValidationConfigType.class, null, value);
+        return new JAXBElement<>(_ValidationConfig_QNAME, ValidationConfigType.class, null, value);
     }
 
     /**
@@ -252,7 +252,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "constraint-mappings")
     public JAXBElement<ConstraintMappingsType> createConstraintMappings(ConstraintMappingsType value) {
-        return new JAXBElement<ConstraintMappingsType>(_ConstraintMappings_QNAME, ConstraintMappingsType.class, null, value);
+        return new JAXBElement<>(_ConstraintMappings_QNAME, ConstraintMappingsType.class, null, value);
     }
 
     /**
@@ -261,7 +261,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "annotation", scope = ElementType.class)
     public JAXBElement<AnnotationType> createElementTypeAnnotation(AnnotationType value) {
-        return new JAXBElement<AnnotationType>(_ElementTypeAnnotation_QNAME, AnnotationType.class, ElementType.class, value);
+        return new JAXBElement<>(_ElementTypeAnnotation_QNAME, AnnotationType.class, ElementType.class, value);
     }
 
     /**
@@ -271,7 +271,7 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://jboss.org/xml/ns/javax/validation/mapping", name = "value", scope = ElementType.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     public JAXBElement<String> createElementTypeValue(String value) {
-        return new JAXBElement<String>(_ElementTypeValue_QNAME, String.class, ElementType.class, value);
+        return new JAXBElement<>(_ElementTypeValue_QNAME, String.class, ElementType.class, value);
     }
 
 }

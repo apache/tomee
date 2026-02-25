@@ -113,7 +113,7 @@ public class WebServicesClient {
      */
     public List<ComponentScopedRefs> getComponentScopedRefs() {
         if (componentScopedRefs == null) {
-            componentScopedRefs = new ArrayList<ComponentScopedRefs>();
+            componentScopedRefs = new ArrayList<>();
         }
         return this.componentScopedRefs;
     }
@@ -141,7 +141,7 @@ public class WebServicesClient {
      */
     public List<ServiceRef> getServiceRefs() {
         if (serviceRefs == null) {
-            serviceRefs = new ArrayList<ServiceRef>();
+            serviceRefs = new ArrayList<>();
         }
         return this.serviceRefs;
     }
@@ -169,7 +169,7 @@ public class WebServicesClient {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

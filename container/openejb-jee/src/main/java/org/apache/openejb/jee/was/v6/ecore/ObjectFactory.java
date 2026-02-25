@@ -211,8 +211,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "ETypedElement")
     public JAXBElement<ETypedElement> createETypedElement(final ETypedElement value) {
-        return new JAXBElement<ETypedElement>(_ETypedElement_QNAME,
-            ETypedElement.class, null, value);
+        return new JAXBElement<>(_ETypedElement_QNAME,
+                ETypedElement.class, null, value);
     }
 
     /**
@@ -221,8 +221,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EFactory")
     public JAXBElement<EFactory> createEFactory(final EFactory value) {
-        return new JAXBElement<EFactory>(_EFactory_QNAME, EFactory.class, null,
-            value);
+        return new JAXBElement<>(_EFactory_QNAME, EFactory.class, null,
+                value);
     }
 
     /**
@@ -231,8 +231,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EOperation")
     public JAXBElement<EOperation> createEOperation(final EOperation value) {
-        return new JAXBElement<EOperation>(_EOperation_QNAME, EOperation.class,
-            null, value);
+        return new JAXBElement<>(_EOperation_QNAME, EOperation.class,
+                null, value);
     }
 
     /**
@@ -241,8 +241,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EClassifier")
     public JAXBElement<EClassifier> createEClassifier(final EClassifier value) {
-        return new JAXBElement<EClassifier>(_EClassifier_QNAME,
-            EClassifier.class, null, value);
+        return new JAXBElement<>(_EClassifier_QNAME,
+                EClassifier.class, null, value);
     }
 
     /**
@@ -252,9 +252,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EStringToStringMapEntry")
     public JAXBElement<EStringToStringMapEntry> createEStringToStringMapEntry(
         final EStringToStringMapEntry value) {
-        return new JAXBElement<EStringToStringMapEntry>(
-            _EStringToStringMapEntry_QNAME, EStringToStringMapEntry.class,
-            null, value);
+        return new JAXBElement<>(
+                _EStringToStringMapEntry_QNAME, EStringToStringMapEntry.class,
+                null, value);
     }
 
     /**
@@ -263,8 +263,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EObject")
     public JAXBElement<EObject> createEObject(final EObject value) {
-        return new JAXBElement<EObject>(_EObject_QNAME, EObject.class, null,
-            value);
+        return new JAXBElement<>(_EObject_QNAME, EObject.class, null,
+                value);
     }
 
     /**
@@ -273,8 +273,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EAttribute")
     public JAXBElement<EAttribute> createEAttribute(final EAttribute value) {
-        return new JAXBElement<EAttribute>(_EAttribute_QNAME, EAttribute.class,
-            null, value);
+        return new JAXBElement<>(_EAttribute_QNAME, EAttribute.class,
+                null, value);
     }
 
     /**
@@ -283,8 +283,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EModelElement")
     public JAXBElement<EModelElement> createEModelElement(final EModelElement value) {
-        return new JAXBElement<EModelElement>(_EModelElement_QNAME,
-            EModelElement.class, null, value);
+        return new JAXBElement<>(_EModelElement_QNAME,
+                EModelElement.class, null, value);
     }
 
     /**
@@ -292,7 +292,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EEnum")
     public JAXBElement<EEnum> createEEnum(final EEnum value) {
-        return new JAXBElement<EEnum>(_EEnum_QNAME, EEnum.class, null, value);
+        return new JAXBElement<>(_EEnum_QNAME, EEnum.class, null, value);
     }
 
     /**
@@ -301,8 +301,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EEnumLiteral")
     public JAXBElement<EEnumLiteral> createEEnumLiteral(final EEnumLiteral value) {
-        return new JAXBElement<EEnumLiteral>(_EEnumLiteral_QNAME,
-            EEnumLiteral.class, null, value);
+        return new JAXBElement<>(_EEnumLiteral_QNAME,
+                EEnumLiteral.class, null, value);
     }
 
     /**
@@ -311,8 +311,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EReference")
     public JAXBElement<EReference> createEReference(final EReference value) {
-        return new JAXBElement<EReference>(_EReference_QNAME, EReference.class,
-            null, value);
+        return new JAXBElement<>(_EReference_QNAME, EReference.class,
+                null, value);
     }
 
     /**
@@ -322,8 +322,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EStructuralFeature")
     public JAXBElement<EStructuralFeature> createEStructuralFeature(
         final EStructuralFeature value) {
-        return new JAXBElement<EStructuralFeature>(_EStructuralFeature_QNAME,
-            EStructuralFeature.class, null, value);
+        return new JAXBElement<>(_EStructuralFeature_QNAME,
+                EStructuralFeature.class, null, value);
     }
 
     /**
@@ -332,8 +332,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EAnnotation")
     public JAXBElement<EAnnotation> createEAnnotation(final EAnnotation value) {
-        return new JAXBElement<EAnnotation>(_EAnnotation_QNAME,
-            EAnnotation.class, null, value);
+        return new JAXBElement<>(_EAnnotation_QNAME,
+                EAnnotation.class, null, value);
     }
 
     /**
@@ -342,8 +342,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "ENamedElement")
     public JAXBElement<ENamedElement> createENamedElement(final ENamedElement value) {
-        return new JAXBElement<ENamedElement>(_ENamedElement_QNAME,
-            ENamedElement.class, null, value);
+        return new JAXBElement<>(_ENamedElement_QNAME,
+                ENamedElement.class, null, value);
     }
 
     /**
@@ -352,8 +352,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EParameter")
     public JAXBElement<EParameter> createEParameter(final EParameter value) {
-        return new JAXBElement<EParameter>(_EParameter_QNAME, EParameter.class,
-            null, value);
+        return new JAXBElement<>(_EParameter_QNAME, EParameter.class,
+                null, value);
     }
 
     /**
@@ -362,8 +362,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EDataType")
     public JAXBElement<EDataType> createEDataType(final EDataType value) {
-        return new JAXBElement<EDataType>(_EDataType_QNAME, EDataType.class,
-            null, value);
+        return new JAXBElement<>(_EDataType_QNAME, EDataType.class,
+                null, value);
     }
 
     /**
@@ -371,7 +371,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EClass")
     public JAXBElement<EClass> createEClass(final EClass value) {
-        return new JAXBElement<EClass>(_EClass_QNAME, EClass.class, null, value);
+        return new JAXBElement<>(_EClass_QNAME, EClass.class, null, value);
     }
 
     /**
@@ -380,8 +380,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.eclipse.org/emf/2002/Ecore", name = "EPackage")
     public JAXBElement<EPackage> createEPackage(final EPackage value) {
-        return new JAXBElement<EPackage>(_EPackage_QNAME, EPackage.class, null,
-            value);
+        return new JAXBElement<>(_EPackage_QNAME, EPackage.class, null,
+                value);
     }
 
 }

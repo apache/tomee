@@ -38,7 +38,7 @@ public class TelephoneBean implements Telephone {
             "You don't say!",
     };
 
-    private final List<String> conversation = new ArrayList<String>();
+    private final List<String> conversation = new ArrayList<>();
 
     @Override
     public void speak(final String words) {

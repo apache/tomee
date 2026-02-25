@@ -56,7 +56,7 @@ public class Any {
     @XmlAnyElement
     protected List<Element> elements;
     @XmlAnyAttribute
-    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<>();
 
     /**
      * Gets the value of the elements property.
@@ -80,7 +80,7 @@ public class Any {
      */
     public List<Element> getElements() {
         if (elements == null) {
-            elements = new ArrayList<Element>();
+            elements = new ArrayList<>();
         }
         return this.elements;
     }

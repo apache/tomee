@@ -477,7 +477,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private static final ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
+    private static final ThreadLocal<Map<String, Object>> context = new ThreadLocal<>();
 
     public static void setContext(final Map<String, Object> map) {
         context.set(map);
@@ -1864,7 +1864,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Sort all the beans with references to the back of the list.  Beans
         // without references to ther beans will be deployed first.
-        deployments = References.sort(deployments, new References.Visitor<BeanContext>() {
+        deployments = References.sort(deployments, new References.Visitor<>() {
             @Override
             public String getName(final BeanContext t) {
                 return (String) t.getDeploymentID();
@@ -1995,7 +1995,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        resources.sort(new Comparator<DestroyingResource>() { // end by destroying RA after having closed CF pool (for jms for instance)
+        resources.sort(new Comparator<>() { // end by destroying RA after having closed CF pool (for jms for instance)
             @Override
             public int compare(final DestroyingResource o1, final DestroyingResource o2) {
                 final boolean ra1 = isRa(o1.instance);

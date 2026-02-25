@@ -93,7 +93,7 @@ public class Table {
      */
     public List<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new ArrayList<>();
         }
         return this.uniqueConstraint;
     }

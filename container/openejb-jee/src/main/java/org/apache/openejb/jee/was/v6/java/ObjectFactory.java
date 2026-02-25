@@ -153,8 +153,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "JavaEvent")
     public JAXBElement<JavaEvent> createJavaEvent(final JavaEvent value) {
-        return new JAXBElement<JavaEvent>(_JavaEvent_QNAME, JavaEvent.class,
-            null, value);
+        return new JAXBElement<>(_JavaEvent_QNAME, JavaEvent.class,
+                null, value);
     }
 
     /**
@@ -163,8 +163,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "JavaParameter")
     public JAXBElement<JavaParameter> createJavaParameter(final JavaParameter value) {
-        return new JAXBElement<JavaParameter>(_JavaParameter_QNAME,
-            JavaParameter.class, null, value);
+        return new JAXBElement<>(_JavaParameter_QNAME,
+                JavaParameter.class, null, value);
     }
 
     /**
@@ -173,8 +173,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "JavaClass")
     public JAXBElement<JavaClass> createJavaClass(final JavaClass value) {
-        return new JAXBElement<JavaClass>(_JavaClass_QNAME, JavaClass.class,
-            null, value);
+        return new JAXBElement<>(_JavaClass_QNAME, JavaClass.class,
+                null, value);
     }
 
     /**
@@ -183,8 +183,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "Initializer")
     public JAXBElement<Initializer> createInitializer(final Initializer value) {
-        return new JAXBElement<Initializer>(_Initializer_QNAME,
-            Initializer.class, null, value);
+        return new JAXBElement<>(_Initializer_QNAME,
+                Initializer.class, null, value);
     }
 
     /**
@@ -192,7 +192,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "Field")
     public JAXBElement<Field> createField(final Field value) {
-        return new JAXBElement<Field>(_Field_QNAME, Field.class, null, value);
+        return new JAXBElement<>(_Field_QNAME, Field.class, null, value);
     }
 
     /**
@@ -201,8 +201,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "JavaDataType")
     public JAXBElement<JavaDataType> createJavaDataType(final JavaDataType value) {
-        return new JAXBElement<JavaDataType>(_JavaDataType_QNAME,
-            JavaDataType.class, null, value);
+        return new JAXBElement<>(_JavaDataType_QNAME,
+                JavaDataType.class, null, value);
     }
 
     /**
@@ -211,8 +211,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "Statement")
     public JAXBElement<Statement> createStatement(final Statement value) {
-        return new JAXBElement<Statement>(_Statement_QNAME, Statement.class,
-            null, value);
+        return new JAXBElement<>(_Statement_QNAME, Statement.class,
+                null, value);
     }
 
     /**
@@ -221,8 +221,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "Comment")
     public JAXBElement<Comment> createComment(final Comment value) {
-        return new JAXBElement<Comment>(_Comment_QNAME, Comment.class, null,
-            value);
+        return new JAXBElement<>(_Comment_QNAME, Comment.class, null,
+                value);
     }
 
     /**
@@ -230,7 +230,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "Method")
     public JAXBElement<Method> createMethod(final Method value) {
-        return new JAXBElement<Method>(_Method_QNAME, Method.class, null, value);
+        return new JAXBElement<>(_Method_QNAME, Method.class, null, value);
     }
 
     /**
@@ -239,8 +239,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "JavaPackage")
     public JAXBElement<JavaPackage> createJavaPackage(final JavaPackage value) {
-        return new JAXBElement<JavaPackage>(_JavaPackage_QNAME,
-            JavaPackage.class, null, value);
+        return new JAXBElement<>(_JavaPackage_QNAME,
+                JavaPackage.class, null, value);
     }
 
     /**
@@ -249,8 +249,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "ArrayType")
     public JAXBElement<ArrayType> createArrayType(final ArrayType value) {
-        return new JAXBElement<ArrayType>(_ArrayType_QNAME, ArrayType.class,
-            null, value);
+        return new JAXBElement<>(_ArrayType_QNAME, ArrayType.class,
+                null, value);
     }
 
     /**
@@ -258,7 +258,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "java.xmi", name = "Block")
     public JAXBElement<Block> createBlock(final Block value) {
-        return new JAXBElement<Block>(_Block_QNAME, Block.class, null, value);
+        return new JAXBElement<>(_Block_QNAME, Block.class, null, value);
     }
 
 }

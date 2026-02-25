@@ -245,7 +245,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
 
-        final List<Integer> values = new ArrayList<Integer>();
+        final List<Integer> values = new ArrayList<>();
         for (final Object object : result) {
             assertTrue("result item should be an instance of QueryDataLocal but is instance of " + Arrays.toString(object.getClass().getInterfaces()), object instanceof QueryDataLocal);
             final QueryDataLocal queryData = (QueryDataLocal) object;
@@ -262,7 +262,7 @@ public class EjbqlLocalTest extends Cmp2TestClient {
         assertNotNull("result is null", result);
         assertEquals("result.size()", 4, result.size());
 
-        final List<Integer> values = new ArrayList<Integer>();
+        final List<Integer> values = new ArrayList<>();
         for (final Object object : result) {
             assertTrue("result item should be an instance of QueryDataRemote", object instanceof QueryDataRemote);
             final QueryDataRemote queryData = (QueryDataRemote) object;

@@ -155,7 +155,7 @@ public class EnterpriseBeanBinding {
      */
     public List<EnterpriseBean> getEnterpriseBeans() {
         if (enterpriseBeans == null) {
-            enterpriseBeans = new ArrayList<EnterpriseBean>();
+            enterpriseBeans = new ArrayList<>();
         }
         return this.enterpriseBeans;
     }
@@ -183,7 +183,7 @@ public class EnterpriseBeanBinding {
      */
     public List<ResourceRefBinding> getDatasources() {
         if (datasources == null) {
-            datasources = new ArrayList<ResourceRefBinding>();
+            datasources = new ArrayList<>();
         }
         return this.datasources;
     }
@@ -211,7 +211,7 @@ public class EnterpriseBeanBinding {
      */
     public List<ResourceRefBinding> getResRefBindings() {
         if (resRefBindings == null) {
-            resRefBindings = new ArrayList<ResourceRefBinding>();
+            resRefBindings = new ArrayList<>();
         }
         return this.resRefBindings;
     }
@@ -239,7 +239,7 @@ public class EnterpriseBeanBinding {
      */
     public List<EjbRefBinding> getEjbRefBindings() {
         if (ejbRefBindings == null) {
-            ejbRefBindings = new ArrayList<EjbRefBinding>();
+            ejbRefBindings = new ArrayList<>();
         }
         return this.ejbRefBindings;
     }
@@ -267,7 +267,7 @@ public class EnterpriseBeanBinding {
      */
     public List<ResourceEnvRefBinding> getResourceEnvRefBindings() {
         if (resourceEnvRefBindings == null) {
-            resourceEnvRefBindings = new ArrayList<ResourceEnvRefBinding>();
+            resourceEnvRefBindings = new ArrayList<>();
         }
         return this.resourceEnvRefBindings;
     }
@@ -295,7 +295,7 @@ public class EnterpriseBeanBinding {
      */
     public List<CMPConnectionFactoryBinding> getCmpConnectionFactories() {
         if (cmpConnectionFactories == null) {
-            cmpConnectionFactories = new ArrayList<CMPConnectionFactoryBinding>();
+            cmpConnectionFactories = new ArrayList<>();
         }
         return this.cmpConnectionFactories;
     }
@@ -323,7 +323,7 @@ public class EnterpriseBeanBinding {
      */
     public List<ServiceRefBinding> getServiceRefBindings() {
         if (serviceRefBindings == null) {
-            serviceRefBindings = new ArrayList<ServiceRefBinding>();
+            serviceRefBindings = new ArrayList<>();
         }
         return this.serviceRefBindings;
     }
@@ -351,7 +351,7 @@ public class EnterpriseBeanBinding {
      */
     public List<MessageDestinationRefBinding> getMessageDestinationRefBindings() {
         if (messageDestinationRefBindings == null) {
-            messageDestinationRefBindings = new ArrayList<MessageDestinationRefBinding>();
+            messageDestinationRefBindings = new ArrayList<>();
         }
         return this.messageDestinationRefBindings;
     }
@@ -379,7 +379,7 @@ public class EnterpriseBeanBinding {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

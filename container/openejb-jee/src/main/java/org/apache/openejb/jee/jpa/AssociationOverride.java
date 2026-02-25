@@ -115,7 +115,7 @@ public class AssociationOverride {
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
-            joinColumn = new ArrayList<JoinColumn>();
+            joinColumn = new ArrayList<>();
         }
         return this.joinColumn;
     }

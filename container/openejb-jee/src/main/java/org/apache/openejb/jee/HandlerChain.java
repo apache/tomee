@@ -97,14 +97,14 @@ public class HandlerChain {
 
     public List<String> getProtocolBindings() {
         if (protocolBindings == null) {
-            protocolBindings = new ArrayList<String>();
+            protocolBindings = new ArrayList<>();
         }
         return this.protocolBindings;
     }
 
     public List<Handler> getHandler() {
         if (handler == null) {
-            handler = new ArrayList<Handler>();
+            handler = new ArrayList<>();
         }
         return this.handler;
     }

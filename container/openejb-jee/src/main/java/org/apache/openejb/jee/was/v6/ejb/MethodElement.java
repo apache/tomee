@@ -325,7 +325,7 @@ public class MethodElement {
      */
     public List<EnterpriseBean> getEnterpriseBeans() {
         if (enterpriseBeans == null) {
-            enterpriseBeans = new ArrayList<EnterpriseBean>();
+            enterpriseBeans = new ArrayList<>();
         }
         return this.enterpriseBeans;
     }
@@ -353,7 +353,7 @@ public class MethodElement {
      */
     public List<Description> getDescriptions() {
         if (descriptions == null) {
-            descriptions = new ArrayList<Description>();
+            descriptions = new ArrayList<>();
         }
         return this.descriptions;
     }
@@ -381,7 +381,7 @@ public class MethodElement {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

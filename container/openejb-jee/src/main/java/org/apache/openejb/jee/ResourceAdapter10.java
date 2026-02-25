@@ -123,7 +123,7 @@ public class ResourceAdapter10 {
     //     @XmlElement(name = "authentication-mechanism")
     public List<AuthenticationMechanism> getAuthenticationMechanism() {
         if (authenticationMechanism == null) {
-            authenticationMechanism = new ArrayList<AuthenticationMechanism>();
+            authenticationMechanism = new ArrayList<>();
         }
         return this.authenticationMechanism;
     }
@@ -141,7 +141,7 @@ public class ResourceAdapter10 {
     //    @XmlElement(name = "security-permission")
     public List<SecurityPermission> getSecurityPermission() {
         if (securityPermission == null) {
-            securityPermission = new ArrayList<SecurityPermission>();
+            securityPermission = new ArrayList<>();
         }
         return this.securityPermission;
     }

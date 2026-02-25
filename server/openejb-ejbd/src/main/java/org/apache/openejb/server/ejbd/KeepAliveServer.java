@@ -95,7 +95,7 @@ public class KeepAliveServer implements ServerService {
 
         final long now = System.currentTimeMillis();
 
-        final List<Session> current = new ArrayList<Session>();
+        final List<Session> current = new ArrayList<>();
         current.addAll(this.sessions.values());
 
         for (final Session session : current) {

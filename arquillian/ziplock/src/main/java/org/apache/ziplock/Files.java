@@ -38,7 +38,7 @@ public class Files {
 
 
     public static List<File> collect(final File dir, final FileFilter filter) {
-        final List<File> accepted = new ArrayList<File>();
+        final List<File> accepted = new ArrayList<>();
         if (filter.accept(dir)) {
             accepted.add(dir);
         }
@@ -115,7 +115,7 @@ public class Files {
     }
 
     // Shutdown hook for recursive delete on tmp directories
-    static final List<String> delete = new ArrayList<String>();
+    static final List<String> delete = new ArrayList<>();
 
     static {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();

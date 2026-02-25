@@ -80,7 +80,7 @@ public class CheckDependsOn extends ValidationBase {
         }
 
         try {
-            References.sort(new ArrayList<Bean>(app.values()), new References.Visitor<Bean>() {
+            References.sort(new ArrayList<>(app.values()), new References.Visitor<>() {
                 public String getName(final Bean t) {
                     return t.getId();
                 }

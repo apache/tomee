@@ -131,21 +131,21 @@ public class FacesFactory {
      */
     public List<java.lang.String> getApplicationFactory() {
         if (applicationFactory == null) {
-            applicationFactory = new ArrayList<java.lang.String>();
+            applicationFactory = new ArrayList<>();
         }
         return this.applicationFactory;
     }
 
     public List<String> getExceptionHandlerFactory() {
         if (exceptionHandlerFactory == null) {
-            exceptionHandlerFactory = new ArrayList<String>();
+            exceptionHandlerFactory = new ArrayList<>();
         }
         return exceptionHandlerFactory;
     }
 
     public List<String> getExternalContextFactory() {
         if (externalContextFactory == null) {
-            externalContextFactory = new ArrayList<String>();
+            externalContextFactory = new ArrayList<>();
         }
         return externalContextFactory;
     }
@@ -172,7 +172,7 @@ public class FacesFactory {
      */
     public List<java.lang.String> getFacesContextFactory() {
         if (facesContextFactory == null) {
-            facesContextFactory = new ArrayList<java.lang.String>();
+            facesContextFactory = new ArrayList<>();
         }
         return this.facesContextFactory;
     }
@@ -199,28 +199,28 @@ public class FacesFactory {
      */
     public List<java.lang.String> getLifecycleFactory() {
         if (lifecycleFactory == null) {
-            lifecycleFactory = new ArrayList<java.lang.String>();
+            lifecycleFactory = new ArrayList<>();
         }
         return this.lifecycleFactory;
     }
 
     public List<String> getViewDeclarationLanguageFactory() {
         if (viewDeclarationLanguageFactory == null) {
-            viewDeclarationLanguageFactory = new ArrayList<String>();
+            viewDeclarationLanguageFactory = new ArrayList<>();
         }
         return viewDeclarationLanguageFactory;
     }
 
     public List<String> getPartialViewContextFactory() {
         if (partialViewContextFactory == null) {
-            partialViewContextFactory = new ArrayList<String>();
+            partialViewContextFactory = new ArrayList<>();
         }
         return partialViewContextFactory;
     }
 
     public List<String> getTagHandlerDelegateFactory() {
         if (tagHandlerDelegateFactory == null) {
-            tagHandlerDelegateFactory = new ArrayList<String>();
+            tagHandlerDelegateFactory = new ArrayList<>();
         }
         return tagHandlerDelegateFactory;
     }
@@ -247,14 +247,14 @@ public class FacesFactory {
      */
     public List<java.lang.String> getRenderKitFactory() {
         if (renderKitFactory == null) {
-            renderKitFactory = new ArrayList<java.lang.String>();
+            renderKitFactory = new ArrayList<>();
         }
         return this.renderKitFactory;
     }
 
     public List<String> getVisitContextFactory() {
         if (visitContextFactory == null) {
-            visitContextFactory = new ArrayList<String>();
+            visitContextFactory = new ArrayList<>();
         }
         return visitContextFactory;
     }
@@ -281,7 +281,7 @@ public class FacesFactory {
      */
     public List<FacesFactoryExtension> getFactoryExtension() {
         if (factoryExtension == null) {
-            factoryExtension = new ArrayList<FacesFactoryExtension>();
+            factoryExtension = new ArrayList<>();
         }
         return this.factoryExtension;
     }

@@ -81,7 +81,7 @@ public class FacesConfigProtectedViews {
      */
     public List<UrlPattern> getUrlPattern() {
         if (urlPattern == null) {
-            urlPattern = new ArrayList<UrlPattern>();
+            urlPattern = new ArrayList<>();
         }
         return this.urlPattern;
     }

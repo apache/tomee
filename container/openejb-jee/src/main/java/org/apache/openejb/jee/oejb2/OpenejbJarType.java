@@ -113,7 +113,7 @@ public class OpenejbJarType {
         @XmlElement(name = "message-driven", required = true, type = MessageDrivenBeanType.class),
         @XmlElement(name = "session", required = true, type = SessionBeanType.class),
         @XmlElement(name = "entity", required = true, type = EntityBeanType.class)})
-    protected List<EnterpriseBean> enterpriseBeans = new ArrayList<EnterpriseBean>();
+    protected List<EnterpriseBean> enterpriseBeans = new ArrayList<>();
 
     @XmlElementWrapper(name = "relationships")
     @XmlElement(name = "ejb-relation", required = true)
@@ -219,7 +219,7 @@ public class OpenejbJarType {
 
     public List<EjbRelationType> getEjbRelation() {
         if (ejbRelation == null) {
-            ejbRelation = new ArrayList<EjbRelationType>();
+            ejbRelation = new ArrayList<>();
         }
         return ejbRelation;
     }
@@ -230,7 +230,7 @@ public class OpenejbJarType {
 
     public List<MessageDestinationType> getMessageDestination() {
         if (messageDestination == null) {
-            messageDestination = new ArrayList<MessageDestinationType>();
+            messageDestination = new ArrayList<>();
         }
         return this.messageDestination;
     }
@@ -245,14 +245,14 @@ public class OpenejbJarType {
 
     public List<JAXBElement<? extends AbstractServiceType>> getService() {
         if (service == null) {
-            service = new ArrayList<JAXBElement<? extends AbstractServiceType>>();
+            service = new ArrayList<>();
         }
         return this.service;
     }
 
     public List<Persistence> getPersistence() {
         if (persistence == null) {
-            persistence = new ArrayList<Persistence>();
+            persistence = new ArrayList<>();
         }
         return persistence;
     }

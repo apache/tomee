@@ -196,7 +196,7 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
 
     public Set<InjectionTarget> getInjectionTarget() {
         if (injectionTarget == null) {
-            injectionTarget = new HashSet<InjectionTarget>();
+            injectionTarget = new HashSet<>();
         }
         return this.injectionTarget;
     }

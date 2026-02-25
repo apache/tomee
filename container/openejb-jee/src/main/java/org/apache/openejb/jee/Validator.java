@@ -91,7 +91,7 @@ public class Validator {
 
     public List<ParamValue> getInitParam() {
         if (initParam == null) {
-            initParam = new ArrayList<ParamValue>();
+            initParam = new ArrayList<>();
         }
         return this.initParam;
     }

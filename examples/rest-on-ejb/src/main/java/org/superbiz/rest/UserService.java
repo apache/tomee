@@ -64,7 +64,7 @@ public class UserService {
     @GET
     public List<User> list(@QueryParam("first") @DefaultValue("0") int first,
                            @QueryParam("max") @DefaultValue("20") int max) {
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
         List<User> found = em.createNamedQuery("user.list", User.class).setFirstResult(first).setMaxResults(max).getResultList();
         for (User u : found) {
             users.add(u.copy());

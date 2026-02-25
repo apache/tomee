@@ -365,7 +365,7 @@ public class EjbRelationshipRoleType {
          */
         public List<EjbRelationshipRoleType.RoleMapping.CmrFieldMapping> getCmrFieldMapping() {
             if (cmrFieldMapping == null) {
-                cmrFieldMapping = new ArrayList<EjbRelationshipRoleType.RoleMapping.CmrFieldMapping>();
+                cmrFieldMapping = new ArrayList<>();
             }
             return this.cmrFieldMapping;
         }

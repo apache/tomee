@@ -36,7 +36,7 @@ public class PmDescriptors {
 
     public List<PmDescriptor> getPmDescriptor() {
         if (pmDescriptor == null) {
-            pmDescriptor = new ArrayList<PmDescriptor>();
+            pmDescriptor = new ArrayList<>();
         }
         return this.pmDescriptor;
     }

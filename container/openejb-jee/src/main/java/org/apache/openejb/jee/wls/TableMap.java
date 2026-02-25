@@ -127,7 +127,7 @@ public class TableMap {
      */
     public List<FieldMap> getFieldMap() {
         if (fieldMap == null) {
-            fieldMap = new ArrayList<FieldMap>();
+            fieldMap = new ArrayList<>();
         }
         return this.fieldMap;
     }

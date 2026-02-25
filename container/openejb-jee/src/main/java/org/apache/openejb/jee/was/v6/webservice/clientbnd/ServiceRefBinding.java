@@ -115,7 +115,7 @@ public class ServiceRefBinding {
      */
     public List<ServiceRef> getBindingServiceRefs() {
         if (bindingServiceRefs == null) {
-            bindingServiceRefs = new ArrayList<ServiceRef>();
+            bindingServiceRefs = new ArrayList<>();
         }
         return this.bindingServiceRefs;
     }
@@ -143,7 +143,7 @@ public class ServiceRefBinding {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

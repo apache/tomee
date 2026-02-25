@@ -877,7 +877,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private List<String> webappsAlreadyAdded() {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         final File webapps = new File(catalinaBase, webappDirOrImplicitDefault());
         if (webapps.exists() && webapps.isDirectory()) {
             final File[] files = webapps.listFiles();

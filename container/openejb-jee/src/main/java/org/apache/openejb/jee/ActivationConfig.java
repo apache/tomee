@@ -88,7 +88,7 @@ public class ActivationConfig {
 
     public List<ActivationConfigProperty> getActivationConfigProperty() {
         if (activationConfigProperty == null) {
-            activationConfigProperty = new ArrayList<ActivationConfigProperty>();
+            activationConfigProperty = new ArrayList<>();
         }
         return this.activationConfigProperty;
     }

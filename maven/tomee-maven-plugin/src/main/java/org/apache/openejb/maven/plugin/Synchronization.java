@@ -104,7 +104,7 @@ public class Synchronization extends AbstractSynchronizable {
     @Override
     public Map<File, File> updates() {
         if (updates == null) {
-            updates = new HashMap<File, File>();
+            updates = new HashMap<>();
             if (resourcesDir != null && targetResourcesDir != null) {
                 updates.put(resourcesDir, targetResourcesDir);
             }

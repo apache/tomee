@@ -225,7 +225,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
 
     public List<Property> getPersistenceProperty() {
         if (persistenceProperty == null) {
-            persistenceProperty = new ArrayList<Property>();
+            persistenceProperty = new ArrayList<>();
         }
         return this.persistenceProperty;
     }
@@ -248,7 +248,7 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
 
     public Set<InjectionTarget> getInjectionTarget() {
         if (injectionTarget == null) {
-            injectionTarget = new HashSet<InjectionTarget>();
+            injectionTarget = new HashSet<>();
         }
         return this.injectionTarget;
     }

@@ -75,7 +75,7 @@ public class FacesProperty {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
     @XmlElement(name = "property-name", required = true)
     protected java.lang.String propertyName;
     @XmlElement(name = "property-class", required = true)
@@ -120,14 +120,14 @@ public class FacesProperty {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -238,7 +238,7 @@ public class FacesProperty {
      */
     public List<FacesPropertyExtension> getPropertyExtension() {
         if (propertyExtension == null) {
-            propertyExtension = new ArrayList<FacesPropertyExtension>();
+            propertyExtension = new ArrayList<>();
         }
         return this.propertyExtension;
     }

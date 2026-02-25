@@ -53,20 +53,20 @@ public class OpenejbJar implements NamedModule {
 
     public List<EjbDeployment> getEjbDeployment() {
         if (ejbDeployment == null) {
-            ejbDeployment = new ArrayList<EjbDeployment>();
+            ejbDeployment = new ArrayList<>();
         }
         return this.ejbDeployment;
     }
 
     public List<PojoDeployment> getPojoDeployment() {
         if (pojoDeployment == null) {
-            pojoDeployment = new ArrayList<PojoDeployment>();
+            pojoDeployment = new ArrayList<>();
         }
         return pojoDeployment;
     }
 
     public Map<String, EjbDeployment> getDeploymentsById() {
-        final Map<String, EjbDeployment> map = new LinkedHashMap<String, EjbDeployment>();
+        final Map<String, EjbDeployment> map = new LinkedHashMap<>();
         for (final EjbDeployment deployment : getEjbDeployment()) {
             map.put(deployment.getDeploymentId(), deployment);
         }
@@ -74,7 +74,7 @@ public class OpenejbJar implements NamedModule {
     }
 
     public Map<String, EjbDeployment> getDeploymentsByEjbName() {
-        final Map<String, EjbDeployment> map = new LinkedHashMap<String, EjbDeployment>();
+        final Map<String, EjbDeployment> map = new LinkedHashMap<>();
         for (final EjbDeployment deployment : getEjbDeployment()) {
             map.put(deployment.getEjbName(), deployment);
         }

@@ -73,7 +73,7 @@ public class DependenciesType {
      */
     public List<DependencyType> getDependency() {
         if (dependency == null) {
-            dependency = new ArrayList<DependencyType>();
+            dependency = new ArrayList<>();
         }
         return this.dependency;
     }

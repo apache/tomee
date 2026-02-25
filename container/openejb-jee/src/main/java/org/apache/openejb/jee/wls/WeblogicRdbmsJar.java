@@ -114,7 +114,7 @@ public class WeblogicRdbmsJar {
      */
     public List<WeblogicRdbmsBean> getWeblogicRdbmsBean() {
         if (weblogicRdbmsBean == null) {
-            weblogicRdbmsBean = new ArrayList<WeblogicRdbmsBean>();
+            weblogicRdbmsBean = new ArrayList<>();
         }
         return this.weblogicRdbmsBean;
     }
@@ -141,7 +141,7 @@ public class WeblogicRdbmsJar {
      */
     public List<WeblogicRdbmsRelation> getWeblogicRdbmsRelation() {
         if (weblogicRdbmsRelation == null) {
-            weblogicRdbmsRelation = new ArrayList<WeblogicRdbmsRelation>();
+            weblogicRdbmsRelation = new ArrayList<>();
         }
         return this.weblogicRdbmsRelation;
     }

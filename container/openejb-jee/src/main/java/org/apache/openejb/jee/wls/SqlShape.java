@@ -127,7 +127,7 @@ public class SqlShape {
      */
     public List<Table> getTable() {
         if (table == null) {
-            table = new ArrayList<Table>();
+            table = new ArrayList<>();
         }
         return this.table;
     }
@@ -174,7 +174,7 @@ public class SqlShape {
      */
     public List<String> getEjbRelationName() {
         if (ejbRelationName == null) {
-            ejbRelationName = new ArrayList<String>();
+            ejbRelationName = new ArrayList<>();
         }
         return this.ejbRelationName;
     }

@@ -105,7 +105,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
     private void avoidAutoReload() {
         if (systemVariables == null) {
-            systemVariables = new HashMap<String, String>();
+            systemVariables = new HashMap<>();
         }
         if (!systemVariables.containsKey("tomee.classloader.skip-background-process")) {
             systemVariables.put("tomee.classloader.skip-background-process", "true");
@@ -142,7 +142,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             synchronization.setUpdateInterval(5); // sec
         }
         if (synchronization.getExtensions() == null) {
-            synchronization.setExtensions(new ArrayList<String>(Arrays.asList(".html", ".css", ".js", ".xhtml")));
+            synchronization.setExtensions(new ArrayList<>(Arrays.asList(".html", ".css", ".js", ".xhtml")));
         }
         if (synchronization.getUpdateOnlyExtenions() == null) {
             synchronization.setUpdateOnlyExtensions(Collections.<String>emptyList());

@@ -58,7 +58,7 @@ public class RetryHandlers {
      */
     public List<Handler> getHandler() {
         if (handler == null) {
-            handler = new ArrayList<Handler>();
+            handler = new ArrayList<>();
         }
         return this.handler;
     }

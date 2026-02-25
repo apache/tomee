@@ -89,7 +89,7 @@ public class JspPropertyGroup {
     @XmlTransient
     protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon", required = true)
-    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
+    protected LocalCollection<Icon> icon = new LocalCollection<>();
 
     @XmlElement(name = "url-pattern", required = true)
     @XmlJavaTypeAdapter(TrimStringAdapter.class)
@@ -148,14 +148,14 @@ public class JspPropertyGroup {
 
     public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon;
     }
 
     public Map<String, Icon> getIconMap() {
         if (icon == null) {
-            icon = new LocalCollection<Icon>();
+            icon = new LocalCollection<>();
         }
         return icon.toMap();
     }
@@ -166,7 +166,7 @@ public class JspPropertyGroup {
 
     public List<String> getUrlPattern() {
         if (urlPattern == null) {
-            urlPattern = new ArrayList<String>();
+            urlPattern = new ArrayList<>();
         }
         return this.urlPattern;
     }
@@ -205,14 +205,14 @@ public class JspPropertyGroup {
 
     public List<String> getIncludePrelude() {
         if (includePrelude == null) {
-            includePrelude = new ArrayList<String>();
+            includePrelude = new ArrayList<>();
         }
         return this.includePrelude;
     }
 
     public List<String> getIncludeCoda() {
         if (includeCoda == null) {
-            includeCoda = new ArrayList<String>();
+            includeCoda = new ArrayList<>();
         }
         return this.includeCoda;
     }

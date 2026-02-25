@@ -79,8 +79,8 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     private volatile boolean cachedSessionScoped;
 
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
-    private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
-    private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<ClassLoader, WebBeansContext>();
+    private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<>();
+    private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<>();
 
     private OWBContextThreadListener contextThreadListener;
 

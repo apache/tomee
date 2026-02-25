@@ -204,7 +204,7 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
     }
 
     public static class MostSpecificMethodCache { // just a wrapper to put in BeanContext without conflict
-        public final ConcurrentMap<MostSpecificMethodKey, Method> methods = new ConcurrentHashMap<MostSpecificMethodKey, Method>();
+        public final ConcurrentMap<MostSpecificMethodKey, Method> methods = new ConcurrentHashMap<>();
     }
 
     public static class MostSpecificMethodKey {

@@ -45,7 +45,7 @@ import java.util.logging.LogRecord;
  * @author gnodet
  */
 public class Log4jLogger extends AbstractDelegatingLogger {
-    private static final Map<Level, org.apache.log4j.Level> TO_LOG4J = new HashMap<Level, org.apache.log4j.Level>();
+    private static final Map<Level, org.apache.log4j.Level> TO_LOG4J = new HashMap<>();
     private static final org.apache.log4j.Level TRACE;
 
     private final Logger log;

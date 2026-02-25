@@ -75,7 +75,7 @@ public class Add extends Difference {
      */
     public List<Object> getAdditions() {
         if (additions == null) {
-            additions = new ArrayList<Object>();
+            additions = new ArrayList<>();
         }
         return this.additions;
     }

@@ -80,7 +80,7 @@ public class EntityListeners {
      */
     public List<EntityListener> getEntityListener() {
         if (entityListener == null) {
-            entityListener = new ArrayList<EntityListener>();
+            entityListener = new ArrayList<>();
         }
         return this.entityListener;
     }

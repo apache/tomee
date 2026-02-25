@@ -62,7 +62,7 @@ import javax.management.ReflectionException;
 public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DynamicMBeanWrapper.class);
 
-    private static final Map<Class<?>, CacheInfo> CACHE = new HashMap<Class<?>, CacheInfo>();
+    private static final Map<Class<?>, CacheInfo> CACHE = new HashMap<>();
 
     private static final Map<Class<?>, Class<? extends Annotation>> OPENEJB_API_TO_JAVAX = new HashMap<>();
 

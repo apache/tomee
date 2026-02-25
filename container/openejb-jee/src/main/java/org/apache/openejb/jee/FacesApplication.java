@@ -146,7 +146,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getActionListener() {
         if (actionListener == null) {
-            actionListener = new ArrayList<java.lang.String>();
+            actionListener = new ArrayList<>();
         }
         return this.actionListener;
     }
@@ -173,7 +173,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getDefaultRenderKitId() {
         if (defaultRenderKitId == null) {
-            defaultRenderKitId = new ArrayList<java.lang.String>();
+            defaultRenderKitId = new ArrayList<>();
         }
         return this.defaultRenderKitId;
     }
@@ -200,7 +200,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getMessageBundle() {
         if (messageBundle == null) {
-            messageBundle = new ArrayList<java.lang.String>();
+            messageBundle = new ArrayList<>();
         }
         return this.messageBundle;
     }
@@ -227,7 +227,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getNavigationHandler() {
         if (navigationHandler == null) {
-            navigationHandler = new ArrayList<java.lang.String>();
+            navigationHandler = new ArrayList<>();
         }
         return this.navigationHandler;
     }
@@ -254,7 +254,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getViewHandler() {
         if (viewHandler == null) {
-            viewHandler = new ArrayList<java.lang.String>();
+            viewHandler = new ArrayList<>();
         }
         return this.viewHandler;
     }
@@ -281,7 +281,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getStateManager() {
         if (stateManager == null) {
-            stateManager = new ArrayList<java.lang.String>();
+            stateManager = new ArrayList<>();
         }
         return this.stateManager;
     }
@@ -308,7 +308,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getElResolver() {
         if (elResolver == null) {
-            elResolver = new ArrayList<java.lang.String>();
+            elResolver = new ArrayList<>();
         }
         return this.elResolver;
     }
@@ -335,7 +335,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getPropertyResolver() {
         if (propertyResolver == null) {
-            propertyResolver = new ArrayList<java.lang.String>();
+            propertyResolver = new ArrayList<>();
         }
         return this.propertyResolver;
     }
@@ -362,7 +362,7 @@ public class FacesApplication {
      */
     public List<java.lang.String> getVariableResolver() {
         if (variableResolver == null) {
-            variableResolver = new ArrayList<java.lang.String>();
+            variableResolver = new ArrayList<>();
         }
         return this.variableResolver;
     }
@@ -370,14 +370,14 @@ public class FacesApplication {
 
     public List<String> getResourceHandler() {
         if (resourceHandler == null) {
-            resourceHandler = new ArrayList<String>();
+            resourceHandler = new ArrayList<>();
         }
         return resourceHandler;
     }
 
     public List<FacesSystemEventListener> getSystemEventListener() {
         if (systemEventListener == null) {
-            systemEventListener = new ArrayList<FacesSystemEventListener>();
+            systemEventListener = new ArrayList<>();
         }
         return systemEventListener;
     }
@@ -404,7 +404,7 @@ public class FacesApplication {
      */
     public List<FacesLocaleConfig> getLocaleConfig() {
         if (localeConfig == null) {
-            localeConfig = new ArrayList<FacesLocaleConfig>();
+            localeConfig = new ArrayList<>();
         }
         return this.localeConfig;
     }
@@ -451,14 +451,14 @@ public class FacesApplication {
      */
     public List<FacesApplicationExtension> getApplicationExtension() {
         if (applicationExtension == null) {
-            applicationExtension = new ArrayList<FacesApplicationExtension>();
+            applicationExtension = new ArrayList<>();
         }
         return this.applicationExtension;
     }
 
     public List<FacesValidator> getDefaultValidators() {
         if (defaultValidators == null) {
-            defaultValidators = new ArrayList<FacesValidator>();
+            defaultValidators = new ArrayList<>();
         }
         return defaultValidators;
     }

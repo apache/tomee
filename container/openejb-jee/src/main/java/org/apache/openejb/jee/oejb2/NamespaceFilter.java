@@ -32,7 +32,7 @@ import java.util.Stack;
  */
 public class NamespaceFilter extends XMLFilterImpl {
 
-    static Map<String, String> ns = new HashMap<String, String>();
+    static Map<String, String> ns = new HashMap<>();
 
     static {
         ns.put("abstract-naming-entry", "http://geronimo.apache.org/xml/ns/naming-1.2");
@@ -127,7 +127,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("xml-reference", "http://geronimo.apache.org/xml/ns/deployment-1.2");
     }
 
-    static final Map<String, List<String>> duplicates = new HashMap<String, List<String>>();
+    static final Map<String, List<String>> duplicates = new HashMap<>();
 
     static {
         duplicates.put("artifactId", Arrays.asList("http://geronimo.apache.org/xml/ns/deployment-1.2", "http://geronimo.apache.org/xml/ns/naming-1.2"));
@@ -143,7 +143,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         super(xmlReader);
     }
 
-    private final Stack<String> visibleNamespaces = new Stack<String>();
+    private final Stack<String> visibleNamespaces = new Stack<>();
 
     public void startDocument() throws SAXException {
         visibleNamespaces.push("");

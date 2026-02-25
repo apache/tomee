@@ -51,7 +51,7 @@ public class SampleManagedConnection implements ManagedConnection {
     public SampleManagedConnection(SampleManagedConnectionFactory mcf) {
         this.mcf = mcf;
         this.logwriter = null;
-        this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
+        this.listeners = Collections.synchronizedList(new ArrayList<>(1));
         this.connection = null;
     }
 

@@ -130,7 +130,7 @@ public class Persistence {
      */
     public List<PersistenceUnit> getPersistenceUnit() {
         if (persistenceUnit == null) {
-            persistenceUnit = new ArrayList<PersistenceUnit>();
+            persistenceUnit = new ArrayList<>();
         }
         return this.persistenceUnit;
     }

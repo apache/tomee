@@ -112,7 +112,7 @@ public class Initializer {
      */
     public List<Block> getSources() {
         if (sources == null) {
-            sources = new ArrayList<Block>();
+            sources = new ArrayList<>();
         }
         return this.sources;
     }
@@ -140,7 +140,7 @@ public class Initializer {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

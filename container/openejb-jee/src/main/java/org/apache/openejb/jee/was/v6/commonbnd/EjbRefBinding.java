@@ -113,7 +113,7 @@ public class EjbRefBinding {
      */
     public List<EjbRef> getBindingEjbRefs() {
         if (bindingEjbRefs == null) {
-            bindingEjbRefs = new ArrayList<EjbRef>();
+            bindingEjbRefs = new ArrayList<>();
         }
         return this.bindingEjbRefs;
     }
@@ -141,7 +141,7 @@ public class EjbRefBinding {
      */
     public List<Extension> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<>();
         }
         return this.extensions;
     }

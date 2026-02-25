@@ -274,7 +274,7 @@ class AppInfoBuilder {
 
         // Check for circular references in Singleton @DependsOn
         try {
-            References.sort(beans, new References.Visitor<EnterpriseBeanInfo>() {
+            References.sort(beans, new References.Visitor<>() {
                 @Override
                 public String getName(final EnterpriseBeanInfo bean) {
                     return bean.ejbDeploymentId;

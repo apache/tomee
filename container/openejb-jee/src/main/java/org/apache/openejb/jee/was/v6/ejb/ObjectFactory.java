@@ -251,8 +251,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "CMPAttribute")
     public JAXBElement<CMPAttribute> createCMPAttribute(final CMPAttribute value) {
-        return new JAXBElement<CMPAttribute>(_CMPAttribute_QNAME,
-            CMPAttribute.class, null, value);
+        return new JAXBElement<>(_CMPAttribute_QNAME,
+                CMPAttribute.class, null, value);
     }
 
     /**
@@ -261,8 +261,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "ExcludeList")
     public JAXBElement<ExcludeList> createExcludeList(final ExcludeList value) {
-        return new JAXBElement<ExcludeList>(_ExcludeList_QNAME,
-            ExcludeList.class, null, value);
+        return new JAXBElement<>(_ExcludeList_QNAME,
+                ExcludeList.class, null, value);
     }
 
     /**
@@ -270,7 +270,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "EJBJar")
     public JAXBElement<EJBJar> createEJBJar(final EJBJar value) {
-        return new JAXBElement<EJBJar>(_EJBJar_QNAME, EJBJar.class, null, value);
+        return new JAXBElement<>(_EJBJar_QNAME, EJBJar.class, null, value);
     }
 
     /**
@@ -279,8 +279,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "MessageDriven")
     public JAXBElement<MessageDriven> createMessageDriven(final MessageDriven value) {
-        return new JAXBElement<MessageDriven>(_MessageDriven_QNAME,
-            MessageDriven.class, null, value);
+        return new JAXBElement<>(_MessageDriven_QNAME,
+                MessageDriven.class, null, value);
     }
 
     /**
@@ -290,8 +290,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "EJBMethodCategory")
     public JAXBElement<EJBMethodCategory> createEJBMethodCategory(
         final EJBMethodCategory value) {
-        return new JAXBElement<EJBMethodCategory>(_EJBMethodCategory_QNAME,
-            EJBMethodCategory.class, null, value);
+        return new JAXBElement<>(_EJBMethodCategory_QNAME,
+                EJBMethodCategory.class, null, value);
     }
 
     /**
@@ -300,8 +300,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "EnterpriseBean")
     public JAXBElement<EnterpriseBean> createEnterpriseBean(final EnterpriseBean value) {
-        return new JAXBElement<EnterpriseBean>(_EnterpriseBean_QNAME,
-            EnterpriseBean.class, null, value);
+        return new JAXBElement<>(_EnterpriseBean_QNAME,
+                EnterpriseBean.class, null, value);
     }
 
     /**
@@ -311,9 +311,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "ContainerManagedEntity")
     public JAXBElement<ContainerManagedEntity> createContainerManagedEntity(
         final ContainerManagedEntity value) {
-        return new JAXBElement<ContainerManagedEntity>(
-            _ContainerManagedEntity_QNAME, ContainerManagedEntity.class,
-            null, value);
+        return new JAXBElement<>(
+                _ContainerManagedEntity_QNAME, ContainerManagedEntity.class,
+                null, value);
     }
 
     /**
@@ -323,9 +323,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "MessageDrivenDestination")
     public JAXBElement<MessageDrivenDestination> createMessageDrivenDestination(
         final MessageDrivenDestination value) {
-        return new JAXBElement<MessageDrivenDestination>(
-            _MessageDrivenDestination_QNAME,
-            MessageDrivenDestination.class, null, value);
+        return new JAXBElement<>(
+                _MessageDrivenDestination_QNAME,
+                MessageDrivenDestination.class, null, value);
     }
 
     /**
@@ -334,8 +334,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "EJBRelation")
     public JAXBElement<EJBRelation> createEJBRelation(final EJBRelation value) {
-        return new JAXBElement<EJBRelation>(_EJBRelation_QNAME,
-            EJBRelation.class, null, value);
+        return new JAXBElement<>(_EJBRelation_QNAME,
+                EJBRelation.class, null, value);
     }
 
     /**
@@ -345,8 +345,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "EJBRelationshipRole")
     public JAXBElement<EJBRelationshipRole> createEJBRelationshipRole(
         final EJBRelationshipRole value) {
-        return new JAXBElement<EJBRelationshipRole>(_EJBRelationshipRole_QNAME,
-            EJBRelationshipRole.class, null, value);
+        return new JAXBElement<>(_EJBRelationshipRole_QNAME,
+                EJBRelationshipRole.class, null, value);
     }
 
     /**
@@ -355,8 +355,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "RoleSource")
     public JAXBElement<RoleSource> createRoleSource(final RoleSource value) {
-        return new JAXBElement<RoleSource>(_RoleSource_QNAME, RoleSource.class,
-            null, value);
+        return new JAXBElement<>(_RoleSource_QNAME, RoleSource.class,
+                null, value);
     }
 
     /**
@@ -366,9 +366,9 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "ActivationConfigProperty")
     public JAXBElement<ActivationConfigProperty> createActivationConfigProperty(
         final ActivationConfigProperty value) {
-        return new JAXBElement<ActivationConfigProperty>(
-            _ActivationConfigProperty_QNAME,
-            ActivationConfigProperty.class, null, value);
+        return new JAXBElement<>(
+                _ActivationConfigProperty_QNAME,
+                ActivationConfigProperty.class, null, value);
     }
 
     /**
@@ -377,8 +377,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "Session")
     public JAXBElement<Session> createSession(final Session value) {
-        return new JAXBElement<Session>(_Session_QNAME, Session.class, null,
-            value);
+        return new JAXBElement<>(_Session_QNAME, Session.class, null,
+                value);
     }
 
     /**
@@ -387,8 +387,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "MethodElement")
     public JAXBElement<MethodElement> createMethodElement(final MethodElement value) {
-        return new JAXBElement<MethodElement>(_MethodElement_QNAME,
-            MethodElement.class, null, value);
+        return new JAXBElement<>(_MethodElement_QNAME,
+                MethodElement.class, null, value);
     }
 
     /**
@@ -398,8 +398,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "MethodTransaction")
     public JAXBElement<MethodTransaction> createMethodTransaction(
         final MethodTransaction value) {
-        return new JAXBElement<MethodTransaction>(_MethodTransaction_QNAME,
-            MethodTransaction.class, null, value);
+        return new JAXBElement<>(_MethodTransaction_QNAME,
+                MethodTransaction.class, null, value);
     }
 
     /**
@@ -409,8 +409,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "AssemblyDescriptor")
     public JAXBElement<AssemblyDescriptor> createAssemblyDescriptor(
         final AssemblyDescriptor value) {
-        return new JAXBElement<AssemblyDescriptor>(_AssemblyDescriptor_QNAME,
-            AssemblyDescriptor.class, null, value);
+        return new JAXBElement<>(_AssemblyDescriptor_QNAME,
+                AssemblyDescriptor.class, null, value);
     }
 
     /**
@@ -418,7 +418,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "Entity")
     public JAXBElement<Entity> createEntity(final Entity value) {
-        return new JAXBElement<Entity>(_Entity_QNAME, Entity.class, null, value);
+        return new JAXBElement<>(_Entity_QNAME, Entity.class, null, value);
     }
 
     /**
@@ -426,7 +426,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "Query")
     public JAXBElement<Query> createQuery(final Query value) {
-        return new JAXBElement<Query>(_Query_QNAME, Query.class, null, value);
+        return new JAXBElement<>(_Query_QNAME, Query.class, null, value);
     }
 
     /**
@@ -436,8 +436,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "MethodPermission")
     public JAXBElement<MethodPermission> createMethodPermission(
         final MethodPermission value) {
-        return new JAXBElement<MethodPermission>(_MethodPermission_QNAME,
-            MethodPermission.class, null, value);
+        return new JAXBElement<>(_MethodPermission_QNAME,
+                MethodPermission.class, null, value);
     }
 
     /**
@@ -446,8 +446,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "Relationships")
     public JAXBElement<Relationships> createRelationships(final Relationships value) {
-        return new JAXBElement<Relationships>(_Relationships_QNAME,
-            Relationships.class, null, value);
+        return new JAXBElement<>(_Relationships_QNAME,
+                Relationships.class, null, value);
     }
 
     /**
@@ -456,8 +456,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "CMRField")
     public JAXBElement<CMRField> createCMRField(final CMRField value) {
-        return new JAXBElement<CMRField>(_CMRField_QNAME, CMRField.class, null,
-            value);
+        return new JAXBElement<>(_CMRField_QNAME, CMRField.class, null,
+                value);
     }
 
     /**
@@ -466,8 +466,8 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "ejb.xmi", name = "QueryMethod")
     public JAXBElement<QueryMethod> createQueryMethod(final QueryMethod value) {
-        return new JAXBElement<QueryMethod>(_QueryMethod_QNAME,
-            QueryMethod.class, null, value);
+        return new JAXBElement<>(_QueryMethod_QNAME,
+                QueryMethod.class, null, value);
     }
 
     /**
@@ -477,8 +477,8 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "ejb.xmi", name = "ActivationConfig")
     public JAXBElement<ActivationConfig> createActivationConfig(
         final ActivationConfig value) {
-        return new JAXBElement<ActivationConfig>(_ActivationConfig_QNAME,
-            ActivationConfig.class, null, value);
+        return new JAXBElement<>(_ActivationConfig_QNAME,
+                ActivationConfig.class, null, value);
     }
 
 }

@@ -47,7 +47,7 @@ public class CmrFieldMapping {
 
     public List<ColumnPair> getColumnPair() {
         if (columnPair == null) {
-            columnPair = new ArrayList<ColumnPair>();
+            columnPair = new ArrayList<>();
         }
         return this.columnPair;
     }

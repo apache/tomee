@@ -66,7 +66,7 @@ public class WebServiceBindingType {
 
     public List<String> getWebServiceVirtualHost() {
         if (webServiceVirtualHost == null) {
-            webServiceVirtualHost = new ArrayList<String>();
+            webServiceVirtualHost = new ArrayList<>();
         }
         return webServiceVirtualHost;
     }
@@ -158,7 +158,7 @@ public class WebServiceBindingType {
 
         public List<String> getHttpMethod() {
             if (httpMethod == null) {
-                httpMethod = new ArrayList<String>();
+                httpMethod = new ArrayList<>();
             }
             return this.httpMethod;
         }

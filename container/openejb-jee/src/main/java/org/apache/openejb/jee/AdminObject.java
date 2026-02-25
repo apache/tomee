@@ -87,7 +87,7 @@ public class AdminObject {
 
     public List<ConfigProperty> getConfigProperty() {
         if (configProperty == null) {
-            configProperty = new ArrayList<ConfigProperty>();
+            configProperty = new ArrayList<>();
         }
         return this.configProperty;
     }

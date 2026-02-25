@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class IsolationLevels {
 
-    private static final Map<String, Integer> isolation = new HashMap<String, Integer>();
+    private static final Map<String, Integer> isolation = new HashMap<>();
 
     static {
         isolation.put("NONE", 0);

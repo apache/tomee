@@ -69,7 +69,7 @@ public class FailoverConnectionFactory implements ConnectionFactory {
             servers = remainder;
         }
 
-        final List<URI> list = new ArrayList<URI>();
+        final List<URI> list = new ArrayList<>();
 
         for (final String server : servers.split(",")) {
             list.add(URI.create(server));

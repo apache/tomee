@@ -253,7 +253,7 @@ public class CheckClassLoading extends ValidationBase {
 
     public static class DiffItemComparator implements Comparator<DiffItem> {
         private static final DiffItemComparator INSTANCE = new DiffItemComparator();
-        private static final Map<Class<?>, Integer> ORDER = new HashMap<Class<?>, Integer>();
+        private static final Map<Class<?>, Integer> ORDER = new HashMap<>();
 
         static {
             ORDER.put(SameItem.class, 0);

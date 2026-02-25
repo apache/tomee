@@ -37,7 +37,7 @@ public class OpenEJBHttpRegistry {
     public static final Logger log = Logger.getInstance(LogCategory.HTTPSERVER, OpenEJBHttpRegistry.class);
 
     protected final HttpListenerRegistry registry;
-    protected final List<URI> baseUris = new ArrayList<URI>();
+    protected final List<URI> baseUris = new ArrayList<>();
 
     public OpenEJBHttpRegistry() {
         try {
@@ -75,7 +75,7 @@ public class OpenEJBHttpRegistry {
             suffix = '/' + suffix;
         }
 
-        List<String> addresses = new ArrayList<String>();
+        List<String> addresses = new ArrayList<>();
         for (final URI baseUri : baseUris) {
             URI uri = baseUri;
             if (baseUri.getPort() == 0) { // if port was set to 0 we need to get httpejbd service port which was updated in SystemInstance

@@ -159,7 +159,7 @@ public class Main {
     }
 
     private static String[] siftArgs(final String[] args) {
-        final List<String> argsList = new ArrayList<String>();
+        final List<String> argsList = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
             final String arg = args[i];
             if (arg.indexOf("-D") == -1) {

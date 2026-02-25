@@ -122,7 +122,7 @@ public class LoadGroup {
      */
     public List<FieldName> getFieldName() {
         if (fieldName == null) {
-            fieldName = new ArrayList<FieldName>();
+            fieldName = new ArrayList<>();
         }
         return this.fieldName;
     }

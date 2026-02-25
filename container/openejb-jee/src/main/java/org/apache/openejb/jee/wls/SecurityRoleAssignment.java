@@ -113,7 +113,7 @@ public class SecurityRoleAssignment {
      */
     public List<JAXBElement<String>> getPrincipalName() {
         if (principalName == null) {
-            principalName = new ArrayList<JAXBElement<String>>();
+            principalName = new ArrayList<>();
         }
         return this.principalName;
     }

@@ -38,7 +38,7 @@ public class FilteredTestSuite extends TestSuite {
             return tests;
         }
 
-        final ArrayList<Test> filtered = new ArrayList<Test>();
+        final ArrayList<Test> filtered = new ArrayList<>();
         for (final Test test : tests) {
             final String simpleName = test.getClass().getSimpleName();
             if (simpleName.matches(itest)) {

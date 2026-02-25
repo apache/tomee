@@ -77,7 +77,7 @@ public class ActivationConfigType {
      */
     public List<String> getDescription() {
         if (description == null) {
-            description = new ArrayList<String>();
+            description = new ArrayList<>();
         }
         return this.description;
     }
@@ -104,7 +104,7 @@ public class ActivationConfigType {
      */
     public List<ActivationConfigPropertyType> getActivationConfigProperty() {
         if (activationConfigProperty == null) {
-            activationConfigProperty = new ArrayList<ActivationConfigPropertyType>();
+            activationConfigProperty = new ArrayList<>();
         }
         return this.activationConfigProperty;
     }

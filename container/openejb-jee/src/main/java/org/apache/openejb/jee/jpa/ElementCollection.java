@@ -288,7 +288,7 @@ public class ElementCollection {
      */
     public List<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
-            mapKeyAttributeOverride = new ArrayList<AttributeOverride>();
+            mapKeyAttributeOverride = new ArrayList<>();
         }
         return this.mapKeyAttributeOverride;
     }
@@ -335,7 +335,7 @@ public class ElementCollection {
      */
     public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
-            mapKeyJoinColumn = new ArrayList<MapKeyJoinColumn>();
+            mapKeyJoinColumn = new ArrayList<>();
         }
         return this.mapKeyJoinColumn;
     }
@@ -442,7 +442,7 @@ public class ElementCollection {
      */
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
-            attributeOverride = new ArrayList<AttributeOverride>();
+            attributeOverride = new ArrayList<>();
         }
         return this.attributeOverride;
     }
@@ -469,7 +469,7 @@ public class ElementCollection {
      */
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
-            associationOverride = new ArrayList<AssociationOverride>();
+            associationOverride = new ArrayList<>();
         }
         return this.associationOverride;
     }

@@ -131,7 +131,7 @@ public class OneToOne implements RelationField {
      */
     public List<PrimaryKeyJoinColumn> getPrimaryKeyJoinColumn() {
         if (primaryKeyJoinColumn == null) {
-            primaryKeyJoinColumn = new ArrayList<PrimaryKeyJoinColumn>();
+            primaryKeyJoinColumn = new ArrayList<>();
         }
         return this.primaryKeyJoinColumn;
     }
@@ -158,7 +158,7 @@ public class OneToOne implements RelationField {
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
-            joinColumn = new ArrayList<JoinColumn>();
+            joinColumn = new ArrayList<>();
         }
         return this.joinColumn;
     }

@@ -77,7 +77,7 @@ public class PayloadType {
      */
     public List<String> getValue() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return this.value;
     }

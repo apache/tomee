@@ -81,7 +81,7 @@ public class AuthConstraint {
 
     public List<String> getRoleName() {
         if (roleName == null) {
-            roleName = new ArrayList<String>();
+            roleName = new ArrayList<>();
         }
         return this.roleName;
     }
