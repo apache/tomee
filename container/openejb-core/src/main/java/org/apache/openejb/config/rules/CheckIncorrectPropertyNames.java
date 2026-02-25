@@ -26,7 +26,7 @@ import java.util.Properties;
 
 public class CheckIncorrectPropertyNames extends ValidationBase {
 
-    Map incorrectAndCorrectPropNames = new HashMap<String, String>();
+    Map<String, String> incorrectAndCorrectPropNames = new HashMap<>();
 
     {
         //incorrect property key : correct property key
@@ -46,7 +46,6 @@ public class CheckIncorrectPropertyNames extends ValidationBase {
         incorrectAndCorrectPropNames.put("java.xml.soap.MetaFactory", "jakarta.xml.soap.MetaFactory");
         incorrectAndCorrectPropNames.put("java.persistence.sharedCache.mode", "jakarta.persistence.sharedCache.mode");
         incorrectAndCorrectPropNames.put("java.persistence.validation.mode", "jakarta.persistence.validation.mode");
-        incorrectAndCorrectPropNames.put("java.persistence.transactionType", "jakarta.persistence.transactionType");
 
         incorrectAndCorrectPropNames.put("javax.naming.applet", "java.naming.applet");
         incorrectAndCorrectPropNames.put("javax.naming.authoritative", "java.naming.authoritative");
@@ -71,8 +70,7 @@ public class CheckIncorrectPropertyNames extends ValidationBase {
         this.module = appModule;
         final Properties systemProperties = SystemInstance.get().getProperties();
 
-        for (Object o : incorrectAndCorrectPropNames.entrySet()) {
-            final Map.Entry<String, String> entry = (Map.Entry<String, String>) o;
+        for (Map.Entry<String, String> entry : incorrectAndCorrectPropNames.entrySet()) {
             if (systemProperties.containsKey(entry.getKey())) {
                 warn(appModule.toString(), "incorrect.property.name", entry.getKey(), entry.getValue());
             }

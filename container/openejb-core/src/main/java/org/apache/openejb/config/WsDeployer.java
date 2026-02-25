@@ -96,9 +96,9 @@ public class WsDeployer implements DynamicDeployer {
                     final String wsdlFile = serviceRef.getWsdlFile();
                     final Definition definition = getWsdl(module, wsdlFile);
 
-                    final Set serviceQNames = definition.getServices().keySet();
+                    final Set<QName> serviceQNames = definition.getServices().keySet();
                     if (serviceQNames.size() == 1) {
-                        final QName serviceQName = (QName) serviceQNames.iterator().next();
+                        final QName serviceQName = serviceQNames.iterator().next();
                         serviceRef.setServiceQname(serviceQName);
                     } else if (serviceQNames.isEmpty()) {
                         logger.error("The service-ref " + serviceRef.getName() + " must define service-qname because the wsdl-file " + serviceRef.getWsdlFile() + " does not constain any service definitions ");

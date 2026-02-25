@@ -242,7 +242,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
         final Set<Principal> principals = new HashSet<>();
         principals.add(new RunAsRole(role));
-        return new Subject(true, principals, new HashSet(), new HashSet());
+        return new Subject(true, principals, new HashSet<>(), new HashSet<>());
     }
 
     @CallerPrincipal

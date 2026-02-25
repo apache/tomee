@@ -85,8 +85,7 @@ public class TestRunner extends junit.textui.TestRunner {
                 System.out.println("_________________________________________________");
                 System.out.println("CLIENT JNDI PROPERTIES");
                 final Properties env = TestManager.getServer().getContextEnvironment();
-                for (final Iterator iterator = env.entrySet().iterator(); iterator.hasNext(); ) {
-                    final Map.Entry entry = (Map.Entry) iterator.next();
+                for (final Map.Entry<Object, Object> entry : env.entrySet()) {
                     final String key = (String) entry.getKey();
                     final Object value = entry.getValue();
                     System.out.println(key + " = " + value);
