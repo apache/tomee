@@ -681,51 +681,53 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                     System.err.println(e.getMessage());
                 }
 
-                final int size = uriSet.size();
-                if (uriSet != null && size > 0) {
+                if(uriSet != null) {
+                    final int size = uriSet.size();
+                    if (size > 0) {
 
-                    final int st = (timeout / size);
+                        final int st = (timeout / size);
 
-                    for (final URI uri : uriSet) {
+                        for (final URI uri : uriSet) {
 
-                        final String server = uri.getScheme().replace("mp-", "");
-                        URI uriSub = URI.create(uri.getSchemeSpecificPart());
+                            final String server = uri.getScheme().replace("mp-", "");
+                            URI uriSub = URI.create(uri.getSchemeSpecificPart());
 
-                        final String group = uriSub.getScheme();
-                        uriSub = URI.create(uriSub.getSchemeSpecificPart());
+                            final String group = uriSub.getScheme();
+                            uriSub = URI.create(uriSub.getSchemeSpecificPart());
 
-                        final String host = uriSub.getHost();
-                        final int port = uriSub.getPort();
+                            final String host = uriSub.getHost();
+                            final int port = uriSub.getPort();
 
-                        if (MulticastPulseClient.isLocalAddress(host, false) && !MulticastPulseClient.isLocalAddress(server, false)) {
-                            System.out.println(server + ":" + group + " - " + uriSub.toASCIIString() + " is not a local service");
-                            continue;
-                        }
-
-                        System.out.print(server + ":" + group + " - " + uriSub.toASCIIString() + " is reachable: ");
-
-                        boolean b = false;
-                        final Socket s = new Socket();
-                        try {
-                            s.connect(new InetSocketAddress(host, port), st);
-                            b = true;
-                        } catch (Exception e) {
-                            if (java.net.SocketTimeoutException.class.isInstance(e) || SocketException.class.isInstance(e)) {
-                                MulticastPulseClient.broadcastBadUri(group, uriSub, mchost, mcport);
-                                System.out.print("" + e + " : ");
+                            if (MulticastPulseClient.isLocalAddress(host, false) && !MulticastPulseClient.isLocalAddress(server, false)) {
+                                System.out.println(server + ":" + group + " - " + uriSub.toASCIIString() + " is not a local service");
+                                continue;
                             }
-                        } finally {
+
+                            System.out.print(server + ":" + group + " - " + uriSub.toASCIIString() + " is reachable: ");
+
+                            boolean b = false;
+                            final Socket s = new Socket();
                             try {
-                                s.close();
+                                s.connect(new InetSocketAddress(host, port), st);
+                                b = true;
                             } catch (Exception e) {
-                                //Ignore
+                                if (java.net.SocketTimeoutException.class.isInstance(e) || SocketException.class.isInstance(e)) {
+                                    MulticastPulseClient.broadcastBadUri(group, uriSub, mchost, mcport);
+                                    System.out.print("" + e + " : ");
+                                }
+                            } finally {
+                                try {
+                                    s.close();
+                                } catch (Exception e) {
+                                    //Ignore
+                                }
                             }
-                        }
 
-                        System.out.println(b);
+                            System.out.println(b);
+                        }
+                    } else {
+                        System.out.println("### Failed to discover server: " + discover);
                     }
-                } else {
-                    System.out.println("### Failed to discover server: " + discover);
                 }
 
                 System.out.println(".");
