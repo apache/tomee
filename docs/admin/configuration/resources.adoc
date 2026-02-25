@@ -95,7 +95,7 @@ configure it here are the common properties:
 
 You can set the boolean `JtaManaged` to false if you don't want your datasource to be using JTA - if you manage transactions yourself.
 
-Then other configurations are linked the pool the datasource is using. By default TomEE uses https://tomcat.apache.org/tomcat-11.0-doc/jdbc-pool.html[tomcat-jdbc] but we also provide
+Then other configurations are linked the pool the datasource is using. By default TomEE uses https://tomcat.apache.org/tomcat-10.1-doc/jdbc-pool.html[tomcat-jdbc] but we also provide
 https://commons.apache.org/proper/commons-dbcp/configuration.html[commons-dbcp] (2 for TomEE 7.x and 1 for TomEE 1.x).
 The properties are then the related configurations with these particular
 entries we try to keep in sync for both:

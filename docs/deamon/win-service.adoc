@@ -40,9 +40,9 @@ For example:
     Installing the service 'TomEE-DEV' ...
     Using CATALINA_HOME:    "C:\Java\apache-tomee-plus-10.0.0-M1-SNAPSHOT"
     Using CATALINA_BASE:    "C:\Java\apache-tomee-plus-10.0.0-M1-SNAPSHOT"
-    Using JAVA_HOME:        "C:\Java\jdk-11.0.4+11
-    Using JRE_HOME:         "C:\Java\jdk-11.0.4+11"
-    Using JVM:              "C:\Java\jdk-11.0.4+11"\bin\server\jvm.dll"
+    Using JAVA_HOME:        "C:\Java\jdk-10.1.4+11
+    Using JRE_HOME:         "C:\Java\jdk-10.1.4+11"
+    Using JVM:              "C:\Java\jdk-10.1.4+11"\bin\server\jvm.dll"
     Using Service User:     ""
     Installed, will now configure TomEE
     The service 'TomEE-DEV' has been installed.
@@ -81,9 +81,9 @@ C:\Java\apache-tomee-plus-10.0.0-M1-SNAPSHOT\bin>service install /service-user L
 Installing the service 'TomEE-DEV' ...
 Using CATALINA_HOME:    "C:\Java\apache-tomee-plus-10.0.0-M1-SNAPSHOT"
 Using CATALINA_BASE:    "C:\Java\apache-tomee-plus-10.0.0-M1-SNAPSHOT"
-Using JAVA_HOME:        "C:\Java\jdk-11.0.4+11"
-Using JRE_HOME:         "C:\Java\jdk-11.0.4+11"
-Using JVM:              "C:\Java\jdk-11.0.4+11"\bin\server\jvm.dll"
+Using JAVA_HOME:        "C:\Java\jdk-10.1.4+11"
+Using JRE_HOME:         "C:\Java\jdk-10.1.4+11"
+Using JVM:              "C:\Java\jdk-10.1.4+11"\bin\server\jvm.dll"
 Using Service User:     "LocalSystem"
 Installed, will now configure TomEE
 The service 'TomEE-DEV' has been installed.

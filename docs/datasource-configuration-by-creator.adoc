@@ -60,7 +60,7 @@ the latest version of DBCP but TomEE 1.7.x is not using this version).
 
 == Tomcat JDBC
 
-Note: details are at https://tomcat.apache.org/tomcat-11.0-doc/jdbc-pool.html
+Note: details are at https://tomcat.apache.org/tomcat-10.1-doc/jdbc-pool.html
 
 * AbandonWhenPercentageFull
 * AccessToUnderlyingConnectionAllowed
