@@ -226,7 +226,7 @@
     <!-- org.glassfish -->
     <version.mojarra>4.0.14</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate.orm>7.2.5.Final</version.hibernate.orm>
+    <version.hibernate.orm>7.2.6.Final</version.hibernate.orm>
     <version.hibernate.validator>9.1.0.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
