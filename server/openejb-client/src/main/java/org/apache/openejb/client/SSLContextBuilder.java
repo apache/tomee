@@ -54,11 +54,8 @@ public class SSLContextBuilder {
             } else {
                 pwd = "changeit".toCharArray();
             }
-            FileInputStream fis = new FileInputStream(trustStore);
-            try {
+            try (FileInputStream fis = new FileInputStream(trustStore)) {
                 ks.load(fis, pwd);
-            } finally {
-                fis.close();
             }
             String sslTrustStoreProvider = params.get("sslTrustStoreProvider");
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(null == sslTrustStoreProvider ? TrustManagerFactory.getDefaultAlgorithm() : sslTrustStoreProvider);
@@ -85,11 +82,8 @@ public class SSLContextBuilder {
             } else {
                 pwd = "changeit".toCharArray();
             }
-            FileInputStream fis = new FileInputStream(keyStore);
-            try {
+            try (FileInputStream fis = new FileInputStream(keyStore)) {
                 ks.load(fis, pwd);
-            } finally {
-                fis.close();
             }
             String sslKeyStoreProvider = params.get("sslKeyStoreProvider");
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(null == sslKeyStoreProvider ? KeyManagerFactory.getDefaultAlgorithm() : sslKeyStoreProvider);

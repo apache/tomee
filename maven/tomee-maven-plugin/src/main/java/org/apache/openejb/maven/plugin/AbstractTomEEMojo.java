@@ -1750,9 +1750,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private void unzip(final File mvnTomEE) {
-        ZipFile in = null;
-        try {
-            in = new ZipFile(mvnTomEE);
+        try (ZipFile in = new ZipFile(mvnTomEE)) {
 
             final Enumeration<? extends ZipEntry> entries = in.entries();
             while (entries.hasMoreElements()) {
@@ -1819,14 +1817,6 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             getLog().info(container + " was unzipped in '" + catalinaBase.getAbsolutePath() + "'");
         } catch (final Exception e) {
             throw new TomEEException(e.getMessage(), e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (final IOException e) {
-                    // no-op
-                }
-            }
         }
     }
 

@@ -46,13 +46,10 @@ public class CalculatorBean implements jakarta.ejb.SessionBean {
 
             con = ds.getConnection();
 
-            final Statement stmt = con.createStatement();
-            try {
+            try (Statement stmt = con.createStatement()) {
                 final ResultSet rs = stmt.executeQuery("select * from Employees");
                 while (rs.next())
                     System.out.println(rs.getString(2));
-            } finally {
-                stmt.close();
             }
 
         } catch (final javax.naming.NamingException re) {

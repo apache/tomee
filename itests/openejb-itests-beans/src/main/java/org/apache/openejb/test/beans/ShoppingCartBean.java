@@ -79,8 +79,7 @@ public class ShoppingCartBean implements SessionBean, jakarta.ejb.SessionSynchro
 
             con = ds.getConnection();
 
-            final Statement stmt = con.createStatement();
-            try {
+            try (Statement stmt = con.createStatement()) {
                 final ResultSet rs = stmt.executeQuery("select * from Employees");
                 while (rs.next())
                     System.out.println(rs.getString(2));
@@ -90,8 +89,6 @@ public class ShoppingCartBean implements SessionBean, jakarta.ejb.SessionSynchro
                 calc.sub(1, 2);
 
                 final int i = 1;
-            } finally {
-                stmt.close();
             }
 
         } catch (final java.rmi.RemoteException re) {

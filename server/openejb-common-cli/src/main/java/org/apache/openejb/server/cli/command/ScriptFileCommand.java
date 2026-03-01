@@ -41,9 +41,7 @@ public class ScriptFileCommand extends ScriptCommand {
         final StringBuilder builder = new StringBuilder(1024);
         builder.append("script ").append(language).append(" "); // we will run the parent command
 
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(file));
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             char[] buf = new char[1024];
             int numRead;
             while ((numRead = reader.read(buf)) != -1) {
@@ -54,14 +52,6 @@ public class ScriptFileCommand extends ScriptCommand {
         } catch (Exception e) {
             streamManager.writeErr(e);
             return;
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // ignored
-                }
-            }
         }
 
         super.execute(builder.toString());
