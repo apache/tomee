@@ -114,7 +114,7 @@
 
     <!-- Plugins and Build -->
     <maven.version>3.0.5</maven.version>
-    <version.plugin.bundle>6.0.0</version.plugin.bundle>
+    <version.plugin.bundle>6.0.2</version.plugin.bundle>
     <version.plugin.javadoc>3.12.0</version.plugin.javadoc>
     <asciidoclet.version>1.5.0</asciidoclet.version>
     <surefire.version>3.5.5</surefire.version>
