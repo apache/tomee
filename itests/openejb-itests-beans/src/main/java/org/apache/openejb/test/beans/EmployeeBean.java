@@ -48,7 +48,7 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
             try {
                 final PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
                 try {
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     final ResultSet rs = stmt.executeQuery();
                     found = rs.next();
                 } finally {
@@ -85,7 +85,7 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
                     final ResultSet rs = stmt.executeQuery("select EmployeeID from Employees");
                     keys = new java.util.Vector();
                     while (rs.next()) {
-                        keys.addElement(new Integer(rs.getInt("EmployeeID")));
+                        keys.addElement(rs.getInt("EmployeeID"));
                     }
                 } finally {
                     stmt.close();
@@ -132,7 +132,7 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
                 con.close();
             }
 
-            return new Integer(id);
+            return id;
 
         } catch (final Exception e) {
             e.printStackTrace();
@@ -167,7 +167,7 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
                 final PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
                 try {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     final ResultSet rs = stmt.executeQuery();
                     while (rs.next()) {
                         lastName = rs.getString("LastName");
@@ -232,7 +232,7 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
                 final PreparedStatement stmt = con.prepareStatement("delete from Employees where EmployeeID = ?");
                 try {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     stmt.executeUpdate();
                 } finally {
                     stmt.close();

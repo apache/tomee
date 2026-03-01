@@ -184,7 +184,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupDoubleEntry() throws TestFailureException {
         try {
             try {
-                final Double expected = new Double(1.0D);
+                final Double expected = 1.0D;
                 final Double actual = (Double) getSessionContext().lookup("singleton/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
@@ -201,7 +201,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupLongEntry() throws TestFailureException {
         try {
             try {
-                final Long expected = new Long(1L);
+                final Long expected = 1L;
                 final Long actual = (Long) getSessionContext().lookup("singleton/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
@@ -218,7 +218,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupFloatEntry() throws TestFailureException {
         try {
             try {
-                final Float expected = new Float(1.0F);
+                final Float expected = 1.0F;
                 final Float actual = (Float) getSessionContext().lookup("singleton/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
@@ -235,7 +235,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupIntegerEntry() throws TestFailureException {
         try {
             try {
-                final Integer expected = new Integer(1);
+                final Integer expected = 1;
                 final Integer actual = (Integer) getSessionContext().lookup("singleton/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
@@ -252,7 +252,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupShortEntry() throws TestFailureException {
         try {
             try {
-                final Short expected = new Short((short) 1);
+                final Short expected = (short) 1;
                 final Short actual = (Short) getSessionContext().lookup("singleton/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
@@ -286,7 +286,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupByteEntry() throws TestFailureException {
         try {
             try {
-                final Byte expected = new Byte((byte) 1);
+                final Byte expected = (byte) 1;
                 final Byte actual = (Byte) getSessionContext().lookup("singleton/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
@@ -303,7 +303,7 @@ public class ContextLookupSingletonPojoBean {
     public void lookupCharacterEntry() throws TestFailureException {
         try {
             try {
-                final Character expected = new Character('D');
+                final Character expected = 'D';
                 final Character actual = (Character) getSessionContext().lookup("singleton/references/Character");
 
                 Assert.assertNotNull("The Character looked up is null", actual);

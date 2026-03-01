@@ -311,7 +311,7 @@ public class OneToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final ArtistLocal artist = findArtist(new Integer(1));
+            final ArtistLocal artist = findArtist(1);
             final Set songs = artist.getComposed();
 
             try {
@@ -336,8 +336,8 @@ public class OneToManyTests extends AbstractCMRTest {
         Set songs;
         SongLocal newSong;
         try {
-            final ArtistLocal artist = findArtist(new Integer(1));
-            newSong = createSong(new Integer(33));
+            final ArtistLocal artist = findArtist(1);
+            newSong = createSong(33);
             songs = artist.getComposed();
         } finally {
             completeTransaction();
@@ -348,9 +348,9 @@ public class OneToManyTests extends AbstractCMRTest {
         assertEquals(2, songs.size());
         for (final Iterator iter = songs.iterator(); iter.hasNext(); ) {
             final SongLocal song = (SongLocal) iter.next();
-            if (song.getId().equals(new Integer(11))) {
+            if (song.getId().equals(11)) {
                 assertEquals("value11", song.getName());
-            } else if (song.getId().equals(new Integer(22))) {
+            } else if (song.getId().equals(22)) {
                 assertEquals("value22", song.getName());
             } else {
                 fail();
@@ -392,8 +392,8 @@ public class OneToManyTests extends AbstractCMRTest {
         Set songs;
         SongLocal newSong;
         try {
-            final ArtistLocal artist = findArtist(new Integer(1));
-            newSong = createSong(new Integer(33));
+            final ArtistLocal artist = findArtist(1);
+            newSong = createSong(33);
             songs = artist.getComposed();
         } finally {
             completeTransaction();
@@ -406,9 +406,9 @@ public class OneToManyTests extends AbstractCMRTest {
             assertEquals(2, songs.size());
             for (final Iterator iter = songs.iterator(); iter.hasNext(); ) {
                 final SongLocal song = (SongLocal) iter.next();
-                if (song.getId().equals(new Integer(11))) {
+                if (song.getId().equals(11)) {
                     assertEquals("value11", song.getName());
-                } else if (song.getId().equals(new Integer(22))) {
+                } else if (song.getId().equals(22)) {
                     assertEquals("value22", song.getName());
                 } else {
                     fail();
@@ -451,8 +451,8 @@ public class OneToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final ArtistLocal artist = findArtist(new Integer(1));
-            final SongLocal song = findSong(new Integer(11));
+            final ArtistLocal artist = findArtist(1);
+            final SongLocal song = findSong(11);
             final Set songs = artist.getComposed();
             assertFalse(songs.isEmpty());
             assertEquals(2, songs.size());
@@ -476,8 +476,8 @@ public class OneToManyTests extends AbstractCMRTest {
         resetDB();
         beginTransaction();
         try {
-            final ArtistLocal artist = findArtist(new Integer(1));
-            final SongLocal song = findSong(new Integer(11));
+            final ArtistLocal artist = findArtist(1);
+            final SongLocal song = findSong(11);
             final Set games = artist.getComposed();
             assertFalse(games.isEmpty());
             assertEquals(2, games.size());

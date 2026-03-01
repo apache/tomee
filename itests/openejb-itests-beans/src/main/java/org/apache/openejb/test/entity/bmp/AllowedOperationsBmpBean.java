@@ -80,7 +80,7 @@ public class AllowedOperationsBmpBean implements jakarta.ejb.EntityBean {
      */
     public Integer ejbFindByPrimaryKey(final Integer primaryKey) {
         testAllowedOperations("ejbFind");
-        return new Integer(-1);
+        return -1;
     }
 
     /**
@@ -89,7 +89,7 @@ public class AllowedOperationsBmpBean implements jakarta.ejb.EntityBean {
     public Integer ejbCreateObject(final String name) throws CreateException {
         testAllowedOperations("ejbCreate");
 
-        return new Integer(-1);
+        return -1;
     }
 
     public void ejbPostCreateObject(final String name) throws CreateException {

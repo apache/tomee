@@ -47,7 +47,7 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
         }
 
         try {
-            final Integer expected = new Integer(42);
+            final Integer expected = 42;
             final Object actual = businessRemote.echo(expected);
             assertEquals(expected, actual);
             assertNotSame("pass by value", expected, actual);

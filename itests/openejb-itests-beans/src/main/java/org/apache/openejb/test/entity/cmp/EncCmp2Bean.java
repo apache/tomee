@@ -239,7 +239,7 @@ public abstract class EncCmp2Bean implements EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final Double expected = new Double(1.0D);
+                final Double expected = 1.0D;
                 final Double actual = (Double) ctx.lookup("java:comp/env/entity/cmp/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
@@ -259,7 +259,7 @@ public abstract class EncCmp2Bean implements EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final Long expected = new Long(1L);
+                final Long expected = 1L;
                 final Long actual = (Long) ctx.lookup("java:comp/env/entity/cmp/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
@@ -279,7 +279,7 @@ public abstract class EncCmp2Bean implements EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final Float expected = new Float(1.0F);
+                final Float expected = 1.0F;
                 final Float actual = (Float) ctx.lookup("java:comp/env/entity/cmp/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
@@ -299,7 +299,7 @@ public abstract class EncCmp2Bean implements EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final Integer expected = new Integer(1);
+                final Integer expected = 1;
                 final Integer actual = (Integer) ctx.lookup("java:comp/env/entity/cmp/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
@@ -319,7 +319,7 @@ public abstract class EncCmp2Bean implements EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final Short expected = new Short((short) 1);
+                final Short expected = (short) 1;
                 final Short actual = (Short) ctx.lookup("java:comp/env/entity/cmp/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
@@ -359,7 +359,7 @@ public abstract class EncCmp2Bean implements EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final Byte expected = new Byte((byte) 1);
+                final Byte expected = (byte) 1;
                 final Byte actual = (Byte) ctx.lookup("java:comp/env/entity/cmp/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
@@ -379,7 +379,7 @@ public abstract class EncCmp2Bean implements EntityBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final Character expected = new Character('D');
+                final Character expected = 'D';
                 final Character actual = (Character) ctx.lookup("java:comp/env/entity/cmp/references/Character");
 
                 Assert.assertNotNull("The Character looked up is null", actual);

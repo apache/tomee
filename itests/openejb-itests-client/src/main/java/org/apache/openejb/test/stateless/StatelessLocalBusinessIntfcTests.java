@@ -47,7 +47,7 @@ public class StatelessLocalBusinessIntfcTests extends StatelessTestClient {
         }
 
         try {
-            final Integer expected = new Integer(42);
+            final Integer expected = 42;
             final Object actual = businessLocal.echo(expected);
             assertSame("pass by reference", expected, actual);
         } catch (final Exception e) {

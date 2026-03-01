@@ -89,7 +89,7 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
             try {
                 final PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
                 try {
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     found = stmt.executeQuery().next();
                 } finally {
                     stmt.close();
@@ -172,7 +172,7 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
             }
 
 
-            return new Integer(primaryKey);
+            return primaryKey;
 
         } catch (final Exception e) {
             e.printStackTrace();
@@ -253,7 +253,7 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
                 final PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
                 try {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     final ResultSet rs = stmt.executeQuery();
                     while (rs.next()) {
                         lastName = rs.getString("last_name");
@@ -334,7 +334,7 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
                 final PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?");
                 try {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     stmt.executeUpdate();
                 } finally {
                     stmt.close();

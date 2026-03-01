@@ -93,7 +93,7 @@ public class ClassDefiner implements DefiningClassService, InstantiatingClassSer
                                            final Class<?> originalClass, final ProtectionDomain protectionDomain) {
         try {
             return (Class<?>) CLASS_LOADER_DEFINE_CLASS.invoke(
-                    loader, className, b, Integer.valueOf(0), Integer.valueOf(b.length), protectionDomain);
+                    loader, className, b, 0, b.length, protectionDomain);
         } catch (final Exception e) {
             throw e instanceof RuntimeException ? ((RuntimeException) e) : new RuntimeException(e);
         }
