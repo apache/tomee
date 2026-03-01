@@ -291,7 +291,7 @@ public class JWTCallerPrincipal implements JsonWebToken {
                 builder.add(entry.getKey(), value);
 
             } else if (entryValue instanceof Boolean) {
-                final boolean flag = ((Boolean) entryValue).booleanValue();
+                final boolean flag = (Boolean) entryValue;
                 builder.add(entry.getKey(), flag);
 
             } else if (entryValue instanceof String) {

@@ -75,7 +75,7 @@ public class Client {
 
     public Client() {
         final String retryValue = System.getProperty("openejb.client.requestretry", getRetry() + "");
-        retry = Boolean.valueOf(retryValue);
+        retry = Boolean.parseBoolean(retryValue);
 
         observers.addObserver(new EventLogger());
         observers.fireEvent(new ClientVersion());
@@ -465,7 +465,7 @@ public class Client {
     //openejb.client.connection.strategy
 
     private boolean getRetry() {
-        return retry = Boolean.valueOf(System.getProperty("openejb.client.requestretry", retry + ""));
+        return retry = Boolean.parseBoolean(System.getProperty("openejb.client.requestretry", retry + ""));
     }
 
     private static final Map<ServerMetaData, Context> contexts = new ConcurrentHashMap<>();

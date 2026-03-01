@@ -60,10 +60,10 @@ public class CmrMappingTests extends AbstractCMRTest {
 
     protected void setUp() throws Exception {
         super.setUp();
-        compoundPK_20_10 = new Integer(20);
-        compoundPK_20_10_field1 = new Integer(10);
-        compoundPK_20_20 = new Integer(20);
-        compoundPK_20_20_field1 = new Integer(20);
+        compoundPK_20_10 = 20;
+        compoundPK_20_10_field1 = 10;
+        compoundPK_20_20 = 20;
+        compoundPK_20_20_field1 = 20;
 
         oneInverseHome = (OneInverseSideLocalHome) initialContext.lookup("java:openejb/local/client/tests/entity/cmp2/OneInverseSideBean/EJBHomeLocal");
         oneOwningHome = (OneOwningSideLocalHome) initialContext.lookup("java:openejb/local/client/tests/entity/cmp2/OneOwningSideBean/EJBHomeLocal");

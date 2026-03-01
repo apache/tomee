@@ -109,7 +109,7 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
             try {
                 final PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
                 try {
-                    stmt.setInt(1, primaryKey.intValue());
+                    stmt.setInt(1, primaryKey);
                     found = stmt.executeQuery().next();
                 } finally {
                     stmt.close();
@@ -146,7 +146,7 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
                 try {
                     stmt.setString(1, lastName);
                     final ResultSet set = stmt.executeQuery();
-                    while (set.next()) keys.add(new Integer(set.getInt("id")));
+                    while (set.next()) keys.add(set.getInt("id"));
                 } finally {
                     stmt.close();
                 }
@@ -211,7 +211,7 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
                 con.close();
             }
 
-            return new Integer(primaryKey);
+            return primaryKey;
 
         } catch (final Exception e) {
             e.printStackTrace();

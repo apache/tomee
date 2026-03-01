@@ -75,7 +75,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 /*-------------------------------------------------*/
     public void test03_returnCharacterObject() {
         try {
-            final Character expected = new Character('1');
+            final Character expected = '1';
             final Character actual = ejbObject.returnCharacterObject(expected);
             assertEquals(expected, actual);
         } catch (final Exception e) {
@@ -95,7 +95,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 
     public void test05_returnCharacterObjectArray() {
         try {
-            final Character[] expected = {new Character('1'), new Character('2'), new Character('3')};
+            final Character[] expected = {'1', '2', '3'};
             final Character[] actual = ejbObject.returnCharacterObjectArray(expected);
 
             assertNotNull("The array returned is null", actual);
@@ -295,7 +295,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 
     public void test19_returnIntegerObject() {
         try {
-            final Integer expected = new Integer(1);
+            final Integer expected = 1;
             final Integer actual = ejbObject.returnIntegerObject(expected);
             assertEquals(expected, actual);
         } catch (final Exception e) {
@@ -315,7 +315,7 @@ public class SingletonRmiIiopTests extends SingletonTestClient {
 
     public void test21_returnIntegerObjectArray() {
         try {
-            final Integer[] expected = {new Integer(1), new Integer(2), new Integer(3)};
+            final Integer[] expected = {1, 2, 3};
             final Integer[] actual = ejbObject.returnIntegerObjectArray(expected);
 
             assertNotNull("The array returned is null", actual);

@@ -62,7 +62,7 @@ public class RmiIiopBmpBean implements jakarta.ejb.EntityBean {
      */
     public Integer ejbFindByPrimaryKey(final Integer primaryKey)
         throws jakarta.ejb.FinderException {
-        return new Integer(-1);
+        return -1;
     }
 
     /**
@@ -75,7 +75,7 @@ public class RmiIiopBmpBean implements jakarta.ejb.EntityBean {
      */
     public Integer ejbCreate(final String name)
         throws jakarta.ejb.CreateException {
-        return new Integer(-1);
+        return -1;
     }
 
     public void ejbPostCreate(final String name)
