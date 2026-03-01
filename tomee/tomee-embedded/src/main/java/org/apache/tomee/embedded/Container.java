@@ -359,13 +359,8 @@ public class Container implements AutoCloseable {
         // we don't care of these
         callers.remove("org.apache.tomee.embedded.Container");
         callers.remove("org.apache.tomee.gradle.embedded.TomEEEmbeddedTask");
-        final Iterator<String> callerIt = callers.iterator();
-        while (callerIt.hasNext()) { // TomEEEmbeddedMojo is also used with some anonymous classes (TomEEEmbeddedMojo$x)
-            if (callerIt.next().startsWith("org.apache.openejb.maven.plugins.TomEEEmbeddedMojo")) {
-                callerIt.remove();
-                // no break since we remove anonymous class+the mojo itself
-            }
-        }
+        // TomEEEmbeddedMojo is also used with some anonymous classes (TomEEEmbeddedMojo$x)
+        callers.removeIf(s -> s.startsWith("org.apache.openejb.maven.plugins.TomEEEmbeddedMojo"));
         if (additionalCallers != null && additionalCallers.length > 0) {
             callers.addAll(asList(additionalCallers));
         }
