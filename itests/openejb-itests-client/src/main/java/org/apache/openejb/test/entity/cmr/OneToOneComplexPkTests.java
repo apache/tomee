@@ -237,7 +237,7 @@ public class OneToOneComplexPkTests extends AbstractCMRTest {
         try {
             final LicenseLocal license = findLicense(11);
 
-            license.setPoints(new Integer(2));
+            license.setPoints(2);
 
             final PersonLocal person = license.getPerson();
             assertEquals(new Integer(2), person.getId());

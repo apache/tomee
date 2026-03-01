@@ -192,7 +192,7 @@ public class ContextLookupStatelessBean implements jakarta.ejb.SessionBean {
     public void lookupDoubleEntry() throws TestFailureException {
         try {
             try {
-                final Double expected = new Double(1.0D);
+                final Double expected = 1.0D;
                 final Double actual = (Double) ejbContext.lookup("stateless/references/Double");
 
                 Assert.assertNotNull("The Double looked up is null", actual);
@@ -209,7 +209,7 @@ public class ContextLookupStatelessBean implements jakarta.ejb.SessionBean {
     public void lookupLongEntry() throws TestFailureException {
         try {
             try {
-                final Long expected = new Long(1L);
+                final Long expected = 1L;
                 final Long actual = (Long) ejbContext.lookup("stateless/references/Long");
 
                 Assert.assertNotNull("The Long looked up is null", actual);
@@ -226,7 +226,7 @@ public class ContextLookupStatelessBean implements jakarta.ejb.SessionBean {
     public void lookupFloatEntry() throws TestFailureException {
         try {
             try {
-                final Float expected = new Float(1.0F);
+                final Float expected = 1.0F;
                 final Float actual = (Float) ejbContext.lookup("stateless/references/Float");
 
                 Assert.assertNotNull("The Float looked up is null", actual);
@@ -243,7 +243,7 @@ public class ContextLookupStatelessBean implements jakarta.ejb.SessionBean {
     public void lookupIntegerEntry() throws TestFailureException {
         try {
             try {
-                final Integer expected = new Integer(1);
+                final Integer expected = 1;
                 final Integer actual = (Integer) ejbContext.lookup("stateless/references/Integer");
 
                 Assert.assertNotNull("The Integer looked up is null", actual);
@@ -260,7 +260,7 @@ public class ContextLookupStatelessBean implements jakarta.ejb.SessionBean {
     public void lookupShortEntry() throws TestFailureException {
         try {
             try {
-                final Short expected = new Short((short) 1);
+                final Short expected = (short) 1;
                 final Short actual = (Short) ejbContext.lookup("stateless/references/Short");
 
                 Assert.assertNotNull("The Short looked up is null", actual);
@@ -294,7 +294,7 @@ public class ContextLookupStatelessBean implements jakarta.ejb.SessionBean {
     public void lookupByteEntry() throws TestFailureException {
         try {
             try {
-                final Byte expected = new Byte((byte) 1);
+                final Byte expected = (byte) 1;
                 final Byte actual = (Byte) ejbContext.lookup("stateless/references/Byte");
 
                 Assert.assertNotNull("The Byte looked up is null", actual);
@@ -311,7 +311,7 @@ public class ContextLookupStatelessBean implements jakarta.ejb.SessionBean {
     public void lookupCharacterEntry() throws TestFailureException {
         try {
             try {
-                final Character expected = new Character('D');
+                final Character expected = 'D';
                 final Character actual = (Character) ejbContext.lookup("stateless/references/Character");
 
                 Assert.assertNotNull("The Character looked up is null", actual);

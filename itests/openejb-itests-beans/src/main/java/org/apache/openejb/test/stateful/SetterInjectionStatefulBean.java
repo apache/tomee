@@ -405,7 +405,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
 
     public void lookupDoubleEntry() throws TestFailureException {
         try {
-            final Double expected = new Double(1.0D);
+            final Double expected = 1.0D;
 
             Assert.assertNotNull("The Double looked up is null", dooubleField);
             Assert.assertEquals(expected, dooubleField);
@@ -417,7 +417,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
 
     public void lookupLongEntry() throws TestFailureException {
         try {
-            final Long expected = new Long(1L);
+            final Long expected = 1L;
 
             Assert.assertNotNull("The Long looked up is null", loongField);
             Assert.assertEquals(expected, loongField);
@@ -428,7 +428,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
 
     public void lookupFloatEntry() throws TestFailureException {
         try {
-            final Float expected = new Float(1.0F);
+            final Float expected = 1.0F;
 
             Assert.assertNotNull("The Float looked up is null", flooatField);
             Assert.assertEquals(expected, flooatField);
@@ -439,7 +439,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
 
     public void lookupIntegerEntry() throws TestFailureException {
         try {
-            final Integer expected = new Integer(1);
+            final Integer expected = 1;
 
             Assert.assertNotNull("The Integer looked up is null", inteegerField);
             Assert.assertEquals(expected, inteegerField);
@@ -451,7 +451,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
 
     public void lookupShortEntry() throws TestFailureException {
         try {
-            final Short expected = new Short((short) 1);
+            final Short expected = (short) 1;
 
             Assert.assertNotNull("The Short looked up is null", shoortField);
             Assert.assertEquals(expected, shoortField);
@@ -473,7 +473,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
 
     public void lookupByteEntry() throws TestFailureException {
         try {
-            final Byte expected = new Byte((byte) 1);
+            final Byte expected = (byte) 1;
 
             Assert.assertNotNull("The Byte looked up is null", byyteField);
             Assert.assertEquals(expected, byyteField);
@@ -484,7 +484,7 @@ public class SetterInjectionStatefulBean implements SessionBean {
 
     public void lookupCharacterEntry() throws TestFailureException {
         try {
-            final Character expected = new Character('D');
+            final Character expected = 'D';
 
             Assert.assertNotNull("The Character looked up is null", chaaracterField);
             Assert.assertEquals(expected, chaaracterField);

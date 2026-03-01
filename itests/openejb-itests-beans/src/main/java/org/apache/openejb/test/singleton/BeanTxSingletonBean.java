@@ -100,7 +100,7 @@ public class BeanTxSingletonBean implements jakarta.ejb.SessionBean {
                 }
 
                 /*[3] Commit or Rollback the transaction */
-                if (rollback.booleanValue()) ut.setRollbackOnly();
+                if (rollback) ut.setRollbackOnly();
 
                 /*[4] Commit or Rollback the transaction */
                 ut.commit();

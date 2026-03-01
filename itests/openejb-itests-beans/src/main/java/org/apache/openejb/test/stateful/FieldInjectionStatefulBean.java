@@ -180,7 +180,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupDoubleEntry() throws TestFailureException {
         try {
-            final Double expected = new Double(1.0D);
+            final Double expected = 1.0D;
 
             Assert.assertNotNull("The Double looked up is null", doouble);
             Assert.assertEquals(expected, doouble);
@@ -192,7 +192,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupLongEntry() throws TestFailureException {
         try {
-            final Long expected = new Long(1L);
+            final Long expected = 1L;
 
             Assert.assertNotNull("The Long looked up is null", loong);
             Assert.assertEquals(expected, loong);
@@ -203,7 +203,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupFloatEntry() throws TestFailureException {
         try {
-            final Float expected = new Float(1.0F);
+            final Float expected = 1.0F;
 
             Assert.assertNotNull("The Float looked up is null", flooat);
             Assert.assertEquals(expected, flooat);
@@ -214,7 +214,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupIntegerEntry() throws TestFailureException {
         try {
-            final Integer expected = new Integer(1);
+            final Integer expected = 1;
 
             Assert.assertNotNull("The Integer looked up is null", inteeger);
             Assert.assertEquals(expected, inteeger);
@@ -226,7 +226,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupShortEntry() throws TestFailureException {
         try {
-            final Short expected = new Short((short) 1);
+            final Short expected = (short) 1;
 
             Assert.assertNotNull("The Short looked up is null", shoort);
             Assert.assertEquals(expected, shoort);
@@ -248,7 +248,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupByteEntry() throws TestFailureException {
         try {
-            final Byte expected = new Byte((byte) 1);
+            final Byte expected = (byte) 1;
 
             Assert.assertNotNull("The Byte looked up is null", byyte);
             Assert.assertEquals(expected, byyte);
@@ -259,7 +259,7 @@ public class FieldInjectionStatefulBean implements SessionBean {
 
     public void lookupCharacterEntry() throws TestFailureException {
         try {
-            final Character expected = new Character('D');
+            final Character expected = 'D';
 
             Assert.assertNotNull("The Character looked up is null", chaaracter);
             Assert.assertEquals(expected, chaaracter);

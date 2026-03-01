@@ -55,14 +55,14 @@ public class StartWithIPAddressPermission implements IPAddressPermission {
                 if (value < 0 || 255 < value) {
                     throw new IllegalArgumentException("byte #" + i + " is not valid.");
                 }
-                tmpBytes[i] = new Byte((byte) value);
+                tmpBytes[i] = (byte) value;
                 size++;
             }
         }
 
         bytes = new byte[size];
         for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = tmpBytes[i].byteValue();
+            bytes[i] = tmpBytes[i];
         }
     }
 
