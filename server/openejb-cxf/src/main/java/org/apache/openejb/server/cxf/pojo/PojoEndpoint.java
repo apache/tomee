@@ -91,13 +91,7 @@ public class PojoEndpoint extends CxfEndpoint {
         service = doServiceCreate();
 
         { // cleanup jax-ws injections
-            final Iterator<Injection> injections = port.getInjections().iterator();
-            while (injections.hasNext()) {
-                final Injection next = injections.next();
-                if (WebServiceContext.class.equals(type(loader, next))) {
-                    injections.remove();
-                }
-            }
+            port.getInjections().removeIf(next -> WebServiceContext.class.equals(type(loader, next)));
         }
 
         ResourceInjector injector = null;

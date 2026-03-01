@@ -125,13 +125,7 @@ public class TomEEFacesConfigResourceProvider extends DefaultFacesConfigResource
         try {
             if (AppFinder.findAppContextOrWeb(
                     Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE) == null) {
-                final Iterator<URL> toFilter = urlSet.iterator();
-                while (toFilter.hasNext()) {
-                    final URL url = toFilter.next();
-                    if (TomEEMyFacesContainerInitializer.isOwb(url)) {
-                        toFilter.remove();
-                    }
-                }
+                urlSet.removeIf(TomEEMyFacesContainerInitializer::isOwb);
             }
         } catch (final Throwable th) {
             // no-op

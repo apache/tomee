@@ -162,13 +162,7 @@ public class TomEEMyFacesContainerInitializer implements ServletContainerInitial
             }
 
             // remove our internal faces-config.xml
-            final Iterator<URL> it = metaInfFacesConfigUrls.iterator();
-            while (it.hasNext()) {
-                final URL next = it.next();
-                if (isOwb(next)) {
-                    it.remove();
-                }
-            }
+            metaInfFacesConfigUrls.removeIf(TomEEMyFacesContainerInitializer::isOwb);
 
             return !metaInfFacesConfigUrls.isEmpty();
         } catch (final Exception e) {
