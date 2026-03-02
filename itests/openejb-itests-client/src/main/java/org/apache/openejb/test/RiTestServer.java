@@ -42,7 +42,7 @@ public class RiTestServer implements TestServer {
     protected File testHome;
 
     /**
-     * The environment variable <code>test.home</code> sould be set
+     * The environment variable <code>test.home</code> should be set
      * to the base directory where the test suite is located.
      */
     public static final String TEST_HOME = "test.home";

@@ -89,7 +89,7 @@ public class MemoryTimerStore implements TimerStore {
         return out;
     }
 
-    // used to re-register a TimerData, if a cancel() is rolledback...
+    // used to re-register a TimerData, if a cancel() is rolled back...
     @Override
     public void addTimerData(final TimerData timerData) throws TimerStoreException {
         getTasks().addTimerData(timerData);
@@ -187,11 +187,11 @@ public class MemoryTimerStore implements TimerStore {
         private final Map<Long, TimerData> add = new TreeMap<>();
         private final Set<Long> remove = new TreeSet<>();
         private final Lock lock = new ReentrantLock();
-        private final RuntimeException concurentException;
-        private final WeakReference<Transaction> tansactionReference;
+        private final RuntimeException concurrentException;
+        private final WeakReference<Transaction> transactionReference;
 
         /**
-         * This class is not designed to be multi-treaded under the assumption
+         * This class is not designed to be multithreaded under the assumption
          * that transactions are single-threaded and this view is only supposed
          * to be used within the transaction for which it was created.
          *
@@ -204,11 +204,11 @@ public class MemoryTimerStore implements TimerStore {
             // never let it go.  Any other threads attempting to invoke this object
             // will immediately throw an exception.
             lock.lock();
-            concurentException = new IllegalThreadStateException("Object can only be invoked by Thread[" + Thread.currentThread().getName() + "] in Transaction[" + transaction + "]");
-            concurentException.fillInStackTrace();
+            concurrentException = new IllegalThreadStateException("Object can only be invoked by Thread[" + Thread.currentThread().getName() + "] in Transaction[" + transaction + "]");
+            concurrentException.fillInStackTrace();
             try {
                 transaction.registerSynchronization(this);
-                tansactionReference = new WeakReference<>(transaction);
+                transactionReference = new WeakReference<>(transaction);
             } catch (final RollbackException e) {
                 throw new TimerStoreException("Transaction has been rolled back");
             } catch (final SystemException e) {
@@ -218,7 +218,7 @@ public class MemoryTimerStore implements TimerStore {
 
         private void checkThread() {
             if (!lock.tryLock()) {
-                throw new IllegalStateException("Illegal access by Thread[" + Thread.currentThread().getName() + "]", concurentException);
+                throw new IllegalStateException("Illegal access by Thread[" + Thread.currentThread().getName() + "]", concurrentException);
             }
         }
 
@@ -265,7 +265,7 @@ public class MemoryTimerStore implements TimerStore {
         public void afterCompletion(final int status) {
             checkThread();
 
-            // if the tx was not committed, there is nothign to update
+            // if the tx was not committed, there is nothing to update
             if (status != Status.STATUS_COMMITTED) {
                 return;
             }
@@ -276,7 +276,7 @@ public class MemoryTimerStore implements TimerStore {
             // remove work
             taskStore.keySet().removeAll(remove);
 
-            tasksByTransaction.remove(tansactionReference.get());
+            tasksByTransaction.remove(transactionReference.get());
         }
     }
 }

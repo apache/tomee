@@ -35,7 +35,7 @@ public class LoggerCreator implements Callable<Logger> {
     public LoggerCreator(final String channel) {
         name = channel;
 
-        // force eager init if config overrided
+        // force eager init if config overridden
         final Properties p = SystemInstance.get().getProperties();
         final String levelName = p.getProperty("logging.level." + channel);
         if (levelName != null) {

@@ -100,7 +100,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
             customizeProperties(properties);
 
-            // ensure no tx is there cause a managed connection would fail if the provider setAutocCommit(true) and some hib* have this good idea
+            // ensure no tx is there cause a managed connection would fail if the provider setAutoCommit(true) and some hib* have this good idea
             final Transaction transaction;
             if (unitInfo.isLazilyInitialized()) {
                 transaction = OpenEJB.getTransactionManager().suspend();

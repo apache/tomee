@@ -386,7 +386,7 @@ public class ProviderWrapper extends Provider {
                 }
                 // no-op
             }
-        } catch (final Exception ingored) {
+        } catch (final Exception ignored) {
             // no-op
         }
 

@@ -204,7 +204,7 @@ public final class Mvn {
     }
 
     /**
-     * Server war without tests clases.
+     * Server war without tests classes.
      *
      * @return create a war with src/main/resources, src/main/webapp and all compile, runtime and test dependencies
      */

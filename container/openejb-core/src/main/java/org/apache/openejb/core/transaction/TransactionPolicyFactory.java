@@ -26,7 +26,7 @@ import org.apache.openejb.SystemException;
 public interface TransactionPolicyFactory {
     /**
      * Creates and begins a TransactionPolicy for the specified TransactionType.
-     * If this method returns successfully, the specfied transaction type is
+     * If this method returns successfully, the specified transaction type is
      * active and must be committed.
      *
      * @param type the desired type of transaction

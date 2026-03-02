@@ -106,7 +106,7 @@ public class CliRunnable implements Runnable {
                 }
             }
         } catch (RuntimeException e) {
-            LOGGER.error("an error occured while getting commands", e);
+            LOGGER.error("an error occurred while getting commands", e);
         } catch (IOException e) {
             LOGGER.error("can't get commands");
         }

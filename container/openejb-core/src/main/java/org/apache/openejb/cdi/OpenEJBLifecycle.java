@@ -137,7 +137,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         final StartupObject stuff = (StartupObject) startupObject;
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
 
-        // Initalize Application Context
+        // Initialize Application Context
         logger.info("OpenWebBeans Container is starting...");
 
         final long begin = System.currentTimeMillis();
@@ -162,7 +162,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Configure EJB Deployments
             cdiPlugin.configureDeployments(stuff.getBeanContexts());
 
-            //Resournce Injection Service
+            //Resource Injection Service
             final CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
             // todo use startupObject allDeployments to find Comp in priority (otherwise we can keep N times comps and loose time at injection time
             injectionService.setAppContext(stuff.getAppContext(), stuff.getBeanContexts() != null ? stuff.getBeanContexts() : Collections.<BeanContext>emptyList());
@@ -344,7 +344,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
 
         } catch (final Exception e) {
-            logger.error("An error occured while stopping the container.", e);
+            logger.error("An error occurred while stopping the container.", e);
         }
 
     }

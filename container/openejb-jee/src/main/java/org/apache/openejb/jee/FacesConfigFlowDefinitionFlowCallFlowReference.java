@@ -23,7 +23,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p class="changed_added_2_2">Identifiy the called flow.</p>
+ * <p class="changed_added_2_2">Identify the called flow.</p>
  *
  * <div class="changed_added_2_2">
  *

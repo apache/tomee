@@ -45,8 +45,8 @@ import java.util.List;
  * A MdbInstanceFactory creates instances of message driven beans for a single instance. This class differs from other
  * instance managers in OpenEJB as it doesn't do pooling and it creates instances for only a single EJB deployment.
  * </p>
- * The MdbContainer assumes that the resouce adapter is pooling message endpoints so a second level of pooling in the
- * container would be inefficient.  This is true of all known resouce adapters in opensource (ActiveMQ), so if this is
+ * The MdbContainer assumes that the resource adapter is pooling message endpoints so a second level of pooling in the
+ * container would be inefficient.  This is true of all known resource adapters in opensource (ActiveMQ), so if this is
  * a poor assumption for your resource adapter, contact the OpenEJB developers.
  * </p>
  * This class can optionally limit the number of bean instances and therefore the message endpoints available to the

@@ -28,7 +28,7 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
-// some helper reused accross several modules
+// some helper reused across several modules
 public final class Proxys {
     public static <T> T threadLocalProxy(final Class<T> type, final ThreadLocal<? extends T> threadLocal, final T defaultValue) {
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),

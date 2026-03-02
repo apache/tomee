@@ -41,24 +41,24 @@ public class FinalizePayment {
 	@Any
 	private Instance<Payment> paymentsLazy;
 	
-	Payment paymentChoosed;
+	Payment paymentChosen;
 	
 	public String finishWithCash() {
 
-		paymentChoosed = paymentsLazy.select(Cash.class).get();
-		return paymentChoosed.pay();
+		paymentChosen = paymentsLazy.select(Cash.class).get();
+		return paymentChosen.pay();
 	}
 	
 	public String finishWithCreditCard() {
 
-		paymentChoosed = paymentsLazy.select(CreditCard.class).get();
-		return paymentChoosed.pay();
+		paymentChosen = paymentsLazy.select(CreditCard.class).get();
+		return paymentChosen.pay();
 	}
 
 	public String finishByQualifier(PaymentType type) {
 
-		paymentChoosed = paymentsLazy.select( new PayByQualifier(type) ).get();
+		paymentChosen = paymentsLazy.select( new PayByQualifier(type) ).get();
 		
-		return paymentChoosed.pay();
+		return paymentChosen.pay();
 	}
 }

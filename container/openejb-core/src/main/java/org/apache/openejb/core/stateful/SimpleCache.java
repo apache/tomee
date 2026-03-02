@@ -46,7 +46,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     private final ConcurrentHashMap<K, Entry> cache = new ConcurrentHashMap<>();
 
     /**
-     * All values not in use in least resently used order
+     * All values not in use in least recently used order
      */
     private final Queue<Entry> lru = new LinkedBlockingQueue<>();
 
@@ -245,7 +245,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
             entry.lock.lock();
             try {
-                // verfiy state
+                // verify state
                 switch (entry.getState()) {
                     case AVAILABLE:
                         break;
@@ -291,7 +291,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
         entry.lock.lock();
         try {
-            // verfiy state
+            // verify state
             switch (entry.getState()) {
                 case AVAILABLE:
                     if (lru.contains(entry)) {
@@ -394,7 +394,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                         iterator.remove();
                         continue;
                     case REMOVED:
-                        // Entry was remmoved between get and lock
+                        // Entry was removed between get and lock
                         iterator.remove();
                         continue;
                 }
@@ -410,7 +410,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                         try {
                             listener.timedOut(entry.getValue());
                         } catch (final Exception e) {
-                            logger.error("An unexpected exception occured from timedOut callback", e);
+                            logger.error("An unexpected exception occurred from timedOut callback", e);
                         }
                     }
                 }
@@ -454,7 +454,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                             lru.remove(entry);
                             continue;
                         case REMOVED:
-                            // Entry was remmoved between get and lock
+                            // Entry was removed between get and lock
                             lru.remove(entry);
                             continue;
                     }
@@ -472,7 +472,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                             try {
                                 listener.timedOut(entry.getValue());
                             } catch (final Exception e) {
-                                logger.error("An unexpected exception occured from timedOut callback", e);
+                                logger.error("An unexpected exception occurred from timedOut callback", e);
                             }
                         }
                     } else {
@@ -511,7 +511,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         try {
             value = (V) passivator.activate(key);
         } catch (final Exception e) {
-            logger.error("An unexpected exception occured while reading entries from disk", e);
+            logger.error("An unexpected exception occurred while reading entries from disk", e);
         }
 
         if (value == null) {
@@ -537,7 +537,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                     listener.beforeStore(entry.getValue());
                 } catch (final Exception e) {
                     iterator.remove();
-                    logger.error("An unexpected exception occured from beforeStore callback", e);
+                    logger.error("An unexpected exception occurred from beforeStore callback", e);
                 }
             }
 
@@ -551,7 +551,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         try {
             passivator.passivate(entriesToStore);
         } catch (final Exception e) {
-            logger.error("An unexpected exception occured while writting the entries to disk", e);
+            logger.error("An unexpected exception occurred while writing the entries to disk", e);
         }
     }
 

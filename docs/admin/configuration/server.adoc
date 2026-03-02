@@ -18,7 +18,7 @@
 |jakarta.persistence.nonJtaDataSource|	string	|override the non JTA datasource value for persistence contexts
 |openejb.descriptors.output	|bool|	dump memory deployment descriptors. Can be used to set complete metadata to true and avoid scanning when starting the container or to check the used configuration.
 |openejb.deployments.classpath.require.descriptor	|CLIENT or EJB|	can allow to filter what you want to scan (client modules or ejb modules)
-|openejb.descriptors.output.folder|	path|	where to dump deployement descriptors if activated.
+|openejb.descriptors.output.folder|	path|	where to dump deployment descriptors if activated.
 |openejb.strict.interface.declaration	|bool|	add some validations on session beans (spec validations in particular). false by default.
 |openejb.conf.file or openejb.configuration|	string|	OpenEJB configuration file path
 |openejb.debuggable-vm-hackery	|bool|	remove JMS information from deployment

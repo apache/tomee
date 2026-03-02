@@ -108,7 +108,7 @@ public class Messages {
             }
             return mf.format(args);
         } catch (final Exception except) {
-            return "An internal error occured while processing message " + message;
+            return "An internal error occurred while processing message " + message;
         }
     }
 

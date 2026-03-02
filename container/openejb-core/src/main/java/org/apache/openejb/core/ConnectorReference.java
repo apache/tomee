@@ -24,7 +24,7 @@ import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionManager;
 import jakarta.resource.spi.ManagedConnectionFactory;
 /*
-  This reference object is used for wrappering ManagedConnectionFactory objects that
+  This reference object is used for wrapping ManagedConnectionFactory objects that
   manufacture resource specific connection factories. When the getObject( ) method is 
   invoked the factory is created and passed back as the return value.
 

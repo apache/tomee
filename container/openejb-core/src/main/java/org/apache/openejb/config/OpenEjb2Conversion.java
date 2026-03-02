@@ -395,7 +395,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                     }
                 }
 
-                // For one-to-one, make sure that the field to recieve the FK
+                // For one-to-one, make sure that the field to receive the FK
                 // is marked as the owning field
                 if (field instanceof OneToOne left) {
                     final OneToOne right = (OneToOne) left.getRelatedField();

@@ -88,7 +88,7 @@ public class ActiveMQFactory {
     }
 
     /**
-     * Returns the prefix metafile name of the poperties file that ActiveMQ should be
+     * Returns the prefix metafile name of the properties file that ActiveMQ should be
      * provided with. This file is located at META-INF/services/org/apache/activemq/broker/
      * and defines the BrokerFactoryHandler to load.
      *

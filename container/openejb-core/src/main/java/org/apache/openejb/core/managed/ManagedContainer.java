@@ -541,7 +541,7 @@ public class ManagedContainer implements RpcContainer {
                         final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
                         interceptorStack.invoke();
                     } catch (final Throwable callbackException) {
-                        final String logMessage = "An unexpected exception occured while invoking the preDestroy method on the removed Stateful SessionBean instance; " + callbackException.getClass().getName() + " " + callbackException.getMessage();
+                        final String logMessage = "An unexpected exception occurred while invoking the preDestroy method on the removed Stateful SessionBean instance; " + callbackException.getClass().getName() + " " + callbackException.getMessage();
 
                         /* [1] Log the exception or error */
                         logger.error(logMessage);
@@ -923,7 +923,7 @@ public class ManagedContainer implements RpcContainer {
                 interceptorStack.invoke();
 
             } catch (final Exception e) {
-                final String message = "An unexpected system exception occured while invoking the afterBegin method on the SessionSynchronization object";
+                final String message = "An unexpected system exception occurred while invoking the afterBegin method on the SessionSynchronization object";
 
                 // [1] Log the exception or error
                 logger.error(message, e);
@@ -969,7 +969,7 @@ public class ManagedContainer implements RpcContainer {
                 } catch (final InvalidateReferenceException e) {
                     // exception has alredy been handled
                 } catch (final Exception e) {
-                    final String message = "An unexpected system exception occured while invoking the beforeCompletion method on the SessionSynchronization object";
+                    final String message = "An unexpected system exception occurred while invoking the beforeCompletion method on the SessionSynchronization object";
 
                     // [1] Log the exception or error
                     logger.error(message, e);
@@ -1012,7 +1012,7 @@ public class ManagedContainer implements RpcContainer {
                 } catch (final InvalidateReferenceException inv) {
                     // exception has alredy been handled
                 } catch (final Throwable e) {
-                    final String message = "An unexpected system exception occured while invoking the afterCompletion method on the SessionSynchronization object";
+                    final String message = "An unexpected system exception occurred while invoking the afterCompletion method on the SessionSynchronization object";
 
                     // [1] Log the exception or error
                     logger.error(message, e);
@@ -1032,7 +1032,7 @@ public class ManagedContainer implements RpcContainer {
             }
 
             if (firstException != null) {
-                throw new OpenEJBRuntimeException("An unexpected system exception occured while invoking the afterCompletion method on the SessionSynchronization object", firstException);
+                throw new OpenEJBRuntimeException("An unexpected system exception occurred while invoking the afterCompletion method on the SessionSynchronization object", firstException);
             }
         }
     }
@@ -1075,7 +1075,7 @@ public class ManagedContainer implements RpcContainer {
                 interceptorStack.invoke();
 
             } catch (final Throwable e) {
-                logger.error("An unexpected exception occured while invoking the ejbPassivate method on the Stateful SessionBean instance", e);
+                logger.error("An unexpected exception occurred while invoking the ejbPassivate method on the Stateful SessionBean instance", e);
             } finally {
                 ThreadContext.exit(oldContext);
             }
@@ -1096,7 +1096,7 @@ public class ManagedContainer implements RpcContainer {
 
                 interceptorStack.invoke();
             } catch (final Throwable e) {
-                logger.error("An unexpected exception occured while invoking the ejbRemove method on the timed-out Stateful SessionBean instance", e);
+                logger.error("An unexpected exception occurred while invoking the ejbRemove method on the timed-out Stateful SessionBean instance", e);
             } finally {
                 logger.info("Removing the timed-out stateful session bean instance " + instance.primaryKey);
                 ThreadContext.exit(oldContext);

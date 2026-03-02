@@ -37,7 +37,7 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
             if (isValidPkField(pkObjectField)) {
                 final Field entityBeanField = getField(entityBeanClass, pkObjectField.getName());
                 if (!isValidPkField(entityBeanField)) {
-                    throw new OpenEJBException("Invalid primray key field: " + entityBeanField);
+                    throw new OpenEJBException("Invalid primary key field: " + entityBeanField);
                 }
                 final PkField pkField = new PkField(entityBeanField, pkObjectField);
                 fields.add(pkField);

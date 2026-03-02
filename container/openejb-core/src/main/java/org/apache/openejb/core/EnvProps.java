@@ -42,7 +42,7 @@ public class EnvProps {
     * copy operation so that arguments and return values are passed by reference as a performance optimization.
     * Simply setting the org.apache.openejb.core.EnvProps.INTRA_VM_COPY property to FALSE will cause
     * IntraVM to bypass the copy operations; arguments and return values will be passed by reference not value. 
-    * This property is, by default, alwasy TRUE but it can be changed to FALSE by setting it as a System property
+    * This property is, by default, always TRUE, but it can be changed to FALSE by setting it as a System property
     * or a property of the Property argument when invoking OpenEJB.init(props).
     */
     public static final String INTRA_VM_COPY = "org/openejb/core/ivm/BaseEjbProxyHandler/INTRA_VM_COPY";

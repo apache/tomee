@@ -170,7 +170,7 @@ public class OptimizedLoaderService implements LoaderService {
         }
     }
 
-    // mainly intended to avoid conflicts between internal and overrided spec extensions
+    // mainly intended to avoid conflicts between internal and overridden spec extensions
     private boolean isFiltered(final Collection<Extension> extensions, final Extension next) {
         final ClassLoader containerLoader = ParentClassLoaderFinder.Helper.get();
         final Class<? extends Extension> extClass = next.getClass();

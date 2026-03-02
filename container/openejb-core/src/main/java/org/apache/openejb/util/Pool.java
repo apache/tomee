@@ -54,7 +54,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * may be called.
  *
  * To simply fill the pool without a corresponding pop(), the add() method
- * must be used.  This method will attempt to aquire a permit to add to the pool.
+ * must be used.  This method will attempt to acquire a permit to add to the pool.
  *
  * @version $Rev$ $Date$
  */
@@ -215,7 +215,7 @@ public class Pool<T> {
      * A pop() call that returns null is considered successful.
      *
      * @param timeout time to block while waiting for an instance
-     * @param unit    unit of time dicated by the timeout
+     * @param unit    unit of time dictated by the timeout
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
      * @throws IllegalStateException if a permit could not be acquired
@@ -231,7 +231,7 @@ public class Pool<T> {
      * A pop() call that returns null is considered successful.
      *
      * @param timeout time to block while waiting for an instance
-     * @param unit    unit of time dicated by the timeout
+     * @param unit    unit of time dictated by the timeout
      * @param record  should this be reflected in the stats
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
@@ -275,7 +275,7 @@ public class Pool<T> {
     }
 
     /**
-     * Attempt to aquire a permit to add the object to the pool.
+     * Attempt to acquire a permit to add the object to the pool.
      *
      * @param obj object to add to the pool
      * @return true of the item as added
@@ -285,7 +285,7 @@ public class Pool<T> {
     }
 
     /**
-     * Attempt to aquire a permit to add the object to the pool.
+     * Attempt to acquire a permit to add the object to the pool.
      *
      * @param obj    object to add to the pool
      * @param offset creation time offset, used for maxAge
@@ -442,7 +442,7 @@ public class Pool<T> {
      * Used when a call to pop() was made that returned null
      * indicating that the caller has a permit to create an
      * object for this pool, but the caller will not be exercising
-     * that permit and wishes intstead to return "null" to the pool.
+     * that permit and wishes instead to return "null" to the pool.
      */
     public void discard() {
         discard(null);

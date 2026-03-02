@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * We allow CDI and EJB beans to use BeanValidation to validate a JsonWebToken
- * instance by simply creating contstraints and putting them on that method.
+ * instance by simply creating constraints and putting them on that method.
  *
  * BeanValidation doesn't "see" them there so we have to generate a class
  * that has the annotations in a place BeanValidation can see.

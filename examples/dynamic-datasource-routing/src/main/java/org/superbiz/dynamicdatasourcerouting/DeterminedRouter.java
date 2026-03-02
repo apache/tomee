@@ -76,7 +76,7 @@ public class DeterminedRouter extends AbstractRouter {
             }
         }
 
-        // the developper set the datasource to use
+        // the developer set the datasource to use
         return currentDataSource.get();
     }
 

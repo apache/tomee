@@ -337,7 +337,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             try {
                 data.stop();
             } catch (final EJBException ignored) {
-                log.warning("An error occured deleting trigger '" + key + "' on bean " + deployment.getDeploymentID());
+                log.warning("An error occurred deleting trigger '" + key + "' on bean " + deployment.getDeploymentID());
             }
         }
     }
@@ -809,7 +809,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     try {
                         transactionManager.setRollbackOnly();
                     } catch (final SystemException e1) {
-                        log.warning("Exception occured while setting RollbackOnly for container transaction", e1);
+                        log.warning("Exception occurred while setting RollbackOnly for container transaction", e1);
                     }
                 } catch (final OpenEJBException e) {
                     retry = true;
@@ -822,7 +822,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                         try {
                             transactionManager.setRollbackOnly();
                         } catch (final SystemException e1) {
-                            log.warning("Exception occured while setting RollbackOnly for container transaction", e1);
+                            log.warning("Exception occurred while setting RollbackOnly for container transaction", e1);
                         }
                     }
                 } finally {
@@ -839,16 +839,16 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                             transactionManager.rollback();
                         }
                     } catch (final Exception e) {
-                        log.warning("Exception occured while completing container transaction", e);
+                        log.warning("Exception occurred while completing container transaction", e);
                     }
                 }
             }
             log.warning("Failed to execute ejbTimeout on " + timerData.getDeploymentId() + " successfully within " + retryAttempts + " attempts");
         } catch (final RuntimeException e) {
-            log.warning("RuntimeException occured while calling ejbTimeout", e);
+            log.warning("RuntimeException occurred while calling ejbTimeout", e);
             throw e;
         } catch (final Error e) {
-            log.warning("Error occured while calling ejbTimeout", e);
+            log.warning("Error occurred while calling ejbTimeout", e);
             throw e;
         } finally {
             thread.setContextClassLoader(loader);

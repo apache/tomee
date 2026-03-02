@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
  * element interface generated in the org.apache.openejb.jee.was.v6.java
  * package.
  *
- * An ObjectFactory allows you to programatically construct new instances of the
+ * An ObjectFactory allows you to programmatically construct new instances of the
  * Java representation for XML content. The Java representation of XML content
  * can consist of schema derived interfaces and classes representing the binding
  * of schema type definitions, element declarations and model groups. Factory

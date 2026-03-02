@@ -171,7 +171,7 @@ public class ConfigUtils {
 
                     /* 
                      * If the jar entry is already there, no need 
-                     * to add it to the config or go any futher.
+                     * to add it to the config or go any further.
                      */
                     if (jar.equals(target)) {
                         return false;
@@ -191,7 +191,7 @@ public class ConfigUtils {
                      * If a dir entry is already there, the jar
                      * will be loaded automatically.  No need 
                      * to add it explicitly to the config or go
-                     * any futher.
+                     * any further.
                      */
                     if (jarDir != null && jarDir.equals(target)) {
                         return false;

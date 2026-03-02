@@ -220,10 +220,10 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
     /**
      * Maps to BasicBmp2DataSourcesObject.getAllowedOperationsReport
      *
-     * Returns a report of the allowed opperations
+     * Returns a report of the allowed operations
      * for one of the bean's methods.
      *
-     * @param methodName The method for which to get the allowed opperations report
+     * @param methodName The method for which to get the allowed operations report
      * @return OperationPolicy
      */
     public OperationsPolicy getAllowedOperationsReport(final String methodName) {

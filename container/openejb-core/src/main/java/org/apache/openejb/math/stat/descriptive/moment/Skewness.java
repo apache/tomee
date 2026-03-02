@@ -137,7 +137,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
     }
 
     /**
-     * Returns the Skewness of the entries in the specifed portion of the
+     * Returns the Skewness of the entries in the specified portion of the
      * input array.
      * <p>
      * See {@link Skewness} for the definition used in the computation.</p>

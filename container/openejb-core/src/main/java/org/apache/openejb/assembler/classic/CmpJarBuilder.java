@@ -147,7 +147,7 @@ public class CmpJarBuilder {
      * @throws IOException
      */
     private Entry generateClass(final JarOutputStream jarOutputStream, final EntityBeanInfo entityBeanInfo) throws IOException {
-        // don't generate if there is aleady an implementation class
+        // don't generate if there is already an implementation class
         final String cmpImplClass = CmpUtil.getCmpImplClassName(entityBeanInfo.abstractSchemaName, entityBeanInfo.ejbClass);
         final String entryName = cmpImplClass.replace(".", "/") + ".class";
         if (entries.contains(entryName) || tempClassLoader.getResource(entryName) != null) {

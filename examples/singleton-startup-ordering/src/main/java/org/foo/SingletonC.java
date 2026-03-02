@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 
 
 /**
- * Singlenton C only is annotated with @Singleton and will be lazy initialized.
+ * Singleton C only is annotated with @Singleton and will be lazy initialized.
  */
 @Singleton
 public class SingletonC {

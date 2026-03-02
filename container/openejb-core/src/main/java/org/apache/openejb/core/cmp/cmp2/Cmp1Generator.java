@@ -38,7 +38,7 @@ public class Cmp1Generator implements Opcodes {
      * Constructor for a CMP1 class generator.
      *
      * @param cmpImplClass The name of the generated implementation class.
-     * @param beanClass    The source Bean class we're wrappering.
+     * @param beanClass    The source Bean class we're wrapping.
      */
     public Cmp1Generator(final String cmpImplClass, final Class beanClass) {
         beanClassName = Type.getInternalName(beanClass);

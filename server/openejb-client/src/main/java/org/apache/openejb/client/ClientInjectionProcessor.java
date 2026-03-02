@@ -327,7 +327,7 @@ public class ClientInjectionProcessor<T> {
 
     private static boolean isInstance(final Class type, final Object instance) {
         if (type.isPrimitive()) {
-            // for primitives the insance can't be null
+            // for primitives the instance can't be null
             if (instance == null) {
                 return false;
             }
@@ -350,7 +350,7 @@ public class ClientInjectionProcessor<T> {
             } else if (type.equals(double.class)) {
                 return instance instanceof Double;
             } else {
-                throw new AssertionError("Invalid primitve type: " + type);
+                throw new AssertionError("Invalid primitive type: " + type);
             }
         }
 

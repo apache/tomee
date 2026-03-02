@@ -33,7 +33,7 @@ public class MyListener {
     private static boolean logAllEvent = false; // static for testing
 
     public void global(@Observes final Object event) {
-        LOGGER.info(">>> an event occured -> " + event.toString());
+        LOGGER.info(">>> an event occurred -> " + event.toString());
     }
 
     // configurable
