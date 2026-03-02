@@ -53,7 +53,7 @@ public class ThirdStatelessInterceptedBean extends SuperInterceptedBean
     }
 
     /**
-     * A simple dummy busines method to reverse a string
+     * A simple dummy business method to reverse a string
      *
      * @see org.apache.openejb.test.stateless.BasicStatelessInterceptedLocal#reverse(java.lang.String)
      */

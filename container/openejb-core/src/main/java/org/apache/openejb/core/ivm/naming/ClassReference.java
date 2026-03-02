@@ -32,7 +32,7 @@ public class ClassReference extends Reference {
         try {
             return classLoader.loadClass(className);
         } catch (final ClassNotFoundException e) {
-            throw new NamingException("Erorr loading class: " + className);
+            throw new NamingException("Error loading class: " + className);
         }
     }
 }

@@ -28,7 +28,7 @@ public class SimpleKeyGenerator extends AbstractKeyGenerator {
     public SimpleKeyGenerator(final Class beanClass, final String pkField) throws OpenEJBException {
         this.pkField = getField(beanClass, pkField);
         if (!isValidPkField(this.pkField)) {
-            throw new OpenEJBException("Invalid primray key field: " + pkField);
+            throw new OpenEJBException("Invalid primary key field: " + pkField);
         }
     }
 

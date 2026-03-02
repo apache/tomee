@@ -124,7 +124,7 @@ public class LocalXAResource implements XAResource {
 
         try {
             if (connection.isClosed()) {
-                throw new XAException("Conection is closed");
+                throw new XAException("Connection is closed");
             }
 
             if (!connection.isReadOnly()) {

@@ -46,7 +46,7 @@ import java.util.Set;
  * };
  *
  * Note: you can use instead of delegate &lt;appid&gt; to define a delegate by app.
- * Note 2: loginModuleAsCdiBean=true is recommanded only for @Dependent beans
+ * Note 2: loginModuleAsCdiBean=true is recommendd only for @Dependent beans
  * Note 3: delegate and cdiName can be used alone
  */
 public class CDILoginModule implements LoginModule {

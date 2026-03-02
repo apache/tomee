@@ -53,7 +53,7 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
     }
 
     /**
-     * A simple dummy busines method to reverse a string
+     * A simple dummy business method to reverse a string
      */
     @Interceptors({MethodInterceptor.class})
     public String reverse(final String str) {

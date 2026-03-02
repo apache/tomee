@@ -62,7 +62,7 @@ public class ShoppingCartBean implements SessionBean, jakarta.ejb.SessionSynchro
             return calc;
 
         } catch (final java.rmi.RemoteException re) {
-            throw new RuntimeException("Getting calulator bean failed");
+            throw new RuntimeException("Getting calculator bean failed");
         } catch (final javax.naming.NamingException re) {
             throw new RuntimeException("Using JNDI failed");
         }

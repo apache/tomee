@@ -19,7 +19,7 @@ package org.apache.openejb.core.mdb;
 
 enum State {
     /**
-     * The handler has been initialized and is ready for invoation
+     * The handler has been initialized and is ready for invocation
      */
     NONE,
 
@@ -37,7 +37,7 @@ enum State {
 
     /**
      * The message delivery threw a system exception, and the next method called must be afterDelivery
-     * or release.  This state notified the afterDelivery method that the instace must be replaced with a new
+     * or release.  This state notified the afterDelivery method that the instance must be replaced with a new
      * instance.
      */
     SYSTEM_EXCEPTION,

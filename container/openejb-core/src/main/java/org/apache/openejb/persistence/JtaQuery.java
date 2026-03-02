@@ -36,7 +36,7 @@ import java.util.Set;
 
 /**
  * The JtaQuery is a wrapper around a query and and entity manager that automatically closes the entity managers
- * when the query is finished.  This implementation is only for non-transaction queryies
+ * when the query is finished.  This implementation is only for non-transaction queries
  */
 public class JtaQuery implements Query {
     private EntityManager entityManager;

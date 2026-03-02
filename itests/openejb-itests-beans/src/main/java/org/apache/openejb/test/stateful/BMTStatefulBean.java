@@ -108,10 +108,10 @@ public class BMTStatefulBean implements jakarta.ejb.SessionBean {
     /**
      * Maps to BasicStatefulObject.getAllowedOperationsReport
      *
-     * Returns a report of the allowed opperations
+     * Returns a report of the allowed operations
      * for one of the bean's methods.
      *
-     * @param methodName The method for which to get the allowed opperations report
+     * @param methodName The method for which to get the allowed operations report
      * @return
      * @see BasicStatefulObject#getAllowedOperationsReport
      */

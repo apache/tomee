@@ -40,7 +40,7 @@ public class TomEEConfiguration implements ContainerConfiguration {
     protected String appWorkingDir = System.getProperty("java.io.tmpdir") + "/arquillian-tomee-app-working-dir-" + ProcessHandle.current().pid();
     protected String host = "localhost";
     protected String stopHost = "localhost"; // generally localhost but host (http) can be different
-    protected String stopCommand = "SHUTDOWN"; // default one - can be overriden in server.xml
+    protected String stopCommand = "SHUTDOWN"; // default one - can be overridden in server.xml
     protected String serverXml;
     protected String portRange = ""; // only used if port < 0, empty means whatever, can be "1024-65535"
     protected String preloadClasses; // just a client classloader.loadClass(), value is comma separated qualified names. Useful with maven resolver for instance

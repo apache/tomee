@@ -61,8 +61,8 @@ public class ClientSecurity {
     }
 
     /**
-     * Login the spedified user using the specified password.  This is a global login for the
-     * entire Java Virtural Machine.  If you would like to have a thread scoped login, use
+     * Login the specified user using the specified password.  This is a global login for the
+     * entire Java Virtual Machine.  If you would like to have a thread scoped login, use
      * ClientSecurity.login(username, password, true);
      *
      * This is the equivalent of ClientSecurity.login(username, password, false);
@@ -77,8 +77,8 @@ public class ClientSecurity {
     }
 
     /**
-     * Login the spedified user using the specified password either globally for the
-     * entire Java Virtural Machine or scoped to the thread.
+     * Login the specified user using the specified password either globally for the
+     * entire Java Virtual Machine or scoped to the thread.
      *
      * When using thread scoped login, you should logout in a finally block.  This particularly
      * when using thread pools.  If a thread is returned to the pool with a login attached to the
@@ -87,7 +87,7 @@ public class ClientSecurity {
      * @param username     the user to login
      * @param password     the password for the user
      * @param threadScoped if true the login is scoped to the thread; otherwise the login is global
-     *                     for the entire Java Virtural Machine
+     *                     for the entire Java Virtual Machine
      * @throws FailedLoginException if the username and password combination are not valid or
      *                              if there is a problem communiating with the server
      */

@@ -99,10 +99,10 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
     /**
      * Maps to BasicSingletonObject.getAllowedOperationsReport
      *
-     * Returns a report of the allowed opperations
+     * Returns a report of the allowed operations
      * for one of the bean's methods.
      *
-     * @param methodName The method for which to get the allowed opperations report
+     * @param methodName The method for which to get the allowed operations report
      * @return
      * @see BasicSingletonObject#getAllowedOperationsReport
      */

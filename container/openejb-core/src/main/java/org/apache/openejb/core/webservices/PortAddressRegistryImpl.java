@@ -137,7 +137,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
             }
         }
 
-        // check if there is a unique port with the specifiec interface
+        // check if there is a unique port with the specified interface
         if (referenceClassName != null) {
             final Map<String, PortAddress> interfacePorts = portsByInterface.get(referenceClassName);
             if (interfacePorts != null && interfacePorts.size() == 1) {

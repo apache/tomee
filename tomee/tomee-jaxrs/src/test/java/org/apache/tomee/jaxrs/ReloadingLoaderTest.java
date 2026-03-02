@@ -78,7 +78,7 @@ public class ReloadingLoaderTest {
         SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
         SystemInstance.get().setComponent(WebAppEnricher.class, new WebAppEnricher() {
             @Override
-            public URL[] enrichment(final ClassLoader webappClassLaoder) {
+            public URL[] enrichment(final ClassLoader webappClassLoader) {
                 return new URL[0];
             }
         });

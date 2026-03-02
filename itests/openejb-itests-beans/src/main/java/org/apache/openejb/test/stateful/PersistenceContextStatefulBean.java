@@ -34,7 +34,7 @@ public class PersistenceContextStatefulBean {
 
     private EntityManager extendedEntityManager;
 
-    // Used for testing propigation
+    // Used for testing propagation
     private static EntityManager inheritedDelegate;
     private SessionContext ejbContext;
 
@@ -120,12 +120,12 @@ public class PersistenceContextStatefulBean {
                 // get the raw entity manager so we can test it below
                 inheritedDelegate = (EntityManager) em.getDelegate();
 
-                // The extended entity manager is not propigated to a non-extended entity manager unless there is a transaction
+                // The extended entity manager is not propagated to a non-extended entity manager unless there is a transaction
                 final EntityManager nonExtendedEm = (EntityManager) ctx.lookup("java:comp/env/persistence/TestContext");
                 nonExtendedEm.getFlushMode();
                 final EntityManager nonExtendedDelegate = ((EntityManager) nonExtendedEm.getDelegate());
                 Assert.assertTrue("non-extended entity manager should be open", nonExtendedDelegate.isOpen());
-                Assert.assertNotSame("Extended non-extended entity manager shound not be the same instance as extendend entity manager when accessed out side of a transactions",
+                Assert.assertNotSame("Extended non-extended entity manager should not be the same instance as extended entity manager when accessed out side of a transactions",
                     inheritedDelegate,
                     nonExtendedDelegate);
 
@@ -133,12 +133,12 @@ public class PersistenceContextStatefulBean {
                 //
                 // Note: this code also tests EBJ 3.0 Persistence spec 5.9.1 "UserTransaction is begun within the method, the
                 // container associates the persistence context with the JTA transaction and calls EntityManager.joinTransaction."
-                // If our the extended entity manager were not associted with the transaction, the non-extended entity manager would
+                // If our the extended entity manager were not associated with the transaction, the non-extended entity manager would
                 // not see it.
                 final UserTransaction userTransaction = ejbContext.getUserTransaction();
                 userTransaction.begin();
                 try {
-                    Assert.assertSame("Extended non-extended entity manager to be same instance as extendend entity manager",
+                    Assert.assertSame("Extended non-extended entity manager to be same instance as extended entity manager",
                         inheritedDelegate,
                         nonExtendedEm.getDelegate());
                 } finally {
@@ -151,7 +151,7 @@ public class PersistenceContextStatefulBean {
                 final PersistenceContextStatefulHome home = (PersistenceContextStatefulHome) ejbContext.getEJBHome();
                 final PersistenceContextStatefulObject object = home.create();
 
-                // test the new stateful bean recieved the context
+                // test the new stateful bean received the context
                 object.testPropgation();
 
                 // remove the bean

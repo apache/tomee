@@ -74,7 +74,7 @@ public class Injector {
         try {
             OWBInjector.inject(context.getWebBeansContext().getBeanManagerImpl(), object, null);
         } catch (final Throwable t) {
-            logger().warning("an error occured while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
+            logger().warning("an error occurred while injecting the class '" + object.getClass().getName() + "': " + t.getMessage());
         } finally {
             ThreadContext.exit(oldContext);
         }

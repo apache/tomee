@@ -99,7 +99,7 @@ public class StatefulAllowedOperationsTests extends BasicStatefulTestClient {
          * method has already been called by the container.
          *
          * TO DO:
-         * Implement a little application senario to ensure
+         * Implement a little application scenario to ensure
          * that all methods tested for below have been called
          * by the container.
          */

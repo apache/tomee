@@ -50,7 +50,7 @@ public class Instance implements Serializable, Cache.TimeOut {
     private final LockFactory.StatefulLock lock;
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
-    // This would require that we crete an id and that we track it
+    // This would require that we create an id and that we track it
     // alternatively, we could use ImmutableArtifact with some read/write replace magic
     private Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers;
     private final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;

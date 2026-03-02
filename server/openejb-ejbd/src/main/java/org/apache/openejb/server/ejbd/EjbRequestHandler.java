@@ -125,7 +125,7 @@ class EjbRequestHandler extends RequestHandler {
                 return setResponseError(res, version, e, "No such deployment");
             } catch (Throwable t) {
                 failed = true;
-                return setResponseError(res, version, t, "Unkown error occured while retrieving deployment: " + req);
+                return setResponseError(res, version, t, "Unkown error occurred while retrieving deployment: " + req);
             }
 
             try {

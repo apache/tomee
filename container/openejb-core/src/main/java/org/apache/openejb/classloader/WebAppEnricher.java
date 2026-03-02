@@ -21,7 +21,7 @@ import java.net.URL;
 
 public interface WebAppEnricher {
     /**
-     * @param webappClassLaoder the webapp classloader, can be null
+     * @param webappClassLoader the webapp classloader, can be null
      */
-    URL[] enrichment(final ClassLoader webappClassLaoder);
+    URL[] enrichment(final ClassLoader webappClassLoader);
 }

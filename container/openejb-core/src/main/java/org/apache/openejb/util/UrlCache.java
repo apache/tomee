@@ -76,7 +76,7 @@ public class UrlCache {
         while (!locationStack.isEmpty()) {
             final URL url = locationStack.removeFirst();
 
-            // Skip any duplicate urls in the claspath
+            // Skip any duplicate urls in the classpath
             if (cachedUrls.contains(url)) {
                 continue;
             }
@@ -233,7 +233,7 @@ public class UrlCache {
         if (success) {
             // add cache file to cache
             appCache.put(url, cacheFile);
-            logger.debug("Coppied jar file to " + cacheFile);
+            logger.debug("Copied jar file to " + cacheFile);
             return cacheFile;
         } else {
             // clean up failed copy

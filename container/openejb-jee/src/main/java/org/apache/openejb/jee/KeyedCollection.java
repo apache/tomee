@@ -29,7 +29,7 @@ import java.util.Map;
  * the value using either the provided KeyExtractor, or if no KeyExtractor was
  * provided, the value is cast to Keyable and the getKey() method is called.
  *
- * The underlying Map can be obtainded with the toMap method.  Any changes to this
+ * The underlying Map can be obtained with the toMap method.  Any changes to this
  * map are directly reflected in this collection.  Additions to the map do not
  * need to implement Keyable, nor do the values need to be keyed using the key
  * returned from the KeyExtractor.getKey(value) or the key returned from the

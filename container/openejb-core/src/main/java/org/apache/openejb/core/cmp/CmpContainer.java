@@ -638,8 +638,8 @@ public class CmpContainer implements RpcContainer {
                 // method executes in the same transaction context as the previous ejbCreate(...) method."
                 //
                 // The bean is first insterted using db.create( ) and then after ejbPostCreate( ) its
-                // updated using db.update(). This protocol allows for visablity of the bean after ejbCreate
-                // within the current trasnaction.
+                // updated using db.update(). This protocol allows for visibility of the bean after ejbCreate
+                // within the current transaction.
             } finally {
                 ThreadContext.exit(oldContext);
             }
@@ -729,7 +729,7 @@ public class CmpContainer implements RpcContainer {
                 }
             } else {
                 if (results.size() != 1) {
-                    throw new ObjectNotFoundException("A Enteprise bean with deployment_id = " +
+                    throw new ObjectNotFoundException("An Enterprise bean with deployment_id = " +
                         beanContext.getDeploymentID() +
                         (args != null && args.length >= 1 ? " and primarykey = " + args[0] : "") +
                         " Does not exist");
@@ -823,7 +823,7 @@ public class CmpContainer implements RpcContainer {
     public int update(final BeanContext beanContext, final String methodSignature, final Object... args) throws FinderException {
         final String signature = beanContext.getAbstractSchemaName() + "." + methodSignature;
 
-        // exectue the update query
+        // execute the update query
         return cmpEngine.executeUpdateQuery(beanContext, signature, args);
     }
 

@@ -557,7 +557,7 @@ public class EntityInstanceManager {
                 try {
                     bean.ejbStore();
                 } catch (final Exception re) {
-                    logger.error("Exception occured during ejbStore()", re);
+                    logger.error("Exception occurred during ejbStore()", re);
                     txPolicy.setRollbackOnly(re);
                 } finally {
                     ThreadContext.exit(oldCallContext);

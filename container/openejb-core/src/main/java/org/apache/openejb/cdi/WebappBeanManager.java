@@ -91,7 +91,7 @@ public class WebappBeanManager extends BeanManagerImpl {
             return parentBm.getInjectableReference(injectionPoint, ctx);
         }
 
-        // we can do it cause there is caching but we shouldn't - easy way to overide OWB actually
+        // we can do it cause there is caching but we shouldn't - easy way to override OWB actually
         final Bean<Object> injectedBean = (Bean<Object>)getInjectionResolver().getInjectionPointBean(injectionPoint);
         try {
             if (parentBm != null && injectedBean != null && injectedBean == parentBm.getInjectionResolver().getInjectionPointBean(injectionPoint)) {

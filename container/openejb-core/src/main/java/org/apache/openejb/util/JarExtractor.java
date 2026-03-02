@@ -68,7 +68,7 @@ public class JarExtractor {
     }
 
     /**
-     * Extract the jar file into the specifiec destination directory.  If the destination directory
+     * Extract the jar file into the specified destination directory.  If the destination directory
      * already exists, the jar will not be unpacked.
      *
      * @param file           jar file to unpack

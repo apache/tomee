@@ -488,7 +488,7 @@ public class HttpRequestImpl implements HttpRequest {
      * parses the method for this page
      *
      * @param lineParts a StringTokenizer of the request line
-     * @throws java.io.IOException if an exeption is thrown
+     * @throws java.io.IOException if an exception is thrown
      */
     private void parseMethod(StringTokenizer lineParts) throws IOException {
         String token;
@@ -533,7 +533,7 @@ public class HttpRequestImpl implements HttpRequest {
      * parses the URI into the different parts
      *
      * @param lineParts a StringTokenizer of the URI
-     * @throws java.io.IOException if an exeption is thrown
+     * @throws java.io.IOException if an exception is thrown
      */
     public void parseURI(StringTokenizer lineParts) throws IOException {
         String token;
@@ -596,7 +596,7 @@ public class HttpRequestImpl implements HttpRequest {
      * reads the headers from the data input sent from the browser
      *
      * @param in the data input sent from the browser
-     * @throws java.io.IOException if an exeption is thrown
+     * @throws java.io.IOException if an exception is thrown
      */
     private void readHeaders(DataInput in) throws IOException {
 //        System.out.println("\nREQUEST");
