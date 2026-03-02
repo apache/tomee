@@ -337,7 +337,7 @@ public class URISupport {
     }
 
     /**
-     * Creates a URI from the original URI and the remaining paramaters
+     * Creates a URI from the original URI and the remaining parameters
      *
      * @throws URISyntaxException
      */

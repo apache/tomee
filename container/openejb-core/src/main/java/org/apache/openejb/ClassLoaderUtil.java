@@ -329,7 +329,7 @@ public class ClassLoaderUtil {
     /**
      * Cleans well known class loader leaks in VMs and libraries.  There is a lot of bad code out there and this method
      * will clear up the know problems.  This method should only be called when the class loader will no longer be used.
-     * It this method is called two often it can have a serious impact on preformance.
+     * It this method is called two often it can have a serious impact on performance.
      */
     public static void clearClassLoaderCaches() {
         clearSunSoftCache(ObjectInputStream.class, "subclassAudits");
@@ -484,7 +484,7 @@ public class ClassLoaderUtil {
      * Clears the caches maintained by the SunVM object stream implementation.
      * This method uses reflection and setAccessable to obtain access to the Sun cache.
      * The cache Class synchronizes upon itself for access to the cache Map.
-     * This method completely clears the class loader cache which will impact preformance of object serialization.
+     * This method completely clears the class loader cache which will impact performance of object serialization.
      *
      * @param clazz     the name of the class containing the cache field
      * @param fieldName the name of the cache field

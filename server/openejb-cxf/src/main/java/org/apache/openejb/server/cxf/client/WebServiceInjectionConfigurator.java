@@ -55,7 +55,7 @@ import static org.apache.openejb.server.cxf.transport.util.CxfUtil.configureInte
  * # specific
  * cxf.jaxws.client.{ns}MyPort.out-interceptors = com.foo.MyInInterceptor
  *
- * Services can be defines in tomee.xml or application.properties.
+ * Services can be defined in tomee.xml or application.properties.
  *
  * Note: resources.xml are ignored for now (to be enhanced)
  */

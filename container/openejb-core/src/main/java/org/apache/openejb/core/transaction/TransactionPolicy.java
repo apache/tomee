@@ -39,7 +39,7 @@ public interface TransactionPolicy {
     TransactionType getTransactionType();
 
     /**
-     * Is this a new transaction and not an inhreited transaction or no transaction?  Some
+     * Is this a new transaction and not an inherited transaction or no transaction?  Some
      * TransactionTypes, such as Required or Supported, use the caller's
      * transaction instead of starting a new transaction.  If there is no active
      * transaction (e.g., TransactionType is NotSupported), this method will
@@ -50,7 +50,7 @@ public interface TransactionPolicy {
 
 
     /**
-     * Is this policy running in an inhreited transaction?  Some
+     * Is this policy running in an inherited transaction?  Some
      * TransactionTypes, such as Required or Supported, use the caller's
      * transaction instead of starting a new transaction.  If there is no active
      * transaction (e.g., TransactionType is NotSupported), this method will
@@ -129,7 +129,7 @@ public interface TransactionPolicy {
 
     /**
      * Registers a listener for transaction synchronization events.  If there is
-     * an actual transaction active, the events are fired when the acutal
+     * an actual transaction active, the events are fired when the actual
      * transaction is commited; otherwise the events are fired when this
      * TransactionPolicy completes.
      *

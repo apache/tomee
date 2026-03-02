@@ -35,7 +35,7 @@ public @interface ContextConfig {
     String configFile() default "";
 
     /**
-     * Array of properties. The properties file has precedency in being loaded, so
+     * Array of properties. The properties file has precedence in being loaded, so
      * any properties listed here will overwrite those loaded from the properties file.
      *
      * Again, a Method's properties are loaded after a class' properties, so will
@@ -43,7 +43,7 @@ public @interface ContextConfig {
      *
      * If you specify both a properties file and properties for both a method and a class,
      * first the class' file and properties will be loaded, then the method's file
-     * and properties, so the precedency is effectively the following:
+     * and properties, so the precedence is effectively the following:
      * <ol>
      * <li>Class properties file
      * <li>Class properties

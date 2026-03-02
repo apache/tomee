@@ -37,7 +37,7 @@
     ejb-name:       The name of the ejb as it is in the ejb-name element in the
                     bean's ejb-jar.xml.  This name will be used to locate the ejb
                     declaration in the ejb-jar.xml.  The deployment information 
-                    decalred here will be applied to this ejb.
+                    declared here will be applied to this ejb.
     
     deployment-id:  A name for the ejb that is unique not only in this jar, but 
                     in all the jars in the container system.  This name will allow
@@ -73,7 +73,7 @@
     The openejb-jar.xml is placed in the bean's jar to link the bean
     into the container system.  The bean must be given a unique id
     and it's resource references must be resolved and linked to actual
-    resources in the container sytem.
+    resources in the container system.
     -->
     <xsd:element name="openejb-jar">
         <xsd:complexType>

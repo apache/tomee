@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * <p>
  * Methods {@link java.util.logging.Logger#doSetParent(Logger)}, {@link java.util.logging.Logger#getParent()},
  * {@link java.util.logging.Logger#setUseParentHandlers(boolean)} and
- * {@link java.util.logging.Logger#getUseParentHandlers()} are not overrriden.
+ * {@link java.util.logging.Logger#getUseParentHandlers()} are not overridden.
  * </p>
  * <p>
  * Level mapping inspired by org.slf4j.bridge.SLF4JBridgeHandler:

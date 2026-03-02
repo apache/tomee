@@ -72,7 +72,7 @@ public class EndpointHandler extends AbstractEndpointHandler {
         try {
             instance = instanceFactory.recreateInstance(instance);
         } catch (final UnavailableException e) {
-            // an error occured wile attempting to create the replacement instance
+            // an error occurred wile attempting to create the replacement instance
             // this endpoint is now failed
             state = State.RELEASED;
 

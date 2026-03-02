@@ -84,7 +84,7 @@ public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
     public static final String HEADER_COOKIE = "Cookie";
 
     //
-    // Common attrobute values
+    // Common attribute values
     //
     /**
      * If the https server implementation is based on Servlets, the real HttpServletRequest

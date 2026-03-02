@@ -66,13 +66,13 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     public abstract Transaction getCurrentTransaction();
 
     public boolean isTransactionActive() {
-        final Transaction trasaction = getCurrentTransaction();
-        if (trasaction == null) {
+        final Transaction tx = getCurrentTransaction();
+        if (tx == null) {
             return false;
         }
 
         try {
-            final int status = trasaction.getStatus();
+            final int status = tx.getStatus();
             return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
         } catch (final jakarta.transaction.SystemException e) {
             return false;
@@ -80,10 +80,10 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     }
 
     public boolean isRollbackOnly() {
-        final Transaction trasaction = getCurrentTransaction();
-        if (trasaction != null) {
+        final Transaction tx = getCurrentTransaction();
+        if (tx != null) {
             try {
-                final int status = trasaction.getStatus();
+                final int status = tx.getStatus();
                 return status == Status.STATUS_MARKED_ROLLBACK;
             } catch (final jakarta.transaction.SystemException e) {
                 return false;
@@ -99,9 +99,9 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
     @Override
     public void setRollbackOnly(final Throwable reason) {
-        final Transaction trasaction = getCurrentTransaction();
-        if (trasaction != null) {
-            setRollbackOnly(trasaction, reason);
+        final Transaction tx = getCurrentTransaction();
+        if (tx != null) {
+            setRollbackOnly(tx, reason);
         } else {
             rollbackOnly = true;
         }

@@ -67,7 +67,7 @@ public class SimpleServiceManager extends ServiceManager {
     //    httpejb.properties
     //    webejb.properties
     //    xmlejb.properties
-    // Each contains the class name of the daemon implamentation
+    // Each contains the class name of the daemon implementation
     // The port to use
     // whether it's turned on
     // May be reusable elsewhere, move if another use occurs

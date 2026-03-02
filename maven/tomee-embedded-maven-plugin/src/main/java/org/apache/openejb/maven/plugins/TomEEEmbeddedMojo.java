@@ -592,7 +592,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         final String classifier;
         final String type;
         if (infos.length < 3) {
-            throw new MojoExecutionException("format for librairies should be <groupId>:<artifactId>:<version>[:<type>[:<classifier>]]");
+            throw new MojoExecutionException("format for libraries should be <groupId>:<artifactId>:<version>[:<type>[:<classifier>]]");
         }
         if (infos.length >= 4) {
             type = infos[3];
@@ -724,11 +724,11 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
      *
      * Note that reload and quit/exit are built in commands.
      *
-     * It is recommanded to prefix the command by something specific to your set of commands.
+     * It is recommended to prefix the command by something specific to your set of commands.
      */
     public interface Command {
         /**
-         * @return the string to invoke this comamnd.
+         * @return the string to invoke this command.
          */
         String name();
 

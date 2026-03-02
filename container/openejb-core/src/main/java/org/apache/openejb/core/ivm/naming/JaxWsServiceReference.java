@@ -194,7 +194,7 @@ public class JaxWsServiceReference extends Reference {
         WebServiceFeature[] features(QName qname, Properties properties);
 
         /**
-         * Note: it is recommanded to use same key type as in features() impl (ie qname)
+         * Note: it is recommendd to use same key type as in features() impl (ie qname)
          *
          * @param port the client instance
          * @param properties configuration of the application

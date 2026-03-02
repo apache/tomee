@@ -67,7 +67,7 @@ public class GeneratedClientModules {
             for (final ClientModule clientModule : clientModules) {
                 // we automatically add a ClientModule to every EjbModule
                 // if there didn't turn out to be any clients in the module
-                // just ingore it and remove it from the clientModule list
+                // just ignore it and remove it from the clientModule list
                 final boolean haveMainClassAndDescriptor = clientModule.getMainClass() != null && clientModule.getApplicationClient() != null;
                 final boolean haveAnnotatedClients = clientModule.getLocalClients().size() > 0 || clientModule.getRemoteClients().size() > 0;
 

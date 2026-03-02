@@ -62,7 +62,7 @@ public class JaxWsProviderWrapper extends Provider {
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
 
     //
-    // Magic to get our proider wrapper installed with the PortRefData
+    // Magic to get our provider wrapper installed with the PortRefData
     //
 
     private static final ThreadLocal<ProviderWrapperData> threadPortRefs = new ThreadLocal<>();
@@ -401,7 +401,7 @@ public class JaxWsProviderWrapper extends Provider {
                     }
                 }
             }
-        } catch (Exception ingored) {
+        } catch (Exception ignored) {
             logger.log(Level.INFO, "No META-INF/services/jakarta.xml.ws.spi.Provider found");
         }
 

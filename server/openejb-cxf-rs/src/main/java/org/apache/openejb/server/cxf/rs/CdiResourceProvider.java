@@ -342,7 +342,7 @@ public abstract class CdiResourceProvider implements ResourceProvider {
                 LOGGER.warning(msg, ex);
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             } catch (final OpenEJBException ex) {
-                final String msg = "An error occured injecting in class " + constructor.getDeclaringClass().getName();
+                final String msg = "An error occurred injecting in class " + constructor.getDeclaringClass().getName();
                 LOGGER.warning(msg, ex);
                 throw new WebApplicationException(Response.serverError().entity(msg).build());
             }

@@ -47,7 +47,7 @@ public class MethodInfoUtil {
      * Finds the nearest java.lang.reflect.Method with the given NamedMethodInfo
      * Callbacks can be private so class.getMethod() cannot be used.  Searching
      * starts by looking in the specified class, if the method is not found searching continues with
-     * the immediate parent and continues recurssively until the method is found or java.lang.Object
+     * the immediate parent and continues recursively until the method is found or java.lang.Object
      * is reached.  If the method is not found a IllegalStateException is thrown.
      *
      * @param clazz

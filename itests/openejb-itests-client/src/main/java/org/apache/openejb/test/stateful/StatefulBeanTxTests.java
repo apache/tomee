@@ -125,9 +125,9 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
     public void test02_java_comp_UserTransaction() {
         try {
             final Transaction t = ejbObject.jndiUserTransaction();
-            assertNotNull("UserTransaction is null. Could not retreive a UserTransaction from the bean's JNDI namespace.", t);
+            assertNotNull("UserTransaction is null. Could not retrieve a UserTransaction from the bean's JNDI namespace.", t);
         } catch (final Exception e) {
-            fail("Could not retreive a UserTransaction from the bean's JNDI namespace. Received Exception " + e.getClass() + " : " + e.getMessage());
+            fail("Could not retrieve a UserTransaction from the bean's JNDI namespace. Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
@@ -214,7 +214,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
         //// Now check that the account really wasn't added.
         //try{
         //    actual = ejbObject.retreiveAccount( expected.getSsn() );
-        //    //assertTrue( "The transaction was commited when it should have been rolledback.", !expected.equals(actual) );
+        //    //assertTrue( "The transaction was commited when it should have been rolled back.", !expected.equals(actual) );
         //} catch (Exception e){
         //    fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         //}
@@ -279,7 +279,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      *
      * The actions performed by the Container for an instance with bean-managed transaction are summarized
-     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
+     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is currently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
      * business method).
      *
@@ -328,7 +328,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      *
      * The actions performed by the Container for an instance with bean-managed transaction are summarized
-     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
+     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is currently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
      * business method).
      *
@@ -377,7 +377,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      *
      * The actions performed by the Container for an instance with bean-managed transaction are summarized
-     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
+     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is currently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
      * business method).
      *
@@ -425,7 +425,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase {
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      *
      * The actions performed by the Container for an instance with bean-managed transaction are summarized
-     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
+     * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is currently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
      * business method).
      *

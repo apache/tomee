@@ -38,7 +38,7 @@ public class MakeTxLookup implements Opcodes {
         final File file = new File(args[0]);
 
         createTopLinkStrategy(file);
-        createHibernteStrategy(file);
+        createHibernateStrategy(file);
         // hibernate repackaged its SPI...keeping all the same excepted packages
         createNewHibernateStrategy(file, HIBERNATE_NEW_FACTORY, "org/hibernate/service/jta/platform/internal");
         createNewHibernateStrategy(file, HIBERNATE_NEW_FACTORY2, "org/hibernate/engine/transaction/jta/platform/internal");
@@ -98,7 +98,7 @@ public class MakeTxLookup implements Opcodes {
         write(basedir, cw, target.replace('.', '/'));
     }
 
-    private static void createHibernteStrategy(final File baseDir) throws Exception {
+    private static void createHibernateStrategy(final File baseDir) throws Exception {
 
         final String factory = HIBERNATE_FACTORY;
 

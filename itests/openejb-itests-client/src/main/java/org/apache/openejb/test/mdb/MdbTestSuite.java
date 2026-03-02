@@ -31,7 +31,7 @@ public class MdbTestSuite extends junit.framework.TestCase {
     public static junit.framework.Test suite() {
         final TestSuite suite = new FilteredTestSuite();
 
-        // Verify the famework is working
+        // Verify the framework is working
         suite.addTest(new MdbConnectionFactoryTests());
         suite.addTest(new BasicMdbTests());
 

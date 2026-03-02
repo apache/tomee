@@ -409,7 +409,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
         if (this.running.getAndSet(false)) {
 
             try {
-                //Iterrupt threads
+                //Interrupt threads
                 for (final Future future : this.futures) {
                     try {
                         future.cancel(true);

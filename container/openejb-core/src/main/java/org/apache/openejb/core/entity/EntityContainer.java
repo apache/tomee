@@ -315,7 +315,7 @@ public class EntityContainer implements RpcContainer {
         * According to section 9.1.5.1 of the EJB 1.1 specification, the "ejbPostCreate(...)
         * method executes in the same transaction context as the previous ejbCreate(...) method."
         *
-        * For this reason the TransactionScopeHandler methods usally preformed by the invoke( )
+        * For this reason the TransactionScopeHandler methods usually preformed by the invoke( )
         * operation must be handled here along with the call explicitly.
         * This ensures that the afterInvoke() is not processed between the ejbCreate and ejbPostCreate methods to
         * ensure that the ejbPostCreate executes in the same transaction context of the ejbCreate.
@@ -356,9 +356,9 @@ public class EntityContainer implements RpcContainer {
                 // According to section 9.1.5.1 of the EJB 1.1 specification, the "ejbPostCreate(...)
                 // method executes in the same transaction context as the previous ejbCreate(...) method."
                 //
-                // The bean is first insterted using db.create( ) and then after ejbPostCreate( ) its
-                // updated using db.update(). This protocol allows for visablity of the bean after ejbCreate
-                // within the current trasnaction.
+                // The bean is first inserted using db.create( ) and then after ejbPostCreate( ) its
+                // updated using db.update(). This protocol allows for visibility of the bean after ejbCreate
+                // within the current transaction.
             } finally {
                 ThreadContext.exit(oldContext);
             }
@@ -476,7 +476,7 @@ public class EntityContainer implements RpcContainer {
                 try {
                     instanceManager.discardInstance(callContext, bean);
                 } catch (final SystemException e1) {
-                    logger.error("The instance manager encountered an unkown system exception while trying to discard the entity instance with primary key " +
+                    logger.error("The instance manager encountered an unknown system exception while trying to discard the entity instance with primary key " +
                         callContext.getPrimaryKey());
                 }
             }

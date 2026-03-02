@@ -466,8 +466,8 @@ public class NewLoaderLogic {
 
             if (!userSuppliedClasspathFilter) {
 
-                logger.info("Applying buildin classpath excludes");
-                timer.event("buildin excludes");
+                logger.info("Applying building classpath excludes");
+                timer.event("building excludes");
                 urlSet = applyBuiltinExcludes(urlSet);
 
             }

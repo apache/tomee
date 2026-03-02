@@ -56,7 +56,7 @@ public class JWTCallerPrincipal implements JsonWebToken {
      * Create the DefaultJWTCallerPrincipal from the parsed JWT token and the extracted principal name
      *
      * @param jwt  - the parsed JWT token representation
-     * @param name - the extracted unqiue name to use as the principal name; from "upn", "preferred_username" or "sub" claim
+     * @param name - the extracted unique name to use as the principal name; from "upn", "preferred_username" or "sub" claim
      */
     public JWTCallerPrincipal(final String jwt, final String type, final JwtClaims claimsSet, final String name) {
         this.name = name;

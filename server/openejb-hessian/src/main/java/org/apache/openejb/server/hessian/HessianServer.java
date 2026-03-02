@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// done by relfection to let hessian be in the app
+// done by reflection to let hessian be in the app
 public class HessianServer {
     public static final String CONTENT_TYPE_HESSIAN = "application/x-hessian";
 

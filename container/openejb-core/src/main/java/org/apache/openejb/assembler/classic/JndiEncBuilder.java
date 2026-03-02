@@ -532,7 +532,7 @@ public class JndiEncBuilder {
     }
 
     // we don't want to bind globally a global resource multiple times in the Assembler
-    // if the datasource if defined globally in the currently deployed app originAppname hould not be null
+    // if the datasource if defined globally in the currently deployed app originAppname should not be null
     private boolean isNotGobalOrIsHoldByThisApp(final ResourceInfo info, final JndiScope scope) {
         return !info.jndiName.startsWith("global/")
             || info.originAppName != null && info.originAppName.equals(moduleId) && JndiScope.global.equals(scope);

@@ -106,7 +106,7 @@ public class SimpleWorkManager implements WorkManager {
             throw workRejectedException;
         }
 
-        // accecpt all other work
+        // accept all other work
         workListener.workAccepted(new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null));
 
         // execute work

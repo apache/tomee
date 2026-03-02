@@ -374,7 +374,7 @@ public class Tracker {
         private int maxMissedHeartbeats = 10;
         private long heartRate = 500;
         // ---------------------------------
-        // Listenting specific settings
+        // Listening specific settings
         private long reconnectDelay = 1000 * 5;
         private long maxReconnectDelay = 1000 * 30;
         private long exponentialBackoff = 0;

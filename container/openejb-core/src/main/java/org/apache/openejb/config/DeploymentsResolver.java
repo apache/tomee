@@ -215,7 +215,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
      */
     public static List<URL> loadFromClasspath(final ClassLoader classLoader) {
         final ClasspathSearcher searchResult = new ClasspathSearcher().loadUrls(classLoader);
-        if (searchResult.prefiltered == null || searchResult.urlSet == null) { // an error occured
+        if (searchResult.prefiltered == null || searchResult.urlSet == null) { // an error occurred
             return new ArrayList<>(); // allow iterator to fully work compared to emptyList()
         }
 
