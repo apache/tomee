@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -415,11 +417,7 @@ public class Application implements JndiConsumer, NamedModule {
     }
 
     public java.lang.String getVersion() {
-        if (version == null) {
-            return "6";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "6");
     }
 
     public void setVersion(final java.lang.String value) {

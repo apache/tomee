@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 
@@ -80,11 +81,7 @@ public final class CommonsFileUploadPartFactory {
                     try {
                         String encoding = request.getCharacterEncoding();
                         if (encoding == null) {
-                            if (enc == null) {
-                                encoding = "UTF-8";
-                            } else {
-                                encoding = enc;
-                            }
+                            encoding = Objects.requireNonNullElse(enc, "UTF-8");
                         }
                         value = part.getString(encoding);
                     } catch (final IOException uee) {

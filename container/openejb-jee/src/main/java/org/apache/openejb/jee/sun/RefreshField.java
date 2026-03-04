@@ -24,6 +24,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.util.Objects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 public class RefreshField {
@@ -43,11 +45,7 @@ public class RefreshField {
     }
 
     public String getScope() {
-        if (scope == null) {
-            return "request.parameter";
-        } else {
-            return scope;
-        }
+        return Objects.requireNonNullElse(scope, "request.parameter");
     }
 
     public void setScope(final String value) {

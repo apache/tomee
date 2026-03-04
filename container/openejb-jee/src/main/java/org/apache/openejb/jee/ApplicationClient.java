@@ -26,10 +26,12 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -420,11 +422,7 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
     }
 
     public String getVersion() {
-        if (version == null) {
-            return "5";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "5");
     }
 
     public void setVersion(final String value) {

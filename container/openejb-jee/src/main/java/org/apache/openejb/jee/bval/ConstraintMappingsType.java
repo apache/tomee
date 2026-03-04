@@ -18,6 +18,8 @@ package org.apache.openejb.jee.bval;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -157,11 +159,7 @@ public class ConstraintMappingsType {
      *     
      */
     public String getVersion() {
-        if (version == null) {
-            return "1.1";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "1.1");
     }
 
     /**

@@ -24,6 +24,8 @@ import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.util.Objects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"value"})
 public class ConstraintFieldValue {
@@ -40,11 +42,7 @@ public class ConstraintFieldValue {
     protected String value;
 
     public String getMatchExpr() {
-        if (matchExpr == null) {
-            return "equals";
-        } else {
-            return matchExpr;
-        }
+        return Objects.requireNonNullElse(matchExpr, "equals");
     }
 
     public void setMatchExpr(final String value) {
@@ -52,11 +50,7 @@ public class ConstraintFieldValue {
     }
 
     public String getCacheOnMatch() {
-        if (cacheOnMatch == null) {
-            return "true";
-        } else {
-            return cacheOnMatch;
-        }
+        return Objects.requireNonNullElse(cacheOnMatch, "true");
     }
 
     public void setCacheOnMatch(final String value) {
@@ -64,11 +58,7 @@ public class ConstraintFieldValue {
     }
 
     public String getCacheOnMatchFailure() {
-        if (cacheOnMatchFailure == null) {
-            return "false";
-        } else {
-            return cacheOnMatchFailure;
-        }
+        return Objects.requireNonNullElse(cacheOnMatchFailure, "false");
     }
 
     public void setCacheOnMatchFailure(final String value) {

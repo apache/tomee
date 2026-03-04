@@ -22,6 +22,8 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import java.util.Objects;
+
 
 /**
  * <p>Java class for executable-validationType complex type.
@@ -87,11 +89,7 @@ public class ExecutableValidationType {
      *     
      */
     public boolean getEnabled() {
-        if (enabled == null) {
-            return true;
-        } else {
-            return enabled;
-        }
+        return Objects.requireNonNullElse(enabled, true);
     }
 
     /**

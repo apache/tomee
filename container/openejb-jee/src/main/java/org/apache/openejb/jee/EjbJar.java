@@ -30,9 +30,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * ejb-jar_3_1.xsd
@@ -273,11 +275,7 @@ public class EjbJar implements NamedModule {
     }
 
     public String getVersion() {
-        if (version == null) {
-            return "3.0";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "3.0");
     }
 
     public void setVersion(final String value) {

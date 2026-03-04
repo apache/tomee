@@ -26,10 +26,12 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * web-jsptaglibrary_2_1.xsd
@@ -236,11 +238,7 @@ public class TldTaglib {
     }
 
     public String getVersion() {
-        if (version == null) {
-            return "2.1";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "2.1");
     }
 
     public void setVersion(final String value) {

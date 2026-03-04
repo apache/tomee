@@ -18,6 +18,8 @@ package org.apache.openejb.jee.sun;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -91,11 +93,7 @@ public class SunWebApp {
     protected List<WebserviceDescription> webserviceDescription;
 
     public String getErrorUrl() {
-        if (errorUrl == null) {
-            return "";
-        } else {
-            return errorUrl;
-        }
+        return Objects.requireNonNullElse(errorUrl, "");
     }
 
     public void setErrorUrl(final String value) {

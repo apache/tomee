@@ -24,8 +24,10 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -53,11 +55,7 @@ public class Cache {
     protected List<CacheMapping> cacheMapping;
 
     public String getMaxEntries() {
-        if (maxEntries == null) {
-            return "4096";
-        } else {
-            return maxEntries;
-        }
+        return Objects.requireNonNullElse(maxEntries, "4096");
     }
 
     public void setMaxEntries(final String value) {
@@ -65,11 +63,7 @@ public class Cache {
     }
 
     public String getTimeoutInSeconds() {
-        if (timeoutInSeconds == null) {
-            return "30";
-        } else {
-            return timeoutInSeconds;
-        }
+        return Objects.requireNonNullElse(timeoutInSeconds, "30");
     }
 
     public void setTimeoutInSeconds(final String value) {
@@ -77,11 +71,7 @@ public class Cache {
     }
 
     public String getEnabled() {
-        if (enabled == null) {
-            return "true";
-        } else {
-            return enabled;
-        }
+        return Objects.requireNonNullElse(enabled, "true");
     }
 
     public void setEnabled(final String value) {
