@@ -37,18 +37,21 @@ public class DeployApplication extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        delegate.evaluate(testInstance, (Callable<Void>) () -> {
-            try {
-                next.evaluate();
-            } catch (final Error e) {
-                throw e;
-            } catch (final Throwable throwable) {
-                if (throwable instanceof Exception) {
-                    throw (Exception) throwable;
+        delegate.evaluate(testInstance, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    next.evaluate();
+                } catch (final Error e) {
+                    throw e;
+                } catch (final Throwable throwable) {
+                    if (throwable instanceof Exception) {
+                        throw (Exception) throwable;
+                    }
+                    throw new OpenEJBRuntimeException("Failed test evaluation", throwable);
                 }
-                throw new OpenEJBRuntimeException("Failed test evaluation", throwable);
+                return null;
             }
-            return null;
         });
     }
 }

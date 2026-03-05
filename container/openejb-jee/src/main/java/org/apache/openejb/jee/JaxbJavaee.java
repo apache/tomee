@@ -101,12 +101,14 @@ public class JaxbJavaee {
 
         final JAXBContext ctx = JaxbJavaee.getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
-            final String verbose = System.getProperty("openejb.validation.output.level");
-            if (verbose != null && "VERBOSE".equals(verbose.toUpperCase(Locale.ENGLISH))) {
-                System.err.println(validationEvent);
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
+                final String verbose = System.getProperty("openejb.validation.output.level");
+                if (verbose != null && "VERBOSE".equals(verbose.toUpperCase(Locale.ENGLISH))) {
+                    System.err.println(validationEvent);
+                }
+                return false;
             }
-            return false;
         });
 
         SAXSource source = null;
@@ -182,9 +184,11 @@ public class JaxbJavaee {
 
         final JAXBContext ctx = JaxbJavaee.getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
-            System.out.println(validationEvent);
-            return false;
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
+                System.out.println(validationEvent);
+                return false;
+            }
         });
 
         final JaxbJavaee.NoSourceFilter xmlFilter = new JaxbJavaee.NoSourceFilter(parser.getXMLReader());
@@ -221,9 +225,11 @@ public class JaxbJavaee {
 
         final JAXBContext ctx = JaxbJavaee.getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
-            System.out.println(validationEvent);
-            return false;
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
+                System.out.println(validationEvent);
+                return false;
+            }
         });
 
 
@@ -259,9 +265,11 @@ public class JaxbJavaee {
 
         final JAXBContext ctx = JaxbJavaee.getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
-            System.out.println(validationEvent);
-            return false;
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
+                System.out.println(validationEvent);
+                return false;
+            }
         });
 
         final JaxbJavaee.HandlerChainsNamespaceFilter xmlFilter = new JaxbJavaee.HandlerChainsNamespaceFilter(parser.getXMLReader());

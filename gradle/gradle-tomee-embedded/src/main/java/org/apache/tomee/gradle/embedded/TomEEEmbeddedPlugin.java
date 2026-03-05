@@ -44,18 +44,21 @@ public class TomEEEmbeddedPlugin implements Plugin<Project> {
             project.getExtensions().create(name, TomEEEmbeddedExtension.class);
         }
 
-        project.afterEvaluate(actionProject -> {
-            for (final String name : extensions) {
-                final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(actionProject.getExtensions().findByName(name));
-                if (extension == null) {
-                    return;
+        project.afterEvaluate(new Action<Project>() {
+            @Override
+            public void execute(final Project actionProject) {
+                for (final String name : extensions) {
+                    final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(actionProject.getExtensions().findByName(name));
+                    if (extension == null) {
+                        return;
+                    }
+                    if (extension.isSkipDefaultRepository() != null && !extension.isSkipDefaultRepository()) {
+                        actionProject.getRepositories().mavenCentral();
+                        return;
+                    }
                 }
-                if (extension.isSkipDefaultRepository() != null && !extension.isSkipDefaultRepository()) {
-                    actionProject.getRepositories().mavenCentral();
-                    return;
-                }
+                actionProject.getRepositories().mavenCentral();
             }
-            actionProject.getRepositories().mavenCentral();
         });
 
         String configName = TomEEEmbeddedExtension.ALIAS;
@@ -66,33 +69,36 @@ public class TomEEEmbeddedPlugin implements Plugin<Project> {
         }
 
         final Configuration configuration = project.getConfigurations().maybeCreate(configName);
-        configuration.getIncoming().beforeResolve(resolvableDependencies -> {
-            String tomeeVersion = null;
-            for (final String name : extensions) {
-                final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(project.getExtensions().findByName(name));
-                if (extension == null) {
-                    return;
-                }
-                tomeeVersion = extension.getTomeeVersion();
-                if (tomeeVersion != null) {
-                    break;
-                }
-            }
-            if (tomeeVersion == null) {
-                try {
-                    try (final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("META-INF/maven/org.apache.tomee.gradle/tomee-embedded/pom.properties")) {
-                        final Properties p = new Properties();
-                        p.load(is);
-                        tomeeVersion = p.getProperty("version");
+        configuration.getIncoming().beforeResolve(new Action<ResolvableDependencies>() {
+            @Override
+            public void execute(final ResolvableDependencies resolvableDependencies) {
+                String tomeeVersion = null;
+                for (final String name : extensions) {
+                    final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(project.getExtensions().findByName(name));
+                    if (extension == null) {
+                        return;
                     }
-                } catch (final IOException e) {
-                    tomeeVersion = "7.0.2"; // we should never be there
+                    tomeeVersion = extension.getTomeeVersion();
+                    if (tomeeVersion != null) {
+                        break;
+                    }
                 }
-            }
+                if (tomeeVersion == null) {
+                    try {
+                        try (final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("META-INF/maven/org.apache.tomee.gradle/tomee-embedded/pom.properties")) {
+                            final Properties p = new Properties();
+                            p.load(is);
+                            tomeeVersion = p.getProperty("version");
+                        }
+                    } catch (final IOException e) {
+                        tomeeVersion = "7.0.2"; // we should never be there
+                    }
+                }
 
-            final DependencyHandler dependencyHandler = project.getDependencies();
-            final DependencySet dependencies = configuration.getDependencies();
-            dependencies.add(dependencyHandler.create("org.apache.tomee:tomee-embedded:" + tomeeVersion));
+                final DependencyHandler dependencyHandler = project.getDependencies();
+                final DependencySet dependencies = configuration.getDependencies();
+                dependencies.add(dependencyHandler.create("org.apache.tomee:tomee-embedded:" + tomeeVersion));
+            }
         });
 
         project.task(new HashMap<>() {{

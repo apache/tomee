@@ -79,9 +79,11 @@ public class JaxbOpenejbJar3 {
 
         final JAXBContext ctx = getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
 //                System.out.println(validationEvent);
-            return false;
+                return false;
+            }
         });
 
 

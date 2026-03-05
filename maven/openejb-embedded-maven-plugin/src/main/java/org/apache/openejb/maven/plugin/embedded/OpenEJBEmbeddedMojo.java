@@ -72,7 +72,12 @@ public class OpenEJBEmbeddedMojo extends AbstractMojo {
             container = EJBContainer.createEJBContainer(map());
             if (await) {
                 final CountDownLatch latch = new CountDownLatch(1);
-                Runtime.getRuntime().addShutdownHook(new Thread(latch::countDown));
+                Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        latch.countDown();
+                    }
+                }));
                 try {
                     latch.await();
                 } catch (final InterruptedException e) {

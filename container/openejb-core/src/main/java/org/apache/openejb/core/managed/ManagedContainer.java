@@ -272,7 +272,12 @@ public class ManagedContainer implements RpcContainer {
         bean.setContainer(null);
         bean.setContainerData(null);
 
-        cache.removeAll(instance -> bean == instance.beanContext);
+        cache.removeAll(new CacheFilter<Instance>() {
+            @Override
+            public boolean matches(final Instance instance) {
+                return bean == instance.beanContext;
+            }
+        });
     }
 
     @Override

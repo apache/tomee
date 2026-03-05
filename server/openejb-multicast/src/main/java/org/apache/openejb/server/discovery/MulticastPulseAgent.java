@@ -263,11 +263,14 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private void fireEvent(final URI uri, final boolean add) {
         if (null != this.listener) {
             final DiscoveryListener dl = this.listener;
-            getExecutorService().execute(() -> {
-                if (add) {
-                    dl.serviceAdded(uri);
-                } else {
-                    dl.serviceRemoved(uri);
+            getExecutorService().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (add) {
+                        dl.serviceAdded(uri);
+                    } else {
+                        dl.serviceRemoved(uri);
+                    }
                 }
             });
         }
@@ -302,95 +305,98 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 final Sender sender = new Sender(this, socketKey, socket);
                 this.futures.add(executorService.submit(sender));
 
-                this.futures.add(executorService.submit(() -> {
+                this.futures.add(executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    final DatagramPacket request = new DatagramPacket(new byte[2048], 2048);
-                    latch.countDown();
+                        final DatagramPacket request = new DatagramPacket(new byte[2048], 2048);
+                        latch.countDown();
 
-                    while (agent.running.get()) {
+                        while (agent.running.get()) {
 
-                        try {
-                            socket.receive(request);
-                            final SocketAddress sa = request.getSocketAddress();
+                            try {
+                                socket.receive(request);
+                                final SocketAddress sa = request.getSocketAddress();
 
-                            if (null != sa) {
+                                if (null != sa) {
 
-                                String req = new String(request.getData(), 0, request.getLength());
+                                    String req = new String(request.getData(), 0, request.getLength());
 
-                                if (req.startsWith(CLIENT)) {
+                                    if (req.startsWith(CLIENT)) {
 
-                                    final int ix = req.indexOf(BADURI);
-                                    String badUri = null;
+                                        final int ix = req.indexOf(BADURI);
+                                        String badUri = null;
 
-                                    if (ix > 0) {
-                                        //The client is notifying of a bad uri
-                                        badUri = req.substring(ix).replace(BADURI, "");
-                                        req = req.substring(0, ix).replace(CLIENT, "");
-                                    } else {
-                                        req = (req.replace(CLIENT, ""));
-                                    }
-
-                                    //Is this a group or global pulse request
-                                    if (mpg.equals(req) || "*".equals(req)) {
-
-                                        //Is there a bad url and is it this agent broadcasting the bad URI?
-                                        if (null != badUri) {
-                                            if (getHosts(agent.ignore).contains(badUri)) {
-                                                final ReentrantLock l = agent.lock;
-                                                l.lock();
-
-                                                try {
-                                                    //Remove it and rebuild our broadcast packet
-                                                    if (agent.ignore.add(badUri)) {
-                                                        agent.buildPacket();
-                                                        LOG.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
-                                                                " this to the 'ignore' property in the multipulse.properties file");
-                                                    }
-                                                } finally {
-                                                    l.unlock();
-                                                }
-                                            }
-
-                                            agent.fireEvent(URI.create("OpenEJB" + BADURI + badUri), false);
-
+                                        if (ix > 0) {
+                                            //The client is notifying of a bad uri
+                                            badUri = req.substring(ix).replace(BADURI, "");
+                                            req = req.substring(0, ix).replace(CLIENT, "");
                                         } else {
+                                            req = (req.replace(CLIENT, ""));
+                                        }
 
-                                            //Normal client multicast pulse request
-                                            final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
+                                        //Is this a group or global pulse request
+                                        if (mpg.equals(req) || "*".equals(req)) {
 
-                                            if (isLoopBackOnly && !MulticastPulseAgent.isLocalAddress(client, false)) {
-                                                //We only have local services, so make sure the request is from a local source else ignore it
-                                                if (LOG.isDebugEnabled()) {
-                                                    LOG.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
-                                                            client,
-                                                            req));
+                                            //Is there a bad url and is it this agent broadcasting the bad URI?
+                                            if (null != badUri) {
+                                                if (getHosts(agent.ignore).contains(badUri)) {
+                                                    final ReentrantLock l = agent.lock;
+                                                    l.lock();
+
+                                                    try {
+                                                        //Remove it and rebuild our broadcast packet
+                                                        if (agent.ignore.add(badUri)) {
+                                                            agent.buildPacket();
+                                                            LOG.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
+                                                                    " this to the 'ignore' property in the multipulse.properties file");
+                                                        }
+                                                    } finally {
+                                                        l.unlock();
+                                                    }
                                                 }
+
+                                                agent.fireEvent(URI.create("OpenEJB" + BADURI + badUri), false);
+
                                             } else {
 
-                                                //We have received a valid pulse request
-                                                if (LOG.isDebugEnabled()) {
-                                                    LOG.debug(String.format("Answering client '%1$s' pulse request for group: '%2$s' on '%3$s'", client, req, socketKey));
-                                                }
+                                                //Normal client multicast pulse request
+                                                final String client = ((InetSocketAddress) sa).getAddress().getHostAddress();
 
-                                                //Renew response pulse
-                                                sender.pulseResponse();
+                                                if (isLoopBackOnly && !MulticastPulseAgent.isLocalAddress(client, false)) {
+                                                    //We only have local services, so make sure the request is from a local source else ignore it
+                                                    if (LOG.isDebugEnabled()) {
+                                                        LOG.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
+                                                                client,
+                                                                req));
+                                                    }
+                                                } else {
+
+                                                    //We have received a valid pulse request
+                                                    if (LOG.isDebugEnabled()) {
+                                                        LOG.debug(String.format("Answering client '%1$s' pulse request for group: '%2$s' on '%3$s'", client, req, socketKey));
+                                                    }
+
+                                                    //Renew response pulse
+                                                    sender.pulseResponse();
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
 
-                        } catch (final Exception e) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("MulticastPulseAgent request error: " + e.getMessage(), e);
+                            } catch (final Exception e) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("MulticastPulseAgent request error: " + e.getMessage(), e);
+                                }
                             }
                         }
-                    }
 
-                    try {
-                        socket.close();
-                    } catch (final Throwable e) {
-                        //Ignore
+                        try {
+                            socket.close();
+                        } catch (final Throwable e) {
+                            //Ignore
+                        }
                     }
                 }));
             }

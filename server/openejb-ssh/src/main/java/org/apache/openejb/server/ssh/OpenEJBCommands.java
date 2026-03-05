@@ -71,9 +71,12 @@ public class OpenEJBCommands extends CliRunnable implements Command, Runnable, S
             throw new IllegalStateException("No user logged");
         }
         try {
-            Subject.doAs(loginContext.getSubject(), (PrivilegedAction<Object>) () -> {
-                OpenEJBCommands.super.run();
-                return null;
+            Subject.doAs(loginContext.getSubject(), new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    OpenEJBCommands.super.run();
+                    return null;
+                }
             });
         } finally {
             try {

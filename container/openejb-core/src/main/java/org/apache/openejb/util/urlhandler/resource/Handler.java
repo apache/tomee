@@ -55,7 +55,11 @@ public class Handler extends URLStreamHandler {
 
     public static ClassLoader getContextClassLoader() {
         return (ClassLoader) AccessController.doPrivileged(
-                (PrivilegedAction) () -> Thread.currentThread().getContextClassLoader()
+            new PrivilegedAction() {
+                public Object run() {
+                    return Thread.currentThread().getContextClassLoader();
+                }
+            }
         );
     }
 

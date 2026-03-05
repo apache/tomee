@@ -109,20 +109,24 @@ public class SystemClassPath extends BasicURLClassPath {
     }
 
     private Method getGetURLsMethod() {
-        return AccessController.doPrivileged((PrivilegedAction<Method>) () -> {
-            try {
-                final URLClassLoader loader = getSystemLoader();
-                final Object cp = getURLClassPath(loader);
-                final Class<?> clazz = cp.getClass();
-
+        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            @Override
+            public Method run() {
                 try {
-                    return clazz.getDeclaredMethod("getURLs", URL.class);
-                } catch (final NoSuchMethodException e) {
-                    return clazz.getDeclaredMethod("getURLs");
+                    final URLClassLoader loader = getSystemLoader();
+                    final Object cp = getURLClassPath(loader);
+                    final Class<?> clazz = cp.getClass();
+
+                    try {
+                        return clazz.getDeclaredMethod("getURLs", URL.class);
+                    } catch (final NoSuchMethodException e) {
+                        return clazz.getDeclaredMethod("getURLs");
+                    }
+
+                } catch (final Exception e) {
+                    throw new LoaderRuntimeException(e);
                 }
 
-            } catch (final Exception e) {
-                throw new LoaderRuntimeException(e);
             }
 
         });

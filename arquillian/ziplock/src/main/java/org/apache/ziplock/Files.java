@@ -33,7 +33,12 @@ public class Files {
     }
 
     public static List<File> collect(final File dir, final Pattern pattern) {
-        return collect(dir, file -> pattern.matcher(file.getName()).matches());
+        return collect(dir, new FileFilter() {
+            @Override
+            public boolean accept(final File file) {
+                return pattern.matcher(file.getName()).matches();
+            }
+        });
     }
 
 
@@ -121,15 +126,18 @@ public class Files {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(Files.class.getClassLoader());
         try {
-            final Thread deleteShutdownHook = new Thread(() -> {
-                for (final String path : delete) {
-                    try {
-                        remove(new File(path));
-                    } catch (final Throwable e) {
-                        System.err.println(e.getMessage());
+            final Thread deleteShutdownHook = new Thread() {
+                @Override
+                public void run() {
+                    for (final String path : delete) {
+                        try {
+                            remove(new File(path));
+                        } catch (final Throwable e) {
+                            System.err.println(e.getMessage());
+                        }
                     }
                 }
-            });
+            };
             try {
                 Runtime.getRuntime().addShutdownHook(deleteShutdownHook);
             } catch (final Throwable e) {

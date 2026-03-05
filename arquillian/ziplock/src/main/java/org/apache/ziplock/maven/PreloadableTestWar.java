@@ -27,7 +27,12 @@ public final class PreloadableTestWar {
 
     static {
         final ExecutorService es = Executors.newSingleThreadExecutor();
-        war = es.submit(Mvn::testWar);
+        war = es.submit(new Callable<Archive<?>>() {
+            @Override
+            public Archive<?> call() throws Exception {
+                return Mvn.testWar();
+            }
+        });
         es.shutdown();
     }
 

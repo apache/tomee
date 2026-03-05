@@ -156,7 +156,12 @@ public class Bootstrap {
             return;
         }
 
-        final File[] jarFiles = folder.listFiles((dir, name) -> name.endsWith(".jar"));
+        final File[] jarFiles = folder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".jar");
+            }
+        });
 
         for (final File jarFile : jarFiles) {
             classLoader.add(jarFile.toURI().toURL());
