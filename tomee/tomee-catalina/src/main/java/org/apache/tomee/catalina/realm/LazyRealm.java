@@ -226,10 +226,13 @@ public class LazyRealm extends LifecycleBase implements Realm {
 
     @Override
     public void setContainer(final Container container) {
-        container.addLifecycleListener(event -> {
-            if (Lifecycle.BEFORE_STOP_EVENT.equals(event.getType())) {
-                if (creationalContext != null) {
-                    creationalContext.release();
+        container.addLifecycleListener(new LifecycleListener() {
+            @Override
+            public void lifecycleEvent(final LifecycleEvent event) {
+                if (Lifecycle.BEFORE_STOP_EVENT.equals(event.getType())) {
+                    if (creationalContext != null) {
+                        creationalContext.release();
+                    }
                 }
             }
         });

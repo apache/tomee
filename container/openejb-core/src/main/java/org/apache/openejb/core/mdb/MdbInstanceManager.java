@@ -145,18 +145,21 @@ public class MdbInstanceManager {
                 callbackThreads, callbackThreads * 2,
                 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>(qsize), threadFactory);
 
-        this.executor.setRejectedExecutionHandler((r, tpe) -> {
+        this.executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(final Runnable r, final ThreadPoolExecutor tpe) {
 
-            if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
-                return;
-            }
-
-            try {
-                if (!tpe.getQueue().offer(r, 20, TimeUnit.SECONDS)) {
-                    logger.warning("Executor failed to run asynchronous process: " + r);
+                if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
+                    return;
                 }
-            } catch (final InterruptedException e) {
-                //Ignore
+
+                try {
+                    if (!tpe.getQueue().offer(r, 20, TimeUnit.SECONDS)) {
+                        logger.warning("Executor failed to run asynchronous process: " + r);
+                    }
+                } catch (final InterruptedException e) {
+                    //Ignore
+                }
             }
         });
 

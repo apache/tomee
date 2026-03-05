@@ -303,12 +303,15 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             return beanContext.getModuleContext()
                 .getAppContext()
                 .getAsynchronousPool()
-                .invoke(new CUCallable<>((Callable<Object>) () -> {
-                    try {
-                        return homeMethodInvoke(interfce, method, args);
-                    } catch (final ApplicationException ae) {
-                        logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
-                        throw ae;
+                .invoke(new CUCallable<Object>(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        try {
+                            return homeMethodInvoke(interfce, method, args);
+                        } catch (final ApplicationException ae) {
+                            logger.error("EjbHomeProxyHandler: Asynchronous call to '" + interfce.getSimpleName() + "' on '" + method.getName() + "' failed", ae);
+                            throw ae;
+                        }
                     }
                 }), method.getReturnType() == Void.TYPE);
         } else {

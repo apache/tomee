@@ -73,7 +73,13 @@ public class ClassLoaderUtil {
     }
 
     public static ClassLoader getContextClassLoader() {
-        return AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+            @Override
+            public ClassLoader run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
     }
 
     public static File getUrlCachedName(final String appId, final URL url) {

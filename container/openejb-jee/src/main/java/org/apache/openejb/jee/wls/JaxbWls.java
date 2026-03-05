@@ -87,9 +87,11 @@ public class JaxbWls {
 
         final JAXBContext ctx = JaxbWls.getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
-            System.out.println(validationEvent);
-            return false;
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
+                System.out.println(validationEvent);
+                return false;
+            }
         });
 
 

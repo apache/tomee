@@ -27,10 +27,14 @@ import java.util.Set;
 
 public class EntrancyTracker {
     /**
-     * Thread local used to track the instances in the current call stack so we can determine if a non-reentrant
+     * Thread local used to track the insances in the current call stack so we can determine if an nonreentrant
      * instance is being reentered.
      */
-    private final ThreadLocal<Set<InstanceKey>> inCallThreadLocal = ThreadLocal.withInitial(HashSet::new);
+    private final ThreadLocal<Set<InstanceKey>> inCallThreadLocal = new ThreadLocal<Set<InstanceKey>>() {
+        protected Set<InstanceKey> initialValue() {
+            return new HashSet<>();
+        }
+    };
 
     private final TransactionSynchronizationRegistry synchronizationRegistry;
 

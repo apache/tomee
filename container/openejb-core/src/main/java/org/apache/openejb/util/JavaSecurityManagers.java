@@ -32,13 +32,23 @@ public final class JavaSecurityManagers {
     public static String getSystemProperty(final String key) {
         return System.getSecurityManager() == null ?
                 System.getProperty(key) :
-                AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty(key));
+                AccessController.doPrivileged(new PrivilegedAction<String>() {
+                    @Override
+                    public String run() {
+                        return System.getProperty(key);
+                    }
+                });
     }
 
     public static String getSystemProperty(final String key, final String or) {
         return System.getSecurityManager() == null ?
                 System.getProperty(key, or) :
-                AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty(key, or));
+                AccessController.doPrivileged(new PrivilegedAction<String>() {
+                    @Override
+                    public String run() {
+                        return System.getProperty(key, or);
+                    }
+                });
     }
 
     public static Properties getSystemProperties() {
@@ -51,9 +61,12 @@ public final class JavaSecurityManagers {
         if (System.getSecurityManager() == null) {
             System.clearProperty(key);
         } else {
-            AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-                System.clearProperty(key);
-                return null;
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                @Override
+                public Void run() {
+                    System.clearProperty(key);
+                    return null;
+                }
             });
         }
     }
@@ -66,13 +79,16 @@ public final class JavaSecurityManagers {
                 System.getProperties().put(key, value);
             }
         } else {
-            AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-                if (String.class.isInstance(value)) {
-                    System.setProperty(key, String.class.cast(value));
-                } else {
-                    System.getProperties().put(key, value);
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                @Override
+                public Void run() {
+                    if (String.class.isInstance(value)) {
+                        System.setProperty(key, String.class.cast(value));
+                    } else {
+                        System.getProperties().put(key, value);
+                    }
+                    return null;
                 }
-                return null;
             });
         }
     }
@@ -81,9 +97,12 @@ public final class JavaSecurityManagers {
         if (System.getSecurityManager() == null) {
             PolicyContext.setContextID(moduleID);
         } else {
-            AccessController.doPrivileged((PrivilegedAction<String>) () -> {
-                PolicyContext.setContextID(moduleID);
-                return null;
+            AccessController.doPrivileged(new PrivilegedAction<String>() {
+                @Override
+                public String run() {
+                    PolicyContext.setContextID(moduleID);
+                    return null;
+                }
             });
         }
     }

@@ -25,6 +25,7 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.filter.Filters;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -150,7 +152,12 @@ public class TldScanner {
                     continue;
                 }
 
-                futures.add(es.submit(() -> scanForTagLibs(file)));
+                futures.add(es.submit(new Callable<Set<URL>>() {
+                    @Override
+                    public Set<URL> call() throws Exception {
+                        return scanForTagLibs(file);
+                    }
+                }));
             }
 
             es.shutdown();
@@ -192,7 +199,12 @@ public class TldScanner {
         final File webInfMetaInf = new File(webInfDir, "classes/META-INF");
         if (webInfMetaInf.exists()) {
             // filter directly to let it be faster in next loop
-            files.addAll(asList(webInfMetaInf.listFiles((dir, name) -> name.endsWith(".tld"))));
+            files.addAll(asList(webInfMetaInf.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(final File dir, final String name) {
+                    return name.endsWith(".tld");
+                }
+            })));
         }
 
         if (files.isEmpty()) {

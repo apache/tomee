@@ -47,7 +47,12 @@ public class SaajUniverse {
     public static final Type AXIS2 = Type.AXIS2;
 
     private static final ThreadLocal<LinkedList<Type>> CURRENT_UNIVERSE =
-            ThreadLocal.withInitial(LinkedList::new);
+        new ThreadLocal<LinkedList<Type>>() {
+            @Override
+            protected LinkedList<Type> initialValue() {
+                return new LinkedList<Type>();
+            }
+        };
 
     public void set(Type newUniverse) {
         final LinkedList<Type> universeList = CURRENT_UNIVERSE.get();

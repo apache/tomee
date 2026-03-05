@@ -117,7 +117,7 @@ public class VendorMetrics {
 
             final List<JMXAttribute> attributes = Arrays.stream(info.getAttributes())
                     .filter(a -> JMXAttribute.getType(a.getType()) != null)
-                    .map(JMXAttribute::from)
+                    .map(a -> JMXAttribute.from(a))
                     .collect(Collectors.toList());
 
 

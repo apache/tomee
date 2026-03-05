@@ -32,7 +32,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ContextualJndiReference extends IntraVmJndiReference {
-    public static final ThreadLocal<Boolean> followReference = ThreadLocal.withInitial(() -> true);
+    public static final ThreadLocal<Boolean> followReference = new ThreadLocal<Boolean>() {
+        @Override
+        public Boolean initialValue() {
+            return true;
+        }
+    };
 
     private Object defaultValue;
     private final List<String> prefixes = new CopyOnWriteArrayList<>();

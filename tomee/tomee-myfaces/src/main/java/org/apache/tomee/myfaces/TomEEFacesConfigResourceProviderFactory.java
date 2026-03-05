@@ -41,8 +41,11 @@ public class TomEEFacesConfigResourceProviderFactory extends DefaultFacesConfigR
         FacesConfigResourceProvider returnValue = null;
         try {
             if (System.getSecurityManager() != null) {
-                returnValue = AccessController.doPrivileged((PrivilegedExceptionAction<FacesConfigResourceProvider>)
-                        () -> resolveFacesConfigResourceProviderFromService(externalContext));
+                returnValue = AccessController.doPrivileged(new PrivilegedExceptionAction<FacesConfigResourceProvider>() {
+                    public FacesConfigResourceProvider run() throws Exception {
+                        return resolveFacesConfigResourceProviderFromService(externalContext);
+                    }
+                });
             } else {
                 returnValue = resolveFacesConfigResourceProviderFromService(externalContext);
             }

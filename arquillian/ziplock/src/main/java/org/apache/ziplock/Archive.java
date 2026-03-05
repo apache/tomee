@@ -181,7 +181,12 @@ public class Archive {
     }
 
     private String buildManifest() {
-        return Join.join("\r\n", entry -> entry.getKey() + ": " + entry.getValue(), manifest.entrySet());
+        return Join.join("\r\n", new Join.NameCallback<Map.Entry<String, String>>() {
+            @Override
+            public String getName(final Map.Entry<String, String> entry) {
+                return entry.getKey() + ": " + entry.getValue();
+            }
+        }, manifest.entrySet());
     }
 
 }

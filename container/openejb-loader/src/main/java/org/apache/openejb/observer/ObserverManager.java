@@ -43,7 +43,12 @@ import java.util.logging.Logger;
 
 public class ObserverManager {
 
-    private static final ThreadLocal<Set<Invocation>> SEEN = ThreadLocal.withInitial(HashSet::new);
+    private static final ThreadLocal<Set<Invocation>> SEEN = new ThreadLocal<Set<Invocation>>() {
+        @Override
+        protected Set<Invocation> initialValue() {
+            return new HashSet<>();
+        }
+    };
 
     // lazy init since it is used in SystemInstance
     private static final AtomicReference<Logger> LOGGER = new AtomicReference<>();

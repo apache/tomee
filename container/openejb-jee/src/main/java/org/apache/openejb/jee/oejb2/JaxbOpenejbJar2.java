@@ -83,11 +83,13 @@ public class JaxbOpenejbJar2 {
 
         final JAXBContext ctx = getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler((ValidationEventHandler) validationEvent -> {
-            if (logErrors) {
-                System.out.println(validationEvent);
+        unmarshaller.setEventHandler(new ValidationEventHandler() {
+            public boolean handleEvent(final ValidationEvent validationEvent) {
+                if (logErrors) {
+                    System.out.println(validationEvent);
+                }
+                return false;
             }
-            return false;
         });
 
         unmarshaller.setListener(new Unmarshaller.Listener() {

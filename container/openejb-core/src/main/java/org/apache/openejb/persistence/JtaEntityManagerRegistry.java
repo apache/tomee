@@ -51,7 +51,11 @@ public class JtaEntityManagerRegistry {
     /**
      * Registry of extended context entity managers.
      */
-    private final ThreadLocal<ExtendedRegistry> extendedRegistry = ThreadLocal.withInitial(ExtendedRegistry::new);
+    private final ThreadLocal<ExtendedRegistry> extendedRegistry = new ThreadLocal<ExtendedRegistry>() {
+        protected ExtendedRegistry initialValue() {
+            return new ExtendedRegistry();
+        }
+    };
 
     /**
      * Creates a JtaEntityManagerRegistry using the specified transactionSynchronizationRegistry for the registry
