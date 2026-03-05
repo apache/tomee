@@ -26,21 +26,51 @@ import java.util.concurrent.Semaphore;
  * @version $Rev$ $Date$
  */
 public class Core {
+
+    /*
+     * IMPORTANT: Do NOT refactor the anonymous threads in this class to lambda expressions.
+     *
+     * Reason:
+     * This code runs during static class initialization. The main thread holds the
+     * class-initialization lock for Core while starting worker threads and waiting
+     * for them.
+     *
+     * If lambdas are used, the lambda body is compiled into a synthetic method
+     * inside the Core class. When the spawned thread tries to execute the lambda,
+     * it must access that synthetic method, which requires Core to be fully
+     * initialized. However, the main thread is still holding the initialization
+     * lock and waiting for the worker thread to finish.
+     *
+     * This results in a class-initialization deadlock:
+     *   - Main thread waits for worker thread
+     *   - Worker thread waits for Core initialization to complete
+     *
+     * Anonymous inner classes avoid this problem because they are compiled as
+     * separate classes (e.g. Core$1.class) and can execute without requiring
+     * Core to finish initialization.
+     *
+     */
     static {
-        final Thread preloadMessages = new Thread(() -> {
-            new Messages("org.apache.openejb.util.resources");
-            new Messages("org.apache.openejb.config");
-            new Messages("org.apache.openejb.config.resources");
-        });
+        final Thread preloadMessages = new Thread() {
+            @Override
+            public void run() {
+                new Messages("org.apache.openejb.util.resources");
+                new Messages("org.apache.openejb.config");
+                new Messages("org.apache.openejb.config.resources");
+            }
+        };
         preloadMessages.start();
 
-        final Thread preloadServiceProviders = new Thread(() -> {
-            try {
-                ServiceUtils.getServiceProviders();
-            } catch (final OpenEJBException e) {
-                // no-op
+        final Thread preloadServiceProviders = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    ServiceUtils.getServiceProviders();
+                } catch (final OpenEJBException e) {
+                    // no-op
+                }
             }
-        });
+        };
         preloadServiceProviders.start();
 
         final int permits = 2 * Runtime.getRuntime().availableProcessors() + 1;
