@@ -65,7 +65,7 @@ PersistenceContext/Cache*
 * The PersistenceContext/Cache is *flushed* and cleared at JTA *commit*
 time
 
-# Cache == PersistenceContext
+= Cache == PersistenceContext
 
 The concept of a database cache is an extremely important concept to be
 aware of. Without a copy of the data in memory (i.e. a cache) when you
@@ -90,7 +90,7 @@ use exactly one EntityManager instance in your transaction to ensure
 there is only one active PersistenceContext/Cache for the given set of
 data active against the current transaction.
 
-# Caches and Detaching
+= Caches and Detaching
 
 Detaching is the concept of a persistent object *leaving* the
 PersistenceContext/Cache. Leaving means that any updates made to the
@@ -127,7 +127,7 @@ Detached object.
 
 Calling EntityManager.merge() will re-attach a Detached object.
 
-# Valid RESOURCE_LOCAL Unit usage
+= Valid RESOURCE_LOCAL Unit usage
 
 Servlets and EJBs can use RESOURCE_LOCAL persistence units through the
 EntityManagerFactory as follows:

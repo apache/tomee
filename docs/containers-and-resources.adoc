@@ -29,7 +29,7 @@ Supports the following properties:
 | Transaction manager used by the container.
 |===
 
----
+'''
 
 === BMP_ENTITY
 
@@ -52,7 +52,7 @@ Supports the following properties:
 Default value is `10`.
 |===
 
----
+'''
 
 === STATELESS
 
@@ -86,7 +86,7 @@ If `false`, temporary instances are created for one invocation and then discarde
 Default value is `true`.
 |===
 
----
+'''
 
 === STATEFUL
 
@@ -125,7 +125,7 @@ Default value is `1000`.
 Default value is `100`.
 |===
 
----
+'''
 
 === MESSAGE
 
@@ -160,7 +160,7 @@ Default value is `org.apache.activemq.ra.ActiveMQActivationSpec`.
 Default value is `10`.
 |===
 
----
+'''
 
 == Resources
 
@@ -276,7 +276,7 @@ Default value is `0`.
 Default value is `false`.
 |===
 
----
+'''
 
 === ActiveMQResourceAdapter
 
@@ -307,7 +307,7 @@ Default value is `vm://localhost?async=true`.
 Default value is *Default Unmanaged JDBC Database*.
 |===
 
----
+'''
 
 === jakarta.jms.ConnectionFactory
 
@@ -349,7 +349,7 @@ Default value is `5000`.
 Default value is `15`.
 |===
 
----
+'''
 
 === jakarta.jms.Queue
 
@@ -371,7 +371,7 @@ Supports the following properties:
 | Name of the queue.
 |===
 
----
+'''
 
 === jakarta.jms.Topic
 
@@ -393,7 +393,7 @@ Supports the following properties:
 | Name of the topic.
 |===
 
----
+'''
 
 === jakarta.mail.Session
 
