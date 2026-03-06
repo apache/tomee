@@ -99,7 +99,7 @@ Print this help message.
 
 Show examples of how to use the options.
 
-# COMMON ISSUES
+= COMMON ISSUES
 
 == Mislocated class or NoClassDefFoundError
 
