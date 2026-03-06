@@ -133,23 +133,23 @@ public class SavedRequest implements Serializable {
 
             @Override
             public Enumeration<String> getParameterNames() {
-                return Collections.enumeration(parameterMap.keySet());
+                return Collections.enumeration(getParameterMap().keySet());
             }
 
             @Override
             public String[] getParameterValues(String name) {
-                return parameterMap.get(name);
+                return getParameterMap().get(name);
             }
 
             @Override
             public String getParameter(String name) {
-                String[] values = parameterMap.get(name);
+                String[] values = getParameterValues(name);
                 return values == null || values.length == 0 ? null : values[0];
             }
 
             @Override
             public Map<String, String[]> getParameterMap() {
-                return parameterMap;
+                return parameterMap != null ? parameterMap : Collections.emptyMap();
             }
         };
     }
