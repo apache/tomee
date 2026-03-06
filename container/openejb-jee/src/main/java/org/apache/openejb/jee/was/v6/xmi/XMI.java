@@ -18,6 +18,8 @@ package org.apache.openejb.jee.was.v6.xmi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
@@ -121,11 +123,7 @@ public class XMI {
      * @return possible object is {@link String }
      */
     public String getVersion() {
-        if (version == null) {
-            return "2.0";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "2.0");
     }
 
     /**

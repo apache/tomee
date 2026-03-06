@@ -25,6 +25,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.util.Objects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"value"})
 public class Timeout {
@@ -46,11 +48,7 @@ public class Timeout {
     }
 
     public String getScope() {
-        if (scope == null) {
-            return "request.attribute";
-        } else {
-            return scope;
-        }
+        return Objects.requireNonNullElse(scope, "request.attribute");
     }
 
     public void setScope(final String value) {

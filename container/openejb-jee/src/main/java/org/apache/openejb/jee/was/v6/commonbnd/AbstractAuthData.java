@@ -18,6 +18,8 @@ package org.apache.openejb.jee.was.v6.commonbnd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -37,11 +39,9 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * model is Basic Authentication; however, other authentication types such as
  * certificates and tokens are expected to be extended off this type in the
  * advanced and enterprise layers.
- *
- *
+ * <p>
  * Java class for AbstractAuthData complex type.
- *
- *
+ * <p>
  * The following schema fragment specifies the expected content contained within
  * this class.
  *
@@ -84,15 +84,13 @@ public class AbstractAuthData {
     protected String uuid;
 
     /**
-     * Gets the value of the extensions property.
-     *
-     *
+     * Gets the value of the {@code extensions} property.
+     * <p>
      * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
+     * snapshot. Therefore, any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the extensions property.
-     *
-     *
+     * <CODE>set</CODE> method for the {@code extensions} property.
+     * <p>
      * For example, to add a new item, do as follows:
      *
      * <pre>
@@ -153,11 +151,7 @@ public class AbstractAuthData {
      * @return possible object is {@link String }
      */
     public String getVersion() {
-        if (version == null) {
-            return "2.0";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "2.0");
     }
 
     /**

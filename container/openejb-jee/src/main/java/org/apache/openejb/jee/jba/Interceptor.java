@@ -19,6 +19,8 @@ package org.apache.openejb.jee.jba;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
@@ -59,11 +61,7 @@ public class Interceptor {
      * {@link String }
      */
     public String getTransaction() {
-        if (transaction == null) {
-            return "Both";
-        } else {
-            return transaction;
-        }
+        return Objects.requireNonNullElse(transaction, "Both");
     }
 
     /**
@@ -83,11 +81,7 @@ public class Interceptor {
      * {@link String }
      */
     public String getMetricsEnabled() {
-        if (metricsEnabled == null) {
-            return "false";
-        } else {
-            return metricsEnabled;
-        }
+        return Objects.requireNonNullElse(metricsEnabled, "false");
     }
 
     /**
