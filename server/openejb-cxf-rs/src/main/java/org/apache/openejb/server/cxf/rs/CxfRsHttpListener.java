@@ -316,7 +316,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (is == null) {
             return false;
         }
-        try {
+        try (is) {
             final int ind = pathInfo.lastIndexOf(".");
             if (ind != -1 && ind < pathInfo.length()) {
                 final String type = STATIC_CONTENT_TYPES.get(pathInfo.substring(ind + 1));
@@ -331,12 +331,6 @@ public class CxfRsHttpListener implements RsHttpListener {
             response.setStatus(HttpURLConnection.HTTP_OK);
         } catch (final IOException ex) {
             throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
-        } finally {
-            try {
-                is.close();
-            } catch (final IOException e) {
-                // no-op
-            }
         }
         return true;
     }

@@ -73,12 +73,10 @@ public class TomcatEmbedder {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         // set the ClassLoader to the one which loaded ServletConfig.class i.e. the parent ClassLoader
         Thread.currentThread().setContextClassLoader(catalinaCl);
-        URLClassLoader childCl = null;
-        try {
-            childCl = new URLClassLoader(new URL[]{
-                    getThisJar().toURI().toURL(),
-                    findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX).toURI().toURL()
-            });
+        try (URLClassLoader childCl = new URLClassLoader(new URL[]{
+                getThisJar().toURI().toURL(),
+                findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX).toURI().toURL()
+        })) {
 
             // TomcatHook.hook()
             //This is loaded by childCl and is defined in the tomee-loader
@@ -89,13 +87,6 @@ public class TomcatEmbedder {
         } catch (final Throwable e) {
             e.printStackTrace();
         } finally {
-            if (childCl != null) {
-                try {
-                    childCl.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
             Thread.currentThread().setContextClassLoader(oldCl);
         }
     }

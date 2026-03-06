@@ -104,18 +104,12 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?")) {
                     stmt.setInt(1, primaryKey);
                     found = stmt.executeQuery().next();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             throw new FinderException("FindByPrimaryKey failed");
@@ -139,19 +133,13 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("SELECT id FROM entity WHERE last_name = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("SELECT id FROM entity WHERE last_name = ?")) {
                     stmt.setString(1, lastName);
                     final ResultSet set = stmt.executeQuery();
                     while (set.next()) keys.add(set.getInt("id"));
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             throw new FinderException("FindByPrimaryKey failed");
@@ -180,9 +168,7 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
 
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
 
-            final Connection con = ds.getConnection();
-
-            try {
+            try (Connection con = ds.getConnection()) {
                 // Support for Oracle because Oracle doesn't do auto increment
 //          PreparedStatement stmt = con.prepareStatement("insert into entity (id, first_name, last_name) values (?,?,?)");
 //          stmt.setInt(1, keys++);
@@ -207,8 +193,6 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
                 } finally {
                     stmt.close();
                 }
-            } finally {
-                con.close();
             }
 
             return primaryKey;
@@ -310,11 +294,9 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?")) {
                     stmt.setInt(1, primaryKey);
                     final ResultSet rs = stmt.executeQuery();
                     if (!rs.next()) {
@@ -325,11 +307,7 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
                     if (rs.next()) {
                         throw new EJBException("Found more than one entity with id " + primaryKey);
                     }
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final NamingException | SQLException e) {
             throw new EJBException(e);
@@ -362,20 +340,14 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("update entity set first_name = ?, last_name = ? where id = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("update entity set first_name = ?, last_name = ? where id = ?")) {
                     stmt.setString(1, firstName);
                     stmt.setString(2, lastName);
                     stmt.setInt(3, primaryKey);
                     stmt.execute();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -394,18 +366,12 @@ public class BasicBmpBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?")) {
                     stmt.setInt(1, primaryKey);
                     stmt.executeUpdate();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
 
         } catch (final Exception e) {

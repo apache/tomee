@@ -34,13 +34,8 @@ public class Stop {
 
     public static void stop(final String host, final int port) {
 
-        Socket socket = null;
-        OutputStream out = null;
-
-        try {
-
-            socket = new Socket(host, port);
-            out = socket.getOutputStream();
+        try (Socket socket = new Socket(host, port);
+             OutputStream out = socket.getOutputStream()) {
 
             out.write(RequestType.STOP_REQUEST_Stop.getCode());
 
@@ -48,22 +43,6 @@ public class Stop {
             System.out.println(":: server not running ::");
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (null != out) {
-                try {
-                    out.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
-
-            if (null != socket) {
-                try {
-                    socket.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
         }
     }
 

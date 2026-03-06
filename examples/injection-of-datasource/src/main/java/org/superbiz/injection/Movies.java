@@ -47,45 +47,35 @@ public class Movies {
 
     @PostConstruct
     private void construct() throws Exception {
-        Connection connection = movieDatabase.getConnection();
-        try {
+        try (Connection connection = movieDatabase.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement("CREATE TABLE movie ( director VARCHAR(255), title VARCHAR(255), year integer)");
             stmt.execute();
-        } finally {
-            connection.close();
         }
     }
 
     public void addMovie(Movie movie) throws Exception {
-        Connection conn = movieDatabase.getConnection();
-        try {
+        try (Connection conn = movieDatabase.getConnection()) {
             PreparedStatement sql = conn.prepareStatement("INSERT into movie (director, title, year) values (?, ?, ?)");
             sql.setString(1, movie.getDirector());
             sql.setString(2, movie.getTitle());
             sql.setInt(3, movie.getYear());
             sql.execute();
-        } finally {
-            conn.close();
         }
     }
 
     public void deleteMovie(Movie movie) throws Exception {
-        Connection conn = movieDatabase.getConnection();
-        try {
+        try (Connection conn = movieDatabase.getConnection()) {
             PreparedStatement sql = conn.prepareStatement("DELETE from movie where director = ? AND title = ? AND year = ?");
             sql.setString(1, movie.getDirector());
             sql.setString(2, movie.getTitle());
             sql.setInt(3, movie.getYear());
             sql.execute();
-        } finally {
-            conn.close();
         }
     }
 
     public List<Movie> getMovies() throws Exception {
         ArrayList<Movie> movies = new ArrayList<>();
-        Connection conn = movieDatabase.getConnection();
-        try {
+        try (Connection conn = movieDatabase.getConnection()) {
             PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");
             ResultSet set = sql.executeQuery();
             while (set.next()) {
@@ -95,9 +85,6 @@ public class Movies {
                 movie.setYear(set.getInt("year"));
                 movies.add(movie);
             }
-
-        } finally {
-            conn.close();
         }
         return movies;
     }

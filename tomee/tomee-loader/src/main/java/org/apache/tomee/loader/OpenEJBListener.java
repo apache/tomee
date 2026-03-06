@@ -288,9 +288,7 @@ public class OpenEJBListener implements LifecycleListener {
                 input = jarFile.getInputStream(jarEntry);
 
                 final File file = new File(dest, name);
-                BufferedOutputStream output = null;
-                try {
-                    output = new BufferedOutputStream(new FileOutputStream(file));
+                try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
                     final byte[] buffer = new byte[2048];
                     while (true) {
                         final int n = input.read(buffer);
@@ -298,14 +296,6 @@ public class OpenEJBListener implements LifecycleListener {
                             break;
                         }
                         output.write(buffer, 0, n);
-                    }
-                } finally {
-                    if (output != null) {
-                        try {
-                            output.close();
-                        } catch (final IOException e) {
-                            // Ignore
-                        }
                     }
                 }
 

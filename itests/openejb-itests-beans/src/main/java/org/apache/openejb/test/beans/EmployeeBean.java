@@ -43,19 +43,12 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
 
             final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            final Connection con = ds.getConnection();
-
-            try {
-                final PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?")) {
                     stmt.setInt(1, primaryKey);
                     final ResultSet rs = stmt.executeQuery();
                     found = rs.next();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -80,15 +73,12 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
 
             java.util.Vector keys;
             try {
-                final Statement stmt = con.createStatement();
-                try {
+                try (Statement stmt = con.createStatement()) {
                     final ResultSet rs = stmt.executeQuery("select EmployeeID from Employees");
                     keys = new java.util.Vector();
                     while (rs.next()) {
                         keys.addElement(rs.getInt("EmployeeID"));
                     }
-                } finally {
-                    stmt.close();
                 }
             } finally {
                 con.close();
@@ -110,9 +100,7 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
 
             final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            final Connection con = ds.getConnection();
-
-            try {
+            try (Connection con = ds.getConnection()) {
                 PreparedStatement stmt = con.prepareStatement("insert into Employees (FirstName, LastName) values (?,?)");
                 try {
                     stmt.setString(1, firstName);
@@ -128,8 +116,6 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
                 } finally {
                     stmt.close();
                 }
-            } finally {
-                con.close();
             }
 
             return id;
@@ -162,10 +148,8 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
 
             final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            final Connection con = ds.getConnection();
-            try {
-                final PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("select * from Employees where EmployeeID = ?")) {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
                     stmt.setInt(1, primaryKey);
                     final ResultSet rs = stmt.executeQuery();
@@ -173,11 +157,7 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
                         lastName = rs.getString("LastName");
                         firstName = rs.getString("FirstName");
                     }
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
 
         } catch (final Exception e) {
@@ -191,20 +171,14 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
             final InitialContext jndiContext = new InitialContext();
 
             final javax.sql.DataSource ds = (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("update Employees set FirstName = ?, LastName = ? where EmployeeID = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("update Employees set FirstName = ?, LastName = ? where EmployeeID = ?")) {
                     stmt.setString(1, firstName);
                     stmt.setString(2, lastName);
                     stmt.setInt(3, id);
                     stmt.execute();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -226,19 +200,12 @@ public class EmployeeBean implements jakarta.ejb.EntityBean {
             final javax.sql.DataSource ds =
                 (javax.sql.DataSource) jndiContext.lookup("java:comp/env/jdbc/orders");
 
-            final Connection con = ds.getConnection();
-
-            try {
-                final PreparedStatement stmt = con.prepareStatement("delete from Employees where EmployeeID = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("delete from Employees where EmployeeID = ?")) {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
                     stmt.setInt(1, primaryKey);
                     stmt.executeUpdate();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
 
         } catch (final Exception e) {
