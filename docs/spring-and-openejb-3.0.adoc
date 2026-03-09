@@ -8,7 +8,7 @@
 NOTE: OpenEJB 3.1 and later users should refer to the link:spring.html[Spring]
 page.
 
-# Bootstrapping OpenEJB in Spring
+= Bootstrapping OpenEJB in Spring
 
 If you wish to use OpenEJB inside Spring you can do so pretty easily.
 Include OpenEJB and its dependencies in your classpath as you would in a

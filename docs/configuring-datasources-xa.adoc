@@ -45,17 +45,19 @@ or
 This will give a complete list of paramaters that are available for the XA 
 datasource. We'll simply use the `URL` paramater for the datasource.
 
-```
-  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.mysql.cj.jdbc.MysqlXADataSource">
+[source]
+----
+<Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.mysql.cj.jdbc.MysqlXADataSource">
     Url jdbc:mysql://192.168.37.202:3306/movie
-  </Resource>
-```
+</Resource>
+----
 
 Next, we create a JtaManaged datasource as we normally would, and point it to the
 XA datasource using the `XaDataSource` attribute.
 
-```
-  <Resource id="demo/jdbc/XADataSource" type="DataSource">
+[source]
+----
+<Resource id="demo/jdbc/XADataSource" type="DataSource">
     XaDataSource demo/jdbc/XADataSourceXA
     JdbcDriver  com.mysql.cj.jdbc.Driver
     JdbcUrl jdbc:mysql://192.168.37.202:3306/movie
@@ -72,13 +74,14 @@ XA datasource using the `XaDataSource` attribute.
     TimeBetweenEvictionRuns 1 minute
     MaxWaitTime 0 seconds
     ValidationQuery select 1
-  </Resource>
-```
+</Resource>
+----
 
 And finally, a non-JTA managed datasource as well:
 
-```
-  <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+[source]
+----
+<Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
     JdbcDriver com.mysql.cj.jdbc.Driver
     JdbcUrl jdbc:mysql://192.168.37.202:3306/movie
     UserName root
@@ -94,15 +97,16 @@ And finally, a non-JTA managed datasource as well:
     TimeBetweenEvictionRuns 1 minute
     MaxWaitTime 0 seconds
     ValidationQuery select 1
-  </Resource>
-```
+</Resource>
+----
 
 == Sample configs
 
 === Oracle
 
-```
-  <Resource id="demo/jdbc/XADataSource" type="DataSource">
+[source]
+----
+<Resource id="demo/jdbc/XADataSource" type="DataSource">
     XaDataSource demo/jdbc/XADataSourceXA
     JdbcDriver  oracle.jdbc.OracleDriver
     JdbcUrl jdbc:oracle:thin:@//192.168.37.214:1521/XE
@@ -121,13 +125,13 @@ And finally, a non-JTA managed datasource as well:
     PoolPreparedStatements true
     MaxOpenPreparedStatements 1024
     ValidationQuery select 1 from dual
-  </Resource>
+</Resource>
 
-  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="oracle.jdbc.xa.client.OracleXADataSource">
+<Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="oracle.jdbc.xa.client.OracleXADataSource">
     Url jdbc:oracle:thin:@//192.168.37.214:1521/XE
-  </Resource>
+</Resource>
 
-  <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+<Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
     JdbcDriver oracle.jdbc.OracleDriver
     JdbcUrl jdbc:oracle:thin:@//192.168.37.214:1521/XE
     UserName system
@@ -145,13 +149,14 @@ And finally, a non-JTA managed datasource as well:
     PoolPreparedStatements true
     MaxOpenPreparedStatements 1024
     ValidationQuery select 1 from dual
-  </Resource>
-```
+</Resource>
+----
 
 === Microsoft SQL Server
 
-```
-  <Resource id="demo/jdbc/XADataSource" type="DataSource">
+[source]
+----
+<Resource id="demo/jdbc/XADataSource" type="DataSource">
     XaDataSource demo/jdbc/XADataSourceXA
     JdbcDriver  com.microsoft.sqlserver.jdbc.SQLServerDriver
     JdbcUrl jdbc:sqlserver://yourserver.database.windows.net:1433;database=test
@@ -170,13 +175,13 @@ And finally, a non-JTA managed datasource as well:
     PoolPreparedStatements true
     MaxOpenPreparedStatements 1024
     ValidationQuery select 1
-  </Resource>
+</Resource>
 
-  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.microsoft.sqlserver.jdbc.SQLServerXADataSource">
+<Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.microsoft.sqlserver.jdbc.SQLServerXADataSource">
     URL jdbc:sqlserver://yourserver.database.windows.net:1433;database=test
-  </Resource>
+</Resource>
 
-  <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+<Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
     JdbcDriver com.microsoft.sqlserver.jdbc.SQLServerDriver
     JdbcUrl jdbc:sqlserver://yourserver.database.windows.net:1433;database=test
     UserName sa
@@ -194,15 +199,16 @@ And finally, a non-JTA managed datasource as well:
     PoolPreparedStatements true
     MaxOpenPreparedStatements 1024
     ValidationQuery select 1
-  </Resource>
-```
+</Resource>
+----
 
 Please note that using XA with Microsoft SQL Server requires the MS DTC to be configured correctly, and sqljdbc_xa.dll to be installed. For instructions, please see this Microsoft article: https://docs.microsoft.com/en-us/sql/connect/jdbc/understanding-xa-transactions?view=sql-server-2017
 
 === MySQL
 
-```
-  <resources>
+[source]
+----
+<resources>
     <Resource id="demo/jdbc/XADataSource" type="DataSource">
       XaDataSource demo/jdbc/XADataSourceXA
       JdbcDriver  com.mysql.cj.jdbc.Driver
@@ -243,16 +249,17 @@ Please note that using XA with Microsoft SQL Server requires the MS DTC to be co
       MaxWaitTime 0 seconds
       ValidationQuery select 1
     </Resource>
-  </resources>
-```
+</resources>
+----
 
 === PostgreSQL
 
-```
-  <resources>
+[source]
+----
+<resources>
     <Resource id="demo/jdbc/XADataSource" type="DataSource">
       XaDataSource demo/jdbc/XADataSourceXA
-      JdbcDriver org.postgresql.Driver 
+      JdbcDriver org.postgresql.Driver
       JdbcUrl jdbc:postgresql://192.168.37.200:5432/movie
       username postgres
       password mysecretpassword
@@ -294,13 +301,14 @@ Please note that using XA with Microsoft SQL Server requires the MS DTC to be co
       MaxOpenPreparedStatements 1024
       ValidationQuery select 1
     </Resource>
-  </resources>
-```
+</resources>
+----
 
 === Derby
 
-```
-  <resources>
+[source]
+----
+<resources>
     <Resource id="movieDatabaseXA" type="javax.sql.XADataSource" class-name="org.apache.derby.jdbc.ClientXADataSource">
       DatabaseName=testdb
       CreateDatabase=create
@@ -346,5 +354,5 @@ Please note that using XA with Microsoft SQL Server requires the MS DTC to be co
       MaxWaitTime=0 seconds
       JtaManaged=false
     </Resource>
-  </resources>
-```
+</resources>
+----
