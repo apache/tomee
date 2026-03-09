@@ -887,32 +887,21 @@ public class ResourceFinder {
     }
 
     private Properties loadProperties(final URL resource) throws IOException {
-        final InputStream in = resource.openStream();
 
-        BufferedInputStream reader = null;
-        try {
-            reader = new BufferedInputStream(in);
+        try (InputStream in = resource.openStream();
+             BufferedInputStream reader = new BufferedInputStream(in)) {
             final Properties properties = new Properties();
             properties.load(reader);
 
             return properties;
-        } finally {
-            try {
-                in.close();
-                reader.close();
-            } catch (final Exception e) {
-                // no-op
-            }
         }
     }
 
     private String readContents(final URL resource) throws IOException {
-        final InputStream in = resource.openStream();
-        BufferedInputStream reader = null;
         final StringBuffer sb = new StringBuffer();
 
-        try {
-            reader = new BufferedInputStream(in);
+        try (InputStream in = resource.openStream();
+             BufferedInputStream reader = new BufferedInputStream(in)) {
 
             int b = reader.read();
             while (b != -1) {
@@ -921,13 +910,6 @@ public class ResourceFinder {
             }
 
             return sb.toString().trim();
-        } finally {
-            try {
-                in.close();
-                reader.close();
-            } catch (final Exception e) {
-                // no-op
-            }
         }
     }
 

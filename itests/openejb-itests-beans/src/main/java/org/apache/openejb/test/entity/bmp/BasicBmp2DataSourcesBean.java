@@ -84,18 +84,12 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?")) {
                     stmt.setInt(1, primaryKey);
                     found = stmt.executeQuery().next();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             throw new FinderException("FindByPrimaryKey failed");
@@ -247,11 +241,9 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("select * from entity where id = ?")) {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
                     stmt.setInt(1, primaryKey);
                     final ResultSet rs = stmt.executeQuery();
@@ -259,11 +251,7 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
                         lastName = rs.getString("last_name");
                         firstName = rs.getString("first_name");
                     }
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
 
         } catch (final Exception e) {
@@ -297,20 +285,14 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("update entity set first_name = ?, last_name = ? where EmployeeID = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("update entity set first_name = ?, last_name = ? where EmployeeID = ?")) {
                     stmt.setString(1, firstName);
                     stmt.setString(2, lastName);
                     stmt.setInt(3, primaryKey);
                     stmt.execute();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -329,18 +311,12 @@ public class BasicBmp2DataSourcesBean implements jakarta.ejb.EntityBean {
         try {
             final InitialContext jndiContext = new InitialContext();
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/jdbc/basic/entityDatabase");
-            final Connection con = ds.getConnection();
-            try {
-                final PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("delete from entity where id = ?")) {
                     final Integer primaryKey = (Integer) ejbContext.getPrimaryKey();
                     stmt.setInt(1, primaryKey);
                     stmt.executeUpdate();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
 
         } catch (final Exception e) {

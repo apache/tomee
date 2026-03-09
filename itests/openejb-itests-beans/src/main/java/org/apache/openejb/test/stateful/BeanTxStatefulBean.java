@@ -103,23 +103,19 @@ public class BeanTxStatefulBean implements jakarta.ejb.SessionBean {
         try {
 
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/datasource");
-            final Connection con = ds.getConnection();
 
-            try {
+            try (Connection con = ds.getConnection()) {
                 final UserTransaction ut = ejbContext.getUserTransaction();
                 /*[1] Begin the transaction */
                 ut.begin();
 
                 /*[2] Update the table */
-                final PreparedStatement stmt = con.prepareStatement("insert into Account (SSN, First_name, Last_name, Balance) values (?,?,?,?)");
-                try {
+                try (PreparedStatement stmt = con.prepareStatement("insert into Account (SSN, First_name, Last_name, Balance) values (?,?,?,?)")) {
                     stmt.setString(1, acct.getSsn());
                     stmt.setString(2, acct.getFirstName());
                     stmt.setString(3, acct.getLastName());
                     stmt.setInt(4, acct.getBalance());
                     stmt.executeUpdate();
-                } finally {
-                    stmt.close();
                 }
 
                 /*[3] Commit or Rollback the transaction */
@@ -128,8 +124,6 @@ public class BeanTxStatefulBean implements jakarta.ejb.SessionBean {
                 /*[4] Commit or Rollback the transaction */
                 ut.commit();
 
-            } finally {
-                con.close();
             }
         } catch (final RollbackException re) {
             throw re;
@@ -143,11 +137,9 @@ public class BeanTxStatefulBean implements jakarta.ejb.SessionBean {
         final Account acct = new Account();
         try {
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/datasource");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement("select * from Account where SSN = ?");
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("select * from Account where SSN = ?")) {
                     stmt.setString(1, ssn);
                     final ResultSet rs = stmt.executeQuery();
                     if (!rs.next()) return null;
@@ -156,11 +148,7 @@ public class BeanTxStatefulBean implements jakarta.ejb.SessionBean {
                     acct.setFirstName(rs.getString(2));
                     acct.setLastName(rs.getString(3));
                     acct.setBalance(rs.getInt(4));
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             e.printStackTrace();
