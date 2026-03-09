@@ -714,8 +714,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                             System.out.print(server + ":" + group + " - " + uriSub.toASCIIString() + " is reachable: ");
 
                             boolean b = false;
-                            final Socket s = new Socket();
-                            try {
+                            try (Socket s = new Socket()) {
                                 s.connect(new InetSocketAddress(host, port), st);
                                 b = true;
                             } catch (Exception e) {
@@ -723,14 +722,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
                                     MulticastPulseClient.broadcastBadUri(group, uriSub, mchost, mcport);
                                     System.out.print("" + e + " : ");
                                 }
-                            } finally {
-                                try {
-                                    s.close();
-                                } catch (Exception e) {
-                                    //Ignore
-                                }
                             }
-
                             System.out.println(b);
                         }
                     } else {

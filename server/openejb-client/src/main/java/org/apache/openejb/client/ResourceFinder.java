@@ -898,31 +898,18 @@ public class ResourceFinder {
 
     private Properties loadProperties(final URL resource) throws IOException {
 
-        BufferedInputStream reader = null;
-
-        try {
-            reader = new BufferedInputStream(resource.openStream());
+        try (BufferedInputStream reader = new BufferedInputStream(resource.openStream())) {
             final Properties properties = new Properties();
             properties.load(reader);
 
             return properties;
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
         }
     }
 
     private String readContents(final URL resource) throws IOException {
-        BufferedInputStream reader = null;
-        final StringBuilder sb = new StringBuilder();
 
-        try {
-            reader = new BufferedInputStream(resource.openStream());
+        final StringBuilder sb = new StringBuilder();
+        try (BufferedInputStream reader = new BufferedInputStream(resource.openStream())) {
 
             int b = reader.read();
             while (b != -1) {
@@ -931,14 +918,6 @@ public class ResourceFinder {
             }
 
             return sb.toString().trim();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (Throwable e) {
-                    //Ignore
-                }
-            }
         }
     }
 

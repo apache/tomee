@@ -820,9 +820,7 @@ public class Installer implements InstallerInterface {
 
         final File openejbSystemProperties = new File(confDir, "system.properties");
         if (!openejbSystemProperties.exists()) {
-            FileWriter systemPropertiesWriter = null;
-            try {
-                systemPropertiesWriter = new FileWriter(openejbSystemProperties);
+            try (FileWriter systemPropertiesWriter = new FileWriter(openejbSystemProperties)) {
 
                 systemPropertiesWriter.write("# Licensed to the Apache Software Foundation (ASF) under one or more\n" +
                         "# contributor license agreements.  See the NOTICE file distributed with\n" +
@@ -945,14 +943,6 @@ public class Installer implements InstallerInterface {
 
             } catch (final IOException e) {
                 // ignored, this file is far to be mandatory
-            } finally {
-                if (systemPropertiesWriter != null) {
-                    try {
-                        systemPropertiesWriter.close();
-                    } catch (final IOException e) {
-                        // no-op
-                    }
-                }
             }
         }
 

@@ -164,10 +164,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
         final ClassLoader parent = TomEEClassLoaderEnricher.class.getClassLoader();
 
-        JarFile jarFile = null;
-
-        try {
-            jarFile = new JarFile(file);
+        try (JarFile jarFile = new JarFile(file)) {
             for (final String[] name : FORBIDDEN_CLASSES) {
                 // if we can't load if from our classLoader we'll not impose anything on this class
                 boolean found = false;
@@ -200,14 +197,12 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                             return true;
                         }
                     }
-                    final URLClassLoader tmpLoader = new URLClassLoader(new URL[]{ file.toURI().toURL() });
-                    final URL resource = tmpLoader.getResource(entry);
-                    try {
+                    final URLClassLoader tmpLoader = new URLClassLoader(new URL[]{file.toURI().toURL()});
+                    try (tmpLoader) {
+                        final URL resource = tmpLoader.getResource(entry);
                         if (resource != null && resource.equals(parent.getResource(entry))) {
                             continue;
                         }
-                    } finally {
-                        tmpLoader.close();
                     }
 
                     LOGGER.warning("jar '" + file.getAbsolutePath() + "' contains offending class: " + name[0]
@@ -216,14 +211,6 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
                 }
             }
             return true;
-        } finally {
-            if (jarFile != null) { // in java 6 JarFile is not Closeable so don't use IO.close()
-                try {
-                    jarFile.close();
-                } catch (final IOException ioe) {
-                    // Ignored
-                }
-            }
         }
     }
 }

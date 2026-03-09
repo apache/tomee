@@ -36,10 +36,8 @@ public class AdminDaemon implements ServerService {
 
     @Override
     public void service(Socket socket) throws ServiceException, IOException {
-        InputStream in = null;
 
-        try {
-            in = socket.getInputStream();
+        try (InputStream in = socket.getInputStream()) {
 
             byte requestTypeByte = (byte) in.read();
             try {
@@ -69,14 +67,6 @@ public class AdminDaemon implements ServerService {
         } catch (Throwable e) {
             Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Server Socket request failed", e);
         } finally {
-            if (null != in) {
-                try {
-                    in.close();
-                } catch (Throwable t) {
-                    //Ignore
-                }
-            }
-
             if (null != socket) {
                 try {
                     socket.close();

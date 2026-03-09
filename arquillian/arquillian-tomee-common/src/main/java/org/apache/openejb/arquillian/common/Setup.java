@@ -184,21 +184,11 @@ public class Setup {
     }
 
     public static boolean isRunning(final String host, final int port) {
-        Socket socket = null;
-        try {
-            socket = new Socket(host, port);
+        try (Socket socket = new Socket(host, port)) {
             socket.getOutputStream().close();
             return true;
         } catch (final Exception e) {
             return false;
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (final IOException ignored) {
-                    // no-op
-                }
-            }
         }
     }
 

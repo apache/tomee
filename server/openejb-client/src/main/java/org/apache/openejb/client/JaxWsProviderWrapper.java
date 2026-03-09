@@ -381,23 +381,12 @@ public class JaxWsProviderWrapper extends Provider {
         // 1. META-INF/services/jakarta.xml.ws.spi.Provider
         try {
             for (final URL url : Collections.list(classLoader.getResources("META-INF/services/" + JAXWSPROVIDER_PROPERTY))) {
-                BufferedReader in = null;
-                try {
-                    in = new BufferedReader(new InputStreamReader(url.openStream()));
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
 
                     providerClass = in.readLine();
                     provider = createProviderInstance(providerClass, classLoader);
                     if (provider != null) {
                         return provider;
-                    }
-                } catch (Exception ignored) {
-                } finally {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (Throwable e) {
-                            //ignore
-                        }
                     }
                 }
             }
@@ -409,9 +398,7 @@ public class JaxWsProviderWrapper extends Provider {
         final String javaHome = System.getProperty("java.home");
         final File jaxrpcPropertiesFile = new File(new File(javaHome, "lib"), "jaxrpc.properties");
         if (jaxrpcPropertiesFile.exists()) {
-            InputStream in = null;
-            try {
-                in = new FileInputStream(jaxrpcPropertiesFile);
+            try (InputStream in = new FileInputStream(jaxrpcPropertiesFile)) {
                 final Properties properties = new Properties();
                 properties.load(in);
 
@@ -421,15 +408,8 @@ public class JaxWsProviderWrapper extends Provider {
                     return provider;
                 }
             } catch (Exception ignored) {
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (Throwable e) {
-                        //Ignore
-                    }
-                }
             }
+            //Ignore
         }
 
         // 3. System.getProperty("jakarta.xml.ws.spi.Provider")

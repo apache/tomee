@@ -92,9 +92,7 @@ public class JarsTxtMojo extends AbstractMojo {
             FileUtils.mkdir(outputFile.getParentFile().getAbsolutePath());
         }
 
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(outputFile));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
 
             final TreeSet<String> set = new TreeSet<>();
 
@@ -163,14 +161,6 @@ public class JarsTxtMojo extends AbstractMojo {
             writer.flush();
         } catch (final IOException e) {
             getLog().error(e.getMessage(), e);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (final IOException e) {
-                    // no-op
-                }
-            }
         }
     }
 

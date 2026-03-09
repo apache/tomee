@@ -51,17 +51,11 @@ public class DatabaseBean implements jakarta.ejb.SessionBean {
         try {
 
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
-            final Connection con = ds.getConnection();
 
-            try {
-                final PreparedStatement stmt = con.prepareStatement(statement);
-                try {
+            try (Connection con = ds.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement(statement)) {
                     stmt.executeQuery();
-                } finally {
-                    stmt.close();
                 }
-            } finally {
-                con.close();
             }
         } catch (final Exception e) {
             throw new EJBException("Cannot execute the statement: " + statement + e.getMessage());
@@ -76,11 +70,8 @@ public class DatabaseBean implements jakarta.ejb.SessionBean {
             final DataSource ds = (DataSource) jndiContext.lookup("java:comp/env/database");
             con = ds.getConnection();
 
-            final Statement stmt = con.createStatement();
-            try {
+            try (Statement stmt = con.createStatement()) {
                 retval = stmt.execute(statement);
-            } finally {
-                stmt.close();
             }
 
         } catch (final javax.naming.NamingException e) {
