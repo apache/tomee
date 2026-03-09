@@ -11,7 +11,8 @@ This page demonstrates running as a service with systemd, and has been tested wi
 
 Create a file `/etc/systemd/system/tomee.service` with the following content:
 
-```
+[source]
+----
 [Unit]
 Description=Apache TomEE
 After=network.target
@@ -31,7 +32,7 @@ KillSignal=SIGCONT
 
 [Install]
 WantedBy=multi-user.target
-```
+----
 
 The file above assumes TomEE is extracted to `/opt/tomee`, and that `JAVA_HOME` is at `/usr/lib/jvm/jre` - adjust these to match your installation.
 

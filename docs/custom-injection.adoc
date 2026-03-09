@@ -29,7 +29,7 @@ The source for this example is the "custom-injection" directory located
 in the link:downloads.html[openejb-examples.zip] available on the
 http://tomee.apache.org/downloads.html[download page].
 
-# The Code
+= The Code
 
 == Bean Class
 
@@ -133,7 +133,7 @@ public enum Pickup {
 }
 ----
 
-# Test Case
+= Test Case
 
 [source,java]
 ----
@@ -168,7 +168,7 @@ public class StratocasterTest extends TestCase {
 }
 ----
 
-# Running it
+= Running it
 
 Running the example is fairly simple. In the "custom-injection"
 directory of the openejb:download.html[examples zip], just run:

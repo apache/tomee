@@ -61,7 +61,7 @@ archive, this must be relative to the TomEE server.
 console to shut down the server correctly. `reload` is also available
 when internal openejb application is deployed.
 
-### More Tweaks
+=== More Tweaks
 
 The lib tag allows to enrich the container with some additional
 libraries.
@@ -76,7 +76,7 @@ with the specified prefix
 
 Note: the name tweak can be used to rename applications too
 
-### Provisioning Example
+=== Provisioning Example
 
 This plugin is also usable in projects which are not war. For instance,
 you can use it in a pom project to set up a TomEE installation, add libraries,
@@ -114,7 +114,7 @@ deploy apps then run the server.
   </plugin>
 ----
 
-### Auto Reloading Example
+=== Auto Reloading Example
 
 [source,xml]
 ----

@@ -1,4 +1,4 @@
-# TomEE MicroProfile JWT
+= TomEE MicroProfile JWT
 
 Apache TomEE supports https://download.eclipse.org/microprofile/microprofile-jwt-auth-2.0/microprofile-jwt-auth-spec-2.0.html[MicroProfile JWT 2.0], which allows applications to be secured using JWTs.
 JWTs may be either:
@@ -36,7 +36,7 @@ Decryption algorithms supported:
 - ECDH-ES+A192KW
 - ECDH-ES+A256KW
 
-## MicroProfile JWT Configuration Properties
+== MicroProfile JWT Configuration Properties
 
 Specifying the keys for verifying or decrypting JWTs is done via a `META-INF/microprofile-config.properties` and the following MP JWT 2.0 Configuration Properties.
 
@@ -72,7 +72,7 @@ Specifying the keys for verifying or decrypting JWTs is done via a `META-INF/mic
 |===
 
 
-## TomEE JWT Configuration Properties
+== TomEE JWT Configuration Properties
 
 In addition to the standard MicroProfile JWT configuration properties above, the `META-INF/microprofile-config.properties` may contain any of the following TomEE-specific configuration properties.
 
