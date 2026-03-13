@@ -52,7 +52,7 @@ public class SecuredServletTest {
                 + "openid.client-secret = tomee-client-secret\n";
 
         return ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addClasses(SecuredServlet.class, OpenIdConfig.class)
+                .addClasses(SecuredServlet.class, LogoutServlet.class, OpenIdConfig.class)
                 .addAsResource("META-INF/beans.xml")
                 .addAsResource(new StringAsset(mpConfig), "META-INF/microprofile-config.properties");
     }
@@ -89,6 +89,27 @@ public class SecuredServletTest {
             TextPage securedServletPage = loginForm.getButtonByName("login").click();
 
             assertEquals("Hello, tomee-admin\nYou're an admin!\nRequest parameters: ", securedServletPage.getContent());
+        }
+    }
+
+    @Test
+    @RunAsClient
+    public void testLogoutNotifyProvider() throws Exception {
+        try (WebClient webClient = new WebClient()) {
+            // Login and logout again
+            HtmlPage htmlPage = webClient.getPage(url + "/secured");
+            assertTrue(htmlPage.getUrl().toString().startsWith(KEYCLOAK_CONTAINER.getAuthServerUrl() + "/realms/tomee/protocol/openid-connect/auth"));
+
+            HtmlForm loginForm = htmlPage.getForms().get(0);
+            loginForm.getInputByName("username").setValue("tomee-user");
+            loginForm.getInputByName("password").setValue("tomee");
+            loginForm.getButtonByName("login").click();
+
+            webClient.getPage(url + "/logout");
+
+            // Try to log in again, assert that the keycloak login is showing (= provider has been notified of logout)
+            HtmlPage securedAgain = webClient.getPage(url + "/secured");
+            assertTrue(securedAgain.getUrl().toString().startsWith(KEYCLOAK_CONTAINER.getAuthServerUrl() + "/realms/tomee/protocol/openid-connect/auth"));
         }
     }
 }
