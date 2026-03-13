@@ -17,6 +17,7 @@
 package org.superbiz.openid;
 
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
+import jakarta.security.enterprise.authentication.mechanism.http.openid.LogoutDefinition;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.HttpConstraint;
 import jakarta.servlet.annotation.ServletSecurity;
@@ -33,7 +34,8 @@ import java.util.stream.Collectors;
         clientId = "#{openIdConfig.clientId}",
         clientSecret = "#{openIdConfig.clientSecret}",
         useSession = false,
-        redirectToOriginalResource = true)
+        redirectToOriginalResource = true,
+        logout = @LogoutDefinition(notifyProvider = true, redirectURI = "#{baseURL}/logout"))
 @ServletSecurity(@HttpConstraint(rolesAllowed = "user"))
 @WebServlet(name = "Secured Servlet", urlPatterns = "/secured")
 public class SecuredServlet extends HttpServlet {
