@@ -24,8 +24,10 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"constraintFieldValue"})
@@ -54,11 +56,7 @@ public class ConstraintField {
     }
 
     public String getScope() {
-        if (scope == null) {
-            return "request.parameter";
-        } else {
-            return scope;
-        }
+        return Objects.requireNonNullElse(scope, "request.parameter");
     }
 
     public void setScope(final String value) {
@@ -66,11 +64,7 @@ public class ConstraintField {
     }
 
     public String getCacheOnMatch() {
-        if (cacheOnMatch == null) {
-            return "true";
-        } else {
-            return cacheOnMatch;
-        }
+        return Objects.requireNonNullElse(cacheOnMatch, "true");
     }
 
     public void setCacheOnMatch(final String value) {
@@ -78,11 +72,7 @@ public class ConstraintField {
     }
 
     public String getCacheOnMatchFailure() {
-        if (cacheOnMatchFailure == null) {
-            return "false";
-        } else {
-            return cacheOnMatchFailure;
-        }
+        return Objects.requireNonNullElse(cacheOnMatchFailure, "false");
     }
 
     public void setCacheOnMatchFailure(final String value) {

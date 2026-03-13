@@ -26,10 +26,12 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * connector_1_6.xsd
@@ -236,11 +238,7 @@ public class Connector implements NamedModule {
     }
 
     public String getVersion() {
-        if (version == null) {
-            return "1.6";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "1.6");
     }
 
     public void setVersion(final String value) {

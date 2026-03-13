@@ -26,6 +26,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.util.Objects;
+
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -53,11 +55,7 @@ public class ClientInterceptors {
      * {@link String }
      */
     public String getExposeContainer() {
-        if (exposeContainer == null) {
-            return "false";
-        } else {
-            return exposeContainer;
-        }
+        return Objects.requireNonNullElse(exposeContainer, "false");
     }
 
     /**

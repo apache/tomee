@@ -23,6 +23,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.util.Objects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 public class IdempotentUrlPattern {
@@ -42,11 +44,7 @@ public class IdempotentUrlPattern {
     }
 
     public String getNumOfRetries() {
-        if (numOfRetries == null) {
-            return "-1";
-        } else {
-            return numOfRetries;
-        }
+        return Objects.requireNonNullElse(numOfRetries, "-1");
     }
 
     public void setNumOfRetries(final String value) {

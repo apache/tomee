@@ -24,6 +24,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.util.Objects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"managerProperties", "storeProperties"})
 public class SessionManager {
@@ -36,11 +38,7 @@ public class SessionManager {
     protected StoreProperties storeProperties;
 
     public String getPersistenceType() {
-        if (persistenceType == null) {
-            return "memory";
-        } else {
-            return persistenceType;
-        }
+        return Objects.requireNonNullElse(persistenceType, "memory");
     }
 
     public void setPersistenceType(final String value) {

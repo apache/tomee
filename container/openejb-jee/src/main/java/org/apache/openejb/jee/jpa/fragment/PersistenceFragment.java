@@ -24,8 +24,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -93,11 +95,7 @@ public class PersistenceFragment {
      * {@link String }
      */
     public String getVersion() {
-        if (version == null) {
-            return "1.0";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "1.0");
     }
 
     /**

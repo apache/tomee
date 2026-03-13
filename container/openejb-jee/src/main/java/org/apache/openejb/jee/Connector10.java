@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * class for adapting connector 1.0 ra.xml to our jaxb class tree
@@ -150,11 +151,7 @@ public class Connector10 {
     }
 
     public String getSpecVersion() {
-        if (specVersion == null) {
-            return "1.0";
-        } else {
-            return specVersion;
-        }
+        return Objects.requireNonNullElse(specVersion, "1.0");
     }
 
     public void setSpecVersion(final String value) {
