@@ -33,13 +33,6 @@
   </properties>
 
   <dependencies>
-    <!-- FIXME: needs to be shaded in jakartaee-api -->
-    <dependency>
-      <groupId>jakarta.data</groupId>
-      <artifactId>jakarta.data-api</artifactId>
-      <version>1.0.1</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
