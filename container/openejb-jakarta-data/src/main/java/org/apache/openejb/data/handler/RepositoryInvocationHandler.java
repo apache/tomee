@@ -19,6 +19,8 @@ package org.apache.openejb.data.handler;
 import jakarta.data.page.Page;
 import jakarta.data.page.PageRequest;
 import jakarta.data.page.impl.PageRecord;
+import jakarta.data.repository.BasicRepository;
+import jakarta.data.repository.CrudRepository;
 import jakarta.data.repository.Delete;
 import jakarta.data.repository.Find;
 import jakarta.data.repository.Insert;
@@ -443,7 +445,6 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Object handleFindById(final EntityManager em, final Method method, final Object[] args) {
         final Object id = args[0];
         final Object entity = em.find(metadata.getEntityClass(), id);
@@ -453,7 +454,6 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         return entity;
     }
 
-    @SuppressWarnings("unchecked")
     private Object handleFindAll(final EntityManager em, final Method method, final Object[] args) {
         final Class<?> entityClass = metadata.getEntityClass();
         final CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -682,10 +682,6 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         }
     }
 
-    /**
-     * Checks if a deleteById method is a custom one declared on the repository (with @By annotations
-     * pointing to real fields) vs the inherited CrudRepository.deleteById (which may have synthetic @By).
-     */
     private static java.lang.reflect.Field findField(final Class<?> clazz, final String name) throws NoSuchFieldException {
         Class<?> current = clazz;
         while (current != null) {
@@ -698,22 +694,15 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         throw new NoSuchFieldException(name);
     }
 
+    /**
+     * Checks if a deleteById method is a custom one declared on the repository (with @By annotations
+     * pointing to real fields) vs the inherited CrudRepository.deleteById (which may have synthetic @By).
+     */
     private boolean isCustomDeleteById(final Method method) {
-        // If the method is declared on a user-defined interface (not CrudRepository), it's custom
+        // If the method is declared on a built-in repository interface (not user-defined), it's not custom
         final Class<?> declaringClass = method.getDeclaringClass();
-        try {
-            final Class<?> crudRepo = Class.forName("jakarta.data.repository.CrudRepository");
-            if (crudRepo.isAssignableFrom(declaringClass) && declaringClass.equals(crudRepo)) {
-                return false;
-            }
-        } catch (final ClassNotFoundException ignored) {
-        }
-        try {
-            final Class<?> basicRepo = Class.forName("jakarta.data.repository.BasicRepository");
-            if (basicRepo.isAssignableFrom(declaringClass) && declaringClass.equals(basicRepo)) {
-                return false;
-            }
-        } catch (final ClassNotFoundException ignored) {
+        if (declaringClass.equals(CrudRepository.class) || declaringClass.equals(BasicRepository.class)) {
+            return false;
         }
         // Check if @By annotations reference real entity fields (not synthetic like "id(this)")
         for (final java.lang.reflect.Parameter p : method.getParameters()) {

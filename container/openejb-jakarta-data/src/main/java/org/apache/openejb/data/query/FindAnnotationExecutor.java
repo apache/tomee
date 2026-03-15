@@ -49,7 +49,7 @@ public final class FindAnnotationExecutor {
         final List<Predicate> predicates = new ArrayList<>();
 
         for (int i = 0; i < parameters.length; i++) {
-            if (isSpecialParameter(parameters[i].getType())) {
+            if (CriteriaQueryBuilder.isSpecialParameter(parameters[i].getType())) {
                 continue;
             }
             final By by = parameters[i].getAnnotation(By.class);
@@ -107,10 +107,4 @@ public final class FindAnnotationExecutor {
         return results.isEmpty() ? null : results.get(0);
     }
 
-    private static boolean isSpecialParameter(final Class<?> type) {
-        return jakarta.data.Limit.class.isAssignableFrom(type)
-            || jakarta.data.Sort.class.isAssignableFrom(type)
-            || jakarta.data.Order.class.isAssignableFrom(type)
-            || jakarta.data.page.PageRequest.class.isAssignableFrom(type);
-    }
 }

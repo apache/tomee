@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.data.query;
 
-import jakarta.data.Limit;
-import jakarta.data.page.PageRequest;
 import jakarta.data.repository.Param;
 import jakarta.data.repository.Query;
 import jakarta.persistence.EntityManager;
@@ -51,7 +49,7 @@ public final class AnnotatedQueryExecutor {
             final Parameter[] parameters = method.getParameters();
             int ordinal = 1;
             for (int i = 0; i < parameters.length; i++) {
-                if (isSpecialParameter(parameters[i].getType())) {
+                if (CriteriaQueryBuilder.isSpecialParameter(parameters[i].getType())) {
                     continue;
                 }
                 final Param param = parameters[i].getAnnotation(Param.class);
@@ -63,24 +61,9 @@ public final class AnnotatedQueryExecutor {
             }
         }
 
-        applyPagination(query, args);
+        CriteriaQueryBuilder.applyPagination(query, args);
 
         return adaptResult(method, query);
-    }
-
-    private static void applyPagination(final jakarta.persistence.Query query, final Object[] args) {
-        if (args == null) {
-            return;
-        }
-        for (final Object arg : args) {
-            if (arg instanceof Limit limit) {
-                query.setFirstResult((int) (limit.startAt() - 1));
-                query.setMaxResults((int) limit.maxResults());
-            } else if (arg instanceof PageRequest pageRequest) {
-                query.setFirstResult((int) ((pageRequest.page() - 1) * pageRequest.size()));
-                query.setMaxResults((int) pageRequest.size());
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -217,10 +200,4 @@ public final class AnnotatedQueryExecutor {
         return result;
     }
 
-    private static boolean isSpecialParameter(final Class<?> type) {
-        return jakarta.data.Limit.class.isAssignableFrom(type)
-            || jakarta.data.Sort.class.isAssignableFrom(type)
-            || jakarta.data.Order.class.isAssignableFrom(type)
-            || jakarta.data.page.PageRequest.class.isAssignableFrom(type);
-    }
 }

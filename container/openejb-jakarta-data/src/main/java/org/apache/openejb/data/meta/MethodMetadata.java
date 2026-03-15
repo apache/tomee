@@ -22,8 +22,6 @@ public class MethodMetadata {
 
     public enum Strategy {
         BUILTIN,
-        ANNOTATED_QUERY,
-        FIND_ANNOTATION,
         METHOD_NAME
     }
 

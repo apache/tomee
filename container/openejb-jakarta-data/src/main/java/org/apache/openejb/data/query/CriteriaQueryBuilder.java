@@ -76,7 +76,6 @@ public final class CriteriaQueryBuilder {
             .append(entityClass.getSimpleName()).append(" e");
 
         final List<MethodNameParser.Condition> conditions = parsed.conditions();
-        int paramIdx = 0;
         if (!conditions.isEmpty()) {
             jpql.append(" WHERE ");
             for (int i = 0; i < conditions.size(); i++) {
@@ -107,7 +106,7 @@ public final class CriteriaQueryBuilder {
         final jakarta.persistence.Query query = em.createQuery(jpql.toString());
 
         // Bind parameters
-        paramIdx = 0;
+        int paramIdx = 0;
         for (int i = 0; i < conditions.size(); i++) {
             final MethodNameParser.Condition c = conditions.get(i);
             final int paramCount = c.operator().parameterCount();
@@ -272,7 +271,14 @@ public final class CriteriaQueryBuilder {
         }
     }
 
-    public static void applyPagination(final TypedQuery<?> query, final Object[] args) {
+    static boolean isSpecialParameter(final Class<?> type) {
+        return jakarta.data.Limit.class.isAssignableFrom(type)
+            || jakarta.data.Sort.class.isAssignableFrom(type)
+            || jakarta.data.Order.class.isAssignableFrom(type)
+            || jakarta.data.page.PageRequest.class.isAssignableFrom(type);
+    }
+
+    public static void applyPagination(final jakarta.persistence.Query query, final Object[] args) {
         if (args == null) {
             return;
         }

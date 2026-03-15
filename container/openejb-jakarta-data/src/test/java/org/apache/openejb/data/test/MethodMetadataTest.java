@@ -43,23 +43,9 @@ class MethodMetadataTest {
     }
 
     @Test
-    void annotatedQueryStrategy() {
-        final MethodMetadata meta = new MethodMetadata(MethodMetadata.Strategy.ANNOTATED_QUERY, null);
-        assertEquals(MethodMetadata.Strategy.ANNOTATED_QUERY, meta.getStrategy());
-    }
-
-    @Test
-    void findAnnotationStrategy() {
-        final MethodMetadata meta = new MethodMetadata(MethodMetadata.Strategy.FIND_ANNOTATION, null);
-        assertEquals(MethodMetadata.Strategy.FIND_ANNOTATION, meta.getStrategy());
-    }
-
-    @Test
     void allStrategyValuesExist() {
-        assertEquals(4, MethodMetadata.Strategy.values().length);
+        assertEquals(2, MethodMetadata.Strategy.values().length);
         assertNotNull(MethodMetadata.Strategy.valueOf("BUILTIN"));
-        assertNotNull(MethodMetadata.Strategy.valueOf("ANNOTATED_QUERY"));
-        assertNotNull(MethodMetadata.Strategy.valueOf("FIND_ANNOTATION"));
         assertNotNull(MethodMetadata.Strategy.valueOf("METHOD_NAME"));
     }
 }

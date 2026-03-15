@@ -179,14 +179,6 @@ public final class MethodNameParser {
         return -1;
     }
 
-    private static boolean containsAsc(final String s) {
-        return s.contains("Asc");
-    }
-
-    private static boolean containsDesc(final String s) {
-        return s.contains("Desc");
-    }
-
     public enum Action {
         FIND, DELETE, COUNT, EXISTS
     }

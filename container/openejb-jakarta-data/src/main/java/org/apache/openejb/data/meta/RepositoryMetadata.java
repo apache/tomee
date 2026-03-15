@@ -25,7 +25,6 @@ public class RepositoryMetadata {
 
     private final Class<?> repositoryInterface;
     private final Class<?> entityClass;
-    private final Class<?> keyClass;
     private final String dataStore;
 
     public RepositoryMetadata(final Class<?> repositoryInterface) {
@@ -34,36 +33,34 @@ public class RepositoryMetadata {
         final Repository repoAnnotation = repositoryInterface.getAnnotation(Repository.class);
         this.dataStore = repoAnnotation != null ? repoAnnotation.dataStore() : "";
 
-        final Class<?>[] types = resolveTypeArguments(repositoryInterface);
-        this.entityClass = types[0];
-        this.keyClass = types[1];
+        this.entityClass = resolveEntityClass(repositoryInterface);
     }
 
-    private static Class<?>[] resolveTypeArguments(final Class<?> repoInterface) {
+    private static Class<?> resolveEntityClass(final Class<?> repoInterface) {
         for (final Type type : repoInterface.getGenericInterfaces()) {
             if (type instanceof ParameterizedType pt) {
                 final Type rawType = pt.getRawType();
                 if (rawType instanceof Class<?> rawClass && isDataRepository(rawClass)) {
                     final Type[] args = pt.getActualTypeArguments();
-                    if (args.length >= 2) {
-                        return new Class<?>[]{(Class<?>) args[0], (Class<?>) args[1]};
+                    if (args.length >= 1 && args[0] instanceof Class<?>) {
+                        return (Class<?>) args[0];
                     }
                 }
                 // recurse into parent interfaces
                 if (rawType instanceof Class<?> rawClass) {
-                    final Class<?>[] result = resolveTypeArguments(rawClass);
-                    if (result[0] != Object.class) {
+                    final Class<?> result = resolveEntityClass(rawClass);
+                    if (result != Object.class) {
                         return result;
                     }
                 }
             } else if (type instanceof Class<?> parentInterface) {
-                final Class<?>[] result = resolveTypeArguments(parentInterface);
-                if (result[0] != Object.class) {
+                final Class<?> result = resolveEntityClass(parentInterface);
+                if (result != Object.class) {
                     return result;
                 }
             }
         }
-        return new Class<?>[]{Object.class, Object.class};
+        return Object.class;
     }
 
     private static boolean isDataRepository(final Class<?> clazz) {
@@ -84,10 +81,6 @@ public class RepositoryMetadata {
 
     public Class<?> getEntityClass() {
         return entityClass;
-    }
-
-    public Class<?> getKeyClass() {
-        return keyClass;
     }
 
     public String getDataStore() {

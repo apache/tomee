@@ -46,10 +46,6 @@ class RepositoryMetadataTest {
     interface PersonWithDataStore extends CrudRepository<Person, Long> {
     }
 
-    @Repository
-    interface StringKeyRepo extends DataRepository<Person, String> {
-    }
-
     // Intermediate interface (no type args, just extends)
     interface IntermediateRepo extends CrudRepository<Person, Long> {
     }
@@ -71,12 +67,6 @@ class RepositoryMetadataTest {
     }
 
     @Test
-    void resolvesKeyClassFromCrudRepository() {
-        final RepositoryMetadata meta = new RepositoryMetadata(PersonCrudRepo.class);
-        assertEquals(Long.class, meta.getKeyClass());
-    }
-
-    @Test
     void returnsRepositoryInterface() {
         final RepositoryMetadata meta = new RepositoryMetadata(PersonCrudRepo.class);
         assertEquals(PersonCrudRepo.class, meta.getRepositoryInterface());
@@ -90,24 +80,12 @@ class RepositoryMetadataTest {
         assertEquals(Person.class, meta.getEntityClass());
     }
 
-    @Test
-    void resolvesKeyClassFromBasicRepository() {
-        final RepositoryMetadata meta = new RepositoryMetadata(PersonBasicRepo.class);
-        assertEquals(Long.class, meta.getKeyClass());
-    }
-
     // -- Tests: DataRepository --
 
     @Test
     void resolvesEntityClassFromDataRepository() {
         final RepositoryMetadata meta = new RepositoryMetadata(PersonDataRepo.class);
         assertEquals(Person.class, meta.getEntityClass());
-    }
-
-    @Test
-    void resolvesKeyClassFromDataRepository() {
-        final RepositoryMetadata meta = new RepositoryMetadata(PersonDataRepo.class);
-        assertEquals(Long.class, meta.getKeyClass());
     }
 
     // -- Tests: dataStore --
@@ -130,20 +108,11 @@ class RepositoryMetadataTest {
         assertEquals("", meta.getDataStore());
     }
 
-    // -- Tests: different key types --
-
-    @Test
-    void resolvesStringKeyType() {
-        final RepositoryMetadata meta = new RepositoryMetadata(StringKeyRepo.class);
-        assertEquals(String.class, meta.getKeyClass());
-    }
-
     // -- Tests: intermediate interface hierarchy --
 
     @Test
     void resolvesTypesFromIntermediateInterface() {
         final RepositoryMetadata meta = new RepositoryMetadata(ExtendedIntermediateRepo.class);
         assertEquals(Person.class, meta.getEntityClass());
-        assertEquals(Long.class, meta.getKeyClass());
     }
 }
