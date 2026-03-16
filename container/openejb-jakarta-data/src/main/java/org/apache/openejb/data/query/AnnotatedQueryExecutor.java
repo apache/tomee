@@ -37,11 +37,21 @@ public final class AnnotatedQueryExecutor {
     private AnnotatedQueryExecutor() {
     }
 
-    public static Object execute(final EntityManager em, final Method method, final Object[] args,
-                                  final Class<?> entityClass) {
+    /**
+     * Builds the JPQL string for a @Query-annotated method. Cacheable — depends only on
+     * the annotation value and entity class. The first call requires an EntityManager
+     * for JDQL field reference qualification; subsequent calls use the cached result.
+     */
+    public static String buildJpql(final Method method, final Class<?> entityClass, final EntityManager em) {
         final Query queryAnnotation = method.getAnnotation(Query.class);
-        final String jpql = expandJdqlToJpql(queryAnnotation.value(), entityClass, em);
+        return expandJdqlToJpql(queryAnnotation.value(), entityClass, em);
+    }
 
+    /**
+     * Executes a @Query-annotated method using the given (cached) JPQL string.
+     */
+    public static Object execute(final EntityManager em, final Method method, final Object[] args,
+                                  final String jpql) {
         final jakarta.persistence.Query query = em.createQuery(jpql);
 
         // Bind parameters
@@ -176,16 +186,10 @@ public final class AnnotatedQueryExecutor {
 
         String result = jpql;
         for (final String field : fieldNames) {
-            // Replace unqualified field references (not already preceded by "e." or another alias)
-            // Match field name that is:
-            // - preceded by a non-alphanumeric, non-dot char (or start)
-            // - followed by a non-alphanumeric char (or end)
-            // - not already preceded by a dot (alias qualification)
             final Pattern pattern = Pattern.compile("(?<![.\\w])" + Pattern.quote(field) + "(?![\\w])");
             final Matcher matcher = pattern.matcher(result);
             final StringBuilder sb = new StringBuilder();
             while (matcher.find()) {
-                // Check if preceded by a dot (already qualified)
                 final int start = matcher.start();
                 if (start > 0 && result.charAt(start - 1) == '.') {
                     matcher.appendReplacement(sb, Matcher.quoteReplacement(field));
@@ -199,5 +203,4 @@ public final class AnnotatedQueryExecutor {
 
         return result;
     }
-
 }

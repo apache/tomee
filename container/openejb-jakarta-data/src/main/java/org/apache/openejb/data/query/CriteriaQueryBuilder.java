@@ -21,16 +21,7 @@ import jakarta.data.Sort;
 import jakarta.data.page.PageRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public final class CriteriaQueryBuilder {
@@ -38,80 +29,146 @@ public final class CriteriaQueryBuilder {
     private CriteriaQueryBuilder() {
     }
 
-    public static <T> TypedQuery<T> buildFind(final EntityManager em, final Class<T> entityClass,
-                                               final MethodNameParser.ParsedQuery parsed,
-                                               final Object[] args) {
-        final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<T> cq = cb.createQuery(entityClass);
-        final Root<T> root = cq.from(entityClass);
-        cq.select(root);
+    // -- JPQL building (cacheable, no args dependency) --
 
-        final int paramIdx = applyConditions(cb, root, cq, parsed.conditions(), args, 0);
-        applyOrderClauses(cb, root, cq, parsed.orderClauses());
-        applySortParameters(cb, root, cq, args);
+    public static String buildFindJpql(final Class<?> entityClass,
+                                       final MethodNameParser.ParsedQuery parsed) {
+        final StringBuilder jpql = new StringBuilder("SELECT e FROM ")
+            .append(entityClass.getSimpleName()).append(" e");
 
-        final TypedQuery<T> query = em.createQuery(cq);
+        appendWhereClause(jpql, parsed.conditions());
+        appendOrderByClause(jpql, parsed.orderClauses());
+
+        return jpql.toString();
+    }
+
+    public static String buildCountJpql(final Class<?> entityClass,
+                                        final MethodNameParser.ParsedQuery parsed) {
+        final StringBuilder jpql = new StringBuilder("SELECT COUNT(e) FROM ")
+            .append(entityClass.getSimpleName()).append(" e");
+
+        appendWhereClause(jpql, parsed.conditions());
+
+        return jpql.toString();
+    }
+
+    public static String buildDeleteJpql(final Class<?> entityClass,
+                                         final MethodNameParser.ParsedQuery parsed) {
+        final StringBuilder jpql = new StringBuilder("DELETE FROM ")
+            .append(entityClass.getSimpleName()).append(" e");
+
+        appendWhereClause(jpql, parsed.conditions());
+
+        return jpql.toString();
+    }
+
+    // -- Query execution (per-call, binds args) --
+
+    @SuppressWarnings("unchecked")
+    public static <T> TypedQuery<T> executeFind(final EntityManager em, final Class<T> entityClass,
+                                                 final String jpql,
+                                                 final MethodNameParser.ParsedQuery parsed,
+                                                 final Object[] args) {
+        final String effectiveJpql = appendDynamicSort(jpql, args);
+        final TypedQuery<T> query = em.createQuery(effectiveJpql, entityClass);
+        if (!bindConditionParameters(query, parsed.conditions(), args)) {
+            // Empty IN collection — return a query that yields no results
+            query.setMaxResults(0);
+            return query;
+        }
         applyPagination(query, args);
         return query;
     }
 
-    public static <T> TypedQuery<Long> buildCount(final EntityManager em, final Class<T> entityClass,
-                                                   final MethodNameParser.ParsedQuery parsed,
-                                                   final Object[] args) {
-        final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        final Root<T> root = cq.from(entityClass);
-        cq.select(cb.count(root));
-
-        applyConditions(cb, root, cq, parsed.conditions(), args, 0);
-
-        return em.createQuery(cq);
+    public static TypedQuery<Long> executeCount(final EntityManager em,
+                                                 final String jpql,
+                                                 final MethodNameParser.ParsedQuery parsed,
+                                                 final Object[] args) {
+        final TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+        if (!bindConditionParameters(query, parsed.conditions(), args)) {
+            return em.createQuery("SELECT 0L", Long.class);
+        }
+        return query;
     }
 
-    public static <T> long buildDelete(final EntityManager em, final Class<T> entityClass,
-                                      final MethodNameParser.ParsedQuery parsed,
-                                      final Object[] args) {
-        // Use JPQL DELETE instead of CriteriaDelete for broader JPA provider compatibility
-        final StringBuilder jpql = new StringBuilder("DELETE FROM ")
-            .append(entityClass.getSimpleName()).append(" e");
+    public static long executeDelete(final EntityManager em,
+                                     final String jpql,
+                                     final MethodNameParser.ParsedQuery parsed,
+                                     final Object[] args) {
+        final jakarta.persistence.Query query = em.createQuery(jpql);
+        if (!bindConditionParameters(query, parsed.conditions(), args)) {
+            return 0L;
+        }
+        return (long) query.executeUpdate();
+    }
 
-        final List<MethodNameParser.Condition> conditions = parsed.conditions();
-        if (!conditions.isEmpty()) {
-            jpql.append(" WHERE ");
-            for (int i = 0; i < conditions.size(); i++) {
-                final MethodNameParser.Condition c = conditions.get(i);
-                if (i > 0) {
-                    jpql.append(c.connector() == MethodNameParser.Connector.OR ? " OR " : " AND ");
-                }
-                final String paramName = "p" + i;
-                switch (c.operator()) {
-                    case EQUAL -> jpql.append("e.").append(c.property()).append(" = :").append(paramName);
-                    case GREATER_THAN -> jpql.append("e.").append(c.property()).append(" > :").append(paramName);
-                    case GREATER_THAN_EQUAL -> jpql.append("e.").append(c.property()).append(" >= :").append(paramName);
-                    case LESS_THAN -> jpql.append("e.").append(c.property()).append(" < :").append(paramName);
-                    case LESS_THAN_EQUAL -> jpql.append("e.").append(c.property()).append(" <= :").append(paramName);
-                    case LIKE -> jpql.append("e.").append(c.property()).append(" LIKE :").append(paramName);
-                    case CONTAINS -> jpql.append("e.").append(c.property()).append(" LIKE :").append(paramName);
-                    case STARTS_WITH -> jpql.append("e.").append(c.property()).append(" LIKE :").append(paramName);
-                    case ENDS_WITH -> jpql.append("e.").append(c.property()).append(" LIKE :").append(paramName);
-                    case NOT -> jpql.append("e.").append(c.property()).append(" <> :").append(paramName);
-                    case NULL -> jpql.append("e.").append(c.property()).append(" IS NULL");
-                    case NOT_NULL -> jpql.append("e.").append(c.property()).append(" IS NOT NULL");
-                    case IN -> jpql.append("e.").append(c.property()).append(" IN :").append(paramName);
-                    default -> jpql.append("e.").append(c.property()).append(" = :").append(paramName);
-                }
+    // -- Shared helpers --
+
+    private static void appendWhereClause(final StringBuilder jpql,
+                                           final List<MethodNameParser.Condition> conditions) {
+        if (conditions.isEmpty()) {
+            return;
+        }
+        jpql.append(" WHERE ");
+        for (int i = 0; i < conditions.size(); i++) {
+            final MethodNameParser.Condition c = conditions.get(i);
+            if (i > 0) {
+                jpql.append(c.connector() == MethodNameParser.Connector.OR ? " OR " : " AND ");
+            }
+            final String paramName = "p" + i;
+            switch (c.operator()) {
+                case EQUAL -> jpql.append("e.").append(c.property()).append(" = :").append(paramName);
+                case GREATER_THAN -> jpql.append("e.").append(c.property()).append(" > :").append(paramName);
+                case GREATER_THAN_EQUAL -> jpql.append("e.").append(c.property()).append(" >= :").append(paramName);
+                case LESS_THAN -> jpql.append("e.").append(c.property()).append(" < :").append(paramName);
+                case LESS_THAN_EQUAL -> jpql.append("e.").append(c.property()).append(" <= :").append(paramName);
+                case LIKE, CONTAINS, STARTS_WITH, ENDS_WITH ->
+                    jpql.append("e.").append(c.property()).append(" LIKE :").append(paramName);
+                case NOT -> jpql.append("e.").append(c.property()).append(" <> :").append(paramName);
+                case NULL -> jpql.append("e.").append(c.property()).append(" IS NULL");
+                case NOT_NULL -> jpql.append("e.").append(c.property()).append(" IS NOT NULL");
+                case IN -> jpql.append("e.").append(c.property()).append(" IN :").append(paramName);
+                case BETWEEN -> jpql.append("e.").append(c.property()).append(" BETWEEN :").append(paramName)
+                    .append("a AND :").append(paramName).append("b");
+                case TRUE -> jpql.append("e.").append(c.property()).append(" = TRUE");
+                case FALSE -> jpql.append("e.").append(c.property()).append(" = FALSE");
+                default -> jpql.append("e.").append(c.property()).append(" = :").append(paramName);
             }
         }
+    }
 
-        final jakarta.persistence.Query query = em.createQuery(jpql.toString());
+    private static void appendOrderByClause(final StringBuilder jpql,
+                                             final List<MethodNameParser.OrderClause> orderClauses) {
+        if (orderClauses.isEmpty()) {
+            return;
+        }
+        jpql.append(" ORDER BY ");
+        for (int i = 0; i < orderClauses.size(); i++) {
+            if (i > 0) {
+                jpql.append(", ");
+            }
+            final MethodNameParser.OrderClause clause = orderClauses.get(i);
+            jpql.append("e.").append(clause.property()).append(clause.ascending() ? " ASC" : " DESC");
+        }
+    }
 
-        // Bind parameters
+    /**
+     * Binds args to named parameters. Returns false if an IN parameter has an empty
+     * collection (the query should return empty results without execution).
+     */
+    private static boolean bindConditionParameters(final jakarta.persistence.Query query,
+                                                    final List<MethodNameParser.Condition> conditions,
+                                                    final Object[] args) {
         int paramIdx = 0;
         for (int i = 0; i < conditions.size(); i++) {
             final MethodNameParser.Condition c = conditions.get(i);
             final int paramCount = c.operator().parameterCount();
-            if (paramCount > 0) {
+            if (paramCount == 1) {
                 Object value = args[paramIdx++];
+                if (c.operator() == MethodNameParser.Operator.IN
+                    && value instanceof java.util.Collection<?> col && col.isEmpty()) {
+                    return false; // empty IN — query cannot match anything
+                }
                 if (c.operator() == MethodNameParser.Operator.CONTAINS) {
                     value = "%" + value + "%";
                 } else if (c.operator() == MethodNameParser.Operator.STARTS_WITH) {
@@ -120,155 +177,43 @@ public final class CriteriaQueryBuilder {
                     value = "%" + value;
                 }
                 query.setParameter("p" + i, value);
+            } else if (paramCount == 2) {
+                query.setParameter("p" + i + "a", args[paramIdx++]);
+                query.setParameter("p" + i + "b", args[paramIdx++]);
             }
         }
-
-        return (long) query.executeUpdate();
+        return true;
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> int applyConditions(final CriteriaBuilder cb, final Root<T> root,
-                                           final CriteriaQuery<?> cq,
-                                           final List<MethodNameParser.Condition> conditions,
-                                           final Object[] args, final int paramIdx) {
-        final Predicate predicate = buildPredicate(cb, root, conditions, args, paramIdx);
-        if (predicate != null) {
-            cq.where(predicate);
-        }
-        // Calculate how many params were consumed
-        int nextParamIdx = paramIdx;
-        for (final MethodNameParser.Condition c : conditions) {
-            nextParamIdx += c.operator().parameterCount();
-        }
-        return nextParamIdx;
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> Predicate buildPredicate(final CriteriaBuilder cb, final Root<T> root,
-                                                final List<MethodNameParser.Condition> conditions,
-                                                final Object[] args, final int paramIdx) {
-        int currentIdx = paramIdx;
-        Predicate predicate = null;
-
-        for (final MethodNameParser.Condition condition : conditions) {
-            final Path<?> path = root.get(condition.property());
-            final Predicate clause;
-
-            switch (condition.operator()) {
-                case EQUAL:
-                    clause = cb.equal(path, args[currentIdx++]);
-                    break;
-                case GREATER_THAN:
-                    clause = cb.greaterThan((Expression<Comparable>) path, (Comparable) args[currentIdx++]);
-                    break;
-                case GREATER_THAN_EQUAL:
-                    clause = cb.greaterThanOrEqualTo((Expression<Comparable>) path, (Comparable) args[currentIdx++]);
-                    break;
-                case LESS_THAN:
-                    clause = cb.lessThan((Expression<Comparable>) path, (Comparable) args[currentIdx++]);
-                    break;
-                case LESS_THAN_EQUAL:
-                    clause = cb.lessThanOrEqualTo((Expression<Comparable>) path, (Comparable) args[currentIdx++]);
-                    break;
-                case LIKE:
-                    clause = cb.like((Expression<String>) path, (String) args[currentIdx++]);
-                    break;
-                case STARTS_WITH:
-                    clause = cb.like((Expression<String>) path, args[currentIdx++] + "%");
-                    break;
-                case ENDS_WITH:
-                    clause = cb.like((Expression<String>) path, "%" + args[currentIdx++]);
-                    break;
-                case CONTAINS:
-                    clause = cb.like((Expression<String>) path, "%" + args[currentIdx++] + "%");
-                    break;
-                case BETWEEN:
-                    clause = cb.between((Expression<Comparable>) path, (Comparable) args[currentIdx++], (Comparable) args[currentIdx++]);
-                    break;
-                case IN:
-                    final Object inArg = args[currentIdx++];
-                    if (inArg instanceof Collection<?> col) {
-                        clause = path.in(col);
-                    } else {
-                        clause = path.in(inArg);
-                    }
-                    break;
-                case NOT:
-                    clause = cb.notEqual(path, args[currentIdx++]);
-                    break;
-                case NULL:
-                    clause = cb.isNull(path);
-                    break;
-                case NOT_NULL:
-                    clause = cb.isNotNull(path);
-                    break;
-                case TRUE:
-                    clause = cb.isTrue((Expression<Boolean>) path);
-                    break;
-                case FALSE:
-                    clause = cb.isFalse((Expression<Boolean>) path);
-                    break;
-                default:
-                    clause = cb.equal(path, args[currentIdx++]);
-            }
-
-            if (predicate == null) {
-                predicate = clause;
-            } else if (condition.connector() == MethodNameParser.Connector.OR) {
-                predicate = cb.or(predicate, clause);
-            } else {
-                predicate = cb.and(predicate, clause);
-            }
-        }
-
-        return predicate;
-    }
-
-    private static <T> void applyOrderClauses(final CriteriaBuilder cb, final Root<T> root,
-                                               final CriteriaQuery<?> cq,
-                                               final List<MethodNameParser.OrderClause> orderClauses) {
-        if (orderClauses.isEmpty()) {
-            return;
-        }
-        final List<Order> orders = new ArrayList<>();
-        for (final MethodNameParser.OrderClause clause : orderClauses) {
-            if (clause.ascending()) {
-                orders.add(cb.asc(root.get(clause.property())));
-            } else {
-                orders.add(cb.desc(root.get(clause.property())));
-            }
-        }
-        cq.orderBy(orders);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> void applySortParameters(final CriteriaBuilder cb, final Root<T> root,
-                                                 final CriteriaQuery<?> cq, final Object[] args) {
+    private static String appendDynamicSort(final String jpql, final Object[] args) {
         if (args == null) {
-            return;
+            return jpql;
         }
-        final List<Order> orders = new ArrayList<>();
+        final List<String> sortClauses = new java.util.ArrayList<>();
         for (final Object arg : args) {
             if (arg instanceof Sort<?> sort) {
-                if (sort.isAscending()) {
-                    orders.add(cb.asc(root.get(sort.property())));
-                } else {
-                    orders.add(cb.desc(root.get(sort.property())));
-                }
+                sortClauses.add("e." + sort.property() + (sort.isAscending() ? " ASC" : " DESC"));
             } else if (arg instanceof jakarta.data.Order<?> order) {
                 for (final Object s : order.sorts()) {
                     final Sort<?> sort = (Sort<?>) s;
-                    if (sort.isAscending()) {
-                        orders.add(cb.asc(root.get(sort.property())));
-                    } else {
-                        orders.add(cb.desc(root.get(sort.property())));
-                    }
+                    sortClauses.add("e." + sort.property() + (sort.isAscending() ? " ASC" : " DESC"));
                 }
             }
         }
-        if (!orders.isEmpty()) {
-            cq.orderBy(orders);
+        if (sortClauses.isEmpty()) {
+            return jpql;
         }
+        // Dynamic sort overrides any static ORDER BY in the cached JPQL
+        final String upperJpql = jpql.toUpperCase();
+        final String baseJpql;
+        final int orderByIdx = upperJpql.lastIndexOf("ORDER BY");
+        if (orderByIdx > 0) {
+            baseJpql = jpql.substring(0, orderByIdx).stripTrailing();
+        } else {
+            baseJpql = jpql;
+        }
+        return baseJpql + " ORDER BY " + String.join(", ", sortClauses);
     }
 
     static boolean isSpecialParameter(final Class<?> type) {

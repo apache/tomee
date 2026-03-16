@@ -29,9 +29,6 @@ import jakarta.data.repository.Save;
 import jakarta.data.repository.Update;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Status;
 import jakarta.transaction.UserTransaction;
 import jakarta.validation.ConstraintViolation;
@@ -67,10 +64,17 @@ public class RepositoryInvocationHandler implements InvocationHandler {
 
     private final RepositoryMetadata metadata;
     private final ConcurrentHashMap<Method, MethodMetadata> methodCache = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Method, String> deleteJpqlCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Method, String> jpqlCache = new ConcurrentHashMap<>();
+    private final String findAllJpql;
+    private final String deleteAllJpql;
+    private final String countAllJpql;
 
     public RepositoryInvocationHandler(final RepositoryMetadata metadata) {
         this.metadata = metadata;
+        final String entityName = metadata.getEntityClass().getSimpleName();
+        this.findAllJpql = "SELECT e FROM " + entityName + " e";
+        this.deleteAllJpql = "DELETE FROM " + entityName;
+        this.countAllJpql = "SELECT COUNT(e) FROM " + entityName + " e";
     }
 
     @Override
@@ -231,7 +235,9 @@ public class RepositoryInvocationHandler implements InvocationHandler {
 
         // Check annotations for custom methods
         if (method.isAnnotationPresent(Query.class)) {
-            return AnnotatedQueryExecutor.execute(em, method, args, metadata.getEntityClass());
+            final String jpql = jpqlCache.computeIfAbsent(method,
+                m -> AnnotatedQueryExecutor.buildJpql(m, metadata.getEntityClass(), em));
+            return AnnotatedQueryExecutor.execute(em, method, args, jpql);
         }
 
         if (method.isAnnotationPresent(Insert.class)) {
@@ -251,7 +257,9 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         }
 
         if (method.isAnnotationPresent(Find.class)) {
-            return FindAnnotationExecutor.execute(em, method, args, metadata.getEntityClass());
+            final String jpql = jpqlCache.computeIfAbsent(method,
+                m -> FindAnnotationExecutor.buildJpql(m, metadata.getEntityClass()));
+            return FindAnnotationExecutor.execute(em, method, args, metadata.getEntityClass(), jpql);
         }
 
         return handleCustomMethod(em, method, args);
@@ -408,20 +416,14 @@ public class RepositoryInvocationHandler implements InvocationHandler {
     }
 
     private Object handleFindAll(final EntityManager em, final Method method, final Object[] args) {
-        final Class<?> entityClass = metadata.getEntityClass();
-        final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<Object> cq = cb.createQuery(Object.class);
-        final Root<?> root = cq.from(entityClass);
-        cq.select(root);
-
-        final TypedQuery<Object> query = em.createQuery(cq);
+        final TypedQuery<Object> query = em.createQuery(findAllJpql, Object.class);
         CriteriaQueryBuilder.applyPagination(query, args);
 
         final List<Object> results = query.getResultList();
         final Class<?> returnType = method.getReturnType();
 
         if (Page.class.isAssignableFrom(returnType)) {
-            return buildPage(em, entityClass, results, args, null);
+            return buildPage(em, metadata.getEntityClass(), results, args, null);
         }
         if (Stream.class.isAssignableFrom(returnType)) {
             return results.stream();
@@ -457,17 +459,13 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                 removeEntity(em, entity);
             }
         } else {
-            // Delete all entities
-            final String jpql = "DELETE FROM " + metadata.getEntityClass().getSimpleName();
-            em.createQuery(jpql).executeUpdate();
+            em.createQuery(deleteAllJpql).executeUpdate();
         }
     }
 
     private Object handleDeleteAnnotation(final EntityManager em, final Method method, final Object[] args) {
         if (args == null || args.length < 1) {
-            // @Delete with no args: delete all entities
-            final String jpql = "DELETE FROM " + metadata.getEntityClass().getSimpleName();
-            em.createQuery(jpql).executeUpdate();
+            em.createQuery(deleteAllJpql).executeUpdate();
             return null;
         }
 
@@ -482,7 +480,7 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         }
 
         if (hasByAnnotation) {
-            final String jpql = deleteJpqlCache.computeIfAbsent(method, m -> {
+            final String jpql = jpqlCache.computeIfAbsent(method, m -> {
                 final java.lang.reflect.Parameter[] mp = m.getParameters();
                 final StringBuilder sb = new StringBuilder("DELETE FROM ")
                     .append(metadata.getEntityClass().getSimpleName()).append(" e WHERE ");
@@ -524,10 +522,7 @@ public class RepositoryInvocationHandler implements InvocationHandler {
     }
 
     private long handleCount(final EntityManager em) {
-        final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        cq.select(cb.count(cq.from(metadata.getEntityClass())));
-        return em.createQuery(cq).getSingleResult();
+        return em.createQuery(countAllJpql, Long.class).getSingleResult();
     }
 
     private boolean handleExistsById(final EntityManager em, final Object[] args) {
@@ -544,9 +539,15 @@ public class RepositoryInvocationHandler implements InvocationHandler {
             final MethodNameParser.ParsedQuery parsed = meta.getParsedQuery();
 
             return switch (parsed.action()) {
-                case FIND -> executeFindQuery(em, method, parsed, args);
+                case FIND -> {
+                    final String jpql = jpqlCache.computeIfAbsent(method,
+                        m -> CriteriaQueryBuilder.buildFindJpql(metadata.getEntityClass(), parsed));
+                    yield executeFindQuery(em, method, jpql, parsed, args);
+                }
                 case DELETE -> {
-                    final long deleted = CriteriaQueryBuilder.buildDelete(em, metadata.getEntityClass(), parsed, args);
+                    final String jpql = jpqlCache.computeIfAbsent(method,
+                        m -> CriteriaQueryBuilder.buildDeleteJpql(metadata.getEntityClass(), parsed));
+                    final long deleted = CriteriaQueryBuilder.executeDelete(em, jpql, parsed, args);
                     final Class<?> rt = method.getReturnType();
                     if (rt == int.class || rt == Integer.class) {
                         yield (int) deleted;
@@ -554,12 +555,14 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                     yield deleted;
                 }
                 case COUNT -> {
-                    final TypedQuery<Long> countQuery = CriteriaQueryBuilder.buildCount(em, metadata.getEntityClass(), parsed, args);
-                    yield countQuery.getSingleResult();
+                    final String jpql = jpqlCache.computeIfAbsent(method,
+                        m -> CriteriaQueryBuilder.buildCountJpql(metadata.getEntityClass(), parsed));
+                    yield CriteriaQueryBuilder.executeCount(em, jpql, parsed, args).getSingleResult();
                 }
                 case EXISTS -> {
-                    final TypedQuery<Long> countQuery = CriteriaQueryBuilder.buildCount(em, metadata.getEntityClass(), parsed, args);
-                    yield countQuery.getSingleResult() > 0;
+                    final String jpql = jpqlCache.computeIfAbsent(method,
+                        m -> CriteriaQueryBuilder.buildCountJpql(metadata.getEntityClass(), parsed));
+                    yield CriteriaQueryBuilder.executeCount(em, jpql, parsed, args).getSingleResult() > 0;
                 }
             };
         }
@@ -570,8 +573,9 @@ public class RepositoryInvocationHandler implements InvocationHandler {
 
     @SuppressWarnings("unchecked")
     private Object executeFindQuery(final EntityManager em, final Method method,
+                                    final String jpql,
                                     final MethodNameParser.ParsedQuery parsed, final Object[] args) {
-        final TypedQuery<?> query = CriteriaQueryBuilder.buildFind(em, metadata.getEntityClass(), parsed, args);
+        final TypedQuery<?> query = CriteriaQueryBuilder.executeFind(em, metadata.getEntityClass(), jpql, parsed, args);
         final Class<?> returnType = method.getReturnType();
 
         if (Page.class.isAssignableFrom(returnType)) {
@@ -931,13 +935,10 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         // Count total - use the same conditions as the finder query if available
         final long total;
         if (parsed != null && !parsed.conditions().isEmpty()) {
-            final TypedQuery<Long> countQuery = CriteriaQueryBuilder.buildCount(em, entityClass, parsed, args);
-            total = countQuery.getSingleResult();
+            final String countJpql = CriteriaQueryBuilder.buildCountJpql(entityClass, parsed);
+            total = CriteriaQueryBuilder.executeCount(em, countJpql, parsed, args).getSingleResult();
         } else {
-            final CriteriaBuilder cb = em.getCriteriaBuilder();
-            final CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-            countQuery.select(cb.count(countQuery.from(entityClass)));
-            total = em.createQuery(countQuery).getSingleResult();
+            total = em.createQuery(countAllJpql, Long.class).getSingleResult();
         }
 
         return new PageRecord<>(pageRequest, content, total);

@@ -20,10 +20,6 @@ import jakarta.data.repository.By;
 import jakarta.data.repository.OrderBy;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -38,48 +34,61 @@ public final class FindAnnotationExecutor {
     private FindAnnotationExecutor() {
     }
 
-    public static <T> Object execute(final EntityManager em, final Method method, final Object[] args,
-                                     final Class<T> entityClass) {
-        final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<T> cq = cb.createQuery(entityClass);
-        final Root<T> root = cq.from(entityClass);
-        cq.select(root);
+    /**
+     * Builds the JPQL string for a @Find-annotated method. Cacheable — depends only on method metadata.
+     */
+    public static <T> String buildJpql(final Method method, final Class<T> entityClass) {
+        final StringBuilder jpql = new StringBuilder("SELECT e FROM ")
+            .append(entityClass.getSimpleName()).append(" e");
 
         final Parameter[] parameters = method.getParameters();
-        final List<Predicate> predicates = new ArrayList<>();
+        final List<String> conditions = new ArrayList<>();
 
         for (int i = 0; i < parameters.length; i++) {
             if (CriteriaQueryBuilder.isSpecialParameter(parameters[i].getType())) {
                 continue;
             }
             final By by = parameters[i].getAnnotation(By.class);
-            if (by != null) {
-                predicates.add(cb.equal(root.get(by.value()), args[i]));
-            } else {
-                // Use parameter name as property name
-                predicates.add(cb.equal(root.get(parameters[i].getName()), args[i]));
-            }
+            final String property = by != null ? by.value() : parameters[i].getName();
+            conditions.add("e." + property + " = :p" + i);
         }
 
-        if (!predicates.isEmpty()) {
-            cq.where(predicates.toArray(new Predicate[0]));
+        if (!conditions.isEmpty()) {
+            jpql.append(" WHERE ").append(String.join(" AND ", conditions));
         }
 
         // Handle @OrderBy annotation(s) on the method
         final OrderBy[] orderBys = method.getAnnotationsByType(OrderBy.class);
         if (orderBys != null && orderBys.length > 0) {
-            final List<jakarta.persistence.criteria.Order> orders = new ArrayList<>();
-            for (final OrderBy ob : orderBys) {
-                if (ob.descending()) {
-                    orders.add(cb.desc(root.get(ob.value())));
-                } else {
-                    orders.add(cb.asc(root.get(ob.value())));
+            jpql.append(" ORDER BY ");
+            for (int i = 0; i < orderBys.length; i++) {
+                if (i > 0) {
+                    jpql.append(", ");
                 }
+                jpql.append("e.").append(orderBys[i].value())
+                    .append(orderBys[i].descending() ? " DESC" : " ASC");
             }
-            cq.orderBy(orders);
         }
 
-        final TypedQuery<T> query = em.createQuery(cq);
+        return jpql.toString();
+    }
+
+    /**
+     * Executes a @Find-annotated method using the given (cached) JPQL string.
+     */
+    public static <T> Object execute(final EntityManager em, final Method method, final Object[] args,
+                                     final Class<T> entityClass, final String jpql) {
+        final TypedQuery<T> query = em.createQuery(jpql, entityClass);
+
+        // Bind parameters
+        final Parameter[] parameters = method.getParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            if (CriteriaQueryBuilder.isSpecialParameter(parameters[i].getType())) {
+                continue;
+            }
+            query.setParameter("p" + i, args[i]);
+        }
+
         CriteriaQueryBuilder.applyPagination(query, args);
 
         return adaptResult(method, query);
@@ -106,5 +115,4 @@ public final class FindAnnotationExecutor {
         final List<T> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
-
 }
