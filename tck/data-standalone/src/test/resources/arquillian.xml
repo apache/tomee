@@ -52,4 +52,30 @@
             </property>
         </configuration>
     </container>
+    <container qualifier="tomee-hibernate">
+        <configuration>
+            <property name="httpPort">-1</property>
+            <property name="ajpPort">-1</property>
+            <property name="stopPort">-1</property>
+            <property name="classifier">plus</property>
+            <property name="debug">false</property>
+            <property name="cleanOnStartUp">true</property>
+            <property name="dir">target/tomee-hibernate</property>
+            <property name="appWorkingDir">target/workdir-hibernate</property>
+            <property name="catalina_opts">-Xmx512m</property>
+            <property name="additionalLibs">
+                remove:openjpa
+                mvn:org.hibernate.orm:hibernate-core:${version.hibernate.orm}
+                mvn:org.hibernate.models:hibernate-models:1.0.1
+                mvn:com.fasterxml:classmate:1.7.1
+                mvn:net.bytebuddy:byte-buddy:1.17.8
+                mvn:org.antlr:antlr4-runtime:4.13.2
+                mvn:org.slf4j:slf4j-jdk14:${version.slf4j}
+            </property>
+            <property name="properties">
+                openejb.environment.default=true
+                tomee.jpa.cdi=false
+            </property>
+        </configuration>
+    </container>
 </arquillian>

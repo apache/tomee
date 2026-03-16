@@ -239,12 +239,20 @@ class MethodNameParserExtendedTest {
         assertNull(MethodNameParser.parse("find"));
     }
 
-    // -- Operator.fromString coverage --
+    // -- Operator.fromSuffix coverage --
 
     @Test
-    void operatorFromStringUnknownDefaultsToEqual() {
-        assertEquals(Operator.EQUAL, Operator.fromString("Unknown"));
-        assertEquals(Operator.EQUAL, Operator.fromString(""));
+    void operatorFromSuffixUnknownDefaultsToEqual() {
+        assertEquals(Operator.EQUAL, Operator.fromSuffix("Unknown"));
+        assertEquals(Operator.EQUAL, Operator.fromSuffix(""));
+    }
+
+    @Test
+    void operatorSuffixRoundTrips() {
+        for (final Operator op : Operator.values()) {
+            assertEquals(op, Operator.fromSuffix(op.suffix()),
+                "fromSuffix(suffix()) should round-trip for " + op);
+        }
     }
 
     // -- Operator.parameterCount full coverage --

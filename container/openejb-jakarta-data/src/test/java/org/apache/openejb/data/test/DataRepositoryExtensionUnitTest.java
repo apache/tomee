@@ -26,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class DataRepositoryExtensionUnitTest {
 
     @Test
-    void hasHibernateReturnsFalseWhenHibernateNotOnClasspath() throws Exception {
-        // In our test environment, Hibernate is not on the classpath
-        // so hasHibernate() should return false
-        final Method hasHibernate = DataRepositoryExtension.class.getDeclaredMethod("hasHibernate");
-        hasHibernate.setAccessible(true);
-        final boolean result = (boolean) hasHibernate.invoke(null);
-        assertFalse(result, "hasHibernate() should return false when Hibernate is not on the classpath");
+    void hasHibernateGeneratedImplReturnsFalseWhenNoGeneratedClass() throws Exception {
+        // In our test environment, there is no DataRepositoryExtension_ generated class
+        final Method hasImpl = DataRepositoryExtension.class.getDeclaredMethod(
+            "hasHibernateGeneratedImpl", Class.class);
+        hasImpl.setAccessible(true);
+        final boolean result = (boolean) hasImpl.invoke(null, DataRepositoryExtension.class);
+        assertFalse(result, "hasHibernateGeneratedImpl() should return false when no generated class exists");
     }
 }

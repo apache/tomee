@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.data.extension;
 
-import jakarta.data.repository.DataRepository;
 import jakarta.data.repository.Repository;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
@@ -25,10 +24,9 @@ import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.enterprise.inject.spi.WithAnnotations;
 
+import org.apache.openejb.data.meta.RepositoryMetadata;
 import org.apache.openejb.loader.SystemInstance;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -45,23 +43,6 @@ public class DataRepositoryExtension implements Extension {
                 SystemInstance.get().getOptions().get("tomee.jakarta-data.active", "true"));
         if (!active) {
             LOGGER.info("Jakarta Data extension disabled via tomee.jakarta-data.active=false");
-            return;
-        }
-
-        // Hibernate provides its own Jakarta Data implementation, so we back off
-        if (hasHibernate()) {
-            active = false;
-            LOGGER.info("Hibernate detected as persistence provider, disabling TomEE Jakarta Data extension");
-        }
-    }
-
-    private static boolean hasHibernate() {
-        try {
-            Thread.currentThread().getContextClassLoader()
-                    .loadClass("org.hibernate.Session");
-            return true;
-        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-            return false;
         }
     }
 
@@ -87,9 +68,18 @@ public class DataRepositoryExtension implements Extension {
         }
 
         // Skip repositories whose entity type is not a JPA @Entity
-        final Class<?> entityClass = resolveEntityClass(javaClass);
-        if (entityClass != null && !entityClass.isAnnotationPresent(jakarta.persistence.Entity.class)) {
+        final Class<?> entityClass = RepositoryMetadata.resolveEntityClass(javaClass);
+        if (entityClass != null && entityClass != Object.class
+            && !entityClass.isAnnotationPresent(jakarta.persistence.Entity.class)) {
             LOGGER.fine("Skipping Jakarta Data repository for non-JPA entity " + entityClass.getName() + ": " + javaClass.getName());
+            return;
+        }
+
+        // Hibernate's annotation processor generates implementation classes with an underscore
+        // prefix (e.g., _MyRepository) at compile time. If such a class exists, Hibernate
+        // handles this repository — we should not register our proxy.
+        if (hasHibernateGeneratedImpl(javaClass)) {
+            LOGGER.fine("Skipping Jakarta Data repository with Hibernate-generated implementation: " + javaClass.getName());
             return;
         }
 
@@ -98,20 +88,16 @@ public class DataRepositoryExtension implements Extension {
         event.veto();
     }
 
-    private static Class<?> resolveEntityClass(final Class<?> repoInterface) {
-        for (final Type iface : repoInterface.getGenericInterfaces()) {
-            if (iface instanceof ParameterizedType) {
-                final ParameterizedType pt = (ParameterizedType) iface;
-                final Type rawType = pt.getRawType();
-                if (rawType instanceof Class && DataRepository.class.isAssignableFrom((Class<?>) rawType)) {
-                    final Type entityType = pt.getActualTypeArguments()[0];
-                    if (entityType instanceof Class) {
-                        return (Class<?>) entityType;
-                    }
-                }
-            }
+    private static boolean hasHibernateGeneratedImpl(final Class<?> repoInterface) {
+        // Hibernate's annotation processor generates implementation classes with a
+        // trailing underscore (e.g., DataItemRepository_) in the same package.
+        final String generatedName = repoInterface.getName() + "_";
+        try {
+            Thread.currentThread().getContextClassLoader().loadClass(generatedName);
+            return true;
+        } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+            return false;
         }
-        return null;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

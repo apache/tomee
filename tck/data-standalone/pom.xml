@@ -155,6 +155,12 @@
         <profile>
             <id>tck-data</id>
             <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -203,6 +209,19 @@
                                 <configuration>
                                     <systemPropertyVariables combine.children="append">
                                         <arquillian.launch>tomee-plume</arquillian.launch>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <!-- Third execution: run against TomEE Plus with Hibernate (OpenJPA removed) -->
+                            <execution>
+                                <id>tomee-hibernate</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables combine.children="append">
+                                        <arquillian.launch>tomee-hibernate</arquillian.launch>
+                                        <jpa.provider>hibernate</jpa.provider>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

@@ -67,6 +67,7 @@ public class RepositoryInvocationHandler implements InvocationHandler {
 
     private final RepositoryMetadata metadata;
     private final ConcurrentHashMap<Method, MethodMetadata> methodCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Method, String> deleteJpqlCache = new ConcurrentHashMap<>();
 
     public RepositoryInvocationHandler(final RepositoryMetadata metadata) {
         this.metadata = metadata;
@@ -263,20 +264,9 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         if (args == null || args.length != 1) {
             throw new IllegalArgumentException("save requires exactly one argument");
         }
-        final Object entity = args[0];
-        if (entity instanceof Iterable<?>) {
-            return (T) handleSaveAll(em, args);
-        }
-        if (entity.getClass().isArray()) {
-            final Object[] array = (Object[]) entity;
-            final Object[] result = java.util.Arrays.copyOf(array, array.length);
-            for (int i = 0; i < array.length; i++) {
-                result[i] = em.merge(array[i]);
-            }
-            em.flush();
-            return (T) result;
-        }
-        return (T) em.merge(entity);
+        final Object result = applyToEntities(args[0], e -> em.merge(e));
+        em.flush();
+        return (T) result;
     }
 
     @SuppressWarnings("unchecked")
@@ -285,6 +275,7 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         for (final Object entity : asIterable(args[0])) {
             result.add((T) em.merge(entity));
         }
+        em.flush();
         return result;
     }
 
@@ -293,32 +284,12 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         if (args == null || args.length != 1) {
             throw new IllegalArgumentException("insert requires exactly one argument");
         }
-        final Object entity = args[0];
-        if (entity instanceof Iterable<?> iterable) {
-            final List<Object> result = new ArrayList<>();
-            for (final Object e : iterable) {
-                clearVersionField(em, e);
-                em.persist(e);
-                result.add(e);
-            }
+        return (T) applyToEntities(args[0], e -> {
+            clearVersionField(em, e);
+            em.persist(e);
             em.flush();
-            return (T) result;
-        }
-        if (entity.getClass().isArray()) {
-            final Object[] array = (Object[]) entity;
-            final Object[] result = java.util.Arrays.copyOf(array, array.length);
-            for (int i = 0; i < array.length; i++) {
-                clearVersionField(em, array[i]);
-                em.persist(array[i]);
-                result[i] = array[i];
-            }
-            em.flush();
-            return (T) result;
-        }
-        clearVersionField(em, entity);
-        em.persist(entity);
-        em.flush();
-        return (T) entity;
+            return e;
+        });
     }
 
     private void clearVersionField(final EntityManager em, final Object entity) {
@@ -351,29 +322,16 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         if (args == null || args.length != 1) {
             throw new IllegalArgumentException("update requires exactly one argument");
         }
-        final Object entity = args[0];
-        if (entity instanceof Iterable<?> iterable) {
-            final List<Object> result = new ArrayList<>();
-            for (final Object e : iterable) {
-                result.add(mergeWithVersionCheck(em, e));
-            }
-            return (T) result;
-        }
-        if (entity.getClass().isArray()) {
-            final Object[] array = (Object[]) entity;
-            final Object[] result = java.util.Arrays.copyOf(array, array.length);
-            for (int i = 0; i < array.length; i++) {
-                result[i] = mergeWithVersionCheck(em, array[i]);
-            }
-            return (T) result;
-        }
-        return (T) mergeWithVersionCheck(em, entity);
+        return (T) applyToEntities(args[0], e -> mergeWithVersionCheck(em, e));
     }
 
     /**
-     * Performs a version-checked merge: finds the existing entity, verifies the version matches,
-     * then copies non-ID, non-version fields from the input to the managed entity.
-     * This avoids OpenJPA's restriction on setting @Version fields directly.
+     * Performs an update with version checking. The strategy depends on the JPA provider:
+     * <ul>
+     *   <li>Hibernate/EclipseLink: standard {@code em.merge()} handles @Version correctly</li>
+     *   <li>OpenJPA: requires a workaround — reflection-based field copying with
+     *       OPTIMISTIC_FORCE_INCREMENT because OpenJPA restricts setting @Version fields</li>
+     * </ul>
      */
     private Object mergeWithVersionCheck(final EntityManager em, final Object entity) {
         final Object id = getEntityId(em, entity);
@@ -387,27 +345,19 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                 "Entity not found for update: " + entity);
         }
 
-        // Check version if the entity has a @Version field
+        // Check version before merge
+        checkVersionMatch(em, entity, existing);
+
+        // Providers other than OpenJPA handle @Version correctly via em.merge()
+        if (!isOpenJpa(em)) {
+            return em.merge(entity);
+        }
+
+        // OpenJPA workaround: copy fields via reflection, force version increment
         try {
             final jakarta.persistence.metamodel.EntityType<?> entityType =
                 em.getMetamodel().entity(entity.getClass());
-            if (entityType.hasVersionAttribute()) {
-                for (final jakarta.persistence.metamodel.SingularAttribute<?, ?> attr : entityType.getSingularAttributes()) {
-                    if (attr.isVersion()) {
-                        final java.lang.reflect.Field field = entity.getClass().getDeclaredField(attr.getName());
-                        field.setAccessible(true);
-                        final Object inputVersion = field.get(entity);
-                        final Object existingVersion = field.get(existing);
-                        if (inputVersion != null && existingVersion != null && !inputVersion.equals(existingVersion)) {
-                            throw new jakarta.data.exceptions.OptimisticLockingFailureException(
-                                "Version mismatch: expected " + existingVersion + " but got " + inputVersion);
-                        }
-                        break;
-                    }
-                }
-            }
 
-            // Copy non-ID, non-version fields from input to existing managed entity
             for (final jakarta.persistence.metamodel.Attribute<?, ?> attr : entityType.getAttributes()) {
                 if (attr instanceof jakarta.persistence.metamodel.SingularAttribute<?, ?> sa) {
                     if (sa.isId() || sa.isVersion()) {
@@ -420,11 +370,10 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                 existingField.setAccessible(true);
                 existingField.set(existing, field.get(entity));
             }
-            // Force version increment since reflection bypasses OpenJPA dirty tracking
             em.lock(existing, jakarta.persistence.LockModeType.OPTIMISTIC_FORCE_INCREMENT);
             em.flush();
             em.refresh(existing);
-            // Copy ALL fields (including version) from the managed entity back to the input entity
+            // Copy updated fields (including version) back to the input entity
             for (final jakarta.persistence.metamodel.Attribute<?, ?> attr : entityType.getAttributes()) {
                 try {
                     final java.lang.reflect.Field f = findField(entity.getClass(), attr.getName());
@@ -440,9 +389,13 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         } catch (final jakarta.data.exceptions.OptimisticLockingFailureException e) {
             throw e;
         } catch (final Exception e) {
-            // Fallback to standard merge
             return em.merge(entity);
         }
+    }
+
+    private static boolean isOpenJpa(final EntityManager em) {
+        return em.getClass().getName().startsWith("org.apache.openjpa.")
+            || em.getDelegate().getClass().getName().startsWith("org.apache.openjpa.");
     }
 
     private Object handleFindById(final EntityManager em, final Method method, final Object[] args) {
@@ -529,19 +482,22 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         }
 
         if (hasByAnnotation) {
-            // Build JPQL DELETE with @By conditions
-            final StringBuilder jpql = new StringBuilder("DELETE FROM ")
-                .append(metadata.getEntityClass().getSimpleName()).append(" e WHERE ");
-            final List<String> conditions = new ArrayList<>();
-            for (int i = 0; i < params.length; i++) {
-                final jakarta.data.repository.By by = params[i].getAnnotation(jakarta.data.repository.By.class);
-                if (by != null) {
-                    conditions.add("e." + by.value() + " = :p" + i);
+            final String jpql = deleteJpqlCache.computeIfAbsent(method, m -> {
+                final java.lang.reflect.Parameter[] mp = m.getParameters();
+                final StringBuilder sb = new StringBuilder("DELETE FROM ")
+                    .append(metadata.getEntityClass().getSimpleName()).append(" e WHERE ");
+                final List<String> conds = new ArrayList<>();
+                for (int j = 0; j < mp.length; j++) {
+                    final jakarta.data.repository.By by = mp[j].getAnnotation(jakarta.data.repository.By.class);
+                    if (by != null) {
+                        conds.add("e." + by.value() + " = :p" + j);
+                    }
                 }
-            }
-            jpql.append(String.join(" AND ", conditions));
+                sb.append(String.join(" AND ", conds));
+                return sb.toString();
+            });
 
-            final jakarta.persistence.Query query = em.createQuery(jpql.toString());
+            final jakarta.persistence.Query query = em.createQuery(jpql);
             for (int i = 0; i < params.length; i++) {
                 if (params[i].isAnnotationPresent(jakarta.data.repository.By.class)) {
                     query.setParameter("p" + i, args[i]);
@@ -727,7 +683,7 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                         final Object existingVersion = field.get(existing);
                         if (inputVersion != null && existingVersion != null && !inputVersion.equals(existingVersion)) {
                             throw new jakarta.data.exceptions.OptimisticLockingFailureException(
-                                "Version mismatch for deletion: expected " + existingVersion + " but got " + inputVersion);
+                                "Version mismatch: expected " + existingVersion + " but got " + inputVersion);
                         }
                         break;
                     }
@@ -775,7 +731,7 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                 return new jakarta.data.exceptions.OptimisticLockingFailureException(message);
             }
             if (jpaCause instanceof jakarta.persistence.EntityNotFoundException) {
-                return new jakarta.data.exceptions.OptimisticLockingFailureException(message);
+                return new jakarta.data.exceptions.EmptyResultException(message);
             }
             if (jpaCause instanceof jakarta.persistence.NonUniqueResultException) {
                 return new jakarta.data.exceptions.NonUniqueResultException(message);
@@ -784,7 +740,8 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                 return new jakarta.data.exceptions.EmptyResultException(message);
             }
             if (jpaCause instanceof jakarta.persistence.PersistenceException) {
-                // Check if the cause chain contains a constraint violation (duplicate key)
+                // SQL constraint violation within a PersistenceException indicates
+                // an insert-duplicate / unique-key conflict → EntityExistsException per spec
                 if (hasSqlConstraintViolation(jpaCause)) {
                     return new jakarta.data.exceptions.EntityExistsException(message);
                 }
@@ -877,7 +834,8 @@ public class RepositoryInvocationHandler implements InvocationHandler {
         while (current != null) {
             final String className = current.getClass().getName();
             if (className.startsWith("org.eclipse.persistence.")
-                || className.startsWith("org.apache.openjpa.")) {
+                || className.startsWith("org.apache.openjpa.")
+                || className.startsWith("org.hibernate.")) {
                 return true;
             }
             current = current.getCause();
@@ -914,6 +872,31 @@ public class RepositoryInvocationHandler implements InvocationHandler {
             current = current.getCause();
         }
         return null;
+    }
+
+    @FunctionalInterface
+    private interface EntityOperation {
+        Object apply(Object entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object applyToEntities(final Object arg, final EntityOperation op) {
+        if (arg instanceof Iterable<?>) {
+            final List<Object> result = new ArrayList<>();
+            for (final Object entity : (Iterable<?>) arg) {
+                result.add(op.apply(entity));
+            }
+            return result;
+        }
+        if (arg.getClass().isArray()) {
+            final Object[] array = (Object[]) arg;
+            final Object[] result = java.util.Arrays.copyOf(array, array.length);
+            for (int i = 0; i < array.length; i++) {
+                result[i] = op.apply(array[i]);
+            }
+            return result;
+        }
+        return op.apply(arg);
     }
 
     @SuppressWarnings("unchecked")

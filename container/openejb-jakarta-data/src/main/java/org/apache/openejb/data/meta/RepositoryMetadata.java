@@ -36,7 +36,7 @@ public class RepositoryMetadata {
         this.entityClass = resolveEntityClass(repositoryInterface);
     }
 
-    private static Class<?> resolveEntityClass(final Class<?> repoInterface) {
+    public static Class<?> resolveEntityClass(final Class<?> repoInterface) {
         for (final Type type : repoInterface.getGenericInterfaces()) {
             if (type instanceof ParameterizedType pt) {
                 final Type rawType = pt.getRawType();

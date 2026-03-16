@@ -19,6 +19,7 @@ package org.apache.openejb.data.query;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,11 +31,15 @@ public final class MethodNameParser {
     private static final String EXISTS_BY = "existsBy";
     private static final String ORDER_BY = "OrderBy";
 
-    private static final String[] OPERATORS = {
-        "GreaterThanEqual", "LessThanEqual", "GreaterThan", "LessThan",
-        "StartsWith", "EndsWith", "Contains", "NotNull", "Null",
-        "Between", "Like", "Not", "In", "True", "False"
-    };
+    // Derived from Operator enum, sorted longest-first to match greedily
+    private static final String[] OPERATOR_SUFFIXES;
+    static {
+        OPERATOR_SUFFIXES = Arrays.stream(Operator.values())
+            .filter(op -> op != Operator.EQUAL)
+            .map(Operator::suffix)
+            .sorted((a, b) -> Integer.compare(b.length(), a.length()))
+            .toArray(String[]::new);
+    }
 
     private MethodNameParser() {
     }
@@ -125,10 +130,10 @@ public final class MethodNameParser {
     }
 
     private static Condition parseConditionPart(final String part, final Connector connector) {
-        for (final String op : OPERATORS) {
+        for (final String op : OPERATOR_SUFFIXES) {
             if (part.endsWith(op)) {
                 final String property = StringUtils.uncapitalize(part.substring(0, part.length() - op.length()));
-                return new Condition(property, Operator.fromString(op), connector);
+                return new Condition(property, Operator.fromSuffix(op), connector);
             }
         }
         // Default: equality
@@ -188,33 +193,31 @@ public final class MethodNameParser {
     }
 
     public enum Operator {
-        EQUAL,
-        GREATER_THAN, GREATER_THAN_EQUAL,
-        LESS_THAN, LESS_THAN_EQUAL,
-        LIKE, STARTS_WITH, ENDS_WITH, CONTAINS,
-        BETWEEN, IN, NOT,
-        NULL, NOT_NULL,
-        TRUE, FALSE;
+        EQUAL("Equal"),
+        GREATER_THAN("GreaterThan"), GREATER_THAN_EQUAL("GreaterThanEqual"),
+        LESS_THAN("LessThan"), LESS_THAN_EQUAL("LessThanEqual"),
+        LIKE("Like"), STARTS_WITH("StartsWith"), ENDS_WITH("EndsWith"), CONTAINS("Contains"),
+        BETWEEN("Between"), IN("In"), NOT("Not"),
+        NULL("Null"), NOT_NULL("NotNull"),
+        TRUE("True"), FALSE("False");
 
-        public static Operator fromString(final String s) {
-            return switch (s) {
-                case "GreaterThan" -> GREATER_THAN;
-                case "GreaterThanEqual" -> GREATER_THAN_EQUAL;
-                case "LessThan" -> LESS_THAN;
-                case "LessThanEqual" -> LESS_THAN_EQUAL;
-                case "Like" -> LIKE;
-                case "StartsWith" -> STARTS_WITH;
-                case "EndsWith" -> ENDS_WITH;
-                case "Contains" -> CONTAINS;
-                case "Between" -> BETWEEN;
-                case "In" -> IN;
-                case "Not" -> NOT;
-                case "Null" -> NULL;
-                case "NotNull" -> NOT_NULL;
-                case "True" -> TRUE;
-                case "False" -> FALSE;
-                default -> EQUAL;
-            };
+        private final String suffix;
+
+        Operator(final String suffix) {
+            this.suffix = suffix;
+        }
+
+        public String suffix() {
+            return suffix;
+        }
+
+        public static Operator fromSuffix(final String s) {
+            for (final Operator op : values()) {
+                if (op.suffix.equals(s)) {
+                    return op;
+                }
+            }
+            return EQUAL;
         }
 
         public int parameterCount() {
