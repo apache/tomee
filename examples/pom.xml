@@ -112,6 +112,7 @@
     <module>mp-rest-jwt-jwk</module>
     <module>mp-rest-jwt-principal</module>
     <module>mp-rest-jwt-public-key</module>
+    <module>mp-opentelemetry-metrics</module>
     <module>mp-rest-client</module>
     <module>mp-custom-healthcheck</module>
     <module>mp-openapi-reader</module>
