@@ -35,12 +35,16 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.5</version>
         <configuration>
-          <reuseForks>true</reuseForks>
+          <reuseForks>false</reuseForks>
           <forkCount>1</forkCount>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.fault-tolerance:microprofile-fault-tolerance-tck</dependency>
           </dependenciesToScan>
           <trimStackTrace>false</trimStackTrace>
+          <excludes>
+            <!-- Old MP Metrics-based tests - MP Metrics removed in MP 7.1, replaced by *TelemetryTest -->
+            <exclude>org.eclipse.microprofile.fault.tolerance.tck.metrics.**</exclude>
+          </excludes>
           <systemPropertyVariables>
             <java.io.tmpdir>./target</java.io.tmpdir>
           </systemPropertyVariables>

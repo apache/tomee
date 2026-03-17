@@ -20,9 +20,11 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.container.ClassContainer;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import java.util.logging.Logger;
 
@@ -48,6 +50,15 @@ public class MicroProfileFaultToleranceDeploymentProcessor implements Applicatio
 
         if (!applicationArchive.contains("META-INF/beans.xml")) {
             applicationArchive.add(EmptyAsset.INSTANCE, "META-INF/beans.xml");
+        }
+
+        // Reset GlobalOpenTelemetry before each deployment so the OTel SDK is
+        // re-initialized with app-specific ServiceLoader providers
+        if (applicationArchive instanceof WebArchive webapp) {
+            webapp.addClass(GlobalOpenTelemetryResetListener.class);
+            webapp.addAsResource(
+                    new StringAsset(GlobalOpenTelemetryResetListener.class.getName()),
+                    "META-INF/services/jakarta.servlet.ServletContainerInitializer");
         }
     }
 }
