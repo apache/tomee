@@ -27,8 +27,6 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
 import org.apache.tomee.server.composer.Archive;
 import org.apache.tomee.server.composer.TomEE;
-import org.eclipse.microprofile.metrics.MetricUnits;
-import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -195,10 +193,6 @@ public class OpenApiTest {
                                        schema = @Schema(implementation = Properties.class)))})
         @Operation(summary = "Outputs a list of books",
                    description = "This method outputs a list of books")
-        @Timed(name = "get-all-books",
-               description = "Monitor the time getAll Method takes",
-               unit = MetricUnits.MILLISECONDS,
-               absolute = true)
         @GET
         @Path("/get")
         public String getId(@QueryParam( "id" ) Integer id) {
@@ -245,10 +239,6 @@ public class OpenApiTest {
                                        schema = @Schema(implementation = Properties.class)))})
         @Operation(summary = "Outputs a list of books",
                    description = "This method outputs a list of books")
-        @Timed(name = "get-all-books",
-               description = "Monitor the time getAll Method takes",
-               unit = MetricUnits.MILLISECONDS,
-               absolute = true)
         @GET
         @Path("/get")
         public String getId(@QueryParam( "id" ) Integer id);

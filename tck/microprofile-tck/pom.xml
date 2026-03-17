@@ -33,7 +33,6 @@
     <module>config</module>
     <module>jwt</module>
     <module>health</module>
-    <module>metrics</module>
     <module>rest-client</module>
     <module>openapi</module>
     <module>fault-tolerance</module>
@@ -79,18 +78,6 @@
         <artifactId>microprofile-jwt-auth-tck</artifactId>
         <version>${version.microprofile.jwt}</version>
         <type>test-jar</type>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.microprofile.metrics</groupId>
-        <artifactId>microprofile-metrics-api-tck</artifactId>
-        <version>${version.microprofile.metrics}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.microprofile.metrics</groupId>
-        <artifactId>microprofile-metrics-rest-tck</artifactId>
-        <version>${version.microprofile.metrics}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

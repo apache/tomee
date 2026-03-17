@@ -151,7 +151,6 @@ public final class SystemInstance {
             this.internalProperties.setProperty("tomee.mp.cdi.extensions", String.join(",", List.of(
                     "io.smallrye.config.inject.ConfigExtension",
                     "io.smallrye.faulttolerance.FaultToleranceExtension",
-                    "io.smallrye.metrics.legacyapi.LegacyMetricsExtension",
                     "io.smallrye.opentelemetry.implementation.cdi.OpenTelemetryExtension",
                     "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
                     "org.apache.tomee.microprofile.faulttolerance.MPFaultToleranceCDIExtension",

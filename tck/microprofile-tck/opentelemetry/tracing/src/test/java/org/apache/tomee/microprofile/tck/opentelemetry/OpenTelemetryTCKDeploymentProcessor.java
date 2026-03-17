@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.microprofile.tck.opentelemetry;
 
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import io.opentelemetry.semconv.HttpAttributes;
 import org.apache.xbean.asm9.ClassReader;
 import org.apache.xbean.asm9.ClassVisitor;
 import org.apache.xbean.asm9.ClassWriter;
@@ -49,7 +49,7 @@ public class OpenTelemetryTCKDeploymentProcessor {
 
     private void process(Archive<?> archive) {
         if (archive instanceof WebArchive webapp) {
-            webapp.addAsLibrary(JarLocation.jarLocation(SemanticAttributes.class)) // required for some tck classes
+            webapp.addAsLibrary(JarLocation.jarLocation(HttpAttributes.class)) // required for some tck classes
                     .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
             applyJaxRsClientAsyncTestVisibilityHack(webapp);

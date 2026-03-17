@@ -14,22 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.tomee.microprofile.metrics;
+package org.apache.tomee.microprofile.tck.opentelemetry;
 
-import io.smallrye.metrics.jaxrs.JaxRsMetricsFilter;
-import jakarta.ws.rs.container.DynamicFeature;
-import jakarta.ws.rs.container.ResourceInfo;
-import jakarta.ws.rs.core.FeatureContext;
-import jakarta.ws.rs.ext.Provider;
-import org.apache.openejb.loader.SystemInstance;
+import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.test.spi.TestClass;
 
-@Provider
-public class MetricsFilterRegistration implements DynamicFeature {
-    @Override
-    public void configure(ResourceInfo resourceInfo, FeatureContext context) {
-        if ("none".equals(SystemInstance.get().getOptions().get("tomee.mp.scan", "none"))) {
-            return;
-        }
-        context.register(JaxRsMetricsFilter.class);
+import io.opentelemetry.api.GlobalOpenTelemetry;
+
+public class ArquillianLifecycle {
+    public void beforeDeploy(@Observes BeforeDeploy event, TestClass testClass) {
+        GlobalOpenTelemetry.resetForTest();
     }
 }
