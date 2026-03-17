@@ -29,8 +29,7 @@
   <name>TomEE :: TCK :: MicroProfile Rest Client TCK</name>
 
   <properties>
-    <!-- Note: This old version is needed for the MP Rest Client TCK-->
-    <jetty-tck.version>9.2.28.v20190418</jetty-tck.version>
+    <wiremock.version>3.13.1</wiremock.version>
   </properties>
 
   <build>
@@ -39,10 +38,17 @@
       <plugin>
         <groupId>uk.co.automatictester</groupId>
         <artifactId>wiremock-maven-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>7.3.0</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <dir>target/classes</dir>
-          <params>--port=8765 --verbose</params>
+          <params>--port=8765 --disable-banner=true</params>
         </configuration>
         <executions>
           <execution>
@@ -164,68 +170,14 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
+      <version>7.10.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>com.github.tomakehurst</groupId>
+      <groupId>org.wiremock</groupId>
       <artifactId>wiremock</artifactId>
-      <version>2.27.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-http</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-io</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-security</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlets</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-webapp</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-util</artifactId>
-      <version>${jetty-tck.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-continuation</artifactId>
-      <version>${jetty-tck.version}</version>
+      <version>${wiremock.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -269,6 +221,13 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents.core5</groupId>
+      <artifactId>httpcore5</artifactId>
+      <version>5.4.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
