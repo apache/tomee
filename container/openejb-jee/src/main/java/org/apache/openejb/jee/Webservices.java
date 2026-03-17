@@ -29,6 +29,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * javaee_web_services_1_3.xsd
@@ -144,11 +145,7 @@ public class Webservices {
     }
 
     public String getVersion() {
-        if (version == null) {
-            return "1.2";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "1.2");
     }
 
     public void setVersion(final String value) {
