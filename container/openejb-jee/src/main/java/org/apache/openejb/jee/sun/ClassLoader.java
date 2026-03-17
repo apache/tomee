@@ -23,8 +23,10 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"property"})
@@ -49,11 +51,7 @@ public class ClassLoader {
     }
 
     public String getDelegate() {
-        if (delegate == null) {
-            return "true";
-        } else {
-            return delegate;
-        }
+        return Objects.requireNonNullElse(delegate, "true");
     }
 
     public void setDelegate(final String value) {

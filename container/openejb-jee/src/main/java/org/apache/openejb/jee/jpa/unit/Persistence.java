@@ -18,6 +18,8 @@ package org.apache.openejb.jee.jpa.unit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -151,11 +153,7 @@ public class Persistence {
      * {@link String }
      */
     public String getVersion() {
-        if (version == null) {
-            return "1.0";
-        } else {
-            return version;
-        }
+        return Objects.requireNonNullElse(version, "1.0");
     }
 
     /**
