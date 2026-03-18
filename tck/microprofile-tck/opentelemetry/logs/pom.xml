@@ -27,7 +27,17 @@
 
     <name>TomEE :: TCK :: MicroProfile Telemetry Logs TCK</name>
 
+    <properties>
+        <mptelemetry.tck.log.file.path>${java.io.tmpdir}/tomee-otel-logs-tck0.log</mptelemetry.tck.log.file.path>
+    </properties>
+
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -37,6 +47,9 @@
                     <dependenciesToScan>
                         <dependency>org.eclipse.microprofile.telemetry:microprofile-telemetry-logs-tck</dependency>
                     </dependenciesToScan>
+                    <systemPropertyVariables>
+                        <mptelemetry.tck.log.file.path>${mptelemetry.tck.log.file.path}</mptelemetry.tck.log.file.path>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

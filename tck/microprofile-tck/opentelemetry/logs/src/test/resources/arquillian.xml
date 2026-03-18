@@ -33,7 +33,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
-        mptelemetry.tck.log.file.path = /tmp/tomee-otel-logs-tck0.log
+        mptelemetry.tck.log.file.path = ${mptelemetry.tck.log.file.path}
       </property>
     </configuration>
   </container>
