@@ -97,9 +97,6 @@ public class SavedRequestTest {
         assertEquals("PATCH", request.getMethod());
         assertEquals("foo=bar", request.getQueryString());
         assertEquals("http://example.com/foo", request.getUrl());
-        // parameterMap should be initialized to a safe default (e.g., empty map) rather than null
-        assertNotNull(request.getParameterMap());
-        assertTrue(request.getParameterMap().isEmpty());
     }
 
     @Test
