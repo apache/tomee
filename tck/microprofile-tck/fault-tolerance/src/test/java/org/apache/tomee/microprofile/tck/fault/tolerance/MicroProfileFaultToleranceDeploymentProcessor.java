@@ -59,6 +59,26 @@ public class MicroProfileFaultToleranceDeploymentProcessor implements Applicatio
             webapp.addAsResource(
                     new StringAsset(GlobalOpenTelemetryResetListener.class.getName()),
                     "META-INF/services/jakarta.servlet.ServletContainerInitializer");
+
+            // Register the TCK's InMemoryMetricReader via AutoConfigurationCustomizerProvider
+            // so the OTel SDK picks it up during auto-configuration. Without this, the
+            // InMemoryMetricReader is not discovered on some platforms (e.g., Linux CI)
+            // where class isolation prevents ServiceLoader from finding it on the parent classloader.
+            try {
+                final Class<?> customizerProvider = Class.forName(
+                    "org.eclipse.microprofile.fault.tolerance.tck.telemetryMetrics.util.PullExporterAutoConfigurationCustomizerProvider");
+                webapp.addClass(customizerProvider);
+                // Also include InMemoryMetricReader which the customizer references
+                final Class<?> metricReader = Class.forName(
+                    "org.eclipse.microprofile.fault.tolerance.tck.telemetryMetrics.util.InMemoryMetricReader");
+                webapp.addClass(metricReader);
+                webapp.addAsResource(
+                        new StringAsset(customizerProvider.getName()),
+                        "META-INF/services/io.opentelemetry.sdk.autoconfigure.spi.AutoConfigurationCustomizerProvider");
+            } catch (final ClassNotFoundException e) {
+                // Telemetry metrics TCK classes not on classpath — skip
+                LOGGER.fine("PullExporterAutoConfigurationCustomizerProvider not found, skipping InMemoryMetricReader registration");
+            }
         }
     }
 }
