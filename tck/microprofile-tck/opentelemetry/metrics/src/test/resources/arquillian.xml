@@ -33,6 +33,10 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="catalina_opts">-Xmx512m -Dmptelemetry.tck.log.file.path=${mptelemetry.tck.log.file.path}</property>
+      <property name="properties">
+        openejb.environment.default=true
+        mptelemetry.tck.log.file.path = ${mptelemetry.tck.log.file.path}
+      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plus">
