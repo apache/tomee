@@ -17,21 +17,44 @@
 package org.apache.tomee.microprofile.tck.fault.tolerance;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Resets GlobalOpenTelemetry before each app deployment so that the OTel SDK
- * is re-initialized with the app's ServiceLoader providers (e.g. InMemoryMetricReader
- * for telemetry tests). Uses ServletContainerInitializer to run before CDI startup.
+ * Resets GlobalOpenTelemetry and rebuilds the OTel SDK using the webapp's
+ * classloader so that ServiceLoader discovers the TCK's
+ * {@code PullExporterAutoConfigurationCustomizerProvider} (which registers
+ * the {@code InMemoryMetricReader} for telemetry metric tests).
+ *
+ * This is needed because TomEE initializes the OTel SDK once at the server
+ * level with the server classloader. The TCK's ServiceLoader entries are
+ * in the WAR and are not visible to the server classloader.
  */
 public class GlobalOpenTelemetryResetListener implements ServletContainerInitializer {
 
+    private static final Logger LOGGER = Logger.getLogger(GlobalOpenTelemetryResetListener.class.getName());
+
     @Override
     public void onStartup(Set<Class<?>> c, ServletContext ctx) throws ServletException {
-        GlobalOpenTelemetry.resetForTest();
+        try {
+            GlobalOpenTelemetry.resetForTest();
+
+            // Rebuild the SDK using the webapp classloader so ServiceLoader picks up
+            // the TCK's AutoConfigurationCustomizerProvider from the WAR
+            AutoConfiguredOpenTelemetrySdk.builder()
+                .setServiceClassLoader(Thread.currentThread().getContextClassLoader())
+                .setResultAsGlobal()
+                .build();
+
+            LOGGER.info("Rebuilt GlobalOpenTelemetry SDK with webapp classloader");
+        } catch (final Exception e) {
+            LOGGER.log(Level.WARNING, "Failed to rebuild GlobalOpenTelemetry SDK", e);
+        }
     }
 }
