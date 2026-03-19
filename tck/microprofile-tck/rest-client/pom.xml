@@ -79,10 +79,12 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <suiteXmlFiles>
-                <suiteXmlFile>tck-suite.xml</suiteXmlFile>
-              </suiteXmlFiles>
+              <dependenciesToScan>
+                <dependency>org.eclipse.microprofile.rest.client:microprofile-rest-client-tck</dependency>
+              </dependenciesToScan>
               <excludes>
+                <!-- JSONB tests run in a separate solo execution below -->
+                <exclude>org.eclipse.microprofile.rest.client.tck.jsonb.*</exclude>
                 <!-- SSE reactive streams tests pass locally but fail on ASF CI (Linux) -->
                 <exclude>org.eclipse.microprofile.rest.client.tck.sse.BasicReactiveStreamsTest</exclude>
               </excludes>
