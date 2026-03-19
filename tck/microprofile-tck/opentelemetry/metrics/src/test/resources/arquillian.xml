@@ -32,9 +32,7 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="properties">
-        mptelemetry.tck.log.file.path = ${mptelemetry.tck.log.file.path}
-      </property>
+      <property name="catalina_opts">-Xmx512m -Dmptelemetry.tck.log.file.path=${mptelemetry.tck.log.file.path}</property>
     </configuration>
   </container>
   <container qualifier="tomee-plus">
