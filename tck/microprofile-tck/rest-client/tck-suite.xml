@@ -23,10 +23,6 @@
       <package name="org.eclipse.microprofile.rest.client.tck.*">
         <!-- will pass if run in solo mode -->
         <exclude name="org.eclipse.microprofile.rest.client.tck.jsonb.*"></exclude>
-        <!-- SSE reactive streams tests pass on macOS but fail intermittently on Linux CI
-             due to a race condition: rapidly emitted SSE events get coalesced into a single
-             TCP write and the CXF client-side SSE parser may miss event boundaries -->
-        <exclude name="org.eclipse.microprofile.rest.client.tck.sse.BasicReactiveStreamsTest"></exclude>
       </package>
     </packages>
   </test>
