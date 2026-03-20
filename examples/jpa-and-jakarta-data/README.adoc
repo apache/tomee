@@ -1,0 +1,218 @@
+= JPA and Jakarta Data Combined
+:index-group: JPA
+:jbake-type: page
+:jbake-status: published
+
+This example shows how classic JPA (`EntityManager`) and Jakarta Data repositories can coexist side by side, sharing the same persistence unit and database table. Data inserted via one approach is immediately visible to the other within the same transaction.
+
+This is a realistic migration scenario: existing code uses an `EntityManager`-based DAO, while new features are added using the simpler Jakarta Data repository pattern.
+
+== The Entity
+
+A `Movie` entity with a `Genre` enum, shared by both approaches.
+
+[source,java]
+----
+@Entity
+public class Movie {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String director;
+    private String title;
+    private int year;
+
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
+
+    public Movie() {
+    }
+
+    public Movie(final String director, final String title, final int year, final Genre genre) {
+        this.director = director;
+        this.title = title;
+        this.year = year;
+        this.genre = genre;
+    }
+
+    // getters and setters ...
+}
+----
+
+== Classic JPA: EntityManager DAO
+
+The traditional approach uses a `@Stateless` EJB with a transaction-scoped `PersistenceContext`. It provides JPQL queries and JPA Criteria API queries.
+
+[source,java]
+----
+@Stateless
+public class MovieDao {
+
+    @PersistenceContext(unitName = "movie-unit")
+    private EntityManager em;
+
+    public void addMovie(final Movie movie) {
+        em.persist(movie);
+    }
+
+    public List<Movie> findAll() {
+        return em.createQuery("SELECT m FROM Movie m ORDER BY m.title", Movie.class)
+            .getResultList();
+    }
+
+    public List<Movie> findByDirectorAndGenre(final String director, final Genre genre) {
+        final CriteriaBuilder cb = em.getCriteriaBuilder();
+        final CriteriaQuery<Movie> cq = cb.createQuery(Movie.class);
+        final Root<Movie> root = cq.from(Movie.class);
+
+        cq.where(
+            cb.and(
+                cb.equal(root.get("director"), director),
+                cb.equal(root.get("genre"), genre)
+            )
+        );
+        cq.orderBy(cb.asc(root.get("year")));
+
+        return em.createQuery(cq).getResultList();
+    }
+
+    // more methods ...
+}
+----
+
+== Jakarta Data: Repository Interface
+
+The modern approach uses a `@Repository` interface extending `CrudRepository`. The container generates the implementation automatically.
+
+[source,java]
+----
+@Repository
+public interface MovieRepository extends CrudRepository<Movie, Long> {
+
+    List<Movie> findByDirector(String director);
+
+    List<Movie> findByGenre(Genre genre);
+
+    @OrderBy("year")
+    List<Movie> findByYearGreaterThanEqual(int year);
+
+    @Query("SELECT m FROM Movie m WHERE m.genre = ?1 AND m.year BETWEEN ?2 AND ?3 ORDER BY m.title")
+    List<Movie> findByGenreAndYearRange(Genre genre, int startYear, int endYear);
+
+    long countByGenre(Genre genre);
+
+    long countByDirector(String director);
+}
+----
+
+== Using Both in a Service
+
+A single CDI bean can inject both the classic DAO and the Jakarta Data repository. This allows gradual migration -- old code stays as is while new features use the repository.
+
+[source,java]
+----
+@ApplicationScoped
+public class MovieService {
+
+    @EJB
+    private MovieDao movieDao;
+
+    @Inject
+    private MovieRepository movieRepository;
+
+    // Classic JPA
+    public void addMovieClassic(final String director, final String title, final int year, final Genre genre) {
+        movieDao.addMovie(new Movie(director, title, year, genre));
+    }
+
+    // Jakarta Data
+    public Movie addMovieData(final String director, final String title, final int year, final Genre genre) {
+        return movieRepository.insert(new Movie(director, title, year, genre));
+    }
+
+    // Query via Jakarta Data, even for JPA-inserted data
+    public long countByDirectorViaRepository(final String director) {
+        return movieRepository.countByDirector(director);
+    }
+
+    // Query via classic JPA, even for Jakarta Data-inserted data
+    public List<Movie> findByGenreViaDao(final Genre genre) {
+        return movieDao.findByGenre(genre);
+    }
+}
+----
+
+== Cross-Approach Visibility
+
+The key point of this example: data inserted through one approach is visible to the other within the same transaction. This works because both share the same persistence unit and JTA transaction.
+
+[source,java]
+----
+@Test
+public void testJpaInsertVisibleViaDataRepository() throws Exception {
+    utx.begin();
+    try {
+        // Insert using classic JPA EntityManager
+        movieDao.addMovie(new Movie("Ridley Scott", "Blade Runner", 1982, Genre.SCI_FI));
+        movieDao.addMovie(new Movie("Ridley Scott", "Alien", 1979, Genre.SCI_FI));
+
+        // Query using Jakarta Data repository -- sees JPA-persisted data
+        final List<Movie> sciFi = movieRepository.findByGenre(Genre.SCI_FI);
+        assertEquals(2, sciFi.size());
+    } finally {
+        utx.rollback();
+    }
+}
+
+@Test
+public void testMixedInsertAndQuery() throws Exception {
+    utx.begin();
+    try {
+        // Insert some via JPA, some via Jakarta Data
+        movieDao.addMovie(new Movie("Denis Villeneuve", "Arrival", 2016, Genre.SCI_FI));
+        movieRepository.insert(new Movie("Denis Villeneuve", "Dune", 2021, Genre.SCI_FI));
+
+        // Both approaches see all data
+        assertEquals(2, movieDao.count());
+        assertEquals(2, movieRepository.countByDirector("Denis Villeneuve"));
+    } finally {
+        utx.rollback();
+    }
+}
+----
+
+== Configuring JPA
+
+The `persistence.xml` configures the shared persistence unit.
+
+[source,xml]
+----
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence">
+  <persistence-unit name="movie-unit">
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+    <class>org.superbiz.combined.Movie</class>
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+----
+
+= Running
+
+Running the example produces output similar to the following.
+
+[source,console]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.combined.JpaAndJakartaDataTest
+INFO - Discovered Jakarta Data repository: org.superbiz.combined.MovieRepository
+INFO - Registering Jakarta Data repository bean: org.superbiz.combined.MovieRepository
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+----

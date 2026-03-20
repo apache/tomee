@@ -30,6 +30,7 @@
     <module>arquillian-tomee-jaxws-tests</module>
     <module>arquillian-tomee-jms-tests</module>
     <module>arquillian-tomee-config-tests</module>
+    <module>arquillian-tomee-data-tests</module>
   </modules>
 
   <dependencies>
