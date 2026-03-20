@@ -167,7 +167,11 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     protected AuthenticationStatus refreshTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
         try (Client client = ClientBuilder.newClient()) {
             RefreshToken refreshToken = openIdContext.getRefreshToken()
-                    .orElseThrow(() -> new IllegalArgumentException("Cannot refresh tokens, no refresh_token received"));
+                    .orElse(null);
+
+            if (refreshToken == null) {
+                throw new IllegalStateException("Cannot refresh tokens, no refresh_token received");
+            }
 
             Form form = new Form()
                     .param(OpenIdConstant.CLIENT_ID, definition.clientId())
@@ -182,9 +186,9 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             return handleTokenResponse(tokenResponse, httpMessageContext);
 
         } catch (Exception e) {
+            LOGGER.warning("Token refresh failed, logging out the current subject", e);
             cleanSubject(request, response, httpMessageContext);
-
-            throw e;
+            return AuthenticationStatus.SEND_FAILURE;
         }
     }
 
