@@ -109,14 +109,10 @@
     <module>mp-faulttolerance-timeout</module>
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
-    <module>mp-metrics-counted</module>
-    <module>mp-metrics-histogram</module>
-    <module>mp-metrics-timed</module>
-    <module>mp-metrics-gauge</module>
-    <module>mp-metrics-metered</module>
     <module>mp-rest-jwt-jwk</module>
     <module>mp-rest-jwt-principal</module>
     <module>mp-rest-jwt-public-key</module>
+    <module>mp-opentelemetry-metrics</module>
     <module>mp-rest-client</module>
     <module>mp-custom-healthcheck</module>
     <module>mp-openapi-reader</module>
