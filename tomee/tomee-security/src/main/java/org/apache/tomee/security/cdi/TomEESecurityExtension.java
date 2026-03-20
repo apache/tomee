@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.security.cdi;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import org.apache.tomee.security.TomEEELInvocationHandler;
@@ -320,7 +321,7 @@ public class TomEESecurityExtension implements Extension {
                     .beanClass(OpenIdAuthenticationMechanismDefinition.class)
                     .types(Object.class, OpenIdAuthenticationMechanismDefinition.class)
                     .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-                    .scope(ApplicationScoped.class)
+                    .scope(RequestScoped.class)
                     .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
 
             afterBeanDiscovery.addBean()
