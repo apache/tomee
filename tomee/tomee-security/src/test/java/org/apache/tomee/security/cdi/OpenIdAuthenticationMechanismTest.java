@@ -31,6 +31,8 @@ import org.mockito.Mock;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Vetoed;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.AuthenticationStatus;
+import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.DisplayType;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.PromptType;
@@ -40,11 +42,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Vetoed
 @RunWith(ApplicationComposer.class)
-@Classes(cdi = true, value = {OpenIdAuthenticationMechanism.class, TomEEOpenIdContext.class, OpenIdAuthenticationMechanismTest.SimpleStorageHandler.class})
+@Classes(cdi = true, value = {OpenIdAuthenticationMechanismTest.TestOpenIdAuthenticationMechanism.class, TomEEOpenIdContext.class, OpenIdAuthenticationMechanismTest.SimpleStorageHandler.class})
 public class OpenIdAuthenticationMechanismTest {
 
     @Inject
@@ -72,6 +75,8 @@ public class OpenIdAuthenticationMechanismTest {
         when(definition.display()).thenReturn(null);
         when(definition.prompt()).thenReturn(new PromptType[0]);
         when(definition.extraParameters()).thenReturn(new String[0]);
+        when(definition.logout().notifyProvider()).thenReturn(false);
+        when(definition.logout().redirectURI()).thenReturn("");
     }
 
     @Test
@@ -138,6 +143,25 @@ public class OpenIdAuthenticationMechanismTest {
         when(definition.extraParameters()).thenReturn(new String[]{"foobar"});
 
         assertThrows(IllegalArgumentException.class, () -> authenticationMechanism.buildAuthorizationUri(null, null));
+    }
+
+    @Test
+    public void refreshTokenFailureDoesNotThrow() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpMessageContext messageContext = mock(HttpMessageContext.class, Answers.RETURNS_DEEP_STUBS);
+        when(request.getRequestURL()).thenReturn(new StringBuffer("https://example.com/app"));
+
+        assertEquals(AuthenticationStatus.SEND_FAILURE,
+                authenticationMechanism.refreshTokens(request, response, messageContext));
+    }
+
+    @ApplicationScoped
+    public static class TestOpenIdAuthenticationMechanism extends OpenIdAuthenticationMechanism {
+        @Override
+        public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
+            // no-op for this focused failure-path test
+        }
     }
 
     @ApplicationScoped
