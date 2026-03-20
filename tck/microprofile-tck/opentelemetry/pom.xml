@@ -33,5 +33,15 @@
         <module>metrics</module>
         <module>logs</module>
     </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+                <configuration>
+                    <reuseForks>false</reuseForks>
+                    <dependenciesToScan>
+                        <dependency>org.eclipse.microprofile.telemetry.tracing:microprofile-telemetry-tracing-tck</dependency>
+                    </dependenciesToScan>
 
 </project>

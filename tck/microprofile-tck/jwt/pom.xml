@@ -133,7 +133,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <!-- needed for the TCK to work correctly -->
         <version>3.10.0</version>
         <executions>
           <execution>
@@ -147,7 +146,7 @@
                 <artifactItem>
                   <groupId>org.eclipse.microprofile.jwt</groupId>
                   <artifactId>microprofile-jwt-auth-tck</artifactId>
-                  <type>test-jar</type>
+                  <classifier>tests</classifier>
                   <overWrite>true</overWrite>
                 </artifactItem>
               </artifactItems>
@@ -158,7 +157,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.3</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/suites/tck-base-suite.xml</suiteXmlFile>
