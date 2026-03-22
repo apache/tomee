@@ -61,9 +61,12 @@ public class SavedRequest implements Serializable {
     public static SavedRequest fromRequest(HttpServletRequest request) {
         Map<String, List<String>> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            headers.put(name, Collections.list(request.getHeaders(name)));
+
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                headers.put(name, Collections.list(request.getHeaders(name)));
+            }
         }
 
         SavedRequest result = new SavedRequest();
