@@ -76,7 +76,7 @@
     </dependency>
     <dependency>
       <groupId>jakarta.validation</groupId>
-      <artifactId>beanvalidation-tck-tests</artifactId>
+      <artifactId>validation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <exclusions>
         <exclusion>
@@ -121,22 +121,20 @@
         <version>3.10.0</version>
         <executions>
           <execution>
-            <id>copy-tck-test-suite-file</id>
+            <id>unpack-tck-test-suite-file</id>
             <phase>generate-test-sources</phase>
             <goals>
-              <goal>copy</goal>
+              <goal>unpack</goal>
             </goals>
             <configuration>
-              <stripVersion>true</stripVersion>
               <artifactItems>
                 <artifactItem>
                   <groupId>jakarta.validation</groupId>
-                  <artifactId>beanvalidation-tck-tests</artifactId>
-                  <type>xml</type>
-                  <classifier>suite</classifier>
-                  <overWrite>false</overWrite>
+                  <artifactId>validation-tck-tests</artifactId>
+                  <version>${bval-tck.version}</version>
                 </artifactItem>
               </artifactItems>
+              <includes>tck-tests.xml</includes>
             </configuration>
           </execution>
         </executions>
@@ -148,7 +146,7 @@
         <configuration>
           <reuseForks>false</reuseForks>
           <suiteXmlFiles>
-            <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
+            <suiteXmlFile>${project.build.directory}/dependency/tck-tests.xml</suiteXmlFile>
           </suiteXmlFiles>
           <systemPropertyVariables>
             <validation.provider>${validation.provider}</validation.provider>

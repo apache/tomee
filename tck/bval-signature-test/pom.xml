@@ -56,7 +56,7 @@
     </dependency>
     <dependency>
       <groupId>jakarta.validation</groupId>
-      <artifactId>beanvalidation-tck-tests</artifactId>
+      <artifactId>validation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <scope>test</scope>
     </dependency>
@@ -96,14 +96,14 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>jakarta.validation</groupId>
-                  <artifactId>beanvalidation-tck-tests</artifactId>
+                  <artifactId>validation-tck-tests</artifactId>
                   <version>${bval-tck.version}</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                 </artifactItem>
               </artifactItems>
               <!-- We just need the signature file and nothing else -->
-              <includes>**/*.sig</includes>
+              <includes>*.sig</includes>
               <outputDirectory>${project.build.directory}/api-signature</outputDirectory>
             </configuration>
           </execution>
@@ -125,7 +125,7 @@
             jakarta.validation.constraintvalidation,jakarta.validation.executable,jakarta.validation.groups,
             jakarta.validation.metadata,jakarta.validation.spi,jakarta.validation.valueextraction
           </packages>
-          <sigfile>${project.build.directory}/api-signature/validation-api-java8.sig</sigfile>
+          <sigfile>${project.build.directory}/api-signature/validation-api-jdk17.sig</sigfile>
         </configuration>
       </plugin>
     </plugins>

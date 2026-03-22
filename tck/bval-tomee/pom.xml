@@ -28,7 +28,7 @@
 
   <properties>
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
-    <suiteFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteFile>
+    <suiteFile>${project.build.directory}/dependency/tck-tests.xml</suiteFile>
   </properties>
 
   <dependencies>
@@ -81,7 +81,7 @@
     </dependency>
     <dependency>
       <groupId>jakarta.validation</groupId>
-      <artifactId>beanvalidation-tck-tests</artifactId>
+      <artifactId>validation-tck-tests</artifactId>
       <version>${bval-tck.version}</version>
       <scope>test</scope>
       <exclusions>
@@ -133,22 +133,20 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-tck-test-suite-file</id>
+            <id>unpack-tck-test-suite-file</id>
             <phase>generate-test-sources</phase>
             <goals>
-              <goal>copy</goal>
+              <goal>unpack</goal>
             </goals>
             <configuration>
-              <stripVersion>true</stripVersion>
               <artifactItems>
                 <artifactItem>
                   <groupId>jakarta.validation</groupId>
-                  <artifactId>beanvalidation-tck-tests</artifactId>
-                  <type>xml</type>
-                  <classifier>suite</classifier>
-                  <overWrite>false</overWrite>
+                  <artifactId>validation-tck-tests</artifactId>
+                  <version>${bval-tck.version}</version>
                 </artifactItem>
               </artifactItems>
+              <includes>tck-tests.xml</includes>
             </configuration>
           </execution>
         </executions>
