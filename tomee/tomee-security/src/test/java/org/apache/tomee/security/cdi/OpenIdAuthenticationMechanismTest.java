@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 
 @Vetoed
 @RunWith(ApplicationComposer.class)
-@Classes(cdi = true, value = {OpenIdAuthenticationMechanismTest.TestOpenIdAuthenticationMechanism.class, TomEEOpenIdContext.class, OpenIdAuthenticationMechanismTest.SimpleStorageHandler.class})
+@Classes(cdi = true, value = {OpenIdAuthenticationMechanism.class, TomEEOpenIdContext.class, OpenIdAuthenticationMechanismTest.SimpleStorageHandler.class})
 public class OpenIdAuthenticationMechanismTest {
 
     @Inject
@@ -154,14 +154,6 @@ public class OpenIdAuthenticationMechanismTest {
 
         assertEquals(AuthenticationStatus.SEND_FAILURE,
                 authenticationMechanism.refreshTokens(request, response, messageContext));
-    }
-
-    @ApplicationScoped
-    public static class TestOpenIdAuthenticationMechanism extends OpenIdAuthenticationMechanism {
-        @Override
-        public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
-            // no-op for this focused failure-path test
-        }
     }
 
     @ApplicationScoped
