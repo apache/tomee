@@ -76,11 +76,24 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     @Override
     public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
+        String redirectTarget = buildRedirectUri();
+
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
 
+        if (redirectTarget != null) {
+            httpMessageContext.redirect(redirectTarget);
+            return;
+        }
+
+        // Restart authorization by redirecting to openid provider
+        redirectToAuthorization(request, response, httpMessageContext);
+    }
+
+    private String buildRedirectUri()
+    {
         if (definition.logout().notifyProvider()) {
             if (!definition.providerMetadata().endSessionEndpoint().isEmpty()) {
                 UriBuilder endSession = UriBuilder.fromUri(definition.providerMetadata().endSessionEndpoint())
@@ -90,18 +103,15 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                     endSession.queryParam(OpenIdConstant.POST_LOGOUT_REDIRECT_URI, definition.logout().redirectURI());
                 }
 
-                httpMessageContext.redirect(endSession.build().toString());
-                return;
+                return endSession.build().toString();
             }
         } else {
             if (!definition.logout().redirectURI().isEmpty()) {
-                httpMessageContext.redirect(definition.logout().redirectURI());
-                return;
+                return definition.logout().redirectURI();
             }
         }
 
-        // Restart authorization by redirecting to openid provider
-        redirectToAuthorization(request, response, httpMessageContext);
+        return null;
     }
 
     @Override
