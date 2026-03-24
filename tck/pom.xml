@@ -51,6 +51,8 @@
     <module>concurrency-signature-test</module>
     <module>microprofile-tck</module>
     <module>jax-rs</module>
+    <module>data-standalone</module>
+    <module>data-signature-test</module>
   </modules>
 
   <build>

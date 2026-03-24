@@ -86,6 +86,8 @@
     <module>javamail-velocity</module>
     <module>java-modules</module>
     <module>jaxrs-filter</module>
+    <module>jakarta-data-repository</module>
+    <module>jpa-and-jakarta-data</module>
     <module>jaxrs-json-provider-jettison</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>

@@ -1,0 +1,235 @@
+= Jakarta Data Repository
+:index-group: JPA
+:jbake-type: page
+:jbake-status: published
+
+This example shows how to use Jakarta Data 1.0 repositories with TomEE. Instead of injecting an `EntityManager` and writing queries manually, you define a repository interface annotated with `@Repository` and let the container provide the implementation. The repository is injected into your CDI beans via `@Inject` just like any other dependency.
+
+Jakarta Data supports several ways to define queries:
+
+ * *Built-in CRUD* -- extending `CrudRepository` gives you `insert`, `findById`, `update`, `delete`, and more out of the box.
+ * *Method-name queries* -- methods like `findByDirector` are parsed automatically and translated into JPA queries.
+ * *`@Find` annotation* -- combined with `@By` and `@OrderBy` for annotation-driven finders with sorting.
+ * *`@Query` annotation* -- for custom JPQL when you need full control.
+
+== Creating the JPA Entity
+
+The entity is a simple pojo annotated with `@Entity`. We create one called `Movie` to hold movie records.
+
+[source,java]
+----
+@Entity
+public class Movie {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String director;
+    private String title;
+    private int year;
+
+    public Movie() {
+    }
+
+    public Movie(final String director, final String title, final int year) {
+        this.director = director;
+        this.title = title;
+        this.year = year;
+    }
+
+    // getters and setters ...
+}
+----
+
+== Defining the Repository
+
+Instead of writing a `@Stateful` or `@Stateless` bean with an `EntityManager`, we define a repository interface. The `@Repository` annotation tells the Jakarta Data provider to generate the implementation automatically.
+
+[source,java]
+----
+@Repository
+public interface MovieRepository extends CrudRepository<Movie, Long> {
+
+    // Method-name query: find all movies by a given director
+    List<Movie> findByDirector(String director);
+
+    // @Find + @OrderBy: find movies by year, ordered by title ascending
+    @Find
+    @OrderBy("title")
+    List<Movie> findByYear(@By("year") int year);
+
+    // @Query with JPQL: find movies by director within a year range
+    @Query("SELECT m FROM Movie m WHERE m.director = ?1 AND m.year BETWEEN ?2 AND ?3 ORDER BY m.year")
+    List<Movie> findByDirectorAndYearRange(String director, int startYear, int endYear);
+
+    // Method-name query: count movies by director
+    long countByDirector(String director);
+}
+----
+
+By extending `CrudRepository<Movie, Long>`, the repository inherits standard operations like `insert`, `findById`, `save`, `delete`, and `deleteById`. The custom methods above show three different query styles:
+
+ * `findByDirector` -- the method name is parsed: `findBy` + `Director` means "filter where director equals the parameter".
+ * `findByYear` -- uses `@Find` with `@By("year")` to match the parameter to the entity field, and `@OrderBy("title")` to sort results.
+ * `findByDirectorAndYearRange` -- uses `@Query` with JPQL for a more complex query involving `BETWEEN`.
+ * `countByDirector` -- method name parsing recognizes the `countBy` prefix.
+
+== Using the Repository in a CDI Bean
+
+The repository is a CDI bean and can be injected into any managed component. No `EntityManager` boilerplate is needed.
+
+[source,java]
+----
+@ApplicationScoped
+public class MovieService {
+
+    @Inject
+    private MovieRepository movieRepository;
+
+    public Movie addMovie(final String director, final String title, final int year) {
+        return movieRepository.insert(new Movie(director, title, year));
+    }
+
+    public Optional<Movie> findById(final long id) {
+        return movieRepository.findById(id);
+    }
+
+    public List<Movie> findByDirector(final String director) {
+        return movieRepository.findByDirector(director);
+    }
+
+    public long countByDirector(final String director) {
+        return movieRepository.countByDirector(director);
+    }
+
+    public void deleteMovie(final Movie movie) {
+        movieRepository.delete(movie);
+    }
+}
+----
+
+== Configuring JPA
+
+The `persistence.xml` configures the JPA persistence unit. The Jakarta Data repository uses this persistence unit to access the database.
+
+[source,xml]
+----
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence">
+  <persistence-unit name="movie-unit">
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+    <class>org.superbiz.data.Movie</class>
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+----
+
+== MovieRepositoryTest
+
+Testing is straightforward with TomEE's `ApplicationComposer`. The repository and service are injected via CDI, and each test uses a `UserTransaction` to keep tests isolated via rollback.
+
+[source,java]
+----
+@RunWith(ApplicationComposer.class)
+public class MovieRepositoryTest {
+
+    @Inject
+    private MovieRepository movieRepository;
+
+    @Inject
+    private MovieService movieService;
+
+    @Resource
+    private UserTransaction utx;
+
+    @Module
+    @Classes(cdi = true, value = {MovieRepository.class, MovieService.class})
+    public EjbJar beans() {
+        return new EjbJar();
+    }
+
+    @Module
+    public PersistenceUnit persistence() {
+        final PersistenceUnit unit = new PersistenceUnit("movie-unit");
+        unit.setJtaDataSource("movieDatabase");
+        unit.setNonJtaDataSource("movieDatabaseUnmanaged");
+        unit.getClazz().add(Movie.class.getName());
+        unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
+        return unit;
+    }
+
+    @Configuration
+    public Properties config() {
+        final Properties p = new Properties();
+        p.put("movieDatabase", "new://Resource?type=DataSource");
+        p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb-data");
+        return p;
+    }
+
+    @Test
+    public void testInsertAndFindById() throws Exception {
+        utx.begin();
+        try {
+            final Movie movie = movieRepository.insert(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+            assertNotNull(movie.getId());
+
+            final Optional<Movie> found = movieRepository.findById(movie.getId());
+            assertTrue(found.isPresent());
+            assertEquals("Reservoir Dogs", found.get().getTitle());
+        } finally {
+            utx.rollback();
+        }
+    }
+
+    @Test
+    public void testFindByDirector() throws Exception {
+        utx.begin();
+        try {
+            movieRepository.insert(new Movie("Joel Coen", "Fargo", 1996));
+            movieRepository.insert(new Movie("Joel Coen", "The Big Lebowski", 1998));
+            movieRepository.insert(new Movie("Quentin Tarantino", "Pulp Fiction", 1994));
+
+            final List<Movie> coenMovies = movieRepository.findByDirector("Joel Coen");
+            assertEquals(2, coenMovies.size());
+        } finally {
+            utx.rollback();
+        }
+    }
+
+    @Test
+    public void testQueryAnnotation() throws Exception {
+        utx.begin();
+        try {
+            movieRepository.insert(new Movie("Joel Coen", "Blood Simple", 1984));
+            movieRepository.insert(new Movie("Joel Coen", "Fargo", 1996));
+            movieRepository.insert(new Movie("Joel Coen", "The Big Lebowski", 1998));
+            movieRepository.insert(new Movie("Joel Coen", "No Country for Old Men", 2007));
+
+            final List<Movie> nineties = movieRepository.findByDirectorAndYearRange("Joel Coen", 1990, 2000);
+            assertEquals(2, nineties.size());
+        } finally {
+            utx.rollback();
+        }
+    }
+}
+----
+
+= Running
+
+Running the example produces output similar to the following.
+
+[source,console]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.data.MovieRepositoryTest
+INFO - Discovered Jakarta Data repository: org.superbiz.data.MovieRepository
+INFO - Registering Jakarta Data repository bean: org.superbiz.data.MovieRepository
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0
+----

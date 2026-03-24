@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>tck</artifactId>
+        <groupId>org.apache.tomee</groupId>
+        <version>11.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>data-standalone</artifactId>
+    <name>TomEE :: TCK :: Jakarta Data</name>
+
+    <properties>
+        <jakarta.data-tck.version>1.0.1</jakarta.data-tck.version>
+        <!-- Must match the Arquillian version the TCK was built against -->
+        <arquillian.version.tck>1.9.1.Final</arquillian.version.tck>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${arquillian.version.tck}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- The Jakarta Data TCK -->
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-tck</artifactId>
+            <version>${jakarta.data-tck.version}</version>
+        </dependency>
+
+        <!-- Jakarta Data API -->
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-api</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!-- JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian JUnit 5 integration -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian Servlet protocol for Jakarta -->
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+            <version>${version.arquillian-protocol-servlet-jakarta}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- TomEE distribution zip (plus) -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apache-tomee</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>plus</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- TomEE distribution zip (plume / EclipseLink) -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apache-tomee</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>plume</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- TomEE Arquillian remote adapter -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>arquillian-tomee-remote</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Jakarta Data implementation -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>openejb-jakarta-data</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Servlet API (transitive dep of Arquillian) -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ShrinkWrap resolver for Maven -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>${version.shrinkwrap.resolver.bom}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Sigtest for signature verification -->
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>2.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- HSQLDB for the database -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${version.hsqldb}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>tck-data</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>17</source>
+                            <target>17</target>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <!-- Default execution: main TCK tests (excluding signature) -->
+                        <configuration>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                            <useFile>false</useFile>
+                            <trimStackTrace>false</trimStackTrace>
+
+                            <dependenciesToScan>
+                                <dependency>jakarta.data:jakarta.data-tck</dependency>
+                            </dependenciesToScan>
+
+                            <includes>
+                                <include>ee/jakarta/tck/data/standalone/persistence/PersistenceEntityTests.java</include>
+                                <include>ee/jakarta/tck/data/standalone/entity/EntityTests.java</include>
+                                <include>ee/jakarta/tck/data/core/cdi/CDITests.java</include>
+                                <include>ee/jakarta/tck/data/web/transaction/PersistenceTests.java</include>
+                                <include>ee/jakarta/tck/data/web/example/ComplexServletTests.java</include>
+                                <include>ee/jakarta/tck/data/web/validation/ValidationTests.java</include>
+                            </includes>
+
+                            <systemPropertyVariables>
+                                <jakarta.tck.database.type>RELATIONAL</jakarta.tck.database.type>
+                                <jimage.dir>${project.build.directory}/jimage</jimage.dir>
+                                <signature.sigTestClasspath>${settings.localRepository}/jakarta/data/jakarta.data-api/1.0.1/jakarta.data-api-1.0.1.jar</signature.sigTestClasspath>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <!-- Second execution: run the same tests against TomEE Plume (EclipseLink) -->
+                            <execution>
+                                <id>tomee-plume</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables combine.children="append">
+                                        <arquillian.launch>tomee-plume</arquillian.launch>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <!-- Third execution: run against TomEE Plus with Hibernate (OpenJPA removed) -->
+                            <execution>
+                                <id>tomee-hibernate</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables combine.children="append">
+                                        <arquillian.launch>tomee-hibernate</arquillian.launch>
+                                        <jpa.provider>hibernate</jpa.provider>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
