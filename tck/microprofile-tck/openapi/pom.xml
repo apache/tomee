@@ -64,7 +64,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <!-- Updated version to fix hanging text -->
-        <version>3.5.3</version>
+        <version>3.5.5</version>
         <configuration>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.openapi:microprofile-openapi-tck</dependency>
