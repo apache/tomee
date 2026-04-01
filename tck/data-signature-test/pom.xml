@@ -29,7 +29,7 @@
     <properties>
         <jakarta.data-tck.version>1.0.1</jakarta.data-tck.version>
         <!-- Must match the Arquillian version the TCK was built against -->
-        <arquillian.version.tck>1.9.1.Final</arquillian.version.tck>
+        <arquillian.version.tck>1.10.1.Final</arquillian.version.tck>
     </properties>
 
     <dependencyManagement>
