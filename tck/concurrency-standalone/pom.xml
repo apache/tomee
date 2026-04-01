@@ -33,20 +33,13 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Dependency and Plugin Versions -->
-        <jakarta.concurrent.version>3.0.4</jakarta.concurrent.version>
-        <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-        <testng.version>7.5.1</testng.version>
-        <sigtest.version>1.6</sigtest.version>
-        <maven.dep.plugin.version>3.10.0</maven.dep.plugin.version>
-        <maven.comp.plugin.version>3.15.0</maven.comp.plugin.version>
-        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-
-        <suiteXmlFile>suite-web.xml</suiteXmlFile>
+        <jakarta.concurrent.tck.version>3.1.1</jakarta.concurrent.tck.version>
+        <jakarta.concurrent.api.version>3.1.0</jakarta.concurrent.api.version>
+        <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
 
         <targetDirectory>${project.basedir}/target</targetDirectory>
     </properties>
 
-    <!-- tag::testClientDep[] -->
     <!-- The Arquillian test framework -->
     <dependencyManagement>
         <dependencies>
@@ -66,22 +59,28 @@
         <dependency>
             <groupId>jakarta.enterprise.concurrent</groupId>
             <artifactId>jakarta.enterprise.concurrent-tck</artifactId>
-            <version>${jakarta.concurrent.version}</version>
+            <version>${jakarta.concurrent.tck.version}</version>
         </dependency>
         <!-- The API -->
         <dependency>
             <groupId>jakarta.enterprise.concurrent</groupId>
             <artifactId>jakarta.enterprise.concurrent-api</artifactId>
-            <version>${jakarta.concurrent.version}</version>
+            <version>${jakarta.concurrent.api.version}</version>
         </dependency>
-        <!-- Arquillian Implementation for TestNG -->
+        <!-- JUnit 5 -->
         <dependency>
-            <groupId>org.jboss.arquillian.testng</groupId>
-            <artifactId>arquillian-testng-container</artifactId>
-            <version>${version.arquillian}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Arquillian JUnit 5 integration -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- Arquillian Deps for Apache TomEE -->
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>apache-tomee</artifactId>
@@ -96,19 +95,18 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- End of deps for Apache TomEE -->
-
         <!-- Arquillian transitive dependency on Servlet -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta.servlet.version}</version>
         </dependency>
-        <!-- TestNG -->
+        <!-- Sigtest -->
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>2.3</version>
+            <scope>test</scope>
         </dependency>
         <!-- To ensure its available for the TomEE lib directory -->
         <dependency>
@@ -131,7 +129,6 @@
         </dependency>
 
     </dependencies>
-    <!-- end::testClientDep[] -->
 
     <profiles>
         <profile>
@@ -143,14 +140,8 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>${maven.dep.plugin.version}</version>
                         <configuration>
                             <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.testng</groupId>
-                                    <artifactId>testng</artifactId>
-                                    <version>${testng.version}</version>
-                                </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.derby</groupId>
                                     <artifactId>derby</artifactId>
@@ -162,7 +153,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>${maven.comp.plugin.version}</version>
                         <configuration>
                             <source>${maven.compiler.source}</source>
                             <target>${maven.compiler.target}</target>
@@ -171,15 +161,29 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven.surefire.plugin.version}</version>
+                        <version>${surefire.version}</version>
                         <configuration>
+                            <reuseForks>true</reuseForks>
+                            <forkCount>1</forkCount>
+                            <useFile>false</useFile>
+                            <trimStackTrace>false</trimStackTrace>
+                            <dependenciesToScan>
+                                <dependency>jakarta.enterprise.concurrent:jakarta.enterprise.concurrent-tck</dependency>
+                            </dependenciesToScan>
+                            <includes>
+                                <include>ee/jakarta/tck/concurrent/api/**</include>
+                                <include>ee/jakarta/tck/concurrent/spec/**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>ee/jakarta/tck/concurrent/spec/signature/**</exclude>
+                            </excludes>
+                            <groups>!eefull</groups>
                             <systemPropertyVariables>
+                                <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
+                                <jimage.dir>${project.build.directory}/jimage</jimage.dir>
                             </systemPropertyVariables>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
-                            </suiteXmlFiles>
                             <testSourceDirectory>
-                                ${basedir}${file.separarator}src${file.separarator}main${file.separarator}java${file.separarator}
+                                ${basedir}${file.separator}src${file.separator}main${file.separator}java${file.separator}
                             </testSourceDirectory>
                         </configuration>
                     </plugin>
