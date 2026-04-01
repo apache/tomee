@@ -29,7 +29,7 @@
   <name>TomEE :: TCK :: MicroProfile Rest Client TCK</name>
 
   <properties>
-    <wiremock.version>3.13.1</wiremock.version>
+    <wiremock.version>3.13.2</wiremock.version>
   </properties>
 
   <build>
