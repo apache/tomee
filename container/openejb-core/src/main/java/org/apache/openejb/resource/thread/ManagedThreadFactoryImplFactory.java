@@ -26,9 +26,10 @@ public class ManagedThreadFactoryImplFactory {
     private String prefix = "openejb-managed-thread-";
     private Integer priority;
     private String context;
+    private boolean virtual;
 
     public ManagedThreadFactory create() {
-        return new ManagedThreadFactoryImpl(prefix, priority, ContextServiceImplFactory.lookupOrDefault(context));
+        return new ManagedThreadFactoryImpl(prefix, priority, ContextServiceImplFactory.lookupOrDefault(context), virtual);
     }
 
     public void setPrefix(final String prefix) {
@@ -41,5 +42,13 @@ public class ManagedThreadFactoryImplFactory {
 
     public void setContext(final String context) {
         this.context = context;
+    }
+
+    public boolean isVirtual() {
+        return virtual;
+    }
+
+    public void setVirtual(final boolean virtual) {
+        this.virtual = virtual;
     }
 }
