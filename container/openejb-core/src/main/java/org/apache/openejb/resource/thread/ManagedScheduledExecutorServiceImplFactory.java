@@ -62,9 +62,13 @@ public class ManagedScheduledExecutorServiceImplFactory {
         // Try container JNDI with resource ID
         try {
             final Context ctx = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-            final String resourceId = DEFAULT_MSES.equals(name)
-                    ? "Default Scheduled Executor Service"
-                    : name;
+            String resourceId;
+            if (DEFAULT_MSES.equals(name)) {
+                resourceId = "Default Scheduled Executor Service";
+            } else {
+                // Strip java: prefix to match how resources are registered (via cleanUpName)
+                resourceId = name.startsWith("java:") ? name.substring("java:".length()) : name;
+            }
 
             final Object obj = ctx.lookup("openejb/Resource/" + resourceId);
             if (obj instanceof ManagedScheduledExecutorServiceImpl mses) {
