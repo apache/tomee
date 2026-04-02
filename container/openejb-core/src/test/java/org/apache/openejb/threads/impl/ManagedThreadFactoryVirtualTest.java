@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -91,14 +92,23 @@ public class ManagedThreadFactoryVirtualTest {
         }
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void virtualFactoryRejectsForkJoinPool() {
+    @Test
+    public void virtualFactoryFallsBackToPlatformForForkJoinPool() {
         Assume.assumeTrue("Virtual threads require Java 21+", VirtualThreadHelper.isSupported());
 
         final ContextServiceImpl contextService = ContextServiceImplFactory.newDefaultContextService();
         final ManagedThreadFactoryImpl factory = new ManagedThreadFactoryImpl("test-vt-", null, contextService, true);
 
-        factory.newThread(new ForkJoinPool());
+        // ForkJoinWorkerThread cannot be virtual — should fall back to platform thread
+        final ForkJoinPool pool = new ForkJoinPool(1, factory, null, false);
+        try {
+            final java.util.concurrent.Future<String> result = pool.submit(() -> "ok");
+            assertEquals("ForkJoinPool should work with virtual factory", "ok", result.get(5, java.util.concurrent.TimeUnit.SECONDS));
+        } catch (final Exception e) {
+            fail("ForkJoinPool with virtual factory should not throw: " + e);
+        } finally {
+            pool.shutdown();
+        }
     }
 
     @Test
