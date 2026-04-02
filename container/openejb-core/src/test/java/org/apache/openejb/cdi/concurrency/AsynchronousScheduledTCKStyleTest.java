@@ -195,6 +195,23 @@ public class AsynchronousScheduledTCKStyleTest {
         assertEquals(Integer.valueOf(3), result2);
     }
 
+    /**
+     * TCK: testScheduledAsynchIgnoresMaxAsync (MED-Web variant)
+     * Method with @Asynchronous(executor=MES, runAt=@Schedule) — the executor is a plain
+     * ManagedExecutorService, not a ManagedScheduledExecutorService. The interceptor
+     * should fall back to the default MSES for scheduling.
+     */
+    @Test
+    public void scheduledWithManagedExecutorServiceExecutor() throws Exception {
+        final AtomicInteger counter = new AtomicInteger();
+        // This method references the default MES (not MSES) as executor
+        final CompletableFuture<Integer> future = reqBean.scheduledWithMESExecutor(2, counter);
+
+        assertNotNull("Future should be returned even when executor is MES", future);
+        final Integer result = future.get(15, TimeUnit.SECONDS);
+        assertEquals("Should complete after 2 runs", Integer.valueOf(2), result);
+    }
+
     // --- Bean ---
 
     public enum ReturnType {
@@ -254,6 +271,18 @@ public class AsynchronousScheduledTCKStyleTest {
             }
             final CompletableFuture<String> future = Asynchronous.Result.getFuture();
             future.complete("completed-" + count);
+            return future;
+        }
+
+        @Asynchronous(executor = "java:comp/DefaultManagedExecutorService",
+                       runAt = @Schedule(cron = "* * * * * *"))
+        public CompletableFuture<Integer> scheduledWithMESExecutor(final int runs, final AtomicInteger counter) {
+            final int count = counter.incrementAndGet();
+            if (count < runs) {
+                return null;
+            }
+            final CompletableFuture<Integer> future = Asynchronous.Result.getFuture();
+            future.complete(count);
             return future;
         }
 

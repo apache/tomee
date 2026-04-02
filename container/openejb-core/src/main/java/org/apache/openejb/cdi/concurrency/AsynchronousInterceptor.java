@@ -111,11 +111,23 @@ public class AsynchronousInterceptor {
 
     private Object aroundInvokeScheduled(final InvocationContext ctx, final Asynchronous asynchronous,
                                           final Schedule[] schedules) throws Exception {
-        final ManagedScheduledExecutorService mses;
+        // Per spec, the executor attribute may reference either a ManagedScheduledExecutorService
+        // or a plain ManagedExecutorService. When a plain MES is referenced, fall back to the
+        // default MSES for scheduling capability (the trigger mechanism requires MSES).
+        ManagedScheduledExecutorService mses;
         try {
             mses = ManagedScheduledExecutorServiceImplFactory.lookup(asynchronous.executor());
         } catch (final IllegalArgumentException e) {
-            throw new RejectedExecutionException("Cannot lookup ManagedScheduledExecutorService", e);
+            // The executor might be a plain ManagedExecutorService — verify it exists,
+            // then use the default MSES for scheduling
+            try {
+                ManagedExecutorServiceImplFactory.lookup(asynchronous.executor());
+                // MES exists — use default MSES for scheduling
+                mses = ManagedScheduledExecutorServiceImplFactory.lookup(
+                        "java:comp/DefaultManagedScheduledExecutorService");
+            } catch (final Exception fallbackEx) {
+                throw new RejectedExecutionException("Cannot lookup executor for scheduled async method", e);
+            }
         }
 
         final ZonedTrigger trigger = ScheduleHelper.toTrigger(schedules);
