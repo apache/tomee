@@ -40,7 +40,7 @@ public class ConcurrencyTCKArchiveProcessor implements ApplicationArchiveProcess
         "       xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee\n" +
         "         https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd\"\n" +
         "       version=\"4.0\"\n" +
-        "       bean-discovery-mode=\"all\">\n" +
+        "       bean-discovery-mode=\"annotated\">\n" +
         "</beans>\n";
 
     @Override
