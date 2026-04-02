@@ -40,6 +40,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Interceptor
 @Asynchronous
@@ -120,48 +122,56 @@ public class AsynchronousInterceptor {
         final boolean isVoid = ctx.getMethod().getReturnType() == Void.TYPE;
 
         // A single CompletableFuture represents ALL executions in the schedule.
-        // Each execution gets Asynchronous.Result.setFuture() called before ctx.proceed()
-        // so the bean method can call Asynchronous.Result.getFuture() / complete().
-        // The schedule stops when the future is completed, cancelled, or an exception is thrown.
+        // Per spec: "A single future represents the completion of all executions in the schedule."
+        // The schedule continues until:
+        //   - the method returns a non-null result value
+        //   - the method raises an exception
+        //   - the future is completed (via Asynchronous.Result.complete()) or cancelled
         final CompletableFuture<Object> outerFuture = mses.newIncompleteFuture();
+        final AtomicReference<ScheduledFuture<?>> scheduledRef = new AtomicReference<>();
 
-        mses.schedule((Callable<Object>) () -> {
+        final ScheduledFuture<?> scheduledFuture = mses.schedule((Callable<Object>) () -> {
             try {
                 Asynchronous.Result.setFuture(outerFuture);
                 final Object result = ctx.proceed();
 
                 if (isVoid) {
-                    // For void methods, the bean may call Asynchronous.Result.complete("value")
-                    // to signal completion. If it didn't complete the future, the schedule continues.
                     Asynchronous.Result.setFuture(null);
                     return null;
                 }
 
-                if (result instanceof CompletionStage<?> cs) {
-                    if (result == outerFuture) {
-                        // Bean returned the container-provided future (via Asynchronous.Result.getFuture()).
-                        // It may have been completed by Asynchronous.Result.complete() inside the method.
-                        Asynchronous.Result.setFuture(null);
-                    } else {
+                // Per spec: non-null return value stops the schedule
+                if (result != null) {
+                    if (result instanceof CompletionStage<?> cs && result != outerFuture) {
                         cs.whenComplete((val, err) -> {
                             if (err != null) {
                                 outerFuture.completeExceptionally(err);
-                            } else if (val != null) {
+                            } else {
                                 outerFuture.complete(val);
                             }
                             Asynchronous.Result.setFuture(null);
                         });
                     }
-                } else if (result != null) {
-                    outerFuture.complete(result);
                     Asynchronous.Result.setFuture(null);
+
+                    // Cancel the trigger loop — method returned non-null
+                    final ScheduledFuture<?> sf = scheduledRef.get();
+                    if (sf != null) {
+                        sf.cancel(false);
+                    }
                 }
+                // null return: schedule continues
             } catch (final Exception e) {
                 outerFuture.completeExceptionally(e);
                 Asynchronous.Result.setFuture(null);
             }
             return null;
         }, trigger);
+
+        scheduledRef.set(scheduledFuture);
+
+        // Also cancel when the future completes externally (e.g. Asynchronous.Result.complete())
+        outerFuture.whenComplete((val, err) -> scheduledFuture.cancel(false));
 
         return isVoid ? null : outerFuture;
     }
