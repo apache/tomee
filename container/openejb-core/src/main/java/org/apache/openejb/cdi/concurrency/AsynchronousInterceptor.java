@@ -128,7 +128,13 @@ public class AsynchronousInterceptor {
         final boolean isVoid = ctx.getMethod().getReturnType() == Void.TYPE;
         final ContextServiceImpl ctxService = (ContextServiceImpl) mses.getContextService();
         final ContextServiceImpl.Snapshot snapshot = ctxService.snapshot(null);
-        final ScheduledExecutorService delegate = mses.getDelegate();
+
+        // Per spec, scheduled async methods are NOT subject to maxAsync constraints.
+        // Use the default MSES's delegate for the trigger loop — it is not constrained
+        // by the referenced executor's maxAsync setting.
+        final ManagedScheduledExecutorServiceImpl defaultMses =
+                ManagedScheduledExecutorServiceImplFactory.lookup("java:comp/DefaultManagedScheduledExecutorService");
+        final ScheduledExecutorService triggerDelegate = defaultMses.getDelegate();
 
         // A single CompletableFuture represents ALL executions in the schedule.
         // Per spec: "A single future represents the completion of all executions in the schedule."
@@ -140,8 +146,7 @@ public class AsynchronousInterceptor {
         final AtomicReference<ScheduledFuture<?>> scheduledRef = new AtomicReference<>();
         final AtomicReference<LastExecution> lastExecutionRef = new AtomicReference<>();
 
-        // Schedule the first execution via the manual trigger loop
-        scheduleNextExecution(delegate, snapshot, ctxService, trigger, outerFuture,
+        scheduleNextExecution(triggerDelegate, snapshot, ctxService, trigger, outerFuture,
                 ctx, isVoid, scheduledRef, lastExecutionRef);
 
         // Cancel the underlying scheduled task when the future completes externally
