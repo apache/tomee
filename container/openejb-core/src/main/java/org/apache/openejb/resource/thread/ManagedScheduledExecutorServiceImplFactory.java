@@ -26,7 +26,6 @@ import org.apache.openejb.threads.reject.CURejectHandler;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
 
 import javax.naming.Context;
@@ -95,7 +94,7 @@ public class ManagedScheduledExecutorServiceImplFactory {
             managedThreadFactory = ThreadFactories.findThreadFactory(threadFactory);
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImplFactory.class).warning("Unable to create configured thread factory: " + threadFactory, e);
-            managedThreadFactory = new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context));
+            managedThreadFactory = new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context), virtual);
         }
 
         return new ScheduledThreadPoolExecutor(core, managedThreadFactory, CURejectHandler.INSTANCE);

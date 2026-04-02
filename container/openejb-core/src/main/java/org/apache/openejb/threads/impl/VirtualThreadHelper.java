@@ -54,7 +54,6 @@ public final class VirtualThreadHelper {
             // Use the public interface Thread.Builder (not the internal impl class)
             // to look up methods — avoids module access issues
             final Class<?> builderInterface = Class.forName("java.lang.Thread$Builder");
-            final Class<?> ofVirtualInterface = Class.forName("java.lang.Thread$Builder$OfVirtual");
 
             // Thread.Builder.OfVirtual.name(String, long) — declared on Builder
             builderName = builderInterface.getMethod("name", String.class, long.class);
