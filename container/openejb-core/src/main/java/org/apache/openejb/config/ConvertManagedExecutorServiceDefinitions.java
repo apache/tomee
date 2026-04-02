@@ -78,7 +78,9 @@ public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinit
 
         final Properties p = def.getProperties();
 
-        String contextName = managedExecutor.getContextService().getvalue();
+        String contextName = managedExecutor.getContextService() != null
+            ? managedExecutor.getContextService().getvalue()
+            : "java:comp/DefaultContextService";
         // Translate JNDI name to TomEE Resource ID, otherwise AutoConfig will fail to resolve it
         // and try to fix it by rewriting this to an unwanted ContextService
         if ("java:comp/DefaultContextService".equals(contextName)) {

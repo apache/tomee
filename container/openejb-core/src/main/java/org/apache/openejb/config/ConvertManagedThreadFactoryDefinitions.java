@@ -77,7 +77,9 @@ public class ConvertManagedThreadFactoryDefinitions extends BaseConvertDefinitio
 
         def.setJndi(managedThreadFactory.getName().getvalue().replaceFirst("java:", ""));
 
-        String contextName = managedThreadFactory.getContextService().getvalue();
+        String contextName = managedThreadFactory.getContextService() != null
+            ? managedThreadFactory.getContextService().getvalue()
+            : "java:comp/DefaultContextService";
         // Translate JNDI name to TomEE Resource ID, otherwise AutoConfig will fail to resolve it
         // and try to fix it by rewriting this to an unwanted ContextService
         if ("java:comp/DefaultContextService".equals(contextName)) {
