@@ -77,7 +77,9 @@ public class ConvertManagedScheduledExecutorServiceDefinitions extends BaseConve
         def.setJndi(managedScheduledExecutor.getName().getvalue().replaceFirst("java:", ""));
 
 
-        String contextName = managedScheduledExecutor.getContextService().getvalue();
+        String contextName = managedScheduledExecutor.getContextService() != null
+            ? managedScheduledExecutor.getContextService().getvalue()
+            : "java:comp/DefaultContextService";
         // Translate JNDI name to TomEE Resource ID, otherwise AutoConfig will fail to resolve it
         // and try to fix it by rewriting this to an unwanted ContextService
         if ("java:comp/DefaultContextService".equals(contextName)) {

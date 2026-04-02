@@ -101,6 +101,82 @@ public class ConvertVirtualDefinitionsTest {
         assertEquals("true", resources.get(0).getProperties().getProperty("Virtual"));
     }
 
+    @Test
+    public void threadFactoryWithNullContextServiceDefaults() throws OpenEJBException {
+        final ManagedThreadFactory factory = new ManagedThreadFactory();
+        factory.setName(jndi("java:comp/env/concurrent/NoCtxTF"));
+        // contextService intentionally NOT set — should default to DefaultContextService
+        factory.setPriority(5);
+
+        final AppModule appModule = createAppModuleWithThreadFactory(factory);
+        new ConvertManagedThreadFactoryDefinitions().deploy(appModule);
+
+        final List<Resource> resources = new ArrayList<>(appModule.getResources());
+        assertEquals(1, resources.size());
+        assertEquals("Default Context Service",
+                resources.get(0).getProperties().getProperty("Context"));
+    }
+
+    @Test
+    public void executorWithNullContextServiceDefaults() throws OpenEJBException {
+        final ManagedExecutor executor = new ManagedExecutor();
+        executor.setName(jndi("java:comp/env/concurrent/NoCtxMES"));
+        // contextService intentionally NOT set
+
+        final AppModule appModule = createAppModuleWithExecutor(executor);
+        new ConvertManagedExecutorServiceDefinitions().deploy(appModule);
+
+        final List<Resource> resources = new ArrayList<>(appModule.getResources());
+        assertEquals(1, resources.size());
+        assertEquals("Default Context Service",
+                resources.get(0).getProperties().getProperty("Context"));
+    }
+
+    @Test
+    public void scheduledExecutorWithNullContextServiceDefaults() throws OpenEJBException {
+        final ManagedScheduledExecutor executor = new ManagedScheduledExecutor();
+        executor.setName(jndi("java:comp/env/concurrent/NoCtxMSES"));
+        // contextService intentionally NOT set
+
+        final AppModule appModule = createAppModuleWithScheduledExecutor(executor);
+        new ConvertManagedScheduledExecutorServiceDefinitions().deploy(appModule);
+
+        final List<Resource> resources = new ArrayList<>(appModule.getResources());
+        assertEquals(1, resources.size());
+        assertEquals("Default Context Service",
+                resources.get(0).getProperties().getProperty("Context"));
+    }
+
+    @Test
+    public void threadFactoryQualifierIsPreserved() {
+        final ManagedThreadFactory factory = new ManagedThreadFactory();
+        factory.setName(jndi("java:comp/env/concurrent/QualifiedTF"));
+        factory.setContextService(jndi("java:comp/DefaultContextService"));
+
+        final List<String> qualifiers = new ArrayList<>();
+        qualifiers.add("com.example.MyQualifier");
+        qualifiers.add("com.example.AnotherQualifier");
+        factory.setQualifier(qualifiers);
+
+        assertEquals(2, factory.getQualifier().size());
+        assertEquals("com.example.MyQualifier", factory.getQualifier().get(0));
+        assertEquals("com.example.AnotherQualifier", factory.getQualifier().get(1));
+    }
+
+    @Test
+    public void executorQualifierIsPreserved() {
+        final ManagedExecutor executor = new ManagedExecutor();
+        executor.setName(jndi("java:comp/env/concurrent/QualifiedMES"));
+        executor.setContextService(jndi("java:comp/DefaultContextService"));
+
+        final List<String> qualifiers = new ArrayList<>();
+        qualifiers.add("com.example.ExecutorQualifier");
+        executor.setQualifier(qualifiers);
+
+        assertEquals(1, executor.getQualifier().size());
+        assertEquals("com.example.ExecutorQualifier", executor.getQualifier().get(0));
+    }
+
     // --- helpers ---
 
     private static JndiName jndi(final String value) {
