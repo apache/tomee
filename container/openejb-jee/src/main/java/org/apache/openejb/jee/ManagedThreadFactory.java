@@ -30,6 +30,7 @@ import java.util.List;
         "name",
         "contextService",
         "priority",
+        "virtual",
         "properties"
 })
 public class ManagedThreadFactory implements Keyable<String> {
@@ -41,6 +42,8 @@ public class ManagedThreadFactory implements Keyable<String> {
     protected JndiName contextService;
     @XmlElement
     protected Integer priority;
+    @XmlElement
+    protected Boolean virtual;
     @XmlElement(name = "property")
     protected List<Property> properties;
 
@@ -74,6 +77,14 @@ public class ManagedThreadFactory implements Keyable<String> {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public Boolean getVirtual() {
+        return virtual;
+    }
+
+    public void setVirtual(final Boolean virtual) {
+        this.virtual = virtual;
     }
 
     public List<Property> getProperties() {

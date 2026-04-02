@@ -88,6 +88,7 @@ public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinit
         put(p, "Context", contextName);
         put(p, "HungTaskThreshold", managedExecutor.getHungTaskThreshold());
         put(p, "Max", managedExecutor.getMaxAsync());
+        put(p, "Virtual", managedExecutor.getVirtual());
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());

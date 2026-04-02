@@ -4140,6 +4140,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             managedExecutor.getContextService().setvalue(definition.context());
             managedExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
             managedExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            managedExecutor.setVirtual(definition.virtual() ? Boolean.TRUE : null);
 
             consumer.getManagedExecutorMap().put(definition.name(), managedExecutor);
         }
@@ -4154,6 +4155,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             managedScheduledExecutor.getContextService().setvalue(definition.context());
             managedScheduledExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
             managedScheduledExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            managedScheduledExecutor.setVirtual(definition.virtual() ? Boolean.TRUE : null);
 
             consumer.getManagedScheduledExecutorMap().put(definition.name(), managedScheduledExecutor);
         }
@@ -4167,6 +4169,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             managedThreadFactory.setContextService(new JndiName());
             managedThreadFactory.getContextService().setvalue(definition.context());
             managedThreadFactory.setPriority(definition.priority());
+            managedThreadFactory.setVirtual(definition.virtual() ? Boolean.TRUE : null);
 
             consumer.getManagedThreadFactoryMap().put(definition.name(), managedThreadFactory);
         }

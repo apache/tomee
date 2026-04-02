@@ -31,22 +31,38 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
     private final ContextServiceImpl contextService;
     private final String prefix;
     private final Integer priority;
+    private final boolean virtual;
 
     // Invoked by ThreadFactories.findThreadFactory via reflection
     @SuppressWarnings("unused")
     public ManagedThreadFactoryImpl() {
-        this(DEFAULT_PREFIX, Thread.NORM_PRIORITY, ContextServiceImplFactory.getOrCreateDefaultSingleton());
+        this(DEFAULT_PREFIX, Thread.NORM_PRIORITY, ContextServiceImplFactory.getOrCreateDefaultSingleton(), false);
     }
 
     public ManagedThreadFactoryImpl(final String prefix, final Integer priority, final ContextServiceImpl contextService) {
+        this(prefix, priority, contextService, false);
+    }
+
+    public ManagedThreadFactoryImpl(final String prefix, final Integer priority, final ContextServiceImpl contextService,
+                                     final boolean virtual) {
         this.prefix = prefix;
         this.priority = priority;
         this.contextService = contextService;
+        this.virtual = virtual;
     }
 
     @Override
     public Thread newThread(final Runnable r) {
         final CURunnable wrapper = new CURunnable(r, contextService);
+
+        if (virtual) {
+            // Virtual threads do NOT implement ManageableThread (spec 3.4.4)
+            // Priority and daemon settings are ignored for virtual threads
+            final Thread thread = VirtualThreadHelper.newVirtualThread(prefix, ID.incrementAndGet(), wrapper);
+            thread.setContextClassLoader(ManagedThreadFactoryImpl.class.getClassLoader());
+            return thread;
+        }
+
         final Thread thread = new ManagedThread(wrapper);
         thread.setDaemon(true);
         thread.setName(prefix + ID.incrementAndGet());
@@ -59,7 +75,14 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
 
     @Override
     public ForkJoinWorkerThread newThread(final ForkJoinPool pool) {
+        if (virtual) {
+            throw new UnsupportedOperationException("Virtual thread factory does not support ForkJoinPool threads");
+        }
         return new ManagedForkJoinWorkerThread(pool, priority, contextService);
+    }
+
+    public boolean isVirtual() {
+        return virtual;
     }
 
     public static class ManagedThread extends Thread implements ManageableThread {
@@ -102,7 +125,7 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
         }
 
         @Override
-        protected void onTermination(Throwable exception) {
+        protected void onTermination(final Throwable exception) {
             setPriority(initialPriority);
             contextService.exit(state);
 

@@ -32,6 +32,7 @@ import java.util.List;
         "contextService",
         "hungTaskThreshold",
         "maxAsync",
+        "virtual",
         "properties"
 })
 public class ManagedScheduledExecutor implements Keyable<String> {
@@ -45,6 +46,8 @@ public class ManagedScheduledExecutor implements Keyable<String> {
     protected Long hungTaskThreshold;
     @XmlElement(name = "max-async")
     protected Integer maxAsync;
+    @XmlElement
+    protected Boolean virtual;
     @XmlElement(name = "property")
     protected List<Property> properties;
 
@@ -86,6 +89,14 @@ public class ManagedScheduledExecutor implements Keyable<String> {
 
     public void setMaxAsync(Integer maxAsync) {
         this.maxAsync = maxAsync;
+    }
+
+    public Boolean getVirtual() {
+        return virtual;
+    }
+
+    public void setVirtual(final Boolean virtual) {
+        this.virtual = virtual;
     }
 
     public List<Property> getProperties() {
