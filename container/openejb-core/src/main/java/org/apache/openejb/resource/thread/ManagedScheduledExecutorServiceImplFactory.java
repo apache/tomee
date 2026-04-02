@@ -78,6 +78,7 @@ public class ManagedScheduledExecutorServiceImplFactory {
 
     private int core = 5;
     private String threadFactory = ManagedThreadFactoryImpl.class.getName();
+    private boolean virtual;
 
     private String context;
 
@@ -112,7 +113,15 @@ public class ManagedScheduledExecutorServiceImplFactory {
         return context;
     }
 
-    public void setContext(String context) {
+    public void setContext(final String context) {
         this.context = context;
+    }
+
+    public boolean isVirtual() {
+        return virtual;
+    }
+
+    public void setVirtual(final boolean virtual) {
+        this.virtual = virtual;
     }
 }
