@@ -157,6 +157,44 @@ public class AsynchronousScheduledTCKStyleTest {
         }
     }
 
+    /**
+     * TCK: testScheduledAsynchWithMultipleSchedules
+     * Method with two @Schedule annotations — should use composite trigger.
+     */
+    @Test
+    public void scheduledWithMultipleSchedules() throws Exception {
+        final AtomicInteger counter = new AtomicInteger();
+        final CompletableFuture<String> future = reqBean.scheduledMultipleSchedules(1, counter);
+
+        assertNotNull("Future should be returned by interceptor", future);
+
+        final String result = future.get(15, TimeUnit.SECONDS);
+        assertNotNull("Should have completed with a result", result);
+        assertEquals("Should have run exactly once", 1, counter.get());
+    }
+
+    /**
+     * TCK: testScheduledAsynchIgnoresMaxAsync
+     * Multiple concurrent scheduled async method invocations should all run regardless of maxAsync.
+     * Here we just verify that the scheduled method works when called multiple times.
+     */
+    @Test
+    public void scheduledIgnoresMaxAsync() throws Exception {
+        final AtomicInteger counter1 = new AtomicInteger();
+        final AtomicInteger counter2 = new AtomicInteger();
+        final CompletableFuture<Integer> future1 = reqBean.scheduledEverySecond(3, ReturnType.COMPLETE_RESULT, counter1);
+        final CompletableFuture<Integer> future2 = reqBean.scheduledEverySecond(3, ReturnType.COMPLETE_RESULT, counter2);
+
+        assertNotNull("First future should not be null", future1);
+        assertNotNull("Second future should not be null", future2);
+
+        // Both should complete
+        final Integer result1 = future1.get(15, TimeUnit.SECONDS);
+        final Integer result2 = future2.get(15, TimeUnit.SECONDS);
+        assertEquals(Integer.valueOf(3), result1);
+        assertEquals(Integer.valueOf(3), result2);
+    }
+
     // --- Bean ---
 
     public enum ReturnType {
@@ -203,6 +241,20 @@ public class AsynchronousScheduledTCKStyleTest {
             if (count >= runs) {
                 Asynchronous.Result.getFuture().complete(null);
             }
+        }
+
+        @Asynchronous(runAt = {
+                @Schedule(cron = "* * * * * *"),
+                @Schedule(cron = "*/2 * * * * *")
+        })
+        public CompletableFuture<String> scheduledMultipleSchedules(final int runs, final AtomicInteger counter) {
+            final int count = counter.incrementAndGet();
+            if (runs != count) {
+                return null;
+            }
+            final CompletableFuture<String> future = Asynchronous.Result.getFuture();
+            future.complete("completed-" + count);
+            return future;
         }
 
         @Asynchronous(executor = "java:comp/env/invalid/executor",
