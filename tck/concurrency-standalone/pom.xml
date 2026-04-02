@@ -177,7 +177,7 @@
                             <excludes>
                                 <exclude>ee/jakarta/tck/concurrent/spec/signature/**</exclude>
                             </excludes>
-                            <groups>!eefull</groups>
+                            <groups>web</groups>
                             <systemPropertyVariables>
                                 <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
                                 <jimage.dir>${project.build.directory}/jimage</jimage.dir>
