@@ -21,8 +21,6 @@ import jakarta.enterprise.concurrent.LastExecution;
 import jakarta.enterprise.concurrent.Schedule;
 import jakarta.enterprise.concurrent.ZonedTrigger;
 
-import java.time.DayOfWeek;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -57,13 +55,13 @@ public final class ScheduleHelper {
         final CronTrigger trigger = new CronTrigger(zone);
 
         if (schedule.months().length > 0) {
-            trigger.months(toMonths(schedule.months()));
+            trigger.months(schedule.months());
         }
         if (schedule.daysOfMonth().length > 0) {
             trigger.daysOfMonth(schedule.daysOfMonth());
         }
         if (schedule.daysOfWeek().length > 0) {
-            trigger.daysOfWeek(toDaysOfWeek(schedule.daysOfWeek()));
+            trigger.daysOfWeek(schedule.daysOfWeek());
         }
         if (schedule.hours().length > 0) {
             trigger.hours(schedule.hours());
@@ -103,14 +101,6 @@ public final class ScheduleHelper {
             return trigger;
         }
         return new SkipIfLateTrigger(trigger, skipIfLateBy);
-    }
-
-    private static Month[] toMonths(final Month[] months) {
-        return months;
-    }
-
-    private static DayOfWeek[] toDaysOfWeek(final DayOfWeek[] days) {
-        return days;
     }
 
     /**
