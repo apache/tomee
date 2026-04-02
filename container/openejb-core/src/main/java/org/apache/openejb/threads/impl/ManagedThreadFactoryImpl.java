@@ -75,9 +75,8 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
 
     @Override
     public ForkJoinWorkerThread newThread(final ForkJoinPool pool) {
-        if (virtual) {
-            throw new UnsupportedOperationException("Virtual thread factory does not support ForkJoinPool threads");
-        }
+        // ForkJoinWorkerThread extends Thread (platform) — cannot be virtual.
+        // For virtual factories, fall back to a platform ForkJoinWorkerThread.
         return new ManagedForkJoinWorkerThread(pool, priority, contextService);
     }
 
