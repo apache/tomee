@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.resource.thread;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
@@ -24,12 +26,56 @@ import org.apache.openejb.threads.reject.CURejectHandler;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
 import jakarta.enterprise.concurrent.ManagedThreadFactory;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class ManagedScheduledExecutorServiceImplFactory {
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImplFactory.class);
+
+    public static ManagedScheduledExecutorServiceImpl lookup(String name) {
+        // If the caller passes the default ManagedExecutorService JNDI name, map it to the
+        // default ManagedScheduledExecutorService instead
+        if ("java:comp/DefaultManagedExecutorService".equals(name)) {
+            name = "java:comp/DefaultManagedScheduledExecutorService";
+        }
+
+        // Try direct JNDI lookup first
+        try {
+            final Object obj = InitialContext.doLookup(name);
+            if (obj instanceof ManagedScheduledExecutorServiceImpl mses) {
+                return mses;
+            }
+        } catch (final NamingException ignored) {
+            // fall through to container JNDI
+        }
+
+        // Try container JNDI with resource ID
+        try {
+            final Context ctx = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            final String resourceId = "java:comp/DefaultManagedScheduledExecutorService".equals(name)
+                    ? "Default Scheduled Executor Service"
+                    : name;
+
+            final Object obj = ctx.lookup("openejb/Resource/" + resourceId);
+            if (obj instanceof ManagedScheduledExecutorServiceImpl mses) {
+                return mses;
+            }
+        } catch (final NamingException ignored) {
+            // fall through to default creation
+        }
+
+        // Graceful fallback: create a default instance
+        LOGGER.debug("Cannot lookup ManagedScheduledExecutorService '" + name + "', creating default instance");
+        return new ManagedScheduledExecutorServiceImplFactory().create();
+    }
+
     private int core = 5;
     private String threadFactory = ManagedThreadFactoryImpl.class.getName();
 
