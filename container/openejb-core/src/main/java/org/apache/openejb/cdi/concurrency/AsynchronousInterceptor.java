@@ -119,19 +119,10 @@ public class AsynchronousInterceptor {
         final ZonedTrigger trigger = ScheduleHelper.toTrigger(schedules);
         final boolean isVoid = ctx.getMethod().getReturnType() == Void.TYPE;
 
-        if (isVoid) {
-            // void method: schedule as Runnable, runs indefinitely until cancelled
-            mses.schedule((Runnable) () -> {
-                try {
-                    ctx.proceed();
-                } catch (final Exception e) {
-                    LOGGER.warning("Scheduled async method threw exception", e);
-                }
-            }, trigger);
-            return null;
-        }
-
-        // non-void: schedule as Callable, each invocation gets a fresh future via Asynchronous.Result
+        // A single CompletableFuture represents ALL executions in the schedule.
+        // Each execution gets Asynchronous.Result.setFuture() called before ctx.proceed()
+        // so the bean method can call Asynchronous.Result.getFuture() / complete().
+        // The schedule stops when the future is completed, cancelled, or an exception is thrown.
         final CompletableFuture<Object> outerFuture = mses.newIncompleteFuture();
 
         mses.schedule((Callable<Object>) () -> {
@@ -139,16 +130,29 @@ public class AsynchronousInterceptor {
                 Asynchronous.Result.setFuture(outerFuture);
                 final Object result = ctx.proceed();
 
+                if (isVoid) {
+                    // For void methods, the bean may call Asynchronous.Result.complete("value")
+                    // to signal completion. If it didn't complete the future, the schedule continues.
+                    Asynchronous.Result.setFuture(null);
+                    return null;
+                }
+
                 if (result instanceof CompletionStage<?> cs) {
-                    cs.whenComplete((val, err) -> {
-                        if (err != null) {
-                            outerFuture.completeExceptionally(err);
-                        } else if (val != null) {
-                            outerFuture.complete(val);
-                        }
+                    if (result == outerFuture) {
+                        // Bean returned the container-provided future (via Asynchronous.Result.getFuture()).
+                        // It may have been completed by Asynchronous.Result.complete() inside the method.
                         Asynchronous.Result.setFuture(null);
-                    });
-                } else if (result != null && result != outerFuture) {
+                    } else {
+                        cs.whenComplete((val, err) -> {
+                            if (err != null) {
+                                outerFuture.completeExceptionally(err);
+                            } else if (val != null) {
+                                outerFuture.complete(val);
+                            }
+                            Asynchronous.Result.setFuture(null);
+                        });
+                    }
+                } else if (result != null) {
                     outerFuture.complete(result);
                     Asynchronous.Result.setFuture(null);
                 }
@@ -159,7 +163,7 @@ public class AsynchronousInterceptor {
             return null;
         }, trigger);
 
-        return outerFuture;
+        return isVoid ? null : outerFuture;
     }
 
     private Exception validate(final Method method) {
