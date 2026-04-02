@@ -38,11 +38,15 @@ public class ManagedScheduledExecutorServiceImplFactory {
 
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImplFactory.class);
 
+    private static final String DEFAULT_MES = "java:comp/DefaultManagedExecutorService";
+    private static final String DEFAULT_MSES = "java:comp/DefaultManagedScheduledExecutorService";
+
     public static ManagedScheduledExecutorServiceImpl lookup(String name) {
         // If the caller passes the default ManagedExecutorService JNDI name, map it to the
         // default ManagedScheduledExecutorService instead
-        if ("java:comp/DefaultManagedExecutorService".equals(name)) {
-            name = "java:comp/DefaultManagedScheduledExecutorService";
+        final boolean isDefault = DEFAULT_MES.equals(name) || DEFAULT_MSES.equals(name);
+        if (DEFAULT_MES.equals(name)) {
+            name = DEFAULT_MSES;
         }
 
         // Try direct JNDI lookup first
@@ -58,7 +62,7 @@ public class ManagedScheduledExecutorServiceImplFactory {
         // Try container JNDI with resource ID
         try {
             final Context ctx = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-            final String resourceId = "java:comp/DefaultManagedScheduledExecutorService".equals(name)
+            final String resourceId = DEFAULT_MSES.equals(name)
                     ? "Default Scheduled Executor Service"
                     : name;
 
@@ -67,12 +71,17 @@ public class ManagedScheduledExecutorServiceImplFactory {
                 return mses;
             }
         } catch (final NamingException ignored) {
-            // fall through to default creation
+            // fall through
         }
 
-        // Graceful fallback: create a default instance
-        LOGGER.debug("Cannot lookup ManagedScheduledExecutorService '" + name + "', creating default instance");
-        return new ManagedScheduledExecutorServiceImplFactory().create();
+        // Only fall back to default for the well-known default names.
+        // For custom/invalid names, throw so the caller gets RejectedExecutionException.
+        if (isDefault) {
+            LOGGER.debug("Cannot lookup ManagedScheduledExecutorService '" + name + "', creating default instance");
+            return new ManagedScheduledExecutorServiceImplFactory().create();
+        }
+
+        throw new IllegalArgumentException("Cannot find ManagedScheduledExecutorService with name '" + name + "'");
     }
 
     private int core = 5;
