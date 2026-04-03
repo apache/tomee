@@ -1141,6 +1141,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         factory.setDestinationFactory(transportFactory);
         factory.setBus(CxfUtil.getBus());
         factory.setAddress(prefix);
+        factory.getProperties(true).put(JAXRSUtils.MATCHED_RESOURCE_TEMPLATE_BASE_PATH, prefix);
         return factory;
     }
 
