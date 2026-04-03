@@ -147,8 +147,15 @@ public class AsynchronousInterceptor {
         final AtomicReference<ScheduledFuture<?>> scheduledRef = new AtomicReference<>();
         final AtomicReference<LastExecution> lastExecutionRef = new AtomicReference<>();
 
+        // Extract method and target from InvocationContext for direct invocation.
+        // We must NOT reuse ctx.proceed() — InvocationContext's interceptor iterator
+        // is single-use, so subsequent proceed() calls would bypass TX/security interceptors.
+        final Method beanMethod = ctx.getMethod();
+        final Object target = ctx.getTarget();
+        final Object[] params = ctx.getParameters();
+
         scheduleNextExecution(triggerDelegate, snapshot, ctxService, trigger, outerFuture,
-                ctx, isVoid, scheduledRef, lastExecutionRef);
+                beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
 
         // Cancel the underlying scheduled task when the future completes externally
         // (e.g. Asynchronous.Result.complete() or cancel())
@@ -182,7 +189,8 @@ public class AsynchronousInterceptor {
 
     private void scheduleNextExecution(final ScheduledExecutorService delegate, final ContextServiceImpl.Snapshot snapshot,
                                        final ContextServiceImpl ctxService, final ZonedTrigger trigger,
-                                       final CompletableFuture<Object> future, final InvocationContext ctx,
+                                       final CompletableFuture<Object> future, final Method beanMethod,
+                                       final Object target, final Object[] params,
                                        final boolean isVoid, final AtomicReference<ScheduledFuture<?>> scheduledRef,
                                        final AtomicReference<LastExecution> lastExecutionRef) {
         final ZonedDateTime taskScheduledTime = ZonedDateTime.now();
@@ -203,13 +211,18 @@ public class AsynchronousInterceptor {
                 if (trigger.skipRun(lastExecutionRef.get(), nextRun)) {
                     // Skipped — reschedule for the next run
                     scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
-                            ctx, isVoid, scheduledRef, lastExecutionRef);
+                            beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
                     return;
                 }
 
                 final ZonedDateTime runStart = ZonedDateTime.now();
                 Asynchronous.Result.setFuture(future);
-                final Object result = ctx.proceed();
+
+                // Invoke the bean method directly instead of ctx.proceed() —
+                // InvocationContext's interceptor iterator is single-use, so re-calling
+                // proceed() would bypass other interceptors (TX, security).
+                // Context propagation is handled by ContextService.enter/exit above.
+                final Object result = beanMethod.invoke(target, params);
                 final ZonedDateTime runEnd = ZonedDateTime.now();
 
                 // Track last execution for trigger computation
@@ -218,7 +231,7 @@ public class AsynchronousInterceptor {
                 if (isVoid) {
                     Asynchronous.Result.setFuture(null);
                     scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
-                            ctx, isVoid, scheduledRef, lastExecutionRef);
+                            beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
                     return;
                 }
 
@@ -241,7 +254,10 @@ public class AsynchronousInterceptor {
                 Asynchronous.Result.setFuture(null);
                 // null return: schedule continues
                 scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
-                        ctx, isVoid, scheduledRef, lastExecutionRef);
+                        beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+            } catch (final java.lang.reflect.InvocationTargetException e) {
+                future.completeExceptionally(e.getCause() != null ? e.getCause() : e);
+                Asynchronous.Result.setFuture(null);
             } catch (final Exception e) {
                 future.completeExceptionally(e);
                 Asynchronous.Result.setFuture(null);
