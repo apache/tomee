@@ -81,7 +81,9 @@ public class ManagedExecutorServiceImplFactory {
     }
 
     private ExecutorService createExecutorService() {
-        if (virtual) {
+        // Per spec: "When running on Java SE 17, the true value behaves the same as the
+        // false value and results in platform threads being created rather than virtual threads."
+        if (virtual && VirtualThreadHelper.isSupported()) {
             final ThreadFactory vtFactory = VirtualThreadHelper.newVirtualThreadFactory(ManagedThreadFactoryImpl.DEFAULT_PREFIX);
             return VirtualThreadHelper.newVirtualThreadPerTaskExecutor(vtFactory);
         }
