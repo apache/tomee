@@ -23,6 +23,8 @@ import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.ManagedScheduledExecutor;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
+import org.apache.openejb.util.Join;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -91,6 +93,9 @@ public class ConvertManagedScheduledExecutorServiceDefinitions extends BaseConve
         put(p, "HungTaskThreshold", managedScheduledExecutor.getHungTaskThreshold());
         put(p, "Core", managedScheduledExecutor.getMaxAsync());
         put(p, "Virtual", managedScheduledExecutor.getVirtual());
+        if (managedScheduledExecutor.getQualifier() != null && !managedScheduledExecutor.getQualifier().isEmpty()) {
+            put(p, "Qualifiers", Join.join(",", managedScheduledExecutor.getQualifier()));
+        }
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());
