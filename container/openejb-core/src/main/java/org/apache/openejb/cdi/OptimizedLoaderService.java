@@ -126,6 +126,8 @@ public class OptimizedLoaderService implements LoaderService {
             list.add(new JMS2CDIExtension());
         }
 
+        list.add(new org.apache.openejb.cdi.concurrency.ConcurrencyCDIExtension());
+
         final Collection<Extension> extensionCopy = new ArrayList<>(list);
 
         final Iterator<Extension> it = list.iterator();

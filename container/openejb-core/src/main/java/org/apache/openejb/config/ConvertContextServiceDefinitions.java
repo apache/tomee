@@ -88,6 +88,9 @@ public class ConvertContextServiceDefinitions extends BaseConvertDefinitions {
         put(p, "Propagated", Join.join(",", contextService.getPropagated()));
         put(p, "Cleared", Join.join(",", contextService.getCleared()));
         put(p, "Unchanged", Join.join(",", contextService.getUnchanged()));
+        if (contextService.getQualifier() != null && !contextService.getQualifier().isEmpty()) {
+            put(p, "Qualifiers", Join.join(",", contextService.getQualifier()));
+        }
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());

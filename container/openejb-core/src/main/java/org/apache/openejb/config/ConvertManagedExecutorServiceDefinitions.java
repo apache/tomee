@@ -23,6 +23,8 @@ import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.ManagedExecutor;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
+import org.apache.openejb.util.Join;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -91,6 +93,9 @@ public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinit
         put(p, "HungTaskThreshold", managedExecutor.getHungTaskThreshold());
         put(p, "Max", managedExecutor.getMaxAsync());
         put(p, "Virtual", managedExecutor.getVirtual());
+        if (managedExecutor.getQualifier() != null && !managedExecutor.getQualifier().isEmpty()) {
+            put(p, "Qualifiers", Join.join(",", managedExecutor.getQualifier()));
+        }
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());
