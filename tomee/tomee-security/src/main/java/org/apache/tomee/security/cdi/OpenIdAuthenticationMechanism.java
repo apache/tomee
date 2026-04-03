@@ -243,11 +243,10 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
 
             if (definition.redirectToOriginalResource() && !matchesOriginalRequest) {
-                if (originalRequest == null) {
-                    throw new IllegalStateException("redirectToOriginalResource=true is configured but no original request has been stored before");
+                AuthenticationStatus redirectStatus = redirectToStoredOriginalRequest(request, messageContext, originalRequest);
+                if (redirectStatus != null) {
+                    return redirectStatus;
                 }
-
-                return messageContext.redirect(appendQueryString(originalRequest, request.getQueryString()));
             }
 
             // Callback is okay, continue with (4)
@@ -269,8 +268,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
                 // We're finished, restore original request now and clean up
                 if (definition.redirectToOriginalResource()) {
-                    String originalRequestJson = storageHandler.get(request, response, OpenIdStorageHandler.REQUEST_KEY);
-                    messageContext.withRequest(SavedRequest.fromJson(originalRequestJson).mask(request));
+                    restoreOriginalRequest(request, response, messageContext);
                 }
 
                 storageHandler.delete(request, response, OpenIdStorageHandler.NONCE_KEY);
@@ -282,6 +280,28 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
 
         return null;
+    }
+
+    protected AuthenticationStatus redirectToStoredOriginalRequest(HttpServletRequest request, HttpMessageContext messageContext,
+                                                                   String originalRequest) {
+        if (originalRequest == null) {
+            LOGGER.warning("redirectToOriginalResource=true is configured but no original request has been stored before; continuing without redirecting to the original resource");
+            return null;
+        }
+
+        return messageContext.redirect(appendQueryString(originalRequest, request.getQueryString()));
+    }
+
+    protected void restoreOriginalRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext messageContext) {
+        String originalRequestJson = storageHandler.get(request, response, OpenIdStorageHandler.REQUEST_KEY);
+        if (originalRequestJson == null) {
+            return;
+        }
+
+        SavedRequest savedRequest = SavedRequest.fromJson(originalRequestJson);
+        if (savedRequest != null) {
+            messageContext.withRequest(savedRequest.mask(request));
+        }
     }
 
     protected AuthenticationStatus handleTokenResponse(TokenResponse tokenResponse, HttpMessageContext httpMessageContext) {
