@@ -55,7 +55,9 @@ public class ManagedThreadFactoryImpl implements ManagedThreadFactory {
     public Thread newThread(final Runnable r) {
         final CURunnable wrapper = new CURunnable(r, contextService);
 
-        if (virtual) {
+        // Per spec: "When running on Java SE 17, the true value behaves the same as the
+        // false value and results in platform threads being created rather than virtual threads."
+        if (virtual && VirtualThreadHelper.isSupported()) {
             // Virtual threads do NOT implement ManageableThread (spec 3.4.4)
             // Priority and daemon settings are ignored for virtual threads
             final Thread thread = VirtualThreadHelper.newVirtualThread(prefix, ID.incrementAndGet(), wrapper);

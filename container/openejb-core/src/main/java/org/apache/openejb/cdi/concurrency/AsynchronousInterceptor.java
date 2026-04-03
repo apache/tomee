@@ -130,8 +130,9 @@ public class AsynchronousInterceptor {
         final ContextServiceImpl.Snapshot snapshot = ctxService.snapshot(null);
 
         // Per spec, scheduled async methods are NOT subject to maxAsync constraints.
-        // Use the default MSES's delegate for the trigger loop — it is not constrained
-        // by the referenced executor's maxAsync setting.
+        // Use the default MSES's delegate for both the trigger timer and method execution —
+        // it is not constrained by the referenced executor's maxAsync setting.
+        // Context propagation (security, TX, etc.) is handled via ContextService.snapshot/enter/exit.
         final ManagedScheduledExecutorServiceImpl defaultMses =
                 ManagedScheduledExecutorServiceImplFactory.lookup("java:comp/DefaultManagedScheduledExecutorService");
         final ScheduledExecutorService triggerDelegate = defaultMses.getDelegate();
