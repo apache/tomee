@@ -138,7 +138,7 @@
     <version.xbean>4.30</version.xbean>
     <version.groovy>2.4.21</version.groovy>
     <version.jetty>11.0.20</version.jetty>
-    <version.ehcache>3.11.1</version.ehcache>
+    <version.ehcache>3.12.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.12.0</junit.jupiter.version>
     <version.osgi.framework>4.2.0</version.osgi.framework>
