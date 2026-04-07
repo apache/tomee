@@ -33,6 +33,7 @@
     <jsonb-tck.version>3.0.0</jsonb-tck.version>
     <jsonp-tck.version>2.1.1</jsonp-tck.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+    <security-tck.version>4.0.0</security-tck.version>
   </properties>
 
   <modules>
@@ -53,6 +54,7 @@
     <module>jax-rs</module>
     <module>data-standalone</module>
     <module>data-signature-test</module>
+    <module>security-standalone</module>
   </modules>
 
   <build>
