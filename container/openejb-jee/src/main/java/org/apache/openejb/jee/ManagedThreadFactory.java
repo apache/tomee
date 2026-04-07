@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.jba.JndiName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -30,6 +31,8 @@ import java.util.List;
         "name",
         "contextService",
         "priority",
+        "virtual",
+        "qualifier",
         "properties"
 })
 public class ManagedThreadFactory implements Keyable<String> {
@@ -41,6 +44,10 @@ public class ManagedThreadFactory implements Keyable<String> {
     protected JndiName contextService;
     @XmlElement
     protected Integer priority;
+    @XmlElement
+    protected Boolean virtual;
+    @XmlElement
+    protected List<String> qualifier;
     @XmlElement(name = "property")
     protected List<Property> properties;
 
@@ -74,6 +81,25 @@ public class ManagedThreadFactory implements Keyable<String> {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public Boolean getVirtual() {
+        return virtual;
+    }
+
+    public void setVirtual(final Boolean virtual) {
+        this.virtual = virtual;
+    }
+
+    public List<String> getQualifier() {
+        if (qualifier == null) {
+            qualifier = new ArrayList<>();
+        }
+        return this.qualifier;
+    }
+
+    public void setQualifier(final List<String> qualifier) {
+        this.qualifier = qualifier;
     }
 
     public List<Property> getProperties() {

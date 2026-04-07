@@ -26,9 +26,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import jakarta.enterprise.concurrent.CronTrigger;
 import jakarta.enterprise.concurrent.LastExecution;
 import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
 import jakarta.enterprise.concurrent.Trigger;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -38,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ManagedScheduledExecutorServiceTest {
@@ -143,6 +146,65 @@ public class ManagedScheduledExecutorServiceTest {
             }
         }, 2, TimeUnit.SECONDS);
         assertEquals(6, TimeUnit.MILLISECONDS.toSeconds(future.get() - start), 1);
+    }
+
+    @Test
+    public void cronTriggerSchedule() throws Exception {
+        final ContextServiceImpl contextService = ContextServiceImplFactory.newDefaultContextService();
+        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create(contextService);
+        final CountDownLatch counter = new CountDownLatch(3);
+        final FutureAwareCallable callable = new FutureAwareCallable(counter);
+
+        // Use CronTrigger (API-provided ZonedTrigger) — every second
+        final CronTrigger cronTrigger = new CronTrigger("* * * * * *", ZoneId.systemDefault());
+
+        final ScheduledFuture<?> future = es.schedule(Runnable.class.cast(callable), cronTrigger);
+
+        assertFalse(future.isDone());
+        assertFalse(future.isCancelled());
+
+        // Should get 3 invocations within 5 seconds
+        counter.await(5, TimeUnit.SECONDS);
+
+        future.cancel(true);
+        assertEquals("Counter did not count down in time", 0L, counter.getCount());
+        assertTrue("Future should be done", future.isDone());
+        assertTrue("Future should be cancelled", future.isCancelled());
+    }
+
+    @Test
+    public void cronTriggerCallableSchedule() throws Exception {
+        final ContextServiceImpl contextService = ContextServiceImplFactory.newDefaultContextService();
+        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create(contextService);
+        final CountDownLatch counter = new CountDownLatch(3);
+        final FutureAwareCallable callable = new FutureAwareCallable(counter);
+
+        final CronTrigger cronTrigger = new CronTrigger("* * * * * *", ZoneId.systemDefault());
+
+        final Future<Long> future = es.schedule((Callable<Long>) callable, cronTrigger);
+
+        assertFalse(future.isDone());
+
+        counter.await(5, TimeUnit.SECONDS);
+
+        assertEquals("Future was not called", 0L, future.get().longValue());
+        future.cancel(true);
+        assertEquals("Counter did not count down in time", 0L, counter.getCount());
+    }
+
+    @Test
+    public void cronTriggerLastExecutionHasZonedDateTime() throws Exception {
+        final ContextServiceImpl contextService = ContextServiceImplFactory.newDefaultContextService();
+        final ManagedScheduledExecutorService es = new ManagedScheduledExecutorServiceImplFactory().create(contextService);
+        final CountDownLatch counter = new CountDownLatch(2);
+
+        final CronTrigger cronTrigger = new CronTrigger("* * * * * *", ZoneId.systemDefault());
+
+        final ScheduledFuture<?> future = es.schedule((Runnable) counter::countDown, cronTrigger);
+
+        // Wait for 2 invocations so LastExecution is populated
+        assertTrue("Should have 2 executions", counter.await(5, TimeUnit.SECONDS));
+        future.cancel(true);
     }
 
     protected static class FutureAwareCallable implements Callable<Long>, Runnable {

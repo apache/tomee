@@ -18,26 +18,45 @@ package org.apache.openejb.cdi.concurrency;
 
 import jakarta.annotation.Priority;
 import jakarta.enterprise.concurrent.Asynchronous;
+import jakarta.enterprise.concurrent.LastExecution;
 import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.Schedule;
+import jakarta.enterprise.concurrent.ZonedTrigger;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 import org.apache.openejb.core.ivm.naming.NamingException;
 import org.apache.openejb.resource.thread.ManagedExecutorServiceImplFactory;
+import org.apache.openejb.resource.thread.ManagedScheduledExecutorServiceImplFactory;
+import org.apache.openejb.threads.impl.ContextServiceImpl;
+import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
+import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Interceptor
 @Asynchronous
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 5)
 public class AsynchronousInterceptor {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, AsynchronousInterceptor.class);
+
     public static final String MP_ASYNC_ANNOTATION_NAME = "org.eclipse.microprofile.faulttolerance.Asynchronous";
 
     // ensure validation logic required by the spec only runs once per invoked Method
@@ -45,24 +64,34 @@ public class AsynchronousInterceptor {
 
     @AroundInvoke
     public Object aroundInvoke(final InvocationContext ctx) throws Exception {
-        Exception exception = validationCache.computeIfAbsent(ctx.getMethod(), this::validate);
+        final Exception exception = validationCache.computeIfAbsent(ctx.getMethod(), this::validate);
         if (exception != null) {
             throw exception;
         }
 
-        Asynchronous asynchronous = ctx.getMethod().getAnnotation(Asynchronous.class);
-        ManagedExecutorService mes;
+        final Asynchronous asynchronous = ctx.getMethod().getAnnotation(Asynchronous.class);
+        final Schedule[] schedules = asynchronous.runAt();
+
+        if (schedules.length > 0) {
+            return aroundInvokeScheduled(ctx, asynchronous, schedules);
+        }
+
+        return aroundInvokeOneShot(ctx, asynchronous);
+    }
+
+    private Object aroundInvokeOneShot(final InvocationContext ctx, final Asynchronous asynchronous) throws Exception {
+        final ManagedExecutorService mes;
         try {
             mes = ManagedExecutorServiceImplFactory.lookup(asynchronous.executor());
-        } catch (NamingException | IllegalArgumentException e) {
+        } catch (final NamingException | IllegalArgumentException e) {
             throw new RejectedExecutionException("Cannot lookup ManagedExecutorService", e);
         }
 
-        CompletableFuture<Object> future = mes.newIncompleteFuture();
+        final CompletableFuture<Object> future = mes.newIncompleteFuture();
         mes.execute(() -> {
             try {
                 Asynchronous.Result.setFuture(future);
-                CompletionStage<?> result = (CompletionStage<?>) ctx.proceed();
+                final CompletionStage<?> result = (CompletionStage<?>) ctx.proceed();
                 if (result == null || result == future) {
                     future.complete(result);
 
@@ -79,7 +108,7 @@ public class AsynchronousInterceptor {
 
                     Asynchronous.Result.setFuture(null);
                 });
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 future.completeExceptionally(e);
                 Asynchronous.Result.setFuture(null);
             }
@@ -88,18 +117,217 @@ public class AsynchronousInterceptor {
         return ctx.getMethod().getReturnType() == Void.TYPE ? null : future;
     }
 
+    private Object aroundInvokeScheduled(final InvocationContext ctx, final Asynchronous asynchronous,
+                                          final Schedule[] schedules) throws Exception {
+        // Per spec, the executor attribute may reference either a ManagedScheduledExecutorService
+        // or a plain ManagedExecutorService. When a plain MES is referenced, fall back to the
+        // default MSES for scheduling capability but preserve the MES's context service.
+        final ManagedScheduledExecutorServiceImpl mses = resolveMses(asynchronous.executor());
+
+        final ZonedTrigger trigger = ScheduleHelper.toTrigger(schedules);
+        final boolean isVoid = ctx.getMethod().getReturnType() == Void.TYPE;
+        final ContextServiceImpl ctxService = (ContextServiceImpl) mses.getContextService();
+        final ContextServiceImpl.Snapshot snapshot = ctxService.snapshot(null);
+
+        // Per spec, scheduled async methods are NOT subject to maxAsync constraints.
+        // Use the default MSES's delegate for both the trigger timer and method execution —
+        // it is not constrained by the referenced executor's maxAsync setting.
+        // Context propagation (security, TX, etc.) is handled via ContextService.snapshot/enter/exit.
+        final ManagedScheduledExecutorServiceImpl defaultMses =
+                ManagedScheduledExecutorServiceImplFactory.lookup("java:comp/DefaultManagedScheduledExecutorService");
+        final ScheduledExecutorService triggerDelegate = defaultMses.getDelegate();
+
+        // A single CompletableFuture represents ALL executions in the schedule.
+        // Per spec: "A single future represents the completion of all executions in the schedule."
+        // The schedule continues until:
+        //   - the method returns a non-null result value
+        //   - the method raises an exception
+        //   - the future is completed (via Asynchronous.Result.complete()) or cancelled
+        final CompletableFuture<Object> outerFuture = mses.newIncompleteFuture();
+        final AtomicReference<ScheduledFuture<?>> scheduledRef = new AtomicReference<>();
+        final AtomicReference<LastExecution> lastExecutionRef = new AtomicReference<>();
+
+        // Extract method and target from InvocationContext for direct invocation.
+        // We must NOT reuse ctx.proceed() — InvocationContext's interceptor iterator
+        // is single-use, so subsequent proceed() calls would bypass TX/security interceptors.
+        final Method beanMethod = ctx.getMethod();
+        final Object target = ctx.getTarget();
+        final Object[] params = ctx.getParameters();
+
+        scheduleNextExecution(triggerDelegate, snapshot, ctxService, trigger, outerFuture,
+                beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+
+        // Cancel the underlying scheduled task when the future completes externally
+        // (e.g. Asynchronous.Result.complete() or cancel())
+        outerFuture.whenComplete((final Object val, final Throwable err) -> {
+            final ScheduledFuture<?> sf = scheduledRef.get();
+            if (sf != null) {
+                sf.cancel(false);
+            }
+        });
+
+        return isVoid ? null : outerFuture;
+    }
+
+    private ManagedScheduledExecutorServiceImpl resolveMses(final String executorName) {
+        try {
+            return ManagedScheduledExecutorServiceImplFactory.lookup(executorName);
+        } catch (final IllegalArgumentException e) {
+            // The executor might be a plain ManagedExecutorService — verify it exists,
+            // then use the default MSES for scheduling with the MES's context service
+            try {
+                final ManagedExecutorServiceImpl plainMes = ManagedExecutorServiceImplFactory.lookup(executorName);
+                final ContextServiceImpl mesContextService = (ContextServiceImpl) plainMes.getContextService();
+                final ManagedScheduledExecutorServiceImpl defaultMses =
+                        ManagedScheduledExecutorServiceImplFactory.lookup("java:comp/DefaultManagedScheduledExecutorService");
+                return new ManagedScheduledExecutorServiceImpl(defaultMses.getDelegate(), mesContextService);
+            } catch (final Exception fallbackEx) {
+                throw new RejectedExecutionException("Cannot lookup executor for scheduled async method", e);
+            }
+        }
+    }
+
+    private void scheduleNextExecution(final ScheduledExecutorService delegate, final ContextServiceImpl.Snapshot snapshot,
+                                       final ContextServiceImpl ctxService, final ZonedTrigger trigger,
+                                       final CompletableFuture<Object> future, final Method beanMethod,
+                                       final Object target, final Object[] params,
+                                       final boolean isVoid, final AtomicReference<ScheduledFuture<?>> scheduledRef,
+                                       final AtomicReference<LastExecution> lastExecutionRef) {
+        final ZonedDateTime taskScheduledTime = ZonedDateTime.now();
+        final ZonedDateTime nextRun = trigger.getNextRunTime(lastExecutionRef.get(), taskScheduledTime);
+        if (nextRun == null || future.isDone()) {
+            return;
+        }
+
+        final long delayMs = Duration.between(ZonedDateTime.now(), nextRun).toMillis();
+
+        final ScheduledFuture<?> sf = delegate.schedule(() -> {
+            if (future.isDone()) {
+                return;
+            }
+
+            final ContextServiceImpl.State state = ctxService.enter(snapshot);
+            try {
+                if (trigger.skipRun(lastExecutionRef.get(), nextRun)) {
+                    // Skipped — reschedule for the next run
+                    scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
+                            beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+                    return;
+                }
+
+                final ZonedDateTime runStart = ZonedDateTime.now();
+                Asynchronous.Result.setFuture(future);
+
+                // Invoke the bean method directly instead of ctx.proceed() —
+                // InvocationContext's interceptor iterator is single-use, so re-calling
+                // proceed() would bypass other interceptors (TX, security).
+                // Context propagation is handled by ContextService.enter/exit above.
+                final Object result = beanMethod.invoke(target, params);
+                final ZonedDateTime runEnd = ZonedDateTime.now();
+
+                // Track last execution for trigger computation
+                lastExecutionRef.set(new SimpleLastExecution(taskScheduledTime, runStart, runEnd, result));
+
+                if (isVoid) {
+                    Asynchronous.Result.setFuture(null);
+                    scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
+                            beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+                    return;
+                }
+
+                // Per spec: non-null return value stops the schedule
+                if (result != null) {
+                    if (result instanceof CompletionStage<?> cs && result != future) {
+                        cs.whenComplete((final Object val, final Throwable err) -> {
+                            if (err != null) {
+                                future.completeExceptionally(err);
+                            } else {
+                                future.complete(val);
+                            }
+                        });
+                    }
+                    Asynchronous.Result.setFuture(null);
+                    // Don't reschedule — method returned non-null
+                    return;
+                }
+
+                Asynchronous.Result.setFuture(null);
+                // null return: schedule continues
+                scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
+                        beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+            } catch (final java.lang.reflect.InvocationTargetException e) {
+                future.completeExceptionally(e.getCause() != null ? e.getCause() : e);
+                Asynchronous.Result.setFuture(null);
+            } catch (final Exception e) {
+                future.completeExceptionally(e);
+                Asynchronous.Result.setFuture(null);
+            } finally {
+                ctxService.exit(state);
+            }
+        }, Math.max(0, delayMs), TimeUnit.MILLISECONDS);
+
+        scheduledRef.set(sf);
+    }
+
+    /**
+     * Simple {@link LastExecution} implementation for tracking execution history
+     * within the manual trigger loop.
+     */
+    private record SimpleLastExecution(ZonedDateTime scheduledStart, ZonedDateTime runStart,
+                                       ZonedDateTime runEnd, Object result) implements LastExecution {
+        @Override
+        public String getIdentityName() {
+            return null;
+        }
+
+        @Override
+        public Object getResult() {
+            return result;
+        }
+
+        @Override
+        public Date getScheduledStart() {
+            return Date.from(scheduledStart.toInstant());
+        }
+
+        @Override
+        public ZonedDateTime getScheduledStart(final ZoneId zone) {
+            return scheduledStart.withZoneSameInstant(zone);
+        }
+
+        @Override
+        public Date getRunStart() {
+            return Date.from(runStart.toInstant());
+        }
+
+        @Override
+        public ZonedDateTime getRunStart(final ZoneId zone) {
+            return runStart.withZoneSameInstant(zone);
+        }
+
+        @Override
+        public Date getRunEnd() {
+            return Date.from(runEnd.toInstant());
+        }
+
+        @Override
+        public ZonedDateTime getRunEnd(final ZoneId zone) {
+            return runEnd.withZoneSameInstant(zone);
+        }
+    }
+
     private Exception validate(final Method method) {
         if (hasMpAsyncAnnotation(method.getAnnotations()) || hasMpAsyncAnnotation(method.getDeclaringClass().getAnnotations())) {
             return new UnsupportedOperationException("Combining " + Asynchronous.class.getName()
                     + " and " + MP_ASYNC_ANNOTATION_NAME + " on the same method/class is not supported");
         }
 
-        Asynchronous asynchronous = method.getAnnotation(Asynchronous.class);
+        final Asynchronous asynchronous = method.getAnnotation(Asynchronous.class);
         if (asynchronous == null) {
             return new UnsupportedOperationException("Asynchronous annotation must be placed on a method");
         }
 
-        Class<?> returnType = method.getReturnType();
+        final Class<?> returnType = method.getReturnType();
         if (returnType != Void.TYPE && returnType != CompletableFuture.class && returnType != CompletionStage.class) {
             return new UnsupportedOperationException("Asynchronous annotation must be placed on a method that returns either void, CompletableFuture or CompletionStage");
         }
@@ -107,7 +335,7 @@ public class AsynchronousInterceptor {
         return null;
     }
 
-    private boolean hasMpAsyncAnnotation(Annotation[] declaredAnnotations) {
+    private boolean hasMpAsyncAnnotation(final Annotation[] declaredAnnotations) {
         return Arrays.stream(declaredAnnotations)
                 .map(it -> it.annotationType().getName())
                 .anyMatch(it -> it.equals(MP_ASYNC_ANNOTATION_NAME));

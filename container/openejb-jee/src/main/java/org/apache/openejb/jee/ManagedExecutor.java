@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.jba.JndiName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -31,6 +32,8 @@ import java.util.List;
         "contextService",
         "hungTaskThreshold",
         "maxAsync",
+        "virtual",
+        "qualifier",
         "properties"
 })
 public class ManagedExecutor implements Keyable<String> {
@@ -44,6 +47,10 @@ public class ManagedExecutor implements Keyable<String> {
     protected Long hungTaskThreshold;
     @XmlElement(name = "max-async")
     protected Integer maxAsync;
+    @XmlElement
+    protected Boolean virtual;
+    @XmlElement
+    protected List<String> qualifier;
     @XmlElement(name = "properties")
     protected List<Property> properties;
 
@@ -85,6 +92,25 @@ public class ManagedExecutor implements Keyable<String> {
 
     public void setMaxAsync(Integer maxAsync) {
         this.maxAsync = maxAsync;
+    }
+
+    public Boolean getVirtual() {
+        return virtual;
+    }
+
+    public void setVirtual(final Boolean virtual) {
+        this.virtual = virtual;
+    }
+
+    public List<String> getQualifier() {
+        if (qualifier == null) {
+            qualifier = new ArrayList<>();
+        }
+        return this.qualifier;
+    }
+
+    public void setQualifier(final List<String> qualifier) {
+        this.qualifier = qualifier;
     }
 
     public List<Property> getProperties() {

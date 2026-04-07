@@ -4127,6 +4127,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 contextService.getUnchanged().addAll(Arrays.asList(definition.unchanged()));
             }
 
+            if (contextService.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    contextService.getQualifier().add(qualifier.getName());
+                }
+            }
+
             consumer.getContextServiceMap().put(definition.name(), contextService);
         }
 
@@ -4140,6 +4146,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             managedExecutor.getContextService().setvalue(definition.context());
             managedExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
             managedExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            managedExecutor.setVirtual(definition.virtual() ? Boolean.TRUE : null);
+
+            if (managedExecutor.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    managedExecutor.getQualifier().add(qualifier.getName());
+                }
+            }
 
             consumer.getManagedExecutorMap().put(definition.name(), managedExecutor);
         }
@@ -4154,6 +4167,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             managedScheduledExecutor.getContextService().setvalue(definition.context());
             managedScheduledExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
             managedScheduledExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            managedScheduledExecutor.setVirtual(definition.virtual() ? Boolean.TRUE : null);
+
+            if (managedScheduledExecutor.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    managedScheduledExecutor.getQualifier().add(qualifier.getName());
+                }
+            }
 
             consumer.getManagedScheduledExecutorMap().put(definition.name(), managedScheduledExecutor);
         }
@@ -4167,6 +4187,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             managedThreadFactory.setContextService(new JndiName());
             managedThreadFactory.getContextService().setvalue(definition.context());
             managedThreadFactory.setPriority(definition.priority());
+            managedThreadFactory.setVirtual(definition.virtual() ? Boolean.TRUE : null);
+
+            if (managedThreadFactory.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    managedThreadFactory.getQualifier().add(qualifier.getName());
+                }
+            }
 
             consumer.getManagedThreadFactoryMap().put(definition.name(), managedThreadFactory);
         }

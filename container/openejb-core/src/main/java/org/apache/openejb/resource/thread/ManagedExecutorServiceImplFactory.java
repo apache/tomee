@@ -23,6 +23,7 @@ import org.apache.openejb.threads.impl.ContextServiceImpl;
 import org.apache.openejb.threads.impl.ContextServiceImplFactory;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
+import org.apache.openejb.threads.impl.VirtualThreadHelper;
 import org.apache.openejb.threads.reject.CURejectHandler;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
@@ -36,6 +37,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class ManagedExecutorServiceImplFactory {
@@ -44,6 +46,7 @@ public class ManagedExecutorServiceImplFactory {
     private Duration keepAlive = new Duration("5 second");
     private int queue = 15;
     private String threadFactory;
+    private boolean virtual;
 
     private String context;
 
@@ -78,6 +81,13 @@ public class ManagedExecutorServiceImplFactory {
     }
 
     private ExecutorService createExecutorService() {
+        // Per spec: "When running on Java SE 17, the true value behaves the same as the
+        // false value and results in platform threads being created rather than virtual threads."
+        if (virtual && VirtualThreadHelper.isSupported()) {
+            final ThreadFactory vtFactory = VirtualThreadHelper.newVirtualThreadFactory(ManagedThreadFactoryImpl.DEFAULT_PREFIX);
+            return VirtualThreadHelper.newVirtualThreadPerTaskExecutor(vtFactory);
+        }
+
         final BlockingQueue<Runnable> blockingQueue;
         if (queue < 0) {
             blockingQueue = new LinkedBlockingQueue<>();
@@ -133,5 +143,13 @@ public class ManagedExecutorServiceImplFactory {
 
     public void setContext(final String context) {
         this.context = context;
+    }
+
+    public boolean isVirtual() {
+        return virtual;
+    }
+
+    public void setVirtual(final boolean virtual) {
+        this.virtual = virtual;
     }
 }
