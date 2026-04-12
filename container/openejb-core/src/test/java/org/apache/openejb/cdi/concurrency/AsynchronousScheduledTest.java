@@ -16,10 +16,15 @@
  */
 package org.apache.openejb.cdi.concurrency;
 
+import jakarta.annotation.Priority;
 import jakarta.enterprise.concurrent.Asynchronous;
 import jakarta.enterprise.concurrent.Schedule;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InterceptorBinding;
+import jakarta.interceptor.InvocationContext;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -27,11 +32,16 @@ import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
@@ -48,7 +58,7 @@ public class AsynchronousScheduledTest {
 
     @Module
     public Class<?>[] beans() {
-        return new Class<?>[]{ScheduledBean.class};
+        return new Class<?>[]{ScheduledBean.class, CountingInterceptor.class};
     }
 
     @Test
@@ -73,6 +83,23 @@ public class AsynchronousScheduledTest {
                 + ScheduledBean.RETURNING_COUNTER.get(), reached);
     }
 
+    @Test
+    public void scheduledMethodExecutesThroughCdiInterceptor() throws Exception {
+        CountingInterceptor.INVOCATIONS.set(0);
+        assertEquals("Control invocation should go through the CDI interceptor", "ok", scheduledBean.directInterceptedCall());
+        assertEquals("Control invocation should increment the CDI interceptor", 1, CountingInterceptor.INVOCATIONS.get());
+
+        ScheduledBean.INTERCEPTED_COUNTER.set(0);
+        CountingInterceptor.INVOCATIONS.set(0);
+
+        final CompletableFuture<Integer> future = scheduledBean.everySecondIntercepted(2);
+        final Integer result = future.get(15, TimeUnit.SECONDS);
+
+        assertEquals("Scheduled method should complete after 2 runs", Integer.valueOf(2), result);
+        assertEquals("Business method should have been invoked twice", 2, ScheduledBean.INTERCEPTED_COUNTER.get());
+        assertEquals("CDI interceptor should run for each scheduled firing", 2, CountingInterceptor.INVOCATIONS.get());
+    }
+
     @ApplicationScoped
     public static class ScheduledBean {
         static final AtomicInteger VOID_COUNTER = new AtomicInteger();
@@ -80,6 +107,7 @@ public class AsynchronousScheduledTest {
 
         static final AtomicInteger RETURNING_COUNTER = new AtomicInteger();
         static final CountDownLatch RETURNING_LATCH = new CountDownLatch(1);
+        static final AtomicInteger INTERCEPTED_COUNTER = new AtomicInteger();
 
         @Asynchronous(runAt = @Schedule(cron = "* * * * * *"))
         public void everySecondVoid() {
@@ -92,6 +120,43 @@ public class AsynchronousScheduledTest {
             RETURNING_COUNTER.incrementAndGet();
             RETURNING_LATCH.countDown();
             return Asynchronous.Result.complete("done");
+        }
+
+        @Counted
+        public String directInterceptedCall() {
+            return "ok";
+        }
+
+        @Counted
+        @Asynchronous(runAt = @Schedule(cron = "* * * * * *"))
+        public CompletableFuture<Integer> everySecondIntercepted(final int runs) {
+            final int count = INTERCEPTED_COUNTER.incrementAndGet();
+            if (count < runs) {
+                return null;
+            }
+
+            final CompletableFuture<Integer> future = Asynchronous.Result.getFuture();
+            future.complete(count);
+            return future;
+        }
+    }
+
+    @InterceptorBinding
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Counted {
+    }
+
+    @Interceptor
+    @Counted
+    @Priority(Interceptor.Priority.APPLICATION)
+    public static class CountingInterceptor {
+        static final AtomicInteger INVOCATIONS = new AtomicInteger();
+
+        @AroundInvoke
+        public Object aroundInvoke(final InvocationContext context) throws Exception {
+            INVOCATIONS.incrementAndGet();
+            return context.proceed();
         }
     }
 
