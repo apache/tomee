@@ -59,7 +59,6 @@ public class WebappBeanManager extends BeanManagerImpl {
         super(ctx);
         webappCtx = ctx;
         deploymentBeans = super.getBeans(); // use the parent one while starting
-        Reflections.set(this, "injectionResolver", new WebAppInjectionResolver(ctx));
         filter = new InheritedBeanFilter(this);
     }
 
