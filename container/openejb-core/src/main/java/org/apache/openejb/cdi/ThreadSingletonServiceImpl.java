@@ -126,7 +126,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         //from CDI builder
         properties.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
         properties.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
-        properties.setProperty(OpenWebBeansConfiguration.APPLICATION_SUPPORTS_CONVERSATION, "true");
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
         final boolean tomee = SystemInstance.get().getProperty("openejb.loader", "foo").startsWith("tomcat");
@@ -252,8 +251,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
             }
 
             // we want the same reference as the ContextsService if that's our impl
-            if (webBeansContext.getOpenWebBeansConfiguration().supportsConversation()
-                && "org.apache.webbeans.jsf.DefaultConversationService".equals(webBeansContext.getOpenWebBeansConfiguration().getProperty(ConversationService.class.getName()))) {
+            if ("org.apache.webbeans.jsf.DefaultConversationService".equals(webBeansContext.getOpenWebBeansConfiguration().getProperty(ConversationService.class.getName()))) {
                 webBeansContext.registerService(ConversationService.class, ConversationService.class.cast(webBeansContext.getService(ContextsService.class)));
             }
 
