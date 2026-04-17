@@ -18,6 +18,7 @@ package org.apache.openejb.threads.impl;
 
 import jakarta.enterprise.concurrent.ManageableThread;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.thread.ManagedScheduledExecutorServiceImplFactory;
 import org.apache.openejb.ri.sp.PseudoSecurityService;
 import org.apache.openejb.spi.SecurityService;
 import org.junit.AfterClass;
@@ -27,6 +28,8 @@ import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
@@ -120,5 +123,49 @@ public class ManagedThreadFactoryVirtualTest {
 
         final ManagedThreadFactoryImpl virtualFactory = new ManagedThreadFactoryImpl("v-", null, contextService, true);
         assertTrue(virtualFactory.isVirtual());
+    }
+
+    /**
+     * Regression: the default-factory branch in
+     * {@link ManagedScheduledExecutorServiceImplFactory#create()} used to instantiate
+     * {@code ManagedThreadFactoryImpl} via reflection on its no-arg constructor, which
+     * hard-codes {@code virtual=false}. As a result, {@code virtual=true} on the factory
+     * was silently ignored unless reflection failed and the catch block kicked in.
+     */
+    @Test
+    public void scheduledFactoryHonorsVirtualFlagOnDefaultThreadFactoryPath() throws Exception {
+        Assume.assumeTrue("Virtual threads require Java 21+", VirtualThreadHelper.isSupported());
+
+        final ManagedScheduledExecutorServiceImplFactory factory = new ManagedScheduledExecutorServiceImplFactory();
+        factory.setVirtual(true);
+        final ManagedScheduledExecutorServiceImpl mses = factory.create();
+        try {
+            // Per Concurrency 3.1 §3.4.4 virtual threads do NOT implement ManageableThread.
+            final Future<Boolean> future = mses.submit(() -> !(Thread.currentThread() instanceof ManageableThread));
+            assertTrue("Scheduled factory with virtual=true must produce virtual threads",
+                    future.get(5, TimeUnit.SECONDS));
+        } finally {
+            shutdown(mses);
+        }
+    }
+
+    @Test
+    public void scheduledFactoryDefaultsToPlatformThreads() throws Exception {
+        final ManagedScheduledExecutorServiceImplFactory factory = new ManagedScheduledExecutorServiceImplFactory();
+        final ManagedScheduledExecutorServiceImpl mses = factory.create();
+        try {
+            final Future<Boolean> future = mses.submit(() -> Thread.currentThread() instanceof ManageableThread);
+            assertTrue("Default scheduled factory must produce platform (ManageableThread) threads",
+                    future.get(5, TimeUnit.SECONDS));
+        } finally {
+            shutdown(mses);
+        }
+    }
+
+    private static void shutdown(final ManagedScheduledExecutorServiceImpl mses) {
+        final ScheduledExecutorService delegate = mses.getDelegate();
+        if (delegate != null) {
+            delegate.shutdownNow();
+        }
     }
 }

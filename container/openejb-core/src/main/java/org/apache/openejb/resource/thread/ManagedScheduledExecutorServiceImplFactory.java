@@ -104,7 +104,11 @@ public class ManagedScheduledExecutorServiceImplFactory {
     private ScheduledExecutorService createScheduledExecutorService() {
         ManagedThreadFactory managedThreadFactory;
         try {
-            managedThreadFactory = ThreadFactories.findThreadFactory(threadFactory);
+            // For the default factory, bypass reflective instantiation so the configured
+            // virtual flag is honored — the no-arg constructor hardcodes virtual=false.
+            managedThreadFactory = ManagedThreadFactoryImpl.class.getName().equals(threadFactory) ?
+                    new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context), virtual) :
+                    ThreadFactories.findThreadFactory(threadFactory);
         } catch (final Exception e) {
             Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImplFactory.class).warning("Unable to create configured thread factory: " + threadFactory, e);
             managedThreadFactory = new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context), virtual);
