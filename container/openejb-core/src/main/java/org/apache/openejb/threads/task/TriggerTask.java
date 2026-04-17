@@ -142,6 +142,10 @@ public abstract class TriggerTask<T> extends CUTask<T> {
         }
     }
 
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
     private static class LastExecutionImpl implements LastExecution {
         private final String identityName;
         private final Object result;

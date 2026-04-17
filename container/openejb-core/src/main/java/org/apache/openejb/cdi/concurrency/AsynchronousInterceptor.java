@@ -135,8 +135,9 @@ public class AsynchronousInterceptor {
         final ContextServiceImpl.Snapshot snapshot = ctxService.snapshot(null);
 
         // Run scheduled firings on the requested executor so the user's thread factory,
-        // priorities, and virtual-thread settings apply.
-        final ScheduledExecutorService triggerDelegate = mses.getDelegate();
+        // priorities, and virtual-thread settings apply. Use the secondary pool so firings
+        // are not throttled by maxAsync (per Concurrency 3.1 §3.1).
+        final ScheduledExecutorService triggerDelegate = mses.getScheduledAsyncDelegate();
 
         // A single CompletableFuture represents ALL executions in the schedule.
         // Per spec: "A single future represents the completion of all executions in the schedule."
@@ -177,7 +178,10 @@ public class AsynchronousInterceptor {
                 final ContextServiceImpl mesContextService = (ContextServiceImpl) plainMes.getContextService();
                 final ManagedScheduledExecutorServiceImpl defaultMses =
                         ManagedScheduledExecutorServiceImplFactory.lookup("java:comp/DefaultManagedScheduledExecutorService");
-                return new ManagedScheduledExecutorServiceImpl(defaultMses.getDelegate(), mesContextService);
+                // Borrow the default MSES's secondary pool so this short-lived wrapper does not
+                // leak a fresh ScheduledThreadPoolExecutor per invocation. ownsScheduledAsyncDelegate=false.
+                return new ManagedScheduledExecutorServiceImpl(defaultMses.getDelegate(), mesContextService,
+                        defaultMses.getScheduledAsyncDelegate(), false);
             } catch (final Exception fallbackEx) {
                 throw new RejectedExecutionException("Cannot lookup executor for scheduled async method", e);
             }

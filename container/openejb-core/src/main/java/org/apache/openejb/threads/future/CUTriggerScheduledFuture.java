@@ -45,6 +45,17 @@ public class CUTriggerScheduledFuture<V> extends CUScheduledFuture<V> {
     }
 
     @Override
+    public boolean isCancelled() {
+        // Also honour the TriggerTask's cancelled flag. The underlying delegate future
+        // reachable through the facade can point at the just-completed execution if
+        // cancel() raced ahead of the recursive scheduleNextRun(); in that case cancel()
+        // set cancelled=true on the TriggerTask but the delegate future reports done
+        // rather than cancelled. Without this override, isCancelled() would return false
+        // for a future the caller explicitly cancelled.
+        return super.isCancelled() || ((TriggerTask<V>) listener).isCancelled();
+    }
+
+    @Override
     public V get() throws InterruptedException, ExecutionException {
         V result = super.get();
         if (((TriggerTask<V>) listener).isSkipped()) {
