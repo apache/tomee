@@ -4127,6 +4127,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 contextService.getUnchanged().addAll(Arrays.asList(definition.unchanged()));
             }
 
+            if (contextService.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    contextService.getQualifier().add(qualifier.getName());
+                }
+            }
+
             consumer.getContextServiceMap().put(definition.name(), contextService);
         }
 
@@ -4134,12 +4140,35 @@ public class AnnotationDeployer implements DynamicDeployer {
             ManagedExecutor existing = consumer.getManagedExecutorMap().get(definition.name());
             final ManagedExecutor managedExecutor = (existing != null) ? existing : new ManagedExecutor();
 
-            managedExecutor.setName(new JndiName());
-            managedExecutor.getName().setvalue(definition.name());
-            managedExecutor.setContextService(new JndiName());
-            managedExecutor.getContextService().setvalue(definition.context());
-            managedExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
-            managedExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            if (managedExecutor.getName() == null) {
+                final JndiName jndiName = new JndiName();
+                jndiName.setvalue(definition.name());
+                managedExecutor.setName(jndiName);
+            }
+
+            if (managedExecutor.getContextService() == null) {
+                final JndiName contextName = new JndiName();
+                contextName.setvalue(definition.context());
+                managedExecutor.setContextService(contextName);
+            }
+
+            if (managedExecutor.getHungTaskThreshold() == null) {
+                managedExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
+            }
+
+            if (managedExecutor.getMaxAsync() == null) {
+                managedExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            }
+
+            if (managedExecutor.getVirtual() == null) {
+                managedExecutor.setVirtual(definition.virtual() ? Boolean.TRUE : null);
+            }
+
+            if (managedExecutor.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    managedExecutor.getQualifier().add(qualifier.getName());
+                }
+            }
 
             consumer.getManagedExecutorMap().put(definition.name(), managedExecutor);
         }
@@ -4148,12 +4177,35 @@ public class AnnotationDeployer implements DynamicDeployer {
             ManagedScheduledExecutor existing = consumer.getManagedScheduledExecutorMap().get(definition.name());
             final ManagedScheduledExecutor managedScheduledExecutor = (existing != null) ? existing : new ManagedScheduledExecutor();
 
-            managedScheduledExecutor.setName(new JndiName());
-            managedScheduledExecutor.getName().setvalue(definition.name());
-            managedScheduledExecutor.setContextService(new JndiName());
-            managedScheduledExecutor.getContextService().setvalue(definition.context());
-            managedScheduledExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
-            managedScheduledExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            if (managedScheduledExecutor.getName() == null) {
+                final JndiName jndiName = new JndiName();
+                jndiName.setvalue(definition.name());
+                managedScheduledExecutor.setName(jndiName);
+            }
+
+            if (managedScheduledExecutor.getContextService() == null) {
+                final JndiName contextName = new JndiName();
+                contextName.setvalue(definition.context());
+                managedScheduledExecutor.setContextService(contextName);
+            }
+
+            if (managedScheduledExecutor.getHungTaskThreshold() == null) {
+                managedScheduledExecutor.setHungTaskThreshold(definition.hungTaskThreshold());
+            }
+
+            if (managedScheduledExecutor.getMaxAsync() == null) {
+                managedScheduledExecutor.setMaxAsync(definition.maxAsync() == -1 ? null : definition.maxAsync());
+            }
+
+            if (managedScheduledExecutor.getVirtual() == null) {
+                managedScheduledExecutor.setVirtual(definition.virtual() ? Boolean.TRUE : null);
+            }
+
+            if (managedScheduledExecutor.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    managedScheduledExecutor.getQualifier().add(qualifier.getName());
+                }
+            }
 
             consumer.getManagedScheduledExecutorMap().put(definition.name(), managedScheduledExecutor);
         }
@@ -4162,11 +4214,31 @@ public class AnnotationDeployer implements DynamicDeployer {
             ManagedThreadFactory existing = consumer.getManagedThreadFactoryMap().get(definition.name());
             final ManagedThreadFactory managedThreadFactory = (existing != null) ? existing : new ManagedThreadFactory();
 
-            managedThreadFactory.setName(new JndiName());
-            managedThreadFactory.getName().setvalue(definition.name());
-            managedThreadFactory.setContextService(new JndiName());
-            managedThreadFactory.getContextService().setvalue(definition.context());
-            managedThreadFactory.setPriority(definition.priority());
+            if (managedThreadFactory.getName() == null) {
+                final JndiName jndiName = new JndiName();
+                jndiName.setvalue(definition.name());
+                managedThreadFactory.setName(jndiName);
+            }
+
+            if (managedThreadFactory.getContextService() == null) {
+                final JndiName contextName = new JndiName();
+                contextName.setvalue(definition.context());
+                managedThreadFactory.setContextService(contextName);
+            }
+
+            if (managedThreadFactory.getPriority() == null) {
+                managedThreadFactory.setPriority(definition.priority());
+            }
+
+            if (managedThreadFactory.getVirtual() == null) {
+                managedThreadFactory.setVirtual(definition.virtual() ? Boolean.TRUE : null);
+            }
+
+            if (managedThreadFactory.getQualifier().isEmpty() && definition.qualifiers().length > 0) {
+                for (final Class<?> qualifier : definition.qualifiers()) {
+                    managedThreadFactory.getQualifier().add(qualifier.getName());
+                }
+            }
 
             consumer.getManagedThreadFactoryMap().put(definition.name(), managedThreadFactory);
         }
