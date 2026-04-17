@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.threads.impl;
 
-import org.junit.Assume;
+import org.apache.openejb.junit.jre.EnabledForJreRange;
+import org.apache.openejb.junit.jre.JreConditionRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
@@ -31,18 +33,12 @@ import static org.junit.Assert.fail;
 
 public class VirtualThreadHelperTest {
 
-    @Test
-    public void isSupportedReturnsConsistentValue() {
-        // Just verify it doesn't throw — result depends on JVM version
-        final boolean supported = VirtualThreadHelper.isSupported();
-        // On Java 21+ should be true, on 17 false
-        assertNotNull("isSupported should return a value", Boolean.valueOf(supported));
-    }
+    @Rule
+    public final JreConditionRule jreCondition = new JreConditionRule();
 
     @Test
+    @EnabledForJreRange(min = 21)
     public void newVirtualThreadCreatesThread() {
-        Assume.assumeTrue("Virtual threads require Java 21+", VirtualThreadHelper.isSupported());
-
         final CountDownLatch latch = new CountDownLatch(1);
         final Thread thread = VirtualThreadHelper.newVirtualThread("test-vt-", 1, latch::countDown);
 
@@ -59,9 +55,8 @@ public class VirtualThreadHelperTest {
     }
 
     @Test
+    @EnabledForJreRange(min = 21)
     public void newVirtualThreadFactoryCreatesThreads() {
-        Assume.assumeTrue("Virtual threads require Java 21+", VirtualThreadHelper.isSupported());
-
         final ThreadFactory factory = VirtualThreadHelper.newVirtualThreadFactory("test-vtf-");
         assertNotNull(factory);
 
@@ -79,9 +74,8 @@ public class VirtualThreadHelperTest {
     }
 
     @Test
+    @EnabledForJreRange(min = 21)
     public void newVirtualThreadPerTaskExecutorWorks() {
-        Assume.assumeTrue("Virtual threads require Java 21+", VirtualThreadHelper.isSupported());
-
         final ThreadFactory factory = VirtualThreadHelper.newVirtualThreadFactory("test-vtpe-");
         final ExecutorService executor = VirtualThreadHelper.newVirtualThreadPerTaskExecutor(factory);
         assertNotNull(executor);
@@ -102,16 +96,14 @@ public class VirtualThreadHelperTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
+    @EnabledForJreRange(max = 20)
     public void newVirtualThreadThrowsOnUnsupported() {
-        Assume.assumeFalse("Only run on Java < 21", VirtualThreadHelper.isSupported());
-
         VirtualThreadHelper.newVirtualThread("test-", 1, () -> {});
     }
 
     @Test(expected = UnsupportedOperationException.class)
+    @EnabledForJreRange(max = 20)
     public void newVirtualThreadFactoryThrowsOnUnsupported() {
-        Assume.assumeFalse("Only run on Java < 21", VirtualThreadHelper.isSupported());
-
         VirtualThreadHelper.newVirtualThreadFactory("test-");
     }
 }
