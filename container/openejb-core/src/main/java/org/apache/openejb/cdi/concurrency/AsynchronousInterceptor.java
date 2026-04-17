@@ -58,6 +58,7 @@ public class AsynchronousInterceptor {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, AsynchronousInterceptor.class);
 
     public static final String MP_ASYNC_ANNOTATION_NAME = "org.eclipse.microprofile.faulttolerance.Asynchronous";
+    private static final ScheduledAsyncInvoker SCHEDULED_ASYNC_INVOKER = new ScheduledAsyncInvoker();
 
     // ensure validation logic required by the spec only runs once per invoked Method
     private final Map<Method, Exception> validationCache = new ConcurrentHashMap<>();
@@ -67,6 +68,10 @@ public class AsynchronousInterceptor {
         final Exception exception = validationCache.computeIfAbsent(ctx.getMethod(), this::validate);
         if (exception != null) {
             throw exception;
+        }
+
+        if (SCHEDULED_ASYNC_INVOKER.isReentry(ctx)) {
+            return ctx.proceed();
         }
 
         final Asynchronous asynchronous = ctx.getMethod().getAnnotation(Asynchronous.class);
@@ -129,13 +134,9 @@ public class AsynchronousInterceptor {
         final ContextServiceImpl ctxService = (ContextServiceImpl) mses.getContextService();
         final ContextServiceImpl.Snapshot snapshot = ctxService.snapshot(null);
 
-        // Per spec, scheduled async methods are NOT subject to maxAsync constraints.
-        // Use the default MSES's delegate for both the trigger timer and method execution —
-        // it is not constrained by the referenced executor's maxAsync setting.
-        // Context propagation (security, TX, etc.) is handled via ContextService.snapshot/enter/exit.
-        final ManagedScheduledExecutorServiceImpl defaultMses =
-                ManagedScheduledExecutorServiceImplFactory.lookup("java:comp/DefaultManagedScheduledExecutorService");
-        final ScheduledExecutorService triggerDelegate = defaultMses.getDelegate();
+        // Run scheduled firings on the requested executor so the user's thread factory,
+        // priorities, and virtual-thread settings apply.
+        final ScheduledExecutorService triggerDelegate = mses.getDelegate();
 
         // A single CompletableFuture represents ALL executions in the schedule.
         // Per spec: "A single future represents the completion of all executions in the schedule."
@@ -147,15 +148,10 @@ public class AsynchronousInterceptor {
         final AtomicReference<ScheduledFuture<?>> scheduledRef = new AtomicReference<>();
         final AtomicReference<LastExecution> lastExecutionRef = new AtomicReference<>();
 
-        // Extract method and target from InvocationContext for direct invocation.
-        // We must NOT reuse ctx.proceed() — InvocationContext's interceptor iterator
-        // is single-use, so subsequent proceed() calls would bypass TX/security interceptors.
-        final Method beanMethod = ctx.getMethod();
-        final Object target = ctx.getTarget();
-        final Object[] params = ctx.getParameters();
+        final ScheduledAsyncInvoker.Invocation scheduledInvocation = SCHEDULED_ASYNC_INVOKER.capture(ctx);
 
         scheduleNextExecution(triggerDelegate, snapshot, ctxService, trigger, outerFuture,
-                beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+                scheduledInvocation, isVoid, scheduledRef, lastExecutionRef);
 
         // Cancel the underlying scheduled task when the future completes externally
         // (e.g. Asynchronous.Result.complete() or cancel())
@@ -164,6 +160,7 @@ public class AsynchronousInterceptor {
             if (sf != null) {
                 sf.cancel(false);
             }
+            scheduledInvocation.release();
         });
 
         return isVoid ? null : outerFuture;
@@ -189,8 +186,8 @@ public class AsynchronousInterceptor {
 
     private void scheduleNextExecution(final ScheduledExecutorService delegate, final ContextServiceImpl.Snapshot snapshot,
                                        final ContextServiceImpl ctxService, final ZonedTrigger trigger,
-                                       final CompletableFuture<Object> future, final Method beanMethod,
-                                       final Object target, final Object[] params,
+                                       final CompletableFuture<Object> future,
+                                       final ScheduledAsyncInvoker.Invocation scheduledInvocation,
                                        final boolean isVoid, final AtomicReference<ScheduledFuture<?>> scheduledRef,
                                        final AtomicReference<LastExecution> lastExecutionRef) {
         final ZonedDateTime taskScheduledTime = ZonedDateTime.now();
@@ -211,18 +208,14 @@ public class AsynchronousInterceptor {
                 if (trigger.skipRun(lastExecutionRef.get(), nextRun)) {
                     // Skipped — reschedule for the next run
                     scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
-                            beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+                            scheduledInvocation, isVoid, scheduledRef, lastExecutionRef);
                     return;
                 }
 
                 final ZonedDateTime runStart = ZonedDateTime.now();
                 Asynchronous.Result.setFuture(future);
 
-                // Invoke the bean method directly instead of ctx.proceed() —
-                // InvocationContext's interceptor iterator is single-use, so re-calling
-                // proceed() would bypass other interceptors (TX, security).
-                // Context propagation is handled by ContextService.enter/exit above.
-                final Object result = beanMethod.invoke(target, params);
+                final Object result = scheduledInvocation.proceed();
                 final ZonedDateTime runEnd = ZonedDateTime.now();
 
                 // Track last execution for trigger computation
@@ -231,7 +224,7 @@ public class AsynchronousInterceptor {
                 if (isVoid) {
                     Asynchronous.Result.setFuture(null);
                     scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
-                            beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+                            scheduledInvocation, isVoid, scheduledRef, lastExecutionRef);
                     return;
                 }
 
@@ -254,7 +247,7 @@ public class AsynchronousInterceptor {
                 Asynchronous.Result.setFuture(null);
                 // null return: schedule continues
                 scheduleNextExecution(delegate, snapshot, ctxService, trigger, future,
-                        beanMethod, target, params, isVoid, scheduledRef, lastExecutionRef);
+                        scheduledInvocation, isVoid, scheduledRef, lastExecutionRef);
             } catch (final java.lang.reflect.InvocationTargetException e) {
                 future.completeExceptionally(e.getCause() != null ? e.getCause() : e);
                 Asynchronous.Result.setFuture(null);
