@@ -36,7 +36,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,7 +61,8 @@ public class AsynchronousScheduledTest {
 
     @Module
     public Class<?>[] beans() {
-        return new Class<?>[]{ScheduledBean.class, CountingInterceptor.class};
+        return new Class<?>[]{ScheduledBean.class, CountingInterceptor.class,
+                TracingOuterInterceptor.class, TracingInnerInterceptor.class};
     }
 
     @Test
@@ -100,6 +104,24 @@ public class AsynchronousScheduledTest {
         assertEquals("CDI interceptor should run for each scheduled firing", 2, CountingInterceptor.INVOCATIONS.get());
     }
 
+    @Test
+    public void scheduledMethodPreservesInterceptorOrderingOnEveryFiring() throws Exception {
+        ScheduledBean.TRACE.clear();
+        ScheduledBean.TRACED_COUNTER.set(0);
+
+        final CompletableFuture<Integer> future = scheduledBean.tracedSchedule(2);
+        final Integer result = future.get(15, TimeUnit.SECONDS);
+
+        assertEquals("Scheduled method should complete after 2 runs", Integer.valueOf(2), result);
+
+        // Two firings, each must walk outer -> inner -> body in priority order.
+        final List<String> expected = Arrays.asList(
+                "outer", "inner", "body",
+                "outer", "inner", "body");
+        assertEquals("Interceptor chain must run in priority order on every firing",
+                expected, ScheduledBean.TRACE);
+    }
+
     @ApplicationScoped
     public static class ScheduledBean {
         static final AtomicInteger VOID_COUNTER = new AtomicInteger();
@@ -108,6 +130,8 @@ public class AsynchronousScheduledTest {
         static final AtomicInteger RETURNING_COUNTER = new AtomicInteger();
         static final CountDownLatch RETURNING_LATCH = new CountDownLatch(1);
         static final AtomicInteger INTERCEPTED_COUNTER = new AtomicInteger();
+        static final AtomicInteger TRACED_COUNTER = new AtomicInteger();
+        static final List<String> TRACE = new CopyOnWriteArrayList<>();
 
         @Asynchronous(runAt = @Schedule(cron = "* * * * * *"))
         public void everySecondVoid() {
@@ -139,6 +163,19 @@ public class AsynchronousScheduledTest {
             future.complete(count);
             return future;
         }
+
+        @Traced
+        @Asynchronous(runAt = @Schedule(cron = "* * * * * *"))
+        public CompletableFuture<Integer> tracedSchedule(final int runs) {
+            TRACE.add("body");
+            final int count = TRACED_COUNTER.incrementAndGet();
+            if (count < runs) {
+                return null;
+            }
+            final CompletableFuture<Integer> future = Asynchronous.Result.getFuture();
+            future.complete(count);
+            return future;
+        }
     }
 
     @InterceptorBinding
@@ -156,6 +193,40 @@ public class AsynchronousScheduledTest {
         @AroundInvoke
         public Object aroundInvoke(final InvocationContext context) throws Exception {
             INVOCATIONS.incrementAndGet();
+            return context.proceed();
+        }
+    }
+
+    @InterceptorBinding
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Traced {
+    }
+
+    @Interceptor
+    @Traced
+    @Priority(Interceptor.Priority.LIBRARY_BEFORE)
+    public static class TracingOuterInterceptor {
+        static final List<String> TRACE = new CopyOnWriteArrayList<>();
+
+        @AroundInvoke
+        public Object aroundInvoke(final InvocationContext context) throws Exception {
+            TRACE.add("outer");
+            ScheduledBean.TRACE.add("outer");
+            return context.proceed();
+        }
+    }
+
+    @Interceptor
+    @Traced
+    @Priority(Interceptor.Priority.APPLICATION)
+    public static class TracingInnerInterceptor {
+        static final List<String> TRACE = new CopyOnWriteArrayList<>();
+
+        @AroundInvoke
+        public Object aroundInvoke(final InvocationContext context) throws Exception {
+            TRACE.add("inner");
+            ScheduledBean.TRACE.add("inner");
             return context.proceed();
         }
     }
