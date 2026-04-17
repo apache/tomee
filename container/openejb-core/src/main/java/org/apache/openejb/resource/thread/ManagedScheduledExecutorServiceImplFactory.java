@@ -89,19 +89,23 @@ public class ManagedScheduledExecutorServiceImplFactory {
     }
 
     private int core = 5;
+    private int scheduledAsyncCore = 5;
     private String threadFactory = ManagedThreadFactoryImpl.class.getName();
     private boolean virtual;
 
     private String context;
 
     public ManagedScheduledExecutorServiceImpl create(final ContextServiceImpl contextService) {
-        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), contextService);
+        final Pools pools = createScheduledExecutorServicePools();
+        return new ManagedScheduledExecutorServiceImpl(pools.primary, contextService, pools.secondary, true);
     }
     public ManagedScheduledExecutorServiceImpl create() {
-        return new ManagedScheduledExecutorServiceImpl(createScheduledExecutorService(), ContextServiceImplFactory.lookupOrDefault(context));
+        final Pools pools = createScheduledExecutorServicePools();
+        return new ManagedScheduledExecutorServiceImpl(pools.primary, ContextServiceImplFactory.lookupOrDefault(context),
+                pools.secondary, true);
     }
 
-    private ScheduledExecutorService createScheduledExecutorService() {
+    private Pools createScheduledExecutorServicePools() {
         ManagedThreadFactory managedThreadFactory;
         try {
             // For the default factory, bypass reflective instantiation so the configured
@@ -114,11 +118,26 @@ public class ManagedScheduledExecutorServiceImplFactory {
             managedThreadFactory = new ManagedThreadFactoryImpl(ManagedThreadFactoryImpl.DEFAULT_PREFIX, null, ContextServiceImplFactory.lookupOrDefault(context), virtual);
         }
 
-        return new ScheduledThreadPoolExecutor(core, managedThreadFactory, CURejectHandler.INSTANCE);
+        // Primary pool — regular async submissions; corePoolSize follows maxAsync.
+        final ScheduledExecutorService primary =
+                new ScheduledThreadPoolExecutor(core, managedThreadFactory, CURejectHandler.INSTANCE);
+        // Secondary pool — scheduled @Asynchronous firings. Per Concurrency 3.1 §3.1 these
+        // must NOT be throttled by maxAsync, so size the pool independently while reusing
+        // the same stateless thread factory (preserves naming / virtual / priority).
+        final ScheduledExecutorService secondary =
+                new ScheduledThreadPoolExecutor(scheduledAsyncCore, managedThreadFactory, CURejectHandler.INSTANCE);
+        return new Pools(primary, secondary);
     }
 
     public void setCore(final int core) {
         this.core = core;
+    }
+
+    public void setScheduledAsyncCore(final int scheduledAsyncCore) {
+        this.scheduledAsyncCore = scheduledAsyncCore;
+    }
+
+    private record Pools(ScheduledExecutorService primary, ScheduledExecutorService secondary) {
     }
 
     public void setThreadFactory(final String threadFactory) {
