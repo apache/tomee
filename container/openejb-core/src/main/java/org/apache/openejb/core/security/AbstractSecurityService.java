@@ -43,7 +43,6 @@ import org.apache.openejb.util.Logger;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import java.io.Serializable;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
 import java.security.AccessControlException;
@@ -547,54 +546,26 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             return HttpServletRequest.class.isInstance(data) ? data : null;
         }
         if (KEY_PRINCIPAL_MAPPER.equals(key)) {
-            return principalMapperView();
+            return principalMapper;
         }
         throw new PolicyContextException("Handler does not support key: " + key);
     }
 
-    private Object principalMapperView() {
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        if (tccl == null || tccl == PrincipalMapper.class.getClassLoader()) {
-            return principalMapper;
-        }
-
-        try {
-            final Class<?> principalMapperType = Class.forName(KEY_PRINCIPAL_MAPPER, false, tccl);
-            if (!principalMapperType.isInterface() || PrincipalMapper.class == principalMapperType) {
-                return principalMapper;
-            }
-
-            return Proxy.newProxyInstance(tccl, new Class<?>[] { principalMapperType }, (proxy, method, args) -> {
-                final String name = method.getName();
-                if ("getCallerPrincipal".equals(name)) {
-                    final Subject subject = args == null || args.length == 0 ? null : (Subject) args[0];
-                    return principalMapper.getCallerPrincipal(subject);
-                }
-                if ("getMappedRoles".equals(name)) {
-                    final Subject subject = args == null || args.length == 0 ? null : (Subject) args[0];
-                    return principalMapper.getMappedRoles(subject);
-                }
-                if ("toString".equals(name)) {
-                    return principalMapper.toString();
-                }
-                if ("hashCode".equals(name)) {
-                    return principalMapper.hashCode();
-                }
-                if ("equals".equals(name)) {
-                    return proxy == (args == null || args.length == 0 ? null : args[0]);
-                }
-                throw new UnsupportedOperationException("Unsupported PrincipalMapper method: " + method);
-            });
-        } catch (final ClassNotFoundException ignored) {
-            return principalMapper;
-        }
+    PrincipalMapper getPrincipalMapper() {
+        return principalMapper;
     }
 
-    private class DefaultPrincipalMapper implements PrincipalMapper {
+    static class DefaultPrincipalMapper implements PrincipalMapper {
         @Override
         public Principal getCallerPrincipal(final Subject subject) {
             if (subject == null) {
                 return null;
+            }
+
+            for (final Principal principal : subject.getPrincipals()) {
+                if (principal instanceof jakarta.security.enterprise.CallerPrincipal) {
+                    return principal;
+                }
             }
 
             for (final Principal principal : subject.getPrincipals()) {
