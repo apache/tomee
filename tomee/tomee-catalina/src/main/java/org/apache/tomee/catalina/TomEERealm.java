@@ -27,6 +27,7 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.realm.CombinedRealm;
 import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.openejb.core.security.JaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
@@ -37,13 +38,42 @@ import org.ietf.jgss.GSSContext;
 
 import javax.security.auth.Subject;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
 public class TomEERealm extends CombinedRealm {
     public static final String SECURITY_NOTE = TomEERealm.class.getName() + ".securityContext";
 
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SECURITY, TomEERealm.class);
+
+    /**
+     * Jakarta Authorization 3.0 exposes {@link PolicyContext#setHandlerData(Object)} but not a
+     * matching getter. To avoid clobbering outer callers' handler data when we set our own, we
+     * read the private thread-local reflectively. If reflection fails (e.g. Jakarta API changes
+     * again or a SecurityManager denies access), we fall back to restoring {@code null} which
+     * preserves the prior behaviour. This is only a best-effort improvement over the previous
+     * hard null-out.
+     */
+    private static final ThreadLocal<Object> HANDLER_DATA_TL = lookupHandlerDataThreadLocal();
+
     private TomcatSecurityService securityService;
+
+    @SuppressWarnings("unchecked")
+    private static ThreadLocal<Object> lookupHandlerDataThreadLocal() {
+        try {
+            final Field f = PolicyContext.class.getDeclaredField("threadLocalHandlerData");
+            f.setAccessible(true);
+            return (ThreadLocal<Object>) f.get(null);
+        } catch (final ReflectiveOperationException | RuntimeException e) {
+            final Logger init = Logger.getInstance(LogCategory.OPENEJB_SECURITY, TomEERealm.class);
+            if (init.isDebugEnabled()) {
+                init.debug("Unable to access PolicyContext.threadLocalHandlerData reflectively; "
+                        + "handler data will be cleared (not restored) after evaluation", e);
+            }
+            return null;
+        }
+    }
 
     @Override
     protected void startInternal() throws LifecycleException {
@@ -109,31 +139,37 @@ public class TomEERealm extends CombinedRealm {
             return true;
         }
 
-        if (isGrantedByPolicyFactory(request)) {
-            return true;
+        final Boolean verdict = evaluatePolicyFactory(request);
+        if (verdict != null) {
+            return verdict;
         }
 
         return super.hasResourcePermission(request, response, constraints, context);
     }
 
-    private boolean isGrantedByPolicyFactory(final Request request) {
+    private Boolean evaluatePolicyFactory(final Request request) {
+        final Object previousHandlerData = HANDLER_DATA_TL != null ? HANDLER_DATA_TL.get() : null;
         try {
             PolicyContext.setHandlerData(request.getRequest());
 
             final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
             final jakarta.security.jacc.Policy policy = policyFactory == null ? null : policyFactory.getPolicy();
-            if (policy == null) {
-                return false;
+            if (policy == null || JaccProvider.isSentinelPolicy(policy)) {
+                return null;
             }
 
             final Subject subject = getCurrentSubject();
             final WebResourcePermission permission =
                     new WebResourcePermission(requestPath(request), request.getMethod());
             return policy.implies(permission, subject);
-        } catch (final RuntimeException ignored) {
-            return false;
+        } catch (final RuntimeException ex) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PolicyFactory evaluation failed for " + requestPath(request)
+                        + " (" + request.getMethod() + "); falling back to Catalina check", ex);
+            }
+            return null;
         } finally {
-            PolicyContext.setHandlerData(null);
+            PolicyContext.setHandlerData(previousHandlerData);
         }
     }
 

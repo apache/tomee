@@ -191,7 +191,15 @@ public abstract class JaccProvider {
         }
     }
 
+    public static boolean isSentinelPolicy(final jakarta.security.jacc.Policy policy) {
+        return policy instanceof DefaultPolicy;
+    }
+
     private static final class DefaultPolicy implements jakarta.security.jacc.Policy {
+        boolean isSentinel() {
+            return true;
+        }
+
         @Override
         public boolean implies(final Permission permissionToBeChecked, final Subject subject) {
             final Principal[] principals = subject == null ? new Principal[0] : subject.getPrincipals().toArray(new Principal[0]);
