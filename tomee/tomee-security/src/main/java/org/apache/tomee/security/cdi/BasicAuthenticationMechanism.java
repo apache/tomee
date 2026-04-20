@@ -24,6 +24,8 @@ import jakarta.security.enterprise.authentication.mechanism.http.BasicAuthentica
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.credential.BasicAuthenticationCredential;
+import jakarta.security.enterprise.credential.Password;
+import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +44,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
     @Inject
     private Supplier<BasicAuthenticationMechanismDefinition> basicAuthenticationMechanismDefinition;
+    private Supplier<BasicAuthenticationMechanismDefinition> resolvedDefinition;
 
 
     @Override
@@ -52,7 +55,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         try {
             final BasicAuthenticationCredential credential = parseAuthenticationHeader(request.getHeader(AUTHORIZATION));
-            final CredentialValidationResult result = identityStoreHandler.validate(credential);
+            final CredentialValidationResult result = identityStoreHandler.validate(toUsernamePasswordCredential(credential));
 
             if (result.getStatus().equals(VALID)) {
                 return httpMessageContext.notifyContainerAboutLogin(result);
@@ -64,7 +67,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         if (httpMessageContext.isProtected()) {
 
-            final String realmName = basicAuthenticationMechanismDefinition.get().realmName();
+            final String realmName = getDefinition().realmName();
             if (realmName.isEmpty()) {
                 response.setHeader("WWW-Authenticate", "Basic");
             } else {
@@ -78,6 +81,14 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
         return httpMessageContext.doNothing();
     }
 
+    void setDefinitionSupplier(final Supplier<BasicAuthenticationMechanismDefinition> definitionSupplier) {
+        this.resolvedDefinition = definitionSupplier;
+    }
+
+    private BasicAuthenticationMechanismDefinition getDefinition() {
+        return resolvedDefinition != null ? resolvedDefinition.get() : basicAuthenticationMechanismDefinition.get();
+    }
+
     private BasicAuthenticationCredential parseAuthenticationHeader(final String authenticationHeader) {
         return Optional.ofNullable(authenticationHeader)
                        .filter(header -> !header.isEmpty())
@@ -85,5 +96,10 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
                        .map(header -> header.substring(6))
                        .map(BasicAuthenticationCredential::new)
                        .orElseGet(() -> new BasicAuthenticationCredential(""));
+    }
+
+    private UsernamePasswordCredential toUsernamePasswordCredential(final BasicAuthenticationCredential credential) {
+        final Password password = credential.getPassword();
+        return new UsernamePasswordCredential(credential.getCaller(), password);
     }
 }
