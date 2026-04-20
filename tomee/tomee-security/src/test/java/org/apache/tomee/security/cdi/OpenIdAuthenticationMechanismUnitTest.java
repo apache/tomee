@@ -59,7 +59,7 @@ public class OpenIdAuthenticationMechanismUnitTest {
         identityStoreHandler = mock(IdentityStoreHandler.class);
         storageHandler = new SimpleStorageHandler();
 
-        Reflections.set(authenticationMechanism, "definition", definition);
+        authenticationMechanism.setDefinitionSupplier(() -> definition);
         Reflections.set(authenticationMechanism, "identityStoreHandler", identityStoreHandler);
         Reflections.set(authenticationMechanism, "openIdContext", new TomEEOpenIdContext());
         Reflections.set(authenticationMechanism, "storageHandler", storageHandler);
