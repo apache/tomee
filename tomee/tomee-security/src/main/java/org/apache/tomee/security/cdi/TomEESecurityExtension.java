@@ -42,11 +42,13 @@ import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
+import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
 import jakarta.enterprise.inject.spi.Annotated;
 import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.BeanAttributes;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
+import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessBean;
 import jakarta.enterprise.util.TypeLiteral;
@@ -62,11 +64,17 @@ import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class TomEESecurityExtension implements Extension {
     // LinkedHashSet: ProcessBean fires for each bean *and* any derived observer/interceptor beans on the
@@ -453,6 +461,74 @@ public class TomEESecurityExtension implements Extension {
         return !basicMechanismDefinitions.isEmpty() || !formMechanismDefinitions.isEmpty() ||
                 !customMechanismDefinitions.isEmpty() || !oidcMechanismDefinitions.isEmpty() ||
                 applicationAuthenticationMechanisms;
+    }
+
+    // Fail deployment early when two *AuthenticationMechanismDefinition annotations would register
+    // beans with the same qualifier set but different content (e.g. two @BasicAuthenticationMechanismDefinition
+    // with identical default qualifiers but different realmName). Without this the clash only surfaces
+    // at first injection as an AmbiguousResolutionException, which is hard to diagnose.
+    void validateMechanismDefinitionUniqueness(@Observes final AfterDeploymentValidation afterDeploymentValidation) {
+        final List<String> problems = new ArrayList<>();
+
+        problems.addAll(validateQualifierUniqueness(basicMechanismDefinitions,
+                BasicAuthenticationMechanismDefinition.class,
+                BasicAuthenticationMechanismDefinition::qualifiers));
+        problems.addAll(validateQualifierUniqueness(formMechanismDefinitions,
+                FormAuthenticationMechanismDefinition.class,
+                FormAuthenticationMechanismDefinition::qualifiers));
+        problems.addAll(validateQualifierUniqueness(customMechanismDefinitions,
+                CustomFormAuthenticationMechanismDefinition.class,
+                CustomFormAuthenticationMechanismDefinition::qualifiers));
+        problems.addAll(validateQualifierUniqueness(oidcMechanismDefinitions,
+                OpenIdAuthenticationMechanismDefinition.class,
+                OpenIdAuthenticationMechanismDefinition::qualifiers));
+
+        if (!problems.isEmpty()) {
+            final String message = "Ambiguous authentication mechanism definitions detected:\n    "
+                    + String.join("\n    ", problems);
+            afterDeploymentValidation.addDeploymentProblem(new DeploymentException(message));
+        }
+    }
+
+    // Package-private for focused unit tests. Groups the annotations by the effective qualifier set
+    // (order-insensitive, duplicates collapsed) and returns a problem message for each set that has
+    // more than one distinct definition. Returns an empty list when the definitions are unambiguous.
+    static <T extends Annotation> List<String> validateQualifierUniqueness(
+            final Collection<T> definitions,
+            final Class<T> annotationType,
+            final Function<T, Class<?>[]> qualifiersAccessor) {
+
+        if (definitions == null || definitions.size() < 2) {
+            return List.of();
+        }
+
+        // LinkedHashMap preserves discovery order so error messages are deterministic.
+        final Map<Set<Class<?>>, List<T>> byQualifierSet = new LinkedHashMap<>();
+        for (final T definition : definitions) {
+            final Class<?>[] qualifiers = qualifiersAccessor.apply(definition);
+            final Set<Class<?>> key = new LinkedHashSet<>(Arrays.asList(qualifiers));
+            byQualifierSet.computeIfAbsent(key, k -> new ArrayList<>()).add(definition);
+        }
+
+        final List<String> problems = new ArrayList<>();
+        for (final Map.Entry<Set<Class<?>>, List<T>> entry : byQualifierSet.entrySet()) {
+            if (entry.getValue().size() <= 1) {
+                continue;
+            }
+            final String qualifierList = entry.getKey().isEmpty()
+                    ? "{}"
+                    : entry.getKey().stream()
+                            .map(Class::getSimpleName)
+                            .collect(Collectors.joining(", ", "{", "}"));
+            final String conflicting = entry.getValue().stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining("; "));
+            problems.add("@" + annotationType.getSimpleName()
+                    + " declared " + entry.getValue().size() + " times with qualifier set " + qualifierList
+                    + " but different content [" + conflicting + "]; "
+                    + "declare distinct qualifiers via qualifiers={...} or pick a single definition");
+        }
+        return problems;
     }
 
     private Supplier<LoginToContinue> createFormLoginToContinueSupplier(final FormAuthenticationMechanismDefinition definition,
