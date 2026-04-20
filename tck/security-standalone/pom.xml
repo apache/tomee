@@ -114,7 +114,7 @@
                         &lt;configuration&gt;
                             &lt;systemPropertyVariables&gt;
                                 &lt;tomee.stopPort&gt;-1&lt;/tomee.stopPort&gt;
-                                &lt;tomee.httpPort&gt;-1&lt;/tomee.httpPort&gt;
+                                &lt;tomee.httpPort&gt;8080&lt;/tomee.httpPort&gt;
                                 &lt;tomee.ajpPort&gt;-1&lt;/tomee.ajpPort&gt;
                                 &lt;tomee.dir&gt;target/tomee/server&lt;/tomee.dir&gt;
                                 &lt;tomee.appWorkingDir&gt;target/tomee/arquillian&lt;/tomee.appWorkingDir&gt;
