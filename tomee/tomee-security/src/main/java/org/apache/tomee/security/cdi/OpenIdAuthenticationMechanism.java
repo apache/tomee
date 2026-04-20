@@ -34,7 +34,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriBuilder;
 
@@ -49,8 +51,11 @@ import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.stream.Collectors;
 import java.util.function.Supplier;
 
@@ -216,15 +221,22 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                 throw new IllegalStateException("Cannot refresh tokens, no refresh_token received");
             }
 
+            final boolean useBasic = preferBasicAuth();
             Form form = new Form()
-                    .param(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
-                    .param(OpenIdConstant.CLIENT_SECRET, getDefinition().clientSecret())
                     .param(OpenIdConstant.GRANT_TYPE, OpenIdConstant.REFRESH_TOKEN)
                     .param(OpenIdConstant.REFRESH_TOKEN, refreshToken.getToken());
+            if (!useBasic) {
+                form.param(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
+                    .param(OpenIdConstant.CLIENT_SECRET, getDefinition().clientSecret());
+            }
 
-            TokenResponse tokenResponse = client.target(tokenEndpoint).request()
-                    .accept(MediaType.APPLICATION_JSON)
-                    .post(Entity.form(form), TokenResponse.class);
+            Invocation.Builder requestBuilder = client.target(tokenEndpoint).request()
+                    .accept(MediaType.APPLICATION_JSON);
+            if (useBasic) {
+                requestBuilder = requestBuilder.header(HttpHeaders.AUTHORIZATION, basicAuthHeader());
+            }
+
+            TokenResponse tokenResponse = requestBuilder.post(Entity.form(form), TokenResponse.class);
 
             return handleTokenResponse(tokenResponse, httpMessageContext);
 
@@ -302,16 +314,23 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
             final String tokenEndpoint = getDefinition().providerMetadata().tokenEndpoint();
             try (Client client = ClientBuilder.newClient()) {
+                final boolean useBasic = preferBasicAuth();
                 Form form = new Form()
-                        .param(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
-                        .param(OpenIdConstant.CLIENT_SECRET, getDefinition().clientSecret())
                         .param(OpenIdConstant.GRANT_TYPE, "authorization_code")
                         .param(OpenIdConstant.REDIRECT_URI, getDefinition().redirectURI())
                         .param(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE));
+                if (!useBasic) {
+                    form.param(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
+                        .param(OpenIdConstant.CLIENT_SECRET, getDefinition().clientSecret());
+                }
 
-                TokenResponse tokenResponse = client.target(tokenEndpoint).request()
-                        .accept(MediaType.APPLICATION_JSON)
-                        .post(Entity.form(form), TokenResponse.class);
+                Invocation.Builder requestBuilder = client.target(tokenEndpoint).request()
+                        .accept(MediaType.APPLICATION_JSON);
+                if (useBasic) {
+                    requestBuilder = requestBuilder.header(HttpHeaders.AUTHORIZATION, basicAuthHeader());
+                }
+
+                TokenResponse tokenResponse = requestBuilder.post(Entity.form(form), TokenResponse.class);
 
                 AuthenticationStatus result = handleTokenResponse(tokenResponse, messageContext);
 
@@ -412,5 +431,66 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         }
 
         return url + "?" + query;
+    }
+
+    /**
+     * Whether to send client credentials as HTTP Basic {@code Authorization} header
+     * ({@code client_secret_basic}) instead of form parameters ({@code client_secret_post})
+     * when talking to the token endpoint.
+     *
+     * <p>Per OIDC Core 1.0 §9 both methods are legal and {@code client_secret_basic} is the
+     * default. When the {@link jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata
+     * OpenIdProviderMetadata} annotation exposes a {@code tokenEndpointAuthMethodsSupported()}
+     * accessor (reflectively detected so we don't couple to a specific spec revision), we honour
+     * it: if {@code client_secret_basic} is in the advertised list we prefer Basic; if only
+     * {@code client_secret_post} is advertised we fall back to form parameters. An empty or
+     * {@code null} array is treated as "not advertised" and we fall back to the OIDC default
+     * of Basic.
+     *
+     * <p>When the accessor does not exist on the bundled API (Jakarta Security 4.0 currently
+     * omits it), we unconditionally prefer Basic — the spec-mandated default — which also keeps
+     * the client secret out of HTTP access logs / form bodies.</p>
+     */
+    protected boolean preferBasicAuth() {
+        final Object providerMetadata = getDefinition().providerMetadata();
+        if (providerMetadata == null) {
+            return true;
+        }
+
+        try {
+            final Method accessor = providerMetadata.getClass().getMethod("tokenEndpointAuthMethodsSupported");
+            final Object value = accessor.invoke(providerMetadata);
+            if (!(value instanceof String[])) {
+                return true;
+            }
+
+            final String[] methods = (String[]) value;
+            if (methods.length == 0) {
+                // Missing / empty => OIDC default; prefer Basic.
+                return true;
+            }
+
+            for (String method : methods) {
+                if ("client_secret_basic".equalsIgnoreCase(method)) {
+                    return true;
+                }
+            }
+
+            // Advertised list exists and does not include client_secret_basic => must use form.
+            return false;
+        } catch (NoSuchMethodException e) {
+            // Bundled API doesn't expose the accessor; default to Basic (OIDC default).
+            return true;
+        } catch (ReflectiveOperationException e) {
+            LOGGER.debug("Unable to read tokenEndpointAuthMethodsSupported(), defaulting to client_secret_basic: " + e.getMessage());
+            return true;
+        }
+    }
+
+    protected String basicAuthHeader() {
+        final String clientId = getDefinition().clientId();
+        final String clientSecret = getDefinition().clientSecret();
+        final String raw = clientId + ':' + clientSecret;
+        return "Basic " + Base64.getEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
     }
 }
