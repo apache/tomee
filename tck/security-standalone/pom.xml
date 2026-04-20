@@ -120,8 +120,19 @@
                                 &lt;tomee.appWorkingDir&gt;target/tomee/arquillian&lt;/tomee.appWorkingDir&gt;
                                 &lt;tomee.cleanOnStartUp&gt;true&lt;/tomee.cleanOnStartUp&gt;
                                 &lt;tomee.classifier&gt;plus&lt;/tomee.classifier&gt;
+                                &lt;!--
+                                  SSL configuration for app-openid2/app-openid3.
+                                  Those tests deploy an OpenID provider in a separate Tomcat with a
+                                  self-signed cert whose public cert is imported into the shared
+                                  keystore below by the TCK's keytool-maven-plugin (the 'glassfish8'
+                                  directory name is a TCK leftover from its GlassFish origins; no
+                                  GlassFish is installed). We point both JVMs at that keystore:
+                                  the failsafe JVM (test driver that uses HtmlUnit) and the forked
+                                  TomEE JVM (the OpenID relying party).
+                                --&gt;
+                                &lt;javax.net.ssl.trustStore&gt;${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks&lt;/javax.net.ssl.trustStore&gt;
                                 &lt;javax.net.ssl.trustStorePassword&gt;changeit&lt;/javax.net.ssl.trustStorePassword&gt;
-                                &lt;javax.net.ssl.trustStoreType&gt;PKCS12&lt;/javax.net.ssl.trustStoreType&gt;
+                                &lt;tomee.catalina_opts&gt;-Djavax.net.ssl.trustStore=${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks -Djavax.net.ssl.trustStorePassword=changeit&lt;/tomee.catalina_opts&gt;
                                 &lt;tomee.properties&gt;openejb.environment.default=true&lt;/tomee.properties&gt;
                             &lt;/systemPropertyVariables&gt;
                         &lt;/configuration&gt;
@@ -146,13 +157,37 @@ ${line.separator}    &lt;/profiles&gt;" />
                                                  token="&lt;artifactId&gt;arquillian-protocol-servlet&lt;/artifactId&gt;"
                                                  value="&lt;artifactId&gt;arquillian-protocol-servlet-jakarta&lt;/artifactId&gt;${line.separator}            &lt;version&gt;${version.arquillian-protocol-servlet-jakarta}&lt;/version&gt;" />
 
-                                        <!-- Avoid keytool alias collisions across sequential OpenID module runs -->
-                                        <replace file="${tck.dir}/app-openid2/pom.xml"
-                                                 token="&lt;alias&gt;tomcat&lt;/alias&gt;"
-                                                 value="&lt;alias&gt;tomcat-openid2&lt;/alias&gt;" />
-                                        <replace file="${tck.dir}/app-openid3/pom.xml"
-                                                 token="&lt;alias&gt;tomcat&lt;/alias&gt;"
-                                                 value="&lt;alias&gt;tomcat-openid3&lt;/alias&gt;" />
+                                        <!--
+                                          Seed the shared truststore that app-openid2/3's
+                                          keytool-maven-plugin will append to. Starts from the JDK's
+                                          default cacerts so Maven metadata fetches against public
+                                          HTTPS repos still validate alongside the localhost cert.
+                                        -->
+                                        <mkdir dir="${project.build.directory}/glassfish8/glassfish/domains/domain1/config" />
+                                        <delete file="${project.build.directory}/glassfish8/glassfish/domains/domain1/config/cacerts.jks" quiet="true" />
+                                        <copy file="${java.home}/lib/security/cacerts"
+                                              tofile="${project.build.directory}/glassfish8/glassfish/domains/domain1/config/cacerts.jks" />
+
+                                        <!--
+                                          Regenerate the OpenID module HTTPS certs.
+                                          The TCK ships self-signed certs that expired in March 2023; we mint
+                                          fresh 10-year certs so standard JSSE validation passes without any
+                                          trust-all fallback.
+                                        -->
+                                        <exec executable="bash" failonerror="true">
+                                            <arg value="-c" />
+                                            <arg value="set -euo pipefail; for d in &quot;${tck.dir}&quot;/app-openid*/; do if [ -f &quot;$d/localhost-rsa.jks&quot; ]; then rm -f &quot;$d/localhost-rsa.jks&quot; &quot;$d/tomcat.cert&quot;; keytool -genkeypair -alias tomcat -keyalg RSA -keysize 2048 -validity 3650 -dname 'CN=localhost, OU=jakarta, O=eclipse, L=amsterdam, ST=holland, C=nl' -storetype PKCS12 -storepass changeit -keypass changeit -keystore &quot;$d/localhost-rsa.jks&quot;; keytool -exportcert -alias tomcat -storepass changeit -keystore &quot;$d/localhost-rsa.jks&quot; -file &quot;$d/tomcat.cert&quot;; fi; done" />
+                                        </exec>
+
+                                        <!--
+                                          Avoid keytool alias collisions when sequential OpenID modules import
+                                          into the same cacerts.jks. Derive a unique alias per app-openidN dir
+                                          (app-openid has no keytool step, so it is skipped).
+                                        -->
+                                        <exec executable="bash" failonerror="true">
+                                            <arg value="-c" />
+                                            <arg value="set -euo pipefail; for p in &quot;${tck.dir}&quot;/app-openid*/pom.xml; do name=$(basename &quot;$(dirname &quot;$p&quot;)&quot;); suffix=${name#app-openid}; if [ -n &quot;$suffix&quot; ]; then sed -i.bak -e &quot;s|&lt;alias&gt;tomcat&lt;/alias&gt;|&lt;alias&gt;tomcat-openid${suffix}&lt;/alias&gt;|&quot; &quot;$p&quot;; rm -f &quot;$p.bak&quot;; fi; done" />
+                                        </exec>
                                     </target>
                                 </configuration>
                             </execution>
