@@ -84,6 +84,28 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         return resolvedDefinition != null ? resolvedDefinition.get() : openIdAuthenticationMechanismDefinition;
     }
 
+    private volatile String cachedRedirectPath;
+    private volatile String cachedRedirectUriSource;
+
+    /**
+     * Returns the path component of the configured {@code redirectURI}, memoised so we don't
+     * re-parse on every request. The comparison in {@link #performAuthentication} is deliberately
+     * path-based instead of comparing against {@link HttpServletRequest#getRequestURL()} which is
+     * derived from the client-supplied {@code Host} header (CWE-350).
+     */
+    private String redirectPath() {
+        String configured = getDefinition().redirectURI();
+        String cachedSource = cachedRedirectUriSource;
+        if (configured != null && configured.equals(cachedSource)) {
+            return cachedRedirectPath;
+        }
+
+        String path = configured == null ? null : URI.create(configured).getPath();
+        cachedRedirectPath = path;
+        cachedRedirectUriSource = configured;
+        return path;
+    }
+
     @Override
     public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
         String redirectTarget = buildRedirectUri();
@@ -234,10 +256,25 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
         if (state != null) {
             String originalRequest = storageHandler.get(request, response, OpenIdConstant.ORIGINAL_REQUEST);
-            boolean matchesOriginalRequest = originalRequest != null && originalRequest.startsWith(request.getRequestURL().toString());
+            // Compare by path only; the full URL from getRequestURL() is composed from the
+            // client-supplied Host header and therefore untrusted (CWE-350).
+            String requestPath = request.getRequestURI();
+            String originalRequestPath = null;
+            if (originalRequest != null) {
+                try {
+                    originalRequestPath = URI.create(originalRequest).getPath();
+                } catch (IllegalArgumentException e) {
+                    originalRequestPath = null;
+                }
+            }
+            boolean matchesOriginalRequest = originalRequestPath != null && originalRequestPath.equals(requestPath);
+            boolean matchesRedirectUri = requestPath != null && requestPath.equals(redirectPath());
 
             // callback from openid provider (3)
-            if (!request.getRequestURL().toString().equals(getDefinition().redirectURI()) && getDefinition().redirectToOriginalResource() && !matchesOriginalRequest) {
+            // Per Jakarta Security 4.0 §2.4.4.2, if the callback URL matches neither the configured
+            // redirectURI nor the stored original request URL, the request must be rejected regardless
+            // of the redirectToOriginalResource setting.
+            if (!matchesRedirectUri && !matchesOriginalRequest) {
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
             }
 
