@@ -60,15 +60,20 @@ import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class TomEESecurityExtension implements Extension {
-    private final List<BasicAuthenticationMechanismDefinition> basicMechanismDefinitions = new ArrayList<>();
-    private final List<FormAuthenticationMechanismDefinition> formMechanismDefinitions = new ArrayList<>();
-    private final List<CustomFormAuthenticationMechanismDefinition> customMechanismDefinitions = new ArrayList<>();
-    private final List<OpenIdAuthenticationMechanismDefinition> oidcMechanismDefinitions = new ArrayList<>();
+    // LinkedHashSet: ProcessBean fires for each bean *and* any derived observer/interceptor beans on the
+    // same class, so List.addAll would otherwise duplicate identical annotation instances and cause
+    // AmbiguousResolutionException when multiple beans are registered with the same qualifier set.
+    private final Set<BasicAuthenticationMechanismDefinition> basicMechanismDefinitions = new LinkedHashSet<>();
+    private final Set<FormAuthenticationMechanismDefinition> formMechanismDefinitions = new LinkedHashSet<>();
+    private final Set<CustomFormAuthenticationMechanismDefinition> customMechanismDefinitions = new LinkedHashSet<>();
+    private final Set<OpenIdAuthenticationMechanismDefinition> oidcMechanismDefinitions = new LinkedHashSet<>();
 
     private final AtomicReference<Annotated> tomcatUserStore = new AtomicReference<>();
     private final AtomicReference<Annotated> databaseStore = new AtomicReference<>();
@@ -128,6 +133,16 @@ public class TomEESecurityExtension implements Extension {
     void registerAuthenticationMechanism(
         @Observes final AfterBeanDiscovery afterBeanDiscovery,
         final BeanManager beanManager) {
+
+        // Snapshot definition sets as ordered lists so the registration loops can use index-based IDs.
+        final List<BasicAuthenticationMechanismDefinition> basicMechanismDefinitions =
+                new ArrayList<>(this.basicMechanismDefinitions);
+        final List<FormAuthenticationMechanismDefinition> formMechanismDefinitions =
+                new ArrayList<>(this.formMechanismDefinitions);
+        final List<CustomFormAuthenticationMechanismDefinition> customMechanismDefinitions =
+                new ArrayList<>(this.customMechanismDefinitions);
+        final List<OpenIdAuthenticationMechanismDefinition> oidcMechanismDefinitions =
+                new ArrayList<>(this.oidcMechanismDefinitions);
 
         if (tomcatUserStore.get() != null) {
             afterBeanDiscovery
