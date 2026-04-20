@@ -33,6 +33,7 @@ import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefini
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEIdentityStoreHandler;
+import org.apache.tomee.security.identitystore.TomEEInMemoryIdentityStore;
 import org.apache.tomee.security.identitystore.TomEELDAPIdentityStore;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -56,6 +57,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticat
 import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import jakarta.security.enterprise.identitystore.IdentityStore;
+import jakarta.security.enterprise.identitystore.InMemoryIdentityStoreDefinition;
 import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 
 import java.lang.annotation.Annotation;
@@ -78,6 +80,7 @@ public class TomEESecurityExtension implements Extension {
     private final AtomicReference<Annotated> tomcatUserStore = new AtomicReference<>();
     private final AtomicReference<Annotated> databaseStore = new AtomicReference<>();
     private final AtomicReference<Annotated> ldapStore = new AtomicReference<>();
+    private final AtomicReference<Annotated> inMemoryStore = new AtomicReference<>();
 
     private boolean applicationAuthenticationMechanisms = false;
 
@@ -118,6 +121,10 @@ public class TomEESecurityExtension implements Extension {
 
         if (ldapStore.get() == null && annotatedType.isAnnotationPresent(LdapIdentityStoreDefinition.class)) {
             ldapStore.set(annotatedType);
+        }
+
+        if (inMemoryStore.get() == null && annotatedType.isAnnotationPresent(InMemoryIdentityStoreDefinition.class)) {
+            inMemoryStore.set(annotatedType);
         }
 
         basicMechanismDefinitions.addAll(annotatedType.getAnnotations(BasicAuthenticationMechanismDefinition.class));
@@ -227,6 +234,35 @@ public class TomEESecurityExtension implements Extension {
                     final BeanAttributes<TomEELDAPIdentityStore> beanAttributes =
                         beanManager.createBeanAttributes(annotatedType);
                     return beanManager.createBean(beanAttributes, TomEELDAPIdentityStore.class,
+                                                  beanManager.getInjectionTargetFactory(annotatedType))
+                                      .create(creationalContext);
+                });
+        }
+
+        if (inMemoryStore.get() != null) {
+            afterBeanDiscovery
+                .addBean()
+                .id(TomEEInMemoryIdentityStore.class.getName() + "#" + InMemoryIdentityStoreDefinition.class.getName())
+                .beanClass(Supplier.class)
+                .addType(Object.class)
+                .addType(new TypeLiteral<Supplier<InMemoryIdentityStoreDefinition>>() {})
+                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                .scope(ApplicationScoped.class)
+                .createWith(creationalContext -> createInMemoryIdentityStoreDefinitionSupplier(beanManager));
+
+            afterBeanDiscovery
+                .addBean()
+                .id(TomEEInMemoryIdentityStore.class.getName())
+                .beanClass(TomEEInMemoryIdentityStore.class)
+                .types(Object.class, IdentityStore.class, TomEEInMemoryIdentityStore.class)
+                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                .scope(ApplicationScoped.class)
+                .createWith((CreationalContext<TomEEInMemoryIdentityStore> creationalContext) -> {
+                    final AnnotatedType<TomEEInMemoryIdentityStore> annotatedType =
+                        beanManager.createAnnotatedType(TomEEInMemoryIdentityStore.class);
+                    final BeanAttributes<TomEEInMemoryIdentityStore> beanAttributes =
+                        beanManager.createBeanAttributes(annotatedType);
+                    return beanManager.createBean(beanAttributes, TomEEInMemoryIdentityStore.class,
                                                   beanManager.getInjectionTargetFactory(annotatedType))
                                       .create(creationalContext);
                 });
@@ -462,6 +498,13 @@ public class TomEESecurityExtension implements Extension {
         return () -> {
             final LdapIdentityStoreDefinition annotation = ldapStore.get().getAnnotation(LdapIdentityStoreDefinition.class);
             return TomEEELInvocationHandler.of(LdapIdentityStoreDefinition.class, annotation, beanManager);
+        };
+    }
+
+    private Supplier<InMemoryIdentityStoreDefinition> createInMemoryIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
+        return () -> {
+            final InMemoryIdentityStoreDefinition annotation = inMemoryStore.get().getAnnotation(InMemoryIdentityStoreDefinition.class);
+            return TomEEELInvocationHandler.of(InMemoryIdentityStoreDefinition.class, annotation, beanManager);
         };
     }
 
