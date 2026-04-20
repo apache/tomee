@@ -139,6 +139,14 @@ ${line.separator}    &lt;/profiles&gt;" />
                                         <replace file="${tck.dir}/pom.xml"
                                                  token="&lt;artifactId&gt;arquillian-protocol-servlet&lt;/artifactId&gt;"
                                                  value="&lt;artifactId&gt;arquillian-protocol-servlet-jakarta&lt;/artifactId&gt;${line.separator}            &lt;version&gt;${version.arquillian-protocol-servlet-jakarta}&lt;/version&gt;" />
+
+                                        <!-- Avoid keytool alias collisions across sequential OpenID module runs -->
+                                        <replace file="${tck.dir}/app-openid2/pom.xml"
+                                                 token="&lt;alias&gt;tomcat&lt;/alias&gt;"
+                                                 value="&lt;alias&gt;tomcat-openid2&lt;/alias&gt;" />
+                                        <replace file="${tck.dir}/app-openid3/pom.xml"
+                                                 token="&lt;alias&gt;tomcat&lt;/alias&gt;"
+                                                 value="&lt;alias&gt;tomcat-openid3&lt;/alias&gt;" />
                                     </target>
                                 </configuration>
                             </execution>
