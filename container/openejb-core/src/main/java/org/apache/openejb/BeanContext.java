@@ -1997,6 +1997,18 @@ public class BeanContext extends DeploymentContext {
         return roleLink != null ? roleLink : roleName;
     }
 
+    /**
+     * Returns the set of declared security role-reference names for this bean
+     * (as contributed by {@code <security-role-ref>} entries as well as
+     * {@code @DeclareRoles} and {@code @RolesAllowed} annotations).
+     */
+    public Set<String> getSecurityRoleReferences() {
+        if (securityRoleReferences.isEmpty()) {
+            return java.util.Collections.emptySet();
+        }
+        return new LinkedHashSet<>(securityRoleReferences.keySet());
+    }
+
     private static class Cmp {
 
         private boolean cmp2;
