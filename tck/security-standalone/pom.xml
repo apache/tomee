@@ -70,6 +70,10 @@
         &lt;profile&gt;
             &lt;id&gt;tomee-remote&lt;/id&gt;
 
+            &lt;properties&gt;
+                &lt;glassfish.root&gt;${project.build.directory}&lt;/glassfish.root&gt;
+            &lt;/properties&gt;
+
             &lt;repositories&gt;
                 &lt;repository&gt;
                     &lt;id&gt;apache.snapshots&lt;/id&gt;
@@ -116,6 +120,8 @@
                                 &lt;tomee.appWorkingDir&gt;target/tomee/arquillian&lt;/tomee.appWorkingDir&gt;
                                 &lt;tomee.cleanOnStartUp&gt;true&lt;/tomee.cleanOnStartUp&gt;
                                 &lt;tomee.classifier&gt;plus&lt;/tomee.classifier&gt;
+                                &lt;javax.net.ssl.trustStorePassword&gt;changeit&lt;/javax.net.ssl.trustStorePassword&gt;
+                                &lt;javax.net.ssl.trustStoreType&gt;PKCS12&lt;/javax.net.ssl.trustStoreType&gt;
                                 &lt;tomee.properties&gt;openejb.environment.default=true&lt;/tomee.properties&gt;
                             &lt;/systemPropertyVariables&gt;
                         &lt;/configuration&gt;
