@@ -20,6 +20,7 @@ import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
 import org.junit.Test;
 
+import jakarta.annotation.security.DeclareRoles;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.AuthenticationException;
 import jakarta.security.enterprise.AuthenticationStatus;
@@ -39,6 +40,8 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static org.junit.Assert.assertEquals;
@@ -85,6 +88,22 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
                                                .get();
         assertEquals(200, response.getStatus());
         assertEquals("ok", response.readEntity(String.class));
+    }
+
+    @Test
+    public void allDeclaredCallerRoles() throws Exception {
+        final String servlet = getAppUrl() + "/securityContextDeclaredRoles";
+        final Response response = ClientBuilder.newBuilder()
+                                               .build()
+                                               .target(servlet)
+                                               .queryParam("username", "tomcat")
+                                               .queryParam("password", "tomcat")
+                                               .request()
+                                               .get();
+        assertEquals(200, response.getStatus());
+        // "tomcat" user is declared with role "tomcat"; only declared roles held
+        // by the caller should be returned.
+        assertEquals("tomcat", response.readEntity(String.class));
     }
 
     @Test
@@ -163,6 +182,30 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
             securityContext.authenticate(req, resp, parameters);
 
             resp.getWriter().write(securityContext.isCallerInRole(req.getParameter("role")) ? "ok" : "nok");
+        }
+    }
+
+    @TomcatUserIdentityStoreDefinition
+    @DeclareRoles({"tomcat", "user", "unassigned"})
+    @WebServlet(urlPatterns = "/securityContextDeclaredRoles")
+    public static class DeclaredRolesServlet extends HttpServlet {
+        @Inject
+        private SecurityContext securityContext;
+
+        @Override
+        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+                throws ServletException, IOException {
+
+            final AuthenticationParameters parameters =
+                    AuthenticationParameters.withParams()
+                                            .credential(new UsernamePasswordCredential(req.getParameter("username"),
+                                                                                       req.getParameter("password")))
+                                            .newAuthentication(true);
+
+            securityContext.authenticate(req, resp, parameters);
+
+            final Set<String> roles = new TreeSet<>(securityContext.getAllDeclaredCallerRoles());
+            resp.getWriter().write(String.join(",", roles));
         }
     }
 

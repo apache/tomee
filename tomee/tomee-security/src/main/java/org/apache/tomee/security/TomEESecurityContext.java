@@ -18,6 +18,7 @@ package org.apache.tomee.security;
 
 import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
 import org.apache.catalina.Container;
+import org.apache.catalina.Context;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.core.security.JaccProvider;
@@ -40,14 +41,17 @@ import jakarta.security.auth.message.config.ServerAuthContext;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.SecurityContext;
 import jakarta.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
+import jakarta.security.jacc.Policy;
 import jakarta.security.jacc.PolicyContext;
 import jakarta.security.jacc.PolicyFactory;
 import jakarta.security.jacc.WebResourcePermission;
+import jakarta.security.jacc.WebRoleRefPermission;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -87,7 +91,64 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public Set<String> getAllDeclaredCallerRoles() {
-        throw new UnsupportedOperationException(); // TODO
+        if (securityService == null) {
+            return Collections.emptySet();
+        }
+
+        final Request request = OpenEJBSecurityListener.requests.get();
+        if (request == null) {
+            return Collections.emptySet();
+        }
+
+        final Context context = request.getContext();
+        if (context == null) {
+            return Collections.emptySet();
+        }
+
+        final String[] declaredRoles = context.findSecurityRoles();
+        if (declaredRoles == null || declaredRoles.length == 0) {
+            return Collections.emptySet();
+        }
+
+        final String previousContextId = PolicyContext.getContextID();
+        final String appContext = getAppContextId();
+        try {
+            if (appContext != null) {
+                JavaSecurityManagers.setContextID(appContext);
+            }
+
+            final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+            if (policyFactory == null) {
+                return Collections.emptySet();
+            }
+
+            final Policy policy = policyFactory.getPolicy();
+            if (policy == null) {
+                return Collections.emptySet();
+            }
+
+            final Subject subject = securityService.getCurrentSubject();
+            final Set<String> roles = new LinkedHashSet<>();
+            for (final String role : declaredRoles) {
+                if (role == null) {
+                    continue;
+                }
+                try {
+                    if (policy.implies(new WebRoleRefPermission("", role), subject)) {
+                        roles.add(role);
+                    }
+                } catch (final RuntimeException ignored) {
+                    // Skip roles whose evaluation fails; keep checking the rest.
+                }
+            }
+            return roles;
+        } catch (final RuntimeException ignored) {
+            return Collections.emptySet();
+        } finally {
+            if (appContext != null && !Objects.equals(previousContextId, appContext)) {
+                JavaSecurityManagers.setContextID(previousContextId);
+            }
+        }
     }
 
     @Override
