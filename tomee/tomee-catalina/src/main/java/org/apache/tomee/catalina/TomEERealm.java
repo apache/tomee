@@ -16,19 +16,27 @@
  */
 package org.apache.tomee.catalina;
 
+import jakarta.security.jacc.PolicyContext;
+import jakarta.security.jacc.PolicyFactory;
+import jakarta.security.jacc.WebResourcePermission;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Context;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.realm.CombinedRealm;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.openejb.threads.task.CUTask;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.ietf.jgss.GSSContext;
 
+import javax.security.auth.Subject;
+import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
@@ -91,6 +99,57 @@ public class TomEERealm extends CombinedRealm {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean hasResourcePermission(final Request request, final Response response,
+                                         final SecurityConstraint[] constraints,
+                                         final Context context) throws IOException {
+        if (constraints == null || constraints.length == 0) {
+            return true;
+        }
+
+        if (isGrantedByPolicyFactory(request)) {
+            return true;
+        }
+
+        return super.hasResourcePermission(request, response, constraints, context);
+    }
+
+    private boolean isGrantedByPolicyFactory(final Request request) {
+        try {
+            PolicyContext.setHandlerData(request.getRequest());
+
+            final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+            final jakarta.security.jacc.Policy policy = policyFactory == null ? null : policyFactory.getPolicy();
+            if (policy == null) {
+                return false;
+            }
+
+            final Subject subject = getCurrentSubject();
+            final WebResourcePermission permission =
+                    new WebResourcePermission(requestPath(request), request.getMethod());
+            return policy.implies(permission, subject);
+        } catch (final RuntimeException ignored) {
+            return false;
+        } finally {
+            PolicyContext.setHandlerData(null);
+        }
+    }
+
+    private Subject getCurrentSubject() {
+        if (securityService == null) {
+            securityService = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
+        }
+        return securityService != null ? securityService.getCurrentSubject() : new Subject();
+    }
+
+    private String requestPath(final Request request) {
+        String uri = request.getRequestPathMB().toString();
+        if (uri == null || uri.isEmpty()) {
+            uri = "/";
+        }
+        return uri;
     }
 
     private Principal logInTomEE(final Principal pcp) {

@@ -17,6 +17,7 @@
 package org.apache.tomee.security;
 
 import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
+import org.apache.catalina.Container;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.core.security.JaccProvider;
@@ -39,11 +40,15 @@ import jakarta.security.auth.message.config.ServerAuthContext;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.SecurityContext;
 import jakarta.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
+import jakarta.security.jacc.PolicyContext;
+import jakarta.security.jacc.PolicyFactory;
+import jakarta.security.jacc.WebResourcePermission;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.security.auth.message.AuthStatus.SEND_CONTINUE;
@@ -87,7 +92,28 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public boolean hasAccessToWebResource(final String resource, final String... methods) {
-        return jaccProvider.hasAccessToWebResource(resource, methods);
+        final String previousContextId = PolicyContext.getContextID();
+        final String appContext = getAppContextId();
+        try {
+            if (appContext != null) {
+                JavaSecurityManagers.setContextID(appContext);
+            }
+
+            final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+            if (policyFactory != null && securityService != null) {
+                return policyFactory.getPolicy()
+                                    .implies(new WebResourcePermission(resource, methods),
+                                             securityService.getCurrentSubject());
+            }
+        } catch (final RuntimeException ignored) {
+            // Fall back to legacy provider path below.
+        } finally {
+            if (appContext != null && !Objects.equals(previousContextId, appContext)) {
+                JavaSecurityManagers.setContextID(previousContextId);
+            }
+        }
+
+        return jaccProvider != null && jaccProvider.hasAccessToWebResource(resource, methods);
     }
 
     @Override
@@ -126,10 +152,19 @@ public class TomEESecurityContext implements SecurityContext {
     private ServerAuthContext getServerAuthContext(final HttpServletRequest request) throws AuthException {
         final String appContext = toAppContext(request.getServletContext(), request.getContextPath());
 
+        final CallbackHandlerImpl callbackHandler = new CallbackHandlerImpl();
+        final Request currentRequest = OpenEJBSecurityListener.requests.get();
+        if (currentRequest != null) {
+            final Container container = currentRequest.getWrapper() != null ? currentRequest.getWrapper() : currentRequest.getContext();
+            if (container != null) {
+                callbackHandler.setContainer(container);
+            }
+        }
+
         final AuthConfigProvider authConfigProvider =
                 AuthConfigFactory.getFactory().getConfigProvider("HttpServlet", appContext, null);
         final ServerAuthConfig serverAuthConfig =
-                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, new CallbackHandlerImpl());
+                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, callbackHandler);
 
         return serverAuthConfig.getAuthContext(null, null, null);
     }
@@ -139,6 +174,10 @@ public class TomEESecurityContext implements SecurityContext {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         if (securityService instanceof TomcatSecurityService tomcatSecurityService) {
             final Request request = OpenEJBSecurityListener.requests.get();
+            if (request == null || request.getWrapper() == null) {
+                return;
+            }
+
             final GenericPrincipal genericPrincipal =
                     new GenericPrincipal(
                         principal.getName(),
@@ -151,7 +190,20 @@ public class TomEESecurityContext implements SecurityContext {
             tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
                                               genericPrincipal,
                                               request.getWrapper().getRunAs());
+
+            if (genericPrincipal.getName() != null) {
+                request.setAuthType("JASPIC");
+                request.setUserPrincipal(genericPrincipal);
+            }
         }
+    }
+
+    private String getAppContextId() {
+        final Request request = OpenEJBSecurityListener.requests.get();
+        if (request == null || request.getServletContext() == null) {
+            return null;
+        }
+        return toAppContext(request.getServletContext(), request.getContextPath());
     }
 
 
