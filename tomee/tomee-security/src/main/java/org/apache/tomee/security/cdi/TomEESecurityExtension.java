@@ -111,6 +111,7 @@ public class TomEESecurityExtension implements Extension {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class), "TomEESecurityContext");
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(BaseUrlProducer.class), "TomEEBaseUrlProducer");
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(CallerPrincipalProducer.class), "TomEECallerPrincipalProducer");
     }
 
     // using CDI Observes with WithAnnotations seems to trigger loading of the ProcessAnnotatedType
