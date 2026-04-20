@@ -58,14 +58,17 @@ import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class TomEESecurityExtension implements Extension {
-    private final AtomicReference<Annotated> basicMechanism = new AtomicReference<>();
-    private final AtomicReference<Annotated> formMechanism = new AtomicReference<>();
-    private final AtomicReference<Annotated> customMechanism = new AtomicReference<>();
-    private final AtomicReference<Annotated> oidcMechanism = new AtomicReference<>();
+    private final List<BasicAuthenticationMechanismDefinition> basicMechanismDefinitions = new ArrayList<>();
+    private final List<FormAuthenticationMechanismDefinition> formMechanismDefinitions = new ArrayList<>();
+    private final List<CustomFormAuthenticationMechanismDefinition> customMechanismDefinitions = new ArrayList<>();
+    private final List<OpenIdAuthenticationMechanismDefinition> oidcMechanismDefinitions = new ArrayList<>();
 
     private final AtomicReference<Annotated> tomcatUserStore = new AtomicReference<>();
     private final AtomicReference<Annotated> databaseStore = new AtomicReference<>();
@@ -78,6 +81,7 @@ public class TomEESecurityExtension implements Extension {
         final BeanManager beanManager) {
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanism.class), "DefaultAuthenticationMechanism");
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanismHandler.class), "DefaultAuthenticationMechanismHandler");
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class), "TomEESecurityServletAuthenticationMechanismMapper");
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class), "TomEEIdentityStoreHandler");
 
@@ -111,21 +115,10 @@ public class TomEESecurityExtension implements Extension {
             ldapStore.set(annotatedType);
         }
 
-        if (basicMechanism.get() == null && annotatedType.isAnnotationPresent(BasicAuthenticationMechanismDefinition.class)) {
-            basicMechanism.set(annotatedType);
-        }
-
-        if (formMechanism.get() == null && annotatedType.isAnnotationPresent(FormAuthenticationMechanismDefinition.class)) {
-            formMechanism.set(annotatedType);
-        }
-
-        if (customMechanism.get() == null && annotatedType.isAnnotationPresent(CustomFormAuthenticationMechanismDefinition.class)) {
-            customMechanism.set(annotatedType);
-        }
-
-        if (oidcMechanism.get() == null && annotatedType.isAnnotationPresent(OpenIdAuthenticationMechanismDefinition.class)) {
-            oidcMechanism.set(annotatedType);
-        }
+        basicMechanismDefinitions.addAll(annotatedType.getAnnotations(BasicAuthenticationMechanismDefinition.class));
+        formMechanismDefinitions.addAll(annotatedType.getAnnotations(FormAuthenticationMechanismDefinition.class));
+        customMechanismDefinitions.addAll(annotatedType.getAnnotations(CustomFormAuthenticationMechanismDefinition.class));
+        oidcMechanismDefinitions.addAll(annotatedType.getAnnotations(OpenIdAuthenticationMechanismDefinition.class));
 
         if (eventIn.getBean().getTypes().contains(HttpAuthenticationMechanism.class)) {
             applicationAuthenticationMechanisms = true;
@@ -224,7 +217,8 @@ public class TomEESecurityExtension implements Extension {
                 });
         }
 
-        if (basicMechanism.get() != null) {
+        if (!basicMechanismDefinitions.isEmpty()) {
+            final BasicAuthenticationMechanismDefinition defaultBasicDefinition = basicMechanismDefinitions.get(0);
             afterBeanDiscovery
                 .addBean()
                 .id(BasicAuthenticationMechanism.class.getName() + "#" + BasicAuthenticationMechanismDefinition.class.getName())
@@ -233,28 +227,38 @@ public class TomEESecurityExtension implements Extension {
                 .addType(new TypeLiteral<Supplier<BasicAuthenticationMechanismDefinition>>() {})
                 .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
                 .scope(ApplicationScoped.class)
-                .createWith(creationalContext -> createBasicAuthenticationMechanismDefinitionSupplier(beanManager));
+                .createWith(creationalContext -> createBasicAuthenticationMechanismDefinitionSupplier(defaultBasicDefinition, beanManager));
 
-            afterBeanDiscovery
-                .addBean()
-                .id(BasicAuthenticationMechanism.class.getName())
-                .beanClass(BasicAuthenticationMechanism.class)
-                .types(Object.class, HttpAuthenticationMechanism.class, BasicAuthenticationMechanism.class)
-                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-                .scope(ApplicationScoped.class)
-                .createWith((CreationalContext<BasicAuthenticationMechanism> creationalContext) -> {
-                    final AnnotatedType<BasicAuthenticationMechanism> annotatedType =
-                        beanManager.createAnnotatedType(BasicAuthenticationMechanism.class);
-                    final BeanAttributes<BasicAuthenticationMechanism> beanAttributes =
-                        beanManager.createBeanAttributes(annotatedType);
-                    return beanManager.createBean(beanAttributes, BasicAuthenticationMechanism.class,
-                                                  beanManager.getInjectionTargetFactory(annotatedType))
-                                      .create(creationalContext);
-                });
+            for (int i = 0; i < basicMechanismDefinitions.size(); i++) {
+                final BasicAuthenticationMechanismDefinition definition = basicMechanismDefinitions.get(i);
+                final Supplier<BasicAuthenticationMechanismDefinition> definitionSupplier =
+                        createBasicAuthenticationMechanismDefinitionSupplier(definition, beanManager);
+                final Annotation[] qualifiers = QualifierInstances.beanQualifiers(definition.qualifiers());
 
+                afterBeanDiscovery
+                    .addBean()
+                    .id(BasicAuthenticationMechanism.class.getName() + "#" + i)
+                    .beanClass(BasicAuthenticationMechanism.class)
+                    .types(Object.class, HttpAuthenticationMechanism.class, BasicAuthenticationMechanism.class)
+                    .qualifiers(qualifiers)
+                    .scope(ApplicationScoped.class)
+                    .createWith((CreationalContext<BasicAuthenticationMechanism> creationalContext) -> {
+                        final AnnotatedType<BasicAuthenticationMechanism> annotatedType =
+                            beanManager.createAnnotatedType(BasicAuthenticationMechanism.class);
+                        final BeanAttributes<BasicAuthenticationMechanism> beanAttributes =
+                            beanManager.createBeanAttributes(annotatedType);
+                        final BasicAuthenticationMechanism mechanism =
+                                beanManager.createBean(beanAttributes, BasicAuthenticationMechanism.class,
+                                                       beanManager.getInjectionTargetFactory(annotatedType))
+                                           .create(creationalContext);
+                        mechanism.setDefinitionSupplier(definitionSupplier);
+                        return mechanism;
+                    });
+            }
         }
 
-        if (formMechanism.get() != null) {
+        if (!formMechanismDefinitions.isEmpty()) {
+            final FormAuthenticationMechanismDefinition defaultFormDefinition = formMechanismDefinitions.get(0);
             afterBeanDiscovery
                 .addBean()
                 .id(FormAuthenticationMechanism.class.getName() + "#" + LoginToContinue.class.getName())
@@ -263,29 +267,38 @@ public class TomEESecurityExtension implements Extension {
                 .addType(new TypeLiteral<Supplier<LoginToContinue>>() {})
                 .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
                 .scope(ApplicationScoped.class)
-                .createWith(creationalContext -> createFormLoginToContinueSupplier(beanManager));
+                .createWith(creationalContext -> createFormLoginToContinueSupplier(defaultFormDefinition, beanManager));
 
-            afterBeanDiscovery
-                .addBean()
-                .id(FormAuthenticationMechanism.class.getName())
-                .beanClass(FormAuthenticationMechanism.class)
-                .types(Object.class, HttpAuthenticationMechanism.class, FormAuthenticationMechanism.class)
-                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-                .scope(ApplicationScoped.class)
-                .createWith((CreationalContext<FormAuthenticationMechanism> creationalContext) -> {
-                    final AnnotatedType<FormAuthenticationMechanism> annotatedType =
-                        beanManager.createAnnotatedType(FormAuthenticationMechanism.class);
-                    final BeanAttributes<FormAuthenticationMechanism> beanAttributes =
-                        beanManager.createBeanAttributes(annotatedType);
-                    return beanManager.createBean(beanAttributes, FormAuthenticationMechanism.class,
-                                                  beanManager.getInjectionTargetFactory(annotatedType))
-                                      .create(creationalContext);
-                });
+            for (int i = 0; i < formMechanismDefinitions.size(); i++) {
+                final FormAuthenticationMechanismDefinition definition = formMechanismDefinitions.get(i);
+                final Supplier<LoginToContinue> loginToContinueSupplier =
+                        createFormLoginToContinueSupplier(definition, beanManager);
+                final Annotation[] qualifiers = QualifierInstances.beanQualifiers(definition.qualifiers());
 
-
+                afterBeanDiscovery
+                    .addBean()
+                    .id(FormAuthenticationMechanism.class.getName() + "#" + i)
+                    .beanClass(FormAuthenticationMechanism.class)
+                    .types(Object.class, HttpAuthenticationMechanism.class, FormAuthenticationMechanism.class)
+                    .qualifiers(qualifiers)
+                    .scope(ApplicationScoped.class)
+                    .createWith((CreationalContext<FormAuthenticationMechanism> creationalContext) -> {
+                        final AnnotatedType<FormAuthenticationMechanism> annotatedType =
+                            beanManager.createAnnotatedType(FormAuthenticationMechanism.class);
+                        final BeanAttributes<FormAuthenticationMechanism> beanAttributes =
+                            beanManager.createBeanAttributes(annotatedType);
+                        final FormAuthenticationMechanism mechanism =
+                                beanManager.createBean(beanAttributes, FormAuthenticationMechanism.class,
+                                                       beanManager.getInjectionTargetFactory(annotatedType))
+                                           .create(creationalContext);
+                        mechanism.setLoginToContinueSupplier(loginToContinueSupplier);
+                        return mechanism;
+                    });
+            }
         }
 
-        if (customMechanism.get() != null) {
+        if (!customMechanismDefinitions.isEmpty()) {
+            final CustomFormAuthenticationMechanismDefinition defaultCustomDefinition = customMechanismDefinitions.get(0);
             afterBeanDiscovery
                 .addBean()
                 .id(CustomFormAuthenticationMechanism.class.getName() + "#" + LoginToContinue.class.getName())
@@ -294,27 +307,38 @@ public class TomEESecurityExtension implements Extension {
                 .addType(new TypeLiteral<Supplier<LoginToContinue>>() {})
                 .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
                 .scope(ApplicationScoped.class)
-                .createWith(creationalContext -> createCustomFormLoginToContinueSupplier(beanManager));
+                .createWith(creationalContext -> createCustomFormLoginToContinueSupplier(defaultCustomDefinition, beanManager));
 
-            afterBeanDiscovery
-                .addBean()
-                .id(CustomFormAuthenticationMechanism.class.getName())
-                .beanClass(CustomFormAuthenticationMechanism.class)
-                .types(Object.class, HttpAuthenticationMechanism.class, CustomFormAuthenticationMechanism.class)
-                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-                .scope(ApplicationScoped.class)
-                .createWith((CreationalContext<CustomFormAuthenticationMechanism> creationalContext) -> {
-                    final AnnotatedType<CustomFormAuthenticationMechanism> annotatedType =
-                        beanManager.createAnnotatedType(CustomFormAuthenticationMechanism.class);
-                    final BeanAttributes<CustomFormAuthenticationMechanism> beanAttributes =
-                        beanManager.createBeanAttributes(annotatedType);
-                    return beanManager.createBean(beanAttributes, CustomFormAuthenticationMechanism.class,
-                                                  beanManager.getInjectionTargetFactory(annotatedType))
-                                      .create(creationalContext);
-                });
+            for (int i = 0; i < customMechanismDefinitions.size(); i++) {
+                final CustomFormAuthenticationMechanismDefinition definition = customMechanismDefinitions.get(i);
+                final Supplier<LoginToContinue> loginToContinueSupplier =
+                        createCustomFormLoginToContinueSupplier(definition, beanManager);
+                final Annotation[] qualifiers = QualifierInstances.beanQualifiers(definition.qualifiers());
+
+                afterBeanDiscovery
+                    .addBean()
+                    .id(CustomFormAuthenticationMechanism.class.getName() + "#" + i)
+                    .beanClass(CustomFormAuthenticationMechanism.class)
+                    .types(Object.class, HttpAuthenticationMechanism.class, CustomFormAuthenticationMechanism.class)
+                    .qualifiers(qualifiers)
+                    .scope(ApplicationScoped.class)
+                    .createWith((CreationalContext<CustomFormAuthenticationMechanism> creationalContext) -> {
+                        final AnnotatedType<CustomFormAuthenticationMechanism> annotatedType =
+                            beanManager.createAnnotatedType(CustomFormAuthenticationMechanism.class);
+                        final BeanAttributes<CustomFormAuthenticationMechanism> beanAttributes =
+                            beanManager.createBeanAttributes(annotatedType);
+                        final CustomFormAuthenticationMechanism mechanism =
+                                beanManager.createBean(beanAttributes, CustomFormAuthenticationMechanism.class,
+                                                       beanManager.getInjectionTargetFactory(annotatedType))
+                                           .create(creationalContext);
+                        mechanism.setLoginToContinueSupplier(loginToContinueSupplier);
+                        return mechanism;
+                    });
+            }
         }
 
-        if (oidcMechanism.get() != null) {
+        if (!oidcMechanismDefinitions.isEmpty()) {
+            final OpenIdAuthenticationMechanismDefinition defaultOidcDefinition = oidcMechanismDefinitions.get(0);
             afterBeanDiscovery
                     .addBean()
                     .id(OpenIdAuthenticationMechanism.class.getName() + "#" + OpenIdAuthenticationMechanismDefinition.class.getName())
@@ -322,7 +346,7 @@ public class TomEESecurityExtension implements Extension {
                     .types(Object.class, OpenIdAuthenticationMechanismDefinition.class)
                     .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
                     .scope(RequestScoped.class)
-                    .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(beanManager));
+                    .createWith(creationalContext -> createOpenIdAuthenticationMechanismDefinition(defaultOidcDefinition, beanManager));
 
             afterBeanDiscovery.addBean()
                     .id(OpenIdStorageHandler.class.getName())
@@ -344,38 +368,62 @@ public class TomEESecurityExtension implements Extension {
 
             afterBeanDiscovery.addBean(createBean(TomEEOpenIdContext.class, beanManager));
             afterBeanDiscovery.addBean(createBean(OpenIdIdentityStore.class, beanManager));
-            afterBeanDiscovery.addBean(createBean(OpenIdAuthenticationMechanism.class, beanManager));
+
+            for (int i = 0; i < oidcMechanismDefinitions.size(); i++) {
+                final OpenIdAuthenticationMechanismDefinition definition = oidcMechanismDefinitions.get(i);
+                final Supplier<OpenIdAuthenticationMechanismDefinition> definitionSupplier =
+                        createOpenIdAuthenticationMechanismDefinitionSupplier(definition, beanManager);
+                final Annotation[] qualifiers = QualifierInstances.beanQualifiers(definition.qualifiers());
+
+                afterBeanDiscovery
+                        .addBean()
+                        .id(OpenIdAuthenticationMechanism.class.getName() + "#" + i)
+                        .beanClass(OpenIdAuthenticationMechanism.class)
+                        .types(Object.class, HttpAuthenticationMechanism.class, OpenIdAuthenticationMechanism.class)
+                        .qualifiers(qualifiers)
+                        .scope(ApplicationScoped.class)
+                        .createWith((CreationalContext<OpenIdAuthenticationMechanism> creationalContext) -> {
+                            final AnnotatedType<OpenIdAuthenticationMechanism> annotatedType =
+                                    beanManager.createAnnotatedType(OpenIdAuthenticationMechanism.class);
+                            final BeanAttributes<OpenIdAuthenticationMechanism> beanAttributes =
+                                    beanManager.createBeanAttributes(annotatedType);
+                            final OpenIdAuthenticationMechanism mechanism =
+                                    beanManager.createBean(beanAttributes, OpenIdAuthenticationMechanism.class,
+                                                           beanManager.getInjectionTargetFactory(annotatedType))
+                                               .create(creationalContext);
+                            mechanism.setDefinitionSupplier(definitionSupplier);
+                            return mechanism;
+                        });
+            }
         }
     }
 
     public boolean hasAuthenticationMechanisms() {
-        return basicMechanism.get() != null || formMechanism.get() != null || customMechanism.get() != null || oidcMechanism.get() != null || applicationAuthenticationMechanisms;
+        return !basicMechanismDefinitions.isEmpty() || !formMechanismDefinitions.isEmpty() ||
+                !customMechanismDefinitions.isEmpty() || !oidcMechanismDefinitions.isEmpty() ||
+                applicationAuthenticationMechanisms;
     }
 
-    private Supplier<LoginToContinue> createFormLoginToContinueSupplier(final BeanManager beanManager) {
+    private Supplier<LoginToContinue> createFormLoginToContinueSupplier(final FormAuthenticationMechanismDefinition definition,
+                                                                        final BeanManager beanManager) {
         return () -> {
-            final LoginToContinue loginToContinue = formMechanism.get()
-                                                                      .getAnnotation(
-                                                                          FormAuthenticationMechanismDefinition.class)
-                                                                      .loginToContinue();
+            final LoginToContinue loginToContinue = definition.loginToContinue();
 
             return TomEEELInvocationHandler.of(LoginToContinue.class, loginToContinue, beanManager);
         };
     }
 
-    private Supplier<BasicAuthenticationMechanismDefinition> createBasicAuthenticationMechanismDefinitionSupplier(final BeanManager beanManager) {
+    private Supplier<BasicAuthenticationMechanismDefinition> createBasicAuthenticationMechanismDefinitionSupplier(
+            final BasicAuthenticationMechanismDefinition definition, final BeanManager beanManager) {
         return () -> {
-            final BasicAuthenticationMechanismDefinition annotation = basicMechanism.get().getAnnotation(BasicAuthenticationMechanismDefinition.class);
-            return TomEEELInvocationHandler.of(BasicAuthenticationMechanismDefinition.class, annotation, beanManager);
+            return TomEEELInvocationHandler.of(BasicAuthenticationMechanismDefinition.class, definition, beanManager);
         };
     }
 
-    private Supplier<LoginToContinue> createCustomFormLoginToContinueSupplier(final BeanManager beanManager) {
+    private Supplier<LoginToContinue> createCustomFormLoginToContinueSupplier(
+            final CustomFormAuthenticationMechanismDefinition definition, final BeanManager beanManager) {
         return () -> {
-            final LoginToContinue annotation = customMechanism.get()
-                                                                   .getAnnotation(
-                                                                       CustomFormAuthenticationMechanismDefinition.class)
-                                                                   .loginToContinue();
+            final LoginToContinue annotation = definition.loginToContinue();
 
             return TomEEELInvocationHandler.of(LoginToContinue.class, annotation, beanManager);
         };
@@ -402,10 +450,13 @@ public class TomEESecurityExtension implements Extension {
         };
     }
 
-    private OpenIdAuthenticationMechanismDefinition createOpenIdAuthenticationMechanismDefinition(final BeanManager bm) {
-        final OpenIdAuthenticationMechanismDefinition annotation = oidcMechanism.get()
-                .getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+    private Supplier<OpenIdAuthenticationMechanismDefinition> createOpenIdAuthenticationMechanismDefinitionSupplier(
+            final OpenIdAuthenticationMechanismDefinition definition, final BeanManager bm) {
+        return () -> createOpenIdAuthenticationMechanismDefinition(definition, bm);
+    }
 
+    private OpenIdAuthenticationMechanismDefinition createOpenIdAuthenticationMechanismDefinition(
+            final OpenIdAuthenticationMechanismDefinition annotation, final BeanManager bm) {
         return new OpenIdAuthenticationMechanismDefinitionDelegate.AutoResolvingProviderMetadata(
                 TomEEELInvocationHandler.of(OpenIdAuthenticationMechanismDefinition.class, annotation, bm));
     }

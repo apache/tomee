@@ -32,7 +32,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
@@ -43,6 +42,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.SavedRequest;
+import org.apache.tomee.security.http.openid.OpenIdHttpClientSupport;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 /**
  * see <a href="https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth">OIDC</a>
@@ -63,7 +64,8 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             LogCategory.TOMEE_SECURITY, OpenIdAuthenticationMechanism.class);
 
     @Inject
-    private OpenIdAuthenticationMechanismDefinition definition;
+    private OpenIdAuthenticationMechanismDefinition openIdAuthenticationMechanismDefinition;
+    private Supplier<OpenIdAuthenticationMechanismDefinition> resolvedDefinition;
 
     @Inject
     private IdentityStoreHandler identityStoreHandler;
@@ -73,6 +75,14 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     @Inject
     private OpenIdStorageHandler storageHandler;
+
+    void setDefinitionSupplier(final Supplier<OpenIdAuthenticationMechanismDefinition> definitionSupplier) {
+        this.resolvedDefinition = definitionSupplier;
+    }
+
+    private OpenIdAuthenticationMechanismDefinition getDefinition() {
+        return resolvedDefinition != null ? resolvedDefinition.get() : openIdAuthenticationMechanismDefinition;
+    }
 
     @Override
     public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
@@ -94,20 +104,20 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     private String buildRedirectUri()
     {
-        if (definition.logout().notifyProvider()) {
-            if (!definition.providerMetadata().endSessionEndpoint().isEmpty()) {
-                UriBuilder endSession = UriBuilder.fromUri(definition.providerMetadata().endSessionEndpoint())
+        if (getDefinition().logout().notifyProvider()) {
+            if (!getDefinition().providerMetadata().endSessionEndpoint().isEmpty()) {
+                UriBuilder endSession = UriBuilder.fromUri(getDefinition().providerMetadata().endSessionEndpoint())
                         .queryParam(OpenIdConstant.ID_TOKEN_HINT, openIdContext.getIdentityToken().getToken());
 
-                if (!definition.logout().redirectURI().isEmpty()) {
-                    endSession.queryParam(OpenIdConstant.POST_LOGOUT_REDIRECT_URI, definition.logout().redirectURI());
+                if (!getDefinition().logout().redirectURI().isEmpty()) {
+                    endSession.queryParam(OpenIdConstant.POST_LOGOUT_REDIRECT_URI, getDefinition().logout().redirectURI());
                 }
 
                 return endSession.build().toString();
             }
         } else {
-            if (!definition.logout().redirectURI().isEmpty()) {
-                return definition.logout().redirectURI();
+            if (!getDefinition().logout().redirectURI().isEmpty()) {
+                return getDefinition().logout().redirectURI();
             }
         }
 
@@ -145,12 +155,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
         if (openIdContext.getAccessToken() != null && openIdContext.getAccessToken().isExpired()) {
             LOGGER.debug("access token did expire");
 
-            if (definition.tokenAutoRefresh()) {
+            if (getDefinition().tokenAutoRefresh()) {
                 LOGGER.debug("Attempting to refresh tokens after access token expiry");
                 return refreshTokens(request, response, httpMessageContext);
             }
 
-            if (definition.logout().accessTokenExpiry()) {
+            if (getDefinition().logout().accessTokenExpiry()) {
                 LOGGER.debug("access token expired and accessTokenExpiry=true, performing logout");
                 cleanSubject(request, response, httpMessageContext);
                 return AuthenticationStatus.SEND_FAILURE;
@@ -159,12 +169,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
         if (openIdContext.getIdentityToken() != null && openIdContext.getIdentityToken().isExpired()) {
             LOGGER.debug("identity token did expire");
-            if (definition.tokenAutoRefresh()) {
+            if (getDefinition().tokenAutoRefresh()) {
                 LOGGER.debug("Attempting to refresh tokens after identity token expiry");
                 return refreshTokens(request, response, httpMessageContext);
             }
 
-            if (definition.logout().identityTokenExpiry()) {
+            if (getDefinition().logout().identityTokenExpiry()) {
                 LOGGER.debug("identity token expired and identityTokenExpiry=true, performing logout");
                 cleanSubject(request, response, httpMessageContext);
                 return AuthenticationStatus.SEND_FAILURE;
@@ -175,7 +185,8 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected AuthenticationStatus refreshTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
-        try (Client client = ClientBuilder.newClient()) {
+        final String tokenEndpoint = getDefinition().providerMetadata().tokenEndpoint();
+        try (Client client = OpenIdHttpClientSupport.newClient(tokenEndpoint)) {
             RefreshToken refreshToken = openIdContext.getRefreshToken()
                     .orElse(null);
 
@@ -184,12 +195,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             }
 
             Form form = new Form()
-                    .param(OpenIdConstant.CLIENT_ID, definition.clientId())
-                    .param(OpenIdConstant.CLIENT_SECRET, definition.clientSecret())
+                    .param(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
+                    .param(OpenIdConstant.CLIENT_SECRET, getDefinition().clientSecret())
                     .param(OpenIdConstant.GRANT_TYPE, OpenIdConstant.REFRESH_TOKEN)
                     .param(OpenIdConstant.REFRESH_TOKEN, refreshToken.getToken());
 
-            TokenResponse tokenResponse = client.target(definition.providerMetadata().tokenEndpoint()).request()
+            TokenResponse tokenResponse = client.target(tokenEndpoint).request()
                     .accept(MediaType.APPLICATION_JSON)
                     .post(Entity.form(form), TokenResponse.class);
 
@@ -226,7 +237,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             boolean matchesOriginalRequest = originalRequest != null && originalRequest.startsWith(request.getRequestURL().toString());
 
             // callback from openid provider (3)
-            if (!request.getRequestURL().toString().equals(definition.redirectURI()) && definition.redirectToOriginalResource() && !matchesOriginalRequest) {
+            if (!request.getRequestURL().toString().equals(getDefinition().redirectURI()) && getDefinition().redirectToOriginalResource() && !matchesOriginalRequest) {
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
             }
 
@@ -242,7 +253,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
             }
 
-            if (definition.redirectToOriginalResource() && !matchesOriginalRequest) {
+            if (getDefinition().redirectToOriginalResource() && !matchesOriginalRequest) {
                 AuthenticationStatus redirectStatus = redirectToStoredOriginalRequest(request, messageContext, originalRequest);
                 if (redirectStatus != null) {
                     return redirectStatus;
@@ -252,22 +263,23 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             // Callback is okay, continue with (4)
             storageHandler.delete(request, response, OpenIdStorageHandler.STATE_KEY);
 
-            try (Client client = ClientBuilder.newClient()) {
+            final String tokenEndpoint = getDefinition().providerMetadata().tokenEndpoint();
+            try (Client client = OpenIdHttpClientSupport.newClient(tokenEndpoint)) {
                 Form form = new Form()
-                        .param(OpenIdConstant.CLIENT_ID, definition.clientId())
-                        .param(OpenIdConstant.CLIENT_SECRET, definition.clientSecret())
+                        .param(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
+                        .param(OpenIdConstant.CLIENT_SECRET, getDefinition().clientSecret())
                         .param(OpenIdConstant.GRANT_TYPE, "authorization_code")
-                        .param(OpenIdConstant.REDIRECT_URI, definition.redirectURI())
+                        .param(OpenIdConstant.REDIRECT_URI, getDefinition().redirectURI())
                         .param(OpenIdConstant.CODE, request.getParameter(OpenIdConstant.CODE));
 
-                TokenResponse tokenResponse = client.target(definition.providerMetadata().tokenEndpoint()).request()
+                TokenResponse tokenResponse = client.target(tokenEndpoint).request()
                         .accept(MediaType.APPLICATION_JSON)
                         .post(Entity.form(form), TokenResponse.class);
 
                 AuthenticationStatus result = handleTokenResponse(tokenResponse, messageContext);
 
                 // We're finished, restore original request now and clean up
-                if (definition.redirectToOriginalResource()) {
+                if (getDefinition().redirectToOriginalResource()) {
                     restoreOriginalRequest(request, response, messageContext);
                 }
 
@@ -317,34 +329,34 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected URI buildAuthorizationUri(HttpServletRequest request, HttpServletResponse response) {
-        UriBuilder uriBuilder = UriBuilder.fromUri(definition.providerMetadata().authorizationEndpoint())
-                .queryParam(OpenIdConstant.CLIENT_ID, definition.clientId())
-                .queryParam(OpenIdConstant.SCOPE, String.join(" ", definition.scope()))
-                .queryParam(OpenIdConstant.RESPONSE_TYPE, definition.responseType())
+        UriBuilder uriBuilder = UriBuilder.fromUri(getDefinition().providerMetadata().authorizationEndpoint())
+                .queryParam(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
+                .queryParam(OpenIdConstant.SCOPE, String.join(" ", getDefinition().scope()))
+                .queryParam(OpenIdConstant.RESPONSE_TYPE, getDefinition().responseType())
                 .queryParam(OpenIdConstant.STATE, storageHandler.createNewState(request, response))
-                .queryParam(OpenIdConstant.REDIRECT_URI, definition.redirectURI());
+                .queryParam(OpenIdConstant.REDIRECT_URI, getDefinition().redirectURI());
 
-        if (definition.useNonce()) {
+        if (getDefinition().useNonce()) {
             uriBuilder.queryParam(OpenIdConstant.NONCE, storageHandler.createNewNonce(request, response));
         }
 
-        if (!definition.responseMode().isEmpty()) {
-            uriBuilder.queryParam(OpenIdConstant.RESPONSE_MODE, definition.responseMode());
+        if (!getDefinition().responseMode().isEmpty()) {
+            uriBuilder.queryParam(OpenIdConstant.RESPONSE_MODE, getDefinition().responseMode());
         }
 
-        if (definition.display() != null) {
-            uriBuilder.queryParam(OpenIdConstant.DISPLAY, definition.display().name().toLowerCase());
+        if (getDefinition().display() != null) {
+            uriBuilder.queryParam(OpenIdConstant.DISPLAY, getDefinition().display().name().toLowerCase());
         }
 
-        if (definition.prompt().length > 0) {
-            String stringifiedPrompt = Arrays.stream(definition.prompt())
+        if (getDefinition().prompt().length > 0) {
+            String stringifiedPrompt = Arrays.stream(getDefinition().prompt())
                     .map(Enum::toString).map(String::toLowerCase)
                     .collect(Collectors.joining(" "));
 
             uriBuilder.queryParam(OpenIdConstant.PROMPT, stringifiedPrompt);
         }
 
-        for (String extraParam : definition.extraParameters()) {
+        for (String extraParam : getDefinition().extraParameters()) {
             String[] paramParts = extraParam.split("=");
 
             if (paramParts.length != 2) {
