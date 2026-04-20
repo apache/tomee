@@ -32,6 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
@@ -42,7 +43,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.SavedRequest;
-import org.apache.tomee.security.http.openid.OpenIdHttpClientSupport;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
@@ -186,7 +186,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     protected AuthenticationStatus refreshTokens(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
         final String tokenEndpoint = getDefinition().providerMetadata().tokenEndpoint();
-        try (Client client = OpenIdHttpClientSupport.newClient(tokenEndpoint)) {
+        try (Client client = ClientBuilder.newClient()) {
             RefreshToken refreshToken = openIdContext.getRefreshToken()
                     .orElse(null);
 
@@ -264,7 +264,7 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             storageHandler.delete(request, response, OpenIdStorageHandler.STATE_KEY);
 
             final String tokenEndpoint = getDefinition().providerMetadata().tokenEndpoint();
-            try (Client client = OpenIdHttpClientSupport.newClient(tokenEndpoint)) {
+            try (Client client = ClientBuilder.newClient()) {
                 Form form = new Form()
                         .param(OpenIdConstant.CLIENT_ID, getDefinition().clientId())
                         .param(OpenIdConstant.CLIENT_SECRET, getDefinition().clientSecret())

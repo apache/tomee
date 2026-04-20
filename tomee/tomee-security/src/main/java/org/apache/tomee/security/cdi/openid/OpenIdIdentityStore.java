@@ -30,13 +30,13 @@ import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.openid.AccessToken;
 import jakarta.security.enterprise.identitystore.openid.IdentityToken;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
-import org.apache.tomee.security.http.openid.OpenIdHttpClientSupport;
 import org.apache.tomee.security.http.openid.JwtValidators;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEAccesToken;
@@ -169,7 +169,7 @@ public class OpenIdIdentityStore implements IdentityStore {
 
     private JsonObject fetchUserinfoClaims(JwtConsumer jwtConsumer, String accessToken) {
         final String userinfoEndpoint = definition.providerMetadata().userinfoEndpoint();
-        try (Client client = OpenIdHttpClientSupport.newClient(userinfoEndpoint)) {
+        try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(userinfoEndpoint)
                     .request(MediaType.APPLICATION_JSON, "application/jwt")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).get();
@@ -209,7 +209,6 @@ public class OpenIdIdentityStore implements IdentityStore {
         Get get = new Get();
         get.setConnectTimeout(definition.jwksConnectTimeout());
         get.setReadTimeout(definition.jwksReadTimeout());
-        OpenIdHttpClientSupport.configureHttpsGet(get, definition.providerMetadata().jwksURI());
         jwks.setSimpleHttpGet(get);
 
         HttpsJwksVerificationKeyResolver keyResolver = new HttpsJwksVerificationKeyResolver(jwks);
