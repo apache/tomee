@@ -366,7 +366,9 @@ public class BeanContext extends DeploymentContext {
     private Cmp cmp;
     private LegacyView legacyView;
 
-    private final Map<String, String> securityRoleReferences = new HashMap<>();
+    // LinkedHashMap so getSecurityRoleReferences() returns role-refs in the
+    // order the container registered them, not the non-deterministic HashMap order.
+    private final Map<String, String> securityRoleReferences = new LinkedHashMap<>();
 
     /**
      * TODO: Move to MethodContext

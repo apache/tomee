@@ -25,6 +25,8 @@ import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
 import jakarta.security.enterprise.identitystore.InMemoryIdentityStoreDefinition;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -36,8 +38,9 @@ import static java.util.Collections.emptySet;
 
 /**
  * Jakarta Security 4.0 {@link InMemoryIdentityStoreDefinition}
- * implementation. Credentials are declared directly on the annotation and matched with a constant-time byte comparison
- * to avoid leaking timing information about which callers are present.
+ * implementation. Credentials are declared directly on the annotation and matched with constant-time byte
+ * comparison (both password and caller name) to avoid leaking timing information about which callers are
+ * present.
  */
 @ApplicationScoped
 public class TomEEInMemoryIdentityStore implements IdentityStore {
@@ -65,28 +68,37 @@ public class TomEEInMemoryIdentityStore implements IdentityStore {
             return CredentialValidationResult.NOT_VALIDATED_RESULT;
         }
 
-        final String caller = usernamePasswordCredential.getCaller();
         final char[] suppliedPasswordChars = usernamePasswordCredential.getPassword().getValue();
+        // Encode char[] -> UTF-8 bytes without going through String, so the plaintext
+        // password never gets interned/retained outside of a scrubbable buffer.
         final byte[] suppliedPassword = toUtf8Bytes(suppliedPasswordChars);
+        final byte[] suppliedCaller = toUtf8Bytes(usernamePasswordCredential.getCaller());
 
-        InMemoryIdentityStoreDefinition.Credentials match = null;
-        // Walk every entry once, regardless of a hit, so runtime stays roughly independent
-        // of which (or how many) callers are declared and where the match occurs.
-        for (final InMemoryIdentityStoreDefinition.Credentials entry : definition.value()) {
-            final byte[] declaredPassword = entry.password().getBytes(StandardCharsets.UTF_8);
-            final boolean passwordMatches = MessageDigest.isEqual(declaredPassword, suppliedPassword);
-            // Compare caller after password so we still compute the digest work for unknown callers.
-            if (passwordMatches && entry.callerName().equals(caller) && match == null) {
-                match = entry;
+        try {
+            InMemoryIdentityStoreDefinition.Credentials match = null;
+            // Walk every entry once, regardless of a hit, so runtime stays roughly independent
+            // of which (or how many) callers are declared and where the match occurs.
+            for (final InMemoryIdentityStoreDefinition.Credentials entry : definition.value()) {
+                final byte[] declaredPassword = entry.password().getBytes(StandardCharsets.UTF_8);
+                final byte[] declaredCaller = entry.callerName().getBytes(StandardCharsets.UTF_8);
+                // MessageDigest.isEqual is time-constant in the length of its second argument, so
+                // both comparisons leak at most the declared (public, annotation-known) lengths.
+                final boolean passwordMatches = MessageDigest.isEqual(declaredPassword, suppliedPassword);
+                final boolean callerMatches = MessageDigest.isEqual(declaredCaller, suppliedCaller);
+                if (passwordMatches && callerMatches && match == null) {
+                    match = entry;
+                }
             }
-        }
 
-        if (match == null) {
-            return CredentialValidationResult.INVALID_RESULT;
-        }
+            if (match == null) {
+                return CredentialValidationResult.INVALID_RESULT;
+            }
 
-        final Set<String> groups = new HashSet<>(Arrays.asList(match.groups()));
-        return new CredentialValidationResult(match.callerName(), groups);
+            final Set<String> groups = new HashSet<>(Arrays.asList(match.groups()));
+            return new CredentialValidationResult(match.callerName(), groups);
+        } finally {
+            Arrays.fill(suppliedPassword, (byte) 0);
+        }
     }
 
     @Override
@@ -108,11 +120,21 @@ public class TomEEInMemoryIdentityStore implements IdentityStore {
     }
 
     private static byte[] toUtf8Bytes(final char[] chars) {
-        if (chars == null) {
+        if (chars == null || chars.length == 0) {
             return new byte[0];
         }
-        // Route through a String to stay aligned with how annotation-declared passwords are encoded;
-        // the spec stores passwords as plain String and we compare against their UTF-8 byte form.
-        return new String(chars).getBytes(StandardCharsets.UTF_8);
+        // Direct char[] -> UTF-8 bytes via the charset encoder, bypassing String so the
+        // plaintext never lands in the String pool or a long-lived heap slot.
+        final ByteBuffer buffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
+        final byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return bytes;
+    }
+
+    private static byte[] toUtf8Bytes(final String value) {
+        if (value == null) {
+            return new byte[0];
+        }
+        return value.getBytes(StandardCharsets.UTF_8);
     }
 }

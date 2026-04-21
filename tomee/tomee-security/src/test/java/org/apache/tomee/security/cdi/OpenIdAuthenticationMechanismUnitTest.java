@@ -21,14 +21,18 @@ import com.sun.net.httpserver.HttpServer;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
+import org.apache.tomee.security.http.openid.CompositeOpenIdProviderMetadata;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
+import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -291,23 +295,22 @@ public class OpenIdAuthenticationMechanismUnitTest {
         });
         server.start();
 
-        // Simulate an OP that advertises ONLY client_secret_post by subclassing the mechanism
-        // and overriding the preference decision. We keep the RETURNS_DEEP_STUBS wiring so the
-        // rest of the flow still runs against the shared `definition` mock.
-        OpenIdAuthenticationMechanism postOnlyMechanism = new OpenIdAuthenticationMechanism() {
-            @Override
-            protected boolean preferBasicAuth() {
-                return false;
-            }
-        };
-        postOnlyMechanism.setDefinitionSupplier(() -> definition);
-        Reflections.set(postOnlyMechanism, "identityStoreHandler", identityStoreHandler);
-        Reflections.set(postOnlyMechanism, "openIdContext", new TomEEOpenIdContext());
-        Reflections.set(postOnlyMechanism, "storageHandler", storageHandler);
-
         try {
-            when(definition.providerMetadata().tokenEndpoint())
-                    .thenReturn("http://127.0.0.1:" + server.getAddress().getPort() + "/token");
+            // Real CompositeOpenIdProviderMetadata built from a discovery JSON that advertises ONLY
+            // client_secret_post. Exercises the production preferBasicAuth() code path end-to-end
+            // instead of a subclass override.
+            final JsonObject discovery = Json.createObjectBuilder()
+                    .add(OpenIdConstant.TOKEN_ENDPOINT,
+                            "http://127.0.0.1:" + server.getAddress().getPort() + "/token")
+                    .add(OpenIdConstant.TOKEN_ENDPOINT_AUTH_METHODS_SUPPORTED,
+                            Json.createArrayBuilder().add("client_secret_post"))
+                    .build();
+            final OpenIdProviderMetadata overrideDefaults =
+                    DefaultOverrideHolder.class.getAnnotation(OpenIdProviderMetadata.class);
+            final CompositeOpenIdProviderMetadata composite =
+                    new CompositeOpenIdProviderMetadata(discovery, overrideDefaults);
+
+            when(definition.providerMetadata()).thenReturn(composite);
             when(identityStoreHandler.validate(any()))
                     .thenReturn(new CredentialValidationResult("caller", Set.of("users")));
 
@@ -324,7 +327,7 @@ public class OpenIdAuthenticationMechanismUnitTest {
 
             storageHandler.set(request, response, OpenIdStorageHandler.STATE_KEY, "STATE");
 
-            AuthenticationStatus status = postOnlyMechanism.performAuthentication(request, response, messageContext);
+            AuthenticationStatus status = authenticationMechanism.performAuthentication(request, response, messageContext);
 
             assertEquals(AuthenticationStatus.SUCCESS, status);
 
@@ -342,6 +345,72 @@ public class OpenIdAuthenticationMechanismUnitTest {
             server.stop(0);
         }
     }
+
+    @Test
+    public void tokenEndpointUsesClientSecretBasicWhenDiscoveryAdvertisesIt() throws Exception {
+        final AtomicReference<String> capturedAuthHeader = new AtomicReference<>();
+        final AtomicReference<String> capturedBody = new AtomicReference<>();
+
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        server.createContext("/token", exchange -> {
+            capturedAuthHeader.set(exchange.getRequestHeaders().getFirst("Authorization"));
+            capturedBody.set(readRequestBody(exchange));
+
+            byte[] body = "{\"token_type\":\"Bearer\",\"access_token\":\"ACCESS\",\"id_token\":\"ID\",\"expires_in\":3600}"
+                    .getBytes(StandardCharsets.UTF_8);
+
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+
+        try {
+            // Discovery advertises both methods; Basic must win because OIDC Core §9 names it as the default.
+            final JsonObject discovery = Json.createObjectBuilder()
+                    .add(OpenIdConstant.TOKEN_ENDPOINT,
+                            "http://127.0.0.1:" + server.getAddress().getPort() + "/token")
+                    .add(OpenIdConstant.TOKEN_ENDPOINT_AUTH_METHODS_SUPPORTED,
+                            Json.createArrayBuilder().add("client_secret_post").add("client_secret_basic"))
+                    .build();
+            final OpenIdProviderMetadata overrideDefaults =
+                    DefaultOverrideHolder.class.getAnnotation(OpenIdProviderMetadata.class);
+            final CompositeOpenIdProviderMetadata composite =
+                    new CompositeOpenIdProviderMetadata(discovery, overrideDefaults);
+
+            when(definition.providerMetadata()).thenReturn(composite);
+            when(identityStoreHandler.validate(any()))
+                    .thenReturn(new CredentialValidationResult("caller", Set.of("users")));
+
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            HttpMessageContext messageContext = mock(HttpMessageContext.class, Answers.RETURNS_DEEP_STUBS);
+
+            when(request.getParameter(OpenIdConstant.STATE)).thenReturn("STATE");
+            when(request.getParameter(OpenIdConstant.CODE)).thenReturn("CODE");
+            when(request.getRequestURL()).thenReturn(new StringBuffer("https://example.com/redirect"));
+            when(request.getRequestURI()).thenReturn("/redirect");
+            when(messageContext.notifyContainerAboutLogin(any(CredentialValidationResult.class)))
+                    .thenReturn(AuthenticationStatus.SUCCESS);
+
+            storageHandler.set(request, response, OpenIdStorageHandler.STATE_KEY, "STATE");
+
+            AuthenticationStatus status = authenticationMechanism.performAuthentication(request, response, messageContext);
+
+            assertEquals(AuthenticationStatus.SUCCESS, status);
+            assertNotNull(capturedAuthHeader.get());
+            assertTrue(capturedAuthHeader.get().startsWith("Basic "));
+
+            Map<String, String> formParams = parseFormBody(capturedBody.get());
+            assertFalse(formParams.containsKey(OpenIdConstant.CLIENT_SECRET));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @OpenIdProviderMetadata
+    private static class DefaultOverrideHolder { }
 
     private static String readRequestBody(HttpExchange exchange) throws java.io.IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.security.http.openid;
 
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdConstant;
@@ -129,6 +130,30 @@ public class CompositeOpenIdProviderMetadata implements OpenIdProviderMetadata {
 
         return openIdProviderMetadataOverride.responseTypeSupported();
 
+    }
+
+    /**
+     * OIDC Discovery 1.0 §3 {@code token_endpoint_auth_methods_supported}: the client authentication
+     * methods supported by the OP's token endpoint (e.g. {@code client_secret_basic},
+     * {@code client_secret_post}). Not on the spec-level {@link OpenIdProviderMetadata} annotation,
+     * so this is exposed as a regular method and read directly from the discovery JSON.
+     *
+     * @return the advertised methods, or an empty array if the OP did not advertise any.
+     */
+    public String[] tokenEndpointAuthMethodsSupported() {
+        if (!openidProviderMetadata.containsKey(OpenIdConstant.TOKEN_ENDPOINT_AUTH_METHODS_SUPPORTED)) {
+            return new String[0];
+        }
+
+        final JsonArray array = openidProviderMetadata.getJsonArray(OpenIdConstant.TOKEN_ENDPOINT_AUTH_METHODS_SUPPORTED);
+        if (array == null) {
+            return new String[0];
+        }
+
+        return array.stream()
+                .map(JsonString.class::cast)
+                .map(JsonString::getString)
+                .toArray(String[]::new);
     }
 
     @Override
