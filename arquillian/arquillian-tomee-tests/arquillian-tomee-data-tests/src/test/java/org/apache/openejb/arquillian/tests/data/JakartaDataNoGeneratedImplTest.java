@@ -53,6 +53,8 @@ public class JakartaDataNoGeneratedImplTest {
         "        <class>org.apache.openejb.arquillian.tests.data.SimpleItem</class>\n" +
         "        <exclude-unlisted-classes>true</exclude-unlisted-classes>\n" +
         "        <properties>\n" +
+        "            <property name=\"jakarta.persistence.schema-generation.database.action\"\n" +
+        "                      value=\"create\"/>\n" +
         "            <property name=\"openjpa.jdbc.SynchronizeMappings\"\n" +
         "                      value=\"buildSchema(ForeignKeys=true)\"/>\n" +
         "        </properties>\n" +
