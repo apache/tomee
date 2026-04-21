@@ -45,13 +45,13 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.SavedRequest;
+import org.apache.tomee.security.http.openid.CompositeOpenIdProviderMetadata;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -439,52 +439,33 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
      * when talking to the token endpoint.
      *
      * <p>Per OIDC Core 1.0 §9 both methods are legal and {@code client_secret_basic} is the
-     * default. When the {@link jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata
-     * OpenIdProviderMetadata} annotation exposes a {@code tokenEndpointAuthMethodsSupported()}
-     * accessor (reflectively detected so we don't couple to a specific spec revision), we honour
-     * it: if {@code client_secret_basic} is in the advertised list we prefer Basic; if only
-     * {@code client_secret_post} is advertised we fall back to form parameters. An empty or
-     * {@code null} array is treated as "not advertised" and we fall back to the OIDC default
-     * of Basic.
-     *
-     * <p>When the accessor does not exist on the bundled API (Jakarta Security 4.0 currently
-     * omits it), we unconditionally prefer Basic — the spec-mandated default — which also keeps
-     * the client secret out of HTTP access logs / form bodies.</p>
+     * default OP-mandated behaviour. The spec-level {@link jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata
+     * OpenIdProviderMetadata} annotation does not expose {@code token_endpoint_auth_methods_supported},
+     * but when TomEE discovers the OP via {@code providerURI} the raw JSON document is available
+     * on {@link CompositeOpenIdProviderMetadata}. If the discovered list advertises
+     * {@code client_secret_post} without {@code client_secret_basic} we fall back to form parameters;
+     * otherwise (list absent, empty, or contains Basic) we prefer Basic.</p>
      */
     protected boolean preferBasicAuth() {
         final Object providerMetadata = getDefinition().providerMetadata();
-        if (providerMetadata == null) {
+        if (!(providerMetadata instanceof CompositeOpenIdProviderMetadata)) {
+            // No discovery document to consult: default to Basic (OIDC default).
             return true;
         }
 
-        try {
-            final Method accessor = providerMetadata.getClass().getMethod("tokenEndpointAuthMethodsSupported");
-            final Object value = accessor.invoke(providerMetadata);
-            if (!(value instanceof String[])) {
-                return true;
-            }
-
-            final String[] methods = (String[]) value;
-            if (methods.length == 0) {
-                // Missing / empty => OIDC default; prefer Basic.
-                return true;
-            }
-
-            for (String method : methods) {
-                if ("client_secret_basic".equalsIgnoreCase(method)) {
-                    return true;
-                }
-            }
-
-            // Advertised list exists and does not include client_secret_basic => must use form.
-            return false;
-        } catch (NoSuchMethodException e) {
-            // Bundled API doesn't expose the accessor; default to Basic (OIDC default).
-            return true;
-        } catch (ReflectiveOperationException e) {
-            LOGGER.debug("Unable to read tokenEndpointAuthMethodsSupported(), defaulting to client_secret_basic: " + e.getMessage());
+        final String[] methods = ((CompositeOpenIdProviderMetadata) providerMetadata).tokenEndpointAuthMethodsSupported();
+        if (methods == null || methods.length == 0) {
             return true;
         }
+
+        for (final String method : methods) {
+            if ("client_secret_basic".equalsIgnoreCase(method)) {
+                return true;
+            }
+        }
+
+        // Advertised list exists and does not include client_secret_basic => must use form.
+        return false;
     }
 
     protected String basicAuthHeader() {
