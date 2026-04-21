@@ -33,9 +33,14 @@ import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.MessageHandler.Whole;
 import jakarta.websocket.Session;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.security.KeyStore;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -106,15 +111,24 @@ public class WebSocketResourceTest {
             }
         };
 
+        // Trust the server's self-signed certificate by building an SSLContext from the bundled
+        // keystore.  Tomcat 11's WsWebSocketContainer reads the SSLContext directly from
+        // ClientEndpointConfig#getSSLContext() and no longer honours the legacy
+        // org.apache.tomcat.websocket.SSL_TRUSTSTORE / SSL_TRUSTSTORE_PWD user-properties.
+        final KeyStore trustStore = KeyStore.getInstance("PKCS12");
+        try (InputStream in = new FileInputStream("src/main/conf/keystore.jks")) {
+            trustStore.load(in, "123456".toCharArray());
+        }
+        final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
+                TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(trustStore);
+        final SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, tmf.getTrustManagers(), null);
+
         ClientEndpointConfig authorizationConfiguration = ClientEndpointConfig.Builder.create()
                 .configurator(configurator)
+                .sslContext(sslContext)
                 .build();
-
-        //use same keystore as the server
-        authorizationConfiguration.getUserProperties().put("org.apache.tomcat.websocket.SSL_TRUSTSTORE",
-                "src/main/conf/keystore.jks");
-        authorizationConfiguration.getUserProperties().put("org.apache.tomcat.websocket.SSL_TRUSTSTORE_PWD",
-                "123456");
 
         Session session = ContainerProvider.getWebSocketContainer()
                 .connectToServer(
