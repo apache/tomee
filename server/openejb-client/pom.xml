@@ -147,7 +147,7 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcmail-jdk15to18</artifactId>
+      <artifactId>bcmail-jdk18on</artifactId>
       <version>1.84</version>
       <scope>test</scope>
     </dependency>
