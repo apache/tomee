@@ -663,17 +663,17 @@
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcpkix-jdk15to18</artifactId>
+        <artifactId>bcpkix-jdk18on</artifactId>
         <version>1.84</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk15to18</artifactId>
+        <artifactId>bcprov-jdk18on</artifactId>
         <version>1.84</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcutil-jdk15to18</artifactId>
+        <artifactId>bcutil-jdk18on</artifactId>
         <version>1.84</version>
       </dependency>
       <dependency>
@@ -2012,7 +2012,7 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15to18</artifactId>
+      <artifactId>bcpkix-jdk18on</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2022,7 +2022,7 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15to18</artifactId>
+      <artifactId>bcprov-jdk18on</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2032,7 +2032,7 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcutil-jdk15to18</artifactId>
+      <artifactId>bcutil-jdk18on</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
