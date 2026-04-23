@@ -442,9 +442,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
      * default OP-mandated behaviour. The spec-level {@link jakarta.security.enterprise.authentication.mechanism.http.openid.OpenIdProviderMetadata
      * OpenIdProviderMetadata} annotation does not expose {@code token_endpoint_auth_methods_supported},
      * but when TomEE discovers the OP via {@code providerURI} the raw JSON document is available
-     * on {@link CompositeOpenIdProviderMetadata}. If the discovered list advertises
-     * {@code client_secret_post} without {@code client_secret_basic} we fall back to form parameters;
-     * otherwise (list absent, empty, or contains Basic) we prefer Basic.</p>
+     * on {@link CompositeOpenIdProviderMetadata}. When that list is present we walk it in the
+     * order the OP advertised and pick the first method we know how to speak ({@code client_secret_basic}
+     * or {@code client_secret_post}); other listed methods (e.g. {@code client_secret_jwt},
+     * {@code private_key_jwt}, {@code tls_client_auth}) are skipped because this RP does not
+     * implement them. With no list (annotation-only config or empty discovery field) we fall
+     * back to Basic, the OIDC default.</p>
      */
     protected boolean preferBasicAuth() {
         final Object providerMetadata = getDefinition().providerMetadata();
@@ -462,10 +465,13 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
             if ("client_secret_basic".equalsIgnoreCase(method)) {
                 return true;
             }
+            if ("client_secret_post".equalsIgnoreCase(method)) {
+                return false;
+            }
         }
 
-        // Advertised list exists and does not include client_secret_basic => must use form.
-        return false;
+        // List exists but advertises no method we implement; OIDC default is Basic.
+        return true;
     }
 
     protected String basicAuthHeader() {
