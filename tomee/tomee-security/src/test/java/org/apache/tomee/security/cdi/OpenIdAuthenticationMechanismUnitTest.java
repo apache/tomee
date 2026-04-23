@@ -347,7 +347,7 @@ public class OpenIdAuthenticationMechanismUnitTest {
     }
 
     @Test
-    public void tokenEndpointUsesClientSecretBasicWhenDiscoveryAdvertisesIt() throws Exception {
+    public void tokenEndpointHonoursOpAdvertisedOrder() throws Exception {
         final AtomicReference<String> capturedAuthHeader = new AtomicReference<>();
         final AtomicReference<String> capturedBody = new AtomicReference<>();
 
@@ -367,7 +367,9 @@ public class OpenIdAuthenticationMechanismUnitTest {
         server.start();
 
         try {
-            // Discovery advertises both methods; Basic must win because OIDC Core §9 names it as the default.
+            // Discovery advertises both methods with client_secret_post listed FIRST. The RP must
+            // honour the OP's advertised order rather than always defaulting to Basic, otherwise
+            // form-only OPs (like the Jakarta Security 4.0 TCK mock) reject the token request.
             final JsonObject discovery = Json.createObjectBuilder()
                     .add(OpenIdConstant.TOKEN_ENDPOINT,
                             "http://127.0.0.1:" + server.getAddress().getPort() + "/token")
@@ -399,11 +401,80 @@ public class OpenIdAuthenticationMechanismUnitTest {
             AuthenticationStatus status = authenticationMechanism.performAuthentication(request, response, messageContext);
 
             assertEquals(AuthenticationStatus.SUCCESS, status);
-            assertNotNull(capturedAuthHeader.get());
+            assertNull("Authorization header must be absent when OP lists client_secret_post first",
+                    capturedAuthHeader.get());
+
+            Map<String, String> formParams = parseFormBody(capturedBody.get());
+            assertTrue("client_id must be in form body when using client_secret_post",
+                    formParams.containsKey(OpenIdConstant.CLIENT_ID));
+            assertTrue("client_secret must be in form body when using client_secret_post",
+                    formParams.containsKey(OpenIdConstant.CLIENT_SECRET));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    public void tokenEndpointHonoursOpAdvertisedOrderBasicFirst() throws Exception {
+        // Mirror of tokenEndpointHonoursOpAdvertisedOrder with the order flipped; locks in
+        // that the array order, not just membership, drives the choice.
+        final AtomicReference<String> capturedAuthHeader = new AtomicReference<>();
+        final AtomicReference<String> capturedBody = new AtomicReference<>();
+
+        HttpServer server = HttpServer.create(new InetSocketAddress(0), 0);
+        server.createContext("/token", exchange -> {
+            capturedAuthHeader.set(exchange.getRequestHeaders().getFirst("Authorization"));
+            capturedBody.set(readRequestBody(exchange));
+
+            byte[] body = "{\"token_type\":\"Bearer\",\"access_token\":\"ACCESS\",\"id_token\":\"ID\",\"expires_in\":3600}"
+                    .getBytes(StandardCharsets.UTF_8);
+
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+
+        try {
+            final JsonObject discovery = Json.createObjectBuilder()
+                    .add(OpenIdConstant.TOKEN_ENDPOINT,
+                            "http://127.0.0.1:" + server.getAddress().getPort() + "/token")
+                    .add(OpenIdConstant.TOKEN_ENDPOINT_AUTH_METHODS_SUPPORTED,
+                            Json.createArrayBuilder().add("client_secret_basic").add("client_secret_post"))
+                    .build();
+            final OpenIdProviderMetadata overrideDefaults =
+                    DefaultOverrideHolder.class.getAnnotation(OpenIdProviderMetadata.class);
+            final CompositeOpenIdProviderMetadata composite =
+                    new CompositeOpenIdProviderMetadata(discovery, overrideDefaults);
+
+            when(definition.providerMetadata()).thenReturn(composite);
+            when(identityStoreHandler.validate(any()))
+                    .thenReturn(new CredentialValidationResult("caller", Set.of("users")));
+
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            HttpMessageContext messageContext = mock(HttpMessageContext.class, Answers.RETURNS_DEEP_STUBS);
+
+            when(request.getParameter(OpenIdConstant.STATE)).thenReturn("STATE");
+            when(request.getParameter(OpenIdConstant.CODE)).thenReturn("CODE");
+            when(request.getRequestURL()).thenReturn(new StringBuffer("https://example.com/redirect"));
+            when(request.getRequestURI()).thenReturn("/redirect");
+            when(messageContext.notifyContainerAboutLogin(any(CredentialValidationResult.class)))
+                    .thenReturn(AuthenticationStatus.SUCCESS);
+
+            storageHandler.set(request, response, OpenIdStorageHandler.STATE_KEY, "STATE");
+
+            AuthenticationStatus status = authenticationMechanism.performAuthentication(request, response, messageContext);
+
+            assertEquals(AuthenticationStatus.SUCCESS, status);
+            assertNotNull("Authorization header must be present when OP lists client_secret_basic first",
+                    capturedAuthHeader.get());
             assertTrue(capturedAuthHeader.get().startsWith("Basic "));
 
             Map<String, String> formParams = parseFormBody(capturedBody.get());
-            assertFalse(formParams.containsKey(OpenIdConstant.CLIENT_SECRET));
+            assertFalse("client_secret must NOT be in form body when using client_secret_basic",
+                    formParams.containsKey(OpenIdConstant.CLIENT_SECRET));
         } finally {
             server.stop(0);
         }
