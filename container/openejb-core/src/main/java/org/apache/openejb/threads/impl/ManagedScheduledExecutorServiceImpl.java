@@ -27,11 +27,14 @@ import org.apache.openejb.threads.task.TriggerTask;
 import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
 import jakarta.enterprise.concurrent.ManagedTask;
 import jakarta.enterprise.concurrent.Trigger;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -42,13 +45,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceImpl implements ManagedScheduledExecutorService {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ManagedScheduledExecutorServiceImpl.class);
+
     private final ScheduledExecutorService delegate;
     private final ContextServiceImpl contextService;
+    private final ScheduledExecutorService scheduledAsyncDelegate;
+    private final boolean ownsScheduledAsyncDelegate;
 
     public ManagedScheduledExecutorServiceImpl(final ScheduledExecutorService delegate, final ContextServiceImpl contextService) {
+        this(delegate, contextService, delegate, false);
+    }
+
+    public ManagedScheduledExecutorServiceImpl(final ScheduledExecutorService delegate, final ContextServiceImpl contextService,
+                                               final ScheduledExecutorService scheduledAsyncDelegate,
+                                               final boolean ownsScheduledAsyncDelegate) {
         super(delegate, contextService);
         this.delegate = delegate;
         this.contextService = contextService;
+        this.scheduledAsyncDelegate = scheduledAsyncDelegate != null ? scheduledAsyncDelegate : delegate;
+        this.ownsScheduledAsyncDelegate = ownsScheduledAsyncDelegate;
     }
 
 
@@ -135,6 +150,35 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     @Override
     public ScheduledExecutorService getDelegate() {
         return delegate;
+    }
+
+    /**
+     * Secondary scheduling pool used to dispatch {@code @Asynchronous(runAt=@Schedule(...))}
+     * firings. Per Jakarta Concurrency 3.1 §3.1, scheduled asynchronous methods are not
+     * subject to {@code max-async}, so firings must not queue behind regular async work
+     * occupying the primary delegate's core threads.
+     */
+    public ScheduledExecutorService getScheduledAsyncDelegate() {
+        return scheduledAsyncDelegate;
+    }
+
+    @Override
+    public void destroyResource() {
+        if (ownsScheduledAsyncDelegate && scheduledAsyncDelegate != null && scheduledAsyncDelegate != delegate) {
+            final List<Runnable> leftover = scheduledAsyncDelegate.shutdownNow();
+            if (!leftover.isEmpty()) {
+                LOGGER.warning(leftover.size() + " scheduled-async tasks to execute");
+                for (final Runnable runnable : leftover) {
+                    try {
+                        LOGGER.info("Executing " + runnable);
+                        runnable.run();
+                    } catch (final Throwable th) {
+                        LOGGER.error(th.getMessage(), th);
+                    }
+                }
+            }
+        }
+        super.destroyResource();
     }
 
     /**

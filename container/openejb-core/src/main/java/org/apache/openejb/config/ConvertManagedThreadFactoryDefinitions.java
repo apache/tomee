@@ -24,6 +24,8 @@ import org.apache.openejb.jee.ManagedThreadFactory;
 import org.apache.openejb.jee.ManagedThreadFactory;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
+import org.apache.openejb.util.Join;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -77,7 +79,9 @@ public class ConvertManagedThreadFactoryDefinitions extends BaseConvertDefinitio
 
         def.setJndi(managedThreadFactory.getName().getvalue().replaceFirst("java:", ""));
 
-        String contextName = managedThreadFactory.getContextService().getvalue();
+        String contextName = managedThreadFactory.getContextService() != null
+            ? managedThreadFactory.getContextService().getvalue()
+            : "java:comp/DefaultContextService";
         // Translate JNDI name to TomEE Resource ID, otherwise AutoConfig will fail to resolve it
         // and try to fix it by rewriting this to an unwanted ContextService
         if ("java:comp/DefaultContextService".equals(contextName)) {
@@ -87,6 +91,10 @@ public class ConvertManagedThreadFactoryDefinitions extends BaseConvertDefinitio
         final Properties p = def.getProperties();
         put(p, "Context", contextName);
         put(p, "Priority", managedThreadFactory.getPriority());
+        put(p, "Virtual", managedThreadFactory.getVirtual());
+        if (managedThreadFactory.getQualifier() != null && !managedThreadFactory.getQualifier().isEmpty()) {
+            put(p, "Qualifiers", Join.join(",", managedThreadFactory.getQualifier()));
+        }
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());

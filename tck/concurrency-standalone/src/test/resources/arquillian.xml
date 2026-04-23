@@ -21,28 +21,7 @@
             xsi:schemaLocation="
               http://jboss.org/schema/arquillian
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-    <container qualifier="tomee-microprofile" default="true">
-        <configuration>
-            <property name="httpPort">-1</property>
-            <property name="ajpPort">-1</property>
-            <property name="stopPort">-1</property>
-            <property name="classifier">microprofile</property>
-            <property name="debug">false</property>
-            <property name="conf">src/test/conf</property>
-            <property name="cleanOnStartUp">false</property>
-            <property name="additionalLibs">
-                mvn:org.apache.derby:derby:10.15.2.0
-                mvn:org.apache.derby:derbytools:10.15.2.0
-                mvn:org.apache.derby:derbyshared:10.15.2.0
-                mvn:org.testng:testng:7.5
-            </property>
-            <property name="dir">target/tomee</property>
-            <property name="properties">
-                openejb.environment.default=true
-            </property>
-        </configuration>
-    </container>
-    <container qualifier="tomee-plus">
+    <container qualifier="tomee-plus" default="true">
         <configuration>
             <property name="httpPort">-1</property>
             <property name="ajpPort">-1</property>
@@ -50,12 +29,11 @@
             <property name="classifier">plus</property>
             <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
-            <property name="cleanOnStartUp">false</property>
+            <property name="cleanOnStartUp">true</property>
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
                 mvn:org.apache.derby:derbyshared:10.15.2.0
-                mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
             <property name="properties">
@@ -71,12 +49,11 @@
             <property name="classifier">plume</property>
             <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
-            <property name="cleanOnStartUp">false</property>
+            <property name="cleanOnStartUp">true</property>
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
                 mvn:org.apache.derby:derbyshared:10.15.2.0
-                mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
             <property name="properties">
@@ -92,12 +69,11 @@
             <property name="classifier">webprofile</property>
             <property name="debug">false</property>
             <property name="conf">src/test/conf</property>
-            <property name="cleanOnStartUp">false</property>
+            <property name="cleanOnStartUp">true</property>
             <property name="additionalLibs">
                 mvn:org.apache.derby:derby:10.15.2.0
                 mvn:org.apache.derby:derbytools:10.15.2.0
                 mvn:org.apache.derby:derbyshared:10.15.2.0
-                mvn:org.testng:testng:7.5
             </property>
             <property name="dir">target/tomee</property>
             <property name="properties">

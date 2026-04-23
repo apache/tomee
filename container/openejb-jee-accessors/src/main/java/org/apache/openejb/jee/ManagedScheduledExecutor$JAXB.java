@@ -84,6 +84,7 @@ public class ManagedScheduledExecutor$JAXB
         ManagedScheduledExecutor managedScheduledExecutor = new ManagedScheduledExecutor();
         context.beforeUnmarshal(managedScheduledExecutor, LifecycleCallback.NONE);
 
+        List<String> qualifier = null;
         List<Property> properties = null;
 
         // Check xsi:type
@@ -123,6 +124,22 @@ public class ManagedScheduledExecutor$JAXB
                 // ELEMENT: maxAsync
                 Integer maxAsync = Integer.valueOf(elementReader.getElementText());
                 managedScheduledExecutor.maxAsync = maxAsync;
+            } else if (("virtual" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: virtual
+                Boolean virtual = Boolean.valueOf(elementReader.getElementText());
+                managedScheduledExecutor.virtual = virtual;
+            } else if (("qualifier" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: qualifier
+                String qualifierItem = elementReader.getElementText();
+                if (qualifier == null) {
+                    qualifier = managedScheduledExecutor.qualifier;
+                    if (qualifier!= null) {
+                        qualifier.clear();
+                    } else {
+                        qualifier = new ArrayList<>();
+                    }
+                }
+                qualifier.add(qualifierItem);
             } else if (("property" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: properties
                 Property propertiesItem = readProperty(elementReader, context);
@@ -136,8 +153,11 @@ public class ManagedScheduledExecutor$JAXB
                 }
                 properties.add(propertiesItem);
             } else {
-                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "context-service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "hung-task-threshold"), new QName("http://java.sun.com/xml/ns/javaee", "max-async"), new QName("http://java.sun.com/xml/ns/javaee", "property"));
+                context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "context-service-ref"), new QName("http://java.sun.com/xml/ns/javaee", "hung-task-threshold"), new QName("http://java.sun.com/xml/ns/javaee", "max-async"), new QName("http://java.sun.com/xml/ns/javaee", "virtual"), new QName("http://java.sun.com/xml/ns/javaee", "qualifier"), new QName("http://java.sun.com/xml/ns/javaee", "property"));
             }
+        }
+        if (qualifier!= null) {
+            managedScheduledExecutor.qualifier = qualifier;
         }
         if (properties!= null) {
             managedScheduledExecutor.properties = properties;
@@ -213,6 +233,26 @@ public class ManagedScheduledExecutor$JAXB
             writer.writeStartElement(prefix, "max-async", "http://java.sun.com/xml/ns/javaee");
             writer.writeCharacters(Integer.toString(maxAsync));
             writer.writeEndElement();
+        }
+
+        // ELEMENT: virtual
+        Boolean virtual = managedScheduledExecutor.virtual;
+        if (virtual!= null) {
+            writer.writeStartElement(prefix, "virtual", "http://java.sun.com/xml/ns/javaee");
+            writer.writeCharacters(Boolean.toString(virtual));
+            writer.writeEndElement();
+        }
+
+        // ELEMENT: qualifier
+        List<String> qualifier = managedScheduledExecutor.qualifier;
+        if (qualifier!= null) {
+            for (String qualifierItem: qualifier) {
+                if (qualifierItem!= null) {
+                    writer.writeStartElement(prefix, "qualifier", "http://java.sun.com/xml/ns/javaee");
+                    writer.writeCharacters(qualifierItem);
+                    writer.writeEndElement();
+                }
+            }
         }
 
         // ELEMENT: properties

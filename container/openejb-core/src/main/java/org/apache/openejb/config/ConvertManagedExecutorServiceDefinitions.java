@@ -23,6 +23,8 @@ import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.ManagedExecutor;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
+import org.apache.openejb.util.Join;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -78,7 +80,9 @@ public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinit
 
         final Properties p = def.getProperties();
 
-        String contextName = managedExecutor.getContextService().getvalue();
+        String contextName = managedExecutor.getContextService() != null
+            ? managedExecutor.getContextService().getvalue()
+            : "java:comp/DefaultContextService";
         // Translate JNDI name to TomEE Resource ID, otherwise AutoConfig will fail to resolve it
         // and try to fix it by rewriting this to an unwanted ContextService
         if ("java:comp/DefaultContextService".equals(contextName)) {
@@ -88,6 +92,10 @@ public class ConvertManagedExecutorServiceDefinitions extends BaseConvertDefinit
         put(p, "Context", contextName);
         put(p, "HungTaskThreshold", managedExecutor.getHungTaskThreshold());
         put(p, "Max", managedExecutor.getMaxAsync());
+        put(p, "Virtual", managedExecutor.getVirtual());
+        if (managedExecutor.getQualifier() != null && !managedExecutor.getQualifier().isEmpty()) {
+            put(p, "Qualifiers", Join.join(",", managedExecutor.getQualifier()));
+        }
 
         // to force it to be bound in JndiEncBuilder
         put(p, "JndiName", def.getJndi());
