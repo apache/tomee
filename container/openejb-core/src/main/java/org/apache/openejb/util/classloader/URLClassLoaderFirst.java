@@ -556,28 +556,13 @@ public class URLClassLoaderFirst extends URLClassLoader {
     }
 
     public static boolean shouldSkipJsf(final ClassLoader loader, final String name) {
-        if (!name.startsWith("jakarta.faces.")) {
-            return false;
-        }
-
-        // using annotation to test to avoid to load more classes with deps
-        final String testClass;
-        // these test classes have to be jsf 2.x AND 1.x otherwise we force JSF 2
-        if ("jakarta.faces.webapp.FacesServlet".equals(name)) {
-            testClass = "jakarta.faces.FactoryFinder";
-        } else {
-            testClass = "jakarta.faces.webapp.FacesServlet";
-        }
-
-        final String classname = testClass.replace('.', '/') + ".class";
-        try {
-            final Enumeration<URL> resources = loader.getResources(classname);
-            final Collection<URL> thisJSf = Collections.list(resources);
-            return thisJSf.isEmpty() || thisJSf.size() <= 1;
-        } catch (final IOException e) {
-            return true;
-        }
-
+        // TomEE plus/plume ship MyFaces in the server lib/, so MyFaces' impl classes are
+        // bound to the container-loaded copy of the jakarta.faces.* API. If a WAR also
+        // bundles jakarta.faces-api, two distinct Class objects exist for the same FQN
+        // and any cross-cast (e.g. inside StartupServletContextListener) blows up with
+        // LinkageError / ClassCastException. Always delegate the API to the container so
+        // exactly one copy is in play.
+        return name.startsWith("jakarta.faces.");
     }
 
     // in org.apache.openejb.
