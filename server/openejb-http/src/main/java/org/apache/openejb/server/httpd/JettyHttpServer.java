@@ -19,25 +19,19 @@ package org.apache.openejb.server.httpd;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.server.ServiceException;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SessionIdManager;
-import org.eclipse.jetty.server.session.DefaultSessionIdManager;
-import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.security.SecureRandom;
 import java.util.Properties;
 
 /**
@@ -99,16 +93,15 @@ public class JettyHttpServer implements HttpServer {
         connector.setPort(port);
         server.setConnectors(new Connector[]{connector});
 
-        final ContextHandler context = new ContextHandler();
+        final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         final ServletContext servletContext = context.getServletContext();
         server.setHandler(context);
 
-        final Handler handler = new AbstractHandler() {
+        context.addServlet(new HttpServlet() {
             @Override
-            public void handle(final String target, final Request request, final HttpServletRequest req, final HttpServletResponse res) throws IOException, ServletException {
+            protected void service(final HttpServletRequest req, final HttpServletResponse res) throws IOException, ServletException {
                 try {
-                    request.setHandled(true);
                     final HttpRequest httpRequest = new ServletRequestAdapter(req, res, servletContext);
                     final HttpResponse httpResponse = new ServletResponseAdapter(res);
                     JettyHttpServer.this.listener.onMessage(httpRequest, httpResponse);
@@ -118,14 +111,7 @@ public class JettyHttpServer implements HttpServer {
                     throw new ServletException(e);
                 }
             }
-        };
-
-        final SessionHandler sessionHandler = new SessionHandler();
-        final SessionIdManager sessionManager = new DefaultSessionIdManager(server, new SecureRandom());
-        sessionHandler.setSessionIdManager(sessionManager);
-        sessionHandler.setHandler(handler);
-
-        context.setHandler(sessionHandler);
+        }, "/*");
     }
 
     @Override
