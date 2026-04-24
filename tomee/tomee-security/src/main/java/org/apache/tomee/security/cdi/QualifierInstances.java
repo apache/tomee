@@ -21,6 +21,10 @@ import jakarta.enterprise.inject.Default;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -74,9 +78,82 @@ final class QualifierInstances {
                 return annotation;
             }
         } catch (final ReflectiveOperationException e) {
-            throw new IllegalStateException("Unable to resolve qualifier literal for " + qualifierClass.getName(), e);
+            return proxyQualifier(qualifierClass.asSubclass(Annotation.class));
         }
 
-        throw new IllegalStateException("Qualifier literal for " + qualifierClass.getName() + " is invalid");
+        return proxyQualifier(qualifierClass.asSubclass(Annotation.class));
+    }
+
+    private static Annotation proxyQualifier(final Class<? extends Annotation> qualifierClass) {
+        return (Annotation) Proxy.newProxyInstance(
+                qualifierClass.getClassLoader(),
+                new Class<?>[] {qualifierClass},
+                new QualifierInvocationHandler(qualifierClass));
+    }
+
+    private static final class QualifierInvocationHandler implements InvocationHandler {
+        private final Class<? extends Annotation> qualifierClass;
+
+        private QualifierInvocationHandler(final Class<? extends Annotation> qualifierClass) {
+            this.qualifierClass = qualifierClass;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) {
+            final String name = method.getName();
+            if ("annotationType".equals(name) && method.getParameterCount() == 0) {
+                return qualifierClass;
+            }
+            if ("equals".equals(name) && method.getParameterCount() == 1) {
+                return equals(args[0]);
+            }
+            if ("hashCode".equals(name) && method.getParameterCount() == 0) {
+                return hashCode();
+            }
+            if ("toString".equals(name) && method.getParameterCount() == 0) {
+                return "@" + qualifierClass.getName() + "()";
+            }
+
+            return method.getDefaultValue();
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            if (!qualifierClass.isInstance(other)) {
+                return false;
+            }
+
+            for (final Method member : qualifierClass.getDeclaredMethods()) {
+                final Object defaultValue = member.getDefaultValue();
+                final Object otherValue;
+                try {
+                    otherValue = member.invoke(other);
+                } catch (final ReflectiveOperationException e) {
+                    return false;
+                }
+                if (!memberValueEquals(defaultValue, otherValue)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hashCode = 0;
+            for (final Method member : qualifierClass.getDeclaredMethods()) {
+                hashCode += (127 * member.getName().hashCode()) ^ memberValueHashCode(member.getDefaultValue());
+            }
+            return hashCode;
+        }
+
+        private static boolean memberValueEquals(final Object left, final Object right) {
+            return Arrays.deepEquals(new Object[] {left}, new Object[] {right});
+        }
+
+        private static int memberValueHashCode(final Object value) {
+            return Arrays.deepHashCode(new Object[] {value}) - 31;
+        }
     }
 }
