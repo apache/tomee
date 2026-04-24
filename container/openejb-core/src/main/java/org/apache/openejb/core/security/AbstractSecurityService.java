@@ -22,6 +22,8 @@ import jakarta.security.jacc.PolicyConfigurationFactory;
 import jakarta.security.jacc.PolicyContext;
 import jakarta.security.jacc.PolicyContextException;
 import jakarta.security.jacc.PolicyContextHandler;
+import jakarta.security.jacc.PolicyFactory;
+import jakarta.security.jacc.PrincipalMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
@@ -76,7 +78,8 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     protected static final String KEY_SUBJECT = "javax.security.auth.Subject.container";
     protected static final String KEY_REQUEST = "jakarta.servlet.http.HttpServletRequest";
-    protected static final Set<String> KEYS = new HashSet<>(asList(KEY_REQUEST, KEY_SUBJECT));
+    protected static final String KEY_PRINCIPAL_MAPPER = PolicyContext.PRINCIPAL_MAPPER;
+    protected static final Set<String> KEYS = new HashSet<>(asList(KEY_REQUEST, KEY_SUBJECT, KEY_PRINCIPAL_MAPPER));
 
     private static final Map<Object, Identity> identities = new ConcurrentHashMap<>();
     protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<>();
@@ -85,6 +88,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     protected Subject defaultSubject;
     protected SecurityContext defaultContext;
     private static final AtomicBoolean jaccWarningLogged = new AtomicBoolean(false);
+    private final PrincipalMapper principalMapper = new DefaultPrincipalMapper();
 
     public AbstractSecurityService() {
         this(autoJaccProvider());
@@ -420,6 +424,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         final String providerKey = "jakarta.security.jacc.PolicyConfigurationFactory.provider";
+        final String policyFactoryProviderKey = "jakarta.security.jacc.PolicyFactory.provider";
         try {
             if (JavaSecurityManagers.getSystemProperty(providerKey) == null) {
                 JavaSecurityManagers.setSystemProperty(providerKey, JaccProvider.Factory.class.getName());
@@ -431,6 +436,13 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             // Hopefully it will be cached thereafter and ClassNotFoundExceptions thrown
             // from the equivalent call in JaccPermissionsBuilder can be avoided.
             PolicyConfigurationFactory.getPolicyConfigurationFactory();
+
+            if (JavaSecurityManagers.getSystemProperty(policyFactoryProviderKey) == null) {
+                JavaSecurityManagers.setSystemProperty(policyFactoryProviderKey, JaccProvider.PolicyFactory.class.getName());
+                final ClassLoader cl = JaccProvider.PolicyFactory.class.getClassLoader();
+                Thread.currentThread().setContextClassLoader(cl);
+            }
+            PolicyFactory.getPolicyFactory();
         } catch (final Exception e) {
             throw new IllegalStateException("Could not install JACC Policy Configuration Factory: " + JavaSecurityManagers.getSystemProperty(providerKey), e);
         } finally {
@@ -517,12 +529,12 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public boolean supports(final String key) throws PolicyContextException {
-        return KEY_SUBJECT.equals(key);
+        return KEYS.contains(key);
     }
 
     @Override
     public String[] getKeys() throws PolicyContextException {
-        return new String[] {KEY_SUBJECT};
+        return KEYS.toArray(new String[0]);
     }
 
     @Override
@@ -530,7 +542,62 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         if (KEY_SUBJECT.equals(key)) {
             return getSubject();
         }
+        if (KEY_REQUEST.equals(key)) {
+            return HttpServletRequest.class.isInstance(data) ? data : null;
+        }
+        if (KEY_PRINCIPAL_MAPPER.equals(key)) {
+            return principalMapper;
+        }
         throw new PolicyContextException("Handler does not support key: " + key);
+    }
+
+    PrincipalMapper getPrincipalMapper() {
+        return principalMapper;
+    }
+
+    static class DefaultPrincipalMapper implements PrincipalMapper {
+        @Override
+        public Principal getCallerPrincipal(final Subject subject) {
+            if (subject == null) {
+                return null;
+            }
+
+            for (final Principal principal : subject.getPrincipals()) {
+                if (principal instanceof jakarta.security.enterprise.CallerPrincipal) {
+                    return principal;
+                }
+            }
+
+            for (final Principal principal : subject.getPrincipals()) {
+                if (principal != null && principal.getClass().isAnnotationPresent(CallerPrincipal.class)) {
+                    return principal;
+                }
+            }
+
+            for (final Principal principal : subject.getPrincipals()) {
+                if (principal == null || principal instanceof Group || principal instanceof GroupPrincipal) {
+                    continue;
+                }
+                return principal;
+            }
+            return null;
+        }
+
+        @Override
+        public Set<String> getMappedRoles(final Subject subject) {
+            final LinkedHashSet<String> roles = new LinkedHashSet<>();
+            if (subject == null) {
+                return roles;
+            }
+
+            for (final Group group : subject.getPrincipals(Group.class)) {
+                roles.add(group.getName());
+            }
+            for (final GroupPrincipal group : subject.getPrincipals(GroupPrincipal.class)) {
+                roles.add(group.getName());
+            }
+            return roles;
+        }
     }
 
     public static final class ProvidedSecurityContext {

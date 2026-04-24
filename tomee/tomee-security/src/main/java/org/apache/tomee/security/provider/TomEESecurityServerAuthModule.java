@@ -16,8 +16,8 @@
  */
 package org.apache.tomee.security.provider;
 
-import org.apache.tomee.security.cdi.TomEESecurityServletAuthenticationMechanismMapper;
-
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -28,9 +28,10 @@ import jakarta.security.auth.message.MessagePolicy;
 import jakarta.security.auth.message.module.ServerAuthModule;
 import jakarta.security.enterprise.AuthenticationException;
 import jakarta.security.enterprise.AuthenticationStatus;
-import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
+import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanismHandler;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import java.util.Map;
+import org.apache.tomee.security.cdi.DefaultAuthenticationMechanismHandler;
 
 import static org.apache.tomee.security.http.TomEEHttpMessageContext.httpMessageContext;
 
@@ -53,29 +54,24 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
     public void cleanSubject(final MessageInfo messageInfo, final Subject subject) throws AuthException {
         final HttpMessageContext httpMessageContext = httpMessageContext(handler, messageInfo, subject, null);
 
-        CDI.current()
-           .select(TomEESecurityServletAuthenticationMechanismMapper.class)
-           .get()
-           .getCurrentAuthenticationMechanism(httpMessageContext)
-           .cleanSubject(httpMessageContext.getRequest(), httpMessageContext.getResponse(), httpMessageContext);
+        getAuthenticationMechanismHandler().cleanSubject(
+                httpMessageContext.getRequest(),
+                httpMessageContext.getResponse(),
+                httpMessageContext);
     }
 
     @Override
     public AuthStatus secureResponse(final MessageInfo messageInfo, final Subject subject) throws AuthException {
         final HttpMessageContext httpMessageContext = httpMessageContext(handler, messageInfo, subject, null);
 
-        final HttpAuthenticationMechanism authenticationMechanism =
-            CDI.current()
-               .select(TomEESecurityServletAuthenticationMechanismMapper.class)
-               .get()
-               .getCurrentAuthenticationMechanism(httpMessageContext);
+        final HttpAuthenticationMechanismHandler authenticationMechanismHandler = getAuthenticationMechanismHandler();
 
         final AuthenticationStatus authenticationStatus;
         try {
             authenticationStatus =
-                authenticationMechanism.secureResponse(httpMessageContext.getRequest(),
-                                                        httpMessageContext.getResponse(),
-                                                        httpMessageContext);
+                authenticationMechanismHandler.secureResponse(httpMessageContext.getRequest(),
+                                                               httpMessageContext.getResponse(),
+                                                               httpMessageContext);
 
 
         } catch (final AuthenticationException e) {
@@ -94,18 +90,14 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
 
         final HttpMessageContext httpMessageContext = httpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
 
-        final HttpAuthenticationMechanism authenticationMechanism =
-                CDI.current()
-                   .select(TomEESecurityServletAuthenticationMechanismMapper.class)
-                   .get()
-                   .getCurrentAuthenticationMechanism(httpMessageContext);
+        final HttpAuthenticationMechanismHandler authenticationMechanismHandler = getAuthenticationMechanismHandler();
 
         final AuthenticationStatus authenticationStatus;
         try {
             authenticationStatus =
-                    authenticationMechanism.validateRequest(httpMessageContext.getRequest(),
-                                                            httpMessageContext.getResponse(),
-                                                            httpMessageContext);
+                    authenticationMechanismHandler.validateRequest(httpMessageContext.getRequest(),
+                                                                   httpMessageContext.getResponse(),
+                                                                   httpMessageContext);
 
 
         } catch (final AuthenticationException e) {
@@ -115,6 +107,28 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
         }
 
         return mapToAuthStatus(authenticationStatus);
+    }
+
+    private HttpAuthenticationMechanismHandler getAuthenticationMechanismHandler() {
+        final Instance<HttpAuthenticationMechanismHandler> handlers =
+                CDI.current().select(HttpAuthenticationMechanismHandler.class, Any.Literal.INSTANCE);
+
+        HttpAuthenticationMechanismHandler selectedHandler = null;
+        for (final HttpAuthenticationMechanismHandler handler : handlers) {
+            if (handler instanceof DefaultAuthenticationMechanismHandler) {
+                continue;
+            }
+            if (selectedHandler != null) {
+                throw new IllegalStateException("Multiple custom HttpAuthenticationMechanismHandler beans found");
+            }
+            selectedHandler = handler;
+        }
+
+        if (selectedHandler != null) {
+            return selectedHandler;
+        }
+
+        return CDI.current().select(DefaultAuthenticationMechanismHandler.class).get();
     }
 
     private AuthStatus mapToAuthStatus(final AuthenticationStatus authenticationStatus) {

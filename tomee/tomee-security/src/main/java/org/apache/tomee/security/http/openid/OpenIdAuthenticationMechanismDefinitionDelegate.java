@@ -31,6 +31,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
+import java.net.URI;
 
 public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAuthenticationMechanismDefinition {
     private final OpenIdAuthenticationMechanismDefinition delegate;
@@ -207,6 +208,8 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
     public static class AutoResolvingProviderMetadata extends OpenIdAuthenticationMechanismDefinitionDelegate {
         private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, AutoResolvingProviderMetadata.class);
 
+        private static final String WELL_KNOWN_CONFIGURATION_PATH = "/.well-known/openid-configuration";
+
         private OpenIdProviderMetadata cached = null;
 
         public AutoResolvingProviderMetadata(OpenIdAuthenticationMechanismDefinition delegate) {
@@ -224,27 +227,34 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
                 return cached;
             }
 
-            // Try to fetch from remote and build a merged view of OP response + @OpenIdProviderMetadata
+            final URI metadataUri = toOpenIdConfigurationUri(providerURI());
+            final JsonObject response = fetchMetadata(metadataUri);
+            cached = new CompositeOpenIdProviderMetadata(response, super.providerMetadata());
+            return cached;
+        }
+
+        private JsonObject fetchMetadata(final URI metadataUri) {
+            LOGGER.debug("Fetching provider metadata from " + metadataUri);
+
             try (Client client = ClientBuilder.newClient()) {
-                String providerUri = StringUtils.removeEnd(providerURI(), "/");
-                if (!providerUri.endsWith("/.well-known/openid-configuration")) {
-                    providerUri += "/.well-known/openid-configuration";
-                }
-
-                LOGGER.debug("Fetching provider metadata from " + providerUri);
-
-                JsonObject response = client.target(providerUri)
+                final JsonObject response = client.target(metadataUri.toString())
                         .request(MediaType.APPLICATION_JSON)
                         .get(JsonObject.class);
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Fetched provider metadata from " + providerUri + ": " + response.toString());
+                    LOGGER.debug("Fetched provider metadata from " + metadataUri + ": " + response);
                 }
 
-                cached = new CompositeOpenIdProviderMetadata(response, super.providerMetadata());
+                return response;
             }
+        }
 
-            return cached;
+        private URI toOpenIdConfigurationUri(final String providerUri) {
+            String value = StringUtils.removeEnd(providerUri, "/");
+            if (!value.endsWith(WELL_KNOWN_CONFIGURATION_PATH)) {
+                value += WELL_KNOWN_CONFIGURATION_PATH;
+            }
+            return URI.create(value);
         }
     }
 }

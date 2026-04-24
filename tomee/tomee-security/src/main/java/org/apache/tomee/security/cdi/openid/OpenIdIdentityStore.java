@@ -168,8 +168,9 @@ public class OpenIdIdentityStore implements IdentityStore {
     }
 
     private JsonObject fetchUserinfoClaims(JwtConsumer jwtConsumer, String accessToken) {
+        final String userinfoEndpoint = definition.providerMetadata().userinfoEndpoint();
         try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(definition.providerMetadata().userinfoEndpoint())
+            Response response = client.target(userinfoEndpoint)
                     .request(MediaType.APPLICATION_JSON, "application/jwt")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).get();
 
