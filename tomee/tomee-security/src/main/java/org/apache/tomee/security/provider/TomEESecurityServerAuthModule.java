@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.security.provider;
 
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -29,6 +31,7 @@ import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanismHandler;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import java.util.Map;
+import org.apache.tomee.security.cdi.DefaultAuthenticationMechanismHandler;
 
 import static org.apache.tomee.security.http.TomEEHttpMessageContext.httpMessageContext;
 
@@ -107,7 +110,25 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
     }
 
     private HttpAuthenticationMechanismHandler getAuthenticationMechanismHandler() {
-        return CDI.current().select(HttpAuthenticationMechanismHandler.class).get();
+        final Instance<HttpAuthenticationMechanismHandler> handlers =
+                CDI.current().select(HttpAuthenticationMechanismHandler.class, Any.Literal.INSTANCE);
+
+        HttpAuthenticationMechanismHandler selectedHandler = null;
+        for (final HttpAuthenticationMechanismHandler handler : handlers) {
+            if (handler instanceof DefaultAuthenticationMechanismHandler) {
+                continue;
+            }
+            if (selectedHandler != null) {
+                throw new IllegalStateException("Multiple custom HttpAuthenticationMechanismHandler beans found");
+            }
+            selectedHandler = handler;
+        }
+
+        if (selectedHandler != null) {
+            return selectedHandler;
+        }
+
+        return CDI.current().select(DefaultAuthenticationMechanismHandler.class).get();
     }
 
     private AuthStatus mapToAuthStatus(final AuthenticationStatus authenticationStatus) {
