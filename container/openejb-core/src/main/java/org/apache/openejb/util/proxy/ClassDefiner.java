@@ -18,6 +18,8 @@
  */
 package org.apache.openejb.util.proxy;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.spi.DefiningClassService;
 import org.apache.webbeans.spi.InstantiatingClassService;
 
@@ -26,6 +28,8 @@ import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 
 public class ClassDefiner implements DefiningClassService, InstantiatingClassService {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, ClassDefiner.class);
+
     private static final Method CLASS_LOADER_DEFINE_CLASS;
     private static final Method GET_MODULE;
     private static final Method CAN_READ;
@@ -95,6 +99,10 @@ public class ClassDefiner implements DefiningClassService, InstantiatingClassSer
             return (Class<?>) CLASS_LOADER_DEFINE_CLASS.invoke(
                     loader, className, b, 0, b.length, protectionDomain);
         } catch (final Exception e) {
+            final Class<?> existing = handleLinkageError(e, className, loader);
+            if (existing != null) {
+                return existing;
+            }
             throw e instanceof RuntimeException ? ((RuntimeException) e) : new RuntimeException(e);
         }
     }
@@ -115,8 +123,40 @@ public class ClassDefiner implements DefiningClassService, InstantiatingClassSer
             final Object lookup = PRIVATE_LOOKUP_IN.invoke(null, originalClass, MethodHandles.lookup());
             return (Class<?>) DEFINE_CLASS.invoke(lookup, b);
         } catch (final Exception e) {
+            final Class<?> existing = handleLinkageError(e, className, loader);
+            if (existing != null) {
+                return existing;
+            }
             throw new RuntimeException(e);
         }
+    }
+
+    // Mirrors org.apache.webbeans.proxy.Unsafe#handleLinkageError: when the
+    // JVM rejects a defineClass with LinkageError because that class name is
+    // already loaded in this ClassLoader, re-resolve the existing class via
+    // Class#forName instead of failing. OpenWebBeans 4.0.x can generate the
+    // same proxy class FQN for two distinct Bean<?> instances of the same
+    // erased type (see TOMEE-4603 / OWB reproducer); without this fallback
+    // the second resolution propagates a LinkageError out to the user.
+    private static Class<?> handleLinkageError(final Throwable thrown, final String className, final ClassLoader loader) {
+        Throwable t = thrown;
+        while (t != null) {
+            if (t instanceof LinkageError) {
+                try {
+                    final Class<?> existing = Class.forName(className.replace('/', '.'), true, loader);
+                    LOGGER.warning("Recovered from duplicate proxy class definition for '" + className
+                            + "' in classloader " + loader
+                            + " by re-resolving the existing class. This usually indicates an upstream proxy "
+                            + "factory generated the same class name twice (see TOMEE-4603). "
+                            + "Original error: " + t);
+                    return existing;
+                } catch (final ClassNotFoundException cnfe) {
+                    return null;
+                }
+            }
+            t = t.getCause();
+        }
+        return null;
     }
 
     public static <T> T allocateProxy(final Class<T> proxyClass) {
