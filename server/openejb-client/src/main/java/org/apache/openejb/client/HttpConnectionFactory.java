@@ -60,7 +60,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
     }
 
     public static class HttpConnection implements Connection {
-        private final static String []PARAMS_TO_STRIP = new String[]{
+        private static final String[] PARAMS_TO_STRIP = new String[]{
                 // must be sorted alphabetically
                 "authorization", "authorizationHeader", "basic.password", "basic.username",
                 "connectTimeout", "readTimeout",
@@ -141,10 +141,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
         }
 
-        private String stripQuery(final String url, final String []params) {
+        private String stripQuery(final String url, final String[] params) {
             final int queryStartIndex = url.indexOf('?');
-            if (queryStartIndex < 0) { return url; }
-            if (queryStartIndex + 1 == url.length()) { return url.substring(0, queryStartIndex); }
+            if (queryStartIndex < 0) {
+                return url;
+            }
+            if (queryStartIndex + 1 == url.length()) {
+                return url.substring(0, queryStartIndex);
+            }
 
             final StringBuilder sb = new StringBuilder();
             for (String param : url.substring(queryStartIndex+1).split("[&?]")) {
