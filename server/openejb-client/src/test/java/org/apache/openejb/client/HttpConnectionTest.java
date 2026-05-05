@@ -19,7 +19,6 @@ package org.apache.openejb.client;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import jakarta.annotation.Nonnull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -138,7 +137,24 @@ public class HttpConnectionTest {
         Assert.assertEquals("secure page|QUERY:http://localhost:" + server.getAddress().getPort() + "/e|AUTH:Basic ABCD|NO_ALT_AUTH:", out);
     }
 
-    @Nonnull
+    @Test
+    public void httpBasicStripsSpecifiedQueryParamsOnly() throws URISyntaxException, IOException {
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
+        final String url = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=Basic%20token&foo=bar&int=1";
+        final Connection connection = factory.getConnection(new URI(url));
+        final String out = drainConnectionToString(connection);
+        Assert.assertEquals("secure page|QUERY:foo=bar&int=1|AUTH:Basic token|NO_ALT_AUTH:", out);
+    }
+
+    @Test
+    public void httpStripsSSLQueryParams() throws URISyntaxException, IOException {
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
+        final String url = "http://localhost:" + server.getAddress().getPort() + "/e?sslKeyStorePassword=changeit&foo=bar&int=1&sslTrustStorePassword=changeit";
+        final Connection connection = factory.getConnection(new URI(url));
+        final String out = drainConnectionToString(connection);
+        Assert.assertEquals("secure page|QUERY:foo=bar&int=1|NO_AUTH:|NO_ALT_AUTH:", out);
+    }
+
     private static String drainConnectionToString(Connection connection) throws IOException {
         BufferedReader br = null;
         final StringBuilder sb = new StringBuilder();
@@ -160,7 +176,6 @@ public class HttpConnectionTest {
             }
             connection.close();
         }
-        final String out = sb.toString();
-        return out;
+        return sb.toString();
     }
 }
