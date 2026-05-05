@@ -59,6 +59,13 @@ public class HttpConnectionFactory implements ConnectionFactory {
     }
 
     public static class HttpConnection implements Connection {
+        private final static String []PARAMS_TO_STRIP = new String[]{
+                // must be sorted alphabetically
+                "authorization", "authorizationHeader", "basic.password", "basic.username", 
+                "connectTimeout", "readTimeout", 
+                "sslKeyStore", "sslKeyStorePassword", "sslKeyStoreType",
+                "sslTrustStore", "sslTrustStorePassword", "sslTrustStoreType"
+        };
         private final byte[] buffer;
         private HttpURLConnection httpURLConnection;
         private InputStream inputStream;
@@ -89,14 +96,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 authorization = "Basic " + printBase64Binary((basicUsername + (basicPassword != null ? ":" + basicPassword : "")).getBytes(StandardCharsets.UTF_8));
             }
 
-            final String newUrl =
-                    stripQuery(
-                        stripQuery(
-                            stripQuery(
-                                stripQuery(url.toExternalForm(), "authorization"),
-                        "basic.username"),
-                            "basic.password"),
-                "authorizationHeader");
+            final String newUrl = stripQuery(url.toExternalForm(), PARAMS_TO_STRIP);
             httpURLConnection = (HttpURLConnection) (authorization == null ? url : new URL(newUrl)).openConnection();
             httpURLConnection.setDoOutput(true);
 
@@ -140,20 +140,21 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
         }
 
-        private String stripQuery(final String url, final String param) {
-            String result = url;
-            do {
-                final int h = result.indexOf(param + '=');
-                int end = result.indexOf('&', h);
-                if (end < 0) {
-                    end = result.length();
+        private String stripQuery(final String url, final String []params) {
+            final int queryStartIndex = url.indexOf('?');
+            if (queryStartIndex < 0) { return url; }
+            if (queryStartIndex + 1 == url.length()) { return url.substring(0, queryStartIndex); }
+
+            final StringBuilder sb = new StringBuilder();
+            for (String param : url.substring(queryStartIndex+1).split("&")) {
+                final int p = param.indexOf('=');
+                if ((p < 0 && Arrays.binarySearch(params, param) < 0)
+                    || (p > 0 && Arrays.binarySearch(params, param.substring(0, p)) < 0)) {
+                    if (!sb.isEmpty()) { sb.append('&'); }
+                    sb.append(param);
                 }
-                if (h <= 0) {
-                    return result.endsWith("?") ? result.substring(0, result.length() - 1) : result;
-                }
-                result = result.substring(0, h) +
-                        (end < 0 || end == result.length() ? "" : result.substring(end + 1, result.length()));
-            } while (true);
+            }
+            return url.substring(0, queryStartIndex) + (sb.isEmpty() ? "" : "?" + sb);
         }
 
         @Override
