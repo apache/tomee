@@ -19,6 +19,7 @@ package org.apache.openejb.client;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import jakarta.annotation.Nonnull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,18 +48,28 @@ public class HttpConnectionTest {
                 exchange.sendResponseHeaders(200, 0);
 
                 final OutputStream responseBody = exchange.getResponseBody();
-                responseBody.write("secure page".getBytes());
+                responseBody.write("secure page|".getBytes());
                 final String query = exchange.getRequestURI().getQuery();
                 if (query != null) {
+                    responseBody.write("QUERY:".getBytes());
                     responseBody.write(query.getBytes());
+                } else {
+                    responseBody.write("NO_QUERY:".getBytes());
                 }
+                responseBody.write("|".getBytes());
                 final String authorization = exchange.getRequestHeaders().getFirst("Authorization");
                 if (authorization != null) {
+                    responseBody.write("AUTH:".getBytes("UTF-8"));
                     responseBody.write(authorization.getBytes("UTF-8"));
+                } else {
+                    responseBody.write("NO_AUTH:".getBytes("UTF-8"));
                 }
+                responseBody.write("|".getBytes());
                 final String authorization2 = exchange.getRequestHeaders().getFirst("AltAuthorization");
                 if (authorization2 != null) {
-                    responseBody.write(("alt" + authorization2).getBytes("UTF-8"));
+                    responseBody.write(("ALT_AUTH:" + authorization2).getBytes("UTF-8"));
+                } else {
+                    responseBody.write("NO_ALT_AUTH:".getBytes("UTF-8"));
                 }
                 responseBody.close();
             }
@@ -77,29 +88,9 @@ public class HttpConnectionTest {
         final String url = "http://localhost:" + server.getAddress().getPort() + "/e";
         for (int i = 0; i < 3; i++) {
             final Connection connection = factory.getConnection(new URI(url));
+            final String out = drainConnectionToString(connection);
 
-            BufferedReader br = null;
-            final StringBuilder sb = new StringBuilder();
-            String line;
-            try {
-                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                connection.close();
-            }
-
-            Assert.assertTrue("should contain", sb.toString().contains("secure"));
+            Assert.assertEquals("secure page|NO_QUERY:|NO_AUTH:|NO_ALT_AUTH:", out);
         }
     }
 
@@ -109,29 +100,9 @@ public class HttpConnectionTest {
         final String url = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=Basic%20token";
         for (int i = 0; i < 3; i++) {
             final Connection connection = factory.getConnection(new URI(url));
+            String out = drainConnectionToString(connection);
 
-            BufferedReader br = null;
-            final StringBuilder sb = new StringBuilder();
-            String line;
-            try {
-                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                connection.close();
-            }
-
-            Assert.assertTrue("should contain", sb.toString().contains("secure pageBasic token"));
+            Assert.assertEquals("secure page|NO_QUERY:|AUTH:Basic token|NO_ALT_AUTH:", out);
         }
     }
 
@@ -141,29 +112,9 @@ public class HttpConnectionTest {
         final String url = "http://localhost:" + server.getAddress().getPort() + "/e?basic.password=pwd&basic.username=test&authorizationHeader=AltAuthorization";
         for (int i = 0; i < 3; i++) {
             final Connection connection = factory.getConnection(new URI(url));
+            String out = drainConnectionToString(connection);
 
-            BufferedReader br = null;
-            final StringBuilder sb = new StringBuilder();
-            String line;
-            try {
-                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (final IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                connection.close();
-            }
-
-            Assert.assertTrue("should contain", sb.toString().contains("secure pagealtBasic dGVzdDpwd2Q="));
+            Assert.assertEquals("secure page|NO_QUERY:|NO_AUTH:|ALT_AUTH:Basic dGVzdDpwd2Q=", out);
         }
     }
 
@@ -173,29 +124,8 @@ public class HttpConnectionTest {
         final String url = "http://localhost:" + server.getAddress().getPort() + "/e?basic.password=pwd&basic.username=te%26st&authorizationHeader=AltAuthorization";
         for (int i = 0; i < 3; i++) {
             final Connection connection = factory.getConnection(new URI(url));
-
-            BufferedReader br = null;
-            final StringBuilder sb = new StringBuilder();
-            String line;
-            try {
-                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (final IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                connection.close();
-            }
-
-            Assert.assertTrue("should contain", sb.toString().contains("secure pagealtBasic dGUmc3Q6cHdk"));
+            String out = drainConnectionToString(connection);
+            Assert.assertEquals("secure page|NO_QUERY:|NO_AUTH:|ALT_AUTH:Basic dGUmc3Q6cHdk", out);
         }
     }
 
@@ -204,6 +134,12 @@ public class HttpConnectionTest {
         final String baseHttp = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=";
         final String uri = "failover:sticky+random:" + baseHttp + "Basic%20ABCD&" + baseHttp + "Basic%20EFG";
         final Connection connection = ConnectionManager.getConnection(new URI(uri));
+        final String out = drainConnectionToString(connection);
+        Assert.assertEquals("secure page|QUERY:http://localhost:" + server.getAddress().getPort() + "/e|AUTH:Basic ABCD|NO_ALT_AUTH:", out);
+    }
+
+    @Nonnull
+    private static String drainConnectionToString(Connection connection) throws IOException {
         BufferedReader br = null;
         final StringBuilder sb = new StringBuilder();
         String line;
@@ -225,6 +161,6 @@ public class HttpConnectionTest {
             connection.close();
         }
         final String out = sb.toString();
-        Assert.assertTrue(out, out.contains("secure pagehttp://localhost:" + server.getAddress().getPort() + "/eBasic ABCD"));
+        return out;
     }
 }
