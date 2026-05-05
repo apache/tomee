@@ -155,7 +155,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             for (String param : url.substring(queryStartIndex+1).split("[&?]")) {
                 final int p = param.indexOf('=');
                 if ((p < 0 && Arrays.binarySearch(params, param) < 0)
-                        || (p > 0 && Arrays.binarySearch(params, param.substring(0, p)) < 0)) {
+                        || (p >= 0 && Arrays.binarySearch(params, param.substring(0, p)) < 0)) {
                     if (!sb.isEmpty()) { sb.append('&'); }
                     sb.append(param);
                 }
