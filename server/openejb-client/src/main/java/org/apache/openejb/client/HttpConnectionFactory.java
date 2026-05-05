@@ -151,6 +151,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
 
             final StringBuilder sb = new StringBuilder();
+            // split on [&?] to account for failover URLs with multiple http URLs embedded
             for (String param : url.substring(queryStartIndex+1).split("[&?]")) {
                 final int p = param.indexOf('=');
                 if ((p < 0 && Arrays.binarySearch(params, param) < 0)
