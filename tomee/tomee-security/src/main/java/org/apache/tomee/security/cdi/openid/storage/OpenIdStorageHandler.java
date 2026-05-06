@@ -18,8 +18,10 @@ package org.apache.tomee.security.cdi.openid.storage;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.function.Supplier;
 
 public abstract class OpenIdStorageHandler {
     protected static final String PREFIX = "openid.";
@@ -27,6 +29,29 @@ public abstract class OpenIdStorageHandler {
     public static final String REQUEST_KEY = "REQUEST";
     public static final String STATE_KEY = "STATE";
     public static final String NONCE_KEY = "NONCE";
+    private static final ThreadLocal<OpenIdAuthenticationMechanismDefinition> CURRENT_DEFINITION = new ThreadLocal<>();
+
+    public static <T> T withDefinition(final OpenIdAuthenticationMechanismDefinition definition, final Supplier<T> task) {
+        final OpenIdAuthenticationMechanismDefinition previous = CURRENT_DEFINITION.get();
+        if (definition == null) {
+            CURRENT_DEFINITION.remove();
+        } else {
+            CURRENT_DEFINITION.set(definition);
+        }
+        try {
+            return task.get();
+        } finally {
+            if (previous == null) {
+                CURRENT_DEFINITION.remove();
+            } else {
+                CURRENT_DEFINITION.set(previous);
+            }
+        }
+    }
+
+    protected static OpenIdAuthenticationMechanismDefinition currentDefinition() {
+        return CURRENT_DEFINITION.get();
+    }
 
     public abstract String get(HttpServletRequest request, HttpServletResponse response, String key);
 

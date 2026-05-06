@@ -113,6 +113,14 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     @Override
     public void cleanSubject(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) {
+        OpenIdStorageHandler.withDefinition(getDefinition(), () -> {
+            cleanSubjectWithSelectedDefinition(request, response, httpMessageContext);
+            return null;
+        });
+    }
+
+    private void cleanSubjectWithSelectedDefinition(final HttpServletRequest request, final HttpServletResponse response,
+                                                    final HttpMessageContext httpMessageContext) {
         String redirectTarget = buildRedirectUri();
 
         HttpSession session = request.getSession(false);
@@ -153,6 +161,13 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
 
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
+        return OpenIdStorageHandler.withDefinition(getDefinition(),
+                () -> validateRequestWithSelectedDefinition(request, response, httpMessageContext));
+    }
+
+    private AuthenticationStatus validateRequestWithSelectedDefinition(final HttpServletRequest request,
+                                                                       final HttpServletResponse response,
+                                                                       final HttpMessageContext httpMessageContext) {
         if (request.getUserPrincipal() != null) {
             AuthenticationStatus result = handleExpiredTokens(request, response, httpMessageContext);
             if (result != null) {

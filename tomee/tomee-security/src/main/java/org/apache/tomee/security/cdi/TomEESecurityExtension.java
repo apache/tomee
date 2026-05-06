@@ -27,8 +27,7 @@ import org.apache.tomee.security.cdi.openid.BaseUrlProducer;
 import org.apache.tomee.security.cdi.openid.OpenIdIdentityStore;
 import org.apache.tomee.security.cdi.openid.TomEEOpenIdContext;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
-import org.apache.tomee.security.cdi.openid.storage.impl.CookieBasedOpenIdStorageHandler;
-import org.apache.tomee.security.cdi.openid.storage.impl.SessionBasedOpenIdStorageHandler;
+import org.apache.tomee.security.cdi.openid.storage.impl.DefinitionAwareOpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.OpenIdAuthenticationMechanismDefinitionDelegate;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
@@ -420,9 +419,7 @@ public class TomEESecurityExtension implements Extension {
                         OpenIdAuthenticationMechanismDefinition definition = (OpenIdAuthenticationMechanismDefinition)
                                 beanManager.getReference(definitionBean, OpenIdAuthenticationMechanismDefinition.class, creationalContext);
 
-                        return definition.useSession()
-                                ? new SessionBasedOpenIdStorageHandler()
-                                : new CookieBasedOpenIdStorageHandler();
+                        return new DefinitionAwareOpenIdStorageHandler();
                     });
 
             afterBeanDiscovery.addBean(createBean(TomEEOpenIdContext.class, beanManager));
