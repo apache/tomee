@@ -85,6 +85,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ReadDescriptors implements DynamicDeployer {
+    public static final String EMPTY_BEANS_XML_MODE_PROPERTY = "openejb.cdi.empty-beans-xml.mode";
+
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
 
     private static final boolean ROOT_URL_FROM_WEBINF = SystemInstance.get().getOptions().get("openejb.jpa.root-url-from-webinf", false);
@@ -534,7 +536,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
         String beanDiscoveryMode = beans.getBeanDiscoveryMode();
         if (beanDiscoveryMode == null) {
-            beanDiscoveryMode = "ALL";
+            beanDiscoveryMode = getDefaultBeanDiscoveryMode();
         }
         else if ("ALL".equalsIgnoreCase(beanDiscoveryMode) && beans.isTrim()) {
             beanDiscoveryMode = "TRIM";
@@ -679,7 +681,7 @@ public class ReadDescriptors implements DynamicDeployer {
             final String content = IO.slurp(inputStream).trim();
             if (content.length() == 0) { // otherwise we want to read <beans /> attributes
                 final Beans beans = new Beans();
-                beans.setBeanDiscoveryMode("ALL"); // backward compatibility
+                beans.setBeanDiscoveryMode(getDefaultBeanDiscoveryMode());
                 return beans;
             }
             return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, new ByteArrayInputStream(content.getBytes()));
@@ -693,6 +695,10 @@ public class ReadDescriptors implements DynamicDeployer {
         } catch (final Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the beans.xml", e);// file: " + url.toExternalForm(), e);
         }
+    }
+
+    public static String getDefaultBeanDiscoveryMode() {
+        return SystemInstance.get().getProperty(EMPTY_BEANS_XML_MODE_PROPERTY, "ANNOTATED");
     }
 
     private static boolean isEmptyEjbJar(final InputStream is) throws IOException, ParserConfigurationException, SAXException {

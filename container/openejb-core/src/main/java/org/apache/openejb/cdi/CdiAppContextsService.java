@@ -21,6 +21,7 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.InitializedLiteral;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.event.EventMetadataImpl;
@@ -30,6 +31,7 @@ import org.apache.webbeans.web.context.WebContextsService;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import jakarta.enterprise.event.Startup;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletRequest;
@@ -100,6 +102,10 @@ public class CdiAppContextsService extends WebContextsService implements Context
                         ServletContext.class.isInstance(appEvent) ? ServletContext.class : Object.class, null,
                         new Annotation[]{InitializedLiteral.INSTANCE_APPLICATION_SCOPED},
                         webBeansContext),
+                false);
+        webBeansContext.getBeanManagerImpl().fireEvent(
+                new Startup(),
+                new EventMetadataImpl(null, Startup.class, null, AnyLiteral.ARRAY, webBeansContext),
                 false);
     }
 

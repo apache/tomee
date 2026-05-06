@@ -25,6 +25,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.component.BuiltInOwbBean;
 import org.apache.webbeans.component.SimpleProducerFactory;
 import org.apache.webbeans.component.WebBeansType;
@@ -52,6 +53,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.ConversationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.event.Shutdown;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -286,6 +288,8 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             if (WebappBeanManager.class.isInstance(beanManager)) {
                 WebappBeanManager.class.cast(beanManager).beforeStop();
             }
+
+            beanManager.fireEvent(new Shutdown(), false, AnyLiteral.INSTANCE);
 
             webBeansContext.getContextsService().endContext(RequestScoped.class, endObject);
             webBeansContext.getContextsService().endContext(ConversationScoped.class, endObject);

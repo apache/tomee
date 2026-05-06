@@ -1207,7 +1207,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         String beanDiscoveryMode = beans.getBeanDiscoveryMode();
         if (beanDiscoveryMode == null) {
-            beanDiscoveryMode = "ALL";
+            beanDiscoveryMode = ReadDescriptors.getDefaultBeanDiscoveryMode();
         }
         else if ("ALL".equalsIgnoreCase(beanDiscoveryMode) && beans.isTrim()) {
             beanDiscoveryMode = "TRIM";
