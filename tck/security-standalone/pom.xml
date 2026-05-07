@@ -62,85 +62,22 @@
                                               tofile="${tck.dir}/common/src/main/resources/arquillian.xml"
                                               overwrite="true" />
 
-                                        <!-- Inject tomee-remote profile into TCK parent pom.xml -->
+                                        <!--
+                                          Load the TomEE Remote profile fragment from src/test/resources
+                                          (Ant property references inside the file are expanded against
+                                          this Maven module) and inject it into the TCK parent pom.xml
+                                          right before </profiles>.
+                                        -->
+                                        <loadfile property="tomee.remote.profile"
+                                                  srcFile="${project.basedir}/src/test/resources/tomee-remote-profile.xml"
+                                                  encoding="UTF-8">
+                                            <filterchain>
+                                                <expandproperties />
+                                            </filterchain>
+                                        </loadfile>
                                         <replace file="${tck.dir}/pom.xml"
                                                  token="&lt;/profiles&gt;"
-                                                 value="${line.separator}${line.separator}
-        &lt;!-- TomEE Remote Profile (injected by TomEE build) --&gt;
-        &lt;profile&gt;
-            &lt;id&gt;tomee-remote&lt;/id&gt;
-
-            &lt;properties&gt;
-                &lt;glassfish.root&gt;${project.build.directory}&lt;/glassfish.root&gt;
-            &lt;/properties&gt;
-
-            &lt;repositories&gt;
-                &lt;repository&gt;
-                    &lt;id&gt;apache.snapshots&lt;/id&gt;
-                    &lt;url&gt;https://repository.apache.org/content/repositories/snapshots/&lt;/url&gt;
-                    &lt;releases&gt;&lt;enabled&gt;false&lt;/enabled&gt;&lt;/releases&gt;
-                    &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
-                &lt;/repository&gt;
-            &lt;/repositories&gt;
-
-            &lt;dependencies&gt;
-                &lt;dependency&gt;
-                    &lt;groupId&gt;org.apache.tomee&lt;/groupId&gt;
-                    &lt;artifactId&gt;apache-tomee&lt;/artifactId&gt;
-                    &lt;version&gt;${project.version}&lt;/version&gt;
-                    &lt;type&gt;zip&lt;/type&gt;
-                    &lt;classifier&gt;plus&lt;/classifier&gt;
-                    &lt;scope&gt;test&lt;/scope&gt;
-                &lt;/dependency&gt;
-                &lt;dependency&gt;
-                    &lt;groupId&gt;org.apache.tomee&lt;/groupId&gt;
-                    &lt;artifactId&gt;arquillian-tomee-remote&lt;/artifactId&gt;
-                    &lt;version&gt;${project.version}&lt;/version&gt;
-                    &lt;scope&gt;test&lt;/scope&gt;
-                    &lt;exclusions&gt;
-                        &lt;exclusion&gt;
-                            &lt;groupId&gt;org.apache.tomee&lt;/groupId&gt;
-                            &lt;artifactId&gt;arquillian-openejb-transaction-provider&lt;/artifactId&gt;
-                        &lt;/exclusion&gt;
-                    &lt;/exclusions&gt;
-                &lt;/dependency&gt;
-            &lt;/dependencies&gt;
-
-            &lt;build&gt;
-                &lt;plugins&gt;
-                    &lt;plugin&gt;
-                        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-                        &lt;artifactId&gt;maven-failsafe-plugin&lt;/artifactId&gt;
-                        &lt;configuration&gt;
-                            &lt;systemPropertyVariables&gt;
-                                &lt;tomee.stopPort&gt;-1&lt;/tomee.stopPort&gt;
-                                &lt;tomee.httpPort&gt;8080&lt;/tomee.httpPort&gt;
-                                &lt;tomee.ajpPort&gt;-1&lt;/tomee.ajpPort&gt;
-                                &lt;tomee.dir&gt;target/tomee/server&lt;/tomee.dir&gt;
-                                &lt;tomee.appWorkingDir&gt;target/tomee/arquillian&lt;/tomee.appWorkingDir&gt;
-                                &lt;tomee.cleanOnStartUp&gt;true&lt;/tomee.cleanOnStartUp&gt;
-                                &lt;tomee.classifier&gt;plus&lt;/tomee.classifier&gt;
-                                &lt;!--
-                                  SSL configuration for app-openid2/app-openid3.
-                                  Those tests deploy an OpenID provider in a separate Tomcat with a
-                                  self-signed cert whose public cert is imported into the shared
-                                  keystore below by the TCK's keytool-maven-plugin (the 'glassfish8'
-                                  directory name is a TCK leftover from its GlassFish origins; no
-                                  GlassFish is installed). We point both JVMs at that keystore:
-                                  the failsafe JVM (test driver that uses HtmlUnit) and the forked
-                                  TomEE JVM (the OpenID relying party).
-                                --&gt;
-                                &lt;javax.net.ssl.trustStore&gt;${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks&lt;/javax.net.ssl.trustStore&gt;
-                                &lt;javax.net.ssl.trustStorePassword&gt;changeit&lt;/javax.net.ssl.trustStorePassword&gt;
-                                &lt;tomee.catalina_opts&gt;-Djavax.net.ssl.trustStore=${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks -Djavax.net.ssl.trustStorePassword=changeit&lt;/tomee.catalina_opts&gt;
-                                &lt;tomee.properties&gt;openejb.environment.default=true&lt;/tomee.properties&gt;
-                            &lt;/systemPropertyVariables&gt;
-                        &lt;/configuration&gt;
-                    &lt;/plugin&gt;
-                &lt;/plugins&gt;
-            &lt;/build&gt;
-        &lt;/profile&gt;
-${line.separator}    &lt;/profiles&gt;" />
+                                                 value="${line.separator}${tomee.remote.profile}${line.separator}    &lt;/profiles&gt;" />
 
                                         <!-- Remove security-signaturetest from reactor (uses GlassFish-only properties) -->
                                         <replace file="${tck.dir}/pom.xml"
