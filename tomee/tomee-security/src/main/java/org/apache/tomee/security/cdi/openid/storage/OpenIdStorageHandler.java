@@ -49,7 +49,16 @@ public abstract class OpenIdStorageHandler {
         }
     }
 
-    protected static OpenIdAuthenticationMechanismDefinition currentDefinition() {
+    /**
+     * Returns the per-mechanism OIDC definition for the current request, or {@code null} when no
+     * mechanism is on the stack. {@link OpenIdAuthenticationMechanism} pushes its definition via
+     * {@link #withDefinition(OpenIdAuthenticationMechanismDefinition, Supplier)} so collaborators
+     * downstream of {@code validateRequest()} (storage handler, identity store) can route against
+     * the active provider rather than the @Default-injected one. Public so {@link
+     * org.apache.tomee.security.cdi.openid.OpenIdIdentityStore} can consult it from outside the
+     * package without exposing the underlying ThreadLocal.
+     */
+    public static OpenIdAuthenticationMechanismDefinition currentDefinition() {
         return CURRENT_DEFINITION.get();
     }
 

@@ -53,6 +53,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -490,8 +491,12 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
     }
 
     protected String basicAuthHeader() {
-        final String clientId = getDefinition().clientId();
-        final String clientSecret = getDefinition().clientSecret();
+        // RFC 6749 §2.3.1 (referenced by OIDC Core §9 client_secret_basic): client_id and client_secret
+        // MUST be application/x-www-form-urlencoded BEFORE being joined with ':' and base64-encoded.
+        // Without form-encoding, credentials containing ':', '+', '%', '/', '=', '&', space or
+        // non-ASCII bytes are misinterpreted by spec-compliant authorization servers (e.g. Keycloak).
+        final String clientId = URLEncoder.encode(getDefinition().clientId(), StandardCharsets.UTF_8);
+        final String clientSecret = URLEncoder.encode(getDefinition().clientSecret(), StandardCharsets.UTF_8);
         final String raw = clientId + ':' + clientSecret;
         return "Basic " + Base64.getEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
     }

@@ -170,6 +170,49 @@ public class TomEEInMemoryIdentityStoreTest {
     }
 
     @Test
+    public void provideGroupsOnlyStoreReturnsLocalGroupsForCallerFromOtherStore() throws Exception {
+        // Spec scenario: a separate IdentityStore (e.g. an LDAP/database one) authenticates the
+        // caller with VALIDATE. IdentityStoreHandler then calls getCallerGroups() on every store
+        // that declares PROVIDE_GROUPS, passing the validation result from that other store. The
+        // PROVIDE_GROUPS-only store must contribute groups it declares locally for that caller --
+        // not echo the groups already on the result. Mirrors Soteria RI's InMemoryIdentityStore.
+        final TomEEInMemoryIdentityStore groupsOnly = buildStore(GroupsOnlyStore.class);
+
+        // Result produced by a different store: caller "alice" with no groups initially.
+        final CredentialValidationResult fromOtherStore =
+                new CredentialValidationResult("alice", java.util.Collections.emptySet());
+
+        assertEquals(Set.of("users"), groupsOnly.getCallerGroups(fromOtherStore));
+    }
+
+    @Test
+    public void provideGroupsOnlyStoreReturnsEmptyForUnknownCaller() throws Exception {
+        // Caller is unknown to this PROVIDE_GROUPS store -- it must contribute nothing rather
+        // than echoing whatever the validating store had on the result.
+        final TomEEInMemoryIdentityStore groupsOnly = buildStore(GroupsOnlyStore.class);
+
+        final CredentialValidationResult fromOtherStore =
+                new CredentialValidationResult("charlie", Set.of("admins"));
+
+        assertTrue("groups must come from the local store, not echo the prior result",
+                groupsOnly.getCallerGroups(fromOtherStore).isEmpty());
+    }
+
+    @Test
+    public void provideGroupsDoesNotEchoIncomingGroups() throws Exception {
+        // The caller IS declared locally (alice) -- the returned groups must be the ones declared
+        // locally on this store, not the unrelated set carried in by the validating store.
+        final TomEEInMemoryIdentityStore groupsOnly = buildStore(GroupsOnlyStore.class);
+
+        final CredentialValidationResult fromOtherStore =
+                new CredentialValidationResult("alice", Set.of("from-other-store"));
+
+        final Set<String> resolved = groupsOnly.getCallerGroups(fromOtherStore);
+        assertEquals(Set.of("users"), resolved);
+        assertFalse(resolved.contains("from-other-store"));
+    }
+
+    @Test
     public void emptyStoreAlwaysReturnsInvalid() throws Exception {
         final TomEEInMemoryIdentityStore empty = buildStore(EmptyStore.class);
 

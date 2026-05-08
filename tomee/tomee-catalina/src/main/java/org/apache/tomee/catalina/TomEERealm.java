@@ -149,7 +149,20 @@ public class TomEERealm extends CombinedRealm {
 
     private Boolean evaluatePolicyFactory(final Request request) {
         final Object previousHandlerData = HANDLER_DATA_TL != null ? HANDLER_DATA_TL.get() : null;
+        // Per Jakarta Authorization 3.0, PolicyFactory.getPolicy() (no-arg) selects the policy
+        // from PolicyContext.getContextID(), and the spec requires the container to associate the
+        // current policy context with the thread before invoking decision interfaces. On reused
+        // Tomcat worker threads the id can be null or carried over from a previous web app/EJB
+        // call, which would resolve the wrong policy and either authorize or reject the request
+        // against constraints from a different application. Set the per-webapp id explicitly and
+        // restore the previous value so we don't perturb outer callers (e.g. an enclosing EJB
+        // invocation that already established its own context).
+        final String previousContextId = PolicyContext.getContextID();
+        final String requestContextId = resolvePolicyContextId(request);
         try {
+            if (requestContextId != null) {
+                PolicyContext.setContextID(requestContextId);
+            }
             PolicyContext.setHandlerData(request.getRequest());
 
             final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
@@ -170,7 +183,32 @@ public class TomEERealm extends CombinedRealm {
             return null;
         } finally {
             PolicyContext.setHandlerData(previousHandlerData);
+            if (requestContextId != null) {
+                PolicyContext.setContextID(previousContextId);
+            }
         }
+    }
+
+    /**
+     * Builds the JACC policy context identifier for the request's web app, in the same
+     * "{@code <virtualServerName> <contextPath>}" form that {@link
+     * org.apache.tomee.catalina.security.TomcatSecurityConstaintsToJaccPermissionsTransformer}
+     * registers with the policy provider on deploy. Returns {@code null} when the request is not
+     * yet bound to a context, in which case we leave whatever id the caller had on the thread —
+     * setting it to {@code null} would lose an outer caller's context (e.g. an enclosing EJB).
+     */
+    private String resolvePolicyContextId(final Request request) {
+        final Context context = request.getContext();
+        if (context == null) {
+            return null;
+        }
+        final jakarta.servlet.ServletContext servletContext = context.getServletContext();
+        if (servletContext == null) {
+            return null;
+        }
+        final String virtualServer = servletContext.getVirtualServerName();
+        final String path = servletContext.getContextPath();
+        return (virtualServer == null ? "" : virtualServer) + " " + (path == null ? "" : path);
     }
 
     private Subject getCurrentSubject() {

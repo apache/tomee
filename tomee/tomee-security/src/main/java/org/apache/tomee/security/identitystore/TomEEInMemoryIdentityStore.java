@@ -106,7 +106,22 @@ public class TomEEInMemoryIdentityStore implements IdentityStore {
         if (!validationTypes.contains(ValidationType.PROVIDE_GROUPS)) {
             return emptySet();
         }
-        return validationResult.getCallerGroups();
+        // Spec: when a store is invoked with PROVIDE_GROUPS, it must contribute groups it knows
+        // about for the caller -- not echo back groups from another store. Look up the declared
+        // entry by caller name and return that entry's groups; mirrors Soteria's RI behavior.
+        if (validationResult == null || validationResult.getCallerPrincipal() == null) {
+            return emptySet();
+        }
+        final String callerName = validationResult.getCallerPrincipal().getName();
+        if (callerName == null) {
+            return emptySet();
+        }
+        for (final InMemoryIdentityStoreDefinition.Credentials entry : definition.value()) {
+            if (callerName.equals(entry.callerName())) {
+                return new HashSet<>(Arrays.asList(entry.groups()));
+            }
+        }
+        return emptySet();
     }
 
     @Override

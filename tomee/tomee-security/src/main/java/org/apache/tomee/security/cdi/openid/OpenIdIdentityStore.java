@@ -63,14 +63,29 @@ public class OpenIdIdentityStore implements IdentityStore {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, OpenIdIdentityStore.class);
 
     @Inject
-    private OpenIdAuthenticationMechanismDefinition definition;
+    private OpenIdAuthenticationMechanismDefinition defaultDefinition;
 
     @Inject
     private TomEEOpenIdContext openIdContext;
 
     @Inject
     private OpenIdStorageHandler storageHandler;
-    
+
+
+    /**
+     * Returns the OIDC definition that should drive this validation. {@link OpenIdAuthenticationMechanism}
+     * registers one mechanism bean per {@code @OpenIdAuthenticationMechanismDefinition}, but only one
+     * {@code OpenIdIdentityStore} bean exists with the @Default-qualified definition injected. Without
+     * this lookup, a non-default mechanism would exchange the auth code with provider B's token endpoint
+     * but then validate the resulting id/access tokens against provider A's issuer/audience/JWKS and
+     * fetch userinfo from provider A — silently accepting or rejecting tokens against the wrong metadata.
+     * The mechanism wraps its work in {@link OpenIdStorageHandler#withDefinition}, so the active
+     * definition is available on the current thread.
+     */
+    private OpenIdAuthenticationMechanismDefinition activeDefinition() {
+        final OpenIdAuthenticationMechanismDefinition current = OpenIdStorageHandler.currentDefinition();
+        return current != null ? current : defaultDefinition;
+    }
 
     @Override
     public CredentialValidationResult validate(Credential credential) {
@@ -78,8 +93,10 @@ public class OpenIdIdentityStore implements IdentityStore {
             return CredentialValidationResult.NOT_VALIDATED_RESULT;
         }
 
-        JwtConsumer defaultJwtConsumer = buildJwtConsumer(null);
-        JwtConsumer idTokenJwtConsumer = buildJwtConsumer(builder -> {
+        final OpenIdAuthenticationMechanismDefinition definition = activeDefinition();
+
+        JwtConsumer defaultJwtConsumer = buildJwtConsumer(definition, null);
+        JwtConsumer idTokenJwtConsumer = buildJwtConsumer(definition, builder -> {
             if (!definition.useNonce()) {
                 return;
             }
@@ -91,14 +108,14 @@ public class OpenIdIdentityStore implements IdentityStore {
         });
 
 
-        openIdContext.setAccessToken(createAccessToken(defaultJwtConsumer, openIdCredential.getTokenResponse()));
-        openIdContext.setIdentityToken(createIdentityToken(idTokenJwtConsumer, openIdCredential.getTokenResponse()));
+        openIdContext.setAccessToken(createAccessToken(definition, defaultJwtConsumer, openIdCredential.getTokenResponse()));
+        openIdContext.setIdentityToken(createIdentityToken(definition, idTokenJwtConsumer, openIdCredential.getTokenResponse()));
         openIdContext.setRefreshToken(openIdCredential.getTokenResponse().getRefreshToken().map(TomEERefreshToken::new).orElse(null));
         if (openIdContext.getIdentityToken() == null) {
             return CredentialValidationResult.INVALID_RESULT;
         }
 
-        openIdContext.setUserInfoClaims(fetchUserinfoClaims(defaultJwtConsumer, openIdContext.getAccessToken().getToken()));
+        openIdContext.setUserInfoClaims(fetchUserinfoClaims(definition, defaultJwtConsumer, openIdContext.getAccessToken().getToken()));
 
         String callerNameClaim = definition.claimsDefinition().callerNameClaim();
         String groupsClaim = definition.claimsDefinition().callerGroupsClaim();
@@ -139,7 +156,8 @@ public class OpenIdIdentityStore implements IdentityStore {
         return validationResult.getCallerGroups();
     }
 
-    private AccessToken createAccessToken(JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
+    private AccessToken createAccessToken(OpenIdAuthenticationMechanismDefinition definition,
+                                          JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
         boolean validJwt = false;
         try {
             jwtConsumer.process(tokenResponse.getAccesToken());
@@ -156,7 +174,8 @@ public class OpenIdIdentityStore implements IdentityStore {
                 definition.tokenMinValidity());
     }
 
-    private IdentityToken createIdentityToken(JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
+    private IdentityToken createIdentityToken(OpenIdAuthenticationMechanismDefinition definition,
+                                              JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
         try {
             JwtContext idToken = jwtConsumer.process(tokenResponse.getIdToken());
             return new TomEEIdentityToken(idToken.getJwt(), definition.tokenMinValidity());
@@ -167,7 +186,8 @@ public class OpenIdIdentityStore implements IdentityStore {
         }
     }
 
-    private JsonObject fetchUserinfoClaims(JwtConsumer jwtConsumer, String accessToken) {
+    private JsonObject fetchUserinfoClaims(OpenIdAuthenticationMechanismDefinition definition,
+                                           JwtConsumer jwtConsumer, String accessToken) {
         final String userinfoEndpoint = definition.providerMetadata().userinfoEndpoint();
         try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(userinfoEndpoint)
@@ -204,7 +224,8 @@ public class OpenIdIdentityStore implements IdentityStore {
         }
     }
 
-    protected JwtConsumer buildJwtConsumer(Consumer<JwtConsumerBuilder> enhancer) {
+    protected JwtConsumer buildJwtConsumer(OpenIdAuthenticationMechanismDefinition definition,
+                                           Consumer<JwtConsumerBuilder> enhancer) {
         HttpsJwks jwks = new HttpsJwks(definition.providerMetadata().jwksURI());
         Get get = new Get();
         get.setConnectTimeout(definition.jwksConnectTimeout());
