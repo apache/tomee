@@ -24,8 +24,6 @@ import jakarta.security.enterprise.authentication.mechanism.http.BasicAuthentica
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.credential.BasicAuthenticationCredential;
-import jakarta.security.enterprise.credential.Password;
-import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,7 +53,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         try {
             final BasicAuthenticationCredential credential = parseAuthenticationHeader(request.getHeader(AUTHORIZATION));
-            final CredentialValidationResult result = identityStoreHandler.validate(toUsernamePasswordCredential(credential));
+            final CredentialValidationResult result = identityStoreHandler.validate(credential);
 
             if (result.getStatus().equals(VALID)) {
                 return httpMessageContext.notifyContainerAboutLogin(result);
@@ -98,8 +96,4 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
                        .orElseGet(() -> new BasicAuthenticationCredential(""));
     }
 
-    private UsernamePasswordCredential toUsernamePasswordCredential(final BasicAuthenticationCredential credential) {
-        final Password password = credential.getPassword();
-        return new UsernamePasswordCredential(credential.getCaller(), password);
-    }
 }
