@@ -583,7 +583,15 @@ public class TomEESecurityExtension implements Extension {
 
     private Supplier<OpenIdAuthenticationMechanismDefinition> createOpenIdAuthenticationMechanismDefinitionSupplier(
             final OpenIdAuthenticationMechanismDefinition definition, final BeanManager bm) {
-        return () -> createOpenIdAuthenticationMechanismDefinition(definition, bm);
+        final AtomicReference<OpenIdAuthenticationMechanismDefinition> ref = new AtomicReference<>();
+        return () -> {
+            OpenIdAuthenticationMechanismDefinition existing = ref.get();
+            if (existing != null) {
+                return existing;
+            }
+            final OpenIdAuthenticationMechanismDefinition created = createOpenIdAuthenticationMechanismDefinition(definition, bm);
+            return ref.compareAndSet(null, created) ? created : ref.get();
+        };
     }
 
     private OpenIdAuthenticationMechanismDefinition createOpenIdAuthenticationMechanismDefinition(
