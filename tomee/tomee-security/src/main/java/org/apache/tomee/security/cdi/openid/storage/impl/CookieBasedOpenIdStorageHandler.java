@@ -61,11 +61,15 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
                 Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8)));
         // OpenID callbacks are cross-origin; spec §2.4.4.2 says the cookie MUST be Secure
         // when cookie-based storage is used. Gated by a system property for local HTTP testing.
-        cookie.setSecure(isSecureCookieEnabled());
+        final boolean secure = isSecureCookieEnabled();
+        cookie.setSecure(secure);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        // SameSite=None is required for cross-site OIDC redirects to carry the cookie back.
-        cookie.setAttribute("SameSite", "None");
+        // SameSite=None requires Secure; browsers silently drop SameSite=None cookies without it.
+        // When Secure is disabled (local HTTP testing), omit SameSite so browsers default to Lax.
+        if (secure) {
+            cookie.setAttribute("SameSite", "None");
+        }
 
         response.addCookie(cookie);
     }
@@ -76,9 +80,12 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
         // Browsers only overwrite a cookie when the attributes match, so replicate everything
         // that set(...) emitted except the MaxAge which instructs the browser to drop it.
         cookie.setPath("/");
-        cookie.setSecure(isSecureCookieEnabled());
+        final boolean secure = isSecureCookieEnabled();
+        cookie.setSecure(secure);
         cookie.setHttpOnly(true);
-        cookie.setAttribute("SameSite", "None");
+        if (secure) {
+            cookie.setAttribute("SameSite", "None");
+        }
         cookie.setMaxAge(0);
 
         response.addCookie(cookie);
