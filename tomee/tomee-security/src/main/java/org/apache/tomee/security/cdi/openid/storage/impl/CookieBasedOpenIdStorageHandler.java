@@ -35,6 +35,11 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
      */
     public static final String STATE_COOKIE_SECURE_PROPERTY = "tomee.security.openid.state-cookie-secure";
 
+    private static String contextPath(HttpServletRequest request) {
+        String ctx = request.getContextPath();
+        return ctx.isEmpty() ? "/" : ctx;
+    }
+
     private static boolean isSecureCookieEnabled() {
         return Boolean.parseBoolean(System.getProperty(STATE_COOKIE_SECURE_PROPERTY, "true"));
     }
@@ -64,7 +69,7 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
         final boolean secure = isSecureCookieEnabled();
         cookie.setSecure(secure);
         cookie.setHttpOnly(true);
-        cookie.setPath("/");
+        cookie.setPath(contextPath(request));
         // SameSite=None requires Secure; browsers silently drop SameSite=None cookies without it.
         // When Secure is disabled (local HTTP testing), omit SameSite so browsers default to Lax.
         if (secure) {
@@ -79,7 +84,7 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
         Cookie cookie = new Cookie(PREFIX + key, "");
         // Browsers only overwrite a cookie when the attributes match, so replicate everything
         // that set(...) emitted except the MaxAge which instructs the browser to drop it.
-        cookie.setPath("/");
+        cookie.setPath(contextPath(request));
         final boolean secure = isSecureCookieEnabled();
         cookie.setSecure(secure);
         cookie.setHttpOnly(true);
