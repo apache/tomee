@@ -377,7 +377,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         try {
             res = requestAuthorization(req);
         } catch (RemoteException e) {
-            throw new AuthenticationException(e.getLocalizedMessage());
+            throw (AuthenticationException) new AuthenticationException(e.getLocalizedMessage()).initCause(e);
         }
 
         switch (res.getResponseCode()) {
@@ -767,7 +767,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         try {
             response = LogoutResponse.class.cast(Client.request(request, new LogoutResponse(), server));
         } catch (final RemoteException e) {
-            throw new AuthenticationException(e.getLocalizedMessage());
+            throw (AuthenticationException) new AuthenticationException(e.getLocalizedMessage()).initCause(e);
         }
 
         switch (response.getResponseCode()) {
