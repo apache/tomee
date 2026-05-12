@@ -141,8 +141,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
+      <groupId>org.eclipse.jetty.ee11</groupId>
+      <artifactId>jetty-ee11-servlet</artifactId>
       <version>${version.jetty}</version>
       <optional>true</optional>
     </dependency>
@@ -175,4 +175,3 @@
     </dependency>
   </dependencies>
 </project>
-

@@ -144,7 +144,7 @@
     <version.tomee-quartz-shade>2.5.1</version.tomee-quartz-shade>
     <version.xbean>4.30</version.xbean>
     <version.groovy>2.4.21</version.groovy>
-    <version.jetty>11.0.20</version.jetty>
+    <version.jetty>12.1.8</version.jetty>
     <version.ehcache>3.11.1</version.ehcache>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>5.12.0</junit.jupiter.version>
@@ -1059,13 +1059,13 @@
         <version>${version.jetty}</version>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-jsp-2.1</artifactId>
+        <groupId>org.eclipse.jetty.ee11</groupId>
+        <artifactId>jetty-ee11-apache-jsp</artifactId>
         <version>${version.jetty}</version>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-plus</artifactId>
+        <groupId>org.eclipse.jetty.ee11</groupId>
+        <artifactId>jetty-ee11-plus</artifactId>
         <version>${version.jetty}</version>
       </dependency>
       <dependency>
@@ -1074,8 +1074,8 @@
         <version>${version.jetty}</version>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-webapp</artifactId>
+        <groupId>org.eclipse.jetty.ee11</groupId>
+        <artifactId>jetty-ee11-webapp</artifactId>
         <version>${version.jetty}</version>
       </dependency>
       <dependency>
