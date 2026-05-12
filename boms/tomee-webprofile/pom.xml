@@ -92,6 +92,21 @@
         <version>0.9</version>
       </dependency>
       <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.soap</groupId>
+        <artifactId>jakarta.xml.soap-api</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.ws</groupId>
+        <artifactId>jakarta.xml.ws-api</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
         <version>3.0.1</version>
@@ -109,97 +124,97 @@
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-soap</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-xml</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-simple</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-extension-providers</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-sse</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-security-saml</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-security</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-addr</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-policy</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-wsdl</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
@@ -244,12 +259,12 @@
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-api</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-impl</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.neethi</groupId>
@@ -264,42 +279,42 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee-common</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-el22</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.santuario</groupId>
@@ -424,12 +439,12 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>commons-dbcp2-shade</artifactId>
-        <version>10.1.5</version>
+        <version>11.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>jakartaee-api</artifactId>
-        <version>10.0.1</version>
+        <version>11.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
@@ -483,6 +498,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
+        <artifactId>openejb-jakarta-data</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-javaagent</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -524,7 +544,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>taglibs-shade</artifactId>
-        <version>10.1.5</version>
+        <version>11.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
@@ -584,32 +604,32 @@
       <dependency>
         <groupId>org.apache.wss4j</groupId>
         <artifactId>wss4j-bindings</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wss4j</groupId>
         <artifactId>wss4j-policy</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wss4j</groupId>
         <artifactId>wss4j-ws-security-common</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wss4j</groupId>
         <artifactId>wss4j-ws-security-dom</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wss4j</groupId>
         <artifactId>wss4j-ws-security-policy-stax</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wss4j</groupId>
         <artifactId>wss4j-ws-security-stax</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -674,7 +694,7 @@
       <dependency>
         <groupId>org.eclipse.jdt</groupId>
         <artifactId>ecj</artifactId>
-        <version>3.33.0</version>
+        <version>3.45.0</version>
       </dependency>
       <dependency>
         <groupId>org.glassfish.jaxb</groupId>
@@ -700,6 +720,11 @@
         <groupId>org.jasypt</groupId>
         <artifactId>jasypt</artifactId>
         <version>1.9.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jspecify</groupId>
+        <artifactId>jspecify</artifactId>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.jvnet.staxex</groupId>
@@ -838,6 +863,36 @@
     <dependency>
       <groupId>io.github.rzo1.org.metatype.sxc</groupId>
       <artifactId>sxc-runtime</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.soap</groupId>
+      <artifactId>jakarta.xml.soap-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1627,6 +1682,16 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-jakarta-data</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-javaagent</artifactId>
       <exclusions>
         <exclusion>
@@ -2058,6 +2123,16 @@
     <dependency>
       <groupId>org.jasypt</groupId>
       <artifactId>jasypt</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

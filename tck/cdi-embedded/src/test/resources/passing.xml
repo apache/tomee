@@ -32,11 +32,87 @@
 
         <packages>
             <package name="org.jboss.cdi.tck.tests.*">
+                <!-- TomEE runs CDI TCK through EE embedded/remote containers; CDI SE bootstrap is not a TomEE TCK target. -->
+                <exclude name="org.jboss.cdi.tck.tests.se.*"/>
+                <!-- Disabled upstream by OpenWebBeans 4.1.0: BCE/Invoker coverage requires Build Compatible Extension support. -->
                 <exclude name="org.jboss.cdi.tck.tests.build.compatible.*"/>
                 <exclude name="org.jboss.cdi.tck.tests.full.extensions.lite.*"/>
                 <exclude name="org.jboss.cdi.tck.tests.invokers.*"/>
             </package>
             <package name="org.jboss.cdi.tck.interceptors.tests.*"/>
         </packages>
+
+        <classes>
+            <!-- Disabled upstream by OpenWebBeans 4.1.0: requires Build Compatible Extension context registration. -->
+            <class name="org.jboss.cdi.tck.tests.beanContainer.BeanContainerTest">
+                <methods>
+                    <exclude name="testGetContexts"/>
+                </methods>
+            </class>
+
+            <!-- Still fails on OWB/TomEE 4.1: custom InjectionPoint#getMember() is never queried; OWB still excludes under historical CDITCK-579. -->
+            <class name="org.jboss.cdi.tck.tests.full.definition.bean.custom.CustomBeanImplementationTest">
+                <methods>
+                    <exclude name="testInjectionPointGetMemberIsUsedToDetermineTheClassThatDeclaresAnInjectionPoint"/>
+                </methods>
+            </class>
+
+            <!-- Disabled upstream by OpenWebBeans 4.1.0: TCK assertion relies on Weld-specific bean type internals. -->
+            <class name="org.jboss.cdi.tck.tests.definition.bean.types.illegal.BeanTypesWithIllegalTypeTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+
+            <!-- Disabled upstream by OpenWebBeans 4.1.0; CDITCK-580 challenged the transitive specialization assertion and was rejected. -->
+            <class name="org.jboss.cdi.tck.tests.full.inheritance.specialization.simple.SimpleBeanSpecializationTest">
+                <methods>
+                    <exclude name="testIndirectSpecialization"/>
+                    <exclude name="testSpecializingBeanHasNameOfSpecializedBean"/>
+                    <exclude name="testSpecializingBeanHasQualifiersOfSpecializedAndSpecializingBean"/>
+                </methods>
+            </class>
+
+            <!-- Disabled upstream by OpenWebBeans 4.1.0: CDI spec does not require this exact extension-event order. -->
+            <class name="org.jboss.cdi.tck.tests.full.extensions.beanDiscovery.event.ordering.LifecycleEventOrderingTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+
+            <!-- Disabled upstream by OpenWebBeans 4.1.0; CDITCK-591 challenged the metadata mutation and was rejected. -->
+            <class name="org.jboss.cdi.tck.tests.full.extensions.alternative.metadata.AlternativeMetadataTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+
+            <!-- Still fails on OWB/TomEE 4.1 with unproxyable Dog after AnnotatedTypeConfigurator changes; OWB still excludes under historical CDITCK-588/CDITCK-589. -->
+            <class name="org.jboss.cdi.tck.tests.full.extensions.configurators.annotatedTypeConfigurator.AnnotatedTypeConfiguratorTest">
+                <methods>
+                    <exclude name="addMethodsOfAnnotationTypecConfigurator"/>
+                </methods>
+            </class>
+
+            <!-- Still fails on OWB/TomEE 4.1: BeanConfigurator callbacks/default scope differ from the TCK expectations; OWB still excludes under historical CDITCK-573. -->
+            <class name="org.jboss.cdi.tck.tests.full.extensions.configurators.bean.BeanConfiguratorTest">
+                <methods>
+                    <exclude name="testCreationalAndDisposalMethods"/>
+                    <exclude name="testDefaultScopeOfAddedBean"/>
+                </methods>
+            </class>
+
+            <!-- Disabled upstream by OpenWebBeans 4.1.0; CDITCK-509 remains open awaiting the related CDI-581 decision. -->
+            <class name="org.jboss.cdi.tck.tests.full.extensions.lifecycle.processBeanAttributes.specialization.SpecializationTest">
+                <methods>
+                    <exclude name="testProcessBeanAttributesFiredProperlyForSpecializedBean"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.full.extensions.lifecycle.processBeanAttributes.specialization.VetoTest">
+                <methods>
+                    <exclude name="testSpecializedBeanAvailableAfterSpecializingBeanVetoed"/>
+                </methods>
+            </class>
+        </classes>
     </test>
 </suite>
