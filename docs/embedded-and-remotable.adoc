@@ -39,17 +39,17 @@ classpath. A number of ServerServices are available currently:
 * openejb-hsql
 * openejb-activemq
 
-_The source for this example is in the "telephone-stateful" directory
-located in the openejb:download.html[openejb-examples.zip] available on
-the http://tomee.apache.org/downloads.html[download page]._
+_The source for this example is in the
+link:https://github.com/apache/tomee/tree/main/examples/telephone-stateful[telephone-stateful]
+example directory._
 
-\{note} If your goal is simply to unit test beans with remote
+NOTE: If your goal is simply to unit test beans with remote
 interfaces, this is _not_ the right example for you. The
 LocalInitialContextFactory completely supports remote interfaces and all
 spec required pass-by-value (serialization) semantics without the need
 for network sockets. This example shows the use of OpenEJB in an
 embedded environment where connection _outside_ the vm is
-required.\{note}
+required.
 
 = The Code
 
@@ -60,13 +60,16 @@ you call _listen_ to get your answer.
 
 == bean
 
-\{snippet:id=code|url=openejb3/examples/telephone-stateful/src/main/java/org/superbiz/telephone/TelephoneBean.java|lang=java}
+link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/main/java/org/superbiz/telephone/TelephoneBean.java[TelephoneBean.java]
 
 == business interface
 
-\{snippet:id=code|url=openejb3/examples/telephone-stateful/src/main/java/org/superbiz/telephone/Telephone.java|lang=java}
+link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/main/java/org/superbiz/telephone/Telephone.java[Telephone.java]
 
-{title= EJB3 Notes} The bean class uses the annotation _`@Remote_` but
+[TIP]
+.EJB3 Notes
+====
+The bean class uses the annotation `@Remote` but
 does not specify a list of interfaces as is normally required. Per EJB3
 rules, if the bean implements exactly _one business interface_ it may
 use `@Remote` with no other values and that business interface is then
@@ -76,7 +79,7 @@ identical usage of `@Local`.
 The critical thing to know is that if you add another interface the
 rules change and require that you specify both interfaces in the `@Remote`
 annotation as in `@Remote`(\{Telephone.class, SecondInterface.class}).
-\{tip}
+====
 
 = Embedding
 
@@ -91,13 +94,13 @@ communicates to the embedded container system over the ejbd protocol.
 
 == setUp
 
-\{snippet:id=setup|url=openejb3/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java|lang=java}
+link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java[TelephoneTest.java]
 
 == LocalInitialContextFactory: making in-vm calls to a remote business
 
 interface
 
-\{snippet:id=localcontext|url=openejb3/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java|lang=java}
+link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java[TelephoneTest.java]
 
 == RemoteInitialContextFactory: making networked calls to a remote
 
@@ -109,18 +112,18 @@ different VM than the one in which the ejb container is embedded. These
 classpath and connect to OpenEJB via the RemoteInitialContextFactory
 like any other remote EJB client.
 
-\{snippet:id=remotecontext|url=openejb3/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java|lang=java}
+link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java[TelephoneTest.java]
 
 = Maven setup
 
-\{snippet:id=desc|url=openejb3/examples/telephone-stateful/pom.xml}
+link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/pom.xml[pom.xml]
 
-\{snippet:id=openejbdep|url=openejb3/examples/telephone-stateful/pom.xml|lang=xml}
+link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/pom.xml[pom.xml]
 
 = Running
 
 Running the example is fairly simple. In the "telephone-stateful"
-directory of the openejb:download.html[examples zip] , just run:
+directory of the link:https://github.com/apache/tomee/tree/main/examples/telephone-stateful[telephone-stateful example], just run:
 
 $ mvn clean install
 

@@ -43,7 +43,7 @@ is where J2EE "jumps the shark" for a large majority of people's needs.
 = Example with Tomcat
 
 If you want to try to work with Servlets/JSP and OpenEJB using Tomcat,
-see the openejbx30:tomcat.html[setup page] and the
+see the link:deploying-in-tomee.html[setup page] and the
 "/webapps/ejb-examples" section of the
-link:downloads.html[openejb-examples.zip] available on the
-http://tomee.apache.org/downloads.html[download page].
+openejb-examples.zip available on the
+https://tomee.apache.org/download-ng.html[download page].

@@ -4,4 +4,4 @@
 :jbake-type: page
 :jbake-status: published
 
-\{include:OPENEJBx30:Singleton Beans}
+See link:singleton-beans.html[Singleton Beans].

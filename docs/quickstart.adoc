@@ -6,7 +6,7 @@
 
 = Installation
 
-To install OpenEJB, simply link:downloads.html[download the latest
+To install OpenEJB, simply https://tomee.apache.org/download-ng.html[download the latest
 binary] and unpack your zip or tar.gz into the directory where you want
 OpenEJB to live.
 
@@ -38,10 +38,10 @@ For Windows users, that looks like this:
 
 For UNIX/Linux/Mac OS X users, that looks like this:
 
-`[user@host openejb-3.0](user@host-openejb-3.0.html) # ./bin/openejb`
+`[user@host openejb-3.0]# ./bin/openejb`
 
 You really only need to know two commands to use OpenEJB,
-openejbx30:deploy-tool.html[deploy] and [start|OPENEJBx30:Startup] .
+link:deploy-tool.html[deploy] and link:startup.html[start].
 Both are completely documented and have examples.
 
 For help information and command options, try this:
@@ -59,11 +59,11 @@ ________________________
 That's it!
 
 If you don't have any EJBs or clients to run, try the ubiquitous
-openejbx30:hello-world.html[Hello World] example.
+link:hello-world.html[Hello World] example.
 
 = Join the mailing list
 
 The OpenEJB User list is where the general OpenEJB community goes to ask
 questions, make suggestions, chat with other users, and keep a finger on
 the pulse of the project. More information about the user list and dev
-list can be found link:mailing-lists.html[here]
+list can be found https://lists.apache.org/list.html?users@tomee.apache.org[here]

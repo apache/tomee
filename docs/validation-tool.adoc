@@ -11,7 +11,7 @@ openejb validate - OpenEJB Validation Tool
 
 = SYNOPSIS
 
-openejb validate link:options.html[options] jarfiles
+openejb validate [options] jarfiles
 
 = NOTE
 
@@ -24,22 +24,20 @@ In Windows, the validation tool can be executed as follows:
 
 _C:> openejb validate -help_
 
-\{warning} There is a bug in the openejb.bat script of OpenEJB 0.9.0
+WARNING: There is a bug in the openejb.bat script of OpenEJB 0.9.0
 that doesn't allow you to execute the validate command as above. For
 that release, Windows users can execute the following command: _C:>
 bin.bat -help_
 
-\{warning}
-
 In UNIX, Linux, or Mac OS X, the deploy tool can be executed as follows:
 
-`[user@host openejb](user@host-openejb.html) # ./openejb.sh validate -help`
+`[user@host openejb]# ./openejb.sh validate -help`
 
 Depending on your OpenEJB version, you may need to change execution bits
 to make the scripts executable. You can do this with the following
 command.
 
-`[user@host openejb](user@host-openejb.html) # chmod 755 openejb.sh bin/*.sh`
+`[user@host openejb]# chmod 755 openejb.sh bin/*.sh`
 
 From here on out, it will be assumed that you know how to execute the
 right openejb script for your operating system and commands will appear

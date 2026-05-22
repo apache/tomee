@@ -5,8 +5,7 @@
 :jbake-status: published
 
 
-!http://www.openejb.org/images/diagram-remote-server.gif|valign=top,
-align=right, hspace=15! # Accessing EJBs Remotely
+== Accessing EJBs Remotely
 
 When using OpenEJB as a stand-alone server you can connect across a
 network and access EJBs from a remote client. The client code for
@@ -35,7 +34,7 @@ Deploy your bean with the Deploy Tool:
 c:\openejb> openejb.bat deploy beans\myBean.jar
 ----
 
-See the openejbx30:deploy-tool.html[OPENEJBx30:Deploy Tool]
+See the link:deploy-tool.html[Deploy Tool]
 documentation for more details on deploying beans.
 
 Start the server:
@@ -62,7 +61,7 @@ InitialContext ctx = new InitialContext(p);
 ----
 
 If you don't have any EJBs or clients to run, try the ubiquitous
-openejbx30:hello-world.html[Hello World] example. Add the following
+link:hello-world.html[Hello World] example. Add the following
 library to your clients classpath:
 
 * openejb-client-x.x.x.jar

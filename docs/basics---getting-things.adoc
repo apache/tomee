@@ -7,28 +7,26 @@
 = Getting Stuff from the Container
 
 Generally speaking the only way to get a
-link:container-managed-resource.html[Container-Managed Resource] is via
-_dependency injection_ or _lookup_ from within a [Container-Managed
-Component] .
+Container-Managed Resource is via
+_dependency injection_ or _lookup_ from within a Container-Managed
+Component.
 
 The _unbreakable rules_. Read these over and over again when things
 don't work.
 
 [arabic]
 . java:comp/env is the spec defined namespace for lookup of any
-link:container-managed-resource.html[Container-Managed Resource]
+Container-Managed Resource
 . java:comp/env is _empty_ by default
 . java:comp/env is _read-only_ at runtime
 . java:comp/env is populated by link:declaring-references.html[Declaring
-References] to [Container-Managed Resource] via xml or annotation
-. only link:container-managed-component.html[Container-Managed
-Component] s, _not_ their libraries, can [Declare References|Declaring
-References] via xml or annotation
-. only link:container-managed-component.html[Container-Managed
-Component] s, _not_ their libraries, can get dependency injection of
-[Container-Managed Resource] s
-. only link:container-managed-component.html[Container-Managed
-Component] s, _and_ their libraries, may look up from java:comp/env
+References] to a Container-Managed Resource via xml or annotation
+. only Container-Managed Components, _not_ their libraries, can
+link:declaring-references.html[Declare References] via xml or annotation
+. only Container-Managed Components, _not_ their libraries, can get
+dependency injection of Container-Managed Resources
+. only Container-Managed Components, _and_ their libraries, may look up
+from java:comp/env
 . you _must_ use the _no-arg_ 'new InitialContext()' constructor to
 lookup something from java:comp/env
 . the annotations and xml for link:declaring-references.html[Declaring
@@ -74,8 +72,8 @@ offer some great new options for more global-style lookups.
 
 See rule 2 and the above. Just creating an EJB doesn't cause it to be
 added to java:comp/env. If a
-link:container-managed-component.html[Container-Managed Component] wants
-to look up the EJB they must [Declare a Reference|Declaring References]
+Container-Managed Component wants
+to look up the EJB they must link:declaring-references.html[Declare a Reference]
 to it via the `@EJB` annotation or <ejb-local-ref> or <ejb-ref> in xml.
 In Java EE 6, however, EJBs will be automatically bound to
 "java:global[/<app-name>]/<module-name>/<bean-name>[!<fully-qualified-interface-name>]"

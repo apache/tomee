@@ -23,7 +23,7 @@ eclipse:eclipse afterwards)
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>9.xxxx</version>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -35,12 +35,8 @@ your build path.
 Next, click the 'OpenEJB' menu on the menubar, and select 'Generate
 Annotations'.
 
-!http://www.jrg.me.uk/openejb/annotations_step_1.jpg!
-
 Select the project you would like to work with, if it isn't already
 selected. Click 'Next'.
-
-!http://www.jrg.me.uk/openejb/annotations_step_2.jpg!
 
 Select your `ejb-jar.xml` and (optionally) your `openejb-jar.xml` files.
 Select or deselect the other options as appropriate, and select 'Next'.
@@ -58,8 +54,6 @@ extending jakarta.ejb.EJBObject. * Add `@Remote` and `@RemoteHome` annotations
 - This adds `@Remote` and `@RemoteHome` annotations appropriately * Convert
 entity beans to POJOs - This options converts abstract CMP classes to
 POJOs generating simple getters and setters.
-
-!http://www.jrg.me.uk/openejb/annotations_step_3.jpg!
 
 Review the changes that the plugin will make to your source code.
 Uncheck any changes you don't want to apply, and click 'Finish'.

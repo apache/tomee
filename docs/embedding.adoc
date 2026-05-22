@@ -24,11 +24,7 @@ PersistenceUnits in Tests]
 Tests]
 * link:configuring-logging-in-tests.html[Configuring Logging in Tests]
 * link:alternate-descriptors.html[Alternate Descriptors]
-* link:unit-testing-transactions.html[Unit Testing Transactions]
-* link:testcase-with-testbean-inner-class.html[TestCase with TestBean
-inner-class]
-* [TestCase Injection (@LocalClient)](local-client-injection.html)
-
-== Examples
-
-\{include:Examples Table}
+* Unit Testing Transactions
+* TestCase with TestBean
+inner-class
+* link:local-client-injection.html[TestCase Injection (`@LocalClient`)]

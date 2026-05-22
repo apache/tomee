@@ -52,15 +52,13 @@ InitialContext using
 org.apache.openejb.client.LocalInitialContextFactory. The
 LocalInitialContextFactory will boot OpenEJB in your vm and all ejb
 applications visible in the classpath will be deployed. See
-http://tomee.apache.org/embedding-openejb.html for details on how to
+https://tomee.apache.org/embedding-openejb.html for details on how to
 embed openejb in your application and IDE. See
-openejbx30:application-discovery-via-the-classpath.html[Application
+link:application-discovery-via-the-classpath.html[Application
 discovery via the classpath] for various ways to have your applications
 discovered.
 
-== During embedded testing, how can I externalize all my DataSource
-
-configuration?
+== During embedded testing, how can I externalize all my DataSource configuration?
 
 Create an openejb.xml file in any directory that gets added to your test
 classpath. For maven, something that winds up directly under

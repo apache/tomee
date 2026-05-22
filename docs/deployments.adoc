@@ -25,7 +25,7 @@ with a 'jar' attribute pointing to the jar file on the file system.
 The last element in the example uses a relative path to point to the ejb
 jar. This path will be resolved relative to the catalina.base property.
 So, for example, of the value of catalina.base was 'c:' then TomEE
-would look for the jar 'c:.jar'. See the [OPENEJB:Configuration] guide
+would look for the jar 'c:.jar'. See the link:configuration.html[Configuration] guide
 for more details.
 
 == A directory of jars

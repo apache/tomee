@@ -14,7 +14,7 @@ Adding a java agent is done via a vm parameter as follows:
 
 [source,bash]
 ----
-java -javaagent:openejb-javaagent-4.6.0.jar _\[other params...](other-params....html)
+java -javaagent:openejb-javaagent-4.6.0.jar [other params...]
 ----
 
 == Maven2

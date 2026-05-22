@@ -10,7 +10,7 @@ openejb start - OpenEJB Remote Server
 
 = SYNOPSIS
 
-openejb start link:#options.html[#options]
+openejb start [options]
 
 = NOTE
 
@@ -31,13 +31,13 @@ _C:-3.0> binstart_
 
 In UNIX, Linux, or Mac OS X, the deploy tool can be executed as follows:
 
-`\[user@host openejb-3.0](user@host-openejb-3.0.html) # ./bin/openejb start`
+`[user@host openejb-3.0]# ./bin/openejb start`
 
 Depending on your OpenEJB version, you may need to change execution bits
 to make the scripts executable. You can do this with the following
 command.
 
-`\[user@host openejb-3.0](user@host-openejb-3.0.html) # chmod 755 bin/openejb`
+`[user@host openejb-3.0]# chmod 755 bin/openejb`
 
 From here on out, it will be assumed that you know how to execute the
 right openejb script for your operating system and commands will appear
@@ -264,7 +264,6 @@ output will be seen on the console
 Apache OpenEJB 3.0    build: 20070825-01:10
 http://tomee.apache.org/
 OpenEJB ready.
-[OPENEJB:init]
 ----
 
 OpenEJB Remote Server ** Starting Services ** NAME IP PORT httpejbd

@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-\{note} Availability: Since OpenEJB 0.9\{note}
+NOTE: Availability: Since OpenEJB 0.9
 
 = Basic Usage
 

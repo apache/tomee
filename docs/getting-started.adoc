@@ -15,7 +15,7 @@ environment 1. Write an EJB 1. Write an EJB client 1. Start the server
 == 1. Download and Install OpenEJB
 
 Follow
-these http://cwiki.apache.org/confluence/display/OPENEJB/Quickstart[instructions]
+these https://cwiki.apache.org/confluence/display/OPENEJB/Quickstart[instructions]
 
 == 2. Setup your development environment
 
@@ -47,7 +47,6 @@ D:\openejb-3.0.0-SNAPSHOT>bin\openejb start
 Apache OpenEJB 3.0.0-SNAPSHOT    build: 20070830-07:53
 http://tomee.apache.org/
 OpenEJB ready.
-[OPENEJB:init]
  OpenEJB Remote Server
       ** Starting Services **
       NAME             IP          PORT
@@ -121,9 +120,9 @@ App(id=D:\openejb-3.0.0-SNAPSHOT\apps\greeting.jar)
         Jndi(name=GreetingBeanRemote)
 ----
 
-\{color:#330000}\{_}Notice the Jndi(name=GreetingBeanRemote)
+_Notice the Jndi(name=GreetingBeanRemote)
 information. Keep this handy as this is the JNDI name of the bean which
-the client will use for lookup\{_}\{color}
+the client will use for lookup_
 
 == 6. Write the Client
 

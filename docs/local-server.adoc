@@ -4,8 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-!http://www.openejb.org/images/diagram-local-server.gif|valign=top,
-align=right, hspace=15! # Accessing EJBs Locally
+= Accessing EJBs Locally
 
 When OpenEJB embedded in your app, server, IDE, or JUnit, you can use
 what we call the Local Server and avoid the network overhead and enjoy
@@ -52,5 +51,4 @@ easy for testing, debugging, developing, etc.
 
 = Embedding
 
-!http://www.openejb.org/images/diagram-local-server.gif|valign=top,
-align=right, hspace=15! \{include:OPENEJBx30:Embedding}
+See link:embedding.html[Embedding] for details.

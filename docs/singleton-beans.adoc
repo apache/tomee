@@ -24,7 +24,7 @@ has an `@Startup` annotation which is similar in concept to the servlet
 you can use an `@DependsOn` annotation to say which other Singletons you
 need and the container will ensure they start before you.
 
-See the link:singleton-example.html[Singleton Example] for sample bean
+See the Singleton Example for sample bean
 code and client.
 
 == Concurrency
@@ -66,7 +66,7 @@ easily put `@Lock`(READ) on their bean class, thus changing the default,
 and then `@Lock`(WRITE) on specific methods if needed.
 
 The locking modes of Container-Managed Concurrency map directly to the
-_http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/ReadWriteLock.html[java.util.concurrent.ReadWriteLock]
+_https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/locks/ReadWriteLock.html[java.util.concurrent.ReadWriteLock]
 _ API which looks like this:
 
 [source,java]
@@ -100,11 +100,10 @@ all the Singleton bean's methods. Essentially:
 The EJB container may use something other than ReadWriteLock but the
 semantics of a ReadWriteLock must be followed. Internally, we use an
 instance of
-http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/ReentrantReadWriteLock.html[java.util.concurrent.ReentrantReadWriteLock]
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/locks/ReentrantReadWriteLock.html[java.util.concurrent.ReentrantReadWriteLock]
 which supports correct memory synchronization, some reentrancy, lock
 downgrading, and
-[more|http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/ReentrantReadWriteLock.html]
-.
+link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/locks/ReentrantReadWriteLock.html[more].
 
 ==== Acquiring the Lock
 
@@ -112,7 +111,7 @@ The `@AccessTimeout` annotation can configure how long a thread will
 wait to acquire the read or write lock. This annotation can be used on
 the bean class or individual methods. The annotation maps directly to
 the
-http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/Lock.html[java.util.concurrent.locks.Lock]
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/locks/Lock.html[java.util.concurrent.locks.Lock]
 interface.
 
 [source,java]
