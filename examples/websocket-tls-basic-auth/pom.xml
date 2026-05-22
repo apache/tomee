@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jakartaee-api.version>11.0.0-SNAPSHOT</jakartaee-api.version>
-    <jakarta.websocket-api.version>2.0.0</jakarta.websocket-api.version>
+    <jakarta.websocket-api.version>2.2.0</jakarta.websocket-api.version>
     <tomee.classifier>webprofile</tomee.classifier>
     <tomcat.version>11.0.14</tomcat.version>
     <junit.version>4.13.2</junit.version>
