@@ -16,7 +16,7 @@ Additionally, the plugin also provides the capability to read an
 add the corresponding EJB 3 annotations to your code automatically.
 
 link:installation.html[Installation]
-link:building-from-source.html[Building from source]
+Building from source
 link:generating-ejb-3-annotations.html[Generating EJB 3 annotations]
 link:running-a-standalone-openejb-server.html[Running a standalone
 OpenEJB server]

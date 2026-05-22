@@ -48,7 +48,7 @@ classpath attribute like so:
 <Resource>
 ----
 
-...Or in a http://maven.apache.org/[Maven] environment like so:
+...Or in a https://maven.apache.org/[Maven] environment like so:
 
 [source,xml]
 ----

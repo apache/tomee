@@ -19,8 +19,8 @@ Here are a more detailed list of accepted properties by creator.
 == DBCP2 (TomEE 7.x and 8.x)
 
 Note: details are at
-http://tomee.apache.org/containers-and-resources.html (note:
-http://commons.apache.org/proper/commons-dbcp/configuration.html uses
+https://tomee.apache.org/containers-and-resources.html (note:
+https://commons.apache.org/proper/commons-dbcp/configuration.html uses
 the latest version of DBCP but TomEE 1.7.x is not using this version).
 
 * AccessToUnderlyingConnectionAllowed
@@ -120,7 +120,7 @@ Note: details are at https://tomcat.apache.org/tomcat-11.0-doc/jdbc-pool.html
 == DBCP2 (TomEE 7.x)
 
 Note: details are at
-http://commons.apache.org/proper/commons-dbcp/configuration.html
+https://commons.apache.org/proper/commons-dbcp/configuration.html
 
 * AccessToUnderlyingConnectionAllowed
 * ConnectionInitSqls

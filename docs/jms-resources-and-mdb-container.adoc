@@ -90,7 +90,7 @@ and is therefore not included in the distribution by default. This is
 purley due to the fact that this ActiveMQ file format is parsed using
 Spring libraries and this is beyond our control. However, the advantage
 is opening up the door to the huge number of configuration options
-available found here: http://activemq.apache.org/xml-configuration.html.
+available found here: https://activemq.apache.org/xml-configuration.html.
 
 This support can be enabled by adding the right libraries and creating
 an link:activemq.xml[`[tomee]/conf/activemq.xml`] file (Click the link
@@ -98,11 +98,11 @@ for a basic example).
 
 Add the following jars to the `tomee/lib/` directory:
 
-* http://repo1.maven.org/maven2/org/springframework/spring-beans/3.2.9.RELEASE/spring-beans-3.2.9.RELEASE.jar[spring-beans-3.2.9.RELEASE.jar]
-* http://repo1.maven.org/maven2/org/springframework/spring-context/3.2.9.RELEASE/spring-context-3.2.9.RELEASE.jar[spring-context-3.2.9.RELEASE.jar]
-* http://repo1.maven.org/maven2/org/springframework/spring-core/3.2.9.RELEASE/spring-core-3.2.9.RELEASE.jar[spring-core-3.2.9.RELEASE.jar]
-* http://repo1.maven.org/maven2/org/springframework/spring-web/3.2.9.RELEASE/spring-web-3.2.9.RELEASE.jar[spring-web-3.2.9.RELEASE.jar]
-* http://repo1.maven.org/maven2/org/apache/xbean/xbean-spring/3.2.9.RELEASE/xbean-spring-3.9.jar[xbean-spring-3.9.jar]
+* https://repo1.maven.org/maven2/org/springframework/spring-beans/3.2.9.RELEASE/spring-beans-3.2.9.RELEASE.jar[spring-beans-3.2.9.RELEASE.jar]
+* https://repo1.maven.org/maven2/org/springframework/spring-context/3.2.9.RELEASE/spring-context-3.2.9.RELEASE.jar[spring-context-3.2.9.RELEASE.jar]
+* https://repo1.maven.org/maven2/org/springframework/spring-core/3.2.9.RELEASE/spring-core-3.2.9.RELEASE.jar[spring-core-3.2.9.RELEASE.jar]
+* https://repo1.maven.org/maven2/org/springframework/spring-web/3.2.9.RELEASE/spring-web-3.2.9.RELEASE.jar[spring-web-3.2.9.RELEASE.jar]
+* https://repo1.maven.org/maven2/org/apache/xbean/xbean-spring/3.2.9.RELEASE/xbean-spring-3.9.jar[xbean-spring-3.9.jar]
 
 Later versions should work, but have not been tested.
 

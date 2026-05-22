@@ -34,49 +34,23 @@ feedback is a critical part of that.
 == Getting Started
 
 We will use one of the existing
-https://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/[examples]
+https://github.com/apache/tomee/tree/main/examples[examples]
 for this demo. Let's import it.
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_01.png[alt
-text]
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_02.png[alt
-text]
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_03.png[alt
-text]
 
 Give a minute while Intellij imports the dependencies.
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_04.png[alt
-text]
 
 It's time to run the application. Open "Edit Configurations".
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_05.png[alt
-text]
 
 Click the "+" icon and select "TomEE Server" and "Local".
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_06.png[alt
-text]
 
 If your server is still not configured, click the "Configure" button and
 point it to your local TomEE installation.
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_07.png[alt
-text]
 
 If you see a warning message like "No artifacts marked for deployment",
 click the "Fix" button and select one of the options.
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_08.png[alt
-text]
 
 You can change the "Application Context".
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_09.png[alt
-text]
 
 Now you can run it. Click the "play" button.
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_10.png[alt
-text]
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_11.png[alt
-text]
 
 Your application is up and running.
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_12.png[alt
-text]
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_13.png[alt
-text]

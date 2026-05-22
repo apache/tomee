@@ -39,7 +39,7 @@ All quartz properties prefixed with `org.apache.openejb.quartz.` (instead of `or
 
 The boolean `openejb.cdi.skip-resource-validation` allows to not validate resources ie `@EJB` and `@Resource` usages in CDI beans.
 
-All properties understood by OpenWebBeans will also be passthrough to OpenWebBeans from this location, see http://openwebbeans.apache.org/owbconfig.html[OWB config] for more details.
+All properties understood by OpenWebBeans will also be passthrough to OpenWebBeans from this location, see https://openwebbeans.apache.org/owbconfig.html[OWB config] for more details.
 
 === `@WebServiceRef`
 

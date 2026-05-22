@@ -140,4 +140,4 @@ a custom service name.
 The TomEE exe files are from the Apache Commons Daemon project. 
 Full documentation for commons-daemon can be found here:
 
-http://commons.apache.org/proper/commons-daemon/procrun.html
+https://commons.apache.org/proper/commons-daemon/procrun.html

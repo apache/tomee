@@ -10,14 +10,14 @@
 If you already have a maven project set up then just add the plugin as
 described link:maven/index.html[here]
 
-You will likely need the full Java EE API added to your pom file:
+You will likely need the full Jakarta EE API added to your pom file:
 
 [source,xml]
 ----
 <dependency>
   <groupId>org.apache.tomee</groupId>
   <artifactId>jakartaee-api</artifactId>
-  <version>9.xxx</version>
+  <version>11.0.0-SNAPSHOT</version>
   <scope>provided</scope>
 </dependency>
 ----

@@ -98,5 +98,5 @@ Another way to install it with tomee is to edit or create the file
 
 [source,properties]
 ----
-zip=http://repo1.maven.org/maven2/org/apache/openejb/openejb-provisionning/<version>/openejb-provisionning-<version>.zip
+zip=https://repo1.maven.org/maven2/org/apache/openejb/openejb-provisionning/<version>/openejb-provisionning-<version>.zip
 ----

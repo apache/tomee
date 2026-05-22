@@ -87,6 +87,6 @@ If you are using a route to deploy/undeploy your applications you can
 have a look to the proposed camel-openejb component:
 
 * base code:
-http://svn.apache.org/repos/asf/tomee/sandbox/camel/camel-openejb/
+svn.apache.org/repos/asf/tomee/sandbox/camel/camel-openejb/
 * proposed to be added to camel:
 https://issues.apache.org/jira/browse/CAMEL-4935

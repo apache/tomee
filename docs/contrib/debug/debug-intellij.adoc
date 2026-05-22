@@ -7,7 +7,7 @@
 = Debugging an Apache
 TomEE App in Intellij IDEA
 
-Stepping through the http://tomee.apache.org/apache-tomee.html[TomEE]
+Stepping through the https://tomee.apache.org/apache-tomee.html[TomEE]
 source code is a must-to-follow step if you want to understand how TomEE
 works and later contribute. This is a guide to quickly start your
 debugging session with TomEE as a TomEE developer.
@@ -26,7 +26,7 @@ bring your learning to a halt. So first start with the latest stable
 released source code. Move to trunk once you are ready to do some code
 modification on TomEE.
 
-http://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/openejb-4.7.1-source-release.zip[Click
+https://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/openejb-4.7.1-source-release.zip[Click
 here to download TomEE 1.7.1 Source code]
 
 == Build the Source Code
@@ -52,7 +52,7 @@ clean install
 _________________________________________________________________________________________________________________________________________________
 
 More details about building the product from the source can be found
-http://tomee.apache.org/dev/source-code.html[here].
+https://tomee.apache.org/dev/source-code.html[here].
 
 == Deploy TomEE
 

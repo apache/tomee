@@ -6,8 +6,8 @@
 
 = Overview
 
-As noted in the link:injection-of-env-entry-example.html[Injection of
-env-entry Example] , the EJB 3.0 supported env-entry types are fairly
+As noted in the Injection of
+env-entry Example, the EJB 3.0 supported env-entry types are fairly
 limited. Also the use of several tags in an `ejb-jar.xml` can get a bit
 verbose.
 
@@ -26,8 +26,8 @@ See link:built-in-type-converters.html[Built-in Type Converters] for a
 full list of supported env-entry types.
 
 The source for this example is the "custom-injection" directory located
-in the link:downloads.html[openejb-examples.zip] available on the
-http://tomee.apache.org/downloads.html[download page].
+in the openejb-examples.zip available on the
+https://tomee.apache.org/download-ng.html[download page].
 
 = The Code
 

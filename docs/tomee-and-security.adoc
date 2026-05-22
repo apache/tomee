@@ -23,7 +23,7 @@ is supported, or you can provide your own security module using the
 login.config file.
 
 For example, to add some simple security to the
-http://tomee.apache.org/examples-trunk/webapps/moviefun/README.html[moviefun
+https://github.com/apache/tomee/tree/main/examples/moviefun[moviefun
 application] , all we would need to do is:
 
 [arabic]

@@ -15,7 +15,7 @@ test might pass on one developers machine, but fail on another. Here's
 one approach that you could take to completely deploy your webapp within
 a test, and functionally test it with a tool like Selenium. There's also
 some sample code demonstrating this, available
-http://people.apache.org/~jgallimore/PersonApp.zip[here] .
+here.
 
 == Creating an embedded server
 
@@ -231,7 +231,7 @@ public class AddPersonTest extends FunctionalTestCase {
 == Sample code
 
 I've made a sample project which demonstrates this, source is available
-http://people.apache.org/~jgallimore/PersonApp.zip[here] . You'll need
+here. You'll need
 Maven to build it, and you can build it and run the tests by running
 'mvn clean install'. If you want to run the tests from your IDE, you'll need
 to have a Selenium server running, which you can do by running 'mvn

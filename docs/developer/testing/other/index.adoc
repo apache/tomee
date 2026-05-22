@@ -6,7 +6,7 @@
 
 == EJBContainer
 
-The `EJBContainer` API is a JavaEE API enriched by some OpenEJB features to make the testing easier.
+The `EJBContainer` API is a Jakarta EE API enriched by some OpenEJB features to make the testing easier.
 
 It starts a container (embedded for case we are interested in) scanning the classpath. This operation can be
 slow and if you go with this solution maybe think to start it only once for all tests.

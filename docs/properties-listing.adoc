@@ -582,8 +582,8 @@ arquillian)
 +
 
 Note: all resources can be configured by properties, see
-http://tomee.apache.org/embedded-configuration.html and
-http://tomee.apache.org/properties-tool.html
+https://tomee.apache.org/embedded-configuration.html and
+https://tomee.apache.org/properties-tool.html
 
 == OpenEJB client
 

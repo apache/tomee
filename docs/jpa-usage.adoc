@@ -45,4 +45,4 @@ reattach your object. 1. Use PersistenceContextType.EXTENDED as in
 PersistenceContextType.EXTENDED)' for EntityManager refs instead of the
 default of PersistenceContextType.TRANSACTION. 1. If testing, use a
 technique to execute transactions in your test code. That's described
-here in link:unit-testing-transactions.html[Unit testing transactions]
+here in Unit testing transactions

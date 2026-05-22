@@ -112,8 +112,8 @@ log4j.appender.C.layout        = org.apache.log4j.SimpleLayout
 Here is that file's location in svn as well as all the previous
 versions. Future versions will follow the same pattern.
 
-* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.1.1/container/openejb-core/src/main/resources/embedded.logging.properties
-* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.1/container/openejb-core/src/main/resources/embedded.logging.properties
-* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0/container/openejb-core/src/main/resources/embedded.logging.properties
-* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0-beta-2/container/openejb-core/src/main/resources/embedded.logging.properties
-* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0-beta-1/container/openejb-core/src/main/resources/embedded.logging.properties
+* svn.apache.org/repos/asf/openejb/tags/openejb-3.1.1/container/openejb-core/src/main/resources/embedded.logging.properties
+* svn.apache.org/repos/asf/openejb/tags/openejb-3.1/container/openejb-core/src/main/resources/embedded.logging.properties
+* svn.apache.org/repos/asf/openejb/tags/openejb-3.0/container/openejb-core/src/main/resources/embedded.logging.properties
+* svn.apache.org/repos/asf/openejb/tags/openejb-3.0-beta-2/container/openejb-core/src/main/resources/embedded.logging.properties
+* svn.apache.org/repos/asf/openejb/tags/openejb-3.0-beta-1/container/openejb-core/src/main/resources/embedded.logging.properties

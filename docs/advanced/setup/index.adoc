@@ -4,7 +4,7 @@
 :jbake-status: published
 
 
-You can use TomEE as described on link:../../admin/directory-structure.html[Directory Structure] page but in production it is better to
+You can use TomEE as described on link:../../admin/file-layout.html[Directory Structure] page but in production it is better to
 split TomEE and application binaries and configuration.
 
 Idea is to have this kind of layout (the root is the one you prefer):

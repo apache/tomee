@@ -24,10 +24,10 @@ bundle. This guide provides a set of step-by-step instructions to this
 approach. Please note that TomEE 1.7.x does not recommend Tomcat
 versions less than 7.0.54. Tomcat 8 is not currently supported in the
 released version, but you can check out the developer branch to see
-progress link:dev/source-code.html[here].
+progress here.
 
 * Download the Apache Tomcat 7.0.55 server.
-http://tomcat.apache.org/download-70.cgi
+https://tomcat.apache.org/download-70.cgi
 * Unzip the Tomcat distribution file.
 * Update $CATALINA_HOME/conf/tomcat-users.xml to add a tomee user to
 allow access to the installer page.
@@ -47,9 +47,5 @@ tomee-webapp-plus-1.7.1.war (for the plus version).
 * Go to the TomEE installer webapp (http://localhost:8080/tomee/) and
 login with the user you added to tomcat-users.xml.
 * Verify the values and click "Confirm".
-
-image:http://people.apache.org/~tveronezi/tomee/tomee_site/tomee_installer.png[alt
-text]
-
 * Restart Tomcat.
 * Your TomEE installation is now complete!

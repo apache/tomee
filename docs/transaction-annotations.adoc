@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-_Also see link:testing-transactions-example.html[Testing Transactions]
+_Also see Testing Transactions
 for an example of how to use and test EJB transaction attributes_
 
 The _jakarta.ejb.TransactionAttribute_ annotation (`@TransactionAttribute`)

@@ -47,7 +47,7 @@ Remotely calling EJBs, independent of using Ejbd or other RMI/IIOP based
 protocols, involves serialization and deserialization of objects.
 Deserializing unknown content coming from an untrusted source imposes a
 security risk as the stream could be manipulated. A much publicized
-http://www.kb.cert.org/vuls/id/576313[vulnerability] was found in the
+https://www.kb.cert.org/vuls/id/576313[vulnerability] was found in the
 commons-collections library which allowed to remotely execute arbitrary
 code simply by deserializing instances of the class
 `InvokerTransformer`.

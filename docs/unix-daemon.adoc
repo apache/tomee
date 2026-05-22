@@ -6,8 +6,8 @@
 
 
 Apache TomEE can be run as a daemon using the
-http://commons.apache.org/daemon/jsvc.html[jsvc] tool from the
-http://commons.apache.org/daemon[Apache Commons Daemon] project.
+https://commons.apache.org/daemon/jsvc.html[jsvc] tool from the
+https://commons.apache.org/daemon[Apache Commons Daemon] project.
 
 Source tarballs for `jsvc` are included with Tomcat and therefore can be
 found in TomEE as well. These need to be compiled before jsvc can be
@@ -155,4 +155,4 @@ Note on OSX, `$JAVA_HOME` should be set to
 
 See also the full Apache Commons Daemon documentation for jsvc.
 
-* http://commons.apache.org/daemon/jsvc.html
+* https://commons.apache.org/daemon/jsvc.html

@@ -186,7 +186,7 @@ Foo.StartupTimeout = 10 seconds
 ==== BrokerXmlConfig
 
 Broker configuration URI as defined by ActiveMQ
-see http://activemq.apache.org/broker-configuration-uri.html
+see https://activemq.apache.org/broker-configuration-uri.html
 BrokerXmlConfig xbean:file:conf/activemq.xml - Requires xbean-spring.jar and dependencies
 
 ==== ServerUrl
@@ -480,7 +480,7 @@ The thread prefix (suffixed with thread id).
 
 == ContextService
 
-A concurrency utilities for JavaEE context service. It allows to create
+A concurrency utilities for Jakarta EE context service. It allows to create
 contextual proxies (inheriting from security, classloader...contexts).
 
 Declarable in tomee.xml via

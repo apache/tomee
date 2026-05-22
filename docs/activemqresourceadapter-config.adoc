@@ -57,7 +57,7 @@ Multiple ActiveMQResourceAdapter declarations are allowed.
 |`broker:(tcp://localhost:61616)?useJmx=false`
 
 |Broker configuration URI as defined by ActiveMQ see
-http://activemq.apache.org/broker-configuration-uri.html BrokerXmlConfig
+https://activemq.apache.org/broker-configuration-uri.html BrokerXmlConfig
 xbean:file:conf/activemq.xml - Requires xbean-spring.jar and
 dependencies
 

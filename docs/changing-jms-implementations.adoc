@@ -20,7 +20,7 @@ the License.
 ActiveMQ is the default JMS provider in Apache TomEE and OpenEJB.
 
 Changing JMS implementation is as simple as using that implementation's
-Java EE Connector. The connector which will be a `.rar` file should be
+Jakarta EE Connector. The connector which will be a `.rar` file should be
 bundled with the application in a `.ear` file. All JMS usage in that
 `.ear` will favor the JMS ConnectionFactory and Topic and Queue
 implementations that are configured in the `.rar` file rather than
@@ -33,7 +33,7 @@ some options for wiring in an alternate implementation.
 
 If the JMS implementation does not have a Resource Archive (`.rar` file)
 that defines a compliant Resource Adapter, the
-http://genericjmsra.java.net/[Generic Resource Adapter for JMS] should
+Generic Resource Adapter for JMS should
 work fine.
 
 To use this Adapter in TomEE or OpenEJB you'll need to create a

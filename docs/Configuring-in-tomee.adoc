@@ -33,5 +33,5 @@ JtaManaged true
 ----
 
 For more on how to configure, read through
-link:/configuring-datasources.html[configuring-datasources],
+link:configuring-datasources.html[configuring-datasources],
 link:containers-and-resources.html[containers-and-resources] docs.

@@ -13,7 +13,7 @@ It can be very useful to connect to the server to get some information.
 
 === Solution
 
-For such a case OpenEJB/TomEE proposes to start with the Java EE server
+For such a case OpenEJB/TomEE proposes to start with the Jakarta EE server
 an SSH server. Currently, the security is based on JAAS (see how to
 configure JAAS for TomEE for more information about it).
 

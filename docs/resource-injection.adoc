@@ -34,8 +34,8 @@ annotation.
 The source for this example can be checked out from svn:
 
 __________________________________________________________________________________________
-$ svn co
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/injection-of-env-entry
+$ git clone https://github.com/apache/tomee.git
+$ cd tomee/examples/injection-of-env-entry
 __________________________________________________________________________________________
 
 To run it change your working directory to the directory
