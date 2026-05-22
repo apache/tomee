@@ -5,16 +5,14 @@
 :jbake-status: published
 
 
-See also the link:examples-trunk/index.html[examples page] for
-downloadable, executable and code-focused view of Java EE and TomEE. You
+See also the link:https://github.com/apache/tomee/tree/main/examples[examples] for
+a downloadable, executable and code-focused view of Jakarta EE and TomEE. You
 can also find us on IRC freenode.org #openejb and #tomee
 
 == IDE
 * link:tomee-and-intellij.html[Get started with Intellij]
 * link:contrib/debug/debug-intellij.html[Debugging in Intellij]
 * link:tomee-and-eclipse.html[Get started with Eclipse (WTP)]
-* link:getting-started-with-eclipse-and-webby.html[Get started with Eclipse
-(m2e-Webby)]
 * link:tomee-and-netbeans.html[Get started with Netbeans]
 
 == General Information
@@ -53,9 +51,6 @@ PersistenceUnits in Tests]
 Tests]
 * link:configuring-logging-in-tests.html[Configuring Logging in Tests]
 * link:alternate-descriptors.html[Alternate Descriptors]
-* link:unit-testing-transactions.html[Unit Testing Transactions]
-* link:testcase-with-testbean-inner-class.html[TestCase with TestBean
-inner-class]
 * link:local-client-injection.html[TestCase Injection (`@LocalClient`)]
 
 == Discovery and Failover
@@ -73,11 +68,6 @@ Layout]
 * link:startup.html[Startup]
 * link:deploy-tool.html[Deploy Tool]
 * link:properties-tool.html[Properties Tool]
-
-== Spring
-* link:spring-and-openejb-3.0.html[Spring and OpenEJB 3.0]
-* link:spring.html[Spring and OpenEJB 3.1 and later]
-* link:spring-ejb-and-jpa.html[Spring, EJB and JPA example]
 
 == Arquillian
 * link:arquillian-getting-started.html[Arquillian Primer - What you need
