@@ -40,8 +40,8 @@
     <finalName>jaxrs-filter</finalName>
   </build>
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
   <!--
   This section allows you to configure where to publish libraries for sharing.

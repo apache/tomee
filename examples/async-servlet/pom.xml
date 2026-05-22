@@ -24,8 +24,8 @@
   <name>TomEE :: Examples :: Async Servlet</name>
   <url>http://maven.apache.org</url>
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <version.arquillian>1.10.0.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
