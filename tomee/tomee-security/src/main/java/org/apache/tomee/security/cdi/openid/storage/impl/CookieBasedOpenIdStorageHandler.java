@@ -37,7 +37,8 @@ public class CookieBasedOpenIdStorageHandler extends OpenIdStorageHandler {
 
     private static String contextPath(HttpServletRequest request) {
         String ctx = request.getContextPath();
-        return ctx.isEmpty() ? "/" : ctx;
+        // Servlet containers return "" for the root context; guard null defensively too.
+        return (ctx == null || ctx.isEmpty()) ? "/" : ctx;
     }
 
     private static boolean isSecureCookieEnabled() {
