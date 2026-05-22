@@ -366,7 +366,9 @@ public class BeanContext extends DeploymentContext {
     private Cmp cmp;
     private LegacyView legacyView;
 
-    private final Map<String, String> securityRoleReferences = new HashMap<>();
+    // LinkedHashMap so getSecurityRoleReferences() returns role-refs in the
+    // order the container registered them, not the non-deterministic HashMap order.
+    private final Map<String, String> securityRoleReferences = new LinkedHashMap<>();
 
     /**
      * TODO: Move to MethodContext
@@ -1995,6 +1997,18 @@ public class BeanContext extends DeploymentContext {
     public String getSecurityRoleReference(final String roleName) {
         final String roleLink = securityRoleReferences.get(roleName);
         return roleLink != null ? roleLink : roleName;
+    }
+
+    /**
+     * Returns the set of declared security role-reference names for this bean
+     * (as contributed by {@code <security-role-ref>} entries as well as
+     * {@code @DeclareRoles} and {@code @RolesAllowed} annotations).
+     */
+    public Set<String> getSecurityRoleReferences() {
+        if (securityRoleReferences.isEmpty()) {
+            return java.util.Collections.emptySet();
+        }
+        return new LinkedHashSet<>(securityRoleReferences.keySet());
     }
 
     private static class Cmp {

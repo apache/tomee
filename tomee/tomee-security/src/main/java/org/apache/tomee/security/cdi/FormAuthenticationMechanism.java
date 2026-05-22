@@ -39,6 +39,7 @@ import java.util.function.Supplier;
 public class FormAuthenticationMechanism implements HttpAuthenticationMechanism, LoginToContinueMechanism {
     @Inject
     private Supplier<LoginToContinue> loginToContinue;
+    private Supplier<LoginToContinue> resolvedLoginToContinue;
     @Inject
     private IdentityStoreHandler identityStoreHandler;
 
@@ -59,7 +60,11 @@ public class FormAuthenticationMechanism implements HttpAuthenticationMechanism,
     }
 
     public LoginToContinue getLoginToContinue() {
-        return loginToContinue.get();
+        return resolvedLoginToContinue != null ? resolvedLoginToContinue.get() : loginToContinue.get();
+    }
+
+    void setLoginToContinueSupplier(final Supplier<LoginToContinue> loginToContinueSupplier) {
+        this.resolvedLoginToContinue = loginToContinueSupplier;
     }
 
     private boolean validateForm(final HttpServletRequest request, final String username, final String password) {

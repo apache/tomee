@@ -17,8 +17,12 @@
 package org.apache.tomee.security;
 
 import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.security.JaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
@@ -39,11 +43,19 @@ import jakarta.security.auth.message.config.ServerAuthContext;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.SecurityContext;
 import jakarta.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
+import jakarta.security.jacc.EJBRoleRefPermission;
+import jakarta.security.jacc.Policy;
+import jakarta.security.jacc.PolicyContext;
+import jakarta.security.jacc.PolicyFactory;
+import jakarta.security.jacc.WebResourcePermission;
+import jakarta.security.jacc.WebRoleRefPermission;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.security.auth.message.AuthStatus.SEND_CONTINUE;
@@ -82,12 +94,137 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public Set<String> getAllDeclaredCallerRoles() {
-        throw new UnsupportedOperationException(); // TODO
+        if (securityService == null) {
+            return Collections.emptySet();
+        }
+
+        final Request request = OpenEJBSecurityListener.requests.get();
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        if (request == null && threadContext == null) {
+            return Collections.emptySet();
+        }
+
+        final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+        if (policyFactory == null) {
+            return Collections.emptySet();
+        }
+
+        final Policy policy;
+        try {
+            policy = policyFactory.getPolicy();
+        } catch (final RuntimeException ignored) {
+            return Collections.emptySet();
+        }
+        if (policy == null) {
+            return Collections.emptySet();
+        }
+
+        final Subject subject = securityService.getCurrentSubject();
+        final Set<String> roles = new LinkedHashSet<>();
+
+        // Web branch: pull declared <security-role>s from the current Context
+        // and evaluate a WebRoleRefPermission for each under the web app's
+        // JACC context-id.
+        if (request != null) {
+            final Context webContext = request.getContext();
+            if (webContext != null) {
+                final String[] declaredRoles = webContext.findSecurityRoles();
+                if (declaredRoles != null && declaredRoles.length > 0) {
+                    final String previousContextId = PolicyContext.getContextID();
+                    final String appContext = getAppContextId();
+                    boolean contextIdChanged = false;
+                    try {
+                        if (appContext != null) {
+                            JavaSecurityManagers.setContextID(appContext);
+                            contextIdChanged = !Objects.equals(previousContextId, appContext);
+                        }
+                        for (final String role : declaredRoles) {
+                            if (role == null) {
+                                continue;
+                            }
+                            try {
+                                if (policy.implies(new WebRoleRefPermission("", role), subject)) {
+                                    roles.add(role);
+                                }
+                            } catch (final RuntimeException ignored) {
+                                // Skip roles whose evaluation fails; keep checking the rest.
+                            }
+                        }
+                    } finally {
+                        if (contextIdChanged) {
+                            JavaSecurityManagers.setContextID(previousContextId);
+                        }
+                    }
+                }
+            }
+        }
+
+        // EJB branch: while executing inside an EJB invocation the current
+        // ThreadContext exposes the BeanContext, whose security-role-ref /
+        // @DeclareRoles names map to EJBRoleRefPermission checks evaluated
+        // under the EJB module's JACC context-id.
+        if (threadContext != null) {
+            final BeanContext beanContext = threadContext.getBeanContext();
+            if (beanContext != null) {
+                final Set<String> roleRefs = beanContext.getSecurityRoleReferences();
+                if (!roleRefs.isEmpty()) {
+                    final String ejbName = beanContext.getEjbName();
+                    final String moduleId = beanContext.getModuleID();
+                    final String previousContextId = PolicyContext.getContextID();
+                    boolean contextIdChanged = false;
+                    try {
+                        if (moduleId != null) {
+                            JavaSecurityManagers.setContextID(moduleId);
+                            contextIdChanged = !Objects.equals(previousContextId, moduleId);
+                        }
+                        for (final String role : roleRefs) {
+                            if (role == null) {
+                                continue;
+                            }
+                            try {
+                                if (policy.implies(new EJBRoleRefPermission(ejbName, role), subject)) {
+                                    roles.add(role);
+                                }
+                            } catch (final RuntimeException ignored) {
+                                // Skip roles whose evaluation fails; keep checking the rest.
+                            }
+                        }
+                    } finally {
+                        if (contextIdChanged) {
+                            JavaSecurityManagers.setContextID(previousContextId);
+                        }
+                    }
+                }
+            }
+        }
+
+        return roles;
     }
 
     @Override
     public boolean hasAccessToWebResource(final String resource, final String... methods) {
-        return jaccProvider.hasAccessToWebResource(resource, methods);
+        final String previousContextId = PolicyContext.getContextID();
+        final String appContext = getAppContextId();
+        try {
+            if (appContext != null) {
+                JavaSecurityManagers.setContextID(appContext);
+            }
+
+            final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+            if (policyFactory != null && securityService != null) {
+                return policyFactory.getPolicy()
+                                    .implies(new WebResourcePermission(resource, methods),
+                                             securityService.getCurrentSubject());
+            }
+        } catch (final RuntimeException ignored) {
+            // Fall back to legacy provider path below.
+        } finally {
+            if (appContext != null && !Objects.equals(previousContextId, appContext)) {
+                JavaSecurityManagers.setContextID(previousContextId);
+            }
+        }
+
+        return jaccProvider != null && jaccProvider.hasAccessToWebResource(resource, methods);
     }
 
     @Override
@@ -126,10 +263,19 @@ public class TomEESecurityContext implements SecurityContext {
     private ServerAuthContext getServerAuthContext(final HttpServletRequest request) throws AuthException {
         final String appContext = toAppContext(request.getServletContext(), request.getContextPath());
 
+        final CallbackHandlerImpl callbackHandler = new CallbackHandlerImpl();
+        final Request currentRequest = OpenEJBSecurityListener.requests.get();
+        if (currentRequest != null) {
+            final Container container = currentRequest.getWrapper() != null ? currentRequest.getWrapper() : currentRequest.getContext();
+            if (container != null) {
+                callbackHandler.setContainer(container);
+            }
+        }
+
         final AuthConfigProvider authConfigProvider =
                 AuthConfigFactory.getFactory().getConfigProvider("HttpServlet", appContext, null);
         final ServerAuthConfig serverAuthConfig =
-                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, new CallbackHandlerImpl());
+                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, callbackHandler);
 
         return serverAuthConfig.getAuthContext(null, null, null);
     }
@@ -139,6 +285,10 @@ public class TomEESecurityContext implements SecurityContext {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         if (securityService instanceof TomcatSecurityService tomcatSecurityService) {
             final Request request = OpenEJBSecurityListener.requests.get();
+            if (request == null || request.getWrapper() == null) {
+                return;
+            }
+
             final GenericPrincipal genericPrincipal =
                     new GenericPrincipal(
                         principal.getName(),
@@ -151,7 +301,20 @@ public class TomEESecurityContext implements SecurityContext {
             tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
                                               genericPrincipal,
                                               request.getWrapper().getRunAs());
+
+            if (genericPrincipal.getName() != null) {
+                request.setAuthType("JASPIC");
+                request.setUserPrincipal(genericPrincipal);
+            }
         }
+    }
+
+    private String getAppContextId() {
+        final Request request = OpenEJBSecurityListener.requests.get();
+        if (request == null || request.getServletContext() == null) {
+            return null;
+        }
+        return toAppContext(request.getServletContext(), request.getContextPath());
     }
 
 

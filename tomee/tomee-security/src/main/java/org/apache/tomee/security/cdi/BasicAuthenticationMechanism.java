@@ -42,6 +42,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
     @Inject
     private Supplier<BasicAuthenticationMechanismDefinition> basicAuthenticationMechanismDefinition;
+    private Supplier<BasicAuthenticationMechanismDefinition> resolvedDefinition;
 
 
     @Override
@@ -64,7 +65,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         if (httpMessageContext.isProtected()) {
 
-            final String realmName = basicAuthenticationMechanismDefinition.get().realmName();
+            final String realmName = getDefinition().realmName();
             if (realmName.isEmpty()) {
                 response.setHeader("WWW-Authenticate", "Basic");
             } else {
@@ -78,6 +79,14 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
         return httpMessageContext.doNothing();
     }
 
+    void setDefinitionSupplier(final Supplier<BasicAuthenticationMechanismDefinition> definitionSupplier) {
+        this.resolvedDefinition = definitionSupplier;
+    }
+
+    private BasicAuthenticationMechanismDefinition getDefinition() {
+        return resolvedDefinition != null ? resolvedDefinition.get() : basicAuthenticationMechanismDefinition.get();
+    }
+
     private BasicAuthenticationCredential parseAuthenticationHeader(final String authenticationHeader) {
         return Optional.ofNullable(authenticationHeader)
                        .filter(header -> !header.isEmpty())
@@ -86,4 +95,5 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
                        .map(BasicAuthenticationCredential::new)
                        .orElseGet(() -> new BasicAuthenticationCredential(""));
     }
+
 }

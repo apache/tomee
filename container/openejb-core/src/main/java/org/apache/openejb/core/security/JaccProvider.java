@@ -27,6 +27,13 @@ import java.security.PermissionCollection;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
+import java.security.cert.Certificate;
+import java.security.Permissions;
+import java.security.Principal;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.security.auth.Subject;
 
 /**
  * @version $Rev$ $Date$
@@ -34,6 +41,10 @@ import java.security.ProtectionDomain;
 public abstract class JaccProvider {
 
     private static final String FACTORY_NAME = JaccProvider.class.getName();
+    private static final String DEFAULT_CONTEXT_ID = "";
+    private static final String BOOTSTRAP_CONTEXT_ID = "openejb";
+    private static final Map<String, jakarta.security.jacc.Policy> POLICIES = new ConcurrentHashMap<>();
+    private static final jakarta.security.jacc.Policy DEFAULT_POLICY = new DefaultPolicy();
     private static JaccProvider jaccProvider;
 
     public static JaccProvider get() {
@@ -118,6 +129,49 @@ public abstract class JaccProvider {
         }
     }
 
+    public static class PolicyFactory extends jakarta.security.jacc.PolicyFactory {
+        public PolicyFactory() throws PolicyContextException, ClassNotFoundException {
+            install();
+        }
+
+        @Override
+        public jakarta.security.jacc.Policy getPolicy(final String contextID) {
+            final String key = normalizeContextID(contextID);
+            final jakarta.security.jacc.Policy contextPolicy = POLICIES.get(key);
+            if (contextPolicy != null) {
+                return contextPolicy;
+            }
+
+            final jakarta.security.jacc.Policy defaultContextPolicy = POLICIES.get(DEFAULT_CONTEXT_ID);
+            if (defaultContextPolicy != null) {
+                return defaultContextPolicy;
+            }
+
+            // During early web-app bootstrap the context id can still be "openejb",
+            // while request-time checks use the Catalina web context id.
+            final jakarta.security.jacc.Policy bootstrapPolicy = POLICIES.get(BOOTSTRAP_CONTEXT_ID);
+            if (bootstrapPolicy != null) {
+                return bootstrapPolicy;
+            }
+
+            if (POLICIES.size() == 1) {
+                return POLICIES.values().iterator().next();
+            }
+
+            return DEFAULT_POLICY;
+        }
+
+        @Override
+        public void setPolicy(final String contextID, final jakarta.security.jacc.Policy policy) {
+            final String key = normalizeContextID(contextID);
+            if (policy == null) {
+                POLICIES.remove(key);
+            } else {
+                POLICIES.put(key, policy);
+            }
+        }
+    }
+
     public static class Policy extends java.security.Policy {
 
         public Policy() throws PolicyContextException, ClassNotFoundException {
@@ -135,6 +189,56 @@ public abstract class JaccProvider {
         public boolean implies(final ProtectionDomain domain, final Permission permission) {
             return get().implies(domain, permission);
         }
+    }
+
+    public static boolean isSentinelPolicy(final jakarta.security.jacc.Policy policy) {
+        return policy instanceof DefaultPolicy;
+    }
+
+    private static final class DefaultPolicy implements jakarta.security.jacc.Policy {
+        boolean isSentinel() {
+            return true;
+        }
+
+        @Override
+        public boolean implies(final Permission permissionToBeChecked, final Subject subject) {
+            final Principal[] principals = subject == null ? new Principal[0] : subject.getPrincipals().toArray(new Principal[0]);
+            final ProtectionDomain protectionDomain = new ProtectionDomain(
+                    new CodeSource(null, (Certificate[]) null), null, null, principals);
+
+            final java.security.Policy policy = getPolicyProvider();
+            return policy != null && policy.implies(protectionDomain, permissionToBeChecked);
+        }
+
+        @Override
+        public PermissionCollection getPermissionCollection(final Subject subject) {
+            final Permissions permissions = new Permissions();
+            final java.security.Policy policy = getPolicyProvider();
+            if (policy == null) {
+                return permissions;
+            }
+
+            final PermissionCollection providerPermissions =
+                    policy.getPermissions(new CodeSource(null, (Certificate[]) null));
+            if (providerPermissions == null) {
+                return permissions;
+            }
+
+            final Enumeration<Permission> elements = providerPermissions.elements();
+            while (elements.hasMoreElements()) {
+                permissions.add(elements.nextElement());
+            }
+            return permissions;
+        }
+    }
+
+    private static String normalizeContextID(final String contextID) {
+        return contextID == null ? DEFAULT_CONTEXT_ID : contextID;
+    }
+
+    private static java.security.Policy getPolicyProvider() {
+        final java.security.Policy policy = PolicyJDK24.getPolicy();
+        return policy != null ? policy : java.security.Policy.getPolicy();
     }
 
     public abstract PolicyConfiguration getPolicyConfiguration(String contextID, boolean remove) throws PolicyContextException;

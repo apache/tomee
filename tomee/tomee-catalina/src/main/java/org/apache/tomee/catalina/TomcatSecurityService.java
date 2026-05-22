@@ -180,6 +180,10 @@ public class TomcatSecurityService extends AbstractSecurityService {
         return super.getCallerPrincipal();
     }
 
+    public Subject getCurrentSubject() {
+        return getSubject();
+    }
+
     public Object enterWebApp(final Realm realm, final Principal principal, final String runAs) {
         Identity newIdentity = null;
         if (principal != null) {
@@ -390,13 +394,9 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
     @Override
     public Object getContext(final String key, final Object data) throws PolicyContextException {
-        return switch (key) {
-            case KEY_REQUEST -> OpenEJBSecurityListener.requests.get();
-            case KEY_SUBJECT ->
-                // quite obvious as internally we keep track of it
-                // but we could also grab the request and the principals and build a new Subject with the principals
-                    getSubject();
-            default -> throw new PolicyContextException("Handler does not support key: " + key);
-        };
+        if (KEY_REQUEST.equals(key)) {
+            return OpenEJBSecurityListener.requests.get();
+        }
+        return super.getContext(key, data);
     }
 }

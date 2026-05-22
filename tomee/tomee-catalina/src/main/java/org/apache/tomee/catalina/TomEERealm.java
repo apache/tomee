@@ -16,26 +16,64 @@
  */
 package org.apache.tomee.catalina;
 
+import jakarta.security.jacc.PolicyContext;
+import jakarta.security.jacc.PolicyFactory;
+import jakarta.security.jacc.WebResourcePermission;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Context;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.realm.CombinedRealm;
 import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.openejb.core.security.JaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.openejb.threads.task.CUTask;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.ietf.jgss.GSSContext;
 
+import javax.security.auth.Subject;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
 public class TomEERealm extends CombinedRealm {
     public static final String SECURITY_NOTE = TomEERealm.class.getName() + ".securityContext";
 
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SECURITY, TomEERealm.class);
+
+    /**
+     * Jakarta Authorization 3.0 exposes {@link PolicyContext#setHandlerData(Object)} but not a
+     * matching getter. To avoid clobbering outer callers' handler data when we set our own, we
+     * read the private thread-local reflectively. If reflection fails (e.g. Jakarta API changes
+     * again or a SecurityManager denies access), we fall back to restoring {@code null} which
+     * preserves the prior behaviour. This is only a best-effort improvement over the previous
+     * hard null-out.
+     */
+    private static final ThreadLocal<Object> HANDLER_DATA_TL = lookupHandlerDataThreadLocal();
+
     private TomcatSecurityService securityService;
+
+    @SuppressWarnings("unchecked")
+    private static ThreadLocal<Object> lookupHandlerDataThreadLocal() {
+        try {
+            final Field f = PolicyContext.class.getDeclaredField("threadLocalHandlerData");
+            f.setAccessible(true);
+            return (ThreadLocal<Object>) f.get(null);
+        } catch (final ReflectiveOperationException | RuntimeException e) {
+            final Logger init = Logger.getInstance(LogCategory.OPENEJB_SECURITY, TomEERealm.class);
+            if (init.isDebugEnabled()) {
+                init.debug("Unable to access PolicyContext.threadLocalHandlerData reflectively; "
+                        + "handler data will be cleared (not restored) after evaluation", e);
+            }
+            return null;
+        }
+    }
 
     @Override
     protected void startInternal() throws LifecycleException {
@@ -91,6 +129,101 @@ public class TomEERealm extends CombinedRealm {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean hasResourcePermission(final Request request, final Response response,
+                                         final SecurityConstraint[] constraints,
+                                         final Context context) throws IOException {
+        if (constraints == null || constraints.length == 0) {
+            return true;
+        }
+
+        final Boolean verdict = evaluatePolicyFactory(request);
+        if (verdict != null) {
+            return verdict;
+        }
+
+        return super.hasResourcePermission(request, response, constraints, context);
+    }
+
+    private Boolean evaluatePolicyFactory(final Request request) {
+        final Object previousHandlerData = HANDLER_DATA_TL != null ? HANDLER_DATA_TL.get() : null;
+        // Per Jakarta Authorization 3.0, PolicyFactory.getPolicy() (no-arg) selects the policy
+        // from PolicyContext.getContextID(), and the spec requires the container to associate the
+        // current policy context with the thread before invoking decision interfaces. On reused
+        // Tomcat worker threads the id can be null or carried over from a previous web app/EJB
+        // call, which would resolve the wrong policy and either authorize or reject the request
+        // against constraints from a different application. Set the per-webapp id explicitly and
+        // restore the previous value so we don't perturb outer callers (e.g. an enclosing EJB
+        // invocation that already established its own context).
+        final String previousContextId = PolicyContext.getContextID();
+        final String requestContextId = resolvePolicyContextId(request);
+        try {
+            if (requestContextId != null) {
+                PolicyContext.setContextID(requestContextId);
+            }
+            PolicyContext.setHandlerData(request.getRequest());
+
+            final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+            final jakarta.security.jacc.Policy policy = policyFactory == null ? null : policyFactory.getPolicy();
+            if (policy == null || JaccProvider.isSentinelPolicy(policy)) {
+                return null;
+            }
+
+            final Subject subject = getCurrentSubject();
+            final WebResourcePermission permission =
+                    new WebResourcePermission(requestPath(request), request.getMethod());
+            return policy.implies(permission, subject);
+        } catch (final RuntimeException ex) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PolicyFactory evaluation failed for " + requestPath(request)
+                        + " (" + request.getMethod() + "); falling back to Catalina check", ex);
+            }
+            return null;
+        } finally {
+            PolicyContext.setHandlerData(previousHandlerData);
+            if (requestContextId != null) {
+                PolicyContext.setContextID(previousContextId);
+            }
+        }
+    }
+
+    /**
+     * Builds the JACC policy context identifier for the request's web app, in the same
+     * "{@code <virtualServerName> <contextPath>}" form that {@link
+     * org.apache.tomee.catalina.security.TomcatSecurityConstaintsToJaccPermissionsTransformer}
+     * registers with the policy provider on deploy. Returns {@code null} when the request is not
+     * yet bound to a context, in which case we leave whatever id the caller had on the thread —
+     * setting it to {@code null} would lose an outer caller's context (e.g. an enclosing EJB).
+     */
+    private String resolvePolicyContextId(final Request request) {
+        final Context context = request.getContext();
+        if (context == null) {
+            return null;
+        }
+        final jakarta.servlet.ServletContext servletContext = context.getServletContext();
+        if (servletContext == null) {
+            return null;
+        }
+        final String virtualServer = servletContext.getVirtualServerName();
+        final String path = servletContext.getContextPath();
+        return (virtualServer == null ? "" : virtualServer) + " " + (path == null ? "" : path);
+    }
+
+    private Subject getCurrentSubject() {
+        if (securityService == null) {
+            securityService = (TomcatSecurityService) SystemInstance.get().getComponent(SecurityService.class);
+        }
+        return securityService != null ? securityService.getCurrentSubject() : new Subject();
+    }
+
+    private String requestPath(final Request request) {
+        String uri = request.getRequestPathMB().toString();
+        if (uri == null || uri.isEmpty()) {
+            uri = "/";
+        }
+        return uri;
     }
 
     private Principal logInTomEE(final Principal pcp) {

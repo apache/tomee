@@ -62,68 +62,22 @@
                                               tofile="${tck.dir}/common/src/main/resources/arquillian.xml"
                                               overwrite="true" />
 
-                                        <!-- Inject tomee-remote profile into TCK parent pom.xml -->
+                                        <!--
+                                          Load the TomEE Remote profile fragment from src/test/resources
+                                          (Ant property references inside the file are expanded against
+                                          this Maven module) and inject it into the TCK parent pom.xml
+                                          right before </profiles>.
+                                        -->
+                                        <loadfile property="tomee.remote.profile"
+                                                  srcFile="${project.basedir}/src/test/resources/tomee-remote-profile.xml"
+                                                  encoding="UTF-8">
+                                            <filterchain>
+                                                <expandproperties />
+                                            </filterchain>
+                                        </loadfile>
                                         <replace file="${tck.dir}/pom.xml"
                                                  token="&lt;/profiles&gt;"
-                                                 value="${line.separator}${line.separator}
-        &lt;!-- TomEE Remote Profile (injected by TomEE build) --&gt;
-        &lt;profile&gt;
-            &lt;id&gt;tomee-remote&lt;/id&gt;
-
-            &lt;repositories&gt;
-                &lt;repository&gt;
-                    &lt;id&gt;apache.snapshots&lt;/id&gt;
-                    &lt;url&gt;https://repository.apache.org/content/repositories/snapshots/&lt;/url&gt;
-                    &lt;releases&gt;&lt;enabled&gt;false&lt;/enabled&gt;&lt;/releases&gt;
-                    &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
-                &lt;/repository&gt;
-            &lt;/repositories&gt;
-
-            &lt;dependencies&gt;
-                &lt;dependency&gt;
-                    &lt;groupId&gt;org.apache.tomee&lt;/groupId&gt;
-                    &lt;artifactId&gt;apache-tomee&lt;/artifactId&gt;
-                    &lt;version&gt;${project.version}&lt;/version&gt;
-                    &lt;type&gt;zip&lt;/type&gt;
-                    &lt;classifier&gt;plus&lt;/classifier&gt;
-                    &lt;scope&gt;test&lt;/scope&gt;
-                &lt;/dependency&gt;
-                &lt;dependency&gt;
-                    &lt;groupId&gt;org.apache.tomee&lt;/groupId&gt;
-                    &lt;artifactId&gt;arquillian-tomee-remote&lt;/artifactId&gt;
-                    &lt;version&gt;${project.version}&lt;/version&gt;
-                    &lt;scope&gt;test&lt;/scope&gt;
-                    &lt;exclusions&gt;
-                        &lt;exclusion&gt;
-                            &lt;groupId&gt;org.apache.tomee&lt;/groupId&gt;
-                            &lt;artifactId&gt;arquillian-openejb-transaction-provider&lt;/artifactId&gt;
-                        &lt;/exclusion&gt;
-                    &lt;/exclusions&gt;
-                &lt;/dependency&gt;
-            &lt;/dependencies&gt;
-
-            &lt;build&gt;
-                &lt;plugins&gt;
-                    &lt;plugin&gt;
-                        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-                        &lt;artifactId&gt;maven-failsafe-plugin&lt;/artifactId&gt;
-                        &lt;configuration&gt;
-                            &lt;systemPropertyVariables&gt;
-                                &lt;tomee.stopPort&gt;-1&lt;/tomee.stopPort&gt;
-                                &lt;tomee.httpPort&gt;-1&lt;/tomee.httpPort&gt;
-                                &lt;tomee.ajpPort&gt;-1&lt;/tomee.ajpPort&gt;
-                                &lt;tomee.dir&gt;target/tomee/server&lt;/tomee.dir&gt;
-                                &lt;tomee.appWorkingDir&gt;target/tomee/arquillian&lt;/tomee.appWorkingDir&gt;
-                                &lt;tomee.cleanOnStartUp&gt;true&lt;/tomee.cleanOnStartUp&gt;
-                                &lt;tomee.classifier&gt;plus&lt;/tomee.classifier&gt;
-                                &lt;tomee.properties&gt;openejb.environment.default=true&lt;/tomee.properties&gt;
-                            &lt;/systemPropertyVariables&gt;
-                        &lt;/configuration&gt;
-                    &lt;/plugin&gt;
-                &lt;/plugins&gt;
-            &lt;/build&gt;
-        &lt;/profile&gt;
-${line.separator}    &lt;/profiles&gt;" />
+                                                 value="${line.separator}${tomee.remote.profile}${line.separator}    &lt;/profiles&gt;" />
 
                                         <!-- Remove security-signaturetest from reactor (uses GlassFish-only properties) -->
                                         <replace file="${tck.dir}/pom.xml"
@@ -139,6 +93,38 @@ ${line.separator}    &lt;/profiles&gt;" />
                                         <replace file="${tck.dir}/pom.xml"
                                                  token="&lt;artifactId&gt;arquillian-protocol-servlet&lt;/artifactId&gt;"
                                                  value="&lt;artifactId&gt;arquillian-protocol-servlet-jakarta&lt;/artifactId&gt;${line.separator}            &lt;version&gt;${version.arquillian-protocol-servlet-jakarta}&lt;/version&gt;" />
+
+                                        <!--
+                                          Seed the shared truststore that app-openid2/3's
+                                          keytool-maven-plugin will append to. Starts from the JDK's
+                                          default cacerts so Maven metadata fetches against public
+                                          HTTPS repos still validate alongside the localhost cert.
+                                        -->
+                                        <mkdir dir="${project.build.directory}/glassfish8/glassfish/domains/domain1/config" />
+                                        <delete file="${project.build.directory}/glassfish8/glassfish/domains/domain1/config/cacerts.jks" quiet="true" />
+                                        <copy file="${java.home}/lib/security/cacerts"
+                                              tofile="${project.build.directory}/glassfish8/glassfish/domains/domain1/config/cacerts.jks" />
+
+                                        <!--
+                                          Regenerate the OpenID module HTTPS certs.
+                                          The TCK ships self-signed certs that expired in March 2023; we mint
+                                          fresh 10-year certs so standard JSSE validation passes without any
+                                          trust-all fallback.
+                                        -->
+                                        <exec executable="bash" failonerror="true">
+                                            <arg value="-c" />
+                                            <arg value="set -euo pipefail; for d in &quot;${tck.dir}&quot;/app-openid*/; do if [ -f &quot;$d/localhost-rsa.jks&quot; ]; then rm -f &quot;$d/localhost-rsa.jks&quot; &quot;$d/tomcat.cert&quot;; keytool -genkeypair -alias tomcat -keyalg RSA -keysize 2048 -validity 3650 -dname 'CN=localhost, OU=jakarta, O=eclipse, L=amsterdam, ST=holland, C=nl' -storetype PKCS12 -storepass changeit -keypass changeit -keystore &quot;$d/localhost-rsa.jks&quot;; keytool -exportcert -alias tomcat -storepass changeit -keystore &quot;$d/localhost-rsa.jks&quot; -file &quot;$d/tomcat.cert&quot;; fi; done" />
+                                        </exec>
+
+                                        <!--
+                                          Avoid keytool alias collisions when sequential OpenID modules import
+                                          into the same cacerts.jks. Derive a unique alias per app-openidN dir
+                                          (app-openid has no keytool step, so it is skipped).
+                                        -->
+                                        <exec executable="bash" failonerror="true">
+                                            <arg value="-c" />
+                                            <arg value="set -euo pipefail; for p in &quot;${tck.dir}&quot;/app-openid*/pom.xml; do name=$(basename &quot;$(dirname &quot;$p&quot;)&quot;); suffix=${name#app-openid}; if [ -n &quot;$suffix&quot; ]; then sed -i.bak -e &quot;s|&lt;alias&gt;tomcat&lt;/alias&gt;|&lt;alias&gt;tomcat-openid${suffix}&lt;/alias&gt;|&quot; &quot;$p&quot;; rm -f &quot;$p.bak&quot;; fi; done" />
+                                        </exec>
                                     </target>
                                 </configuration>
                             </execution>

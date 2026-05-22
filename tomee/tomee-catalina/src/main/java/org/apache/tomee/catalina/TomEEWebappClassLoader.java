@@ -177,7 +177,11 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                     return super.loadClass(name, resolve);
                 }
             }
-        } else if (name.startsWith("jakarta.faces.") || name.startsWith("org.apache.webbeans.jsf")) {
+        } else if (name.startsWith("org.apache.webbeans.jsf")) {
+            // jakarta.faces.* is handled above by shouldDelegateToTheContainer (see
+            // URLClassLoaderFirst.shouldSkipJsf) so the API is loaded from the container
+            // exactly once. The OWB JSF integration must still load locally to bind to
+            // the webapp's CDI beans, hence delegate=false here.
             synchronized (this) {
                 delegate = false;
                 try {

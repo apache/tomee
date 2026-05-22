@@ -1,0 +1,106 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+    TomEE Remote profile fragment for the Jakarta Security TCK.
+
+    This file is NOT a standalone XML document. It is loaded by the antrun
+    task in tck/security-standalone/pom.xml (via <loadfile> with an
+    <expandproperties/> filter) and injected into the downloaded TCK's
+    parent pom.xml right before </profiles>.
+
+    Ant property substitution runs at load time, so ${project.version} and
+    ${project.build.directory} resolve against the security-standalone
+    Maven module. ${glassfish.root} has no Ant value and is therefore
+    passed through as-is so Maven resolves it later (against the property
+    declared in this profile) when the TCK invoker run activates this
+    profile against each TCK module's pom.
+-->
+<profile>
+    <id>tomee-remote</id>
+
+    <properties>
+        <glassfish.root>${project.build.directory}</glassfish.root>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>apache-tomee</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>plus</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>arquillian-tomee-remote</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tomee</groupId>
+                    <artifactId>arquillian-openejb-transaction-provider</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <tomee.stopPort>-1</tomee.stopPort>
+                        <tomee.httpPort>8080</tomee.httpPort>
+                        <tomee.ajpPort>-1</tomee.ajpPort>
+                        <tomee.dir>target/tomee/server</tomee.dir>
+                        <tomee.appWorkingDir>target/tomee/arquillian</tomee.appWorkingDir>
+                        <tomee.cleanOnStartUp>true</tomee.cleanOnStartUp>
+                        <tomee.classifier>plus</tomee.classifier>
+                        <!--
+                          SSL configuration for app-openid2/app-openid3.
+                          Those tests deploy an OpenID provider in a separate Tomcat with a
+                          self-signed cert whose public cert is imported into the shared
+                          keystore below by the TCK's keytool-maven-plugin (the 'glassfish8'
+                          directory name is a TCK leftover from its GlassFish origins; no
+                          GlassFish is installed). We point both JVMs at that keystore:
+                          the failsafe JVM (test driver that uses HtmlUnit) and the forked
+                          TomEE JVM (the OpenID relying party).
+                        -->
+                        <javax.net.ssl.trustStore>${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks</javax.net.ssl.trustStore>
+                        <javax.net.ssl.trustStorePassword>changeit</javax.net.ssl.trustStorePassword>
+                        <tomee.catalina_opts>-Djavax.net.ssl.trustStore=${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks -Djavax.net.ssl.trustStorePassword=changeit</tomee.catalina_opts>
+                        <tomee.properties>openejb.environment.default=true</tomee.properties>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</profile>
