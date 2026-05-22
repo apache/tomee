@@ -30,31 +30,6 @@
     <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>
-        <groupId>org.apache.geronimo.buildsupport</groupId>
-        <artifactId>geronimo-property-plugin</artifactId>
-        <version>3.0.1</version>
-        <configuration>
-          <propertyName>annotations.endorsed</propertyName>
-          <listFiles>false</listFiles>
-          <classpath>
-            <dependency>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-annotation_1.3_spec</artifactId>
-              <version>1.0</version>
-            </dependency>
-          </classpath>
-        </configuration>
-        <executions>
-          <execution>
-            <id>set-endorsed-property</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>set-property</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.14.1</version>
@@ -62,22 +37,8 @@
           <source>17</source>
           <target>17</target>
           <release>17</release>
-          <compilerArguments>
-            <endorseddirs>${annotations.endorsed}</endorseddirs>
-          </compilerArguments>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.3</version>
-        <configuration>
-          <systemPropertyVariables>
-            <java.endorsed.dirs>${annotations.endorsed}</java.endorsed.dirs>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-      
     </plugins>
   </build>
   <repositories>
@@ -92,13 +53,6 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
       <version>11.0.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <!-- for the plugin to endorse the build -->
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.3_spec</artifactId>
-      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
