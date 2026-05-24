@@ -30,6 +30,8 @@
 
   <properties>
     <wiremock.version>3.13.1</wiremock.version>
+    <!-- WireMock 3.x and the MP Rest Client TCK's SSE HttpSseServer run on Jetty 11. -->
+    <version.jetty11>11.0.24</version.jetty11>
   </properties>
 
   <build>
@@ -144,6 +146,46 @@
       </build>
     </profile>
   </profiles>
+
+  <!--
+    The TomEE reactor manages jetty-server/http/io/security/util to Jetty 12
+    (${version.jetty}). WireMock 3.x pulls the rest of its Jetty stack
+    (jetty-servlet, jetty-servlets, jetty-webapp, ...) at Jetty 11, so the reactor's
+    management splits WireMock into a mixed 11/12 Jetty. The TCK's SSE HttpSseServer
+    then loads jetty-servlet:11's org.eclipse.jetty.servlet.ServletHandler, whose
+    superclass org.eclipse.jetty.server.handler.ScopedHandler was removed in Jetty 12,
+    and the SSE server dies with NoClassDefFoundError. Override these test-scope
+    artifacts back to the Jetty 11 line WireMock uses so the whole stack is coherent.
+  -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>${version.jetty11}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-http</artifactId>
+        <version>${version.jetty11}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-io</artifactId>
+        <version>${version.jetty11}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-security</artifactId>
+        <version>${version.jetty11}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <version>${version.jetty11}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
