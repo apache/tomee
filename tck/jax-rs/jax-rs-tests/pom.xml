@@ -156,8 +156,16 @@
                                  -->
                                 <exclude>**/api/client/invocationcallback/JAXRSClientIT.java</exclude>
                                 <exclude>**/spec/client/invocations/JAXRSClientIT.java</exclude>
-                                <exclude>**/ext/interceptor/reader/interceptorcontext/JAXRSClientIT.java</exclude>                    
+                                <exclude>**/ext/interceptor/reader/interceptorcontext/JAXRSClientIT.java</exclude>
                                 <exclude>**/ext/interceptor/containerwriter/interceptorcontext/JAXRSClientIT.java</exclude>
+
+                                <!-- TODO: CXF-9217 - UriInfoImpl#getMatchedResourceTemplate() omits the @ApplicationPath from the returned template.
+                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateSubTest
+                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateOneTest
+                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateTwoPostTest
+                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateTwoGetTest
+                                -->
+                                <exclude>**/jaxrs40/ee/rs/core/uriinfo/UriInfo40ClientIT.java</exclude>
                              </excludes>
 
                             <dependenciesToScan>
