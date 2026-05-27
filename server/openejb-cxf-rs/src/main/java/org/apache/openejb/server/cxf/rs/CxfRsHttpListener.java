@@ -733,8 +733,16 @@ public class CxfRsHttpListener implements RsHttpListener {
              *
              * Global binding annotations are tested in:
              * com/sun/ts/tests/jaxrs/spec/filter/globalbinding/JAXRSClient#globalBoundResourceTest_from_standalone
+             *
+             * We unwrap any InternalApplication wrapper so CXF inspects the user's real
+             * Application subclass.  Without this, the @ApplicationPath annotation on the
+             * user's class is invisible to CXF, and UriInfoImpl#getMatchedResourceTemplate
+             * omits the application path prefix from the returned template.
              */
-            factory.setApplication(application);
+            final Application appForFactory = application instanceof InternalApplication wrapper && wrapper.getOriginal() != null
+                    ? wrapper.getOriginal()
+                    : application;
+            factory.setApplication(appForFactory);
 
             this.context = webContext;
             if (!webContext.startsWith("/")) {
