@@ -39,8 +39,10 @@ import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.sse.SseContextProvider;
+import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.jaxrs.utils.HttpUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
+import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor;
 import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
@@ -113,6 +115,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.metadata.MethodDescriptor;
 import jakarta.ws.rs.ConstrainedTo;
+import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.ClientRequestFilter;
@@ -649,7 +652,6 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             final JAXRSServerFactoryBean factory = newFactory(prefix, createServiceJmxName(classLoader), createEndpointName(application));
             configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx, application);
-            factory.setApplication(application);
 
             final List<Class<?>> classes = new ArrayList<>();
 
@@ -733,16 +735,8 @@ public class CxfRsHttpListener implements RsHttpListener {
              *
              * Global binding annotations are tested in:
              * com/sun/ts/tests/jaxrs/spec/filter/globalbinding/JAXRSClient#globalBoundResourceTest_from_standalone
-             *
-             * We unwrap any InternalApplication wrapper so CXF inspects the user's real
-             * Application subclass.  Without this, the @ApplicationPath annotation on the
-             * user's class is invisible to CXF, and UriInfoImpl#getMatchedResourceTemplate
-             * omits the application path prefix from the returned template.
              */
-            final Application appForFactory = application instanceof InternalApplication wrapper && wrapper.getOriginal() != null
-                    ? wrapper.getOriginal()
-                    : application;
-            factory.setApplication(appForFactory);
+            setApplication(factory, application);
 
             this.context = webContext;
             if (!webContext.startsWith("/")) {
@@ -945,6 +939,22 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         final Bus bus = factory.getBus();
         new ApplicationInfo(application, bus);
+    }
+
+    private static void setApplication(final JAXRSServerFactoryBean factory, final Application application) {
+        factory.setApplication(application);
+
+        if (application instanceof InternalApplication wrapper && wrapper.getOriginal() != null) {
+            final ApplicationPath applicationPath = ResourceUtils.locateApplicationPath(wrapper.getOriginal().getClass());
+            final ApplicationInfo applicationInfo = new ApplicationInfo(application, factory.getBus()) {
+                @Override
+                public ApplicationPath getApplicationPath() {
+                    return applicationPath;
+                }
+            };
+
+            factory.setApplicationInfo(applicationInfo);
+        }
     }
 
     private boolean isConsideredSingleton(final Class<?> scope) {
