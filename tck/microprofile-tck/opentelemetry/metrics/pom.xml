@@ -186,7 +186,7 @@
         <dependency>
             <groupId>io.opentelemetry.semconv</groupId>
             <artifactId>opentelemetry-semconv</artifactId>
-            <version>1.32.0</version>
+            <version>1.41.1</version>
         </dependency>
 
         <dependency>
