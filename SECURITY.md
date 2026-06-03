@@ -4,6 +4,24 @@ Apache TomEE is a Jakarta EE and MicroProfile runtime. The Apache TomEE Security
 
 Report suspected vulnerabilities privately to **security@apache.org**. Do not file security reports as public Jira tickets or GitHub issues.
 
+## Triage dispositions
+
+Every report resolves to exactly one of four dispositions. A triager applies the disposition and cites the section below that licenses it.
+
+- **VALID** — a vulnerability in TomEE's own attack surface (see *In scope* below). Accepted and fixed.
+- **BY-DESIGN** — the behaviour is an intentional property of a protocol or feature, not a defect (e.g. EJBd Java-object deserialization; see *Connectors and transports*).
+- **OUT-OF-MODEL** — a real or hypothetical issue that falls outside the trust boundaries of this model. Cite the controlling section: a trusted actor (*Administrative users*, *Deployed applications*), the trusted-network deployment contract (*Connectors and transports*, *Embedded network services*, *Service discovery*), a flaw in a bundled library as released (*Bundled third-party libraries*), or generic resource exhaustion / DoS (*Connectors and transports*).
+- **KNOWN-NON-FINDING** — the report matches an entry in *Known non-findings*. Pre-adjudicated; repeated submissions are treated as spam. This label takes precedence: if a report matches the Known non-findings list, label it here rather than by its underlying reason.
+
+### In scope — what IS a TomEE vulnerability
+
+These are the active search targets. A finding in any of them is VALID:
+
+- **Bundled-webapp endpoints** — the TomEE web applications shipped in ASF distributions (the TomEE webapp, web console, REST admin endpoints, `webaccess`, plus/plume admin UIs), including CSRF that tricks an administrator (see *Administrative users*, *Deployed applications*).
+- **TomEE integration code** — the wiring that exposes bundled libraries through TomEE's deployment model, configuration, and defaults (see *Bundled third-party libraries*).
+- **TomEE-modified library code** — anything TomEE forks, patches, shades/relocates, or bytecode-transforms at build time, even when it sits in an upstream package namespace (see *Bundled third-party libraries*).
+- **Amplification resource exhaustion** — a single bounded, well-formed request that causes disproportionate (super-linear or unbounded) resource consumption because of a defect in TomEE-owned code, on a connector that does not require a trusted network (see *Connectors and transports*).
+
 ## Administrative users
 
 Administrative users are always considered to be trusted. Reports for vulnerabilities where an attacker already has access to or control over any of the following will be rejected:
@@ -49,6 +67,8 @@ Data received via any TomEE-exposed connector or transport is considered to be u
 **EJBd Java-object deserialization.** The EJBd protocol deserializes Java objects from clients by design — this is what the protocol is. Exposing EJBd on an untrusted network without authentication and a deserialization filter is misuse, not a TomEE vulnerability. An optional transport flag enables TLS, but the default cipher suite is not authenticated; operators are responsible for selecting authenticated cipher suites and configuring a JEP 290 deserialization filter (`-Djdk.serialFilter=...`) when the transport is reachable from untrusted clients.
 
 All clients — including reverse proxies and remote EJB clients using `openejb-client` — are responsible for the consequences of the data they present to TomEE. If a client presents a malformed request that TomEE processes per the protocol specification, any security impact to the client is the client's responsibility.
+
+**Resource exhaustion and denial of service.** Generic DoS is out of scope: request or connection floods, slow-client (Slowloris-style) attacks, large-but-linear payloads, and resource cost inherent to a protocol or to a bundled library as released are not treated as TomEE vulnerabilities. The exception is amplification — a single bounded, well-formed request that triggers disproportionate (super-linear or unbounded) CPU, memory, or thread consumption because of a defect in TomEE-owned code (for example a decompression bomb, entity expansion, or quadratic parsing in TomEE's integration or patched code), on a connector that does not require a trusted network. Such amplification defects are in scope. The trusted-network transports (EJBd, the SSH admin transport, the embedded brokers and databases, JMX, and discovery) are excluded, because exposing them to untrusted clients at all is already misuse.
 
 ## Embedded network services
 
@@ -116,3 +136,4 @@ The following non-findings are frequently reported despite being invalid under t
 3. Any report that depends on deploying a malicious application — deployed applications are trusted (see *Deployed applications*).
 4. Any report against the EJBd protocol, JMX, the embedded ActiveMQ broker, Derby Network Server, HSQLDB Server, or other management or admin endpoints that assumes they should be safe to expose on an untrusted network without authentication (see *Connectors and transports* and *Embedded network services*).
 5. Any report against bundled third-party libraries — including but not limited to CXF, ActiveMQ, MyFaces, Mojarra, OpenJPA, BVal, HSQLDB, Derby, and MicroProfile implementations — where the root cause is in the upstream library as released rather than in TomEE's integration code or in any code TomEE forks, patches, shades, or byte-code-transforms (see *Bundled third-party libraries*).
+6. Any report of generic denial of service — request or connection floods, slow-client attacks, large-but-linear payloads, or resource cost inherent to a protocol or bundled library — absent a specific amplification defect in TomEE-owned code (see *Resource exhaustion and denial of service* under *Connectors and transports*).
