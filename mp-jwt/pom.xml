@@ -28,6 +28,8 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.microprofile.jwt</tomee.build.name>
+
+    <version.asm>9.10.1</version.asm>
   </properties>
 
   <dependencies>
@@ -100,13 +102,13 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>9.10.1</version>
+      <version>${version.asm}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm-util</artifactId>
-      <version>9.10.1</version>
+      <version>${version.asm}</version>
       <scope>test</scope>
     </dependency>
 
