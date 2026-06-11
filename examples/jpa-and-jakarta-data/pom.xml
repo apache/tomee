@@ -21,12 +21,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>jpa-and-jakarta-data</artifactId>
   <packaging>jar</packaging>
-  <version>11.0.0-SNAPSHOT</version>
+  <version>11.0.0-M1</version>
   <name>TomEE :: Examples :: JPA and Jakarta Data Combined</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>11.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M1</tomee.version>
     <surefire.argline />
   </properties>
 
