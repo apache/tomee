@@ -20,13 +20,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-opentelemetry-metrics</artifactId>
-  <version>11.0.0-SNAPSHOT</version>
+  <version>11.0.0-M1</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile OpenTelemetry Metrics</name>
 
   <properties>
     <version.jakartaee-api>11.0.0-M1</version.jakartaee-api>
-    <tomee.version>11.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M1</tomee.version>
     <version.opentelemetry>1.55.0</version.opentelemetry>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
