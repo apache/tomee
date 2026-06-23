@@ -32,8 +32,8 @@ import java.io.StringReader;
 import java.util.Base64;
 import java.util.Map;
 
-public class TomEEAccesToken implements AccessToken, Serializable {
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEAccesToken.class);
+public class TomEEAccessToken implements AccessToken, Serializable {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEAccessToken.class);
 
     private final boolean jwt;
     private final String token;
@@ -48,7 +48,7 @@ public class TomEEAccesToken implements AccessToken, Serializable {
     private Map<String, Object> rawClaims;
 
 
-    public TomEEAccesToken(boolean jwt, String token, Type type, Scope scope, Long expiresIn, long minValidity) {
+    public TomEEAccessToken(boolean jwt, String token, Type type, Scope scope, Long expiresIn, long minValidity) {
         this.jwt = jwt;
         this.token = token;
         this.type = type;
