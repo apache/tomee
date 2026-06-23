@@ -26,7 +26,7 @@ import java.util.Optional;
 public class TokenResponse {
     @JsonbProperty(OpenIdConstant.TOKEN_TYPE) private String tokenType;
 
-    @JsonbProperty(OpenIdConstant.ACCESS_TOKEN) private String accesToken;
+    @JsonbProperty(OpenIdConstant.ACCESS_TOKEN) private String accessToken;
     @JsonbProperty(OpenIdConstant.IDENTITY_TOKEN) private String idToken;
     @JsonbProperty(OpenIdConstant.REFRESH_TOKEN) private Optional<String> refreshToken = Optional.empty();
 
@@ -40,8 +40,8 @@ public class TokenResponse {
         return tokenType;
     }
 
-    public String getAccesToken() {
-        return accesToken;
+    public String getAccessToken() {
+        return accessToken;
     }
 
     public String getIdToken() {

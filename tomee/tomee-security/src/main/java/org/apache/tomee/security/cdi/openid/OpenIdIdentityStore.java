@@ -39,7 +39,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.tomee.security.cdi.openid.storage.OpenIdStorageHandler;
 import org.apache.tomee.security.http.openid.JwtValidators;
 import org.apache.tomee.security.http.openid.model.TokenResponse;
-import org.apache.tomee.security.http.openid.model.TomEEAccesToken;
+import org.apache.tomee.security.http.openid.model.TomEEAccessToken;
 import org.apache.tomee.security.http.openid.model.TomEEIdentityToken;
 import org.apache.tomee.security.http.openid.model.TomEEOpenIdCredential;
 import org.apache.tomee.security.http.openid.model.TomEERefreshToken;
@@ -160,14 +160,14 @@ public class OpenIdIdentityStore implements IdentityStore {
                                           JwtConsumer jwtConsumer, TokenResponse tokenResponse) {
         boolean validJwt = false;
         try {
-            jwtConsumer.process(tokenResponse.getAccesToken());
+            jwtConsumer.process(tokenResponse.getAccessToken());
             validJwt = true;
         } catch (InvalidJwtException e) {
             LOGGER.warning(OpenIdConstant.ACCESS_TOKEN + " is invalid: " + e.getMessage());
         }
 
-        return new TomEEAccesToken(
-                validJwt, tokenResponse.getAccesToken(),
+        return new TomEEAccessToken(
+                validJwt, tokenResponse.getAccessToken(),
                 "Bearer".equals(tokenResponse.getTokenType()) ? AccessToken.Type.BEARER : AccessToken.Type.MAC,
                 tokenResponse.getScope(),
                 tokenResponse.getExpiresIn(),
