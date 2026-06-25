@@ -209,11 +209,11 @@ public class Servlet$JAXB
                 servlet.loadOnStartup = loadOnStartup;
             } else if (("enabled" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enabled
-                Boolean enabled = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean enabled = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 servlet.enabled = enabled;
             } else if (("async-supported" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: asyncSupported
-                Boolean asyncSupported = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean asyncSupported = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 servlet.asyncSupported = asyncSupported;
             } else if (("run-as" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: runAs

@@ -114,7 +114,7 @@ public class Query$JAXB
                 query.queryMethod = queryMethod;
             } else if (("result-type-mapping" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resultTypeMapping
-                ResultTypeMapping resultTypeMapping = parseResultTypeMapping(elementReader, context, elementReader.getElementText());
+                ResultTypeMapping resultTypeMapping = parseResultTypeMapping(elementReader, context, elementReader.getElementText().trim());
                 if (resultTypeMapping!= null) {
                     query.resultTypeMapping = resultTypeMapping;
                 }

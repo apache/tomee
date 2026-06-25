@@ -98,7 +98,7 @@ public class FacesRedirect$JAXB
                 facesRedirect.id = id;
             } else if (("include-view-params" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: includeViewParams
-                Boolean includeViewParams = ("1".equals(attribute.getValue())||"true".equals(attribute.getValue()));
+                Boolean includeViewParams = ("1".equals(attribute.getValue().trim())||"true".equals(attribute.getValue().trim()));
                 facesRedirect.includeViewParams = includeViewParams;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI!= attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute, new QName("", "id"), new QName("", "include-view-params"));

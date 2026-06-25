@@ -99,7 +99,7 @@ public class ErrorPage$JAXB
         for (XoXMLStreamReader elementReader: reader.getChildElements()) {
             if (("error-code" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: errorCode
-                BigInteger errorCode = new BigInteger(elementReader.getElementText());
+                BigInteger errorCode = new BigInteger(elementReader.getElementText().trim());
                 errorPage.errorCode = errorCode;
             } else if (("exception-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: exceptionType

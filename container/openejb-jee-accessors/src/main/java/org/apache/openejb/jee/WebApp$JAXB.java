@@ -209,7 +209,7 @@ public class WebApp$JAXB
                 webApp.id = id;
             } else if (("metadata-complete" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: metadataComplete
-                Boolean metadataComplete = ("1".equals(attribute.getValue())||"true".equals(attribute.getValue()));
+                Boolean metadataComplete = ("1".equals(attribute.getValue().trim())||"true".equals(attribute.getValue().trim()));
                 webApp.metadataComplete = metadataComplete;
             } else if (("version" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: version

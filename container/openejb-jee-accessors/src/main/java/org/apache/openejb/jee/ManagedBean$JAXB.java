@@ -203,7 +203,7 @@ public class ManagedBean$JAXB
         for (XoXMLStreamReader elementReader: reader.getChildElements()) {
             if (("hidden" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: hidden
-                Boolean hidden = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean hidden = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 managedBean.hidden = hidden;
             } else if (("description" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: descriptions
@@ -383,7 +383,7 @@ public class ManagedBean$JAXB
                 managedBean.ejbClass = ejbClass;
             } else if (("session-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: sessionType
-                SessionType sessionType = parseSessionType(elementReader, context, elementReader.getElementText());
+                SessionType sessionType = parseSessionType(elementReader, context, elementReader.getElementText().trim());
                 if (sessionType!= null) {
                     managedBean.sessionType = sessionType;
                 }
@@ -409,11 +409,11 @@ public class ManagedBean$JAXB
                 timer.add(timerItem);
             } else if (("init-on-startup" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initOnStartup
-                Boolean initOnStartup = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean initOnStartup = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 managedBean.initOnStartup = initOnStartup;
             } else if (("concurrency-management-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: concurrencyManagementType
-                ConcurrencyManagementType concurrencyManagementType = parseConcurrencyManagementType(elementReader, context, elementReader.getElementText());
+                ConcurrencyManagementType concurrencyManagementType = parseConcurrencyManagementType(elementReader, context, elementReader.getElementText().trim());
                 if (concurrencyManagementType!= null) {
                     managedBean.concurrencyManagementType = concurrencyManagementType;
                 }
@@ -470,7 +470,7 @@ public class ManagedBean$JAXB
                 asyncMethod.add(asyncMethodItem);
             } else if (("transaction-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactionType
-                TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementText());
+                TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementText().trim());
                 if (transactionType!= null) {
                     managedBean.transactionType = transactionType;
                 }
@@ -732,7 +732,7 @@ public class ManagedBean$JAXB
                 managedBean.securityIdentity = securityIdentity;
             } else if (("passivation-capable" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: passivationCapable
-                Boolean passivationCapable = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean passivationCapable = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 managedBean.passivationCapable = passivationCapable;
             } else if (("context-service" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: contextService

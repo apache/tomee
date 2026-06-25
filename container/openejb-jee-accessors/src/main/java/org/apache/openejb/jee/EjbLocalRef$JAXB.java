@@ -131,7 +131,7 @@ public class EjbLocalRef$JAXB
                 ejbLocalRef.ejbRefName = ejbRefName;
             } else if (("ejb-ref-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: ejbRefType
-                EjbRefType ejbRefType = parseEjbRefType(elementReader, context, elementReader.getElementText());
+                EjbRefType ejbRefType = parseEjbRefType(elementReader, context, elementReader.getElementText().trim());
                 if (ejbRefType!= null) {
                     ejbLocalRef.ejbRefType = ejbRefType;
                 }

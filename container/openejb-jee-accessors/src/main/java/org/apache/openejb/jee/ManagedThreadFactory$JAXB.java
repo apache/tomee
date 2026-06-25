@@ -118,11 +118,11 @@ public class ManagedThreadFactory$JAXB
                 managedThreadFactory.contextService = contextService;
             } else if (("priority" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: priority
-                Integer priority = Integer.valueOf(elementReader.getElementText());
+                Integer priority = Integer.valueOf(elementReader.getElementText().trim());
                 managedThreadFactory.priority = priority;
             } else if (("virtual" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: virtual
-                Boolean virtual = Boolean.valueOf(elementReader.getElementText());
+                Boolean virtual = Boolean.valueOf(elementReader.getElementText().trim());
                 managedThreadFactory.virtual = virtual;
             } else if (("qualifier" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: qualifier

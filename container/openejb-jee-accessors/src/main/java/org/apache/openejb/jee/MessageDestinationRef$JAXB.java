@@ -144,7 +144,7 @@ public class MessageDestinationRef$JAXB
                 messageDestinationRef.messageDestinationType = messageDestinationType;
             } else if (("message-destination-usage" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: messageDestinationUsage
-                MessageDestinationUsage messageDestinationUsage = parseMessageDestinationUsage(elementReader, context, elementReader.getElementText());
+                MessageDestinationUsage messageDestinationUsage = parseMessageDestinationUsage(elementReader, context, elementReader.getElementText().trim());
                 if (messageDestinationUsage!= null) {
                     messageDestinationRef.messageDestinationUsage = messageDestinationUsage;
                 }

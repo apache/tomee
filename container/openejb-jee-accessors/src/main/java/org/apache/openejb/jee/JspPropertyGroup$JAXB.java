@@ -159,7 +159,7 @@ public class JspPropertyGroup$JAXB
                 urlPattern.add(urlPatternItem);
             } else if (("el-ignored" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: elIgnored
-                Boolean elIgnored = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean elIgnored = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 jspPropertyGroup.elIgnored = elIgnored;
             } else if (("page-encoding" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: pageEncoding
@@ -176,11 +176,11 @@ public class JspPropertyGroup$JAXB
                 jspPropertyGroup.pageEncoding = pageEncoding;
             } else if (("scripting-invalid" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: scriptingInvalid
-                Boolean scriptingInvalid = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean scriptingInvalid = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 jspPropertyGroup.scriptingInvalid = scriptingInvalid;
             } else if (("is-xml" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: isXml
-                Boolean isXml = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean isXml = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 jspPropertyGroup.isXml = isXml;
             } else if (("include-prelude" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: includePrelude
@@ -226,11 +226,11 @@ public class JspPropertyGroup$JAXB
                 includeCoda.add(includeCodaItem);
             } else if (("deferred-syntax-allowed-as-literal" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: deferredSyntaxAllowedAsLiteral
-                Boolean deferredSyntaxAllowedAsLiteral = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean deferredSyntaxAllowedAsLiteral = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 jspPropertyGroup.deferredSyntaxAllowedAsLiteral = deferredSyntaxAllowedAsLiteral;
             } else if (("trim-directive-whitespaces" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: trimDirectiveWhitespaces
-                Boolean trimDirectiveWhitespaces = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean trimDirectiveWhitespaces = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 jspPropertyGroup.trimDirectiveWhitespaces = trimDirectiveWhitespaces;
             } else if (("default-content-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: defaultContentType
@@ -260,7 +260,7 @@ public class JspPropertyGroup$JAXB
                 jspPropertyGroup.buffer = buffer;
             } else if (("error-on-undeclared-namespace" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: errorOnUndeclaredNamespace
-                Boolean errorOnUndeclaredNamespace = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean errorOnUndeclaredNamespace = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 jspPropertyGroup.errorOnUndeclaredNamespace = errorOnUndeclaredNamespace;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "display-name"), new QName("http://java.sun.com/xml/ns/javaee", "icon"), new QName("http://java.sun.com/xml/ns/javaee", "url-pattern"), new QName("http://java.sun.com/xml/ns/javaee", "el-ignored"), new QName("http://java.sun.com/xml/ns/javaee", "page-encoding"), new QName("http://java.sun.com/xml/ns/javaee", "scripting-invalid"), new QName("http://java.sun.com/xml/ns/javaee", "is-xml"), new QName("http://java.sun.com/xml/ns/javaee", "include-prelude"), new QName("http://java.sun.com/xml/ns/javaee", "include-coda"), new QName("http://java.sun.com/xml/ns/javaee", "deferred-syntax-allowed-as-literal"), new QName("http://java.sun.com/xml/ns/javaee", "trim-directive-whitespaces"), new QName("http://java.sun.com/xml/ns/javaee", "default-content-type"), new QName("http://java.sun.com/xml/ns/javaee", "buffer"), new QName("http://java.sun.com/xml/ns/javaee", "error-on-undeclared-namespace"));

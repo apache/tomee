@@ -129,7 +129,7 @@ public class ContainerTransaction$JAXB
                 method.add(methodItem);
             } else if (("trans-attribute" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transAttribute
-                TransAttribute transAttribute = parseTransAttribute(elementReader, context, elementReader.getElementText());
+                TransAttribute transAttribute = parseTransAttribute(elementReader, context, elementReader.getElementText().trim());
                 if (transAttribute!= null) {
                     containerTransaction.transAttribute = transAttribute;
                 }

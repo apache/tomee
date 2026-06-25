@@ -150,13 +150,13 @@ public class PersistenceContextRef$JAXB
                 persistenceContextRef.persistenceUnitName = persistenceUnitName;
             } else if (("persistence-context-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceContextType
-                PersistenceContextType persistenceContextType = parsePersistenceContextType(elementReader, context, elementReader.getElementText());
+                PersistenceContextType persistenceContextType = parsePersistenceContextType(elementReader, context, elementReader.getElementText().trim());
                 if (persistenceContextType!= null) {
                     persistenceContextRef.persistenceContextType = persistenceContextType;
                 }
             } else if (("persistence-context-synchronization" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceContextSynchronization
-                PersistenceContextSynchronization persistenceContextSynchronization = parsePersistenceContextSynchronization(elementReader, context, elementReader.getElementText());
+                PersistenceContextSynchronization persistenceContextSynchronization = parsePersistenceContextSynchronization(elementReader, context, elementReader.getElementText().trim());
                 if (persistenceContextSynchronization!= null) {
                     persistenceContextRef.persistenceContextSynchronization = persistenceContextSynchronization;
                 }
