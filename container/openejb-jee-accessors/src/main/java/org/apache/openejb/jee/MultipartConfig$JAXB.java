@@ -106,15 +106,15 @@ public class MultipartConfig$JAXB
                 multipartConfig.location = location;
             } else if (("max-file-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxFileSize
-                Long maxFileSize = Long.valueOf(elementReader.getElementText());
+                Long maxFileSize = Long.valueOf(elementReader.getElementText().trim());
                 multipartConfig.maxFileSize = maxFileSize;
             } else if (("max-request-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxRequestSize
-                Long maxRequestSize = Long.valueOf(elementReader.getElementText());
+                Long maxRequestSize = Long.valueOf(elementReader.getElementText().trim());
                 multipartConfig.maxRequestSize = maxRequestSize;
             } else if (("file-size-threshold" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: fileSizeThreshold
-                Integer fileSizeThreshold = Integer.valueOf(elementReader.getElementText());
+                Integer fileSizeThreshold = Integer.valueOf(elementReader.getElementText().trim());
                 multipartConfig.fileSizeThreshold = fileSizeThreshold;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "location"), new QName("http://java.sun.com/xml/ns/javaee", "max-file-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-request-size"), new QName("http://java.sun.com/xml/ns/javaee", "file-size-threshold"));

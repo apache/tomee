@@ -150,15 +150,15 @@ public class CookieConfig$JAXB
                 cookieConfig.comment = comment;
             } else if (("http-only" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: httpOnly
-                Boolean httpOnly = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean httpOnly = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 cookieConfig.httpOnly = httpOnly;
             } else if (("secure" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: secure
-                Boolean secure = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean secure = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 cookieConfig.secure = secure;
             } else if (("max-age" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxAge
-                Integer maxAge = Integer.valueOf(elementReader.getElementText());
+                Integer maxAge = Integer.valueOf(elementReader.getElementText().trim());
                 cookieConfig.maxAge = maxAge;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "domain"), new QName("http://java.sun.com/xml/ns/javaee", "path"), new QName("http://java.sun.com/xml/ns/javaee", "comment"), new QName("http://java.sun.com/xml/ns/javaee", "http-only"), new QName("http://java.sun.com/xml/ns/javaee", "secure"), new QName("http://java.sun.com/xml/ns/javaee", "max-age"));

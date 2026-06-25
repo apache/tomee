@@ -150,15 +150,15 @@ public class ConfigProperty$JAXB
                 configProperty.configPropertyValue = configPropertyValue;
             } else if (("config-property-ignore" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyIgnore
-                Boolean configPropertyIgnore = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean configPropertyIgnore = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 configProperty.configPropertyIgnore = configPropertyIgnore;
             } else if (("config-property-supports-dynamic-updates" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertySupportsDynamicUpdates
-                Boolean configPropertySupportsDynamicUpdates = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean configPropertySupportsDynamicUpdates = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 configProperty.configPropertySupportsDynamicUpdates = configPropertySupportsDynamicUpdates;
             } else if (("config-property-confidential" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: configPropertyConfidential
-                Boolean configPropertyConfidential = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean configPropertyConfidential = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 configProperty.configPropertyConfidential = configPropertyConfidential;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-name"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-type"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-value"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-ignore"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-supports-dynamic-updates"), new QName("http://java.sun.com/xml/ns/javaee", "config-property-confidential"));

@@ -128,7 +128,7 @@ public class Method$JAXB
                 method.ejbName = ejbName;
             } else if (("method-intf" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: methodIntf
-                MethodIntf methodIntf = parseMethodIntf(elementReader, context, elementReader.getElementText());
+                MethodIntf methodIntf = parseMethodIntf(elementReader, context, elementReader.getElementText().trim());
                 if (methodIntf!= null) {
                     method.methodIntf = methodIntf;
                 }

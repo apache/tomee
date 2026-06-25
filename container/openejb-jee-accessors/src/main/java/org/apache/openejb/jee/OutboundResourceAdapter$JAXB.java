@@ -122,7 +122,7 @@ public class OutboundResourceAdapter$JAXB
                 connectionDefinition.add(connectionDefinitionItem);
             } else if (("transaction-support" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactionSupport
-                TransactionSupportType transactionSupport = parseTransactionSupportType(elementReader, context, elementReader.getElementText());
+                TransactionSupportType transactionSupport = parseTransactionSupportType(elementReader, context, elementReader.getElementText().trim());
                 if (transactionSupport!= null) {
                     outboundResourceAdapter.transactionSupport = transactionSupport;
                 }
@@ -140,7 +140,7 @@ public class OutboundResourceAdapter$JAXB
                 authenticationMechanism.add(authenticationMechanismItem);
             } else if (("reauthentication-support" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: reauthenticationSupport
-                Boolean reauthenticationSupport = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean reauthenticationSupport = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 outboundResourceAdapter.reauthenticationSupport = reauthenticationSupport;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "connection-definition"), new QName("http://java.sun.com/xml/ns/javaee", "transaction-support"), new QName("http://java.sun.com/xml/ns/javaee", "authentication-mechanism"), new QName("http://java.sun.com/xml/ns/javaee", "reauthentication-support"));

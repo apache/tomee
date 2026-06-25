@@ -96,15 +96,15 @@ public class Addressing$JAXB
         for (XoXMLStreamReader elementReader: reader.getChildElements()) {
             if (("enabled" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enabled
-                Boolean enabled = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean enabled = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 addressing.enabled = enabled;
             } else if (("required" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: required
-                Boolean required = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean required = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 addressing.required = required;
             } else if (("responses" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: responses
-                AddressingResponses responses = parseAddressingResponses(elementReader, context, elementReader.getElementText());
+                AddressingResponses responses = parseAddressingResponses(elementReader, context, elementReader.getElementText().trim());
                 if (responses!= null) {
                     addressing.responses = responses;
                 }

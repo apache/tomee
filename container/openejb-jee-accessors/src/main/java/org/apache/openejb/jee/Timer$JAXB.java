@@ -131,11 +131,11 @@ public class Timer$JAXB
                 timer.schedule = schedule;
             } else if (("start" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: start
-                XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementText());
+                XMLGregorianCalendar start = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementText().trim());
                 timer.start = start;
             } else if (("end" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: end
-                XMLGregorianCalendar end = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementText());
+                XMLGregorianCalendar end = datatypeFactory.newXMLGregorianCalendar(elementReader.getElementText().trim());
                 timer.end = end;
             } else if (("timeout-method" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timeoutMethod
@@ -143,7 +143,7 @@ public class Timer$JAXB
                 timer.timeoutMethod = timeoutMethod;
             } else if (("persistent" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistent
-                Boolean persistent = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean persistent = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 timer.persistent = persistent;
             } else if (("timezone" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timezone

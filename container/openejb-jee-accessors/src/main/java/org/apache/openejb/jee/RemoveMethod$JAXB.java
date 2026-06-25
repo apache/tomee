@@ -106,7 +106,7 @@ public class RemoveMethod$JAXB
                 removeMethod.beanMethod = beanMethod;
             } else if (("retain-if-exception" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: retainIfException
-                Boolean retainIfException = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean retainIfException = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 removeMethod.retainIfException = retainIfException;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "bean-method"), new QName("http://java.sun.com/xml/ns/javaee", "retain-if-exception"));

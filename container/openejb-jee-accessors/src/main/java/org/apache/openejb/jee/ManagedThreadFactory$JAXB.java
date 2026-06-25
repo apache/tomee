@@ -117,7 +117,7 @@ public class ManagedThreadFactory$JAXB
                 managedThreadFactory.contextService = contextService;
             } else if (("priority" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: priority
-                Integer priority = Integer.valueOf(elementReader.getElementText());
+                Integer priority = Integer.valueOf(elementReader.getElementText().trim());
                 managedThreadFactory.priority = priority;
             } else if (("property" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: properties

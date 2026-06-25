@@ -148,7 +148,7 @@ public class FacesConfig$JAXB
                 facesConfig.version = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
             } else if (("metadata-complete" == attribute.getLocalName())&&(("" == attribute.getNamespace())||(attribute.getNamespace() == null))) {
                 // ATTRIBUTE: metadataComplete
-                Boolean metadataComplete = ("1".equals(attribute.getValue())||"true".equals(attribute.getValue()));
+                Boolean metadataComplete = ("1".equals(attribute.getValue().trim())||"true".equals(attribute.getValue().trim()));
                 facesConfig.metadataComplete = metadataComplete;
             } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI!= attribute.getNamespace()) {
                 context.unexpectedAttribute(attribute, new QName("", "id"), new QName("", "version"), new QName("", "metadata-complete"));

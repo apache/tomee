@@ -103,7 +103,7 @@ public class MethodParamPartsMapping$JAXB
         for (XoXMLStreamReader elementReader: reader.getChildElements()) {
             if (("param-position" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: paramPosition
-                BigInteger paramPosition = new BigInteger(elementReader.getElementText());
+                BigInteger paramPosition = new BigInteger(elementReader.getElementText().trim());
                 methodParamPartsMapping.paramPosition = paramPosition;
             } else if (("param-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: paramType

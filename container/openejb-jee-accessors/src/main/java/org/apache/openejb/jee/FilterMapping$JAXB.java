@@ -164,7 +164,7 @@ public class FilterMapping$JAXB
                 // ELEMENT: dispatcher
                 Dispatcher dispatcherItem = null;
                 if (!elementReader.isXsiNil()) {
-                    dispatcherItem = parseDispatcher(elementReader, context, elementReader.getElementText());
+                    dispatcherItem = parseDispatcher(elementReader, context, elementReader.getElementText().trim());
                 }
                 if (dispatcher == null) {
                     dispatcher = filterMapping.dispatcher;
