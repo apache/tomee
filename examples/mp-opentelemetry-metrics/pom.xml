@@ -27,7 +27,7 @@
   <properties>
     <version.jakartaee-api>11.0.0-M1</version.jakartaee-api>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
-    <version.opentelemetry>1.55.0</version.opentelemetry>
+    <version.opentelemetry>1.62.0</version.opentelemetry>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
   </properties>
