@@ -204,7 +204,7 @@
     <!-- Jakarta EE Impl. -->
     <tomcat.version>11.0.22</tomcat.version>
     <!-- com.sun -->
-    <version.impl.saaj>3.0.5</version.impl.saaj>
+    <version.impl.saaj>3.0.6</version.impl.saaj>
     <!-- org.apache -->
     <version.activemq>6.2.6</version.activemq>
     <version.batchee>2.0.0</version.batchee>
