@@ -113,7 +113,7 @@ public class UserDataConstraint$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("transport-guarantee" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transportGuarantee
-                TransportGuarantee transportGuarantee = parseTransportGuarantee(elementReader, context, elementReader.getElementText());
+                TransportGuarantee transportGuarantee = parseTransportGuarantee(elementReader, context, elementReader.getElementText().trim());
                 if (transportGuarantee!= null) {
                     userDataConstraint.transportGuarantee = transportGuarantee;
                 }

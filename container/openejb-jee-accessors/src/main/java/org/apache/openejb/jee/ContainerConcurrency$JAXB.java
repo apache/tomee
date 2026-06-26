@@ -129,7 +129,7 @@ public class ContainerConcurrency$JAXB
                 method.add(methodItem);
             } else if (("concurrency-attribute" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lock
-                ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementText());
+                ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementText().trim());
                 if (lock!= null) {
                     containerConcurrency.lock = lock;
                 }

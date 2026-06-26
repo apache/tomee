@@ -206,15 +206,15 @@ public class JMSConnectionFactory$JAXB
                 JMSConnectionFactory.clientId = clientId;
             } else if (("transactional" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactional
-                Boolean transactional = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean transactional = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 JMSConnectionFactory.transactional = transactional;
             } else if (("max-pool-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxPoolSize
-                Integer maxPoolSize = Integer.valueOf(elementReader.getElementText());
+                Integer maxPoolSize = Integer.valueOf(elementReader.getElementText().trim());
                 JMSConnectionFactory.maxPoolSize = maxPoolSize;
             } else if (("min-pool-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: minPoolSize
-                Integer minPoolSize = Integer.valueOf(elementReader.getElementText());
+                Integer minPoolSize = Integer.valueOf(elementReader.getElementText().trim());
                 JMSConnectionFactory.minPoolSize = minPoolSize;
             } else if (("property" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: property

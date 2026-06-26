@@ -292,7 +292,7 @@ public class EntityBean$JAXB
                 entityBean.ejbClass = ejbClass;
             } else if (("persistence-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: persistenceType
-                PersistenceType persistenceType = parsePersistenceType(elementReader, context, elementReader.getElementText());
+                PersistenceType persistenceType = parsePersistenceType(elementReader, context, elementReader.getElementText().trim());
                 if (persistenceType!= null) {
                     entityBean.persistenceType = persistenceType;
                 }
@@ -324,7 +324,7 @@ public class EntityBean$JAXB
                 entityBean.reentrant = reentrant;
             } else if (("cmp-version" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: cmpVersion
-                CmpVersion cmpVersion = parseCmpVersion(elementReader, context, elementReader.getElementText());
+                CmpVersion cmpVersion = parseCmpVersion(elementReader, context, elementReader.getElementText().trim());
                 if (cmpVersion!= null) {
                     entityBean.cmpVersion = cmpVersion;
                 }

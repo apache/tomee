@@ -111,11 +111,11 @@ public class ApplicationException$JAXB
                 applicationException.exceptionClass = exceptionClass;
             } else if (("rollback" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: rollback
-                Boolean rollback = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean rollback = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 applicationException.rollback = rollback;
             } else if (("inherited" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: inherited
-                Boolean inherited = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean inherited = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 applicationException.inherited = inherited;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "exception-class"), new QName("http://java.sun.com/xml/ns/javaee", "rollback"), new QName("http://java.sun.com/xml/ns/javaee", "inherited"));

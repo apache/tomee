@@ -132,7 +132,7 @@ public class EjbRelationshipRole$JAXB
                 ejbRelationshipRole.ejbRelationshipRoleName = ejbRelationshipRoleName;
             } else if (("multiplicity" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: multiplicity
-                Multiplicity multiplicity = parseMultiplicity(elementReader, context, elementReader.getElementText());
+                Multiplicity multiplicity = parseMultiplicity(elementReader, context, elementReader.getElementText().trim());
                 if (multiplicity!= null) {
                     ejbRelationshipRole.multiplicity = multiplicity;
                 }

@@ -164,7 +164,7 @@ public class Filter$JAXB
                 filter.filterClass = filterClass;
             } else if (("async-supported" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: asyncSupported
-                Boolean asyncSupported = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean asyncSupported = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 filter.asyncSupported = asyncSupported;
             } else if (("init-param" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initParam

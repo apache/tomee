@@ -117,11 +117,11 @@ public class PortComponentRef$JAXB
                 portComponentRef.serviceEndpointInterface = serviceEndpointInterface;
             } else if (("enable-mtom" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enableMtom
-                Boolean enableMtom = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean enableMtom = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 portComponentRef.enableMtom = enableMtom;
             } else if (("mtom-threshold" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: mtomThreshold
-                Integer mtomThreshold = Integer.valueOf(elementReader.getElementText());
+                Integer mtomThreshold = Integer.valueOf(elementReader.getElementText().trim());
                 portComponentRef.mtomThreshold = mtomThreshold;
             } else if (("addressing" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: addressing

@@ -146,13 +146,13 @@ public class ResourceRef$JAXB
                 resourceRef.resType = resType;
             } else if (("res-auth" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resAuth
-                ResAuth resAuth = parseResAuth(elementReader, context, elementReader.getElementText());
+                ResAuth resAuth = parseResAuth(elementReader, context, elementReader.getElementText().trim());
                 if (resAuth!= null) {
                     resourceRef.resAuth = resAuth;
                 }
             } else if (("res-sharing-scope" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: resSharingScope
-                ResSharingScope resSharingScope = parseResSharingScope(elementReader, context, elementReader.getElementText());
+                ResSharingScope resSharingScope = parseResSharingScope(elementReader, context, elementReader.getElementText().trim());
                 if (resSharingScope!= null) {
                     resourceRef.resSharingScope = resSharingScope;
                 }

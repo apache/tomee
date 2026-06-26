@@ -107,7 +107,7 @@ public class SessionConfig$JAXB
         for (XoXMLStreamReader elementReader: reader.getChildElements()) {
             if (("session-timeout" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: sessionTimeout
-                Integer sessionTimeout = Integer.valueOf(elementReader.getElementText());
+                Integer sessionTimeout = Integer.valueOf(elementReader.getElementText().trim());
                 sessionConfig.sessionTimeout = sessionTimeout;
             } else if (("cookie-config" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: cookieConfig
@@ -115,7 +115,7 @@ public class SessionConfig$JAXB
                 sessionConfig.cookieConfig = cookieConfig;
             } else if (("tracking-mode" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: trackingMode
-                TrackingMode trackingModeItem = parseTrackingMode(elementReader, context, elementReader.getElementText());
+                TrackingMode trackingModeItem = parseTrackingMode(elementReader, context, elementReader.getElementText().trim());
                 if (trackingMode == null) {
                     trackingMode = sessionConfig.trackingMode;
                     if (trackingMode!= null) {

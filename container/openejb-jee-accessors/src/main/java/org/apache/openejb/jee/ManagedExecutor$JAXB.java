@@ -117,11 +117,11 @@ public class ManagedExecutor$JAXB
                 managedExecutor.contextService = contextService;
             } else if (("hung-task-threshold" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: hungTaskThreshold
-                Long hungTaskThreshold = Long.valueOf(elementReader.getElementText());
+                Long hungTaskThreshold = Long.valueOf(elementReader.getElementText().trim());
                 managedExecutor.hungTaskThreshold = hungTaskThreshold;
             } else if (("max-async" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxAsync
-                Integer maxAsync = Integer.valueOf(elementReader.getElementText());
+                Integer maxAsync = Integer.valueOf(elementReader.getElementText().trim());
                 managedExecutor.maxAsync = maxAsync;
             } else if (("properties" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: properties
