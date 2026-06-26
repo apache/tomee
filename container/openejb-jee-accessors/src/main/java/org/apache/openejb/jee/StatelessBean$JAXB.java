@@ -379,7 +379,7 @@ public class StatelessBean$JAXB
                 statelessBean.ejbClass = ejbClass;
             } else if (("session-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: sessionType
-                SessionType sessionType = parseSessionType(elementReader, context, elementReader.getElementText());
+                SessionType sessionType = parseSessionType(elementReader, context, elementReader.getElementText().trim());
                 if (sessionType!= null) {
                     statelessBean.sessionType = sessionType;
                 }
@@ -405,11 +405,11 @@ public class StatelessBean$JAXB
                 timer.add(timerItem);
             } else if (("init-on-startup" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initOnStartup
-                Boolean initOnStartup = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean initOnStartup = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 statelessBean.initOnStartup = initOnStartup;
             } else if (("concurrency-management-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: concurrencyManagementType
-                ConcurrencyManagementType concurrencyManagementType = parseConcurrencyManagementType(elementReader, context, elementReader.getElementText());
+                ConcurrencyManagementType concurrencyManagementType = parseConcurrencyManagementType(elementReader, context, elementReader.getElementText().trim());
                 if (concurrencyManagementType!= null) {
                     statelessBean.concurrencyManagementType = concurrencyManagementType;
                 }
@@ -466,7 +466,7 @@ public class StatelessBean$JAXB
                 asyncMethod.add(asyncMethodItem);
             } else if (("transaction-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactionType
-                TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementText());
+                TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementText().trim());
                 if (transactionType!= null) {
                     statelessBean.transactionType = transactionType;
                 }
@@ -728,7 +728,7 @@ public class StatelessBean$JAXB
                 statelessBean.securityIdentity = securityIdentity;
             } else if (("passivation-capable" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: passivationCapable
-                Boolean passivationCapable = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean passivationCapable = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 statelessBean.passivationCapable = passivationCapable;
             } else if (("context-service" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: contextService

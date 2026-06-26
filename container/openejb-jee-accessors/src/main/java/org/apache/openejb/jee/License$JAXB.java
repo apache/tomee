@@ -111,7 +111,7 @@ public class License$JAXB
                 descriptions.add(descriptionsItem);
             } else if (("license-required" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: licenseRequired
-                Boolean licenseRequired = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean licenseRequired = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 license.licenseRequired = licenseRequired;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "license-required"));

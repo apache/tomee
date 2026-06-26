@@ -156,7 +156,7 @@ public class DataSource$JAXB
                 dataSource.serverName = serverName;
             } else if (("port-number" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: portNumber
-                Integer portNumber = Integer.valueOf(elementReader.getElementText());
+                Integer portNumber = Integer.valueOf(elementReader.getElementText().trim());
                 dataSource.portNumber = portNumber;
             } else if (("database-name" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: databaseName
@@ -224,37 +224,37 @@ public class DataSource$JAXB
                 property.add(propertyItem);
             } else if (("login-timeout" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: loginTimeout
-                Integer loginTimeout = Integer.valueOf(elementReader.getElementText());
+                Integer loginTimeout = Integer.valueOf(elementReader.getElementText().trim());
                 dataSource.loginTimeout = loginTimeout;
             } else if (("transactional" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactional
-                Boolean transactional = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean transactional = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 dataSource.transactional = transactional;
             } else if (("isolation-level" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: isolationLevel
-                IsolationLevel isolationLevel = parseIsolationLevel(elementReader, context, elementReader.getElementText());
+                IsolationLevel isolationLevel = parseIsolationLevel(elementReader, context, elementReader.getElementText().trim());
                 if (isolationLevel!= null) {
                     dataSource.isolationLevel = isolationLevel;
                 }
             } else if (("initial-pool-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: initialPoolSize
-                Integer initialPoolSize = Integer.valueOf(elementReader.getElementText());
+                Integer initialPoolSize = Integer.valueOf(elementReader.getElementText().trim());
                 dataSource.initialPoolSize = initialPoolSize;
             } else if (("max-pool-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxPoolSize
-                Integer maxPoolSize = Integer.valueOf(elementReader.getElementText());
+                Integer maxPoolSize = Integer.valueOf(elementReader.getElementText().trim());
                 dataSource.maxPoolSize = maxPoolSize;
             } else if (("min-pool-size" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: minPoolSize
-                Integer minPoolSize = Integer.valueOf(elementReader.getElementText());
+                Integer minPoolSize = Integer.valueOf(elementReader.getElementText().trim());
                 dataSource.minPoolSize = minPoolSize;
             } else if (("max-idle-time" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxIdleTime
-                Integer maxIdleTime = Integer.valueOf(elementReader.getElementText());
+                Integer maxIdleTime = Integer.valueOf(elementReader.getElementText().trim());
                 dataSource.maxIdleTime = maxIdleTime;
             } else if (("max-statements" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: maxStatements
-                Integer maxStatements = Integer.valueOf(elementReader.getElementText());
+                Integer maxStatements = Integer.valueOf(elementReader.getElementText().trim());
                 dataSource.maxStatements = maxStatements;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "description"), new QName("http://java.sun.com/xml/ns/javaee", "name"), new QName("http://java.sun.com/xml/ns/javaee", "class-name"), new QName("http://java.sun.com/xml/ns/javaee", "server-name"), new QName("http://java.sun.com/xml/ns/javaee", "port-number"), new QName("http://java.sun.com/xml/ns/javaee", "database-name"), new QName("http://java.sun.com/xml/ns/javaee", "url"), new QName("http://java.sun.com/xml/ns/javaee", "user"), new QName("http://java.sun.com/xml/ns/javaee", "password"), new QName("http://java.sun.com/xml/ns/javaee", "property"), new QName("http://java.sun.com/xml/ns/javaee", "login-timeout"), new QName("http://java.sun.com/xml/ns/javaee", "transactional"), new QName("http://java.sun.com/xml/ns/javaee", "isolation-level"), new QName("http://java.sun.com/xml/ns/javaee", "initial-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "min-pool-size"), new QName("http://java.sun.com/xml/ns/javaee", "max-idle-time"), new QName("http://java.sun.com/xml/ns/javaee", "max-statements"));

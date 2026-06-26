@@ -276,7 +276,7 @@ public class MessageDrivenBean$JAXB
                 timer.add(timerItem);
             } else if (("transaction-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: transactionType
-                TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementText());
+                TransactionType transactionType = parseTransactionType(elementReader, context, elementReader.getElementText().trim());
                 if (transactionType!= null) {
                     messageDrivenBean.transactionType = transactionType;
                 }

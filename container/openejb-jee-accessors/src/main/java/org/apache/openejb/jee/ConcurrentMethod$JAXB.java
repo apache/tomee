@@ -110,7 +110,7 @@ public class ConcurrentMethod$JAXB
                 concurrentMethod.method = method;
             } else if (("lock" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: lock
-                ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementText());
+                ConcurrentLockType lock = parseConcurrentLockType(elementReader, context, elementReader.getElementText().trim());
                 if (lock!= null) {
                     concurrentMethod.lock = lock;
                 }

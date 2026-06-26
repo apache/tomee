@@ -185,7 +185,7 @@ public class Tag$JAXB
                 tag.teiClass = teiClass;
             } else if (("body-content" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: bodyContent
-                BodyContent bodyContent = parseBodyContent(elementReader, context, elementReader.getElementText());
+                BodyContent bodyContent = parseBodyContent(elementReader, context, elementReader.getElementText().trim());
                 if (bodyContent!= null) {
                     tag.bodyContent = bodyContent;
                 }

@@ -126,7 +126,7 @@ public class CmrField$JAXB
                 cmrField.cmrFieldName = cmrFieldName;
             } else if (("cmr-field-type" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: cmrFieldType
-                CmrFieldType cmrFieldType = parseCmrFieldType(elementReader, context, elementReader.getElementText());
+                CmrFieldType cmrFieldType = parseCmrFieldType(elementReader, context, elementReader.getElementText().trim());
                 if (cmrFieldType!= null) {
                     cmrField.cmrFieldType = cmrFieldType;
                 }

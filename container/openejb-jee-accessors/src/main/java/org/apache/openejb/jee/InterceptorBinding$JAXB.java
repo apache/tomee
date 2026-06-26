@@ -155,11 +155,11 @@ public class InterceptorBinding$JAXB
                 interceptorBinding.interceptorOrder = interceptorOrder;
             } else if (("exclude-default-interceptors" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: excludeDefaultInterceptors
-                Boolean excludeDefaultInterceptors = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean excludeDefaultInterceptors = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 interceptorBinding.excludeDefaultInterceptors = excludeDefaultInterceptors;
             } else if (("exclude-class-interceptors" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: excludeClassInterceptors
-                Boolean excludeClassInterceptors = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean excludeClassInterceptors = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 interceptorBinding.excludeClassInterceptors = excludeClassInterceptors;
             } else if (("method" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: method

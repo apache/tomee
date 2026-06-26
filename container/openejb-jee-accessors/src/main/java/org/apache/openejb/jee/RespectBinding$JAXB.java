@@ -92,7 +92,7 @@ public class RespectBinding$JAXB
         for (XoXMLStreamReader elementReader: reader.getChildElements()) {
             if (("enabled" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: enabled
-                Boolean enabled = ("1".equals(elementReader.getElementText())||"true".equals(elementReader.getElementText()));
+                Boolean enabled = ("1".equals(elementReader.getElementText().trim())||"true".equals(elementReader.getElementText().trim()));
                 respectBinding.enabled = enabled;
             } else {
                 context.unexpectedElement(elementReader, new QName("http://java.sun.com/xml/ns/javaee", "enabled"));

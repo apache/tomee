@@ -99,7 +99,7 @@ public class Timeout$JAXB
         for (XoXMLStreamReader elementReader: reader.getChildElements()) {
             if (("timeout" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: timeout
-                Long timeout1 = Long.valueOf(elementReader.getElementText());
+                Long timeout1 = Long.valueOf(elementReader.getElementText().trim());
                 timeout.timeout = timeout1;
             } else if (("unit" == elementReader.getLocalName())&&("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
                 // ELEMENT: unit
