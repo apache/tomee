@@ -91,16 +91,6 @@
         <artifactId>jakartaee-api</artifactId>
         <version>10.0.1</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>mbean-annotation-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -198,26 +188,6 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>mbean-annotation-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-api</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
