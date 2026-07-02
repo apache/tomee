@@ -1039,7 +1039,7 @@
       <dependency>
         <groupId>org.eclipse.persistence</groupId>
         <artifactId>eclipselink</artifactId>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
       </dependency>
       <dependency>
         <groupId>org.fusesource.hawtbuf</groupId>
@@ -1169,22 +1169,22 @@
       <dependency>
         <groupId>org.ow2.asm</groupId>
         <artifactId>asm-analysis</artifactId>
-        <version>9.9.1</version>
+        <version>9.10</version>
       </dependency>
       <dependency>
         <groupId>org.ow2.asm</groupId>
         <artifactId>asm-commons</artifactId>
-        <version>9.9.1</version>
+        <version>9.10</version>
       </dependency>
       <dependency>
         <groupId>org.ow2.asm</groupId>
         <artifactId>asm-tree</artifactId>
-        <version>9.9.1</version>
+        <version>9.10</version>
       </dependency>
       <dependency>
         <groupId>org.ow2.asm</groupId>
         <artifactId>asm-util</artifactId>
-        <version>9.9.1</version>
+        <version>9.10</version>
       </dependency>
       <dependency>
         <groupId>org.ow2.asm</groupId>
