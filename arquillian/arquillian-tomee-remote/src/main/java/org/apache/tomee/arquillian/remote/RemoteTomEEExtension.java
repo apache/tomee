@@ -26,40 +26,28 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RemoteTomEEExtension implements LoadableExtension {
 
     private static final String ADAPTER = "tomee-remote";
-    private static final AtomicBoolean registered = new AtomicBoolean(false);
-    private static final ReentrantLock lock = new ReentrantLock();
 
     @Override
     public void register(final ExtensionBuilder builder) {
         if (ArquillianUtil.isCurrentAdapter(ADAPTER)) {
-
-            final ReentrantLock l = lock;
-            l.lock();
-
+            // Register unconditionally (like EmbeddedTomEEExtension): register() runs once per
+            // Manager bootstrap, so a JVM-static latch skipped every Manager after the first in
+            // the same fork and broke failsafe reruns (TOMEE-4631). The try/catch below guards
+            // against a genuine double-registration within a single builder.
             try {
-
-                if (!registered.getAndSet(true)) {
-
-                    try {
-                        builder.observer(RemoteInitialContextObserver.class);
-                        builder.observer(DeploymentExceptionObserver.class);
-                        builder.service(DeployableContainer.class, RemoteTomEEContainer.class)
-                                                    .service(AuxiliaryArchiveAppender.class, RemoteTomEEEJBEnricherArchiveAppender.class)
-                                                    .service(ResourceProvider.class, DeploymentExceptionProvider.class);
-                    } catch (final IllegalArgumentException e) {
-                        Logger.getLogger(RemoteTomEEExtension.class.getName()).log(Level.WARNING, "RemoteTomEEExtension: " + e.getMessage());
-                    }
-                }
-            } finally {
-                l.unlock();
+                builder.observer(RemoteInitialContextObserver.class);
+                builder.observer(DeploymentExceptionObserver.class);
+                builder.service(DeployableContainer.class, RemoteTomEEContainer.class)
+                                            .service(AuxiliaryArchiveAppender.class, RemoteTomEEEJBEnricherArchiveAppender.class)
+                                            .service(ResourceProvider.class, DeploymentExceptionProvider.class);
+            } catch (final IllegalArgumentException e) {
+                Logger.getLogger(RemoteTomEEExtension.class.getName()).log(Level.WARNING, "RemoteTomEEExtension: " + e.getMessage());
             }
         }
     }
