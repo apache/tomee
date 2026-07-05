@@ -52,12 +52,6 @@ public class ClasspathCustomizationTest {
     }
 
     private static String resolveLog4jVersion() {
-        for (final String entry : System.getProperty("java.class.path", "").split(File.pathSeparator)) {
-            if (entry.contains("log4j-api-") && entry.endsWith(".jar")) {
-                final String name = new File(entry).getName();
-                return name.substring("log4j-api-".length(), name.length() - ".jar".length());
-            }
-        }
-        throw new IllegalStateException("log4j-api jar not found on classpath");
+        return ClasspathHelper.getJarVersion("log4j-api");
     }
 }
