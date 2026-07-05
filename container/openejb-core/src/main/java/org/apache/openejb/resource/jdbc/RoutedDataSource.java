@@ -39,8 +39,8 @@ public class RoutedDataSource implements DataSource {
         // no-op
     }
 
-    public RoutedDataSource(final Router router) {
-        delegate = router;
+    public RoutedDataSource(final Router routerDelegate) {
+        delegate = routerDelegate;
     }
 
     public RoutedDataSource(final String router) {
