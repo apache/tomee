@@ -22,7 +22,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -33,8 +32,12 @@ public class ClasspathCustomizationTest {
     @Rule
     public TomEEMavenPluginRule TMPRule = new TomEEMavenPluginRule();
 
+    private static final String LOG4J_VERSION = resolveLog4jVersion();
+
     @Config
-    private final List<String> classpaths = asList("org.apache.logging.log4j:log4j-api:2.6.2", "org.apache.logging.log4j:log4j-jul:2.6.2");
+    private final List<String> classpaths = asList(
+            "org.apache.logging.log4j:log4j-api:" + LOG4J_VERSION,
+            "org.apache.logging.log4j:log4j-jul:" + LOG4J_VERSION);
 
     @Config
     private final File catalinaBase = new File("target/tomee-classpath");
@@ -43,11 +46,18 @@ public class ClasspathCustomizationTest {
     public void log4j2WasCopied() throws Exception {
         final File boot = new File(catalinaBase, "boot");
         assertTrue(boot.isDirectory());
-        assertEquals(2, boot.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.startsWith("log4j-") && name.endsWith("-2.6.2.jar");
+        final File[] log4jJars = boot.listFiles((dir, name) ->
+                name.startsWith("log4j-") && name.endsWith("-" + LOG4J_VERSION + ".jar"));
+        assertEquals(2, log4jJars.length);
+    }
+
+    private static String resolveLog4jVersion() {
+        for (final String entry : System.getProperty("java.class.path", "").split(File.pathSeparator)) {
+            if (entry.contains("log4j-api-") && entry.endsWith(".jar")) {
+                final String name = new File(entry).getName();
+                return name.substring("log4j-api-".length(), name.length() - ".jar".length());
             }
-        }).length);
+        }
+        throw new IllegalStateException("log4j-api jar not found on classpath");
     }
 }
