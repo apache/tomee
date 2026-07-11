@@ -63,9 +63,10 @@ public class MicroProfileHealthChecksEndpoint {
 
 
     private Response toResponse(final Supplier<SmallRyeHealth> health) {
+        SmallRyeHealth resolved = health.get();
         return Response
-            .status(health.get().isDown() ? Response.Status.SERVICE_UNAVAILABLE : Response.Status.OK)
-            .entity(health.get().getPayload())
+            .status(resolved.isDown() ? Response.Status.SERVICE_UNAVAILABLE : Response.Status.OK)
+            .entity(resolved.getPayload())
             .build();
     }
 }
