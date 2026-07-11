@@ -35,11 +35,5 @@
   them. You will also need to set the passwords to something appropriate.
 -->
   <user username="tomee" password="tomee"/>
-
-  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess) -->
-  <!--
-  <role rolename="tomee-admin" />
-  <user username="tomee" password="tomee" roles="tomee-admin,manager-gui" />
-  -->
 </tomcat-users>
 

@@ -51,7 +51,6 @@
         <module>tomee-jdbc</module>
         <module>tomee-jaxrs</module>
         <module>tomee-webapp</module>
-        <module>tomee-webaccess</module>
         <module>tomee-plus-webapp</module>
         <module>tomee-plume-webapp</module>
         <module>tomee-webservices</module>

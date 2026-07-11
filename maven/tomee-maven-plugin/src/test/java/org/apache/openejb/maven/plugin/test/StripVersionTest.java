@@ -42,9 +42,6 @@ public class StripVersionTest {
         return ClasspathHelper.getJarVersion("plexus-utils");
     }
 
-    @Config
-    private final List<String> webapps = singletonList("org.apache.tomee:tomee-webaccess:7.0.0" /*use release to avoid nasty deps*/);
-
     @Config // otherwise they are not copied
     private final boolean persistJavaagents = true;
 
@@ -56,7 +53,7 @@ public class StripVersionTest {
 
     @Test
     public void sironaIsInstalledAndPersisted() throws Exception {
-        for (final String file : asList("javaagent/sirona-javaagent-shaded.jar", "lib/plexus-utils.jar", "webapps/tomee-webaccess.war")) {
+        for (final String file : asList("javaagent/sirona-javaagent-shaded.jar", "lib/plexus-utils.jar")) {
             final File fullFile = new File(catalinaBase, file);
             assertTrue(fullFile.getAbsolutePath(), fullFile.isFile());
         }

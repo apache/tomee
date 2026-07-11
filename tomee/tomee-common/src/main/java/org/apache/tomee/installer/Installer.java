@@ -107,7 +107,6 @@ public class Installer implements InstallerInterface {
         // addJavaeeInEndorsed();
         addTomEEJuli();
 
-        addTomEEAdminConfInTomcatUsers();
         // addTomEELinkToTomcatHome(); // we don't provide tomee GUI anymore
 
         workaroundOnBat();
@@ -133,56 +132,6 @@ public class Installer implements InstallerInterface {
         }
     }
 
-    public void addTomEEAdminConfInTomcatUsers() {
-        addTomEEAdminConfInTomcatUsers(false);
-    }
-
-    public void addTomEEAdminConfInTomcatUsers(final boolean securityActivated) {
-        // read server.xml
-        final String tomcatUsersXml = Installers.readAll(paths.getTomcatUsersXml(), alerts);
-
-        // server xml will be null if we couldn't read the file
-        if (tomcatUsersXml == null) {
-            return;
-        }
-
-        if (tomcatUsersXml.contains("tomee-admin")) {
-            alerts.addWarning("Can't add tomee user to tomcat-users.xml");
-            return;
-        }
-
-        // if we can't backup the file, do not modify it
-        if (!Installers.backup(paths.getTomcatUsersXml(), alerts)) {
-            return;
-        }
-
-        // add our listener
-        final String roleUserTags =
-                "  <role rolename=\"tomee-admin\" />\n" +
-                        "  <user username=\"tomee\" password=\"tomee\" roles=\"tomee-admin,manager-gui\" />\n";
-        final String content;
-        if (!securityActivated) {
-            content =
-                    "  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess) -->\n" +
-                            "  <!--\n" +
-                            roleUserTags +
-                            "  -->\n" +
-                            "</tomcat-users>\n";
-        } else {
-            content =
-                    "  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess)\n -->" +
-                            roleUserTags +
-                            "</tomcat-users>\n";
-
-        }
-        final String newTomcatUsers = tomcatUsersXml.replace("</tomcat-users>", content);
-
-        // overwrite server.xml
-        if (Installers.writeAll(paths.getTomcatUsersXml(), newTomcatUsers, alerts)) {
-            alerts.addInfo("Add tomee user to tomcat-users.xml");
-        }
-    }
-
     public void installFull() {
         installListener("org.apache.tomee.catalina.ServerListener");
         installJavaagent();
@@ -195,7 +144,6 @@ public class Installer implements InstallerInterface {
         addTomEEJuli(); // before moveLibs
         moveLibs();
 
-        addTomEEAdminConfInTomcatUsers();
         // addTomEELinkToTomcatHome(); // we don't provide it anymore
 
         workaroundOnBat();
