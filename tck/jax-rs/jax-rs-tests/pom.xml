@@ -159,13 +159,6 @@
                                 <exclude>**/ext/interceptor/reader/interceptorcontext/JAXRSClientIT.java</exclude>
                                 <exclude>**/ext/interceptor/containerwriter/interceptorcontext/JAXRSClientIT.java</exclude>
 
-                                <!-- TODO: UriInfoImpl#getMatchedResourceTemplate() invokes StringUtils from micrometer which we don't ship, remove with CXF 4.2.2 (See https://github.com/apache/cxf/pull/3148)
-                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateSubTest
-                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateOneTest
-                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateTwoPostTest
-                                 ee.jakarta.tck.ws.rs.jaxrs40.ee.rs.core.uriinfo.UriInfo40ClientIT#getMatchedResourceTemplateTwoGetTest
-                                -->
-                                <exclude>**/jaxrs40/ee/rs/core/uriinfo/UriInfo40ClientIT.java</exclude>
                              </excludes>
 
                             <dependenciesToScan>
