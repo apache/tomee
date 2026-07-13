@@ -307,8 +307,8 @@ applicationCurrrency = Euro
 applicationCountry = PT
 23-May-2020 00:35:01.677 INFORMAÇÕES [http-nio-40273-exec-7] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.831 sec
-23-May-2020 00:35:01.848 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke A valid shutdown command was received via the shutdown port. Stopping the Server instance.
-23-May-2020 00:35:01.849 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["http-nio-40273"]
+23-May-2020 00:35:01.858 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+23-May-2020 00:35:01.859 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["http-nio-40273"]
 23-May-2020 00:35:01.862 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping service [Catalina]
 23-May-2020 00:35:01.865 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["http-nio-40273"]
 23-May-2020 00:35:01.867 INFORMAÇÕES [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
