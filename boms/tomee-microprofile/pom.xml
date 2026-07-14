@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>10.2.0-SNAPSHOT</version>
+    <version>10.2.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -719,7 +719,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>commons-dbcp2-shade</artifactId>
-        <version>10.2.0-SNAPSHOT</version>
+        <version>10.2.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
@@ -829,7 +829,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>taglibs-shade</artifactId>
-        <version>10.2.0-SNAPSHOT</version>
+        <version>10.2.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
@@ -1183,7 +1183,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>10.2.0-SNAPSHOT</version>
+      <version>10.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
