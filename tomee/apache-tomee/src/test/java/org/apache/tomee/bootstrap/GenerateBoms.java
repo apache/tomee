@@ -564,7 +564,7 @@ public class GenerateBoms {
                     jar.getName().startsWith("mp-common-") ||
                     jar.getName().startsWith("mp-jwt-") ||
                     jar.getName().startsWith("mbean-annotation-"))) {
-                // Strip the version suffix (e.g. "-10.2.0-SNAPSHOT.jar") to get the artifactId.
+                // Strip the version suffix (e.g. "-10.2.1-SNAPSHOT.jar") to get the artifactId.
                 // Match from the first dash that is followed by a digit so this stays
                 // version-agnostic and no longer needs editing for every minor release.
                 final String artifact = jar.getName().replaceAll("-\\d.*", "");
