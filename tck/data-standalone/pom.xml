@@ -28,8 +28,17 @@
 
     <properties>
         <jakarta.data-tck.version>1.0.1</jakarta.data-tck.version>
-        <!-- Must match the Arquillian version the TCK was built against -->
-        <arquillian.version.tck>1.10.1.Final</arquillian.version.tck>
+        <!--
+            Must match the Arquillian version the Jakarta Data TCK 1.0.1 was built against.
+            Pinned to 1.9.1.Final on purpose: the TCK's StandaloneExtension calls
+            ArquillianExtension.handleTestExecutionException(ExtensionContext, Throwable),
+            which exists up to 1.9.x but was removed in 1.10.0.Final. Running against 1.10.x
+            makes every EntityTests method error with a NoSuchMethodError before any query
+            executes. Do NOT let dependabot bump this past 1.9.x until the TCK is rebuilt
+            against a newer Arquillian. (Regression introduced by the 1.9.1 -> 1.10.1 bump in
+            commit a0346ac309, which went unnoticed because no CI job runs the tck-data profile.)
+        -->
+        <arquillian.version.tck>1.9.1.Final</arquillian.version.tck>
     </properties>
 
     <dependencyManagement>
