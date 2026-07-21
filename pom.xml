@@ -1861,9 +1861,14 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <!--
+        Prefer the modular EclipseLink JPA artifact over the monolithic
+        org.eclipse.persistence:eclipselink uber-jar, which also bundles MOXy and its
+        jakarta.xml.bind.JAXBContextFactory service. See TOMEE-4657.
+      -->
       <dependency>
         <groupId>org.eclipse.persistence</groupId>
-        <artifactId>eclipselink</artifactId>
+        <artifactId>org.eclipse.persistence.jpa</artifactId>
         <version>${version.eclipselink}</version>
       </dependency>
       <dependency>
