@@ -31,9 +31,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.ServletContext;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * TOMEE-4651: Jakarta Tags 3.0 renamed the JSTL taglib URIs to the {@code jakarta.tags.*} form.
@@ -57,8 +61,15 @@ public class TomEETldScannerJakartaTagsTest {
         {"jakarta.tags.sql", "http://java.sun.com/jsp/jstl/sql"},
         {"jakarta.tags.xml", "http://java.sun.com/jsp/jstl/xml"},
         {"jakarta.tags.functions", "http://java.sun.com/jsp/jstl/functions"},
-        {"jakarta.tags.permittedTaglibs", PERMITTED_TAGLIBS_URI},
-        {"jakarta.tags.scriptfree", "http://jakarta.apache.org/taglibs/standard/scriptfree"},
+    };
+
+    /**
+     * The TLV taglibs the spec did not rename -- they must stay reachable under their legacy URIs and
+     * must not gain a {@code jakarta.tags.*} spelling.
+     */
+    private static final String[] NOT_RENAMED = {
+        PERMITTED_TAGLIBS_URI,
+        "http://jakarta.apache.org/taglibs/standard/scriptfree",
     };
 
     private Map<String, TldResourcePath> uris;
@@ -107,6 +118,24 @@ public class TomEETldScannerJakartaTagsTest {
         for (final String[] alias : ALIASES) {
             assertTrue("legacy URI " + alias[1] + " was dropped", uris.containsKey(alias[1]));
         }
+        for (final String uri : NOT_RENAMED) {
+            assertTrue("legacy URI " + uri + " was dropped", uris.containsKey(uri));
+        }
+    }
+
+    /**
+     * Jakarta Tags 3.0 renamed only the five functional taglibs. permittedTaglibs/scriptfree are
+     * Apache-Standard-Taglibs TLVs that kept their URIs, so we must not advertise keys the spec never
+     * defines.
+     */
+    @Test
+    public void tlvTaglibsGetNoJakartaTagsSpelling() throws Exception {
+        givenJstlIsPopulated();
+
+        aliasJakartaTagsUris();
+
+        assertFalse(uris.containsKey("jakarta.tags.permittedTaglibs"));
+        assertFalse(uris.containsKey("jakarta.tags.scriptfree"));
     }
 
     @Test
@@ -155,14 +184,55 @@ public class TomEETldScannerJakartaTagsTest {
     }
 
     /**
+     * The aliases are only useful if {@code scanPlatform()} copies them into the per-deployment map
+     * Jasper actually resolves {@code <%@ taglib uri="..." %>} against. Asserts each alias arrives
+     * there pointing at the same TLD resource as its legacy spelling.
+     * <p>
+     * Note this only covers the {@code shouldSkipJsf()} branch: that method returns true for every
+     * {@code jakarta.faces.*} name unconditionally, so the myfaces-exclude branch below it is
+     * currently unreachable and cannot be driven from a test.
+     */
+    @Test
+    public void scanPlatformForwardsAliasesToTheDeploymentMap() throws Exception {
+        givenJstlIsPopulated();
+
+        aliasJakartaTagsUris();
+
+        final Map<String, TldResourcePath> deployment = scanPlatform();
+
+        for (final String[] alias : ALIASES) {
+            assertTrue(alias[0] + " never reached the deployment map", deployment.containsKey(alias[0]));
+            assertSame(alias[0] + " must resolve to the legacy TLD resource",
+                uris.get(alias[1]), deployment.get(alias[0]));
+        }
+    }
+
+    /**
+     * Invokes the protected {@code scanPlatform()} and returns the per-deployment URI map it
+     * populated -- that map is the one Jasper resolves {@code <%@ taglib uri="..." %>} against.
+     */
+    private Map<String, TldResourcePath> scanPlatform() throws Exception {
+        final TomEETldScanner scanner = new TomEETldScanner(mock(ServletContext.class), false, false, false);
+
+        final Method scanPlatform = TomEETldScanner.class.getDeclaredMethod("scanPlatform");
+        scanPlatform.setAccessible(true);
+        scanPlatform.invoke(scanner);
+
+        return scanner.getUriTldResourcePathMap();
+    }
+
+    /**
      * Simulates {@code populateMyfacesAndJstlData()} having run against the shaded taglibs jar:
      * every legacy URI mapped to a resource path, and the permittedTaglibs validator configured as
      * that jar's TLD configures it.
      */
     private void givenJstlIsPopulated() throws Exception {
-        final URL jar = new URL("file:/fake/taglibs-shade.jar");
+        final URL jar = jstlUrl();
         for (final String[] alias : ALIASES) {
             uris.put(alias[1], new TldResourcePath(jar, null, "META-INF/fake.tld"));
+        }
+        for (final String uri : NOT_RENAMED) {
+            uris.put(uri, new TldResourcePath(jar, null, "META-INF/fake.tld"));
         }
 
         final ValidatorXml validator = new ValidatorXml();
@@ -179,6 +249,22 @@ public class TomEETldScannerJakartaTagsTest {
     private List<String> permittedTaglibs() {
         final TaglibXml taglibXml = taglibs.get(uris.get(PERMITTED_TAGLIBS_URI));
         return Arrays.asList(taglibXml.getValidator().getInitParams().get("permittedTaglibs").split("\n"));
+    }
+
+    /**
+     * The URL the pre-populated JSTL entries carry. Uses the real {@code JSTL_URL} when the shaded
+     * taglibs jar happens to be resolvable, so the identity comparison in {@code scanPlatform()} is
+     * exercised against the production value rather than a stand-in.
+     */
+    private URL jstlUrl() throws Exception {
+        final URL real = staticUrl("JSTL_URL");
+        return real != null ? real : new URL("file:/fake/taglibs-shade.jar");
+    }
+
+    private static URL staticUrl(final String name) throws Exception {
+        final Field field = TomEETldScanner.class.getDeclaredField(name);
+        field.setAccessible(true);
+        return (URL) field.get(null);
     }
 
     @SuppressWarnings("unchecked")

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.jsp.tagext.FunctionInfo;
 import jakarta.servlet.jsp.tagext.TagAttributeInfo;
@@ -48,8 +49,8 @@ import static org.apache.openejb.loader.JarLocation.jarLocation;
  * still recognises JSTL entries by the {@code taglibs-standard-jstlel} jar name, whereas the shipped
  * jar is {@code taglibs-shade-*.jar}.
  */
-@SuppressWarnings("PMD") // huge pasted data block, style rules aren't useful here
 public class TomEETldScanner extends TldScanner {
+    private static final Logger LOGGER = Logger.getLogger(TomEETldScanner.class.getName());
     private static final Paths PATHS = new Paths(null);
     private static final URL MYFACES_URL = findJar("myfaces-impl", "org.apache.myfaces.webapp.AbstractFacesInitializer");
     private static final URL JSTL_URL = findJar("taglibs-standard-impl", "jakarta.servlet.jsp.jstl.core.ConditionalTagSupport");
@@ -68,6 +69,11 @@ public class TomEETldScanner extends TldScanner {
      * Keys are the Jakarta Tags 3.0 URIs, values the legacy URI whose TLD resource they resolve to.
      * The pairing mirrors what a Jakarta-native JSTL implementation ships, where both spellings are
      * served by the same TLD.
+     * <p>
+     * Only the five functional taglibs are listed: the spec renamed those alone. The
+     * {@code permittedTaglibs} and {@code scriptfree} TLVs are Apache-Standard-Taglibs extensions that
+     * kept their {@code http://jakarta.apache.org/taglibs/standard/*} URIs, so there is no
+     * {@code jakarta.tags.*} spelling for them to alias.
      */
     private static final Map<String, String> JAKARTA_TAGS_URI_ALIASES = new HashMap<>();
 
@@ -77,8 +83,6 @@ public class TomEETldScanner extends TldScanner {
         JAKARTA_TAGS_URI_ALIASES.put("jakarta.tags.sql", "http://java.sun.com/jsp/jstl/sql");
         JAKARTA_TAGS_URI_ALIASES.put("jakarta.tags.xml", "http://java.sun.com/jsp/jstl/xml");
         JAKARTA_TAGS_URI_ALIASES.put("jakarta.tags.functions", "http://java.sun.com/jsp/jstl/functions");
-        JAKARTA_TAGS_URI_ALIASES.put("jakarta.tags.permittedTaglibs", "http://jakarta.apache.org/taglibs/standard/permittedTaglibs");
-        JAKARTA_TAGS_URI_ALIASES.put("jakarta.tags.scriptfree", "http://jakarta.apache.org/taglibs/standard/scriptfree");
 
         populateMyfacesAndJstlData();
         aliasJakartaTagsUris();
@@ -115,6 +119,7 @@ public class TomEETldScanner extends TldScanner {
     }
 
     //CHECKSTYLE:OFF
+    @SuppressWarnings("PMD") // huge pasted data block, style rules aren't useful here
     private static void populateMyfacesAndJstlData() {
         // pre-populate with shared libraries (myfaces, jstl)
         if (MYFACES_URL != null) {
@@ -7237,16 +7242,27 @@ public class TomEETldScanner extends TldScanner {
      * {@link #populateMyfacesAndJstlData()} already pre-populated for their legacy spellings.
      * <p>
      * Deliberately kept out of the dumped block above, to keep hand-written logic separate from the
-     * pasted data. It is a no-op when the JSTL data is absent (no shaded taglibs in {@code lib/}, i.e.
-     * {@code JSTL_URL == null}), in which case TLD resolution falls back to plain scanning.
+     * pasted data. It is a no-op when nothing was pre-populated (no shaded taglibs in {@code lib/}), in
+     * which case TLD resolution falls back to plain scanning. Once there is data, a legacy URI that
+     * cannot be found is a broken mapping rather than an absent JSTL, and is logged.
      *
      * @see #JAKARTA_TAGS_URI_ALIASES
      */
     private static void aliasJakartaTagsUris() {
+        // nothing was pre-populated (no shaded taglibs in lib/), so there is nothing to alias and a
+        // missing legacy URI below would be expected rather than a broken mapping
+        if (URI_TLD_RESOURCE.isEmpty()) {
+            return;
+        }
+
         for (final Map.Entry<String, String> alias : JAKARTA_TAGS_URI_ALIASES.entrySet()) {
             final String legacyUri = alias.getValue();
             final TldResourcePath path = URI_TLD_RESOURCE.get(legacyUri);
-            if (path == null) { // JSTL not available, nothing to alias
+            if (path == null) {
+                // the data block above no longer carries this legacy URI -- most likely a taglibs
+                // upgrade renamed it. Aliasing silently degrades, so make it observable.
+                LOGGER.warning("Cannot register '" + alias.getKey() + "': no TLD registered for '" + legacyUri
+                    + "'. JSP pages using that URI will fall back to scanning.");
                 continue;
             }
 
@@ -7269,13 +7285,9 @@ public class TomEETldScanner extends TldScanner {
             return;
         }
 
-        final TaglibXml taglibXml = TLD_RESOURCE_TAG_LIB.get(path);
-        if (taglibXml == null || taglibXml.getValidator() == null) {
-            return;
-        }
-
-        final Map<String, String> initParams = taglibXml.getValidator().getInitParams();
-        final String permitted = initParams == null ? null : initParams.get("permittedTaglibs");
+        // the permittedTaglibs TLD always declares a validator, and ValidatorXml always has init params
+        final ValidatorXml validator = TLD_RESOURCE_TAG_LIB.get(path).getValidator();
+        final String permitted = validator.getInitParams().get("permittedTaglibs");
         if (permitted == null) {
             return;
         }
@@ -7287,7 +7299,7 @@ public class TomEETldScanner extends TldScanner {
                 permittedUris.add(alias.getKey());
             }
         }
-        taglibXml.getValidator().addInitParam("permittedTaglibs", String.join("\n", permittedUris));
+        validator.addInitParam("permittedTaglibs", String.join("\n", permittedUris));
     }
 
     private static URL findJar(final String s, final String api) {
