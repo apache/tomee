@@ -43,15 +43,20 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!--
+      Use the modular EclipseLink JPA artifact rather than the monolithic
+      org.eclipse.persistence:eclipselink uber-jar. The uber-jar also bundles MOXy,
+      which registers a jakarta.xml.bind.JAXBContextFactory service and wins the
+      ServiceLoader lookup over the JAXB RI. MOXy cannot unmarshal through the SAX
+      UnmarshallerHandler chain Apache BVal uses, which breaks every Bean Validation
+      XML configuration path on Plume. Plume needs a JPA provider, not a JAXB one.
+      See TOMEE-4657.
+    -->
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
-      <artifactId>eclipselink</artifactId>
+      <artifactId>org.eclipse.persistence.jpa</artifactId>
       <version>${version.eclipselink}</version>
       <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.persistence</groupId>
-          <artifactId>jakarta.persistence</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>org.eclipse.persistence</groupId>
           <artifactId>jakarta.persistence</artifactId>
@@ -67,14 +72,6 @@
         <exclusion>
           <groupId>org.eclipse.parsson</groupId>
           <artifactId>jakarta.json</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-xjc</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
