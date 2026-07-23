@@ -691,6 +691,9 @@ class AppInfoBuilder {
                 info.jtaDataSource = persistenceUnit.getJtaDataSource();
                 info.nonJtaDataSource = persistenceUnit.getNonJtaDataSource();
 
+                info.qualifiers.addAll(persistenceUnit.getQualifier());
+                info.scope = persistenceUnit.getScope();
+
                 info.jarFiles.addAll(persistenceUnit.getJarFile());
                 info.classes.addAll(persistenceUnit.getClazz());
                 info.mappingFiles.addAll(persistenceUnit.getMappingFile());
@@ -703,6 +706,21 @@ class AppInfoBuilder {
                 info.properties.putAll(persistenceUnit.getProperties());
 
                 PersistenceProviderProperties.apply(appModule, info);
+
+                // Jakarta Persistence 3.2: these properties override the corresponding XML elements
+                final String qualifiersProperty = info.properties.getProperty("jakarta.persistence.qualifiers");
+                if (qualifiersProperty != null) {
+                    info.qualifiers.clear();
+                    for (final String qualifier : qualifiersProperty.split(",")) {
+                        if (!qualifier.isBlank()) {
+                            info.qualifiers.add(qualifier.trim());
+                        }
+                    }
+                }
+                final String scopeProperty = info.properties.getProperty("jakarta.persistence.scope");
+                if (scopeProperty != null) {
+                    info.scope = scopeProperty;
+                }
 
 
                 // Persistence Unit Root Url

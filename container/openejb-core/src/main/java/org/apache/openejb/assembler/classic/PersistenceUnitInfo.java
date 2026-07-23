@@ -27,6 +27,9 @@ public class PersistenceUnitInfo extends InfoObject {
     public String id;
     public String name;
     public String provider;
+    // Jakarta Persistence 3.2 CDI integration: <qualifier>/<scope> from persistence.xml
+    public final List<String> qualifiers = new ArrayList<>();
+    public String scope;
     public String transactionType;
     public String jtaDataSource;
     public String nonJtaDataSource;
