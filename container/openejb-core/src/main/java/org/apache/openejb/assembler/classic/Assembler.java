@@ -1100,6 +1100,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 return appContext;
             } catch (final ValidationException | DeploymentException ve) {
+                // these are not wrapped, but the partially deployed application still has to be
+                // rolled back or its deployment ids stay registered and make the next app reusing
+                // one of them fail with a DuplicateDeploymentIdException (TOMEE-4655)
+                try {
+                    destroyApplication(appInfo);
+                } catch (final Exception e1) {
+                    logger.debug("createApplication.undeployFailed", e1, appInfo.path);
+                }
                 throw ve;
             } catch (final Throwable t) {
                 try {
