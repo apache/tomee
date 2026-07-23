@@ -1094,7 +1094,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.info("createApplication.success", appInfo.path);
 
                 //required by spec EE.5.3.4
-                if(setAppNamingContextReadOnly(allDeployments)) {
+                if(setAppNamingContextReadOnly(appContext, allDeployments)) {
                     logger.info("createApplication.naming", appInfo.path);
                 }
 
@@ -1117,20 +1117,31 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    boolean setAppNamingContextReadOnly(final List<BeanContext> allDeployments) {
-        if("true".equals(SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "false"))) {
+    boolean setAppNamingContextReadOnly(final AppContext appContext, final List<BeanContext> allDeployments) {
+        if("true".equals(SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "true"))) {
             for(BeanContext beanContext : allDeployments) {
-                Context ctx = beanContext.getJndiContext();
-             
-                if(IvmContext.class.isInstance(ctx)) {
-                    IvmContext.class.cast(ctx).setReadOnly(true);
-                } else if(ContextHandler.class.isInstance(ctx)) {
-                    ContextHandler.class.cast(ctx).setReadOnly();
+                markReadOnly(beanContext.getJndiContext());
+            }
+
+            // servlets, JSF beans and other web components resolve java:comp/java:module/java:app through the
+            // web and app contexts rather than through a BeanContext, so they need the same treatment
+            if(appContext != null) {
+                for(final WebContext webContext : appContext.getWebContexts()) {
+                    markReadOnly(webContext.getJndiEnc());
                 }
+                markReadOnly(appContext.getAppJndiContext());
             }
             return true;
         }
         return false;
+    }
+
+    private static void markReadOnly(final Context ctx) {
+        if(IvmContext.class.isInstance(ctx)) {
+            IvmContext.class.cast(ctx).setReadOnly(true);
+        } else if(ContextHandler.class.isInstance(ctx)) {
+            ContextHandler.class.cast(ctx).setReadOnly();
+        }
     }
 
     private List<String> getDuplicates(final AppInfo appInfo) {
