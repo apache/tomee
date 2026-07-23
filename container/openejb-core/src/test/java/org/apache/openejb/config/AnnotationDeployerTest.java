@@ -25,6 +25,9 @@ import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Filter;
+import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.TransactionSupportType;
 import org.apache.openejb.jee.WebApp;
@@ -494,6 +497,43 @@ public class AnnotationDeployerTest {
         public void setMyNumber(final int myNumber) {
             this.myNumber = myNumber;
         }
+    }
+
+    /**
+     * TOMEE-4642: a servlet, filter or listener class named in web.xml but not packaged in the war
+     * must not abort the deployment of the whole web module.
+     */
+    @Test
+    public void missingServletFilterAndListenerClassesDoNotFailDeployment() throws Exception {
+        final WebApp webApp = new WebApp();
+        webApp.setContextRoot("/");
+        webApp.setId("web");
+        webApp.setVersion("2.5");
+
+        final Servlet servlet = new Servlet();
+        servlet.setServletName("TestServlet1");
+        servlet.setServletClass("org.apache.openejb.config.missing.TestServlet1");
+        webApp.getServlet().add(servlet);
+
+        final Filter filter = new Filter();
+        filter.setFilterName("AddFilterString");
+        filter.setFilterClass("org.apache.openejb.config.missing.AddFilterString");
+        webApp.getFilter().add(filter);
+
+        final Listener listener = new Listener();
+        listener.setListenerClass("org.apache.openejb.config.missing.MissingListener");
+        webApp.getListener().add(listener);
+
+        WebModule webModule = new WebModule(webApp, webApp.getContextRoot(), Thread.currentThread().getContextClassLoader(), "myapp", webApp.getId());
+        webModule.setFinder(new AnnotationFinder(new ClassesArchive()).link());
+
+        final AnnotationDeployer annotationDeployer = new AnnotationDeployer();
+        webModule = annotationDeployer.deploy(webModule);
+
+        // the declarations are kept as-is, they are simply not resolved for annotation scanning
+        assertEquals(1, webModule.getWebApp().getServlet().size());
+        assertEquals(1, webModule.getWebApp().getFilter().size());
+        assertEquals(1, webModule.getWebApp().getListener().size());
     }
 
     @Test
