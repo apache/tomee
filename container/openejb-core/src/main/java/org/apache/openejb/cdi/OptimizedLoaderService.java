@@ -127,6 +127,7 @@ public class OptimizedLoaderService implements LoaderService {
         }
 
         list.add(new org.apache.openejb.cdi.concurrency.ConcurrencyCDIExtension());
+        list.add(new org.apache.openejb.cdi.persistence.JpaCDIExtension());
 
         final Collection<Extension> extensionCopy = new ArrayList<>(list);
 

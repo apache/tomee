@@ -82,6 +82,8 @@ import java.util.Properties;
 @XmlType(name = "", propOrder = {
     "description",
     "provider",
+    "qualifier",
+    "scope",
     "jtaDataSource",
     "nonJtaDataSource",
     "mappingFile",
@@ -99,6 +101,10 @@ public class PersistenceUnit {
 
     protected String description;
     protected String provider;
+    @XmlElement(name = "qualifier")
+    protected List<String> qualifier;
+    @XmlElement(name = "scope")
+    protected String scope;
     @XmlElement(name = "jta-data-source")
     protected String jtaDataSource;
     @XmlElement(name = "non-jta-data-source")
@@ -172,6 +178,21 @@ public class PersistenceUnit {
 
     public void setProvider(final Class value) {
         setProvider(value == null ? null : value.getName());
+    }
+
+    public List<String> getQualifier() {
+        if (qualifier == null) {
+            qualifier = new ArrayList<>();
+        }
+        return this.qualifier;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(final String value) {
+        this.scope = value;
     }
 
     public String getJtaDataSource() {
