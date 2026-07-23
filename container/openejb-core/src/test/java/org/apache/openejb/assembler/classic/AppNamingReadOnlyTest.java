@@ -43,10 +43,10 @@ public class AppNamingReadOnlyTest extends TestCase {
         System.setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, Boolean.TRUE.toString());
         try {
         	List<BeanContext> mockBeanContextsList = getMockBeanContextsList();
-        	
+
         	Assembler assembler = new Assembler();
-        	assembler.setAppNamingContextReadOnly(mockBeanContextsList);
-        	
+        	assembler.setAppNamingContextReadOnly(null, mockBeanContextsList);
+
         	Context beanNamingContext = mockBeanContextsList.get(0).getJndiContext();
         	//may return null or throw exception depending on openejb.jndiExceptionOnFailedWrite value;
         	//this test is not intended to test read-only behavior (null/exception); it should check whether naming context is marked as read only 
@@ -68,18 +68,45 @@ public class AppNamingReadOnlyTest extends TestCase {
         }
     }
     
-    //check TOMEE behavior is backward compatible
-    public void testAppNamingContextWritableByDefault() throws SystemException, URISyntaxException, NamingException {
+    //read-only is the spec-mandated default (EE.5.3.4, Enterprise Beans 10.4.4)
+    public void testAppNamingContextReadOnlyByDefault() throws SystemException, URISyntaxException {
 
-    	List<BeanContext> mockBeanContextsList = getMockBeanContextsList();
-    	
-    	Assembler assembler = new Assembler();
-    	assembler.setAppNamingContextReadOnly(mockBeanContextsList);
-    	
-    	Context beanNamingContext = mockBeanContextsList.get(0).getJndiContext();
-		Context subContext = beanNamingContext.createSubcontext("sub");
-		
-		assertNotNull(subContext);
+        List<BeanContext> mockBeanContextsList = getMockBeanContextsList();
+
+        Assembler assembler = new Assembler();
+        assertTrue(assembler.setAppNamingContextReadOnly(null, mockBeanContextsList));
+
+        Context beanNamingContext = mockBeanContextsList.get(0).getJndiContext();
+        try {
+            assertNull(beanNamingContext.createSubcontext("sub"));
+        } catch (OperationNotSupportedException e) {
+            //ok
+        } catch (NamingException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    //the legacy writable behavior is still available as an explicit opt-out
+    public void testAppNamingContextWritableWhenDisabled() throws SystemException, URISyntaxException, NamingException {
+
+        String originalValue = System.getProperty(Assembler.FORCE_READ_ONLY_APP_NAMING);
+        System.setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, Boolean.FALSE.toString());
+        try {
+            List<BeanContext> mockBeanContextsList = getMockBeanContextsList();
+
+            Assembler assembler = new Assembler();
+            assertFalse(assembler.setAppNamingContextReadOnly(null, mockBeanContextsList));
+
+            Context beanNamingContext = mockBeanContextsList.get(0).getJndiContext();
+            assertNotNull(beanNamingContext.createSubcontext("sub"));
+        } finally {
+            if(originalValue == null) {
+                System.clearProperty(Assembler.FORCE_READ_ONLY_APP_NAMING);
+            } else {
+                System.setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, originalValue);
+            }
+            SystemInstance.reset();
+        }
     }
     
     private List<BeanContext> getMockBeanContextsList() throws SystemException, URISyntaxException {
