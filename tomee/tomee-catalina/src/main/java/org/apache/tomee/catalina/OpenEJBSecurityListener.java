@@ -64,7 +64,11 @@ public class OpenEJBSecurityListener implements AsyncListener {
         try {
             exit();
         } finally {
-            requests.remove();
+            try {
+                requests.remove();
+            } finally {
+                TransactionCleanup.clean();
+            }
         }
     }
 
