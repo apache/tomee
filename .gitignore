@@ -8,6 +8,7 @@ target
 *.log
 *.vscode
 *~
+*.jar
 quick.bat
 /tomee/tomee-plume-webapp/overlays/
 /tomee/tomee-plus-webapp/overlays/
