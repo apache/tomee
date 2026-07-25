@@ -158,6 +158,8 @@ public class StickyConnectionStrategyTest {
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");
 
 
+        Thread.sleep(1000L);
+
         String previous = null;
         for (final StandaloneServer ignored : servers.values()) {
 
@@ -186,6 +188,8 @@ public class StickyConnectionStrategyTest {
 
             // Now let's kill that server
             servers.get(name).kill();
+
+            Thread.sleep(1000L);
         }
 
         logger.info("All Servers Shutdown");
@@ -210,6 +214,7 @@ public class StickyConnectionStrategyTest {
         logger.info(String.format("Starting %s server", server.getProperties().get("name")));
 
         server.start(1, TimeUnit.MINUTES);
+        Thread.sleep(1000L);
 
         logger.info("Performing one more invocation");
 
