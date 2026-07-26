@@ -31,7 +31,7 @@
   <properties>
     <wiremock.version>3.13.1</wiremock.version>
     <!-- WireMock 3.x and the MP Rest Client TCK's SSE HttpSseServer run on Jetty 11. -->
-    <version.jetty11>11.0.24</version.jetty11>
+    <version.jetty11>12.0.36</version.jetty11>
   </properties>
 
   <build>

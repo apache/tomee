@@ -144,7 +144,7 @@
     <version.tomee-quartz-shade>2.5.1</version.tomee-quartz-shade>
     <version.xbean>4.31</version.xbean>
     <version.groovy>2.4.21</version.groovy>
-    <version.jetty>12.1.8</version.jetty>
+    <version.jetty>12.0.36</version.jetty>
     <version.ehcache>3.12.0</version.ehcache>
     <junit.version>4.13.2</junit.version>
     <junit.jupiter.version>6.1.1</junit.jupiter.version>
