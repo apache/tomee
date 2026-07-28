@@ -35,6 +35,7 @@ import org.apache.openejb.Extensions;
 import org.apache.openejb.Injection;
 import org.apache.openejb.JndiConstants;
 import org.apache.openejb.MethodContext;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
@@ -835,6 +836,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
+                //required by spec EE.5.3.4, applied once the deployments exist - see setAppNamingContextReadOnly
+                appContext.setReadOnlyAppNamingContext(isReadOnlyAppNaming(appInfo));
+                // isSkip defers the web modules of an ear to the web app builders, so the application
+                // naming context has to stay writable until the last of them has been started
+                appContext.setPendingLateModules(appInfo.webAppAlone ? 0 : appInfo.webApps.size());
                 for (final Entry<Object, Object> entry : appInfo.properties.entrySet()) {
                     if (! Module.class.isInstance(entry.getValue())) {
                         appContext.getProperties().put(entry.getKey(), entry.getValue());
@@ -1093,11 +1099,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, appContext, allDeployments));
                 logger.info("createApplication.success", appInfo.path);
 
-                //required by spec EE.5.3.4
-                if(setAppNamingContextReadOnly(appContext, allDeployments)) {
-                    logger.info("createApplication.naming", appInfo.path);
-                }
-
                 return appContext;
             } catch (final ValidationException | DeploymentException ve) {
                 throw ve;
@@ -1117,29 +1118,59 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    boolean setAppNamingContextReadOnly(final AppContext appContext, final List<BeanContext> allDeployments) {
-        if("true".equals(SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "true"))) {
-            for(BeanContext beanContext : allDeployments) {
-                markReadOnly(beanContext.getJndiContext());
-            }
-
-            // servlets, JSF beans and other web components resolve java:comp/java:module/java:app through the
-            // web and app contexts rather than through a BeanContext, so they need the same treatment
-            if(appContext != null) {
-                for(final WebContext webContext : appContext.getWebContexts()) {
-                    markReadOnly(webContext.getJndiEnc());
-                }
-                markReadOnly(appContext.getAppJndiContext());
-            }
-            return true;
+    /**
+     * Marks the component naming contexts of the deployments that were just created read only, as
+     * required by EE.5.3.4 and Enterprise Beans 10.4.4.
+     *
+     * This runs at the end of {@link #startEjbs} rather than at the end of {@link #createApplication}
+     * on purpose, for two reasons.
+     *
+     * The web modules of an ear are skipped by {@link #isSkip} and deployed later, from
+     * TomcatWebAppBuilder, so marking in createApplication would both miss their java:comp and make
+     * the container's own bindings - JndiBuilder binds app/&lt;module&gt;/&lt;bean&gt; into the app context -
+     * fail with OperationNotSupportedException on that later pass. And the containers themselves bind
+     * comp/EJBContext, comp/WebServiceContext and comp/TimerService into each bean enc while
+     * deploying, which happens in startEjbs, after initEjbs has returned.
+     *
+     * The bean contexts are closed as soon as their own deployment pass is done. The shared
+     * application context has to wait until no further module can bind into it, which for an ear
+     * means its last web module.
+     *
+     * @return true if anything was marked read only
+     */
+    boolean setAppNamingContextReadOnly(final List<BeanContext> allDeployments) {
+        final AppContext appContext = appContextOf(allDeployments);
+        if (appContext == null || !appContext.isReadOnlyAppNamingContext()) {
+            return false;
         }
-        return false;
+
+        for (final BeanContext beanContext : allDeployments) {
+            markReadOnly(beanContext.getJndiContext());
+        }
+
+        if (appContext.lastModuleDeployed()) {
+            markReadOnly(appContext.getAppJndiContext());
+        }
+        return true;
+    }
+
+    /**
+     * The application scoped opt-out wins over the container wide one so that a single legacy
+     * application writing into its own naming context does not force the whole container off the
+     * behaviour the specification requires.
+     */
+    private static boolean isReadOnlyAppNaming(final AppInfo appInfo) {
+        final String globalDefault = SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "true");
+        final String value = appInfo == null
+                ? globalDefault
+                : appInfo.properties.getProperty(FORCE_READ_ONLY_APP_NAMING, globalDefault);
+        return Boolean.parseBoolean(value);
     }
 
     private static void markReadOnly(final Context ctx) {
-        if(IvmContext.class.isInstance(ctx)) {
+        if (IvmContext.class.isInstance(ctx)) {
             IvmContext.class.cast(ctx).setReadOnly(true);
-        } else if(ContextHandler.class.isInstance(ctx)) {
+        } else if (ContextHandler.class.isInstance(ctx)) {
             ContextHandler.class.cast(ctx).setReadOnly();
         }
     }
@@ -1720,7 +1751,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     throw new OpenEJBException("Error starting '" + deployment.getEjbName() + "'.  Exception: " + t.getClass() + ": " + t.getMessage(), t);
                 }
             }
+
+            // the containers bind comp/EJBContext and friends into the bean encs while deploying, so
+            // the naming contexts can only be closed for writing once all of that is done
+            if (setAppNamingContextReadOnly(allDeployments)) {
+                logger.info("createApplication.naming", appContextOf(allDeployments).getId());
+            }
         }
+    }
+
+    private static AppContext appContextOf(final List<BeanContext> allDeployments) {
+        for (final BeanContext beanContext : allDeployments) {
+            final ModuleContext moduleContext = beanContext.getModuleContext();
+            if (moduleContext != null && moduleContext.getAppContext() != null) {
+                return moduleContext.getAppContext();
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")

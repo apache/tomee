@@ -35,6 +35,7 @@ import jakarta.ejb.EJB;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
@@ -71,19 +72,26 @@ public class EmbeddedTomEEContainerTest {
         assertEquals("foo", read);
     }
     
+    /**
+     * EE.5.3.4 and Enterprise Beans 10.4.4 require the component naming context to be read only, so
+     * createSubcontext must not succeed from within a bean. Depending on
+     * openejb.jndiExceptionOnFailedWrite the container either throws
+     * OperationNotSupportedException or ignores the write and returns null; both are refusals, what
+     * must not happen is the subcontext being created.
+     */
     @Test
-    public void testEjbCanCreateSubContextByDefault() throws Exception {
+    public void testEjbCannotCreateSubContextByDefault() throws Exception {
     	String originalValue = System.getProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY);
     	if(originalValue == null) {
     		System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
     	}
         try {
 	        String result = ejb.createSubContext();
-	        assertEquals("Cannot create sub context", "created", result);
+	        assertNotEquals("Sub context creation must be refused on a read-only naming context", "created", result);
         } finally {
         	if(originalValue == null) {
         		System.clearProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY);
-        	} 
+        	}
         }
     }
 }
