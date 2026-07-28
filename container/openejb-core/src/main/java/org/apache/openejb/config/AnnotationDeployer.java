@@ -2016,7 +2016,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     buildAnnotatedRefs(client, annotationFinder, classLoader);
                 } catch (final ClassNotFoundException | NoClassDefFoundError e) {
 
-                    logger.debug("Could not load main class {1} for client module {2} / {3}",
+                    logger.debug("Could not load main class {0} for client module {1} / {2}",
                                  className, clientModule.getJarLocation(), clientModule.getFile().getName());
 
                     /*
@@ -2041,7 +2041,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     clazz = classLoader.loadClass(className);
                     remoteClients.add(clazz);
                 } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-                    logger.debug("Could not load RemoteClient class {1} for client module {2} / {3}",
+                    logger.debug("Could not load RemoteClient class {0} for client module {1} / {2}",
                                  className, clientModule.getJarLocation(), clientModule.getFile().getName());
 
                     throw new OpenEJBException("Unable to load RemoteClient class: " + className, e);
@@ -2058,7 +2058,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     clazz = classLoader.loadClass(className);
                 } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-                    logger.debug("Could not load LocalClient class {1} for client module {2} / {3}",
+                    logger.debug("Could not load LocalClient class {0} for client module {1} / {2}",
                                  className, clientModule.getJarLocation(), clientModule.getFile().getName());
                     throw new OpenEJBException("Unable to load LocalClient class: " + className, e);
                 }
@@ -2189,7 +2189,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             clazz = classLoader.loadClass(application);
                             classes.add(clazz);
                         } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-                            logger.debug("Could not load rest Application class {1} for module {2} / {3}",
+                            logger.debug("Could not load rest Application class {0} for module {1} / {2}",
                                          application, webModule.getJarLocation(), webModule.getFile().getName());
                             throw new OpenEJBException("Unable to load Application class: " + application, e);
                         }
@@ -2365,7 +2365,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             final Class clazz = classLoader.loadClass(tagClass);
                             classes.add(clazz);
                         } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-                            logger.debug("Could not load tag class {1} for web module {2} / {3}",
+                            logger.debug("Could not load tag class {0} for web module {1} / {2}",
                                          tagClass, webModule.getJarLocation(), webModule.getFile().getName());
                             logger.error("Unable to load tag library tag class: " + tagClass);
                         }
@@ -2949,7 +2949,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     clazz = classLoader.loadClass(realClassName(interceptor.getInterceptorClass()));
                 } catch (final ClassNotFoundException e) {
-                    logger.debug("Could not load interceptor class {1} for enterprise beans module {2} / {3}",
+                    logger.debug("Could not load interceptor class {0} for enterprise beans module {1} / {2}",
                                  interceptor.getInterceptorClass(), ejbModule.getJarLocation(), ejbModule.getFile().getName());
 
                     throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass(), e);
@@ -5716,7 +5716,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     clazz = classLoader.loadClass(className);
                     classes.add(clazz);
                 } catch (final ClassNotFoundException e) {
-                    logger.debug("Could not load REST class {1} for web module {2} / {3}",
+                    logger.debug("Could not load REST class {0} for web module {1} / {2}",
                                  className, webModule.getJarLocation(), webModule.getFile().getName());
 
                     throw new OpenEJBException("Unable to load REST class: " + className, e);
