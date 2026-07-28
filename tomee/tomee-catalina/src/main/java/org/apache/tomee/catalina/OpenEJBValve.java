@@ -45,7 +45,6 @@ public class OpenEJBValve extends ValveBase {
                 getNext().invoke(request, response);
             } finally {
                 listener.exit();
-                TransactionCleanup.clean();
             }
         } else {
             request.getAsyncContextInternal().addListener(new OpenEJBSecurityListener(securityService, request));
