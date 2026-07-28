@@ -17,6 +17,7 @@
 package org.apache.tomee.embedded;
 
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 
@@ -27,8 +28,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Status;
+import jakarta.transaction.TransactionManager;
 import jakarta.transaction.UserTransaction;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
@@ -66,9 +69,23 @@ public class UserTransactionLeakTest {
 
             assertEquals("STATUS_NO_TRANSACTION", victim.substring(0, victim.indexOf(" on ")));
 
-            // and must still be able to run a transaction of its own
-            assertEquals("committed", IO.slurp(new URL(base + "/commit")));
+            // and must still be able to run a transaction of its own, with the container default
+            // timeout rather than the 120s the leaker set on this thread
+            assertEquals("committed with the default timeout", IO.slurp(new URL(base + "/commit")));
         }
+    }
+
+    private static final long LEAKED_TIMEOUT_MS = 120 * 1000L;
+
+    /**
+     * Geronimo keeps the effective timeout in a private field of TransactionImpl with no getter,
+     * so reflection is the only way to observe which timeout a transaction actually got. The field
+     * holds an absolute deadline (duration + currentTime), so turn it back into a duration.
+     */
+    private static long timeoutMillisOf(final Object transaction) throws Exception {
+        final Field field = transaction.getClass().getDeclaredField("timeout");
+        field.setAccessible(true);
+        return field.getLong(transaction) - System.currentTimeMillis();
     }
 
     private static String threadOf(final String response) {
@@ -125,8 +142,16 @@ public class UserTransactionLeakTest {
                 // would throw NotSupportedException ("Nested Transactions are not supported")
                 // if the leaked transaction were still associated with this thread
                 ut.begin();
+
+                // if the timeout leaked, this transaction inherits the leaker's 120s instead of
+                // the 600s container default
+                final long timeoutMillis = timeoutMillisOf(SystemInstance.get()
+                        .getComponent(TransactionManager.class).getTransaction());
                 ut.commit();
-                resp.getWriter().write("committed");
+
+                resp.getWriter().write(timeoutMillis <= LEAKED_TIMEOUT_MS
+                        ? "committed with the leaked 120s timeout"
+                        : "committed with the default timeout");
             } catch (final Exception e) {
                 resp.getWriter().write("failed: " + e.getClass().getSimpleName() + " " + e.getMessage());
             }

@@ -34,6 +34,15 @@ import jakarta.transaction.TransactionManager;
  * transaction status. The per thread transaction timeout set via
  * {@link TransactionManager#setTransactionTimeout(int)} leaks the same way.
  *
+ * This runs from {@link OpenEJBSecurityListener.RequestCapturer}, which sits on the Host
+ * pipeline and therefore wraps all of {@code StandardHostValve#invoke}. That placement is
+ * deliberate: the Context pipeline returns before
+ * {@link jakarta.servlet.ServletRequestListener#requestDestroyed}, before the
+ * {@code throwable()}/{@code status()} error handling, and before {@code <error-page>}
+ * servlets and JSPs, which are dispatched through an include rather than a Pipeline. Cleaning
+ * up from the Context pipeline would leave all of those uncovered and would also pre-empt an
+ * application that completes its transaction in {@code requestDestroyed}.
+ *
  * @see <a href="https://issues.apache.org/jira/browse/TOMEE-4652">TOMEE-4652</a>
  */
 public final class TransactionCleanup {
@@ -56,9 +65,7 @@ public final class TransactionCleanup {
         try {
             final Transaction transaction = transactionManager.getTransaction();
             if (transaction != null && transaction.getStatus() != Status.STATUS_NO_TRANSACTION) {
-                LOGGER.warning("Request ended with an active transaction " + transaction
-                    + ", rolling it back to avoid leaking it to the next request on this thread");
-                transactionManager.rollback();
+                rollback(transactionManager, transaction);
             }
         } catch (final Throwable t) {
             LOGGER.error("Failed to roll back the transaction left over by this request", t);
@@ -70,7 +77,35 @@ public final class TransactionCleanup {
             }
         }
 
-        // begin() only resets this once a transaction is actually started, so reset it explicitly
+        resetTimeout(transactionManager);
+    }
+
+    private static void rollback(final TransactionManager transactionManager, final Transaction transaction)
+        throws Exception {
+        // a transaction the reaper already finished is not a leak the application can be blamed
+        // for, so unassociate it just the same but don't shout about it
+        final int status = transaction.getStatus();
+        if (status == Status.STATUS_ROLLEDBACK || status == Status.STATUS_ROLLING_BACK) {
+            LOGGER.debug("Request ended with an already rolled back transaction " + transaction
+                + ", unassociating it from this thread");
+        } else {
+            LOGGER.warning("Request ended with an active transaction " + transaction
+                + ", rolling it back to avoid leaking it to the next request on this thread");
+        }
+        transactionManager.rollback();
+    }
+
+    private static void resetTimeout(final TransactionManager transactionManager) {
+        // begin() only clears the timeout once a transaction is actually started, so a request
+        // that set one without beginning leaves it on the thread.
+        //
+        // This does pin a ThreadLocal entry, which the CoreUserTransaction.resetError change in
+        // this same commit argues against. The tradeoff differs: there is no way to read the
+        // pending timeout back (Geronimo exposes no getter, only the package private
+        // getTransactionTimeoutMilliseconds(long)), so skipping the call when nothing was set is
+        // not an option, and setTransactionTimeout(0) stores a null value rather than an
+        // exception. A null valued entry cannot hold a webapp classloader alive the way a stored
+        // exception's stack trace can, so leaking the wrong timeout is the worse of the two.
         try {
             transactionManager.setTransactionTimeout(0);
         } catch (final Throwable t) {
