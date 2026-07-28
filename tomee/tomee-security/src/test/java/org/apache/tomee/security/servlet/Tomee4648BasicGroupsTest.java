@@ -49,6 +49,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.Arrays.asList;
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -74,14 +75,32 @@ public class Tomee4648BasicGroupsTest extends AbstractTomEESecurityTest {
         assertTrue(body, body.contains("web username: reza"));
         assertTrue(body, body.contains("web user has role \"foo\": true"));
         assertTrue(body, body.contains("web user has role \"bar\": true"));
+        // the store grants foo and bar only, so kaz must not be granted
+        assertTrue(body, body.contains("web user has role \"kaz\": false"));
     }
 
+    /**
+     * {@code src/test/resources/META-INF/beans.xml} is a bare {@code <beans/>} and
+     * {@link AbstractTomEESecurityTest} deploys the whole test-classes tree as a single
+     * webapp, so this store is an active authentication store for every test in the
+     * module. It therefore only ever answers for {@value #CALLER}, a caller that exists
+     * in no other test and in no {@code conf/tomcat-users.xml} entry, and returns
+     * {@code NOT_VALIDATED_RESULT} for anything else so the handler keeps consulting the
+     * remaining stores exactly as it would if this one were not deployed.
+     */
     @ApplicationScoped
     public static class TestIdentityStore implements IdentityStore {
+        private static final String CALLER = "reza";
+
         public CredentialValidationResult validate(final UsernamePasswordCredential credential) {
-            if (credential.compareTo("reza", "secret1")) {
-                return new CredentialValidationResult("reza", new HashSet<>(asList("foo", "bar")));
+            if (!CALLER.equals(credential.getCaller())) {
+                return NOT_VALIDATED_RESULT;
             }
+
+            if (credential.compareTo(CALLER, "secret1")) {
+                return new CredentialValidationResult(CALLER, new HashSet<>(asList("foo", "bar")));
+            }
+
             return INVALID_RESULT;
         }
     }
