@@ -2271,7 +2271,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 // allows loading to be "delayed until the container determines the servlet is
                                 // needed to service a request", so a servlet whose class is absent may simply
                                 // never be used (or be registered programmatically). Let resolution happen later.
-                                logger.warning("Unable to load servlet class: " + servletClass);
+                                // Note this also skips @Resource/@EJB processing for that servlet, so if the
+                                // class does resolve later it comes up without its injections.
+                                logger.warning("Unable to load servlet class: " + servletClass + " for web module "
+                                               + webModule.getJarLocation(), e);
                             } else {
                                 logger.error("servlet " + servletName + " has no servlet-class defined and is not a subclass of Application");
                             }
@@ -2301,9 +2304,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     } catch (final ClassNotFoundException | NoClassDefFoundError e) {
                         logger.debug("Could not load Servlet Filter class {0} for web module {1} / {2}",
                                      filterClass, webModule.getJarLocation(), webModule.getFile().getName());
-                        // A missing filter class must not fail the whole context; as with servlets
-                        // (Jakarta Servlet 6.1, section 2.3.1) an unresolved class is deferred, not fatal here.
-                        logger.warning("Unable to load servlet filter class: " + filterClass);
+                        // Jakarta Servlet 6.1 section 6.2.1 requires the filter to be instantiated before a
+                        // request reaches a resource it is mapped to - i.e. later than this, but unlike a
+                        // servlet it cannot be skipped if it is ever used. So a missing class is very likely a
+                        // real packaging error; log it at error level, but keep it local to the filter rather
+                        // than failing the whole application (the spec's "must fail to deploy" rules cover
+                        // web-fragment ordering conflicts, not unresolvable component classes).
+                        logger.error("Unable to load servlet filter class: " + filterClass + " for web module "
+                                     + webModule.getJarLocation(), e);
                     }
                 }
             }
@@ -2320,9 +2328,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                     } catch (final ClassNotFoundException | NoClassDefFoundError e) {
                         logger.debug("Could not load Servlet listener class {0} for web module {1} / {2}",
                                      listenerClass, webModule.getJarLocation(), webModule.getFile().getName());
-                        // A missing listener class must not fail the whole context; as with servlets
-                        // (Jakarta Servlet 6.1, section 2.3.1) an unresolved class is deferred, not fatal here.
-                        logger.warning("Unable to load servlet listener class: " + listenerClass);
+                        // A declared listener is instantiated at application startup, so - as for filters
+                        // above - a missing class is very likely a real packaging error rather than something
+                        // that can be deferred. Report it at error level but keep the failure local.
+                        logger.error("Unable to load servlet listener class: " + listenerClass + " for web module "
+                                     + webModule.getJarLocation(), e);
                     }
                 }
             }
@@ -2385,8 +2395,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                                         final Class clazz = classLoader.loadClass(handlerClass);
                                         classes.add(clazz);
                                     } catch (final ClassNotFoundException | NoClassDefFoundError e) {
-                                        logger.debug("Could not load web service handler class {1} for web module {2} / {3}",
+                                        logger.debug("Could not load web service handler class {0} for web module {1} / {2}",
                                                      handlerClass, webModule.getJarLocation(), webModule.getFile().getName());
+                                        // Deliberately still fatal, unlike the servlet/filter/listener sites above:
+                                        // a handler chain silently missing a handler would leave the endpoint
+                                        // running with a different (weaker) contract than declared, e.g. dropping
+                                        // a security or logging handler, rather than just disabling one component.
                                         throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
                                     }
                                 }

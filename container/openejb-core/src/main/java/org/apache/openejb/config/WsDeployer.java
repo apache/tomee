@@ -146,8 +146,19 @@ public class WsDeployer implements DynamicDeployer {
                 continue;
             }
 
+            // TOMEE-4642: this runs for every servlet, not just webservice endpoints, so a servlet
+            // class the war does not package must not fail the whole deployment here either.
+            // NoClassDefFoundError is an Error, so the catch below would not cover it.
+            final Class<?> clazz;
             try {
-                final Class<?> clazz = webModule.getClassLoader().loadClass(className);
+                clazz = webModule.getClassLoader().loadClass(className);
+            } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                logger.warning("Unable to load servlet class: " + className + " for web module "
+                               + webModule.getJarLocation() + ", skipping webservice detection for it", e);
+                continue;
+            }
+
+            try {
                 if (JaxWsUtils.isWebService(clazz)) {
                     // add servlet mapping if not already declared
                     ServletMapping servletMapping = servletMappings.get(servlet.getServletName());
@@ -231,7 +242,8 @@ public class WsDeployer implements DynamicDeployer {
                     }
                 }
             } catch (final Exception e) {
-                throw new OpenEJBException("Unable to load servlet class: " + className, e);
+                // the class resolved fine, so this is a genuine webservice configuration problem
+                throw new OpenEJBException("Unable to configure webservice for servlet class: " + className, e);
             }
         }
     }
