@@ -30,6 +30,7 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.naming.Context;
+import javax.naming.NameNotFoundException;
 import javax.naming.OperationNotSupportedException;
 
 /**
@@ -53,8 +54,8 @@ public class JavaCompReadOnlyTest extends TestCase {
     }
 
     public void testCompContextRefusesWrites() throws Exception {
-        final AppContext app = deploy();
         try {
+            final AppContext app = deploy();
             final BeanContext bean = app.getBeanContexts().get(0);
             final Context comp = bean.getJndiContext();
 
@@ -63,33 +64,30 @@ public class JavaCompReadOnlyTest extends TestCase {
             assertWriteRefused(comp, "rename", () -> comp.rename("comp", "renameTo"));
             assertWriteRefused(comp, "unbind", () -> comp.unbind("comp"));
             assertWriteRefused(comp, "destroySubcontext", () -> comp.destroySubcontext("comp"));
+            assertWriteRefused(comp, "createSubcontext", () -> comp.createSubcontext("newName"));
 
-            // createSubcontext either throws or returns null, depending on jndiExceptionOnFailedWrite
-            try {
-                assertNull(comp.createSubcontext("newName"));
-            } catch (final OperationNotSupportedException expected) {
-                // ok
-            }
-
-            // nothing the writes attempted may be observable afterwards
+            // none of the attempted writes may be observable afterwards
             assertNotBound(comp, "newName");
             assertNotBound(comp, "renameTo");
 
-            // and the pre-existing binding must have survived unbind/rename/destroySubcontext
-            assertTrue(comp.lookup("comp") instanceof Context);
+            // and what was already bound must have survived rename, unbind and destroySubcontext
+            assertTrue("comp must still be bound", comp.lookup("comp") instanceof Context);
         } finally {
             SystemInstance.reset();
         }
     }
 
     public void testAppContextRefusesWrites() throws Exception {
-        final AppContext app = deploy();
         try {
+            final AppContext app = deploy();
             final Context appCtx = app.getAppJndiContext();
 
             assertWriteRefused(appCtx, "bind", () -> appCtx.bind("newName", "newValue"));
+            assertWriteRefused(appCtx, "rebind", () -> appCtx.rebind("newName", "newValue"));
+            assertWriteRefused(appCtx, "createSubcontext", () -> appCtx.createSubcontext("newName"));
+
             assertNotBound(appCtx, "newName");
-            assertTrue(appCtx.lookup("app") instanceof Context);
+            assertTrue("app must still be bound", appCtx.lookup("app") instanceof Context);
         } finally {
             SystemInstance.reset();
         }
@@ -99,12 +97,16 @@ public class JavaCompReadOnlyTest extends TestCase {
         void run() throws Exception;
     }
 
+    /**
+     * A read only context may either throw OperationNotSupportedException or silently ignore the
+     * write, depending on openejb.jndiExceptionOnFailedWrite. Both are accepted here; that the write
+     * did not take effect is asserted separately by {@link #assertNotBound}.
+     */
     private void assertWriteRefused(final Context ctx, final String operation, final Write write) {
         try {
             write.run();
-            fail(operation + " should have been refused on a read-only naming context");
         } catch (final OperationNotSupportedException expected) {
-            // ok
+            // ok, the context refused the write outright
         } catch (final Exception e) {
             throw new AssertionError("unexpected exception from " + operation, e);
         }
@@ -113,7 +115,7 @@ public class JavaCompReadOnlyTest extends TestCase {
     private void assertNotBound(final Context ctx, final String name) throws Exception {
         try {
             assertNull(name + " must not be bound", ctx.lookup(name));
-        } catch (final javax.naming.NameNotFoundException expected) {
+        } catch (final NameNotFoundException expected) {
             // ok
         }
     }

@@ -36,89 +36,119 @@ import org.apache.openejb.loader.SystemInstance;
 import junit.framework.TestCase;
 
 public class AppNamingReadOnlyTest extends TestCase {
-	
-	public void testReadOnlyAppNamingContext() throws SystemException, URISyntaxException {
-    	
-        String originalValue = System.getProperty(Assembler.FORCE_READ_ONLY_APP_NAMING);
-        System.setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, Boolean.TRUE.toString());
-        try {
-        	List<BeanContext> mockBeanContextsList = getMockBeanContextsList();
 
-        	Assembler assembler = new Assembler();
-        	assembler.setAppNamingContextReadOnly(null, mockBeanContextsList);
+    private AppContext appContext;
 
-        	Context beanNamingContext = mockBeanContextsList.get(0).getJndiContext();
-        	//may return null or throw exception depending on openejb.jndiExceptionOnFailedWrite value;
-        	//this test is not intended to test read-only behavior (null/exception); it should check whether naming context is marked as read only 
-        	try {
-				Context subContext = beanNamingContext.createSubcontext("sub");
-				assertNull(subContext);
-			} catch (OperationNotSupportedException e) {
-				//ok
-			} catch (NamingException e) {
-				throw new AssertionError();
-			}
-        } finally {
-            if(originalValue == null) {
-                System.clearProperty(Assembler.FORCE_READ_ONLY_APP_NAMING);
-            } else {
-                System.setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, originalValue);
-            }
-            SystemInstance.reset();
-        }
+    @Override
+    protected void tearDown() throws Exception {
+        SystemInstance.reset();
+        super.tearDown();
     }
-    
-    //read-only is the spec-mandated default (EE.5.3.4, Enterprise Beans 10.4.4)
+
+    public void testReadOnlyAppNamingContext() throws SystemException, URISyntaxException {
+        final List<BeanContext> beanContexts = getMockBeanContextsList();
+        appContext.setReadOnlyAppNamingContext(true);
+
+        final Assembler assembler = new Assembler();
+        assertTrue(assembler.setAppNamingContextReadOnly(beanContexts));
+
+        assertWriteRefused(beanContexts.get(0).getJndiContext());
+    }
+
+    // the shared application context must stay writable while further modules can still bind into it
+    public void testAppContextStaysWritableUntilTheLastModule() throws Exception {
+        final List<BeanContext> beanContexts = getMockBeanContextsList();
+        appContext.setReadOnlyAppNamingContext(true);
+        // one web module still to come, as for an ear whose war is started by TomcatWebAppBuilder
+        appContext.setPendingLateModules(1);
+
+        final Assembler assembler = new Assembler();
+        assertTrue(assembler.setAppNamingContextReadOnly(beanContexts));
+
+        // the bean context is closed straight away, it can no longer receive bindings
+        assertWriteRefused(beanContexts.get(0).getJndiContext());
+
+        // but the application context still accepts the container's own bindings, as JndiBuilder
+        // does for the ejb modules of an ear's web modules, which deploy later
+        assertNotNull(appContext.getAppJndiContext().createSubcontext("app/late"));
+
+        // and once the last module is in, it closes too
+        assertTrue(assembler.setAppNamingContextReadOnly(beanContexts));
+        assertWriteRefused(appContext.getAppJndiContext());
+    }
+
+    // an ear with two web modules only closes its application context on the third pass: the one
+    // createApplication does, then one per web module started by the web app builder
+    public void testAppContextWaitsForEveryLateModule() throws Exception {
+        getMockBeanContextsList();
+        appContext.setPendingLateModules(2);
+
+        assertFalse("createApplication pass must not close the app context", appContext.lastModuleDeployed());
+        assertFalse("first web module must not close the app context", appContext.lastModuleDeployed());
+        assertTrue("last web module closes the app context", appContext.lastModuleDeployed());
+        // and it stays closed for any further call
+        assertTrue(appContext.lastModuleDeployed());
+    }
+
+    // a standalone module is fully deployed in one pass, so it closes immediately
+    public void testStandaloneModuleClosesOnTheFirstPass() throws Exception {
+        getMockBeanContextsList();
+        appContext.setPendingLateModules(0);
+
+        assertTrue(appContext.lastModuleDeployed());
+    }
+
+    // read-only is the spec-mandated default (EE.5.3.4, Enterprise Beans 10.4.4)
     public void testAppNamingContextReadOnlyByDefault() throws SystemException, URISyntaxException {
+        final List<BeanContext> beanContexts = getMockBeanContextsList();
+        // the flag is what createApplication derives from the properties, defaulting to true
+        appContext.setReadOnlyAppNamingContext(true);
 
-        List<BeanContext> mockBeanContextsList = getMockBeanContextsList();
+        final Assembler assembler = new Assembler();
+        assertTrue(assembler.setAppNamingContextReadOnly(beanContexts));
 
-        Assembler assembler = new Assembler();
-        assertTrue(assembler.setAppNamingContextReadOnly(null, mockBeanContextsList));
+        assertWriteRefused(beanContexts.get(0).getJndiContext());
+    }
 
-        Context beanNamingContext = mockBeanContextsList.get(0).getJndiContext();
+    // the legacy writable behavior is still available as an explicit opt-out
+    public void testAppNamingContextWritableWhenDisabled() throws SystemException, URISyntaxException, NamingException {
+        final List<BeanContext> beanContexts = getMockBeanContextsList();
+        appContext.setReadOnlyAppNamingContext(false);
+
+        final Assembler assembler = new Assembler();
+        assertFalse(assembler.setAppNamingContextReadOnly(beanContexts));
+
+        assertNotNull(beanContexts.get(0).getJndiContext().createSubcontext("sub"));
+    }
+
+    /**
+     * A read only context either throws OperationNotSupportedException or silently ignores the write,
+     * depending on openejb.jndiExceptionOnFailedWrite. This only checks that the context is marked.
+     */
+    private void assertWriteRefused(final Context context) {
         try {
-            assertNull(beanNamingContext.createSubcontext("sub"));
-        } catch (OperationNotSupportedException e) {
-            //ok
-        } catch (NamingException e) {
+            assertNull(context.createSubcontext("sub"));
+        } catch (final OperationNotSupportedException e) {
+            // ok
+        } catch (final NamingException e) {
             throw new AssertionError(e);
         }
     }
 
-    //the legacy writable behavior is still available as an explicit opt-out
-    public void testAppNamingContextWritableWhenDisabled() throws SystemException, URISyntaxException, NamingException {
-
-        String originalValue = System.getProperty(Assembler.FORCE_READ_ONLY_APP_NAMING);
-        System.setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, Boolean.FALSE.toString());
-        try {
-            List<BeanContext> mockBeanContextsList = getMockBeanContextsList();
-
-            Assembler assembler = new Assembler();
-            assertFalse(assembler.setAppNamingContextReadOnly(null, mockBeanContextsList));
-
-            Context beanNamingContext = mockBeanContextsList.get(0).getJndiContext();
-            assertNotNull(beanNamingContext.createSubcontext("sub"));
-        } finally {
-            if(originalValue == null) {
-                System.clearProperty(Assembler.FORCE_READ_ONLY_APP_NAMING);
-            } else {
-                System.setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, originalValue);
-            }
-            SystemInstance.reset();
-        }
-    }
-    
     private List<BeanContext> getMockBeanContextsList() throws SystemException, URISyntaxException {
-    	IvmContext context = new IvmContext();
-    	
-    	AppContext mockAppContext = new AppContext("appId", SystemInstance.get(),  this.getClass().getClassLoader(), context, context, false);
-    	ModuleContext mockModuleContext =  new ModuleContext("moduleId", new URI(""), "uniqueId", mockAppContext, context, this.getClass().getClassLoader());
-    	BeanContext mockBeanContext = new BeanContext("test", context, mockModuleContext, this.getClass(), this.getClass(), new HashMap<>());
-    	
-    	List<BeanContext> beanContextsList = new ArrayList<>();
-    	beanContextsList.add(mockBeanContext);
-    	
-    	return beanContextsList;
+        final IvmContext beanJndiContext = new IvmContext();
+        final IvmContext appJndiContext = new IvmContext();
+
+        appContext = new AppContext("appId", SystemInstance.get(), this.getClass().getClassLoader(),
+                appJndiContext, appJndiContext, false);
+        final ModuleContext mockModuleContext = new ModuleContext("moduleId", new URI(""), "uniqueId", appContext,
+                beanJndiContext, this.getClass().getClassLoader());
+        final BeanContext mockBeanContext = new BeanContext("test", beanJndiContext, mockModuleContext,
+                this.getClass(), this.getClass(), new HashMap<>());
+
+        final List<BeanContext> beanContextsList = new ArrayList<>();
+        beanContextsList.add(mockBeanContext);
+
+        return beanContextsList;
     }
 }
