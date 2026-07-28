@@ -16,20 +16,33 @@
  */
 package org.apache.tomee.jasper;
 
+import org.apache.jasper.servlet.TldScanner;
 import org.apache.tomcat.util.descriptor.tld.TaglibXml;
+import org.apache.xbean.asm9.ClassReader;
+import org.apache.xbean.asm9.ClassVisitor;
+import org.apache.xbean.asm9.MethodVisitor;
+import org.apache.xbean.asm9.Opcodes;
 import org.apache.tomcat.util.descriptor.tld.TldResourcePath;
 import org.apache.tomcat.util.descriptor.tld.ValidatorXml;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import jakarta.servlet.ServletContext;
 
@@ -50,6 +63,7 @@ import static org.mockito.Mockito.mock;
 public class TomEETldScannerJakartaTagsTest {
 
     private static final String PERMITTED_TAGLIBS_URI = "http://jakarta.apache.org/taglibs/standard/permittedTaglibs";
+    private static final Logger LOGGER = Logger.getLogger(TomEETldScanner.class.getName());
 
     /**
      * Mirrors what a Jakarta-native JSTL implementation ships, where both spellings resolve to the
@@ -76,6 +90,9 @@ public class TomEETldScannerJakartaTagsTest {
     private Map<TldResourcePath, TaglibXml> taglibs;
     private Map<String, TldResourcePath> uriBackup;
     private Map<TldResourcePath, TaglibXml> taglibBackup;
+    /** The JSTL jar {@link #givenJstlIsPopulated()} pretended to find, i.e. a non-null JSTL_URL. */
+    private URL populatedJstlUrl;
+    private Handler logHandler;
 
     @Before
     public void backupStaticState() throws Exception {
@@ -89,6 +106,10 @@ public class TomEETldScannerJakartaTagsTest {
 
     @After
     public void restoreStaticState() {
+        if (logHandler != null) {
+            LOGGER.removeHandler(logHandler);
+            logHandler = null;
+        }
         uris.clear();
         uris.putAll(uriBackup);
         taglibs.clear();
@@ -99,7 +120,7 @@ public class TomEETldScannerJakartaTagsTest {
     public void jakartaTagsUrisAliasTheLegacyJstlResources() throws Exception {
         givenJstlIsPopulated();
 
-        aliasJakartaTagsUris();
+        aliasJakartaTagsUris(populatedJstlUrl);
 
         for (final String[] alias : ALIASES) {
             assertTrue(alias[0] + " was not registered", uris.containsKey(alias[0]));
@@ -113,7 +134,7 @@ public class TomEETldScannerJakartaTagsTest {
     public void legacyUrisKeepWorking() throws Exception {
         givenJstlIsPopulated();
 
-        aliasJakartaTagsUris();
+        aliasJakartaTagsUris(populatedJstlUrl);
 
         for (final String[] alias : ALIASES) {
             assertTrue("legacy URI " + alias[1] + " was dropped", uris.containsKey(alias[1]));
@@ -132,25 +153,36 @@ public class TomEETldScannerJakartaTagsTest {
     public void tlvTaglibsGetNoJakartaTagsSpelling() throws Exception {
         givenJstlIsPopulated();
 
-        aliasJakartaTagsUris();
+        aliasJakartaTagsUris(populatedJstlUrl);
 
         assertFalse(uris.containsKey("jakarta.tags.permittedTaglibs"));
         assertFalse(uris.containsKey("jakarta.tags.scriptfree"));
     }
 
+    /**
+     * The guard has to key off JSTL specifically, not off the map being empty: myfaces is
+     * pre-populated independently, so on a distribution carrying myfaces but no JSTL an emptiness
+     * check would fall through and log a warning for every alias.
+     */
     @Test
     public void aliasingIsANoopWithoutJstl() throws Exception {
-        // no shaded taglibs in lib/ -> nothing was pre-populated, so nothing may be aliased
-        aliasJakartaTagsUris();
+        givenMyfacesIsPopulatedWithoutJstl();
 
-        assertEquals(0, uris.size());
+        final List<String> warnings = captureWarnings();
+        aliasJakartaTagsUris(null);
+
+        for (final String[] alias : ALIASES) {
+            assertFalse(alias[0] + " must not be registered without JSTL", uris.containsKey(alias[0]));
+        }
+        // an emptiness check instead of a JSTL check would fall through to the loop and warn per alias
+        assertEquals("absent JSTL is normal and must stay quiet", 0, warnings.size());
     }
 
     @Test
     public void permittedTaglibsAcceptsBothSpellings() throws Exception {
         givenJstlIsPopulated();
 
-        aliasJakartaTagsUris();
+        aliasJakartaTagsUris(populatedJstlUrl);
 
         final List<String> permitted = permittedTaglibs();
         // the four URIs the shaded TLD restricts pages to, plus their Jakarta Tags equivalents
@@ -169,18 +201,106 @@ public class TomEETldScannerJakartaTagsTest {
     public void aliasingTwiceDoesNotDuplicatePermittedTaglibs() throws Exception {
         givenJstlIsPopulated();
 
-        aliasJakartaTagsUris();
+        aliasJakartaTagsUris(populatedJstlUrl);
         final List<String> once = permittedTaglibs();
-        aliasJakartaTagsUris();
+        aliasJakartaTagsUris(populatedJstlUrl);
 
         assertEquals(once, permittedTaglibs());
     }
 
     @Test
     public void permittedTaglibsIsLeftAloneWithoutJstl() throws Exception {
-        aliasJakartaTagsUris();
+        givenMyfacesIsPopulatedWithoutJstl();
+
+        aliasJakartaTagsUris(null);
 
         assertEquals(0, taglibs.size());
+    }
+
+    /**
+     * The TLV tokenizes {@code permittedTaglibs} with a plain {@code StringTokenizer}, i.e. on any
+     * whitespace. A TLD writing the list space-separated must still be widened.
+     */
+    @Test
+    public void permittedTaglibsHandlesWhitespaceSeparatedLists() throws Exception {
+        givenJstlIsPopulated();
+        validator().addInitParam("permittedTaglibs",
+            "http://java.sun.com/jsp/jstl/core http://java.sun.com/jsp/jstl/fmt");
+
+        aliasJakartaTagsUris(populatedJstlUrl);
+
+        final List<String> permitted = permittedTaglibs();
+        assertTrue("jakarta.tags.core missing", permitted.contains("jakarta.tags.core"));
+        assertTrue("jakarta.tags.fmt missing", permitted.contains("jakarta.tags.fmt"));
+        assertFalse("sql was never permitted", permitted.contains("jakarta.tags.sql"));
+    }
+
+    /**
+     * Pins that the aliasing is wired into the static initialiser -- every other test drives
+     * {@code aliasJakartaTagsUris()} by hand and would stay green if that call were dropped.
+     * <p>
+     * The shaded taglibs jar is not on this module's test classpath, so the initialiser cannot be
+     * observed through its effect on the maps. Assert the call is present in the initialiser's
+     * bytecode instead, which holds regardless of what is resolvable at test time.
+     */
+    @Test
+    public void staticInitialiserRegistersTheAliases() throws Exception {
+        final ClassReader reader = new ClassReader(TomEETldScanner.class.getName());
+        final List<String> calls = new ArrayList<>();
+        reader.accept(new ClassVisitor(Opcodes.ASM9) {
+            @Override
+            public MethodVisitor visitMethod(final int access, final String name, final String descriptor,
+                                             final String signature, final String[] exceptions) {
+                if (!"<clinit>".equals(name)) {
+                    return null;
+                }
+                return new MethodVisitor(Opcodes.ASM9) {
+                    @Override
+                    public void visitMethodInsn(final int opcode, final String owner, final String method,
+                                                final String desc, final boolean isInterface) {
+                        calls.add(method);
+                    }
+                };
+            }
+        }, ClassReader.SKIP_FRAMES);
+
+        assertTrue("aliasJakartaTagsUris() is not called from the static initialiser",
+            calls.contains("aliasJakartaTagsUris"));
+        assertTrue("populateMyfacesAndJstlData() must run before the aliasing",
+            calls.indexOf("populateMyfacesAndJstlData") < calls.indexOf("aliasJakartaTagsUris"));
+    }
+
+    /**
+     * Pins the precedence this change establishes: because {@code TldScanner.scan()} runs
+     * {@code scanPlatform()} first and {@code parseTld()} only registers a URI it does not already
+     * know, the container's alias wins over one an application bundles in {@code WEB-INF/lib}.
+     * <p>
+     * This is a deliberate trade-off rather than an accident -- it matches how the legacy
+     * {@code http://java.sun.com/jsp/jstl/*} URIs have always behaved -- but it does mean bundling a
+     * Jakarta-native JSTL is no longer a way to override the container. Driven against the real
+     * {@code parseTld()} so the assertion tracks Tomcat rather than a restatement of it.
+     */
+    @Test
+    public void containerAliasWinsOverAnApplicationBundledTld() throws Exception {
+        givenJstlIsPopulated();
+        aliasJakartaTagsUris(populatedJstlUrl);
+
+        final TomEETldScanner scanner = new TomEETldScanner(mock(ServletContext.class), true, false, true);
+        final Map<String, TldResourcePath> deployment = scanner.getUriTldResourcePathMap();
+        deployment.putAll(uris);
+        final TldResourcePath containerPath = deployment.get("jakarta.tags.core");
+
+        // an application jar declaring the same URI, parsed the way scanJars() would
+        final File appTld = new File("target/test-classes/jakarta-tags-core.tld");
+        appTld.getParentFile().mkdirs();
+        Files.write(appTld.toPath(), ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<taglib xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"3.0\">"
+            + "<tlib-version>3.0</tlib-version><short-name>c</short-name>"
+            + "<uri>jakarta.tags.core</uri></taglib>").getBytes(StandardCharsets.UTF_8));
+        parseTld(scanner, new TldResourcePath(appTld.toURI().toURL(), null));
+
+        assertSame("an application TLD must not displace the container alias",
+            containerPath, deployment.get("jakarta.tags.core"));
     }
 
     /**
@@ -196,7 +316,7 @@ public class TomEETldScannerJakartaTagsTest {
     public void scanPlatformForwardsAliasesToTheDeploymentMap() throws Exception {
         givenJstlIsPopulated();
 
-        aliasJakartaTagsUris();
+        aliasJakartaTagsUris(populatedJstlUrl);
 
         final Map<String, TldResourcePath> deployment = scanPlatform();
 
@@ -228,6 +348,7 @@ public class TomEETldScannerJakartaTagsTest {
      */
     private void givenJstlIsPopulated() throws Exception {
         final URL jar = jstlUrl();
+        populatedJstlUrl = jar;
         for (final String[] alias : ALIASES) {
             uris.put(alias[1], new TldResourcePath(jar, null, "META-INF/fake.tld"));
         }
@@ -246,9 +367,50 @@ public class TomEETldScannerJakartaTagsTest {
         taglibs.put(uris.get(PERMITTED_TAGLIBS_URI), taglibXml);
     }
 
+    /**
+     * A distribution carrying myfaces but no JSTL: the pre-populated map is non-empty, but none of the
+     * legacy JSTL URIs are in it.
+     */
+    private void givenMyfacesIsPopulatedWithoutJstl() throws Exception {
+        uris.put("http://java.sun.com/jsf/html",
+            new TldResourcePath(new URL("file:/fake/myfaces-impl.jar"), null, "META-INF/myfaces_html.tld"));
+    }
+
+    /**
+     * Collects warnings the scanner emits for the rest of the test; the handler is detached in
+     * {@link #restoreStaticState()}.
+     */
+    private List<String> captureWarnings() {
+        final List<String> warnings = new ArrayList<>();
+        logHandler = new Handler() {
+            @Override
+            public void publish(final LogRecord record) {
+                if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
+                    warnings.add(record.getMessage());
+                }
+            }
+
+            @Override
+            public void flush() {
+                // no-op
+            }
+
+            @Override
+            public void close() {
+                // no-op
+            }
+        };
+        LOGGER.addHandler(logHandler);
+        return warnings;
+    }
+
+    private ValidatorXml validator() {
+        return taglibs.get(uris.get(PERMITTED_TAGLIBS_URI)).getValidator();
+    }
+
     private List<String> permittedTaglibs() {
-        final TaglibXml taglibXml = taglibs.get(uris.get(PERMITTED_TAGLIBS_URI));
-        return Arrays.asList(taglibXml.getValidator().getInitParams().get("permittedTaglibs").split("\n"));
+        // read back the way PermittedTaglibsTLV does, i.e. on any whitespace
+        return Arrays.asList(validator().getInitParams().get("permittedTaglibs").trim().split("\\s+"));
     }
 
     /**
@@ -274,9 +436,25 @@ public class TomEETldScannerJakartaTagsTest {
         return (Map<K, V>) field.get(null);
     }
 
+    private static void parseTld(final TomEETldScanner scanner, final TldResourcePath path) throws Exception {
+        final Method method = TldScanner.class.getDeclaredMethod("parseTld", TldResourcePath.class);
+        method.setAccessible(true);
+        method.invoke(scanner, path);
+    }
+
     private static void aliasJakartaTagsUris() throws Exception {
         final Method method = TomEETldScanner.class.getDeclaredMethod("aliasJakartaTagsUris");
         method.setAccessible(true);
         method.invoke(null);
+    }
+
+    /**
+     * Drives the JSTL-presence guard, which cannot be exercised through the no-arg overload:
+     * {@code JSTL_URL} is {@code static final} and modern JDKs reject reflective writes to it.
+     */
+    private static void aliasJakartaTagsUris(final URL jstlUrl) throws Exception {
+        final Method method = TomEETldScanner.class.getDeclaredMethod("aliasJakartaTagsUris", URL.class);
+        method.setAccessible(true);
+        method.invoke(null, jstlUrl);
     }
 }

@@ -7242,16 +7242,29 @@ public class TomEETldScanner extends TldScanner {
      * {@link #populateMyfacesAndJstlData()} already pre-populated for their legacy spellings.
      * <p>
      * Deliberately kept out of the dumped block above, to keep hand-written logic separate from the
-     * pasted data. It is a no-op when nothing was pre-populated (no shaded taglibs in {@code lib/}), in
-     * which case TLD resolution falls back to plain scanning. Once there is data, a legacy URI that
+     * pasted data. It is a no-op when JSTL was not pre-populated (no shaded taglibs in {@code lib/}), in
+     * which case TLD resolution falls back to plain scanning. Once JSTL is there, a legacy URI that
      * cannot be found is a broken mapping rather than an absent JSTL, and is logged.
+     * <p>
+     * Note this claims the {@code jakarta.tags.*} URIs for the container: {@code TldScanner.scan()}
+     * runs {@code scanPlatform()} first and later registrations are first-writer-wins, so an
+     * application bundling its own Jakarta Tags implementation no longer overrides these. That matches
+     * how the legacy {@code http://java.sun.com/jsp/jstl/*} URIs have always behaved here.
      *
      * @see #JAKARTA_TAGS_URI_ALIASES
      */
     private static void aliasJakartaTagsUris() {
-        // nothing was pre-populated (no shaded taglibs in lib/), so there is nothing to alias and a
-        // missing legacy URI below would be expected rather than a broken mapping
-        if (URI_TLD_RESOURCE.isEmpty()) {
+        aliasJakartaTagsUris(JSTL_URL);
+    }
+
+    /**
+     * @param jstlUrl the resolved JSTL jar, or {@code null} when JSTL is not available
+     */
+    private static void aliasJakartaTagsUris(final URL jstlUrl) {
+        // JSTL was not pre-populated (no shaded taglibs in lib/), so there is nothing to alias and a
+        // missing legacy URI below would be expected rather than a broken mapping. Guard on JSTL
+        // rather than on the map being empty: myfaces is populated independently and would mask this.
+        if (jstlUrl == null) {
             return;
         }
 
@@ -7292,7 +7305,9 @@ public class TomEETldScanner extends TldScanner {
             return;
         }
 
-        final List<String> permittedUris = new ArrayList<>(Arrays.asList(permitted.split("\n")));
+        // PermittedTaglibsTLV tokenizes this with a plain StringTokenizer, i.e. on any whitespace --
+        // splitting on "\n" alone would leave a space-separated list as one unmatchable token
+        final List<String> permittedUris = new ArrayList<>(Arrays.asList(permitted.trim().split("\\s+")));
         for (final Map.Entry<String, String> alias : JAKARTA_TAGS_URI_ALIASES.entrySet()) {
             // only widen the list where the legacy spelling is already permitted, and stay idempotent
             if (permittedUris.contains(alias.getValue()) && !permittedUris.contains(alias.getKey())) {
