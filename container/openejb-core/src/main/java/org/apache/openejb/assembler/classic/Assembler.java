@@ -2414,7 +2414,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final String deploymentID = String.valueOf(deployment.getDeploymentID());
                 try {
                     final Container container = deployment.getContainer();
-                    container.stop(deployment);
+                    // a deployment rolled back before startEjbs never got a container, or
+                    // already lost it to a previous undeploy
+                    if (container != null) {
+                        container.stop(deployment);
+                    }
                 } catch (final Throwable t) {
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 }
@@ -2425,8 +2429,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 final String deploymentID = String.valueOf(bean.getDeploymentID());
                 try {
                     final Container container = bean.getContainer();
-                    container.undeploy(bean);
-                    bean.setContainer(null);
+                    if (container != null) {
+                        container.undeploy(bean);
+                        bean.setContainer(null);
+                    }
                 } catch (final Throwable t) {
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 } finally {
