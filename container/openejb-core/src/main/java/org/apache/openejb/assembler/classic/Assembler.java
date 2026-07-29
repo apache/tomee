@@ -283,7 +283,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String TIMER_STORE_CLASS = "timerStore.class";
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static final String OPENEJB_TIMERS_ON = "openejb.timers.on";
-    static final String FORCE_READ_ONLY_APP_NAMING = "openejb.forceReadOnlyAppNamingContext";
+    public static final String FORCE_READ_ONLY_APP_NAMING = "openejb.forceReadOnlyAppNamingContext";
 
     public static final Class<?>[] VALIDATOR_FACTORY_INTERFACES = new Class<?>[]{ValidatorFactory.class, Serializable.class};
     public static final Class<?>[] VALIDATOR_INTERFACES = new Class<?>[]{Validator.class};
@@ -1155,12 +1155,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     /**
-     * The application scoped opt-out wins over the container wide one so that a single legacy
-     * application writing into its own naming context does not force the whole container off the
-     * behaviour the specification requires.
+     * Off by default: making the component naming context read only is what the specification
+     * requires, but turning it on for everyone would break the applications that write into their
+     * own naming context after deployment. It stays opt-in until that can be a release wide
+     * behaviour change.
+     *
+     * The application scoped setting wins over the container wide one so a single application can
+     * opt in or out without the whole container following it.
      */
     private static boolean isReadOnlyAppNaming(final AppInfo appInfo) {
-        final String globalDefault = SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "true");
+        final String globalDefault = SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "false");
         final String value = appInfo == null
                 ? globalDefault
                 : appInfo.properties.getProperty(FORCE_READ_ONLY_APP_NAMING, globalDefault);
