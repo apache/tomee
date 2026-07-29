@@ -35,11 +35,14 @@ import javax.naming.OperationNotSupportedException;
 
 /**
  * The Enterprise Beans spec (10.4.4) and EE.5.3.4 require the component naming context to be read-only:
- * writes against java:comp and friends must not take effect.
+ * writes against java:comp and friends must not take effect. TomEE only does this when
+ * openejb.forceReadOnlyAppNamingContext is turned on, so the deployments here opt in explicitly.
  */
 public class JavaCompReadOnlyTest extends TestCase {
 
     private AppContext deploy() throws Exception {
+        SystemInstance.get().setProperty(Assembler.FORCE_READ_ONLY_APP_NAMING, Boolean.TRUE.toString());
+
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
 

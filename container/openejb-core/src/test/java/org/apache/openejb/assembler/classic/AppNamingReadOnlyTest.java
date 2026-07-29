@@ -98,10 +98,11 @@ public class AppNamingReadOnlyTest extends TestCase {
         assertTrue(appContext.lastModuleDeployed());
     }
 
-    // read-only is the spec-mandated default (EE.5.3.4, Enterprise Beans 10.4.4)
-    public void testAppNamingContextReadOnlyByDefault() throws SystemException, URISyntaxException {
+    // opting in gives the read only component naming context the specification requires
+    // (EE.5.3.4, Enterprise Beans 10.4.4)
+    public void testAppNamingContextReadOnlyWhenEnabled() throws SystemException, URISyntaxException {
         final List<BeanContext> beanContexts = getMockBeanContextsList();
-        // the flag is what createApplication derives from the properties, defaulting to true
+        // the flag is what createApplication derives from the properties
         appContext.setReadOnlyAppNamingContext(true);
 
         final Assembler assembler = new Assembler();
@@ -110,8 +111,8 @@ public class AppNamingReadOnlyTest extends TestCase {
         assertWriteRefused(beanContexts.get(0).getJndiContext());
     }
 
-    // the legacy writable behavior is still available as an explicit opt-out
-    public void testAppNamingContextWritableWhenDisabled() throws SystemException, URISyntaxException, NamingException {
+    // the naming context stays writable unless the application opts in
+    public void testAppNamingContextWritableByDefault() throws SystemException, URISyntaxException, NamingException {
         final List<BeanContext> beanContexts = getMockBeanContextsList();
         appContext.setReadOnlyAppNamingContext(false);
 
