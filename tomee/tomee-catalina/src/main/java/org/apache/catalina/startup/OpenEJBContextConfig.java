@@ -89,6 +89,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenEJBContextConfig extends ContextConfig {
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
@@ -113,8 +114,10 @@ public class OpenEJBContextConfig extends ContextConfig {
     // per candidate class, and every resolution is a filesystem syscall. Both
     // mappings are stable for the lifetime of a deploy, and this config instance
     // is per context, so they are memoised here rather than recomputed.
-    private final Map<String, File> canonicalFiles = new HashMap<>();
-    private final Map<String, File> urlAsFile = new HashMap<>();
+    // ConcurrentHashMap because parallelAnnotationScanning="true" runs
+    // processAnnotationsUrl on multiple utility-executor threads.
+    private final Map<String, File> canonicalFiles = new ConcurrentHashMap<>();
+    private final Map<String, File> urlAsFile = new ConcurrentHashMap<>();
 
     public OpenEJBContextConfig(final TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
@@ -628,6 +631,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     @Override
     protected synchronized void configureStop() {
         webInfClassesAnnotationsProcessed.clear();
+        // the listener survives context stop/start, so drop the memoised
+        // resolutions too: symlinks/paths may change across a reload, and both
+        // maps otherwise retain ~one entry per class file for the context's life
+        canonicalFiles.clear();
+        urlAsFile.clear();
         super.configureStop();
     }
 
