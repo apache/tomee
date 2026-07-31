@@ -288,6 +288,12 @@ public class StatefulContainer implements RpcContainer {
     public synchronized void undeploy(final BeanContext beanContext) throws OpenEJBException {
         final Data data = (Data) beanContext.getContainerData();
 
+        // Possible the bean was never deployed into the container, e.g. when a
+        // deployment fails before startEjbs and is rolled back again
+        if (data == null) {
+            return;
+        }
+
         final MBeanServer server = LocalMBeanServer.get();
         for (final ObjectName objectName : data.jmxNames) {
             try {
