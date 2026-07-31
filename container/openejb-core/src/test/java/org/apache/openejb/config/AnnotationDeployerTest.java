@@ -20,11 +20,15 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Filter;
+import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.TransactionSupportType;
 import org.apache.openejb.jee.WebApp;
@@ -82,6 +86,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -494,6 +499,82 @@ public class AnnotationDeployerTest {
         public void setMyNumber(final int myNumber) {
             this.myNumber = myNumber;
         }
+    }
+
+    /**
+     * TOMEE-4642: a servlet, filter or listener class named in web.xml but not packaged in the war
+     * must not abort the deployment of the whole web module.
+     */
+    @Test
+    public void missingServletFilterAndListenerClassesDoNotFailDeployment() throws Exception {
+        final WebApp webApp = new WebApp();
+        webApp.setContextRoot("/");
+        webApp.setId("web");
+        webApp.setVersion("2.5");
+
+        final Servlet servlet = new Servlet();
+        servlet.setServletName("TestServlet1");
+        servlet.setServletClass("org.apache.openejb.config.missing.TestServlet1");
+        webApp.getServlet().add(servlet);
+
+        final Filter filter = new Filter();
+        filter.setFilterName("AddFilterString");
+        filter.setFilterClass("org.apache.openejb.config.missing.AddFilterString");
+        webApp.getFilter().add(filter);
+
+        final Listener listener = new Listener();
+        listener.setListenerClass("org.apache.openejb.config.missing.MissingListener");
+        webApp.getListener().add(listener);
+
+        WebModule webModule = new WebModule(webApp, webApp.getContextRoot(), Thread.currentThread().getContextClassLoader(), "myapp", webApp.getId());
+        webModule.setFinder(new AnnotationFinder(new ClassesArchive()).link());
+
+        final AnnotationDeployer annotationDeployer = new AnnotationDeployer();
+        webModule = annotationDeployer.deploy(webModule);
+
+        // the declarations are kept as-is, they are simply not resolved for annotation scanning
+        assertEquals(1, webModule.getWebApp().getServlet().size());
+        assertEquals(1, webModule.getWebApp().getFilter().size());
+        assertEquals(1, webModule.getWebApp().getListener().size());
+    }
+
+    /**
+     * TOMEE-4642: same as above, but driven through the whole deployer chain rather than
+     * AnnotationDeployer alone. WsDeployer is part of that chain whenever wsdl4j is on the
+     * classpath (Plus, Plume, openejb-standalone) and loads every servlet class before testing
+     * whether it is a webservice, so it used to fail the deployment on those distributions even
+     * with AnnotationDeployer fixed.
+     */
+    @Test
+    public void missingServletClassDoesNotFailFullConfiguration() throws Exception {
+        final WebApp webApp = new WebApp();
+        webApp.setContextRoot("/");
+        webApp.setId("web");
+        webApp.setVersion("2.5");
+
+        final Servlet servlet = new Servlet();
+        servlet.setServletName("TestServlet1");
+        servlet.setServletClass("org.apache.openejb.config.missing.TestServlet1");
+        webApp.getServlet().add(servlet);
+
+        final Filter filter = new Filter();
+        filter.setFilterName("AddFilterString");
+        filter.setFilterClass("org.apache.openejb.config.missing.AddFilterString");
+        webApp.getFilter().add(filter);
+
+        final Listener listener = new Listener();
+        listener.setListenerClass("org.apache.openejb.config.missing.MissingListener");
+        webApp.getListener().add(listener);
+
+        final WebModule webModule = new WebModule(webApp, webApp.getContextRoot(),
+                Thread.currentThread().getContextClassLoader(), "myapp", webApp.getId());
+        webModule.setFinder(new AnnotationFinder(new ClassesArchive()).link());
+
+        final WebAppInfo webAppInfo = new ConfigurationFactory().configureApplication(webModule);
+
+        assertNotNull(webAppInfo);
+        assertEquals(1, webAppInfo.servlets.size());
+        assertEquals("TestServlet1", webAppInfo.servlets.iterator().next().servletName);
     }
 
     @Test

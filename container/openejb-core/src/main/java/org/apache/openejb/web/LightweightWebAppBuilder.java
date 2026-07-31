@@ -182,7 +182,16 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
             // listeners
             for (final ListenerInfo listener : webAppInfo.listeners) {
-                final Class<?> clazz = webContext.getClassLoader().loadClass(listener.classname);
+                final Class<?> clazz;
+                try {
+                    clazz = webContext.getClassLoader().loadClass(listener.classname);
+                } catch (final ClassNotFoundException | NoClassDefFoundError e) {
+                    // TOMEE-4642: a listener class the war does not package is reported by the
+                    // deployer and must not abort the rest of the application here either.
+                    LOGGER.error("Unable to load listener class: " + listener.classname
+                                 + " for web application " + webAppInfo.contextRoot, e);
+                    continue;
+                }
                 final Object instance = webContext.newInstance(clazz);
                 if (ServletContextListener.class.isInstance(instance)) {
                     switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
