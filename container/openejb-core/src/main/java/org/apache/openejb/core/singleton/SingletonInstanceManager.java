@@ -213,6 +213,13 @@ public class SingletonInstanceManager {
     public void freeInstance(final ThreadContext callContext) {
         final BeanContext beanContext = callContext.getBeanContext();
         final Data data = (Data) beanContext.getContainerData();
+
+        // Possible the bean was never deployed into the container, e.g. when a
+        // deployment fails before startEjbs and is rolled back again
+        if (data == null) {
+            return;
+        }
+
         final Future<Instance> instanceFuture = data.singleton.get();
 
         // Possible the instance was never created
