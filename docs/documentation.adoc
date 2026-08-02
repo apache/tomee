@@ -93,8 +93,6 @@ reference documentation]
 documentation]
 
 == Tips and Tricks
-* link:installation-drop-in-war.html[Install TomEE using the drop-in
-WAR]
 * link:tip-concurrency.html[Global Concurrency Management]
 * link:tip-weblogic.html[WebLogic Lookup]
 * link:tip-jersey-client.html[Jersey Client]
