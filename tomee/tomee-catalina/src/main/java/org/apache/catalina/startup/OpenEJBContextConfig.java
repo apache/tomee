@@ -89,6 +89,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenEJBContextConfig extends ContextConfig {
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, OpenEJBContextConfig.class);
@@ -108,6 +109,15 @@ public class OpenEJBContextConfig extends ContextConfig {
     // processAnnotationXXX is called for each folder of WEB-INF
     // since we store all classes in WEB-INF we will do it only once so use this boolean to avoid multiple processing
     private Collection<String> webInfClassesAnnotationsProcessed = new ArrayList<>(1);
+
+    // isIncluded() resolves the same module roots and the same web resource once
+    // per candidate class, and every resolution is a filesystem syscall. Both
+    // mappings are stable for the lifetime of a deploy, and this config instance
+    // is per context, so they are memoised here rather than recomputed.
+    // ConcurrentHashMap because parallelAnnotationScanning="true" runs
+    // processAnnotationsUrl on multiple utility-executor threads.
+    private final Map<String, File> canonicalFiles = new ConcurrentHashMap<>();
+    private final Map<String, File> urlAsFile = new ConcurrentHashMap<>();
 
     public OpenEJBContextConfig(final TomcatWebAppBuilder.StandardContextInfo standardContextInfo) {
         logger.debug("OpenEJBContextConfig({0})", standardContextInfo.toString());
@@ -565,7 +575,17 @@ public class OpenEJBContextConfig extends ContextConfig {
                                                  final Map<String,JavaClassCacheEntry> javaClassCache) {
         final WebAppInfo webAppInfo = info.get();
         if (webAppInfo != null && FileResource.class.isInstance(webResource)) {
+            // Tomcat calls this for every web resource, but once every module has been processed
+            // there is nothing left to match against and resolving the resource is wasted work.
+            if (allWebAnnotationsProcessed(webAppInfo)) {
+                return;
+            }
+
             final File file = new File(FileResource.class.cast(webResource).getCanonicalPath());
+            // the path already comes from getCanonicalPath(), so record it as its own canonical
+            // form instead of letting isIncluded() resolve it a second time
+            canonicalFiles.putIfAbsent(file.getPath(), file);
+
             for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
                 if (webInfClassesAnnotationsProcessed.contains(info.name)) {
                     continue;
@@ -611,6 +631,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     @Override
     protected synchronized void configureStop() {
         webInfClassesAnnotationsProcessed.clear();
+        // the listener survives context stop/start, so drop the memoised
+        // resolutions too: symlinks/paths may change across a reload, and both
+        // maps otherwise retain ~one entry per class file for the context's life
+        canonicalFiles.clear();
+        urlAsFile.clear();
         super.configureStop();
     }
 
@@ -724,19 +749,8 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     private boolean isIncluded(final File root, final File clazz) {
-        File file;
-        try { // symb links
-            file = root.getCanonicalFile();
-        } catch (final IOException e) {
-            file = root;
-        }
-
-        File current;
-        try { // symb links and windows long home names
-            current = clazz.getCanonicalFile();
-        } catch (final IOException e) {
-            current = clazz;
-        }
+        final File file = canonical(root); // symb links
+        File current = canonical(clazz); // symb links and windows long home names
         while (current != null && current.exists()) {
             if (current.equals(file)) {
                 final File parent = current.getParentFile();
@@ -751,7 +765,38 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     private boolean isIncludedIn(final String filePath, final File classAsFile) throws MalformedURLException {
-        return isIncluded(URLs.toFile(new URL(filePath)), classAsFile);
+        File root = urlAsFile.get(filePath);
+        if (root == null) {
+            root = URLs.toFile(new URL(filePath));
+            urlAsFile.put(filePath, root);
+        }
+        return isIncluded(root, classAsFile);
+    }
+
+    private boolean allWebAnnotationsProcessed(final WebAppInfo webAppInfo) {
+        for (final ClassListInfo classes : webAppInfo.webAnnotatedClasses) {
+            if (!webInfClassesAnnotationsProcessed.contains(classes.name)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private File canonical(final File file) {
+        final String key = file.getPath();
+        final File cached = canonicalFiles.get(key);
+        if (cached != null) {
+            return cached;
+        }
+
+        File resolved;
+        try {
+            resolved = file.getCanonicalFile();
+        } catch (final IOException e) {
+            resolved = file;
+        }
+        canonicalFiles.put(key, resolved);
+        return resolved;
     }
 
 }
