@@ -295,7 +295,6 @@
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-extension-declarative-config</artifactId>
-      <version>1.62.0-alpha</version>
     </dependency>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
