@@ -192,6 +192,9 @@
     <version.microprofile.impl.health>4.0.4</version.microprofile.impl.health>
     <version.microprofile.impl.openapi>4.2.4</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentelemetry>2.15.1</version.microprofile.impl.opentelemetry>
+    <version.opentelemetry>1.62.0</version.opentelemetry>
+    <version.opentelemetry.instrumentation>2.27.0</version.opentelemetry.instrumentation>
+    <version.opentelemetry.declarative-config>1.62.0-alpha</version.opentelemetry.declarative-config>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <version.jackson>2.22.1</version.jackson>
@@ -1915,6 +1918,22 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>${version.snakeyaml}</version>
+      </dependency>
+      <!-- OpenTelemetry libraries used directly by TomEE modules -->
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-api</artifactId>
+        <version>${version.opentelemetry}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-sdk-extension-declarative-config</artifactId>
+        <version>${version.opentelemetry.declarative-config}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+        <version>${version.opentelemetry.instrumentation}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

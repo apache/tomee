@@ -292,6 +292,11 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-extension-declarative-config</artifactId>
+    </dependency>
+
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
