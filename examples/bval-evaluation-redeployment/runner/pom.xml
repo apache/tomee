@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
-      <version>10.2.1-SNAPSHOT</version>
+      <version>10.3.0-SNAPSHOT</version>
       <type>zip</type>
       <classifier>webprofile</classifier>
       <scope>test</scope>

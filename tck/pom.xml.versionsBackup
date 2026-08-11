@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>tomee-project</artifactId>
+    <groupId>org.apache.tomee</groupId>
+    <version>10.2.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>tck</artifactId>
+  <packaging>pom</packaging>
+  <name>TomEE :: TCK</name>
+
+  <properties>
+    <cdi-tck.version>4.0.13</cdi-tck.version>
+    <jaxrs.tck.version>3.1.5</jaxrs.tck.version>
+    <bval-tck.version>3.0.1</bval-tck.version>
+    <jsonb-tck.version>3.0.0</jsonb-tck.version>
+    <jsonp-tck.version>2.1.1</jsonp-tck.version>
+    <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+  </properties>
+
+  <modules>
+    <module>tck-common</module>
+    <module>cdi-embedded</module>
+    <module>cdi-tomee</module>
+    <module>cdi-signature-test</module>
+    <module>bval-embedded</module>
+    <module>bval-tomee</module>
+    <module>bval-signature-test</module>
+    <module>jsonp-standalone</module>
+    <module>jsonp-signature-test</module>
+    <module>jsonb-standalone</module>
+    <module>jsonb-signature-test</module>
+    <module>concurrency-standalone</module>
+    <module>concurrency-signature-test</module>
+    <module>microprofile-tck</module>
+    <module>jax-rs</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${version.plugin.javadoc}</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
