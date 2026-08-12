@@ -24,3 +24,4 @@ transformer/transformer-0.1.0-SNAPSHOT/
 *.zip
 .claude
 CLAUDE.md
+pom.xml.versionsBackup

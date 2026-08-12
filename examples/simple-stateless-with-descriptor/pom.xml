@@ -70,13 +70,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>10.2.1-SNAPSHOT</version>
+      <version>10.3.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-jee-accessors</artifactId>
-      <version>10.2.1-SNAPSHOT</version>
+      <version>10.3.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
