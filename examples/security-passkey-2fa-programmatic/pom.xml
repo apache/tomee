@@ -20,14 +20,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>security-passkey-2fa-programmatic</artifactId>
-  <version>11.0.0-SNAPSHOT</version>
+  <version>10.3.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>TomEE :: Examples :: Jakarta Security Passkey 2FA (programmatic SecurityContext.authenticate)</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>11.0.0-SNAPSHOT</version.tomee>
+    <version.tomee>10.3.0-SNAPSHOT</version.tomee>
     <!--
       https://github.com/webauthn4j/webauthn4j
       Pinned to the 0.30.x line: it uses Jackson 2.x, matching the Jackson on
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>11.0.0-M1</version>
+      <version>10.0.1</version>
       <scope>provided</scope>
     </dependency>
 
