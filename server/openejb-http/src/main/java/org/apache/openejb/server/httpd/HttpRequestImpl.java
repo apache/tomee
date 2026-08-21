@@ -76,6 +76,8 @@ public class HttpRequestImpl implements HttpRequest {
     private static final String MULTIPART_FORM_DATA = "multipart/form-data";
     private static final String TRANSFER_ENCODING = "Transfer-Encoding";
     private static final String CHUNKED = "chunked";
+    private static final String MAX_BODY_SIZE_PROPERTY = "openejb.http.request.max-body-size";
+    private static final int DEFAULT_MAX_BODY_SIZE = 2 * 1024 * 1024; // bytes, aligned with Tomcat's maxPostSize default
 
     public static final Class<?>[] SERVLET_CONTEXT_INTERFACES = new Class<?>[]{ServletContext.class};
     public static final InvocationHandler SERVLET_CONTEXT_HANDLER = (proxy, method, args) -> null;
@@ -684,6 +686,12 @@ public class HttpRequestImpl implements HttpRequest {
         // or multipart/form-data
         length = parseContentLength();
 
+        final int maxBodySize = getMaxBodySize();
+        if (length > maxBodySize) {
+            throw new IOException("Content-Length " + length + " exceeds the maximum allowed request body size (" +
+                maxBodySize + " bytes), set the '" + MAX_BODY_SIZE_PROPERTY + "' property to raise the limit");
+        }
+
         contentType = getHeader(HttpRequest.HEADER_CONTENT_TYPE);
 
         final boolean hasBody = hasBody();
@@ -725,6 +733,7 @@ public class HttpRequestImpl implements HttpRequest {
         } else if (hasBody && CHUNKED.equals(getHeader(TRANSFER_ENCODING))) {
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+                final byte[] buffer = new byte[4096];
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
                     // read the size line which is in hex
                     String sizeString = line.split(";", 2)[0];
@@ -733,10 +742,19 @@ public class HttpRequestImpl implements HttpRequest {
                     // if size is 0 we are done
                     if (size == 0) break;
 
+                    if (size < 0 || size > maxBodySize - out.size()) {
+                        throw new IOException("Chunked request body exceeds the maximum allowed request body size (" +
+                            maxBodySize + " bytes), set the '" + MAX_BODY_SIZE_PROPERTY + "' property to raise the limit");
+                    }
+
                     // read the chunk and append to byte array
-                    byte[] chunk = new byte[size];
-                    in.readFully(chunk);
-                    out.write(chunk);
+                    int remaining = size;
+                    while (remaining > 0) {
+                        final int len = Math.min(remaining, buffer.length);
+                        in.readFully(buffer, 0, len);
+                        out.write(buffer, 0, len);
+                        remaining -= len;
+                    }
 
                     // read off the trailing new line characters after the chunk
                     in.readLine();
@@ -759,10 +777,18 @@ public class HttpRequestImpl implements HttpRequest {
 
     private byte[] readContent(DataInput in) throws IOException {
         if (length >= 0) {
-            byte[] body = new byte[length];
-            in.readFully(body);
-            return body;
+            final ByteArrayOutputStream out = new ByteArrayOutputStream(Math.min(length, 4096));
+            final byte[] buffer = new byte[4096];
+            int remaining = length;
+            while (remaining > 0) {
+                final int len = Math.min(remaining, buffer.length);
+                in.readFully(buffer, 0, len);
+                out.write(buffer, 0, len);
+                remaining -= len;
+            }
+            return out.toByteArray();
         } else {
+            final int maxBodySize = getMaxBodySize();
             ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
             try {
                 boolean atLineStart = true;
@@ -785,6 +811,11 @@ public class HttpRequestImpl implements HttpRequest {
                         atLineStart = false;
                     }
                     out.write(b);
+
+                    if (out.size() > maxBodySize) {
+                        throw new IOException("Request body exceeds the maximum allowed request body size (" +
+                            maxBodySize + " bytes), set the '" + MAX_BODY_SIZE_PROPERTY + "' property to raise the limit");
+                    }
                 }
             } catch (EOFException e) {
                 // done reading
@@ -792,6 +823,10 @@ public class HttpRequestImpl implements HttpRequest {
             byte[] body = out.toByteArray();
             return body;
         }
+    }
+
+    private static int getMaxBodySize() {
+        return SystemInstance.get().getOptions().get(MAX_BODY_SIZE_PROPERTY, DEFAULT_MAX_BODY_SIZE);
     }
 
     private int parseContentLength() {
