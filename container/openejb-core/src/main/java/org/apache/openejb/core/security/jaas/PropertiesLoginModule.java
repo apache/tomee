@@ -32,6 +32,8 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -112,11 +114,10 @@ public class PropertiesLoginModule implements LoginModule {
 
         final String password = users.getProperty(user);
 
-        if (password == null) {
-            throw new FailedLoginException("User does not exist");
-        }
-        if (!password.equals(new String(tmpPassword))) {
-            throw new FailedLoginException("Password does not match");
+        if (password == null || !MessageDigest.isEqual(
+                password.getBytes(StandardCharsets.UTF_8),
+                new String(tmpPassword).getBytes(StandardCharsets.UTF_8))) {
+            throw new FailedLoginException("Username or password does not match");
         }
 
         users.clear();
