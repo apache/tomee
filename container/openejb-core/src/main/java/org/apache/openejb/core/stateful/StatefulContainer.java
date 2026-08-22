@@ -81,11 +81,11 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
-import java.rmi.dgc.VMID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -496,7 +496,7 @@ public class StatefulContainer implements RpcContainer {
     }
 
     protected Object newPrimaryKey() {
-        return new VMID();
+        return UUID.randomUUID();
     }
 
     protected Object removeEJBObject(final BeanContext beanContext, final Object primKey, final Class callInterface, final Method callMethod, Object[] args, final InterfaceType interfaceType) throws OpenEJBException {

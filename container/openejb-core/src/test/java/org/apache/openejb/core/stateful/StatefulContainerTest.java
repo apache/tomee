@@ -26,9 +26,11 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.LocalInitialContextFactory;
+import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.proxy.ProxyManager;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -47,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.util.UUID;
 
 /**
  * @version $Revision$ $Date$
@@ -148,6 +151,24 @@ public class StatefulContainerTest extends TestCase {
 
     public void testBusinessRemoteInterface() throws Exception {
         testBusinessRemoteInterface(expectedLifecycle);
+    }
+
+    public void testPrimaryKeyIsRandomUuid() throws Exception {
+        final InitialContext ctx = new InitialContext();
+        final RemoteWidget first = (RemoteWidget) ctx.lookup("WidgetBeanRemote");
+        final RemoteWidget second = (RemoteWidget) ctx.lookup("WidgetBeanRemote");
+        try {
+            final Object firstKey = ((BaseEjbProxyHandler) ProxyManager.getInvocationHandler(first)).primaryKey;
+            final Object secondKey = ((BaseEjbProxyHandler) ProxyManager.getInvocationHandler(second)).primaryKey;
+
+            assertTrue("key type", firstKey instanceof UUID);
+            assertTrue("key type", secondKey instanceof UUID);
+            assertEquals("random uuid", 4, ((UUID) firstKey).version());
+            assertFalse("distinct keys", firstKey.equals(secondKey));
+        } finally {
+            first.destroy();
+            second.destroy();
+        }
     }
 
     public void testBusinessLocalInterfaceInTx() throws Exception {
