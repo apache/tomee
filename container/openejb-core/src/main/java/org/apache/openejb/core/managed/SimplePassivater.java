@@ -72,9 +72,7 @@ public class SimplePassivater implements PassivationStrategy {
 
     public void passivate(final Object primaryKey, final Object state) throws SystemException {
         try {
-            final String filename = primaryKey.toString().replace(':', '=');
-
-            final File sessionFile = new File(sessionDirectory, filename);
+            final File sessionFile = sessionFile(primaryKey);
             if (!sessionFile.exists() && !sessionFile.createNewFile()) {
                 throw new Exception("Failed to create passivation file: " + sessionFile.getAbsolutePath());
             }
@@ -105,9 +103,7 @@ public class SimplePassivater implements PassivationStrategy {
     @Override
     public Object activate(final Object primaryKey) throws SystemException {
         try {
-            final String filename = primaryKey.toString().replace(':', '=');
-
-            final File sessionFile = new File(sessionDirectory, filename);
+            final File sessionFile = sessionFile(primaryKey);
 
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
@@ -129,5 +125,15 @@ public class SimplePassivater implements PassivationStrategy {
 
             throw new SystemException(t);
         }
+    }
+
+    private File sessionFile(final Object primaryKey) throws IOException {
+        final String filename = primaryKey.toString().replace(':', '=');
+
+        final File sessionFile = new File(sessionDirectory, filename).getCanonicalFile();
+        if (!sessionDirectory.getCanonicalFile().equals(sessionFile.getParentFile())) {
+            throw new IOException("Invalid session id: " + filename + " does not resolve to a file directly inside the passivation directory");
+        }
+        return sessionFile;
     }
 }
