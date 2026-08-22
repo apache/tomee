@@ -30,10 +30,15 @@ import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
 import java.security.Permissions;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.security.auth.Subject;
+
+import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
+import org.apache.openejb.loader.SystemInstance;
 
 /**
  * @version $Rev$ $Date$
@@ -172,25 +177,6 @@ public abstract class JaccProvider {
         }
     }
 
-    public static class Policy extends java.security.Policy {
-
-        public Policy() throws PolicyContextException, ClassNotFoundException {
-            install();
-        }
-
-        public PermissionCollection getPermissions(final CodeSource codesource) {
-            return get().getPermissions(codesource);
-        }
-
-        public void refresh() {
-            get().refresh();
-        }
-
-        public boolean implies(final ProtectionDomain domain, final Permission permission) {
-            return get().implies(domain, permission);
-        }
-    }
-
     public static boolean isSentinelPolicy(final jakarta.security.jacc.Policy policy) {
         return policy instanceof DefaultPolicy;
     }
@@ -202,43 +188,154 @@ public abstract class JaccProvider {
 
         @Override
         public boolean implies(final Permission permissionToBeChecked, final Subject subject) {
+            final JaccProvider provider = get();
+            if (provider == null) {
+                return false;
+            }
+
             final Principal[] principals = subject == null ? new Principal[0] : subject.getPrincipals().toArray(new Principal[0]);
             final ProtectionDomain protectionDomain = new ProtectionDomain(
                     new CodeSource(null, (Certificate[]) null), null, null, principals);
 
-            final java.security.Policy policy = getPolicyProvider();
-            return policy != null && policy.implies(protectionDomain, permissionToBeChecked);
+            return provider.implies(protectionDomain, permissionToBeChecked);
+        }
+
+        @Override
+        public boolean isExcluded(final Permission permission) {
+            final PolicyConfiguration configuration = currentConfiguration();
+            if (configuration == null) {
+                return false;
+            }
+            final PermissionCollection excluded = configuration.getExcludedPermissions();
+            return excluded != null && excluded.implies(permission);
+        }
+
+        @Override
+        public boolean isUnchecked(final Permission permission) {
+            final PolicyConfiguration configuration = currentConfiguration();
+            if (configuration == null) {
+                return false;
+            }
+            final PermissionCollection unchecked = configuration.getUncheckedPermissions();
+            return unchecked != null && unchecked.implies(permission);
+        }
+
+        @Override
+        public boolean impliesByRole(final Permission permission, final Subject subject) {
+            final PolicyConfiguration configuration = currentConfiguration();
+            if (configuration == null || subject == null) {
+                return false;
+            }
+
+            final Map<String, PermissionCollection> perRolePermissions = configuration.getPerRolePermissions();
+            for (final String role : rolesOf(subject, perRolePermissions.keySet())) {
+                final PermissionCollection permissions = perRolePermissions.get(role);
+                if (permissions != null && permissions.implies(permission)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override
         public PermissionCollection getPermissionCollection(final Subject subject) {
-            final Permissions permissions = new Permissions();
-            final java.security.Policy policy = getPolicyProvider();
-            if (policy == null) {
-                return permissions;
+            final PolicyConfiguration configuration = currentConfiguration();
+            if (configuration == null) {
+                return new Permissions();
             }
 
-            final PermissionCollection providerPermissions =
-                    policy.getPermissions(new CodeSource(null, (Certificate[]) null));
-            if (providerPermissions == null) {
-                return permissions;
-            }
+            final PermissionCollection excluded = copyOf(configuration.getExcludedPermissions());
+            final PermissionCollection permissions = new ExcludingPermissionCollection(excluded);
 
-            final Enumeration<Permission> elements = providerPermissions.elements();
-            while (elements.hasMoreElements()) {
-                permissions.add(elements.nextElement());
+            addAll(permissions, configuration.getUncheckedPermissions());
+
+            final Map<String, PermissionCollection> perRolePermissions = configuration.getPerRolePermissions();
+            if (subject != null) {
+                for (final String role : rolesOf(subject, perRolePermissions.keySet())) {
+                    addAll(permissions, perRolePermissions.get(role));
+                }
             }
+            permissions.setReadOnly();
             return permissions;
+        }
+
+        private static Set<String> rolesOf(final Subject subject, final Set<String> declaredRoles) {
+            final Principal[] principals = subject.getPrincipals().toArray(new Principal[0]);
+            if (principals.length == 0) {
+                return Collections.emptySet();
+            }
+
+            final BasicPolicyConfiguration.RoleResolver roleResolver =
+                    SystemInstance.get().getComponent(BasicPolicyConfiguration.RoleResolver.class);
+            if (roleResolver == null) {
+                return Collections.emptySet();
+            }
+            return roleResolver.getLogicalRoles(principals, declaredRoles);
+        }
+
+        private static void addAll(final PermissionCollection target, final PermissionCollection source) {
+            if (source == null) {
+                return;
+            }
+            final Enumeration<Permission> elements = source.elements();
+            while (elements.hasMoreElements()) {
+                target.add(elements.nextElement());
+            }
+        }
+
+        private static PermissionCollection copyOf(final PermissionCollection source) {
+            final Permissions copy = new Permissions();
+            addAll(copy, source);
+            copy.setReadOnly();
+            return copy;
+        }
+
+        private static PolicyConfiguration currentConfiguration() {
+            final JaccProvider provider = get();
+            if (provider == null) {
+                return null;
+            }
+
+            final PolicyConfiguration configuration = provider.getPolicyConfiguration();
+            try {
+                return configuration != null && configuration.inService() ? configuration : null;
+            } catch (final PolicyContextException e) {
+                return null;
+            }
+        }
+
+        private static final class ExcludingPermissionCollection extends PermissionCollection {
+            private static final long serialVersionUID = 1L;
+
+            private final PermissionCollection excluded;
+            private final Permissions granted = new Permissions();
+
+            private ExcludingPermissionCollection(final PermissionCollection excluded) {
+                this.excluded = excluded;
+            }
+
+            @Override
+            public void add(final Permission permission) {
+                if (isReadOnly()) {
+                    throw new SecurityException("attempt to add a Permission to a readonly PermissionCollection");
+                }
+                granted.add(permission);
+            }
+
+            @Override
+            public boolean implies(final Permission permission) {
+                return !excluded.implies(permission) && granted.implies(permission);
+            }
+
+            @Override
+            public Enumeration<Permission> elements() {
+                return granted.elements();
+            }
         }
     }
 
     private static String normalizeContextID(final String contextID) {
         return contextID == null ? DEFAULT_CONTEXT_ID : contextID;
-    }
-
-    private static java.security.Policy getPolicyProvider() {
-        final java.security.Policy policy = PolicyJDK24.getPolicy();
-        return policy != null ? policy : java.security.Policy.getPolicy();
     }
 
     public abstract PolicyConfiguration getPolicyConfiguration(String contextID, boolean remove) throws PolicyContextException;

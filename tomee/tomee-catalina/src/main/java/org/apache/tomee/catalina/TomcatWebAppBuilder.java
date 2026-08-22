@@ -78,7 +78,6 @@ import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
-import org.apache.openejb.assembler.classic.PolicyContext;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
@@ -608,17 +607,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     } else { // force a normal deployment with lazy building of AppInfo
                         deployWar(standardContext, host, null);
                     }
-
-                    // TODO should we copy the information in the appInfo using the jee object tree or add more to the info tree
-                    // this might then move to the assembler after webapp is deployed so we can read information from info tree
-                    // and build up all policy context from there instead of from Tomcat internal objects
-                    final TomcatSecurityConstaintsToJaccPermissionsTransformer transformer =
-                        new TomcatSecurityConstaintsToJaccPermissionsTransformer(standardContext);
-                    final PolicyContext policyContext = transformer.createResourceAndDataPermissions();
-
-                    final JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
-                    jaccPermissionsBuilder.install(policyContext);
-
                 }
             }
         } finally { // cleanup temp var passing
@@ -1738,6 +1726,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return;
         }
         contextInfo.module = null; // shouldn't be there after startup (actually we shouldn't need it from info tree but our scanning does)
+
+        // build the Jakarta Authorization policy context from the merged Tomcat security
+        // constraints (web.xml and @ServletSecurity); runs here so it covers every deployment
+        // path, including wars Tomcat picks up from webapps/
+        try {
+            final TomcatSecurityConstaintsToJaccPermissionsTransformer transformer =
+                new TomcatSecurityConstaintsToJaccPermissionsTransformer(standardContext);
+            new JaccPermissionsBuilder().install(transformer.createResourceAndDataPermissions());
+        } catch (final Exception e) {
+            LOGGER.error("Could not install Jakarta Authorization permissions for " + standardContext.getName(), e);
+        }
 
         final String id = getId(standardContext);
         WebAppInfo currentWebAppInfo = null;

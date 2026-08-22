@@ -30,6 +30,7 @@ import jakarta.security.jacc.EJBRoleRefPermission;
 import jakarta.security.jacc.PolicyConfiguration;
 import jakarta.security.jacc.PolicyConfigurationFactory;
 import jakarta.security.jacc.PolicyContextException;
+import jakarta.security.jacc.PolicyFactory;
 import java.lang.reflect.Method;
 import java.security.Permission;
 import java.security.PermissionCollection;
@@ -60,7 +61,10 @@ public class JaccPermissionsBuilder {
             final PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 
             // final boolean needsCommit = factory.inService(contextID);
-            final PolicyConfiguration policy = factory.getPolicyConfiguration(contextID, false);
+            // open with remove=true: each install carries the complete permission set for its
+            // policy context, so a re-install (e.g. a context reload with changed constraints)
+            // replaces the previous permissions instead of accumulating them
+            final PolicyConfiguration policy = factory.getPolicyConfiguration(contextID, true);
 
             policy.addToExcludedPolicy(policyContext.getExcludedPermissions());
 
@@ -74,6 +78,16 @@ public class JaccPermissionsBuilder {
             // if (needsCommit) {
                 policy.commit();
             // }
+
+            // A committed configuration is not visible to a Policy until that Policy
+            // has had an opportunity to assimilate its in-service configurations.
+            final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+            if (policyFactory != null) {
+                final jakarta.security.jacc.Policy selectedPolicy = policyFactory.getPolicy(contextID);
+                if (selectedPolicy != null) {
+                    selectedPolicy.refresh();
+                }
+            }
         } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("PolicyConfigurationFactory class not found", e);
 
