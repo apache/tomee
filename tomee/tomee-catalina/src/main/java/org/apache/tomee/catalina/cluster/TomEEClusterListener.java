@@ -22,8 +22,8 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
@@ -31,9 +31,6 @@ import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.File;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -103,8 +100,8 @@ public class TomEEClusterListener extends ClusterListener {
         return SystemInstance.get().getComponent(Assembler.class).isDeployed(file);
     }
 
-    private static Deployer deployer() throws NamingException {
-        return (Deployer) new InitialContext(Static.IC_PROPS).lookup("openejb/DeployerBusinessRemote");
+    private static Deployer deployer() {
+        return new DeployerEjb();
     }
 
     @Override
@@ -141,8 +138,6 @@ public class TomEEClusterListener extends ClusterListener {
                     deployer().deploy(app, REMOTE_DEPLOY_PROPERTIES);
                 } catch (final OpenEJBException e) {
                     Static.LOGGER.warning("can't deploy: " + app, e);
-                } catch (final NamingException e) {
-                    Static.LOGGER.warning("can't find deployer", e);
                 }
             }
         }
@@ -164,8 +159,6 @@ public class TomEEClusterListener extends ClusterListener {
                     Static.LOGGER.error("can't undeploy app", e);
                 } catch (final NoSuchApplicationException e) {
                     Static.LOGGER.warning("no app toi deploy", e);
-                } catch (final NamingException e) {
-                    Static.LOGGER.warning("can't find deployer", e);
                 }
             }
         }
@@ -174,14 +167,9 @@ public class TomEEClusterListener extends ClusterListener {
     // lazy init of logger (can fail with shutdown hooks to kill the container) and executor
     private static final class Static {
         private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClusterListener.class);
-        private static final Properties IC_PROPS = new Properties();
 
         // async processing to avoid to make the cluster hanging
         private static final ExecutorService SERVICE = Executors.newSingleThreadExecutor(new DaemonThreadFactory("TomEE-Cluster-Listener-thread-"));
-
-        static {
-            IC_PROPS.setProperty(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
-        }
 
         private Static() {
             // no-op

@@ -427,29 +427,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     }
 
     @Override
-    public void start(final StandardServer server) {
-        if (SystemInstance.get().isDefaultProfile()) { // add user tomee is no user are specified
-            try {
-                final NamingResourcesImpl resources = server.getGlobalNamingResources();
-                final ContextResource userDataBaseResource = resources.findResource("UserDatabase");
-                final UserDatabase db = (UserDatabase) server.getGlobalNamingContext().lookup(userDataBaseResource.getName());
-                if (!db.getUsers().hasNext() && db instanceof MemoryUserDatabase mudb) {
-                    final boolean oldRo = mudb.getReadonly();
-                    try {
-                        mudb.setReadonly(false);
-
-                        db.createRole("tomee-admin", "tomee admin role");
-                        db.createUser("tomee", "tomee", "TomEE");
-                        db.findUser("tomee").addRole(db.findRole("tomee-admin"));
-                    } finally {
-                        mudb.setReadonly(oldRo);
-                    }
-                }
-            } catch (final Throwable t) {
-                // no-op
-            }
-        }
-    }
+    public void start(final StandardServer server) { }
 
     //
     // OpenEJB WebAppBuilder
