@@ -20,6 +20,7 @@ import org.apache.openejb.client.event.ConnectionOpened;
 import org.apache.openejb.client.event.ConnectionPoolCreated;
 import org.apache.openejb.client.event.ConnectionPoolTimeout;
 
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedInputStream;
@@ -54,6 +55,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private static final String PROPERTY_POOL_SIZE2 = "openejb.client.connectionpool.size";
     public static final String PROPERTY_KEEPALIVE = "openejb.client.keepalive";
     public static final String ENABLED_CIPHER_SUITES = "openejb.client.enabledCipherSuites";
+    public static final String DISABLE_ENDPOINT_IDENTIFICATION = "openejb.client.disableEndpointIdentification";
 
     private static final Map<URI, Pool> connections = new ConcurrentHashMap<>();
     private int size = 5;
@@ -283,21 +285,34 @@ public class SocketConnectionFactory implements ConnectionFactory {
             try {
                 final String scheme = uri.getScheme();
                 if (scheme.equalsIgnoreCase("ejbds") || scheme.equalsIgnoreCase("zejbds")) {
-                    final SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
+                    // connect a plain socket first so the configured connect timeout applies,
+                    // then layer TLS over it against the host taken from the location
+                    final Socket plain = new Socket();
+                    this.socket = plain;
+                    plain.setTcpNoDelay(true);
+                    plain.setSoLinger(true, SocketConnectionFactory.this.timeoutLinger);
+                    plain.connect(address, SocketConnectionFactory.this.timeoutConnect);
+
+                    final SSLSocket sslSocket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault())
+                        .createSocket(plain, uri.getHost(), uri.getPort(), true);
                     this.socket = sslSocket;
                     sslSocket.setEnabledCipherSuites(SocketConnectionFactory.this.enabledCipherSuites);
 
+                    if (!Boolean.getBoolean(DISABLE_ENDPOINT_IDENTIFICATION)) {
+                        final SSLParameters sslParameters = sslSocket.getSSLParameters();
+                        sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
+                        sslSocket.setSSLParameters(sslParameters);
+                    }
                 } else {
                     this.socket = new Socket();
+                    this.socket.setTcpNoDelay(true);
+                    this.socket.setSoLinger(true, SocketConnectionFactory.this.timeoutLinger);
+                    this.socket.connect(address, SocketConnectionFactory.this.timeoutConnect);
                 }
 
                 if (scheme.startsWith("z")) {
                     this.gzip = true;
                 }
-
-                this.socket.setTcpNoDelay(true);
-                this.socket.setSoLinger(true, SocketConnectionFactory.this.timeoutLinger);
-                this.socket.connect(address, SocketConnectionFactory.this.timeoutConnect);
 
                 //Four hours default
                 this.socket.setSoTimeout(SocketConnectionFactory.this.timeoutRead);
