@@ -506,18 +506,30 @@ public class Client {
                 throw new IllegalArgumentException("clusterMetaData cannot be null");
             }
 
-            final ClusterMetaData previous = this.clusterMetaData;
-            this.clusterMetaData = updated;
-
-            if (updated.getConnectionStrategy() == null) {
-                updated.setConnectionStrategy(previous.getConnectionStrategy());
+            ClusterMetaData accepted = updated;
+            final URI[] filtered = TransportSecurityPolicy.filter(serverMetaData.getLocation(), updated.getLocations());
+            if (filtered != updated.getLocations()) {
+                if (filtered.length == 0) {
+                    logger.log(Level.WARNING, "Ignoring cluster update: no pushed location preserves the transport security of "
+                        + serverMetaData.getLocation() + ". Set -D" + TransportSecurityPolicy.ALLOW_DOWNGRADE + "=true to allow it.");
+                    return;
+                }
+                accepted = new ClusterMetaData(updated.getVersion(), filtered);
+                accepted.setConnectionStrategy(updated.getConnectionStrategy());
             }
-            updated.setLastLocation(previous.getLastLocation());
-            final ClusterMetaDataUpdated clusterMetaDataUpdated = new ClusterMetaDataUpdated(serverMetaData, updated, previous);
+
+            final ClusterMetaData previous = this.clusterMetaData;
+            this.clusterMetaData = accepted;
+
+            if (accepted.getConnectionStrategy() == null) {
+                accepted.setConnectionStrategy(previous.getConnectionStrategy());
+            }
+            accepted.setLastLocation(previous.getLastLocation());
+            final ClusterMetaDataUpdated clusterMetaDataUpdated = new ClusterMetaDataUpdated(serverMetaData, accepted, previous);
 
             fireEvent(clusterMetaDataUpdated);
 
-            final Set<URI> found = locations(updated);
+            final Set<URI> found = locations(accepted);
             final Set<URI> existing = locations(previous);
 
             for (final URI uri : diff(existing, found)) {
