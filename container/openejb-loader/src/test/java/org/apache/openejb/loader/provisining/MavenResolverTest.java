@@ -22,9 +22,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.jar.JarFile;
 
@@ -73,6 +75,25 @@ public class MavenResolverTest {
         resolveCommon("mvn:junit:junit:4.12:jar");
         resolveCommon("mvn:https://repo1.maven.org/maven2/!junit:junit:4.12:jar");
         resolveCommon("mvn:https://repo1.maven.org/maven2/!junit:junit:LATEST:jar");
+    }
+
+    @Test
+    public void doctypeInMetadataKeepsRequestedVersion() throws Exception {
+        final File external = File.createTempFile("metadata", ".txt");
+        external.deleteOnExit();
+        try (final FileOutputStream out = new FileOutputStream(external)) {
+            out.write("1.2.3".getBytes("UTF-8"));
+        }
+
+        final String xml = "<?xml version=\"1.0\"?>\n"
+                + "<!DOCTYPE metadata [<!ENTITY ext SYSTEM \"" + external.toURI().toURL() + "\">]>\n"
+                + "<metadata><versioning><release>&ext;</release><latest>&ext;</latest></versioning></metadata>";
+        final ByteArrayOutputStream metadata = new ByteArrayOutputStream();
+        metadata.write(xml.getBytes("UTF-8"));
+
+        final Method extract = MavenResolver.class.getDeclaredMethod("extractRealVersion", String.class, ByteArrayOutputStream.class);
+        extract.setAccessible(true);
+        assertEquals("LATEST", extract.invoke(null, "LATEST", metadata));
     }
 
     @Test
