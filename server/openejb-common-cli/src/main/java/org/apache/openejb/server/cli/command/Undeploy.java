@@ -17,14 +17,14 @@
 
 package org.apache.openejb.server.cli.command;
 
-import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.DeployerEjb;
 
 @Command(name = "undeploy", usage = "undeploy <location>", description = "undeploy an application. Note the location should be the same than for deploy")
 public class Undeploy extends AbstractCommand {
     @Override
     public void execute(String cmd) {
         try {
-            lookup(Deployer.class, "openejb/DeployerBusinessRemote").undeploy(cmd.trim());
+            new DeployerEjb().undeploy(cmd.trim());
         } catch (Exception e) {
             streamManager.writeErr(e);
         }
