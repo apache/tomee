@@ -50,6 +50,18 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
     static {
         FACTORY.setNamespaceAware(false);
         FACTORY.setValidating(false);
+        trySetFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        trySetFeature("http://xml.org/sax/features/external-general-entities", false);
+        trySetFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        FACTORY.setXIncludeAware(false);
+    }
+
+    private static void trySetFeature(final String feature, final boolean value) {
+        try {
+            FACTORY.setFeature(feature, value);
+        } catch (final Exception e) {
+            // no-op: feature not supported by this parser
+        }
     }
 
     private ProvisioningResolver resolver;
@@ -148,6 +160,13 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
                 DocumentBuilder builder = BUILDER.get();
                 if (null == builder) {
                     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    try {
+                        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                    } catch (final Exception e) {
+                        // no-op: feature not supported by this parser
+                    }
+                    factory.setXIncludeAware(false);
+                    factory.setExpandEntityReferences(false);
                     builder = factory.newDocumentBuilder();
                     BUILDER.set(builder);
                 }
