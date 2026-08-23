@@ -43,6 +43,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
 public class SortAndLimitTest {
@@ -157,6 +158,28 @@ public class SortAndLimitTest {
             assertEquals(1, result.get(4).getPriority());
         } finally {
             utx.rollback();
+        }
+    }
+
+    @Test
+    public void testSortPropertyMustBeAttributePath() throws Exception {
+        try {
+            repo.findByCompletedFalse(Sort.asc("priority ASC, e.title"));
+            fail("expected IllegalArgumentException");
+        } catch (final IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("Invalid sort property"));
+        }
+    }
+
+    @Test
+    public void testOrderSortPropertyMustBeAttributePath() throws Exception {
+        @SuppressWarnings("unchecked")
+        final Order<Task> order = Order.by(Sort.asc("(SELECT t.title FROM Task t)"));
+        try {
+            repo.findByCompletedFalse(order);
+            fail("expected IllegalArgumentException");
+        } catch (final IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("Invalid sort property"));
         }
     }
 
