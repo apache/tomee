@@ -43,7 +43,11 @@ public class ServerMetaData implements Externalizable {
     }
 
     public void merge(final ServerMetaData toMerge) {
-        locations = toMerge.locations;
+        final URI[] filtered = TransportSecurityPolicy.filter(location, toMerge.locations);
+        if (filtered != null && filtered.length == 0) {
+            return;
+        }
+        locations = filtered;
     }
 
     public URI getLocation() {

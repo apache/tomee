@@ -386,7 +386,13 @@ public class JNDIContext implements InitialContextFactory, Context {
                 break;
             case ResponseCodes.AUTH_REDIRECT:
                 client = res.getIdentity();
-                server = res.getServer();
+                final ServerMetaData redirect = res.getServer();
+                if (redirect != null && !TransportSecurityPolicy.accepts(server.getLocation(), redirect.getLocation())) {
+                    throw new AuthenticationException("Refusing authentication redirect to " + redirect.getLocation()
+                        + ": it would downgrade the transport security of " + server.getLocation()
+                        + ". Set -D" + TransportSecurityPolicy.ALLOW_DOWNGRADE + "=true to allow it.");
+                }
+                server = redirect;
                 break;
             case ResponseCodes.AUTH_DENIED:
                 throw (AuthenticationException) new AuthenticationException("This principle is not authorized.").initCause(res.getDeniedCause());
