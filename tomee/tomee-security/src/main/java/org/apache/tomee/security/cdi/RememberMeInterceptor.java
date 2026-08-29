@@ -148,6 +148,9 @@ public class RememberMeInterceptor {
 
         if (cookie.isPresent() && !isEmpty(cookie.get().getValue())) {
 
+            // remove the token from the store
+            rememberMeIdentityStore.get().removeLoginToken(cookie.get().getValue());
+
             // remove the cookie
             cookie.get().setValue(null);
             cookie.get().setMaxAge(0);
@@ -156,9 +159,6 @@ public class RememberMeInterceptor {
                            "/" :
                            httpMessageContext.getRequest().getContextPath());
             httpMessageContext.getResponse().addCookie(cookie.get());
-
-            // remove the token from the store
-            rememberMeIdentityStore.get().removeLoginToken(cookie.get().getValue());
         }
 
         invocationContext.proceed();
