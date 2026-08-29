@@ -172,7 +172,7 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
     /**
      * Should we use a fast but unsecured session id generation implementation.
      */
-    @Parameter(property = "tomee-embedded-plugin.quickSession", defaultValue = "true")
+    @Parameter(property = "tomee-embedded-plugin.quickSession", defaultValue = "false")
     protected boolean quickSession;
 
     /**

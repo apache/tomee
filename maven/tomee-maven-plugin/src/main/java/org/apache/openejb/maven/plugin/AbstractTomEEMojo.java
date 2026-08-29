@@ -377,7 +377,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     /**
      * use a real random instead of secure random. saves few ms at startup.
      */
-    @Parameter(property = "tomee-plugin.quick-session", defaultValue = "true")
+    @Parameter(property = "tomee-plugin.quick-session", defaultValue = "false")
     protected boolean quickSession;
 
     /**

@@ -66,7 +66,7 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |jsCustomizers|-|a list of js customizers (js scripts)
 |groovyCustomizers|-|a list of groovy customizers (groovy scripts)
 |webappDefaultConfig|false|auto config war oriented
-|quickSession|true|session generation will use `Random` instead of `SecureRandom` (for dev)
+|quickSession|false|session generation will use `Random` instead of `SecureRandom` (for dev)
 |forceReloadable|false|ensure TomEE supports reloading/redeployment
 |forceJspDevelopment|true|JSP will be auto-recompiled on changes
 |libs|-|dependencies to add in lib, see after this table for advanced usage

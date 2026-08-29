@@ -764,7 +764,7 @@ Required: No
 
 User Property: tomee-plugin.quick-session
 
-Default: true
+Default: false
 
 realm:
 

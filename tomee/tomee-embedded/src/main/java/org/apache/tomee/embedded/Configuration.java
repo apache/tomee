@@ -51,7 +51,7 @@ public class Configuration {
     private File serverXml;
     private boolean keepServerXmlAsThis;
     private Properties properties;
-    private boolean quickSession = true;
+    private boolean quickSession;
     private boolean skipHttp;
 
     private int httpsPort = 8443;

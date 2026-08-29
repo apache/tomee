@@ -581,7 +581,7 @@ force webapp to be reloadable
 - Type: boolean
 - Required: No
 - User Property: `tomee-embedded-plugin.quickSession`
-- Default: `true`
+- Default: `false`
 
 [[roles]]*roles:* +
 (no description)
