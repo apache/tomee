@@ -59,7 +59,7 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
         if (httpListener == null) throw new NullPointerException("httpListener is null");
 
         if ("BASIC".equals(authMethod)) {
-            httpListener = new BasicAuthHttpListenerWrapper(httpListener, realmName);
+            httpListener = new BasicAuthHttpListenerWrapper(httpListener, realmName, true);
         }
 
         final StringBuilder deployedPath = new StringBuilder("");
