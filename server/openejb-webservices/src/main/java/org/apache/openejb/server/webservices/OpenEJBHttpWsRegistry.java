@@ -60,6 +60,9 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
 
         if ("BASIC".equals(authMethod)) {
             httpListener = new BasicAuthHttpListenerWrapper(httpListener, realmName, true);
+        } else if (authMethod != null && !"NONE".equals(authMethod)) {
+            throw new IllegalArgumentException("The embedded HTTP transport only supports BASIC or NONE authentication, "
+                    + "refusing to publish '" + path + "' with auth method '" + authMethod + "'");
         }
 
         final StringBuilder deployedPath = new StringBuilder("");

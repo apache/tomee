@@ -36,8 +36,11 @@ public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
 
         if ("BASIC".equals(auth)) { // important to wrap with basic wrapper before classloader wrapping
             addWrappedHttpListener(new BasicAuthHttpListenerWrapper(listener, realm), classLoader, path);
-        } else {
+        } else if (auth == null || "NONE".equals(auth)) {
             addWrappedHttpListener(listener, classLoader, path);
+        } else {
+            throw new IllegalArgumentException("The embedded HTTP transport only supports BASIC or NONE authentication, "
+                    + "refusing to publish '" + path + "' with auth method '" + auth + "'");
         }
 
         addresses.put(address, path);
