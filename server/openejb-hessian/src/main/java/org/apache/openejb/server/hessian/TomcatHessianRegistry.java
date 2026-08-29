@@ -88,6 +88,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
 
         final String contextRoot = contextName(app);
         Context context = Context.class.cast(host.findChild(contextRoot));
+        final boolean applicationContext = context != null && !fakeContexts.containsKey(contextRoot);
         if (context == null) {
             Pair<Context, Integer> fakeContext = fakeContexts.get(contextRoot);
             if (fakeContext != null) {
@@ -109,6 +110,23 @@ public class TomcatHessianRegistry implements HessianRegistry {
             }
         }
 
+        final String realAuthMethod = authMethod == null ? null : authMethod.toUpperCase();
+        if (applicationContext && realAuthMethod != null && !"NONE".equals(realAuthMethod)) {
+            // an existing web context keeps its own login configuration, only the BASIC valve can be added to it
+            if (!"BASIC".equals(realAuthMethod)) {
+                throw new IllegalArgumentException("authMethod '" + authMethod + "' cannot be applied to the existing context '"
+                    + contextRoot + "', refusing to deploy hessian servlet '" + name + "'");
+            }
+            if (transportGuarantee != null && !"NONE".equalsIgnoreCase(transportGuarantee)) {
+                throw new IllegalArgumentException("transportGuarantee '" + transportGuarantee + "' cannot be applied to the existing context '"
+                    + contextRoot + "', refusing to deploy hessian servlet '" + name + "'");
+            }
+            if (!StandardContext.class.isInstance(context)) {
+                throw new IllegalArgumentException("authMethod '" + authMethod + "' cannot be applied to context '"
+                    + contextRoot + "' (" + context.getClass().getName() + "), refusing to deploy hessian servlet '" + name + "'");
+            }
+        }
+
         final String servletMapping = generateServletPath(name);
 
         Wrapper wrapper = Wrapper.class.cast(context.findChild(servletMapping));
@@ -122,7 +140,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
         context.addChild(wrapper);
         context.addServletMappingDecoded(servletMapping, wrapper.getName());
 
-        if ("BASIC".equals(authMethod) && StandardContext.class.isInstance(context)) {
+        if ("BASIC".equals(realAuthMethod) && StandardContext.class.isInstance(context)) {
             final StandardContext standardContext = StandardContext.class.cast(context);
 
             boolean found = false;
@@ -173,7 +191,7 @@ public class TomcatHessianRegistry implements HessianRegistry {
         if (transportGuarantee != null) {
             transportGuarantee = transportGuarantee.toUpperCase();
         }
-        if (authMethod != null & !"NONE".equals(authMethod)) {
+        if (authMethod != null && !"NONE".equals(authMethod)) {
             if ("BASIC".equals(authMethod) || "DIGEST".equals(authMethod) || "CLIENT-CERT".equals(authMethod)) {
 
                 //Setup a login configuration
@@ -200,6 +218,8 @@ public class TomcatHessianRegistry implements HessianRegistry {
                     context.addConstraint(sc);
                     context.addSecurityRole(role);
                 }
+            } else {
+                throw new IllegalArgumentException("Unsupported authMethod '" + rAuthMethod + "': supported values are BASIC, DIGEST and CLIENT-CERT");
             }
 
             //Set the proper authenticator
