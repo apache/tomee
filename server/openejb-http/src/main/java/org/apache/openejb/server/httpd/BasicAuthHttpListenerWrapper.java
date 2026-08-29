@@ -21,6 +21,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Base64;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import javax.security.auth.login.LoginException;
 import java.util.Locale;
 
@@ -28,10 +30,20 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
 
     private final HttpListener httpListener;
     private final String realmName;
+    private final boolean anonymousGet;
 
     public BasicAuthHttpListenerWrapper(final HttpListener httpListener, final String realmName) {
+        this(httpListener, realmName, false);
+    }
+
+    /**
+     * @param anonymousGet when true, GET requests are dispatched without credentials
+     *                     (used for wsdl/xsd retrieval on webservice endpoints)
+     */
+    public BasicAuthHttpListenerWrapper(final HttpListener httpListener, final String realmName, final boolean anonymousGet) {
         this.httpListener = httpListener;
         this.realmName = realmName;
+        this.anonymousGet = anonymousGet;
     }
 
     @Override
@@ -44,7 +56,7 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
             if (auth.toUpperCase(Locale.ENGLISH).startsWith("BASIC ")) {
                 auth = auth.substring(6);
                 final String decoded = new String(Base64.decodeBase64(auth.getBytes()));
-                final String[] parts = decoded.split(":");
+                final String[] parts = decoded.split(":", 2);
                 if (parts.length == 2) {
                     final String username = parts[0];
                     final String password = parts[1];
@@ -63,10 +75,11 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
         }
 
         try {
-            if (token != null || HttpRequest.Method.GET.name().equals(request.getMethod())) {
+            if (token != null || (anonymousGet && HttpRequest.Method.GET.name().equals(request.getMethod()))) {
                 httpListener.onMessage(request, response);
             } else {
-                // login failed,  return 401
+                response.setHeader("WWW-Authenticate", "Basic realm=\"" + (realmName == null ? "" : realmName) + "\"");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         } finally {
             if (token != null) {
