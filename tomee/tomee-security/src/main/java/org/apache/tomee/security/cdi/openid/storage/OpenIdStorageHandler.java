@@ -16,15 +16,16 @@
  */
 package org.apache.tomee.security.cdi.openid.storage;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.function.Supplier;
 
 public abstract class OpenIdStorageHandler {
     protected static final String PREFIX = "openid.";
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     public static final String REQUEST_KEY = "REQUEST";
     public static final String STATE_KEY = "STATE";
@@ -73,7 +74,7 @@ public abstract class OpenIdStorageHandler {
     }
 
     public String createNewState(HttpServletRequest request, HttpServletResponse response) {
-        String state = RandomStringUtils.random(10, true, true);
+        String state = newToken();
         set(request, response, STATE_KEY, state);
 
         return state;
@@ -84,9 +85,15 @@ public abstract class OpenIdStorageHandler {
     }
 
     public String createNewNonce(HttpServletRequest request, HttpServletResponse response) {
-        String nonce = RandomStringUtils.random(10, true, true);
+        String nonce = newToken();
         set(request, response, NONCE_KEY, nonce);
 
         return nonce;
+    }
+
+    static String newToken() {
+        final byte[] bytes = new byte[32];
+        RANDOM.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 }
