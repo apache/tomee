@@ -30,6 +30,14 @@ public class HessianRegistryImpl extends OpenEJBHttpRegistry implements HessianR
     public String deploy(final ClassLoader loader, final HessianServer listener, final String host,
                          final String app, final String authMethod, final String transportGuarantee,
                          final String realmName, final String name) {
+        if (authMethod != null && !"NONE".equalsIgnoreCase(authMethod)) {
+            throw new IllegalArgumentException("authMethod '" + authMethod + "' is not supported by the embedded hessian registry for '" + name
+                + "', use authMethod=NONE or the Tomcat registry");
+        }
+        if (transportGuarantee != null && !"NONE".equalsIgnoreCase(transportGuarantee)) {
+            throw new IllegalArgumentException("transportGuarantee '" + transportGuarantee + "' is not supported by the embedded hessian registry for '" + name
+                + "', use transportGuarantee=NONE or the Tomcat registry");
+        }
         final String path = generateEndpointName(app, name);
         addWrappedHttpListener(new HessianListener(listener), loader, path);
         return HttpUtil.selectSingleAddress(getResolvedAddresses(path));
