@@ -110,7 +110,7 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     @Optional
     @Input
-    private boolean quickSession = true;
+    private boolean quickSession;
 
     @Optional
     @Input

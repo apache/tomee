@@ -32,6 +32,11 @@ import static org.junit.Assert.assertTrue;
 
 public class ConfigurationTest {
     @Test
+    public void quickSessionOffByDefault() {
+        assertFalse(new Configuration().isQuickSession());
+    }
+
+    @Test
     public void autoConfig() {
         final Configuration configuration = new Configuration();
         configuration.loadFromProperties(new PropertiesBuilder()
