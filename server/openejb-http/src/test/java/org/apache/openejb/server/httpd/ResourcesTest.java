@@ -27,8 +27,11 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @EnableServices("http")
@@ -52,5 +55,22 @@ public class ResourcesTest {
     public void folder() throws IOException {
         assertTrue(IO.slurp(new URL(context.toExternalForm() + "openejb/bar.txt")).contains("from web"));
         assertTrue(IO.slurp(new URL(context.toExternalForm() + "openejb/sub/bar.txt")).contains("from web2"));
+    }
+
+    @Test
+    public void parentSegmentsAreNotServed() throws IOException {
+        // src/test/web/../../../pom.xml resolves to the module pom
+        final String body = slurpQuietly(new URL(context.toExternalForm() + "openejb/%2e%2e/%2e%2e/%2e%2e/pom.xml"));
+        assertFalse(body, body.contains("<project"));
+    }
+
+    private static String slurpQuietly(final URL url) throws IOException {
+        final HttpURLConnection connection = HttpURLConnection.class.cast(url.openConnection());
+        try {
+            final InputStream stream = connection.getResponseCode() < 400 ? connection.getInputStream() : connection.getErrorStream();
+            return stream == null ? "" : IO.slurp(stream);
+        } finally {
+            connection.disconnect();
+        }
     }
 }
