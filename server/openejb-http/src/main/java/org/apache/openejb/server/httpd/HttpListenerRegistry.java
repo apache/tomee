@@ -192,7 +192,7 @@ public class HttpListenerRegistry implements HttpListener {
             }
             if (!found) {
                 final String servletPath = request.getServletPath();
-                if (servletPath != null) {
+                if (servletPath != null && !isForbiddenResourcePath(servletPath)) {
                     URL url = SystemInstance.get().getComponent(ServletContext.class).getResource(servletPath);
                     if (url != null) {
                         serveResource(servletPath, response, url);
@@ -205,7 +205,7 @@ public class HttpListenerRegistry implements HttpListener {
                         } else if (resourceBases.length > 0) {
                             for (final File f : resourceBases) {
                                 final File file = new File(f, pathWithoutSlash);
-                                if (file.isFile()) {
+                                if (file.isFile() && isContained(f, file)) {
                                     url = file.toURI().toURL();
                                     serveResource(servletPath, response, url);
                                     break;
@@ -237,6 +237,28 @@ public class HttpListenerRegistry implements HttpListener {
             if (reset) {
                 this.request.set(null);
             }
+        }
+    }
+
+    private static boolean isForbiddenResourcePath(final String path) {
+        if (path.indexOf('\0') >= 0 || path.indexOf('\\') >= 0) {
+            return true;
+        }
+        for (final String segment : path.split("/")) {
+            if ("..".equals(segment)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isContained(final File base, final File file) {
+        try {
+            final String basePath = base.getCanonicalPath();
+            final String filePath = file.getCanonicalPath();
+            return filePath.equals(basePath) || filePath.startsWith(basePath + File.separator);
+        } catch (final IOException ioe) {
+            return false;
         }
     }
 
