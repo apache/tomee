@@ -120,6 +120,13 @@ public class SessionManager {
         sessions.remove(sessionId);
     }
 
+    public void changeSessionId(final String oldId, final String newId) {
+        final SessionWrapper wrapper = sessions.remove(oldId);
+        if (wrapper != null) {
+            sessions.put(newId, wrapper);
+        }
+    }
+
     public Collection<String> findSessionIds() {
         return sessions.keySet();
     }

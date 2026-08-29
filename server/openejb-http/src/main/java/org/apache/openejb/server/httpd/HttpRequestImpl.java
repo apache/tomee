@@ -1030,8 +1030,12 @@ public class HttpRequestImpl implements HttpRequest {
     @Override
     public String changeSessionId() {
         if (session != null) {
-            if (HttpSessionImpl.class.isInstance(session)) {
-                HttpSessionImpl.class.cast(session).newSessionId();
+            jakarta.servlet.http.HttpSession delegate = session;
+            while (ServletSessionAdapter.class.isInstance(delegate)) {
+                delegate = ServletSessionAdapter.class.cast(delegate).session;
+            }
+            if (HttpSessionImpl.class.isInstance(delegate)) {
+                HttpSessionImpl.class.cast(delegate).newSessionId();
             }
             return session.getId();
         }
