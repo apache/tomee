@@ -28,7 +28,11 @@ import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.Socket;
 import java.net.URL;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -39,6 +43,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
@@ -72,6 +77,29 @@ public class OpenEJBHttpServerTest {
         } finally {
             registry.removeHttpListener("/login");
         }
+    }
+
+    @Test
+    public void malformedRequestResponseContainsNoServerDetails() throws Exception {
+        final String response;
+        try (final Socket socket = new Socket("localhost", nextAvailablePort)) {
+            final OutputStream out = socket.getOutputStream();
+            out.write("GET /foo HTTP/1.1\r\nno-colon-header\r\n\r\n".getBytes());
+            out.flush();
+            socket.shutdownOutput();
+            final InputStream in = socket.getInputStream();
+            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            final byte[] chunk = new byte[1024];
+            int read;
+            while ((read = in.read(chunk)) != -1) {
+                buffer.write(chunk, 0, read);
+            }
+            response = buffer.toString();
+        }
+        assertTrue(response, response.startsWith("HTTP/1.1 500 "));
+        assertFalse(response, response.contains("Exception"));
+        assertFalse(response, response.contains("org.apache.openejb"));
+        assertFalse(response, response.contains("\tat "));
     }
 
     @Configuration
