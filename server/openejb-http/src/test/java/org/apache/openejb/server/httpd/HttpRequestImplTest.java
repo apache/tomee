@@ -29,8 +29,10 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -52,6 +54,21 @@ public class HttpRequestImplTest {
         assertNotNull(session);
         session.invalidate();
         assertNull(req.getSession(false));
+    }
+
+    @Test
+    public void changeSessionIdRekeysSession() throws URISyntaxException {
+        final HttpRequestImpl req = new HttpRequestImpl(new URI("http://localhost:1234/foo"));
+        final jakarta.servlet.http.HttpSession session = req.getSession();
+        final String oldId = session.getId();
+
+        final String newId = req.changeSessionId();
+
+        assertNotEquals(oldId, newId);
+        final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
+        assertNull(sessionManager.findSession(oldId));
+        assertNotNull(sessionManager.findSession(newId));
+        assertSame(session, sessionManager.findSession(newId).session);
     }
 
     @Test
