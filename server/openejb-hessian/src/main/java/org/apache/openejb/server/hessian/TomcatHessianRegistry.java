@@ -282,7 +282,11 @@ public class TomcatHessianRegistry implements HessianRegistry {
     protected static class LimitedBasicValve extends BasicAuthenticator {
         @Override
         public void invoke(final Request request, final Response response) throws IOException, ServletException {
-            final String requestURI = request.getDecodedRequestURI();
+            String requestURI = request.getDecodedRequestURI();
+            final String contextPath = request.getContextPath();
+            if (contextPath != null && !contextPath.isEmpty() && requestURI.startsWith(contextPath)) {
+                requestURI = requestURI.substring(contextPath.length());
+            }
             if (requestURI.startsWith(HESSIAN)) {
                 if (!authenticate(request, response)) {
                     return;
