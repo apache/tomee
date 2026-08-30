@@ -29,6 +29,7 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 import jakarta.security.enterprise.credential.Credential;
 import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
@@ -156,12 +157,13 @@ public class TomEELDAPIdentityStore implements IdentityStore {
 
         } else {
 
+            final String escapedCallerDn = escapeFilterValue(callerDn);
             String filter = null;
             if (StringUtils.isNotEmpty(definition.groupSearchFilter())) {
-                filter = format(definition.groupSearchFilter(), callerDn);
+                filter = format(definition.groupSearchFilter(), escapedCallerDn);
 
             } else {
-                filter = format(DEFAULT_GROUP_FILTER, definition.groupMemberAttribute(), callerDn);
+                filter = format(DEFAULT_GROUP_FILTER, definition.groupMemberAttribute(), escapedCallerDn);
             }
 
             final List<SearchResult> searchResults = query(ldapContext, definition.groupSearchBase(), filter, getGroupSearchControls());
@@ -229,21 +231,22 @@ public class TomEELDAPIdentityStore implements IdentityStore {
             && StringUtils.isEmpty(definition.callerSearchBase())) {
 
             // caller DN may be provided in annotation
-            callerDn = format("%s=%s,%s", definition.callerNameAttribute(), callerName,
+            callerDn = format("%s=%s,%s", definition.callerNameAttribute(), Rdn.escapeValue(callerName),
                               definition.callerBaseDn());
 
         } else {
 
             // let's try to look it up in LDAP
+            final String escapedCallerName = escapeFilterValue(callerName);
             String filter = null;
             if (StringUtils.isNotEmpty(definition.callerSearchFilter())) {
                 filter = format(definition.callerSearchFilter(),
-                                callerName);
+                                escapedCallerName);
 
             } else {
                 filter = format(DEFAULT_USER_FILTER,
                                 definition.callerNameAttribute(),
-                                callerName);
+                                escapedCallerName);
             }
 
             final List<SearchResult> callerDns =
@@ -335,6 +338,37 @@ public class TomEELDAPIdentityStore implements IdentityStore {
         } else {
             return ONELEVEL_SCOPE;
         }
+    }
+
+    // RFC 4515 filter value encoding
+    static String escapeFilterValue(final String value) {
+        if (value == null) {
+            return null;
+        }
+        final StringBuilder escaped = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            final char c = value.charAt(i);
+            switch (c) {
+                case '\\':
+                    escaped.append("\\5c");
+                    break;
+                case '*':
+                    escaped.append("\\2a");
+                    break;
+                case '(':
+                    escaped.append("\\28");
+                    break;
+                case ')':
+                    escaped.append("\\29");
+                    break;
+                case '\0':
+                    escaped.append("\\00");
+                    break;
+                default:
+                    escaped.append(c);
+            }
+        }
+        return escaped.toString();
     }
 
     private static List<SearchResult> query(
