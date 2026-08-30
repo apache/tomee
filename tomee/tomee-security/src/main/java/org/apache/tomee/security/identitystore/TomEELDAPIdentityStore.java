@@ -192,9 +192,14 @@ public class TomEELDAPIdentityStore implements IdentityStore {
         final UsernamePasswordCredential usernamePasswordCredential,
         final String callerDn) {
 
+        final String password = usernamePasswordCredential.getPasswordAsString();
+        if (StringUtils.isEmpty(password)) {
+            return false;
+        }
+
         try {
             // do a direct bind and see if an exception happens
-            silentlyCloseLdapContext(lookup(definition.url(), callerDn, usernamePasswordCredential.getPasswordAsString()));
+            silentlyCloseLdapContext(lookup(definition.url(), callerDn, password));
             return true;
 
         } catch (final Exception e) {
