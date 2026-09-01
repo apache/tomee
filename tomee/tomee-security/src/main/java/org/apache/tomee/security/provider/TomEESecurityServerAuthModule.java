@@ -33,6 +33,8 @@ import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageCont
 import java.util.Map;
 import org.apache.tomee.security.cdi.DefaultAuthenticationMechanismHandler;
 
+import org.apache.tomee.security.message.TomEEMessageInfo;
+
 import static org.apache.tomee.security.http.TomEEHttpMessageContext.httpMessageContext;
 
 public class TomEESecurityServerAuthModule implements ServerAuthModule {
@@ -101,11 +103,14 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
 
 
         } catch (final AuthenticationException e) {
+            httpMessageContext.getRequest().setAttribute(TomEEMessageInfo.LAST_AUTH_STATUS,
+                                                         AuthenticationStatus.SEND_FAILURE);
             final AuthException authException = new AuthException(e.getMessage());
             authException.initCause(e);
             throw authException;
         }
 
+        httpMessageContext.getRequest().setAttribute(TomEEMessageInfo.LAST_AUTH_STATUS, authenticationStatus);
         return mapToAuthStatus(authenticationStatus);
     }
 
