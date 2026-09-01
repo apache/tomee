@@ -208,6 +208,8 @@
     <module>security-tomcat-user-identitystore</module>
     <module>security-custom-identitystore</module>
     <module>security-openid</module>
+    <module>security-passkey-2fa</module>
+    <module>security-passkey-2fa-programmatic</module>
 
   </modules>
   <profiles>

@@ -82,6 +82,10 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public boolean isAuthenticationRequest() {
+        final Object fromRequest = getRequest().getAttribute(TomEEMessageInfo.AUTHENTICATE);
+        if (fromRequest != null) {
+            return Boolean.parseBoolean(String.valueOf(fromRequest));
+        }
         return Boolean.parseBoolean((String) messageInfo.getMap().getOrDefault(TomEEMessageInfo.AUTHENTICATE, "false"));
     }
 
@@ -104,6 +108,10 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationParameters getAuthParameters() {
+        final Object fromRequest = getRequest().getAttribute(TomEEMessageInfo.AUTH_PARAMS);
+        if (fromRequest instanceof AuthenticationParameters) {
+            return (AuthenticationParameters) fromRequest;
+        }
         return (AuthenticationParameters) messageInfo.getMap()
                                                      .getOrDefault(TomEEMessageInfo.AUTH_PARAMS,
                                                                    new AuthenticationParameters());
