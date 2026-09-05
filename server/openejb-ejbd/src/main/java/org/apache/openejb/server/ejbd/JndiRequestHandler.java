@@ -270,6 +270,12 @@ class JndiRequestHandler extends RequestHandler {
             } else if (object == null) {
                 throw new NullPointerException("lookup of '" + name + "' returned null");
             } else if (object instanceof DataSource) {
+                // Both connection metadata and references can expose database credentials.
+                if (!SystemInstance.get().getOptions().get("openejb.ejbd.datasource-metadata", false)) {
+                    throw new NamingException("Remote DataSource lookup is disabled. An administrator can enable it with "
+                        + "openejb.ejbd.datasource-metadata=true to share database connection details, including credentials, "
+                        + "with remote clients.");
+                }
                 if (DataSourceFactory.knows(object)) {
                     try {
                         final DbcpDataSource cf = new DbcpDataSource(object);
