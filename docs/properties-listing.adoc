@@ -19,6 +19,16 @@ bool
 
 activate or not the remote services when available
 
+openejb.ejbd.datasource-metadata
+
+boolean (default: false)
+
+Allow remote datasource lookup over EJBd, including HTTP/HTTPS. Enabling this
+shares database connection details, including credentials, with clients able to
+reach the endpoint. Applies server-wide, including datasource references; it
+does not add per-user authorization. See link:ejbd-transport.html[Ejbd Transport]
+for compatibility and configuration details.
+
 .bind, <service prefix>.port, <service prefix>.disabled, <service
 prefix>.threads
 

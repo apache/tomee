@@ -41,6 +41,7 @@ import jakarta.ejb.Remote;
 import jakarta.ejb.RemoteHome;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.rmi.RemoteException;
 import java.util.Properties;
@@ -51,10 +52,19 @@ import java.util.Properties;
 public class AppClientTest extends TestCase {
 
     public void test() throws Exception {
+        checkClient(true);
+    }
+
+    public void testWithoutRemoteDataSources() throws Exception {
+        checkClient(false);
+    }
+
+    private void checkClient(final boolean remoteDataSources) throws Exception {
 
         final EjbServer ejbServer = new EjbServer();
 
         final Properties initProps = new Properties();
+        initProps.setProperty("openejb.ejbd.datasource-metadata", Boolean.toString(remoteDataSources));
         initProps.setProperty("openejb.deployments.classpath.include", "");
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
@@ -64,60 +74,71 @@ public class AppClientTest extends TestCase {
         final ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
-        int port = serviceDaemon.getPort();
+        try {
+            int port = serviceDaemon.getPort();
 
-        final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        final ConfigurationFactory config = new ConfigurationFactory();
+            final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+            final ConfigurationFactory config = new ConfigurationFactory();
 
-        final EjbModule ejbModule = new EjbModule(new EjbJar("testejbmodule"), new OpenejbJar());
-        final EjbJar ejbJar = ejbModule.getEjbJar();
-        ejbJar.addEnterpriseBean(new StatelessBean(Orange.class));
+            final EjbModule ejbModule = new EjbModule(new EjbJar("testejbmodule"), new OpenejbJar());
+            final EjbJar ejbJar = ejbModule.getEjbJar();
+            ejbJar.addEnterpriseBean(new StatelessBean(Orange.class));
 
-        final ClassLoader loader = this.getClass().getClassLoader();
+            final ClassLoader loader = this.getClass().getClassLoader();
 
-        final ClientModule clientModule = new ClientModule(new ApplicationClient(), loader, "orange-client", OrangeAppClient.class.getName(), "orange-client");
+            final ClientModule clientModule = new ClientModule(new ApplicationClient(), loader, "orange-client", OrangeAppClient.class.getName(), "orange-client");
 
-        final AppModule appModule = new AppModule(loader, "testapp");
+            final AppModule appModule = new AppModule(loader, "testapp");
 
-        appModule.getClientModules().add(clientModule);
-        appModule.getEjbModules().add(ejbModule);
+            appModule.getClientModules().add(clientModule);
+            appModule.getEjbModules().add(ejbModule);
 
-        assembler.createApplication(config.configureApplication(appModule));
+            assembler.createApplication(config.configureApplication(appModule));
 
-        final Properties props = new Properties();
-        props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
-        props.put("openejb.client.moduleId", "orange-client");
+            final Properties props = new Properties();
+            props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+            props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
+            props.put("openejb.client.moduleId", "orange-client");
 
-        Context context = new InitialContext(props);
+            Context context = new InitialContext(props);
 
-        final Object home = context.lookup("comp/env/home");
-        assertTrue(home instanceof OrangeHome);
+            final Object home = context.lookup("comp/env/home");
+            assertTrue(home instanceof OrangeHome);
 
-        OrangeHome orangeHome = (OrangeHome) home;
-        final OrangeRemote orangeRemote = orangeHome.create();
-        assertEquals("bat", orangeRemote.echo("tab"));
+            OrangeHome orangeHome = (OrangeHome) home;
+            final OrangeRemote orangeRemote = orangeHome.create();
+            assertEquals("bat", orangeRemote.echo("tab"));
 
-        final Object business = context.lookup("comp/env/business");
-        assertTrue(business instanceof OrangeBusinessRemote);
-        OrangeBusinessRemote orangeBusinessRemote = (OrangeBusinessRemote) business;
-        assertEquals("nap", orangeBusinessRemote.echo("pan"));
+            final Object business = context.lookup("comp/env/business");
+            assertTrue(business instanceof OrangeBusinessRemote);
+            OrangeBusinessRemote orangeBusinessRemote = (OrangeBusinessRemote) business;
+            assertEquals("nap", orangeBusinessRemote.echo("pan"));
 
-        final Object dataSourceObject = context.lookup("comp/env/datasource");
-        assertTrue(dataSourceObject instanceof DataSource);
-        //        DataSource dataSource = (DataSource) dataSourceObject;
-        //        assertEquals("nap", orangeBusinessRemote.echo("pan"));
+            if (remoteDataSources) {
+                assertTrue(context.lookup("comp/env/datasource") instanceof DataSource);
+            } else {
+                try {
+                    context.lookup("comp/env/datasource");
+                    fail("Remote datasource lookup should be disabled");
+                } catch (final NamingException expected) {
+                    assertTrue(expected.getMessage().contains("Remote DataSource lookup is disabled"));
+                }
+            }
 
-        props.put("openejb.client.moduleId", "openejb/global");
-        context = new InitialContext(props);
+            props.put("openejb.client.moduleId", "openejb/global");
+            context = new InitialContext(props);
 
-        final Object global = context.lookup("global/testapp/testejbmodule/Orange!" + OrangeBusinessRemote.class.getName());
-        assertTrue(global instanceof OrangeBusinessRemote);
-        OrangeBusinessRemote globalOrangeBusinessRemote = (OrangeBusinessRemote) global;
-        assertEquals("nap", globalOrangeBusinessRemote.echo("pan"));
-
-        serviceDaemon.stop();
-        OpenEJB.destroy();
+            final Object global = context.lookup("global/testapp/testejbmodule/Orange!" + OrangeBusinessRemote.class.getName());
+            assertTrue(global instanceof OrangeBusinessRemote);
+            OrangeBusinessRemote globalOrangeBusinessRemote = (OrangeBusinessRemote) global;
+            assertEquals("nap", globalOrangeBusinessRemote.echo("pan"));
+        } finally {
+            try {
+                serviceDaemon.stop();
+            } finally {
+                OpenEJB.destroy();
+            }
+        }
     }
 
     public static interface OrangeHome extends EJBHome {
