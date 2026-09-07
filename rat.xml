@@ -88,7 +88,6 @@
           <exclude name="osgi/openejb-core-osgi/src/main/resources/META-INF/services/jakarta.enterprise.inject.spi.Extension"/>
           <exclude name="server/openejb-cxf/src/main/resources/META-INF/cxf.extension"/>
           <exclude name="server/openejb-cxf-rs/src/main/resources/META-INF/services/jakarta.ws.rs.ext.RuntimeDelegate"/>
-          <exclude name="server/openejb-ssh/src/test/key/ssh-key.ser"/>
           <exclude name="server/openejb-ejbd/activemq-data/**"/>
           <exclude name="server/openejb-http/activemq-data/**"/>
           <exclude name="examples/datasource-ciphered-password/src/test/resources/META-INF/beans.xml"/>
