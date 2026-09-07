@@ -50,6 +50,8 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -234,7 +236,8 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
             }
 
-            if (!state.equals(storageHandler.getStoredState(request, response))) {
+            if (!MessageDigest.isEqual(state.getBytes(StandardCharsets.UTF_8),
+                    storageHandler.getStoredState(request, response).getBytes(StandardCharsets.UTF_8))) {
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
             }
 
