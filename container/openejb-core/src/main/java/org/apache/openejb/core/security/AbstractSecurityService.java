@@ -43,7 +43,6 @@ import javax.security.auth.login.LoginException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
-import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.Policy;
@@ -60,7 +59,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Arrays.asList;
 
@@ -84,7 +82,6 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     private String realmName = "PropertiesLogin";
     protected Subject defaultSubject;
     protected SecurityContext defaultContext;
-    private static final AtomicBoolean jaccWarningLogged = new AtomicBoolean(false);
 
     public AbstractSecurityService() {
         this(autoJaccProvider());
@@ -373,41 +370,34 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public boolean isCallerAuthorized(final Method method, final InterfaceType type) {
-        if (System.getProperty("java.vm.specification.version").compareTo("21") < 0) {
-            final ThreadContext threadContext = ThreadContext.getThreadContext();
-            final BeanContext beanContext = threadContext.getBeanContext();
-            try {
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext beanContext = threadContext.getBeanContext();
 
-                final String ejbName = beanContext.getEjbName();
-                String name = type == null ? null : type.getSpecName();
-                if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
-                    name = null;
-                }
-
-                final Identity currentIdentity = clientIdentity.get();
-                final SecurityContext securityContext;
-                if (currentIdentity == null) {
-                    securityContext = threadContext.get(SecurityContext.class);
-                } else {
-                    securityContext = new SecurityContext(currentIdentity.getSubject());
-                }
-
-                securityContext.getAccessControlContext().checkPermission(new EJBMethodPermission(ejbName, name, method));
-            } catch (final AccessControlException e) {
-                return false;
-            }
-        } else {
-            if (!jaccWarningLogged.getAndSet(true)) {
-                LOGGER.warning("Skipping JACC authorization checks as TomEE running on JDK 21+ does not support method security at the moment.");
-            }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Skipping JACC authorization checks for method '"
-                        + (method == null ? "null" : method.getName())
-                        + "' on type '" + (type == null ? "null" : type.getSpecName())
-                        + "'.");
-            }
+        final String ejbName = beanContext.getEjbName();
+        String name = type == null ? null : type.getSpecName();
+        if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
+            name = null;
         }
-        return true;
+
+        final Identity currentIdentity = clientIdentity.get();
+        final SecurityContext securityContext;
+        if (currentIdentity == null) {
+            securityContext = threadContext.get(SecurityContext.class);
+        } else {
+            securityContext = new SecurityContext(currentIdentity.getSubject());
+        }
+
+        final Policy policy = getPolicy();
+        if (policy == null) {
+            return false;
+        }
+
+        final ProtectionDomain protectionDomain = new ProtectionDomain(
+            new CodeSource(null, (java.security.cert.Certificate[]) null),
+            null, null,
+            securityContext.subject.getPrincipals().toArray(new Principal[0])
+        );
+        return policy.implies(protectionDomain, new EJBMethodPermission(ejbName, name, method));
     }
 
     protected static String autoJaccProvider() {
