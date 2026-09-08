@@ -154,7 +154,9 @@ public class ThreadContext {
     public ThreadContext(final ThreadContext that) {
         this.beanContext = that.beanContext;
         this.primaryKey = that.primaryKey;
-        this.data.putAll(that.data);
+        synchronized (that.data) {
+            this.data.putAll(that.data);
+        }
         this.oldClassLoader = that.oldClassLoader;
     }
 
