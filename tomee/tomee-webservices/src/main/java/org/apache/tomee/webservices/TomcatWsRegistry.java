@@ -22,7 +22,9 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Service;
+import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.authenticator.AuthenticatorBase;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.authenticator.DigestAuthenticator;
 import org.apache.catalina.authenticator.NonLoginAuthenticator;
@@ -37,6 +39,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
@@ -58,6 +62,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.Arrays.asList;
 
 public class TomcatWsRegistry implements WsRegistry {
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_WS, TomcatWsRegistry.class);
+
     private static final String WEBSERVICE_SUB_CONTEXT = Strings.slashify(SystemInstance.get().getOptions().get("tomee.jaxws.subcontext", "/webservices"));
 
     private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = SystemInstance.get().getOptions().get("tomee.jaxws.oldsubcontext", false);
@@ -209,7 +215,9 @@ public class TomcatWsRegistry implements WsRegistry {
 
             if (webAppContext != null) {
                 // sub context = '/' means the service address is provided by webservices
-                    addServlet(host, webAppContext, Strings.slashify(WEBSERVICE_SUB_CONTEXT, path), httpListener,
+                    final String mapping = Strings.slashify(WEBSERVICE_SUB_CONTEXT, path);
+                    secureWebserviceMapping(webAppContext, mapping, authMethod, transportGuarantee, realmName);
+                    addServlet(host, webAppContext, mapping, httpListener,
                                path, addresses, false, moduleId);
             } else if (!WEBSERVICE_OLDCONTEXT_ACTIVE) { // deploying in a jar
                 deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee,
@@ -217,6 +225,83 @@ public class TomcatWsRegistry implements WsRegistry {
             }
         }
         return addresses;
+    }
+
+    /**
+     * The endpoint is published on a TomEE generated mapping inside an existing web context, so the
+     * application's own web.xml security constraints do not cover it. Enforce the configured
+     * authMethod/transportGuarantee on that mapping (mirroring what createNewContext does for the
+     * fake-webapp deployment) instead of silently publishing the endpoint unprotected.
+     */
+    private static void secureWebserviceMapping(final Context context, final String mapping,
+                                                String authMethod, String transportGuarantee, final String realmName) {
+        if (authMethod != null) {
+            authMethod = authMethod.toUpperCase();
+        }
+        if (transportGuarantee != null) {
+            transportGuarantee = transportGuarantee.toUpperCase();
+        }
+        if (authMethod == null || "NONE".equals(authMethod)) { //NOPMD
+            // no authentication was configured for the endpoint
+            return;
+        }
+        if (!"BASIC".equals(authMethod) && !"DIGEST".equals(authMethod) && !"CLIENT-CERT".equals(authMethod)) {
+            throw new IllegalArgumentException("Invalid authMethod: " + authMethod);
+        }
+
+        //Setup a Security Constraint on the generated webservice mapping (all HTTP methods)
+        final String securityRole = SystemInstance.get().getProperty(TOMEE_JAXWS_SECURITY_ROLE_PREFIX + context.getName(), "default");
+        for (final String role : securityRole.split(",")) {
+            final SecurityCollection collection = new SecurityCollection();
+            collection.addPattern(mapping);
+            collection.setName(role);
+
+            final SecurityConstraint sc = new SecurityConstraint();
+            sc.addAuthRole("*");
+            sc.addCollection(collection);
+            sc.setAuthConstraint(true);
+            sc.setUserConstraint(transportGuarantee);
+
+            context.addConstraint(sc);
+            context.addSecurityRole(role);
+        }
+
+        //Setup a login configuration if the webapp does not carry its own
+        final LoginConfig loginConfig = context.getLoginConfig();
+        if (loginConfig == null || loginConfig.getAuthMethod() == null) {
+            final LoginConfig config = new LoginConfig();
+            config.setAuthMethod(authMethod);
+            config.setRealmName(realmName);
+            context.setLoginConfig(config);
+        } else if (!authMethod.equalsIgnoreCase(loginConfig.getAuthMethod())) {
+            LOGGER.warning("Webservice endpoint " + mapping + " in context " + context.getName()
+                           + " requested auth method " + authMethod + " but the web application declares "
+                           + loginConfig.getAuthMethod() + "; the web application setting is kept");
+        }
+
+        //Make sure an authenticator able to challenge the caller is in the pipeline
+        Valve authenticator = null;
+        for (final Valve valve : context.getPipeline().getValves()) {
+            if (valve instanceof AuthenticatorBase) {
+                authenticator = valve;
+                break;
+            }
+        }
+        if (authenticator instanceof NonLoginAuthenticator) {
+            // installed when the webapp has no login-config: it can never authenticate a caller
+            context.getPipeline().removeValve(authenticator);
+            authenticator = null;
+        }
+        if (authenticator == null) {
+            final String method = context.getLoginConfig().getAuthMethod().toUpperCase();
+            if ("BASIC".equals(method)) {
+                context.getPipeline().addValve(new BasicAuthenticator());
+            } else if ("DIGEST".equals(method)) {
+                context.getPipeline().addValve(new DigestAuthenticator());
+            } else if ("CLIENT-CERT".equals(method)) {
+                context.getPipeline().addValve(new SSLAuthenticator());
+            }
+        }
     }
 
     private Context findContext(final String context, final String moduleId, final Container host) {
