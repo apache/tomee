@@ -55,6 +55,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Arquillian.class)
 public class WsVerbSecurityJarTest {
 
+    /** Deployment name; the generated fake webapp context is named after the module. */
+    private static final String MODULE = "WsVerbSecurityJar";
+
     private static final String SOAP_REQUEST =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
@@ -119,7 +122,7 @@ public class WsVerbSecurityJarTest {
                 "  </webservice-description>\n" +
                 "</webservices>";
 
-        return ShrinkWrap.create(JavaArchive.class, "WsVerbSecurityJar.jar")
+        return ShrinkWrap.create(JavaArchive.class, MODULE + ".jar")
                 .addClasses(GreeterWs.class, GreeterBean.class)
                 .addAsManifestResource(new StringAsset(ejbJar), "ejb-jar.xml")
                 .addAsManifestResource(new StringAsset(openejbJar), "openejb-jar.xml")
@@ -148,11 +151,13 @@ public class WsVerbSecurityJarTest {
     }
 
     private int call(final String method, final String body) throws Exception {
-        String root = base.toExternalForm();
-        if (!root.endsWith("/")) {
-            root += "/";
-        }
-        final HttpURLConnection connection = (HttpURLConnection) new URL(root + "ws/Greeter").openConnection();
+        // A standalone EJB JAR has no web context of its own, so @ArquillianResource only gives a
+        // usable host:port (its path is the app context in embedded but the arquillian-protocol
+        // context in the remote adapter). The web service is published in the generated fake webapp
+        // named after the module, so address it explicitly rather than relative to base.
+        final URL target = new URL(base.getProtocol() + "://" + base.getHost() + ":" + base.getPort()
+                + "/" + MODULE + "/ws/Greeter");
+        final HttpURLConnection connection = (HttpURLConnection) target.openConnection();
         try {
             connection.setRequestMethod(method);
             connection.setInstanceFollowRedirects(false);
