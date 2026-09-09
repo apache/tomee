@@ -83,6 +83,11 @@ public class ThreadContextCaptureTest {
     }
 
     @Test
+    public void applyingAContextOnAnotherThreadLeavesItsClassLoaderInPlace() throws Exception {
+        facade.checkWorkerThreadClassLoader();
+    }
+
+    @Test
     public void currentContextExecutorCapturesWhereItWasCreated() throws Exception {
         facade.checkCurrentContextExecutorCaptureTime();
     }
@@ -171,6 +176,30 @@ public class ThreadContextCaptureTest {
 
             assertNull("the caller's InvocationContext must not be propagated to the task",
                 seen.get(1, TimeUnit.MINUTES));
+        }
+
+        public void checkWorkerThreadClassLoader() throws Exception {
+            final ContextServiceImpl impl = ContextServiceImpl.class.cast(contextService);
+            final ContextServiceImpl.Snapshot snapshot = impl.snapshot(null);
+
+            // a pool thread applies a context and must be left with its own loader afterwards,
+            // not with the application's
+            final ExecutorService worker = Executors.newSingleThreadExecutor();
+            try {
+                worker.submit(() -> {
+                    final Thread thread = Thread.currentThread();
+                    final ClassLoader marker = new URLClassLoader(new URL[0], thread.getContextClassLoader());
+                    thread.setContextClassLoader(marker);
+
+                    impl.exit(impl.enter(snapshot));
+
+                    assertSame("a worker thread keeps its own context class loader",
+                        marker, thread.getContextClassLoader());
+                    return null;
+                }).get(1, TimeUnit.MINUTES);
+            } finally {
+                worker.shutdownNow();
+            }
         }
 
         public void checkCurrentContextExecutorCaptureTime() throws Exception {
