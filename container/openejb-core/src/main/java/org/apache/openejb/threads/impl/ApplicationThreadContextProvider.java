@@ -100,12 +100,15 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
 
         @Override
         public void endContext() throws IllegalStateException {
-            if (oldClassLoader != null) {
-                Thread.currentThread().setContextClassLoader(oldClassLoader);
-            }
-
+            // exit before restoring the class loader. ThreadContext.exit sets the loader to the value
+            // the context recorded on entry, which is the application class loader installed by
+            // begin(), so restoring afterwards leaves the thread with the loader it started with.
             if (exitThreadContext) {
                 ThreadContext.exit(oldThreadContext);
+            }
+
+            if (oldClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(oldClassLoader);
             }
         }
 
