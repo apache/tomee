@@ -18,6 +18,7 @@ package org.apache.tomee.security.cdi;
 
 import jakarta.el.ELResolver;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.interceptor.InvocationContext;
@@ -41,6 +42,13 @@ import static org.mockito.Mockito.when;
 
 public class RememberMeInterceptorCleanSubjectTest {
 
+    /**
+     * Only ever used directly, never resolved through CDI. It has to stay out of the bean archive:
+     * the tests in this module are deployed as a single webapp, so an HttpAuthenticationMechanism
+     * declared here is found by every other test and makes them all fail to deploy with
+     * "Multiple HttpAuthenticationMechanism found ... without a @WebServlet association".
+     */
+    @Vetoed
     @RememberMe
     public static class RememberMeMechanism implements HttpAuthenticationMechanism {
         @Override
