@@ -44,18 +44,24 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     protected final ContextServiceImpl contextService;
     private final ContextServiceImpl.Snapshot snapshot;
     private final Object[] containerListenerStates;
-    private final Context initialContext;
 
     public CUTask(final Object task, final ContextServiceImpl contextService) {
-        this(task, contextService, null);
+        this(task, contextService, (Map<String, String>) null);
     }
 
     public CUTask(final Object task, final ContextServiceImpl contextService, Map<String, String> props) {
+        this(task, contextService, contextService.snapshot(props));
+    }
+
+    /**
+     * Uses a snapshot captured earlier, on the thread the context is taken from.
+     * {@link ContextService#currentContextExecutor()} captures when the executor is created rather
+     * than when a task is submitted to it.
+     */
+    public CUTask(final Object task, final ContextServiceImpl contextService, final ContextServiceImpl.Snapshot snapshot) {
         super(task);
         this.contextService = contextService;
-
-        snapshot = contextService.snapshot(props);
-        initialContext = new Context();
+        this.snapshot = snapshot;
         if (CONTAINER_LISTENERS.length > 0) {
             containerListenerStates = new Object[CONTAINER_LISTENERS.length];
             for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
@@ -67,7 +73,10 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     }
 
     protected T invoke(final Callable<T> call) throws Exception {
-        initialContext.enter();
+        // one per invocation rather than one per task: a contextual proxy runs its task more than
+        // once, and may run it on several threads at the same time
+        final Context invocationContext = new Context();
+        invocationContext.enter();
         final Object[] oldStates;
         if (CONTAINER_LISTENERS.length > 0) {
             oldStates = new Object[CONTAINER_LISTENERS.length];
@@ -105,7 +114,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
                 if (contextService != null && state != null) {
                     contextService.exit(state);
                 }
-                initialContext.exit();
+                invocationContext.exit();
             }
         }
     }

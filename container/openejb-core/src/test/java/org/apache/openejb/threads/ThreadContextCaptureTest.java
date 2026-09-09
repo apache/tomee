@@ -36,6 +36,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -78,6 +80,16 @@ public class ThreadContextCaptureTest {
     @Test
     public void theCallersInvocationContextIsNotPropagated() throws Exception {
         facade.checkInvocationContextNotPropagated();
+    }
+
+    @Test
+    public void currentContextExecutorCapturesWhereItWasCreated() throws Exception {
+        facade.checkCurrentContextExecutorCaptureTime();
+    }
+
+    @Test
+    public void aContextualProxyCanRunOnSeveralThreadsAtOnce() throws Exception {
+        facade.checkContextualProxyIsReusable();
     }
 
     public static class BeforeCapture {
@@ -159,6 +171,63 @@ public class ThreadContextCaptureTest {
 
             assertNull("the caller's InvocationContext must not be propagated to the task",
                 seen.get(1, TimeUnit.MINUTES));
+        }
+
+        public void checkCurrentContextExecutorCaptureTime() throws Exception {
+            final ThreadContext caller = ThreadContext.getThreadContext();
+            assertNotNull(caller);
+
+            caller.set(BeforeCapture.class, new BeforeCapture());
+            final Executor executor = contextService.currentContextExecutor();
+            caller.set(AfterCapture.class, new AfterCapture());
+
+            try {
+                final Object[] seen = new Object[2];
+                executor.execute(() -> {
+                    final ThreadContext taskContext = ThreadContext.getThreadContext();
+                    seen[0] = taskContext.get(BeforeCapture.class);
+                    seen[1] = taskContext.get(AfterCapture.class);
+                });
+
+                assertNotNull("state present when the executor was created must be propagated", seen[0]);
+                assertNull("state added afterwards must not be, since the capture happens in"
+                    + " currentContextExecutor() and not in execute()", seen[1]);
+            } finally {
+                caller.remove(BeforeCapture.class);
+                caller.remove(AfterCapture.class);
+            }
+        }
+
+        public void checkContextualProxyIsReusable() throws Exception {
+            final int threads = 2;
+            final int rounds = 200;
+            final Callable<Boolean> contextual = contextService.contextualCallable(
+                () -> ThreadContext.getThreadContext() != null);
+
+            // one proxy, called by two threads at the same time. The callers are managed tasks, so
+            // each already has a CUTask context of its own, which is required to observe a task
+            // scoped CUTask.Context. The SPI requires a snapshot to be applicable "to any number of
+            // threads, including concurrently".
+            final CyclicBarrier barrier = new CyclicBarrier(threads);
+            final List<Future<Boolean>> futures = new ArrayList<>();
+            for (int i = 0; i < threads; i++) {
+                futures.add(executorService.submit(() -> {
+                    for (int round = 0; round < rounds; round++) {
+                        barrier.await(1, TimeUnit.MINUTES);
+                        if (!contextual.call()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }));
+            }
+
+            for (final Future<Boolean> future : futures) {
+                assertTrue(future.get(1, TimeUnit.MINUTES));
+            }
+
+            // and once more afterwards, sequentially
+            assertTrue(contextual.call());
         }
 
         public void submitWhileMutating() throws Exception {
