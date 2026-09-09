@@ -239,9 +239,15 @@ public class ThreadContext {
     }
 
     private String dataToString(final Map<Class, Object> data) {
-        return data.entrySet().stream()
+        // copy data under monitor (synchronized map), format outside lock
+        return synchronizedCopy(data).entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + (entry.getValue() == null ? "null" : entry.getValue().hashCode()))
                 .collect(Collectors.joining(", "));
+    }
 
+    private Map<Class, Object> synchronizedCopy(final Map<Class, Object> data) {
+        synchronized (data) {
+            return new HashMap<>(data);
+        }
     }
 }
