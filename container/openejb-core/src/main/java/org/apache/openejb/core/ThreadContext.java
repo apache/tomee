@@ -216,9 +216,10 @@ public class ThreadContext {
             final Map<Class, Object> copy = new HashMap<>();
             synchronized (that.data) {
                 for (final Map.Entry<Class, Object> entry : that.data.entrySet()) {
-                    if (!NON_PROPAGATED.contains(entry.getKey().getName())) {
-                        copy.put(entry.getKey(), entry.getValue());
+                    if (NON_PROPAGATED.contains(entry.getKey().getName())) {
+                        continue;
                     }
+                    copy.put(entry.getKey(), entry.getValue());
                 }
             }
             this.data = Collections.unmodifiableMap(copy);
