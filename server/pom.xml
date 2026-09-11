@@ -45,7 +45,6 @@
     <module>openejb-cxf-rs</module>
     <module>openejb-cxf-transport</module>
     <module>openejb-rest</module>
-    <module>openejb-ssh</module>
     <module>openejb-common-cli</module>
     <module>openejb-bonecp</module>
   </modules>
