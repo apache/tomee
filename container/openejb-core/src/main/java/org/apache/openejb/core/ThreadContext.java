@@ -154,7 +154,9 @@ public class ThreadContext {
     public ThreadContext(final ThreadContext that) {
         this.beanContext = that.beanContext;
         this.primaryKey = that.primaryKey;
-        this.data.putAll(that.data);
+        synchronized (that.data) {
+            this.data.putAll(that.data);
+        }
         this.oldClassLoader = that.oldClassLoader;
     }
 
@@ -226,8 +228,7 @@ public class ThreadContext {
         return "ThreadContext{" +
             "beanContext=" + beanContext.getId() +
             ", primaryKey=" + primaryKey +
-            ", data(" + data.size() +
-            ")=" + dataToString(data) +
+            ", " + dataToString(data) +
             ", oldClassLoader=" + oldClassLoader +
             ", currentOperation=" + currentOperation +
             ", invokedInterface=" + invokedInterface +
@@ -237,9 +238,14 @@ public class ThreadContext {
     }
 
     private String dataToString(final Map<Class, Object> data) {
-        return data.entrySet().stream()
+        final Map<Class, Object> copy;
+        // copy data under monitor (synchronized map), format outside lock
+        synchronized (data) {
+            copy = new HashMap<>(data);
+        }
+        return "data(" + copy.size() + ")=" + copy.entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + (entry.getValue() == null ? "null" : entry.getValue().hashCode()))
                 .collect(Collectors.joining(", "));
-
     }
+
 }
