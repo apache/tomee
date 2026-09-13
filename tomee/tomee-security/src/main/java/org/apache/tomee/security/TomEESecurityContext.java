@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.security;
 
-import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.core.security.JaccProvider;
@@ -28,27 +27,18 @@ import org.apache.tomee.catalina.TomcatSecurityService;
 import org.apache.tomee.security.message.TomEEMessageInfo;
 
 import jakarta.annotation.PostConstruct;
-import javax.security.auth.Subject;
-import jakarta.security.auth.message.AuthException;
-import jakarta.security.auth.message.AuthStatus;
-import jakarta.security.auth.message.MessageInfo;
-import jakarta.security.auth.message.config.AuthConfigFactory;
-import jakarta.security.auth.message.config.AuthConfigProvider;
-import jakarta.security.auth.message.config.ServerAuthConfig;
-import jakarta.security.auth.message.config.ServerAuthContext;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.SecurityContext;
 import jakarta.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
-import static jakarta.security.auth.message.AuthStatus.SEND_CONTINUE;
-import static jakarta.security.auth.message.AuthStatus.SEND_FAILURE;
-import static jakarta.security.auth.message.AuthStatus.SUCCESS;
 import static org.apache.tomee.catalina.Contexts.toAppContext;
 
 public class TomEESecurityContext implements SecurityContext {
@@ -82,7 +72,7 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public boolean hasAccessToWebResource(final String resource, final String... methods) {
-        return jaccProvider.hasAccessToWebResource(resource, methods);
+        return jaccProvider != null && jaccProvider.hasAccessToWebResource(resource, methods);
     }
 
     @Override
@@ -90,43 +80,34 @@ public class TomEESecurityContext implements SecurityContext {
                                              final HttpServletResponse response,
                                              final AuthenticationParameters parameters) {
 
+        // Delegate to HttpServletRequest.authenticate() rather than driving JASPIC directly.
+        request.removeAttribute(TomEEMessageInfo.LAST_AUTH_STATUS);
+
+        if (parameters != null) {
+            request.setAttribute(TomEEMessageInfo.AUTH_PARAMS, parameters);
+        }
+        request.setAttribute(TomEEMessageInfo.AUTHENTICATE, Boolean.toString(true));
+
         try {
-            final MessageInfo messageInfo = new TomEEMessageInfo(request, response, true, parameters);
-            final ServerAuthContext serverAuthContext = getServerAuthContext(request);
-            final AuthStatus authStatus = serverAuthContext.validateRequest(messageInfo, new Subject(), null);
+            if (request.authenticate(response)) {
+                return AuthenticationStatus.SUCCESS;
+            }
 
-            return mapToAuthenticationStatus(authStatus);
+            return lastAuthenticationStatus(request);
 
-        } catch (final AuthException e) {
+        } catch (final ServletException | IOException e) {
             return AuthenticationStatus.SEND_FAILURE;
+        } finally {
+            request.removeAttribute(TomEEMessageInfo.AUTH_PARAMS);
+            request.removeAttribute(TomEEMessageInfo.AUTHENTICATE);
         }
     }
 
-    private AuthenticationStatus mapToAuthenticationStatus(final AuthStatus authStatus) {
-        if (SUCCESS.equals(authStatus)) {
-            return AuthenticationStatus.SUCCESS;
-        }
-
-        if (SEND_FAILURE.equals(authStatus)) {
-            return AuthenticationStatus.SEND_FAILURE;
-        }
-
-        if (SEND_CONTINUE.equals(authStatus)) {
-            return AuthenticationStatus.SEND_CONTINUE;
-        }
-
-        throw new IllegalArgumentException();
-    }
-
-    private ServerAuthContext getServerAuthContext(final HttpServletRequest request) throws AuthException {
-        final String appContext = toAppContext(request.getServletContext(), request.getContextPath());
-
-        final AuthConfigProvider authConfigProvider =
-                AuthConfigFactory.getFactory().getConfigProvider("HttpServlet", appContext, null);
-        final ServerAuthConfig serverAuthConfig =
-                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, new CallbackHandlerImpl());
-
-        return serverAuthConfig.getAuthContext(null, null, null);
+    private static AuthenticationStatus lastAuthenticationStatus(final HttpServletRequest request) {
+        final Object status = request.getAttribute(TomEEMessageInfo.LAST_AUTH_STATUS);
+        return status instanceof AuthenticationStatus
+                ? (AuthenticationStatus) status
+                : AuthenticationStatus.SEND_FAILURE;
     }
 
     public static void registerContainerAboutLogin(final Principal principal, final Set<String> groups) {
@@ -134,10 +115,13 @@ public class TomEESecurityContext implements SecurityContext {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         if (securityService instanceof TomcatSecurityService tomcatSecurityService) {
             final Request request = OpenEJBSecurityListener.requests.get();
+            if (request == null || request.getWrapper() == null) {
+                return;
+            }
+
             final GenericPrincipal genericPrincipal =
                     new GenericPrincipal(
                         principal.getName(),
-                        null,
                         groups == null ? Collections.emptyList() : new ArrayList<>(groups),
                         principal);
 
@@ -147,7 +131,20 @@ public class TomEESecurityContext implements SecurityContext {
             tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
                                               genericPrincipal,
                                               request.getWrapper().getRunAs());
+
+            if (genericPrincipal.getName() != null) {
+                request.setAuthType("JASPIC");
+                request.setUserPrincipal(genericPrincipal);
+            }
         }
+    }
+
+    private String getAppContextId() {
+        final Request request = OpenEJBSecurityListener.requests.get();
+        if (request == null || request.getServletContext() == null) {
+            return null;
+        }
+        return toAppContext(request.getServletContext(), request.getContextPath());
     }
 
 
