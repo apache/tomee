@@ -28,6 +28,8 @@ public class TomEEMessageInfo extends MessageInfoImpl {
     public static final String IS_MANDATORY = "jakarta.security.auth.message.MessagePolicy.isMandatory";
     public static final String REGISTER_SESSION = "jakarta.servlet.http.registerSession";
 
+    public static final String LAST_AUTH_STATUS = "org.apache.tomee.security.context.lastAuthStatus";
+
     public TomEEMessageInfo(final HttpServletRequest request,
                             final HttpServletResponse response,
                             final boolean authMandatory) {
