@@ -119,6 +119,7 @@ import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.RuntimeType;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.container.DynamicFeature;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -146,6 +147,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -166,6 +169,8 @@ public class CxfRsHttpListener implements RsHttpListener {
     public static final String STATIC_RESOURCE_KEY = CXF_JAXRS_PREFIX + "static-resources-list";
     public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
     public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
+    // spec defined, see the "Services" section of the Jakarta RESTful Web Services specification
+    private static final String LOAD_SERVICES_PROPERTY = "jakarta.ws.rs.loadServices";
 
     private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
     public static final boolean TRY_STATIC_RESOURCES = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.static-first", "true"));
@@ -1304,6 +1309,10 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
 
+        if (!ignoreAutoProviders && isServiceLoadingEnabled(application)) {
+            addServiceLoaderProviders(additionalProviders, Thread.currentThread().getContextClassLoader());
+        }
+
         List<Object> providers = null;
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), OpenEJBProviderFactory.INSTANCE);
@@ -1333,6 +1342,65 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (!providers.isEmpty()) {
             factory.setProviders(providers);
         }
+    }
+
+    /**
+     * Service loading is enabled unless the Application subclass maps
+     * {@code jakarta.ws.rs.loadServices} to {@link Boolean#FALSE}, see the "Services" section of
+     * the Jakarta RESTful Web Services specification (Providers / Lifecycle and Environment).
+     */
+    static boolean isServiceLoadingEnabled(final Application application) {
+        if (application == null) {
+            return true;
+        }
+        final Map<String, Object> properties = application.getProperties();
+        return properties == null || !Boolean.FALSE.equals(properties.get(LOAD_SERVICES_PROPERTY));
+    }
+
+    /**
+     * REST 3.1 requires Feature and DynamicFeature implementations declared in
+     * META-INF/services to be picked up through the JDK ServiceLoader at deploy time.
+     *
+     * CXF does not implement this lookup itself - it relies on the container to hand it the
+     * already resolved providers, which is why the CXF TCK run stays green on GlassFish. TomEE
+     * builds the provider list on its own, so without this scan such features never register.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/TOMEE-4643">TOMEE-4643</a>
+     */
+    static void addServiceLoaderProviders(final Collection<Object> additionalProviders, final ClassLoader loader) {
+        for (final Class<?> spi : asList(jakarta.ws.rs.core.Feature.class, DynamicFeature.class)) {
+            // a single broken entry must not discard the remaining providers of this type,
+            // so failures are caught per entry instead of around the whole iteration
+            final Iterator<?> it = ServiceLoader.load(spi, loader).iterator();
+            while (true) {
+                final Object impl;
+                try {
+                    if (!it.hasNext()) {
+                        break;
+                    }
+                    impl = it.next();
+                } catch (final ServiceConfigurationError | LinkageError e) {
+                    LOGGER.warning("Can't load a " + spi.getName() + " implementation from META-INF/services", e);
+                    continue;
+                }
+
+                final Class<?> implClass = impl.getClass();
+                if (alreadyRegistered(additionalProviders, implClass)) {
+                    continue;
+                }
+                additionalProviders.add(impl);
+                LOGGER.info("Registered " + spi.getSimpleName() + " " + implClass.getName() + " found in META-INF/services");
+            }
+        }
+    }
+
+    private static boolean alreadyRegistered(final Collection<Object> providers, final Class<?> clazz) {
+        for (final Object provider : providers) {
+            if (provider == clazz || clazz.equals(provider.getClass())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isProvider(final Class<?> clazz) {
