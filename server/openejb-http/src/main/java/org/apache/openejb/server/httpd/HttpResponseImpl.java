@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import static java.util.Collections.singletonList;
 
@@ -585,11 +584,11 @@ public class HttpResponseImpl implements HttpResponse {
     /**
      * creates an error with user defined variables
      *
-     * @param message the message of the error
-     * @param t       a Throwable to print a stack trace to
+     * @param message the message of the error, logged when debug logging is enabled
+     * @param t       the cause of the error, logged when debug logging is enabled
      * @return the HttpResponseImpl that this error belongs to
      */
-    protected static HttpResponseImpl createError(String message, final Throwable t) {
+    protected static HttpResponseImpl createError(final String message, final Throwable t) {
         final HttpResponseImpl res = new HttpResponseImpl(500, "Internal Server Error", "text/html");
         final PrintWriter body;
         try {
@@ -604,45 +603,10 @@ public class HttpResponseImpl implements HttpResponse {
         body.println("<br><br>");
 
         if (LOGGER.isDebugEnabled()) { // this is not an error, don't log it by default
-            LOGGER.error(String.valueOf(t), t);
+            LOGGER.error(message, t);
         }
 
-        if (message != null) {
-            final StringTokenizer msg = new StringTokenizer(message, "\n\r");
-
-            while (msg.hasMoreTokens()) {
-                body.print(msg.nextToken());
-                body.println("<br>");
-            }
-        }
-
-        if (t != null) {
-
-            PrintWriter writer = null;
-
-            try {
-                body.println("<br><br>");
-                body.println("Stack Trace:<br>");
-                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                writer = new PrintWriter(baos);
-                t.printStackTrace(writer);
-                writer.flush();
-
-                message = new String(baos.toByteArray());
-                final StringTokenizer msg = new StringTokenizer(message, "\n\r");
-
-                while (msg.hasMoreTokens()) {
-                    body.print(msg.nextToken());
-                    body.println("<br>");
-                }
-            } catch (final Exception e) {
-                //no-op
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-        }
+        body.println("The server encountered an internal error.");
 
         body.println("</body>");
         body.println("</html>");

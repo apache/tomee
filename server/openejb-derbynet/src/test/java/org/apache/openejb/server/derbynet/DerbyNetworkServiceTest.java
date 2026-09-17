@@ -108,4 +108,20 @@ public class DerbyNetworkServiceTest {
         assertConnection(port);
         serviceManager.stop();
     }
+
+    @Test
+    public void bindPropertyIsHonored() throws Exception {
+        final DerbyNetworkService service = new DerbyNetworkService();
+        final Properties properties = new Properties();
+        properties.setProperty("bind", "0.0.0.0");
+        service.init(properties);
+        Assert.assertEquals("0.0.0.0", service.getIP());
+    }
+
+    @Test
+    public void bindDefaultsToLoopback() throws Exception {
+        final DerbyNetworkService service = new DerbyNetworkService();
+        service.init(new Properties());
+        Assert.assertEquals("127.0.0.1", service.getIP());
+    }
 }

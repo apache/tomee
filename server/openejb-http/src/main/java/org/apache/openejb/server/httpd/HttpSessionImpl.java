@@ -62,7 +62,13 @@ public class HttpSessionImpl implements HttpSession {
     }
 
     public void newSessionId() {
+        final String oldId = this.sessionId;
         this.sessionId = UUID.randomUUID().toString();
+
+        final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
+        if (sessionManager != null) {
+            sessionManager.changeSessionId(oldId, this.sessionId);
+        }
     }
 
     @Override

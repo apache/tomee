@@ -57,6 +57,7 @@
 |tomee.serialization.class.blacklist|	string	|default list of packages/classnames excluded for EJBd deserialization (needs to be set on server and client sides). Please see the description of Ejbd Transport for details.
 |tomee.serialization.class.whitelist|	string|	default list of packages/classnames allowed for EJBd deserialization (blacklist wins over whitelist, needs to be set on server and client sides). Please see the description of Ejbd Transport for details.
 |tomee.remote.support	|boolean	|if true /tomee webapp is auto-deployed and EJBd is active (true by default for 1.x, false for 7.x excepted for tomee maven plugin and arquillian)
+|openejb.internal.beans.security.enabled	|boolean	|if true (default) the internal EJBs (Deployer, ConfigurationInfo, ...) can only be invoked by a caller in the tomee-admin or openejb-admin role
 |openejb.crosscontext	|bool|	set the cross context property on tomcat context (can be done in the traditional way if the deployment is done through the webapp discovery and not the OpenEJB Deployer EJB)
 |openejb.jsessionid-support	|bool|	remove URL from session tracking modes for this context (see jakarta.servlet.SessionTrackingMode)
 |openejb.myfaces.disable-default-values	|bool|	by default TomEE will initialize myfaces with some its default values to avoid useless logging

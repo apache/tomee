@@ -160,6 +160,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
                 }
             }
         }
+        addAnyAuthenticatedUserRole(principals, logicalRoles, roles);
         return roles;
     }
 

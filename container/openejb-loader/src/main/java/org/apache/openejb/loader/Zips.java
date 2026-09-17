@@ -49,6 +49,9 @@ public class Zips {
 
     public static void unzip(final InputStream read, final File destination, final boolean noparent) throws IOException {
         try {
+            final String destinationPath = destination.getCanonicalPath();
+            final String destinationPrefix = destinationPath.endsWith(File.separator) ? destinationPath : destinationPath + File.separator;
+
             // Open the ZIP file
             final ZipInputStream in = new ZipInputStream(read);
 
@@ -60,6 +63,12 @@ public class Zips {
                     path = path.replaceFirst("^[^/]+/", "");
                 }
                 final File file = new File(destination, path);
+
+                // only extract entries resolving inside the destination directory
+                final String filePath = file.getCanonicalPath();
+                if (!filePath.equals(destinationPath) && !filePath.startsWith(destinationPrefix)) {
+                    throw new IOException("Zip entry escapes the destination directory: " + entry.getName());
+                }
 
                 if (entry.isDirectory()) {
                     Files.mkdir(file);

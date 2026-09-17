@@ -27,6 +27,8 @@ import org.mockito.ArgumentCaptor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -139,5 +141,27 @@ public class CookieBasedOpenIdStorageHandlerTest {
         ArgumentCaptor<Cookie> captor = ArgumentCaptor.forClass(Cookie.class);
         verify(response).addCookie(captor.capture());
         return captor.getValue();
+    }
+
+    @Test
+    public void createNewStateProducesLongUniqueUrlSafeTokens() {
+        final Set<String> seen = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            final String state = handler.createNewState(request, response);
+            assertEquals(43, state.length());
+            assertTrue(state.matches("[A-Za-z0-9_-]+"));
+            assertTrue(seen.add(state));
+        }
+    }
+
+    @Test
+    public void createNewNonceProducesLongUniqueUrlSafeTokens() {
+        final Set<String> seen = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            final String nonce = handler.createNewNonce(request, response);
+            assertEquals(43, nonce.length());
+            assertTrue(nonce.matches("[A-Za-z0-9_-]+"));
+            assertTrue(seen.add(nonce));
+        }
     }
 }

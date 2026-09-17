@@ -41,6 +41,32 @@ servlet definition in your `web.xml` and set the url mapping to what you
 want (let's say /foo/*). Then use the provider url
 http://<host>:<port>/<webapp context name>/foo
 
+== Remote datasource lookup
+
+Remote datasource lookup is disabled by default. Remote EJB invocations and
+server-side datasource use are unaffected. Clients that previously looked up a
+datasource remotely now receive a naming exception instead of connection details.
+
+Administrators who need this feature can set the following server system property
+(for example in `conf/system.properties`):
+
+[source,properties]
+----
+openejb.ejbd.datasource-metadata = true
+----
+
+This restores remote datasource lookup, including datasource references. The
+client receives connection details, including database credentials, and opens
+its own JDBC connection. This is a server-wide opt-in, not a per-user or
+per-datasource permission. EJB method authorization does not restrict these
+lookups. Enable it only when all clients able to reach the remote endpoint are
+trusted to receive the exposed database credentials.
+
+The setting applies to both native EJBd and EJBd over HTTP/HTTPS. HTTPS protects
+the connection in transit; it does not prevent the client from receiving the
+credentials. Applications that only need remote business operations should
+continue using remote EJB methods with datasource access performed on the server.
+
 == Remote communication and serialization
 
 Remotely calling EJBs, independent of using Ejbd or other RMI/IIOP based

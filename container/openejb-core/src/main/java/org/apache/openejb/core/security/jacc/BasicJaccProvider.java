@@ -18,7 +18,6 @@
 package org.apache.openejb.core.security.jacc;
 
 import org.apache.openejb.core.security.JaccProvider;
-import org.apache.openejb.core.security.PolicyJDK24;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 
@@ -64,12 +63,6 @@ public class BasicJaccProvider extends JaccProvider {
 
     private final Map<String, BasicPolicyConfiguration> configurations = new HashMap<>();
 
-    private final java.security.Policy systemPolicy;
-
-    public BasicJaccProvider() {
-        systemPolicy = PolicyJDK24.getPolicy();
-    }
-
     public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {
         if (contextID == null) {
             throw new IllegalArgumentException("contextID can't be null;");
@@ -106,12 +99,12 @@ public class BasicJaccProvider extends JaccProvider {
     }
 
     public boolean inService(final String contextID) throws PolicyContextException {
-        final PolicyConfiguration configuration = getPolicyConfiguration(contextID, false);
-        return configuration.inService();
+        final PolicyConfiguration configuration = getPolicyConfiguration(contextID);
+        return configuration != null && configuration.inService();
     }
 
     public PermissionCollection getPermissions(final CodeSource codesource) {
-        return systemPolicy == null ? null : systemPolicy.getPermissions(codesource);
+        return null;
     }
 
     public void refresh() {
@@ -134,7 +127,7 @@ public class BasicJaccProvider extends JaccProvider {
             }
         }
 
-        return systemPolicy != null && systemPolicy.implies(domain, permission);
+        return false;
     }
 
     public boolean hasAccessToWebResource(final String resource, final String... methods) {

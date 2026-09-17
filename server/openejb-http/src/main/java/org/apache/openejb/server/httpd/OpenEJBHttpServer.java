@@ -25,6 +25,7 @@ import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.server.stream.CountingInputStream;
 import org.apache.openejb.server.stream.CountingOutputStream;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
@@ -270,8 +271,7 @@ public class OpenEJBHttpServer implements HttpServer {
             res.setCode(400);
             res.setResponseString("Could not read the request");
             try {
-                res.getWriter().println(t.getMessage());
-                t.printStackTrace(res.getWriter());
+                res.getWriter().println("Bad request");
             } catch (IOException e) {
                 // no-op
             }
@@ -298,6 +298,12 @@ public class OpenEJBHttpServer implements HttpServer {
             listener.onMessage(req, res);
         } catch (Throwable t) {
             throw new OpenEJBException("Error occurred while executing the module " + location + "\n" + t.getClass().getName() + ":\n" + t.getMessage(), t);
+        } finally {
+            // the request thread is pooled, reset any security association made during the request
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            if (securityService != null) {
+                securityService.disassociate();
+            }
         }
 
         final boolean async = "true".equals(req.getAttribute("openejb_async"));

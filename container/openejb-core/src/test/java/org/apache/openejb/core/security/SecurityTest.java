@@ -36,6 +36,7 @@ import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.annotation.security.RunAs;
+import jakarta.ejb.EJBAccessException;
 import jakarta.ejb.SessionContext;
 import jakarta.ejb.Stateless;
 import javax.naming.Context;
@@ -102,6 +103,7 @@ public class SecurityTest extends TestCase {
 
         foo.svnCheckout("");
         foo.svnCommit("");
+        assertEquals("authenticated", foo.authenticatedOnly());
 
         try {
             foo.deleteProject("");
@@ -153,6 +155,12 @@ public class SecurityTest extends TestCase {
         final Project foo = (Project) ctx.lookup("FooBeanLocal");
 
         foo.svnCheckout("");
+        try {
+            foo.authenticatedOnly();
+            fail("The default unauthenticated identity must not have the ** role");
+        } catch (final EJBAccessException e) {
+            // good.
+        }
         try {
             foo.svnCommit("");
             fail("Should not be allowed");
@@ -231,6 +239,12 @@ public class SecurityTest extends TestCase {
         }
 
         @Override
+        @RolesAllowed({"**"})
+        public String authenticatedOnly() {
+            return "authenticated";
+        }
+
+        @Override
         public boolean isCallerInRole(final String role) {
             return context.isCallerInRole(role);
         }
@@ -274,6 +288,12 @@ public class SecurityTest extends TestCase {
         }
 
         @Override
+        @RolesAllowed({"**"})
+        public String authenticatedOnly() {
+            return "authenticated";
+        }
+
+        @Override
         @PermitAll
         public boolean isCallerInRole(final String role) {
             return context.isCallerInRole(role);
@@ -295,6 +315,8 @@ public class SecurityTest extends TestCase {
         public String svnCheckout(String s);
 
         public String deleteProject(String s);
+
+        public String authenticatedOnly();
 
         public boolean isCaller(String s);
 

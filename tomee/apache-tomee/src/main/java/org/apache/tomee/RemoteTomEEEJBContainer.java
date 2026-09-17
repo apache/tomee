@@ -112,7 +112,8 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
                 try {
                     instance.container.start(Arrays.asList(
                         "-Dtomee.serialization.class.blacklist=" + System.getProperty("tomee.serialization.class.blacklist"),
-                        "-Dopenejb.system.apps=true", "-Dtomee.remote.support=true"),
+                        "-Dopenejb.system.apps=true", "-Dtomee.remote.support=true",
+                        "-Dopenejb.internal.beans.security.enabled=false"),
                         "start", true);
                 } catch (final Exception e) {
                     instance.container.destroy();

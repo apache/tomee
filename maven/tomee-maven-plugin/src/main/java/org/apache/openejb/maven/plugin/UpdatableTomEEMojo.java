@@ -119,6 +119,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
             if (systemVariables == null) {
                 systemVariables = new HashMap<>();
                 systemVariables.put("tomee.remote.support", "true");
+                systemVariables.put("openejb.internal.beans.security.enabled", "false");
             }
         }
     }

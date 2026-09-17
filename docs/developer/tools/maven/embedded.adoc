@@ -27,7 +27,7 @@ TomEE Embedded Maven plugin has a single goal: `tomee-embedded:run`.
 | serverXml | - | a custom server.xml
 | ssl | false | is HTTPS active
 | withEjbRemote |false | is EJBd active
-| quickSession | true | is sessions using Random instead of SecureRandom to generate id (faster but less secure, good for dev purposes)
+| quickSession | false | is sessions using Random instead of SecureRandom to generate id (faster but less secure, good for dev purposes)
 | skipHttp | false | don't activate HTTP connector (allow to have only HTTPS for instance)
 | classpathAsWar | false | deploy the classpath instead of the binary/war
 | useProjectClasspath | true | in previous case use the project classpath and not plugin one

@@ -64,31 +64,6 @@
       </property>
     </configuration>
   </container>
-  <container qualifier="tomee-remote-secpol">
-    <configuration>
-      <property name="httpPort">-1</property>
-      <property name="ajpPort">-1</property>
-      <property name="stopPort">-1</property>
-      <property name="dir">target/apache-tomee-remote</property>
-      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
-      <property name="simpleLog">true</property>
-      <property name="properties">
-        My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
-        My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
-
-        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
-
-        AMQResourceAdapter = new://Resource?type=ActiveMQResourceAdapter
-        AMQResourceAdapter.BrokerXmlConfig = broker:(vm://localhost)?useJmx=false&amp;persistent=false&amp;deleteAllMessagesOnStartup=true
-        AMQMessageContainer = new://Container?type=MESSAGE
-        AMQMessageContainer.ResourceAdapter = AMQResourceAdapter
-        AMQConnectionFactory = new://Resource?type=jakarta.jms.ConnectionFactory
-        AMQConnectionFactory.ResourceAdapter = AMQResourceAdapter
-        
-        jakarta.security.jacc.policy.provider=sun.security.provider.PolicyFile
-      </property>
-    </configuration>
-  </container>
   <container qualifier="tomee-webapp">
     <configuration>
       <property name="httpPort">-1</property>

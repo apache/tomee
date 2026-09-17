@@ -45,10 +45,8 @@ import javax.security.auth.login.LoginException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
-import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.CodeSource;
-import java.security.Policy;
 import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
@@ -62,7 +60,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Arrays.asList;
 
@@ -87,7 +84,6 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     private String realmName = "PropertiesLogin";
     protected Subject defaultSubject;
     protected SecurityContext defaultContext;
-    private static final AtomicBoolean jaccWarningLogged = new AtomicBoolean(false);
     private final PrincipalMapper principalMapper = new DefaultPrincipalMapper();
 
     public AbstractSecurityService() {
@@ -177,7 +173,44 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
                 roles.add(name);
             }
         }
+        addAnyAuthenticatedUserRole(principals, logicalRoles, roles);
         return roles;
+    }
+
+    protected void addAnyAuthenticatedUserRole(final Principal[] principals, final Set<String> logicalRoles,
+                                               final Set<String> roles) {
+        if (principals == null || principals.length == 0 || !logicalRoles.contains("**")
+                || principalMapper.isAnyAuthenticatedUserRoleMapped()) {
+            return;
+        }
+
+        final Set<Principal> principalSet = new LinkedHashSet<>(asList(principals));
+        final Subject subject = new Subject();
+        subject.getPrincipals().addAll(principalSet);
+
+        if (!isDefaultIdentity(principals) && principalMapper.getCallerPrincipal(subject) != null) {
+            roles.add("**");
+        }
+    }
+
+    private boolean isDefaultIdentity(final Principal[] principals) {
+        if (defaultSubject == null || defaultSubject.getPrincipals().size() != principals.length) {
+            return false;
+        }
+
+        for (final Principal principal : principals) {
+            boolean found = false;
+            for (final Principal defaultPrincipal : defaultSubject.getPrincipals()) {
+                if (principal == defaultPrincipal) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -377,41 +410,40 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public boolean isCallerAuthorized(final Method method, final InterfaceType type) {
-        if (System.getProperty("java.vm.specification.version").compareTo("21") < 0) {
-            final ThreadContext threadContext = ThreadContext.getThreadContext();
-            final BeanContext beanContext = threadContext.getBeanContext();
-            try {
+        final ThreadContext threadContext = ThreadContext.getThreadContext();
+        final BeanContext beanContext = threadContext.getBeanContext();
 
-                final String ejbName = beanContext.getEjbName();
-                String name = type == null ? null : type.getSpecName();
-                if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
-                    name = null;
-                }
+        final String ejbName = beanContext.getEjbName();
+        String name = type == null ? null : type.getSpecName();
+        if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
+            name = null;
+        }
 
-                final Identity currentIdentity = clientIdentity.get();
-                final SecurityContext securityContext;
-                if (currentIdentity == null) {
-                    securityContext = threadContext.get(SecurityContext.class);
-                } else {
-                    securityContext = new SecurityContext(currentIdentity.getSubject());
-                }
+        final Identity currentIdentity = clientIdentity.get();
+        final SecurityContext securityContext;
+        if (currentIdentity == null) {
+            securityContext = threadContext.get(SecurityContext.class);
+        } else {
+            securityContext = new SecurityContext(currentIdentity.getSubject());
+        }
 
-                securityContext.getAccessControlContext().checkPermission(new EJBMethodPermission(ejbName, name, method));
-            } catch (final AccessControlException e) {
+        // evaluate the EJBMethodPermission via the Jakarta Authorization policy;
+        // the AccessControlContext.checkPermission() route is unavailable on JDK 24+ (JEP 486)
+        try {
+            final PolicyFactory policyFactory = PolicyFactory.getPolicyFactory();
+            if (policyFactory == null) {
                 return false;
             }
-        } else {
-            if (!jaccWarningLogged.getAndSet(true)) {
-                LOGGER.warning("Skipping JACC authorization checks as TomEE running on JDK 21+ does not support method security at the moment.");
+
+            final jakarta.security.jacc.Policy policy = policyFactory.getPolicy();
+            if (policy == null) {
+                return false;
             }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Skipping JACC authorization checks for method '"
-                        + (method == null ? "null" : method.getName())
-                        + "' on type '" + (type == null ? "null" : type.getSpecName())
-                        + "'.");
-            }
+
+            return policy.implies(new EJBMethodPermission(ejbName, name, method), securityContext.subject);
+        } catch (final SecurityException e) {
+            return false;
         }
-        return true;
     }
 
     protected static String autoJaccProvider() {
@@ -449,49 +481,22 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
 
-        // check the system provided provider first - if for some reason it isn't loaded, load it
-        final String systemPolicyProvider = SystemInstance.get().getOptions().getProperties().getProperty("jakarta.security.jacc.policy.provider");
-        if (systemPolicyProvider != null && getPolicy() == null) {
-            installPolicy(systemPolicyProvider);
-        }
-
-        if (! JaccProvider.Policy.class.getName().equals(getPolicy().getClass().getName())) {
-            // this should delegate to the policy installed above
-            installPolicy(JaccProvider.Policy.class.getName());
-        }
-    }
-
-    private static void installPolicy(String policyProvider) {
-        try {
-            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            final Class policyClass = Class.forName(policyProvider, true, classLoader);
-            final Policy policy = (Policy) policyClass.getDeclaredConstructor().newInstance();
-            policy.refresh();
-            setPolicy(policy);
-        } catch (final Exception e) {
-            throw new IllegalStateException("Could not install JACC Policy Provider: " + policyProvider, e);
+        // Jakarta Authorization requires jakarta.security.jacc.policy.provider to name a
+        // jakarta.security.jacc.Policy implementation registered via PolicyFactory#setPolicy
+        final String policyProvider = SystemInstance.get().getOptions().getProperties().getProperty("jakarta.security.jacc.policy.provider");
+        if (policyProvider != null) {
+            try {
+                final Object policy = Thread.currentThread().getContextClassLoader()
+                        .loadClass(policyProvider).getDeclaredConstructor().newInstance();
+                if (!(policy instanceof jakarta.security.jacc.Policy)) {
+                    throw new IllegalArgumentException(policyProvider + " is not a " + jakarta.security.jacc.Policy.class.getName());
+                }
+                PolicyFactory.getPolicyFactory().setPolicy((jakarta.security.jacc.Policy) policy);
+            } catch (final Exception e) {
+                throw new IllegalStateException("Could not install JACC Policy Provider: " + policyProvider, e);
+            }
         }
     }
-
-
-    public static Policy getPolicy() {
-        Policy policy = PolicyJDK24.getPolicy();
-        if (policy == null) {
-            policy = Policy.getPolicy();
-        }
-
-        return policy;
-    }
-
-    public static void setPolicy(Policy policy) {
-        try {
-            Policy.setPolicy(policy);
-        } catch (UnsupportedOperationException e) {
-            //we are running JDK 24 or later, so no system-wide policy possible.
-            PolicyJDK24.setPolicy(policy);
-        }
-    }
-
 
     protected Subject createSubject(final String name, final String groupName) {
         if (name == null) {

@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.stream.Collectors;
@@ -310,7 +311,8 @@ public class OpenIdAuthenticationMechanism implements HttpAuthenticationMechanis
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.NOT_VALIDATED_RESULT);
             }
 
-            if (!state.equals(storageHandler.getStoredState(request, response))) {
+            if (!MessageDigest.isEqual(state.getBytes(StandardCharsets.UTF_8),
+                    storageHandler.getStoredState(request, response).getBytes(StandardCharsets.UTF_8))) {
                 return messageContext.notifyContainerAboutLogin(CredentialValidationResult.INVALID_RESULT);
             }
 

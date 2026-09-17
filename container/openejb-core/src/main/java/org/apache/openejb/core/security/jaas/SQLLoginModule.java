@@ -37,6 +37,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -48,6 +49,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -363,7 +365,8 @@ public class SQLLoginModule implements LoginModule {
         // Both are non-null
         if (Strings.checkNullBlankString(digest)) {
             // No digest algorithm is used
-            return real.equals(provided);
+            return MessageDigest.isEqual(
+                real.getBytes(StandardCharsets.UTF_8), provided.getBytes(StandardCharsets.UTF_8));
         }
 
         try {
@@ -372,9 +375,12 @@ public class SQLLoginModule implements LoginModule {
             final byte[] data = md.digest(provided.getBytes());
 
             if (encoding == null || "hex".equalsIgnoreCase(encoding)) {
-                return real.equalsIgnoreCase(HexConverter.bytesToHex(data));
+                // lower-case both sides to keep the hex comparison case-insensitive
+                return MessageDigest.isEqual(
+                    real.toLowerCase(Locale.ENGLISH).getBytes(StandardCharsets.UTF_8),
+                    HexConverter.bytesToHex(data).toLowerCase(Locale.ENGLISH).getBytes(StandardCharsets.UTF_8));
             } else if ("base64".equalsIgnoreCase(encoding)) {
-                return real.equals(new String(Base64.encodeBase64(data)));
+                return MessageDigest.isEqual(real.getBytes(StandardCharsets.UTF_8), Base64.encodeBase64(data));
             }
         } catch (final NoSuchAlgorithmException e) {
             // Should not occur.  Availability of algorithm has been checked at initialization

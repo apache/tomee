@@ -34,7 +34,7 @@ The default configuration allows to start tomee without issue but you can desire
 |serverXml|-|which server.xml to use
 |keepServerXmlAsThis|false|don't adjust ports/host from the configuration and keep the ones in server.xml
 |properties|-|container properties
-|quickSession | true|use Random instead of SecureRandom (for dev)
+|quickSession | false|use Random instead of SecureRandom (for dev)
 |skipHttp|false|don't use the http connector
 |httpsPort | 8443|https port
 |ssl|false| activate https

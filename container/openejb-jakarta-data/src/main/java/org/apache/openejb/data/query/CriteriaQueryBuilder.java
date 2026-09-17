@@ -23,8 +23,16 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public final class CriteriaQueryBuilder {
+
+    /**
+     * A dynamic sort property is limited to an attribute name or a dotted
+     * attribute path, e.g. {@code priority} or {@code address.city}.
+     */
+    private static final Pattern VALID_SORT_PROPERTY =
+        Pattern.compile("[A-Za-z_$][A-Za-z0-9_$]*(\\.[A-Za-z_$][A-Za-z0-9_$]*)*");
 
     private CriteriaQueryBuilder() {
     }
@@ -193,11 +201,11 @@ public final class CriteriaQueryBuilder {
         final List<String> sortClauses = new java.util.ArrayList<>();
         for (final Object arg : args) {
             if (arg instanceof Sort<?> sort) {
-                sortClauses.add("e." + sort.property() + (sort.isAscending() ? " ASC" : " DESC"));
+                sortClauses.add("e." + validateSortProperty(sort.property()) + (sort.isAscending() ? " ASC" : " DESC"));
             } else if (arg instanceof jakarta.data.Order<?> order) {
                 for (final Object s : order.sorts()) {
                     final Sort<?> sort = (Sort<?>) s;
-                    sortClauses.add("e." + sort.property() + (sort.isAscending() ? " ASC" : " DESC"));
+                    sortClauses.add("e." + validateSortProperty(sort.property()) + (sort.isAscending() ? " ASC" : " DESC"));
                 }
             }
         }
@@ -214,6 +222,17 @@ public final class CriteriaQueryBuilder {
             baseJpql = jpql;
         }
         return baseJpql + " ORDER BY " + String.join(", ", sortClauses);
+    }
+
+    /**
+     * Returns the property if it is a plain attribute name or a dotted attribute
+     * path, otherwise throws {@link IllegalArgumentException}.
+     */
+    static String validateSortProperty(final String property) {
+        if (property == null || !VALID_SORT_PROPERTY.matcher(property).matches()) {
+            throw new IllegalArgumentException("Invalid sort property: " + property);
+        }
+        return property;
     }
 
     static boolean isSpecialParameter(final Class<?> type) {
