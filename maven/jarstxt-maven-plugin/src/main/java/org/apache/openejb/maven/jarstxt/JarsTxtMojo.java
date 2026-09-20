@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.maven.jarstxt;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.maven.artifact.Artifact;
@@ -45,6 +44,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -128,7 +128,7 @@ public class JarsTxtMojo extends AbstractMojo {
                         throw new MojoExecutionException(e.getMessage(), e);
                     }
                     final File file = artifact.getFile();
-                    line.append("|").append(Files.hash((Set<URL>) Collections.singleton(file.toURI().toURL()), hashAlgo))
+                    line.append("|").append(Files.hash(Collections.singleton(file.toURI().toURL()), hashAlgo))
                         .append("|").append(hashAlgo);
                 }
 

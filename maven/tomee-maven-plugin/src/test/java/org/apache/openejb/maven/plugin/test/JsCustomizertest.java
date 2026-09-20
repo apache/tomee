@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.maven.plugin.test;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.openejb.maven.plugin.Config;
 import org.apache.openejb.maven.plugin.TomEEMavenPluginRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
 
