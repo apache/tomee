@@ -52,7 +52,7 @@ public class TomEEEmbeddedPlugin implements Plugin<Project> {
                     if (extension == null) {
                         return;
                     }
-                    if (extension.isSkipDefaultRepository() != null && !extension.isSkipDefaultRepository()) {
+                    if (!extension.isSkipDefaultRepository()) {
                         actionProject.getRepositories().mavenCentral();
                         return;
                     }
