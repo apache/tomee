@@ -155,7 +155,8 @@
 
     <!-- Logging frameworks -->
     <version.slf4j>2.0.18</version.slf4j>
-    <version.log4j>1.2.17</version.log4j>
+    <!-- reload4j is the maintained fork of the EOL log4j 1.x, same org.apache.log4j API -->
+    <version.reload4j>1.2.26</version.reload4j>
     <version.log4j2>2.26.1</version.log4j2>
     <version.commons-logging>1.4.0</version.commons-logging>
 
@@ -1605,9 +1606,9 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${version.log4j}</version>
+        <groupId>ch.qos.reload4j</groupId>
+        <artifactId>reload4j</artifactId>
+        <version>${version.reload4j}</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
