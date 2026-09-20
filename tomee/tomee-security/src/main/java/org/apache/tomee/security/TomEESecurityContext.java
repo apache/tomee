@@ -49,8 +49,10 @@ import jakarta.security.jacc.PolicyContext;
 import jakarta.security.jacc.PolicyFactory;
 import jakarta.security.jacc.WebResourcePermission;
 import jakarta.security.jacc.WebRoleRefPermission;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -232,52 +234,34 @@ public class TomEESecurityContext implements SecurityContext {
                                              final HttpServletResponse response,
                                              final AuthenticationParameters parameters) {
 
+        // Delegate to HttpServletRequest.authenticate() rather than driving JASPIC directly.
+        request.removeAttribute(TomEEMessageInfo.LAST_AUTH_STATUS);
+
+        if (parameters != null) {
+            request.setAttribute(TomEEMessageInfo.AUTH_PARAMS, parameters);
+        }
+        request.setAttribute(TomEEMessageInfo.AUTHENTICATE, Boolean.toString(true));
+
         try {
-            final MessageInfo messageInfo = new TomEEMessageInfo(request, response, true, parameters);
-            final ServerAuthContext serverAuthContext = getServerAuthContext(request);
-            final AuthStatus authStatus = serverAuthContext.validateRequest(messageInfo, new Subject(), null);
-
-            return mapToAuthenticationStatus(authStatus);
-
-        } catch (final AuthException e) {
-            return AuthenticationStatus.SEND_FAILURE;
-        }
-    }
-
-    private AuthenticationStatus mapToAuthenticationStatus(final AuthStatus authStatus) {
-        if (SUCCESS.equals(authStatus)) {
-            return AuthenticationStatus.SUCCESS;
-        }
-
-        if (SEND_FAILURE.equals(authStatus)) {
-            return AuthenticationStatus.SEND_FAILURE;
-        }
-
-        if (SEND_CONTINUE.equals(authStatus)) {
-            return AuthenticationStatus.SEND_CONTINUE;
-        }
-
-        throw new IllegalArgumentException();
-    }
-
-    private ServerAuthContext getServerAuthContext(final HttpServletRequest request) throws AuthException {
-        final String appContext = toAppContext(request.getServletContext(), request.getContextPath());
-
-        final CallbackHandlerImpl callbackHandler = new CallbackHandlerImpl();
-        final Request currentRequest = OpenEJBSecurityListener.requests.get();
-        if (currentRequest != null) {
-            final Container container = currentRequest.getWrapper() != null ? currentRequest.getWrapper() : currentRequest.getContext();
-            if (container != null) {
-                callbackHandler.setContainer(container);
+            if (request.authenticate(response)) {
+                return AuthenticationStatus.SUCCESS;
             }
+
+            return lastAuthenticationStatus(request);
+
+        } catch (final ServletException | IOException e) {
+            return AuthenticationStatus.SEND_FAILURE;
+        } finally {
+            request.removeAttribute(TomEEMessageInfo.AUTH_PARAMS);
+            request.removeAttribute(TomEEMessageInfo.AUTHENTICATE);
         }
+    }
 
-        final AuthConfigProvider authConfigProvider =
-                AuthConfigFactory.getFactory().getConfigProvider("HttpServlet", appContext, null);
-        final ServerAuthConfig serverAuthConfig =
-                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, callbackHandler);
-
-        return serverAuthConfig.getAuthContext(null, null, null);
+    private static AuthenticationStatus lastAuthenticationStatus(final HttpServletRequest request) {
+        final Object status = request.getAttribute(TomEEMessageInfo.LAST_AUTH_STATUS);
+        return status instanceof AuthenticationStatus
+                ? (AuthenticationStatus) status
+                : AuthenticationStatus.SEND_FAILURE;
     }
 
     public static void registerContainerAboutLogin(final Principal principal, final Set<String> groups) {
