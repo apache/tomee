@@ -63,11 +63,13 @@ public interface LoginToContinueMechanism {
     }
 
     static boolean hasRequest(final HttpServletRequest request) {
-        return request.getSession().getAttribute(ORIGINAL_REQUEST) != null;
+        final HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute(ORIGINAL_REQUEST) != null;
     }
 
     static SavedRequest getRequest(final HttpServletRequest request) {
-        return (SavedRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
+        final HttpSession session = request.getSession(false);
+        return session != null ? (SavedRequest) session.getAttribute(ORIGINAL_REQUEST) : null;
     }
 
     static void saveAuthentication(final HttpServletRequest request,
@@ -78,15 +80,20 @@ public interface LoginToContinueMechanism {
     }
 
     static boolean hasAuthentication(final HttpServletRequest request) {
-        return request.getSession().getAttribute(AUTHENTICATION) != null;
+        final HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute(AUTHENTICATION) != null;
     }
 
     static SavedAuthentication getAuthentication(final HttpServletRequest request) {
-        return (SavedAuthentication) request.getSession().getAttribute(AUTHENTICATION);
+        final HttpSession session = request.getSession(false);
+        return session != null ? (SavedAuthentication) session.getAttribute(AUTHENTICATION) : null;
     }
 
     static void clearRequestAndAuthentication(final HttpServletRequest request) {
-        request.getSession().removeAttribute(ORIGINAL_REQUEST);
-        request.getSession().removeAttribute(AUTHENTICATION);
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(ORIGINAL_REQUEST);
+            session.removeAttribute(AUTHENTICATION);
+        }
     }
 }

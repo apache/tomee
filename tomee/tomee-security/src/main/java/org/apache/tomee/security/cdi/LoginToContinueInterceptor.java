@@ -30,6 +30,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageCont
 import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Arrays;
 
 import static jakarta.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
@@ -86,14 +87,20 @@ public class LoginToContinueInterceptor {
             !hasAuthentication(httpMessageContext.getRequest()) &&
             !httpMessageContext.getRequest().getRequestURI().endsWith("j_security_check")) {
 
-            httpMessageContext.getRequest().getSession().removeAttribute(ORIGINAL_REQUEST);
-            httpMessageContext.getRequest().getSession().removeAttribute(CALLER_AUTHENTICATION);
+            final HttpSession staleSession = httpMessageContext.getRequest().getSession(false);
+            if (staleSession != null) {
+                staleSession.removeAttribute(ORIGINAL_REQUEST);
+                staleSession.removeAttribute(CALLER_AUTHENTICATION);
+            }
         }
 
         if (httpMessageContext.getAuthParameters().isNewAuthentication()) {
             httpMessageContext.getRequest().getSession().setAttribute(CALLER_AUTHENTICATION, true);
-            httpMessageContext.getRequest().getSession().removeAttribute(ORIGINAL_REQUEST);
-            httpMessageContext.getRequest().getSession().removeAttribute(AUTHENTICATION);
+            final HttpSession newAuthSession = httpMessageContext.getRequest().getSession(false);
+            if (newAuthSession != null) {
+                newAuthSession.removeAttribute(ORIGINAL_REQUEST);
+                newAuthSession.removeAttribute(AUTHENTICATION);
+            }
         }
 
     }
