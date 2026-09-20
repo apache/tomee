@@ -22,8 +22,8 @@ var APP_CONFIG = {
         'text': 'webjars/requirejs-text/2.0.10/text',
         'lib/less': 'webjars/less/1.6.0/less.min',
         'lib/jquery': 'webjars/jquery/2.1.0/jquery.min',
-        'lib/bootstrap': 'webjars/bootstrap/3.1.0/js/bootstrap.min',
-        'lib/handlebars': 'webjars/handlebars/1.2.1/handlebars.min',
+        'lib/bootstrap': 'webjars/bootstrap/3.4.1/js/bootstrap.min',
+        'lib/handlebars': 'webjars/handlebars/4.7.7/handlebars.min',
         'lib/underscore': 'webjars/underscorejs/1.4.3/underscore-min',
         'lib/json2': 'webjars/json2/20110223/json2.min',
         'lib/backbone': 'webjars/backbonejs/1.0.0/backbone'

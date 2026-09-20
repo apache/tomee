@@ -16,24 +16,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!DOCTYPE log4j:configuration SYSTEM "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+<Configuration status="WARN">
 
-    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern"
-                   value="%d{ISO8601} %-5p [%t] %c{1}(%L): %m%n"/>
-        </layout>
-    </appender>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{ISO8601} %-5p [%t] %c{1}(%L): %m%n"/>
+        </Console>
+    </Appenders>
 
-    <logger name="org.superbiz">
-        <level value="INFO"/>
-    </logger>
+    <Loggers>
+        <Logger name="org.superbiz" level="INFO"/>
+        <Root level="DEBUG">
+            <AppenderRef ref="CONSOLE"/>
+        </Root>
+    </Loggers>
 
-    <root>
-        <level value="DEBUG"/>
-        <appender-ref ref="CONSOLE"/>
-    </root>
-
-</log4j:configuration>
+</Configuration>

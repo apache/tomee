@@ -30,10 +30,4 @@
                <property name="appWorkingDir">target/arquillian-test-working-dir</property>
            </configuration>
        </container>
-       
-       <extension qualifier="selenium-server">
-	       <configuration>
-	           <property name="enable">true</property>
-	       </configuration>
-       </extension>
 </arquillian>

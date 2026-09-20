@@ -16,7 +16,7 @@
  */
 package org.superbiz.moviefun;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;

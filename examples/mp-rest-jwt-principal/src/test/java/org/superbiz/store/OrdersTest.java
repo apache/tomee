@@ -56,7 +56,7 @@ public class OrdersTest {
                 .addClasses(Order.class, Product.class)
                 .addClass(OrderService.class)
                 .addClasses(OrderRestClient.class, TokenUtils.class)
-                .addPackages(true, "com.nimbusds", "net.minidev.json")
+                .addPackages(true, "com.nimbusds", "net.minidev.json", "net.minidev.asm")
                 .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml")
                 .addAsResource("META-INF/microprofile-config.properties")
                 .addAsResource("john-doe-jwt.json")

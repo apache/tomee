@@ -48,7 +48,7 @@ public class ProductsTest {
                 .addClasses(Product.class)
                 .addClass(ProductService.class)
                 .addClasses(ProductRestClient.class, TokenUtils.class)
-                .addPackages(true, "com.nimbusds", "net.minidev.json")
+                .addPackages(true, "com.nimbusds", "net.minidev.json", "net.minidev.asm")
                 .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml")
                 .addAsResource("META-INF/microprofile-config.properties")
                 .addAsResource("jwt-john.json")

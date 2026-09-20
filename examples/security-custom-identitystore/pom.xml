@@ -43,9 +43,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
+      <groupId>org.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
-      <version>2.50.0</version>
+      <version>4.4.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

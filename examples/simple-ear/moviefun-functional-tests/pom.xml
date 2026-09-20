@@ -90,9 +90,9 @@
       <version>11.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
+      <groupId>org.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
-      <version>2.8</version>
+      <version>4.4.0</version>
       <type>jar</type>
       <scope>test</scope>
     </dependency>
@@ -102,11 +102,6 @@
       <version>11.0.0-SNAPSHOT</version>
       <!--<classifier>uber</classifier> -->
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>

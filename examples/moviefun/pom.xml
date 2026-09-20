@@ -156,9 +156,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
+      <groupId>org.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
-      <version>2.8</version>
+      <version>4.4.0</version>
       <type>jar</type>
       <scope>test</scope>
     </dependency>
@@ -170,9 +170,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.20.0</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>

@@ -16,8 +16,8 @@
  */
 package org.superbiz.moviefun;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 import org.apache.openejb.loader.IO;
 import org.apache.tomee.arquillian.remote.RemoteTomEEConfiguration;
 import org.apache.tomee.arquillian.remote.RemoteTomEEContainer;
@@ -92,7 +92,7 @@ public class DeployInWebAppsDirectoryTest {
         page = webClient.getPage(appUrl + "/moviefun");
 
         assertMoviesPresent(page);
-        webClient.closeAllWindows();
+        webClient.close();
     }
 
     private <T> T attempt(final Callable<T> callable, int numberOfAttempts) {
@@ -120,7 +120,7 @@ public class DeployInWebAppsDirectoryTest {
     }
 
     private void assertMoviesPresent(HtmlPage page) {
-        String pageAsText = page.asText();
+        String pageAsText = page.asNormalizedText();
         assertTrue(pageAsText.contains("Wedding Crashers"));
         assertTrue(pageAsText.contains("Starsky & Hutch"));
         assertTrue(pageAsText.contains("Shanghai Knights"));

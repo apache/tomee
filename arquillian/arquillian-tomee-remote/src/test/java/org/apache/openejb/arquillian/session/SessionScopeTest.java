@@ -18,9 +18,11 @@
 package org.apache.openejb.arquillian.session;
 
 import java.net.URL;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -34,8 +36,6 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
@@ -48,7 +48,6 @@ public class SessionScopeTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "SessionScopeTest.war")
             .addClass(PojoSessionScoped.class).addClass(PojoSessionScopedServletWrapper.class)
-            .addAsLibraries(new File("target/test-libs/commons-httpclient.jar"))
             .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
             .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
                 .version("3.0")
@@ -63,23 +62,22 @@ public class SessionScopeTest {
 
         String[] sessionResult = new String[2];
         for (int i = 0; i < sessionResult.length; i++) {
-            HttpClient client = new HttpClient();
-            HttpMethod get = new GetMethod(sessionUrl);
-            String[] contents = new String[2];
-            try {
+            // a client of its own, so that each iteration starts with an empty cookie store
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                String[] contents = new String[2];
                 for (int j = 0; j < contents.length; j++) {
-                    int out = client.executeMethod(get);
-                    if (out != 200) {
-                        throw new RuntimeException("get " + sessionUrl + " returned " + out);
+                    try (CloseableHttpResponse response = client.execute(new HttpGet(sessionUrl))) {
+                        final int out = response.getStatusLine().getStatusCode();
+                        if (out != 200) {
+                            throw new RuntimeException("get " + sessionUrl + " returned " + out);
+                        }
+                        contents[j] = EntityUtils.toString(response.getEntity());
                     }
-                    contents[j] = get.getResponseBodyAsString();
                 }
 
                 assertEquals(contents[0], contents[1]);
-            } finally {
-                get.releaseConnection();
+                sessionResult[i] = contents[0];
             }
-            sessionResult[i] = contents[0];
         }
 
         assertNotSame(sessionResult[0], sessionResult[1]);

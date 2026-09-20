@@ -16,10 +16,10 @@
  */
 package org.superbiz.security;
 
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.DefaultCredentialsProvider;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 import org.apache.tomee.bootstrap.Archive;
 import org.apache.tomee.bootstrap.Server;
 import org.junit.Assert;

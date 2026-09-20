@@ -25,6 +25,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
+    <version.log4j2>2.26.1</version.log4j2>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -94,9 +95,15 @@
       <version>2.0.17</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <version>${version.log4j2}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${version.log4j2}</version>
       <scope>runtime</scope>
     </dependency>
     <!-- test -->
@@ -117,6 +124,13 @@
       <artifactId>tomee-plus</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <!-- the server ships the JUL binding for Quartz; this example binds SLF4J to Log4j 2 -->
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-jdk14</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>

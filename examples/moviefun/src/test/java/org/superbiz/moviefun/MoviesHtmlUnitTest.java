@@ -16,8 +16,8 @@
  */
 package org.superbiz.moviefun;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomee.embedded.EmbeddedTomEEContainer;
 import org.apache.ziplock.Archive;
@@ -89,11 +89,11 @@ public class MoviesHtmlUnitTest {
         page = webClient.getPage("http://localhost:" + port + "/moviefun/moviefun");
 
         assertMoviesPresent(page);
-        webClient.closeAllWindows();
+        webClient.close();
     }
 
     private void assertMoviesPresent(HtmlPage page) {
-        String pageAsText = page.asText();
+        String pageAsText = page.asNormalizedText();
         assertTrue(pageAsText.contains("Wedding Crashers"));
         assertTrue(pageAsText.contains("Starsky & Hutch"));
         assertTrue(pageAsText.contains("Shanghai Knights"));
