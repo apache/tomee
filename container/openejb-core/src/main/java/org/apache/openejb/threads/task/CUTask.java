@@ -44,18 +44,24 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     protected final ContextServiceImpl contextService;
     private final ContextServiceImpl.Snapshot snapshot;
     private final Object[] containerListenerStates;
-    private final Context initialContext;
 
     public CUTask(final Object task, final ContextServiceImpl contextService) {
-        this(task, contextService, null);
+        this(task, contextService, (Map<String, String>) null);
     }
 
     public CUTask(final Object task, final ContextServiceImpl contextService, Map<String, String> props) {
+        this(task, contextService, contextService.snapshot(props));
+    }
+
+    /**
+     * Uses a snapshot captured earlier, on the thread the context is taken from.
+     * {@link ContextService#currentContextExecutor()} captures when the executor is created rather
+     * than when a task is submitted to it.
+     */
+    public CUTask(final Object task, final ContextServiceImpl contextService, final ContextServiceImpl.Snapshot snapshot) {
         super(task);
         this.contextService = contextService;
-
-        snapshot = contextService.snapshot(props);
-        initialContext = new Context();
+        this.snapshot = snapshot;
         if (CONTAINER_LISTENERS.length > 0) {
             containerListenerStates = new Object[CONTAINER_LISTENERS.length];
             for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
@@ -67,27 +73,36 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
     }
 
     protected T invoke(final Callable<T> call) throws Exception {
-        initialContext.enter();
-        final Object[] oldStates;
-        if (CONTAINER_LISTENERS.length > 0) {
-            oldStates = new Object[CONTAINER_LISTENERS.length];
-            for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
-                oldStates[i] = CONTAINER_LISTENERS[i].onStart(containerListenerStates[i]);
-            }
-        } else {
-            oldStates = null;
-        }
+        // one per invocation rather than one per task: a contextual proxy runs its task more than
+        // once, and may run it on several threads at the same time
+        final Context invocationContext = new Context();
+
+        // read once: the array is replaced when a listener is registered, and the teardown below
+        // walks the listeners that were started
+        final ContainerListener[] listeners = CONTAINER_LISTENERS;
+        final Object[] oldStates = listeners.length > 0 ? new Object[listeners.length] : null;
+        int started = 0;
 
         ContextServiceImpl.State state = null;
-
-        if (contextService != null && snapshot != null) {
-            state = contextService.enter(snapshot);
-        }
-
-
+        boolean entered = false;
         Throwable throwable = null;
+
+        // establishing the context can fail, see TOMEE-4699. Keep it inside the try so that the task
+        // listener is notified and the thread is cleaned up in that case as well.
         try {
-            taskStarting(future, executor, delegate); // do it in try to avoid issues if an exception is thrown
+            invocationContext.enter();
+            entered = true;
+
+            for (int i = 0; i < listeners.length; i++) {
+                oldStates[i] = listeners[i].onStart(containerListenerStates[i]);
+                started = i + 1;
+            }
+
+            if (contextService != null && snapshot != null) {
+                state = contextService.enter(snapshot);
+            }
+
+            taskStarting(future, executor, delegate);
             return call.call();
         } catch (final Throwable t) {
             throwable = t;
@@ -97,15 +112,15 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             try {
                 taskDone(future, executor, delegate, throwable);
             } finally {
-                if (CONTAINER_LISTENERS.length > 0) {
-                    for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
-                        CONTAINER_LISTENERS[i].onEnd(oldStates[i]);
-                    }
+                for (int i = 0; i < started; i++) {
+                    listeners[i].onEnd(oldStates[i]);
                 }
                 if (contextService != null && state != null) {
                     contextService.exit(state);
                 }
-                initialContext.exit();
+                if (entered) {
+                    invocationContext.exit();
+                }
             }
         }
     }

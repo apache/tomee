@@ -28,6 +28,11 @@ public class CURunnable extends CUTask<Void> implements Runnable {
         super(task, ContextServiceImplFactory.newPropagateEverythingContextService());
         delegate = task;
     }
+    public CURunnable(final Runnable task, final ContextServiceImpl contextService, final ContextServiceImpl.Snapshot snapshot) {
+        super(task, contextService, snapshot);
+        this.delegate = task;
+    }
+
     public CURunnable(final Runnable task, final ContextServiceImpl contextService) {
         super(task, contextService);
         delegate = task;
