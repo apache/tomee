@@ -153,6 +153,9 @@
 
   <repositories>
     <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
       <id>apache-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots/</url>
