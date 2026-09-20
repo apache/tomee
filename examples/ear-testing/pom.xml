@@ -33,6 +33,9 @@
   </properties>
   <repositories>
     <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots/</url>
