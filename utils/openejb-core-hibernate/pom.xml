@@ -128,9 +128,9 @@
       <version>${version.slf4j}</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${version.log4j}</version>
+      <groupId>ch.qos.reload4j</groupId>
+      <artifactId>reload4j</artifactId>
+      <version>${version.reload4j}</version>
     </dependency>
     -->
   </dependencies>
