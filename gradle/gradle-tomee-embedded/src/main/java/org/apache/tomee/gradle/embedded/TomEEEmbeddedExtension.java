@@ -65,7 +65,7 @@ public class TomEEEmbeddedExtension {
     private String dir;
     private String conf;
 
-    public Boolean isSkipDefaultRepository() {
+    public boolean isSkipDefaultRepository() {
         return skipDefaultRepository;
     }
 

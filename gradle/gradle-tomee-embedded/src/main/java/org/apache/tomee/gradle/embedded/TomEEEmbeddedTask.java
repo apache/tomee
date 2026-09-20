@@ -23,11 +23,12 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.UnknownConfigurationException;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.util.GFileUtils;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,19 +49,15 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 public class TomEEEmbeddedTask extends DefaultTask {
-    @Optional
     @Input
     private int httpPort = 8080;
 
-    @Optional
     @Input
     private int httpsPort = 8443;
 
-    @Optional
     @Input
     private int ajpPort = 8009;
 
-    @Optional
     @Input
     private int stopPort = 8005;
 
@@ -92,27 +89,20 @@ public class TomEEEmbeddedTask extends DefaultTask {
     @Input
     private String sslProtocol;
 
-    @Optional
-    @Input
+    @Internal
     private File serverXml;
 
-    @Optional
-    @Input
     private boolean singleClassloader = false;
 
-    @Optional
     @Input
     private boolean ssl = false;
 
-    @Optional
     @Input
     private boolean withEjbRemote = false;
 
-    @Optional
     @Input
     private boolean quickSession;
 
-    @Optional
     @Input
     private boolean skipHttp = false;
 
@@ -120,15 +110,12 @@ public class TomEEEmbeddedTask extends DefaultTask {
     @Input
     private Collection<String> applicationScopes = new HashSet<>(asList("compile", "runtime"));
 
-    @Optional
-    @Input
     private Collection<String> classloaderFilteredPackages;
 
     @Optional
     @Input
     private Collection<String> customWebResources;
 
-    @Optional
     @Input
     private boolean webResourceCached = true;
 
@@ -140,7 +127,6 @@ public class TomEEEmbeddedTask extends DefaultTask {
     @Input
     private Map<String, String> containerProperties;
 
-    @Optional
     @Input
     private boolean keepServerXmlAsThis = false;
 
@@ -152,7 +138,6 @@ public class TomEEEmbeddedTask extends DefaultTask {
     @Input
     private Map<String, String> roles;
 
-    @Optional
     @Input
     private boolean forceJspDevelopment = true;
 
@@ -164,24 +149,19 @@ public class TomEEEmbeddedTask extends DefaultTask {
     @Input
     private String inlinedTomEEXml;
 
-    @Optional
-    @Input
+    @Internal
     private File workDir;
 
-    @Optional
-    @Input
+    @Internal
     private List<File> modules;
 
-    @Optional
-    @Input
+    @Internal
     private File docBase;
 
     @Optional
     @Input
     private String dir;
 
-    @Optional
-    @Input
     private String conf;
 
     /* TODO if needed
@@ -192,6 +172,7 @@ public class TomEEEmbeddedTask extends DefaultTask {
     private boolean withLiveReload;
      */
 
+    @Internal
     private Configuration classpath;
 
     @TaskAction
@@ -208,13 +189,18 @@ public class TomEEEmbeddedTask extends DefaultTask {
         }
     }
 
+    // Project.getBuildDir() is deprecated since Gradle 8 and gone in Gradle 9
+    private static File buildDir(final Project project) {
+        return project.getLayout().getBuildDirectory().get().getAsFile();
+    }
+
     private void fixConfig() {
         final Project project = getProject();
 
         // defaults
         if (classpath == null) {
             try {
-                classpath.add(project.getConfigurations().getByName(TomEEEmbeddedExtension.ALIAS).fileCollection());
+                classpath = project.getConfigurations().getByName(TomEEEmbeddedExtension.ALIAS);
             } catch (final UnknownConfigurationException uce) {
                 classpath = project.getConfigurations().getByName(TomEEEmbeddedExtension.NAME);
             }
@@ -224,13 +210,13 @@ public class TomEEEmbeddedTask extends DefaultTask {
             docBase = new File(project.getProjectDir(), "src/main/webapp");
         }
         if (workDir == null) {
-            workDir = new File(project.getBuildDir(), "tomee-embedded/work");
+            workDir = new File(buildDir(project), "tomee-embedded/work");
         }
         if (dir == null) {
-            dir = new File(project.getBuildDir(), "tomee-embedded/run").getAbsolutePath();
+            dir = new File(buildDir(project), "tomee-embedded/run").getAbsolutePath();
         }
         if (modules == null || modules.isEmpty()) {
-            final File main = new File(project.getBuildDir(), "classes/main");
+            final File main = new File(buildDir(project), "classes/main");
             if (main.isDirectory()) {
                 modules = new ArrayList<>(singletonList(main));
             }
@@ -275,9 +261,9 @@ public class TomEEEmbeddedTask extends DefaultTask {
                 throw new GradleException("you can't define a server.xml and an inlinedServerXml");
             }
             try {
-                GFileUtils.mkdirs(workDir);
+                Files.createDirectories(workDir.toPath());
                 serverXml = new File(workDir, "server.xml_dump");
-                GFileUtils.writeFile(inlinedServerXml, serverXml);
+                Files.writeString(serverXml.toPath(), inlinedServerXml);
             } catch (final Exception e) {
                 throw new GradleException(e.getMessage(), e);
             }
@@ -301,8 +287,8 @@ public class TomEEEmbeddedTask extends DefaultTask {
             if (inlinedTomEEXml != null && inlinedTomEEXml.trim().isEmpty()) {
                 try {
                     final File conf = new File(dir, "conf");
-                    GFileUtils.mkdirs(conf);
-                    GFileUtils.writeFile(inlinedTomEEXml, new File(conf, "tomee.xml"));
+                    Files.createDirectories(conf.toPath());
+                    Files.writeString(new File(conf, "tomee.xml").toPath(), inlinedTomEEXml);
                 } catch (final Exception e) {
                     throw new GradleException(e.getMessage(), e);
                 }
@@ -711,6 +697,21 @@ public class TomEEEmbeddedTask extends DefaultTask {
 
     public void setClasspath(final Configuration classpath) {
         this.classpath = classpath;
+    }
+
+    @Internal
+    public boolean isSingleClassloader() {
+        return singleClassloader;
+    }
+
+    @Internal
+    public String getConf() {
+        return conf;
+    }
+
+    @Internal
+    public Collection<String> getClassloaderFilteredPackages() {
+        return classloaderFilteredPackages;
     }
 
     public void setSingleClassloader(final boolean singleClassloader) {
