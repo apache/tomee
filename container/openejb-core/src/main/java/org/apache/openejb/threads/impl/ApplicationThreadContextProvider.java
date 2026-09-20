@@ -39,7 +39,9 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
             return clearedContext(props);
         }
 
-        return new ApplicationThreadContextSnapshot(appContext.getId(), ThreadContext.getThreadContext());
+        // capture on the thread that owns the ThreadContext, see TOMEE-4699. A ThreadContext is
+        // confined to its thread; reading it from the thread running the task races with the owner.
+        return new ApplicationThreadContextSnapshot(appContext.getId(), ThreadContext.capture());
     }
 
     @Override
@@ -54,11 +56,11 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
 
     public static class ApplicationThreadContextSnapshot implements ThreadContextSnapshot, Serializable {
         private final Object appId;
-        private final ThreadContext threadContext;
+        private final ThreadContext.Capture capturedThreadContext;
 
-        public ApplicationThreadContextSnapshot(final Object appId, final ThreadContext threadContext) {
+        public ApplicationThreadContextSnapshot(final Object appId, final ThreadContext.Capture capturedThreadContext) {
             this.appId = appId;
-            this.threadContext = threadContext;
+            this.capturedThreadContext = capturedThreadContext;
         }
 
         @Override
@@ -71,9 +73,12 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
             final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
 
-            // Don't touch ThreadContext if it is already correct or none was captured
-            boolean changeThreadContext = threadContext != null && threadContext != ThreadContext.getThreadContext();
-            ThreadContext oldThreadContext = changeThreadContext ? ThreadContext.enter(new ThreadContext(threadContext)) : null;
+            // leave the ThreadContext alone if nothing was captured, otherwise enter a new copy. This
+            // snapshot may be applied to any number of threads, including concurrently, and
+            // ThreadContext.enter modifies the context it is given.
+            final boolean changeThreadContext = capturedThreadContext != null;
+            final ThreadContext oldThreadContext =
+                    changeThreadContext ? ThreadContext.enter(capturedThreadContext.newThreadContext()) : null;
             return new ApplicationThreadContextRestorer(oldCl, oldThreadContext, changeThreadContext);
         }
 
@@ -81,7 +86,7 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
         public String toString() {
             return "ApplicationThreadContextSnapshot@" + System.identityHashCode(this) +
                     "{appId=" + appId +
-                    "{threadContext=" + threadContext +
+                    "{capturedThreadContext=" + capturedThreadContext +
                     '}';
         }
 
@@ -100,12 +105,15 @@ public class ApplicationThreadContextProvider implements ThreadContextProvider, 
 
         @Override
         public void endContext() throws IllegalStateException {
-            if (oldClassLoader != null) {
-                Thread.currentThread().setContextClassLoader(oldClassLoader);
-            }
-
+            // exit before restoring the class loader. ThreadContext.exit sets the loader to the value
+            // the context recorded on entry, which is the application class loader installed by
+            // begin(), so restoring afterwards leaves the thread with the loader it started with.
             if (exitThreadContext) {
                 ThreadContext.exit(oldThreadContext);
+            }
+
+            if (oldClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(oldClassLoader);
             }
         }
 

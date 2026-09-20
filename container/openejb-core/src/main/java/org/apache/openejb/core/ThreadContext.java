@@ -25,6 +25,7 @@ import org.apache.openejb.util.Logger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -151,6 +152,11 @@ public class ThreadContext {
         this.currentOperation = operation;
     }
 
+    /**
+     * Copy constructor. Must be called on the thread that owns <code>that</code>, since a
+     * ThreadContext is confined to its thread. Use {@link #capture()} to pass a context to
+     * another thread.
+     */
     public ThreadContext(final ThreadContext that) {
         this.beanContext = that.beanContext;
         this.primaryKey = that.primaryKey;
@@ -158,6 +164,85 @@ public class ThreadContext {
             this.data.putAll(that.data);
         }
         this.oldClassLoader = that.oldClassLoader;
+    }
+
+    /**
+     * Returns an immutable copy of the calling thread's context, which may be passed to other
+     * threads. Must be called on the thread that owns the context.
+     *
+     * @return the capture, or <code>null</code> if no context is entered on this thread
+     */
+    public static Capture capture() {
+        final ThreadContext current = threadStorage.get();
+        return current == null ? null : new Capture(current);
+    }
+
+    /**
+     * Immutable copy of the state a {@link ThreadContext} propagates: bean context, primary key and
+     * context data. Per-thread state such as the class loader to restore, the entered flag and the
+     * current operation is not included.
+     * <p>
+     * A capture may be applied to any number of threads, including concurrently.
+     * {@link #newThreadContext()} returns a separate mutable {@link ThreadContext} for each caller,
+     * since {@link ThreadContext#enter(ThreadContext)} modifies its argument and fails if that
+     * context was already entered.
+     */
+    public static final class Capture {
+
+        /**
+         * Context data tied to the invocation a capture is taken from, listed by class name to avoid
+         * a dependency on the types. It is not propagated:
+         * <ul>
+         *   <li><code>InvocationContext</code> is part of the interceptor chain the calling thread is
+         *       still in. It is single use, and {@link BaseContext#getContextData()} exposes its
+         *       unsynchronized map to application code.</li>
+         *   <li><code>DestroyContext</code> references the captured context and would keep it
+         *       reachable for the lifetime of the capture. A new one is created when the context is
+         *       entered on another thread.</li>
+         * </ul>
+         */
+        private static final Set<String> NON_PROPAGATED = Set.of(
+            "jakarta.interceptor.InvocationContext",
+            "org.apache.openejb.cdi.RequestScopedThreadContextListener$DestroyContext");
+
+        private final BeanContext beanContext;
+        private final Object primaryKey;
+        private final Map<Class, Object> data;
+
+        private Capture(final ThreadContext that) {
+            this.beanContext = that.beanContext;
+            this.primaryKey = that.primaryKey;
+
+            final Map<Class, Object> copy = new HashMap<>();
+            synchronized (that.data) {
+                for (final Map.Entry<Class, Object> entry : that.data.entrySet()) {
+                    if (NON_PROPAGATED.contains(entry.getKey().getName())) {
+                        continue;
+                    }
+                    copy.put(entry.getKey(), entry.getValue());
+                }
+            }
+            this.data = Collections.unmodifiableMap(copy);
+        }
+
+        /**
+         * @return a new mutable {@link ThreadContext} with the captured state, for the calling thread
+         *         to pass to {@link ThreadContext#enter(ThreadContext)}
+         */
+        public ThreadContext newThreadContext() {
+            final ThreadContext context = new ThreadContext(beanContext, primaryKey);
+            context.data.putAll(data);
+            return context;
+        }
+
+        @Override
+        public String toString() {
+            return "ThreadContext.Capture{" +
+                "beanContext=" + beanContext.getId() +
+                ", primaryKey=" + primaryKey +
+                ", " + dataToString(data) +
+                '}';
+        }
     }
 
     public BeanContext getBeanContext() {
@@ -237,12 +322,15 @@ public class ThreadContext {
             '}';
     }
 
-    private String dataToString(final Map<Class, Object> data) {
+    private static String dataToString(final Map<Class, Object> data) {
+        // iterating a synchronized map requires its monitor, see TOMEE-4699. Copy under the monitor
+        // and format outside of it, so that application hashCode() implementations do not run while
+        // a lock that is taken on every invocation is held.
         final Map<Class, Object> copy;
-        // copy data under monitor (synchronized map), format outside lock
         synchronized (data) {
             copy = new HashMap<>(data);
         }
+
         return "data(" + copy.size() + ")=" + copy.entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + (entry.getValue() == null ? "null" : entry.getValue().hashCode()))
                 .collect(Collectors.joining(", "));

@@ -26,6 +26,7 @@ import jakarta.enterprise.concurrent.spi.ThreadContextSnapshot;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.resource.thread.ManagedExecutorServiceImplFactory;
 import org.apache.openejb.threads.future.CUCompletableFuture;
+import org.apache.openejb.threads.task.CURunnable;
 import org.apache.openejb.threads.task.CUTask;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -138,7 +139,10 @@ public class ContextServiceImpl implements ContextService, Serializable {
 
     @Override
     public Executor currentContextExecutor() {
-        return command -> contextualRunnable(command).run();
+        // ContextService specifies "context that is captured from the thread that invokes
+        // currentContextExecutor", so capture here rather than in execute()
+        final Snapshot snapshot = snapshot(null);
+        return command -> new CURunnable(command, this, snapshot).run();
     }
 
     @Override
