@@ -1070,9 +1070,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     protected void beforeStart() {
         rsRegistry = SystemInstance.get().getComponent(RsRegistry.class);
-        if (rsRegistry == null && SystemInstance.get().getComponent(HttpListenerRegistry.class) != null) {
-            rsRegistry = new RsRegistryImpl();
-        }
     }
 
     @Override

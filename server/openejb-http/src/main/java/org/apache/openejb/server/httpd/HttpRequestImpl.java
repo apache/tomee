@@ -28,6 +28,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.webbeans.config.WebBeansContext;
 
 import java.io.BufferedReader;
@@ -447,8 +448,8 @@ public class HttpRequestImpl implements HttpRequest {
             builder.append("\n");
 
             final String text = new String(body);
-            if (formatXml && OpenEJBHttpServer.isTextXml(headers)) {
-                builder.append(OpenEJBHttpServer.reformat(text)).append("\n");
+            if (formatXml && HttpUtil.isTextXml(headers)) {
+                builder.append(HttpUtil.reformat(text)).append("\n");
             } else {
                 builder.append(text).append("\n");
             }

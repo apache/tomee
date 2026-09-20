@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-// could be optimized since we could bind to the request the listeners in org.apache.openejb.server.httpd.OpenEJBHttpRegistry.ClassLoaderHttpListener.onMessage()
-// but ok for now since that's fully for the embedded mode
 public final class LightweightWebAppBuilderListenerExtractor {
     public static  <T> Collection<T> findByTypeForContext(final String context, final Class<T> type) {
         final WebAppBuilder builder = SystemInstance.get().getComponent(WebAppBuilder.class);

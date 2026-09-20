@@ -174,9 +174,6 @@ public abstract class WsService implements ServerService, SelfManaging {
     @Override
     public void start() throws ServiceException {
         wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
-        if (wsRegistry == null && SystemInstance.get().getComponent(HttpListenerRegistry.class) != null) {
-            wsRegistry = new OpenEJBHttpWsRegistry();
-        }
 
         if (portAddressRegistry == null) {
             portAddressRegistry = new PortAddressRegistryImpl();

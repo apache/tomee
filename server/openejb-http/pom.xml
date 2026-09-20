@@ -35,10 +35,6 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.server.http</tomee.build.name>
-    <openejb.osgi.import.pkg>
-      org.eclipse.jetty*;resolution:=optional,
-      *
-    </openejb.osgi.import.pkg>
   </properties>
 
   <build>
@@ -133,18 +129,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-ejbd</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <version>${version.jetty}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.ee11</groupId>
-      <artifactId>jetty-ee11-servlet</artifactId>
-      <version>${version.jetty}</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

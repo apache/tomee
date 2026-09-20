@@ -21,6 +21,7 @@ import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.openejb.server.httpd.util.HttpUtil;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
@@ -537,9 +538,9 @@ public class HttpResponseImpl implements HttpResponse {
     private void writeBody(final DataOutput out, final boolean indent) throws IOException {
         out.writeBytes(CRLF);
         if (content == null) {
-            if (indent && OpenEJBHttpServer.isTextXml(headers)) {
+            if (indent && HttpUtil.isTextXml(headers)) {
                 final String xml = new String(sosi.getOutputStream().toByteArray());
-                out.write(OpenEJBHttpServer.reformat(xml).getBytes());
+                out.write(HttpUtil.reformat(xml).getBytes());
             } else {
                 out.write(sosi.getOutputStream().toByteArray());
             }

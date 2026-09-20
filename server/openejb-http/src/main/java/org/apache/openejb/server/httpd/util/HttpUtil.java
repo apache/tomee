@@ -34,12 +34,22 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 public final class HttpUtil {
     private static final String WILDCARD = SystemInstance.get().getProperty("openejb.http.wildcard", ".*");
@@ -256,5 +266,37 @@ public final class HttpUtil {
             path = path.substring(0, path.length() - 1) + WILDCARD;
         }
         return path;
+    }
+
+    public static boolean isTextXml(final Map<String, List<String>> headers) {
+        final Collection<String> contentType = headers.get("Content-Type");
+        if (contentType == null) {
+            return false;
+        }
+        for (final String current : contentType) {
+            if (current.contains("text/xml")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String reformat(final String raw) {
+        if (raw.isEmpty()) {
+            return raw;
+        }
+
+        try {
+            final TransformerFactory factory = TransformerFactory.newInstance();
+            final Transformer transformer = factory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+            final StreamResult result = new StreamResult(new StringWriter());
+            transformer.transform(new StreamSource(new StringReader(raw)), result);
+            return result.getWriter().toString();
+        } catch (final TransformerException e) {
+            return raw;
+        }
     }
 }
