@@ -30,7 +30,7 @@
   <name>TomEE :: Maven Plugins</name>
 
   <properties>
-    <maven.version>2.2.1</maven.version>
+    <maven.version>3.9.16</maven.version>
   </properties>
 
   <modules>
@@ -61,8 +61,15 @@
         <version>${maven.version}</version>
       </dependency>
       <dependency>
+        <!-- MavenProject and MavenProjectHelper, which lived in maven-project under Maven 2 -->
         <groupId>org.apache.maven</groupId>
-        <artifactId>maven-project</artifactId>
+        <artifactId>maven-core</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <!-- ArtifactFactory, ArtifactResolver and the ArtifactRepository types they need -->
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-compat</artifactId>
         <version>${maven.version}</version>
       </dependency>
       <dependency>
@@ -74,11 +81,6 @@
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-artifact</artifactId>
         <version>${maven.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.sonatype.aether</groupId>
-        <artifactId>aether-api</artifactId>
-        <version>${version.aether}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
