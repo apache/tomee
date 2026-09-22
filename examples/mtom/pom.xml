@@ -49,18 +49,6 @@
           <release>17</release>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.3</version>
-        <configuration>
-          <!--
-          one TomEE per test class: the @WebServiceRef resolves its port by SEI, EjbService and PojoService
-          share it, and TomEE keeps the port of an undeployed app registered (PortAddressRegistryImpl.removePort)
-          -->
-          <reuseForks>false</reuseForks>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
