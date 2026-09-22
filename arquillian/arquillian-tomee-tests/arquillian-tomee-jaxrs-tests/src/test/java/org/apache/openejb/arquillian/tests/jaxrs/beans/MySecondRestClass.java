@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
+ *     Licensed to the Apache Software Foundation (ASF) under one or more
  *     contributor license agreements.  See the NOTICE file distributed with
  *     this work for additional information regarding copyright ownership.
  *     The ASF licenses this file to You under the Apache License, Version 2.0
@@ -14,24 +14,17 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.beans;
+package org.apache.openejb.arquillian.tests.jaxrs.beans;
 
-import jakarta.ejb.EJB;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.PathParam;
 
-@Path("/inject")
-public class RestWithInjections {
-    @EJB
-    private SimpleEJB simple;
-    @Context
-    UriInfo uriInfo;
-
-    @Path("/ejb")
+@Path("/second")
+public class MySecondRestClass {
+    @Path("/hi2/{you}")
     @GET
-    public boolean ejb() {
-        return simple != null && "ok".equals(simple.ok()) && uriInfo != null;
+    public String hi(@PathParam("you") String you) {
+        return "hi " + you;
     }
 }

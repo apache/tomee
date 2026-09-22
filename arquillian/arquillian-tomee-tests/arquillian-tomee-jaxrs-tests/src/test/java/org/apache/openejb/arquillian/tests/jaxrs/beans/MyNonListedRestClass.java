@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
+ *     Licensed to the Apache Software Foundation (ASF) under one or more
  *     contributor license agreements.  See the NOTICE file distributed with
  *     this work for additional information regarding copyright ownership.
  *     The ASF licenses this file to You under the Apache License, Version 2.0
@@ -14,28 +14,17 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.beans;
+package org.apache.openejb.arquillian.tests.jaxrs.beans;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
 
-@Path("/hooked")
-public class HookedRest {
-    @Inject
-    private SimpleEJB ejb;
-    private boolean post = false;
-    private int construct = 0;
-
-    @PostConstruct
-    public void post() {
-        post = ejb != null && construct == 0;
-    }
-
-    @Path("/post")
+@Path("/non-listed")
+public class MyNonListedRestClass {
+    @Path("/yata/{did}")
     @GET
-    public boolean wasPosted() {
-        return post;
+    public String yata(@QueryParam("did") String iDidIt) {
+        return "Yata! " + iDidIt;
     }
 }

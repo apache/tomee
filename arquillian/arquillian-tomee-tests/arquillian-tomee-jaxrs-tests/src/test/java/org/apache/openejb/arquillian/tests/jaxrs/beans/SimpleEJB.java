@@ -1,5 +1,5 @@
 /*
- *     Licensed to the Apache Software Foundation (ASF) under one or more
+ * Licensed to the Apache Software Foundation (ASF) under one or more
  *     contributor license agreements.  See the NOTICE file distributed with
  *     this work for additional information regarding copyright ownership.
  *     The ASF licenses this file to You under the Apache License, Version 2.0
@@ -14,21 +14,24 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.beans;
+package org.apache.openejb.arquillian.tests.jaxrs.beans;
 
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
 
-@ApplicationPath("/my-app")
-public class MyRESTApplication extends Application {
-    public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(MyExpertRestClass.class, HookedRest.class, RestWithInjections.class));
+@Singleton
+public class SimpleEJB {
+    private int init = 0;
+
+    @PostConstruct
+    public void count() {
+        init++;
+        if (init > 1) {
+            throw new RuntimeException();
+        }
     }
 
-    public Set<Object> getSingletons() {
-        return new HashSet<Object>(Arrays.asList(new MyFirstRestClass(), new MySecondRestClass()));
+    public String ok() {
+        return "ok";
     }
 }

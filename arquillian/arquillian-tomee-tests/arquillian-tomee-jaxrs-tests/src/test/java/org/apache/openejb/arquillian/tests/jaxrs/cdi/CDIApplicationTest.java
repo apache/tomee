@@ -14,56 +14,51 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.cdi;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.apache.openejb.arquillian.tests.jaxrs.beans.MyFirstRestClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Application;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class CDIApplicationTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
-
-    @Module
-    @Classes(cdi = true, value = {MyCdiRESTApplication.class, MyFirstRestClass.class, ACdiBeanInjectedInApp.class})
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("foo")
-            .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "jakarta.ws.rs.Application", MyCdiRESTApplication.class.getName());
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "foo.war")
+            .addClasses(CDIApplicationTest.class, MyCdiRESTApplication.class, MyFirstRestClass.class, ACdiBeanInjectedInApp.class)
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+            .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                "<servlet>" +
+                "<servlet-name>REST Application</servlet-name>" +
+                "<servlet-class>" + Application.class.getName() + "</servlet-class>" +
+                "<init-param>" +
+                "<param-name>jakarta.ws.rs.Application</param-name>" +
+                "<param-value>" + MyCdiRESTApplication.class.getName() + "</param-value>" +
+                "</init-param>" +
+                "</servlet>" +
+                "</web-app>"));
     }
 
     @Test
@@ -72,7 +67,7 @@ public class CDIApplicationTest {
         for (final Boolean b : MyCdiRESTApplication.injection) {
             assertTrue(b);
         }
-        assertEquals("Hi from REST World!", WebClient.create("http://localhost:" + port + "/foo/").path("/first/hi").get(String.class));
+        assertEquals("Hi from REST World!", WebClient.create(base.toExternalForm()).path("/first/hi").get(String.class));
     }
 
     public static class ACdiBeanInjectedInApp {

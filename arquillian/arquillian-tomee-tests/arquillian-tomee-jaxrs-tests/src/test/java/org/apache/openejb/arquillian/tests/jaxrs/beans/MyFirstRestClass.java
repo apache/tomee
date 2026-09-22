@@ -14,17 +14,19 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.beans;
+package org.apache.openejb.arquillian.tests.jaxrs.beans;
+
+import org.apache.cxf.jaxrs.model.wadl.Description;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
-@Path("/second")
-public class MySecondRestClass {
-    @Path("/hi2/{you}")
+@Path("/first")
+@Description("MyFirstRestClass service")
+public class MyFirstRestClass {
+    @Path("/hi")
     @GET
-    public String hi(@PathParam("you") String you) {
-        return "hi " + you;
+    public String hi() {
+        return "Hi from REST World!";
     }
 }

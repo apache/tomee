@@ -14,19 +14,16 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.beans;
+package org.apache.openejb.arquillian.tests.jaxrs.beans;
 
-import org.apache.cxf.jaxrs.model.wadl.Description;
-
-import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
-@Path("/first")
-@Description("MyFirstRestClass service")
-public class MyFirstRestClass {
-    @Path("/hi")
-    @GET
-    public String hi() {
-        return "Hi from REST World!";
+@Path("/expert")
+public class MyExpertRestClass {
+    @Path("/still-hi/")
+    @POST
+    public String hi(String you) {
+        return "hi " + you;
     }
 }
