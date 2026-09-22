@@ -18,9 +18,9 @@ package org.apache.openejb.server.httpd;
 
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
@@ -32,25 +32,25 @@ public class BasicAuthHttpListenerWrapperTest {
     public void getWithoutCredentialsIsChallenged() throws Exception {
         final AtomicBoolean dispatched = new AtomicBoolean(false);
         final BasicAuthHttpListenerWrapper wrapper = new BasicAuthHttpListenerWrapper(listener(dispatched), "TestRealm");
-        final HttpResponseImpl response = new HttpResponseImpl();
+        final Map<String, Object> written = new HashMap<>();
 
-        wrapper.onMessage(get(), response);
+        wrapper.onMessage(get(), response(written));
 
         assertFalse(dispatched.get());
-        assertEquals(401, response.getStatus());
-        assertEquals("Basic realm=\"TestRealm\"", response.getHeader("WWW-Authenticate"));
+        assertEquals(401, written.get("status"));
+        assertEquals("Basic realm=\"TestRealm\"", written.get("WWW-Authenticate"));
     }
 
     @Test
     public void anonymousGetIsDispatchedWhenEnabled() throws Exception {
         final AtomicBoolean dispatched = new AtomicBoolean(false);
         final BasicAuthHttpListenerWrapper wrapper = new BasicAuthHttpListenerWrapper(listener(dispatched), "TestRealm", true);
-        final HttpResponseImpl response = new HttpResponseImpl();
+        final Map<String, Object> written = new HashMap<>();
 
-        wrapper.onMessage(get(), response);
+        wrapper.onMessage(get(), response(written));
 
         assertTrue(dispatched.get());
-        assertEquals(200, response.getStatus());
+        assertTrue(written.isEmpty());
     }
 
     private static HttpListener listener(final AtomicBoolean dispatched) {
@@ -62,10 +62,21 @@ public class BasicAuthHttpListenerWrapperTest {
         };
     }
 
-    private static HttpRequestImpl get() throws Exception {
-        final HttpRequestImpl request = new HttpRequestImpl(new URI("http://localhost:4204"));
-        assertTrue(request.readMessage(new ByteArrayInputStream(
-                "GET /app/api/customers HTTP/1.1\r\n\r\n".getBytes(StandardCharsets.ISO_8859_1))));
-        return request;
+    private static HttpRequest get() {
+        return (HttpRequest) Proxy.newProxyInstance(HttpRequest.class.getClassLoader(), new Class<?>[]{HttpRequest.class},
+                (proxy, method, args) -> "getMethod".equals(method.getName()) ? "GET" : null);
+    }
+
+    // records setStatus as "status" and setHeader as name -> value
+    private static HttpResponse response(final Map<String, Object> written) {
+        return (HttpResponse) Proxy.newProxyInstance(HttpResponse.class.getClassLoader(), new Class<?>[]{HttpResponse.class},
+                (proxy, method, args) -> {
+                    if ("setStatus".equals(method.getName())) {
+                        written.put("status", args[0]);
+                    } else if ("setHeader".equals(method.getName())) {
+                        written.put((String) args[0], args[1]);
+                    }
+                    return null;
+                });
     }
 }

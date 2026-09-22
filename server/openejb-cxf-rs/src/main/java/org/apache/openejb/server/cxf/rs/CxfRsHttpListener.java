@@ -81,7 +81,6 @@ import org.apache.openejb.server.cxf.rs.sse.TomEESseEventSinkContextProvider;
 import org.apache.openejb.server.cxf.transport.HttpDestination;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
-import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
@@ -106,9 +105,7 @@ import javax.management.openmbean.TabularData;
 import javax.naming.Context;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -184,7 +181,6 @@ public class CxfRsHttpListener implements RsHttpListener {
     private HttpDestination destination;
     private Server server;
     private String context = "";
-    private String servlet = "";
     private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<>();
     private final List<ObjectName> jmxNames = new ArrayList<>();
     private final Collection<CreationalContext<?>> toRelease = new LinkedHashSet<>();
@@ -220,22 +216,6 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
-        // fix the address (to manage multiple connectors)
-        {
-            ServletRequest unwrapped = httpRequest;
-            while (ServletRequestAdapter.class.isInstance(unwrapped)) {
-                unwrapped = ServletRequestAdapter.class.cast(unwrapped).getRequest();
-            }
-            while (HttpServletRequestWrapper.class.isInstance(unwrapped)) {
-                unwrapped = HttpServletRequestWrapper.class.cast(unwrapped).getRequest();
-            }
-            if (HttpRequestImpl.class.isInstance(unwrapped)) {
-                final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(unwrapped);
-                requestImpl.initPathFromContext((!context.startsWith("/") ? "/" : "") + context);
-                requestImpl.initServletPath(servlet);
-            }
-        }
-
         boolean matchedStatic = false;
         if (TRY_STATIC_RESOURCES || (matchedStatic = matchPath(httpRequest))) {
             final String pathInfo = httpRequest.getPathInfo();
@@ -779,11 +759,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
 
-            final int servletIdx = 1 + this.context.substring(1).indexOf('/');
-            if (servletIdx > 0) {
-                this.servlet = this.context.substring(servletIdx);
-                this.context = this.context.substring(0, servletIdx);
-            }
             destination = (HttpDestination) server.getDestination();
 
             final String base;

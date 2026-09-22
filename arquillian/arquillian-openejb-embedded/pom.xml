@@ -150,13 +150,6 @@
       <version>1.2.6</version>
       <scope>provided</scope>
     </dependency>
-
-    <dependency> <!-- shouldn't be a compile/runtime dependency -->
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-http</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <build>

@@ -49,7 +49,6 @@ import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
@@ -80,7 +79,6 @@ import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.reflection.Reflections;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.spi.ContextsService;
@@ -1311,10 +1309,6 @@ public class ApplicationComposers {
 
         final EnableServices annotation = testClass.getAnnotation(EnableServices.class);
         final org.apache.openejb.junit.EnableServices annotationOld = testClass.getAnnotation(org.apache.openejb.junit.EnableServices.class);
-        final WebResource webResource = testClass.getAnnotation(WebResource.class);
-        if (webResource != null && webResource.value().length > 0) {
-            configuration.setProperty("openejb.embedded.http.resources", Join.join(",", webResource.value()));
-        }
 
         Openejb openejb = null;
         final Map<Object, List<Method>> configs = new HashMap<>();
@@ -1577,26 +1571,6 @@ public class ApplicationComposers {
                 }
             }
         });
-        if (!appContext.getWebContexts().isEmpty()) {
-            beforeDestroyAfterRunnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        final Object sessionManager = SystemInstance.get().getComponent(
-                                ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openejb.server.httpd.session.SessionManager")
-                        );
-                        if (sessionManager != null) {
-                            final Class<?>[] paramTypes = {WebContext.class};
-                            for (final WebContext web : appContext.getWebContexts()) {
-                                Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
-                            }
-                        }
-                    } catch (final Throwable e) {
-                        // no-op
-                    }
-                }
-            });
-        }
         for (final Map.Entry<Object, ClassFinder> m : testClassFinders.entrySet()) {
             for (final Method mtd : m.getValue().findAnnotatedMethods(PostConstruct.class)) {
                 if (mtd.getParameterTypes().length == 0) {

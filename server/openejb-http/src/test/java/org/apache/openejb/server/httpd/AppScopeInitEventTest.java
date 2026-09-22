@@ -20,6 +20,7 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Component;
 import org.apache.openejb.testing.SimpleLog;
+import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 public class AppScopeInitEventTest {
     @Component
     public ServletContext context() { // default one doesnt read WebApp
-        final EmbeddedServletContext servletContext = new EmbeddedServletContext();
+        final MockServletContext servletContext = new MockServletContext();
         servletContext.setInitParameter("test", "start");
         return servletContext;
     }

@@ -27,7 +27,6 @@
     -Dopenejb.cdi.filter.classloader=false
     -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder
     -Dopenejb.cdi.debug=true
-    -Dopenejb.embedded.try-jsp=true
     -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->
 

@@ -351,7 +351,6 @@
 
                 <openejb.jul.forceReload>true</openejb.jul.forceReload>
                 <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>
-                <openejb.embedded.try-jsp>true</openejb.embedded.try-jsp>
                 <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
                 <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
               </systemPropertyVariables>
