@@ -14,37 +14,24 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.logging.webappmodule;
+package org.apache.openejb.arquillian.tests.jaxrs.logging.ejbmodule;
 
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.WebModule;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.server.cxf.rs.logging.LoggingJAXRSCommons;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testing.RandomPort;
+import org.apache.openejb.arquillian.tests.jaxrs.logging.LoggingJAXRSCommons;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.net.URL;
 
 import static org.junit.Assert.assertTrue;
 
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
-public class LoggingJAXRSWebAppModuleClassConfigurationTest extends LoggingJAXRSCommons {
-    @RandomPort("http")
-    private URL base;
+@RunWith(Arquillian.class)
+public class LoggingJAXRSEJBModuleTest extends LoggingJAXRSCommons {
 
-    @Module
-    public AppModule service() throws Exception {
-        final WebModule war = new WebModule(getWebApp(), "/test", Thread.currentThread().getContextClassLoader(), "", "test");
-        war.getRestApplications().add(LogginTestApplication.class.getName());
-        final AppModule appModule = new AppModule(getEjbModule(LogginTestApplication.class.getName(), "test"), war);
-
-        configureLoggin();
-        return appModule;
+    @Deployment
+    public static WebArchive service() {
+        return getEjbModule(archive(LoggingJAXRSEJBModuleTest.class), "jaxrs-application");
     }
 
     @Test

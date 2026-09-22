@@ -14,49 +14,32 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.event;
+package org.apache.openejb.arquillian.tests.jaxrs.event;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.apache.openejb.server.cxf.rs.event.ServerCreated;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import jakarta.ws.rs.HEAD;
 import jakarta.ws.rs.Path;
-import java.util.Properties;
 
 import static org.junit.Assert.assertNotNull;
 
-@EnableServices("jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class ServerCreatedTest {
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-                .p("httpejbd.port", Integer.toString(port))
-                .p("observer", "new://Service?class-name=" + Observer.class.getName())
-                .build();
-    }
-
-    @Module
-    @Classes(ServerCreatedEndpoint.class)
-    public WebApp war() {
-        return new WebApp().contextRoot("foo");
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "foo.war")
+                .addClasses(ServerCreatedTest.class, ServerCreatedEndpoint.class, Observer.class, ObserverRegistration.class);
     }
 
     @Test
@@ -78,6 +61,22 @@ public class ServerCreatedTest {
 
         public void obs(@Observes final ServerCreated event) {
             Observer.event = event;
+        }
+    }
+
+    // registers the observer before the JAX-RS deployment of this webapp, removes it on undeploy
+    @WebListener
+    public static class ObserverRegistration implements ServletContextListener {
+        private final Observer observer = new Observer();
+
+        @Override
+        public void contextInitialized(final ServletContextEvent sce) {
+            SystemInstance.get().addObserver(observer);
+        }
+
+        @Override
+        public void contextDestroyed(final ServletContextEvent sce) {
+            SystemInstance.get().removeObserver(observer);
         }
     }
 }

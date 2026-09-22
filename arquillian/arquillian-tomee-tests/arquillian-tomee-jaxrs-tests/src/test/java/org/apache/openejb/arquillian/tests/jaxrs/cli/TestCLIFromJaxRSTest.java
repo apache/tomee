@@ -14,13 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.cli;
 
 import org.apache.openejb.cli.Bootstrap;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,25 +35,31 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@Classes(innerClassesAsBean = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class TestCLIFromJaxRSTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
+
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "cli.war").addClasses(TestCLIFromJaxRSTest.class, ValidateMe.class);
+    }
 
     @Test
     public void mapping() {
+        final PrintStream originalOut = System.out;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
+        try {
+            assertEquals(
+                    "nice",
+                    ClientBuilder.newClient().target(base.toExternalForm()).path("endpoint").request(MediaType.TEXT_PLAIN)
+                            .get(String.class));
 
-
-        assertEquals(
-                "nice",
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/endpoint").request(MediaType.TEXT_PLAIN)
-                        .get(String.class));
-
-        assertEquals("BeAUgMQKg6SzYbDM5vtzsQ==" + System.lineSeparator(), out.toString());
+            assertEquals("BeAUgMQKg6SzYbDM5vtzsQ==" + System.lineSeparator(), out.toString());
+        } finally { // shared JVM, don't leak the capture into the next tests
+            System.setOut(originalOut);
+        }
     }
 
     @Path("endpoint")

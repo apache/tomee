@@ -29,6 +29,9 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
+        # jmx/CxfUtilTest
+        openejb.cxf.monitoring.jmx = true
+        openejb.cxf.monitoring.jmx.clear-on-undeploy = true
       </property>
     </configuration>
   </container>

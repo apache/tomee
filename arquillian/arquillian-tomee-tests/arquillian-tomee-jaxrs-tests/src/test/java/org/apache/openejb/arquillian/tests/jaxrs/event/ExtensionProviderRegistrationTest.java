@@ -14,22 +14,24 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.event;
+package org.apache.openejb.arquillian.tests.jaxrs.event;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
@@ -37,37 +39,25 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class ExtensionProviderRegistrationTest {
-    private static int port = -1;
+    @ArquillianResource
+    private URL base;
 
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-                .p("httpejbd.port", Integer.toString(port))
-                .p("observer", "new://Service?class-name=" + Observer.class.getName())
-                .build();
-    }
-
-    @Module
-    @Classes(ServerCreatedEndpoint.class)
-    public WebApp war() {
-        return new WebApp().contextRoot("foo");
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "foo.war")
+                .addClasses(ExtensionProviderRegistrationTest.class, ServerCreatedEndpoint.class, MyMapper.class, Observer.class, ObserverRegistration.class)
+                // MyMapper must only come from the observer, not from provider scanning
+                .addAsWebInfResource(new StringAsset("openejb.jaxrs.providers.auto = false"), "application.properties");
     }
 
     @Test
     public void checkEvent() throws IOException {
-        assertEquals("foo", IO.slurp(new URL("http://localhost:" + port + "/foo/ExtensionProviderRegistrationTest/")));
+        assertEquals("foo", IO.slurp(new URL(base.toExternalForm() + "ExtensionProviderRegistrationTest/")));
     }
 
     @Path("ExtensionProviderRegistrationTest")
@@ -89,6 +79,22 @@ public class ExtensionProviderRegistrationTest {
     public static class Observer {
         public void obs(@Observes final ExtensionProviderRegistration event) {
             event.getProviders().add(new MyMapper());
+        }
+    }
+
+    // registers the observer before the JAX-RS deployment of this webapp, removes it on undeploy
+    @WebListener
+    public static class ObserverRegistration implements ServletContextListener {
+        private final Observer observer = new Observer();
+
+        @Override
+        public void contextInitialized(final ServletContextEvent sce) {
+            SystemInstance.get().addObserver(observer);
+        }
+
+        @Override
+        public void contextDestroyed(final ServletContextEvent sce) {
+            SystemInstance.get().removeObserver(observer);
         }
     }
 }

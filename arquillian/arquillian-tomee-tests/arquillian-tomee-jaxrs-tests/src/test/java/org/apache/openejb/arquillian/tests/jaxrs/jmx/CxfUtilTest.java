@@ -14,14 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.transport.util;
+package org.apache.openejb.arquillian.tests.jaxrs.jmx;
 
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.ContainerProperties;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,22 +41,26 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@EnableServices("jaxrs")
-@ContainerProperties({
-        @ContainerProperties.Property(name = "openejb.cxf.monitoring.jmx", value = "true"),
-        @ContainerProperties.Property(name = "openejb.cxf.monitoring.jmx.clear-on-undeploy", value = "true")
-})
-@Classes(cdi = true, innerClassesAsBean = true, context = "test")
-@RunWith(ApplicationComposer.class)
+// needs openejb.cxf.monitoring.jmx=true on the container, see arquillian.xml
+@RunWith(Arquillian.class)
 public class CxfUtilTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL root;
+
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClasses(CxfUtilTest.class, Endpoint.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
 
     @Test
     public void checkMonitoring() throws IOException, MalformedObjectNameException {
         // need a call to get something
-        IO.slurp(new URL(root.toExternalForm() + "test/monitoring/cxf"));
-        final Set<ObjectInstance> mbeans = ManagementFactory.getPlatformMBeanServer().queryMBeans(new ObjectName("*:*,type=Performance.Counter.Server"), null);
+        IO.slurp(new URL(root.toExternalForm() + "monitoring/cxf"));
+        // the counters of the apps deployed before in this JVM stay registered, only count the ones of this endpoint
+        final Set<ObjectInstance> mbeans = ManagementFactory.getPlatformMBeanServer().queryMBeans(new ObjectName("*:*,type=Performance.Counter.Server,service="
+                + ObjectName.quote("{http://jmx.jaxrs.tests.arquillian.openejb.apache.org/}Endpoint")), null);
         assertNotNull(mbeans);
         assertEquals(2, mbeans.size());
     }

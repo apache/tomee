@@ -14,37 +14,29 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.logging.ejbmodule;
+package org.apache.openejb.arquillian.tests.jaxrs.logging.webappmodule;
 
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.server.cxf.rs.logging.LoggingJAXRSCommons;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.junit.BeforeClass;
+import org.apache.openejb.arquillian.tests.jaxrs.logging.LoggingJAXRSCommons;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
-public class LoggingJAXRSEJBModuleTest extends LoggingJAXRSCommons {
+@RunWith(Arquillian.class)
+public class LoggingJAXRSWebAppModuleWithoutConfigurationTest extends LoggingJAXRSCommons {
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        configurePort();
-    }
-
-    @Module
-    public EjbModule service() throws Exception {
-        configureLoggin();
-        return getEjbModule("jaxrs-application", null);
+    @Deployment
+    public static WebArchive service() {
+        return archive(LoggingJAXRSWebAppModuleWithoutConfigurationTest.class)
+                .addClasses(LogginTestApplication.class, LogginTestBean.class);
     }
 
     @Test
     public void checkLogger() throws Exception {
-        assertTrue(assertJAXRSConfiguration());
+        assertFalse(assertJAXRSConfiguration());
     }
 }

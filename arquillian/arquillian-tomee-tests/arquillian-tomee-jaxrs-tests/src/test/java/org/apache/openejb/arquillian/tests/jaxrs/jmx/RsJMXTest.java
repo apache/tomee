@@ -14,68 +14,51 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.jmx;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
 import org.hamcrest.CoreMatchers;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import java.util.Properties;
+import java.net.URL;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+// client side so the class rule sees the name set by the test; the embedded container shares the JVM and its MBeanServer
+@RunWith(Arquillian.class)
 public class RsJMXTest {
     private static ObjectName name;
-    private static int port = -1;
 
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
+    @ArquillianResource
+    private URL base;
 
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-            .p("httpejbd.port", Integer.toString(port))
-            .build();
-    }
-
-    @Module
-    @Classes(AnEndpoint.class)
-    public WebApp war() {
-        return new WebApp().contextRoot("app");
-    }
-
-    @BeforeClass
-    public static void before() throws MalformedObjectNameException {
-        name = new ObjectName("openejb.management:j2eeType=JAX-RS,J2EEServer=openejb,J2EEApplication=http_//127.0.0.1_" + port + "/app,EndpointType=Pojo,name=org.apache.openejb.server.cxf.rs.RsJMXTest$AnEndpoint");
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "app.war").addClasses(RsJMXTest.class, AnEndpoint.class);
     }
 
     @Test
     public void checkServiceWasDeployed() throws Exception {
+        name = new ObjectName("openejb.management:j2eeType=JAX-RS,J2EEServer=openejb,J2EEApplication=http_//" + base.getHost() + "_" + base.getPort() + "/app,EndpointType=Pojo,name=" + AnEndpoint.class.getName());
+
         assertTrue(LocalMBeanServer.get().isRegistered(name));
 
         final String wadlXml = String.class.cast(LocalMBeanServer.get().invoke(name, "getWadl", new Object[]{null}, new String[0]));
-        assertThat(wadlXml, wadlXml, CoreMatchers.containsString("<resources base=\"http://localhost:" + port + "/app/"));
+        assertThat(wadlXml, wadlXml, CoreMatchers.containsString("<resources base=\"" + base.toExternalForm()));
 
         /* need a fix from cxf which will be shipped soon so deactivating it ATM
         final String wadlJson = String.class.cast(LocalMBeanServer.get().invoke(name, "getWadl", new Object[]{"json"}, new String[0]));
@@ -83,10 +66,14 @@ public class RsJMXTest {
         */
     }
 
-    @AfterClass
-    public static void after() {
-        assertFalse(LocalMBeanServer.get().isRegistered(name));
-    }
+    // Arquillian runs @AfterClass before the undeployment, a class rule runs after it
+    @ClassRule
+    public static final TestRule AFTER = new ExternalResource() {
+        @Override
+        protected void after() {
+            assertFalse(LocalMBeanServer.get().isRegistered(name));
+        }
+    };
 
     @Path("foo")
     public static class AnEndpoint {
