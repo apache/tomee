@@ -14,21 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.config;
 
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.WebModule;
-import org.apache.openejb.config.sys.Service;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.PojoDeployment;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,16 +40,39 @@ import java.util.Properties;
 import static jakarta.xml.bind.annotation.XmlAccessType.FIELD;
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxws")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class MaxChildTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL root;
+
+    @Deployment(testable = false)
+    public static WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class, "app.war")
+                .addClasses(MaxChildTest.class, SimpleContract.class, SimpleContractImpl.class, Root.class, Child.class)
+                .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                        "<servlet><servlet-name>ws</servlet-name><servlet-class>" + SimpleContractImpl.class.getName() + "</servlet-class></servlet>" +
+                        "<servlet-mapping><servlet-name>ws</servlet-name><url-pattern>/ws</url-pattern></servlet-mapping>" +
+                        "</web-app>"))
+                .addAsWebInfResource(new StringAsset(
+                        "<openejb-jar>\n" +
+                        "  <pojo-deployment class-name=\"" + SimpleContractImpl.class.getName() + "\">\n" +
+                        "    <properties>\n" +
+                        "      cxf.jaxws.properties = cxfLargeMsgSize\n" +
+                        "    </properties>\n" +
+                        "  </pojo-deployment>\n" +
+                        "</openejb-jar>\n"), "openejb-jar.xml")
+                .addAsWebInfResource(new StringAsset(
+                        "<resources>\n" +
+                        "  <Service id=\"cxfLargeMsgSize\" class-name=\"" + Properties.class.getName() + "\">\n" +
+                        "    org.apache.cxf.stax.maxChildElements = 1\n" +
+                        "  </Service>\n" +
+                        "</resources>\n"), "resources.xml");
+    }
 
     @Test
     public void passing() throws MalformedURLException {
         assertEquals(0,
-                jakarta.xml.ws.Service.create(new URL(root.toExternalForm() + "app/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "SimpleContractImplService"))
+                jakarta.xml.ws.Service.create(new URL(root.toExternalForm() + "ws?wsdl"), new QName("http://config.jaxws.tests.arquillian.openejb.apache.org/", "SimpleContractImplService"))
                         .getPort(SimpleContract.class)
                         .test(new Root())
                         .getChildren().size());
@@ -69,36 +85,12 @@ public class MaxChildTest {
             for (int i = 0; i < 2; i++) {
                 root.getChildren().add(new Child());
             }
-            jakarta.xml.ws.Service.create(new URL(this.root.toExternalForm() + "app/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "SimpleContractImplService"))
+            jakarta.xml.ws.Service.create(new URL(this.root.toExternalForm() + "ws?wsdl"), new QName("http://config.jaxws.tests.arquillian.openejb.apache.org/", "SimpleContractImplService"))
                     .getPort(SimpleContract.class)
                     .test(root);
         } catch (final SOAPFaultException e) {
             assertEquals("Unmarshalling Error: Maximum Number of Child Elements limit (1) Exceeded ", e.getMessage());
         }
-    }
-
-    @Module
-    public AppModule app() {
-        final String jarLocation = "target/" + getClass().getSimpleName();
-        return new AppModule(Thread.currentThread().getContextClassLoader(), jarLocation, new Application(), true) {{
-            getEjbModules().add(new EjbModule(new EjbJar("app"), new OpenejbJar() {{
-                getPojoDeployment().add(new PojoDeployment() {{
-                    setClassName(SimpleContractImpl.class.getName());
-                    getProperties().setProperty("cxf.jaxws.properties", "cxfLargeMsgSize");
-                }});
-            }}));
-            getWebModules().add(new WebModule(
-                    new WebApp().contextRoot("app").addServlet("ws", SimpleContractImpl.class.getName(), "/ws"),
-                    "app",
-                    Thread.currentThread().getContextClassLoader(),
-                    jarLocation, "app"
-            ));
-            getServices().add(new Service() {{
-                setId("cxfLargeMsgSize");
-                setClassName(Properties.class.getName());
-                getProperties().setProperty("org.apache.cxf.stax.maxChildElements", "1");
-            }});
-        }};
     }
 
     @WebService

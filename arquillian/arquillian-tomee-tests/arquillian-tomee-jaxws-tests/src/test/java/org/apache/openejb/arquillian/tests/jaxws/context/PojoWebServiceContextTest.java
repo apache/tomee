@@ -14,12 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.context;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,12 +31,16 @@ import jakarta.xml.ws.WebServiceContext;
 
 import static org.junit.Assert.assertTrue;
 
-@EnableServices("jax-ws")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class PojoWebServiceContextTest {
-    @Module
-    public WebApp module() {
-        return new WebApp().contextRoot("/test").addServlet("ws", MyWebservice.class.getName(), "/ws");
+    @Deployment
+    public static WebArchive module() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClasses(PojoWebServiceContextTest.class, MyWebservice.class)
+                .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                        "<servlet><servlet-name>ws</servlet-name><servlet-class>" + MyWebservice.class.getName() + "</servlet-class></servlet>" +
+                        "<servlet-mapping><servlet-name>ws</servlet-name><url-pattern>/ws</url-pattern></servlet-mapping>" +
+                        "</web-app>"));
     }
 
     @Test

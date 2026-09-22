@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.client;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -25,14 +25,13 @@ import org.apache.cxf.ws.addressing.soap.MAPCodec;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.openejb.config.sys.MapFactory;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.server.cxf.config.WSS4JInInterceptorFactory;
-import org.apache.openejb.testing.ApplicationConfiguration;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,6 +45,8 @@ import jakarta.xml.ws.WebServiceException;
 import jakarta.xml.ws.WebServiceFeature;
 import jakarta.xml.ws.WebServiceRef;
 import jakarta.xml.ws.soap.AddressingFeature;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -55,13 +56,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-@EnableServices("jax-ws")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class WebServiceInjectionTest {
-    @Module
-    @Classes(innerClassesAsBean = true)
-    public WebApp module() {
-        return new WebApp();
+    @Deployment
+    public static WebArchive module() throws IOException {
+        final StringWriter applicationProperties = new StringWriter();
+        props().store(applicationProperties, null);
+        return ShrinkWrap.create(WebArchive.class, "injection.war")
+                .addClasses(WebServiceInjectionTest.class)
+                .addAsWebInfResource(new StringAsset(applicationProperties.toString()), "application.properties");
     }
 
     @WebServiceRef
@@ -109,13 +112,13 @@ public class WebServiceInjectionTest {
         assertTrue(WSS4JInInterceptor.class.isInstance(iteratorIn.next()));
     }
 
-    @ApplicationConfiguration
-    public Properties props() {
+    // WEB-INF/application.properties
+    public static Properties props() {
         // return new PropertiesBuilder().p("cxf.jaxws.client.out-interceptors", LoggingOutInterceptor.class.getName()).build();
         // return new PropertiesBuilder().p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}MyWebservicePort.out-interceptors", LoggingOutInterceptor.class.getName()).build();
         return new PropertiesBuilder()
-                .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}MyWebservicePort.in-interceptors", "wss4jin")
-                .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}MyWebservicePort.out-interceptors", "loo,wss4jout")
+                .p("cxf.jaxws.client.{http://client.jaxws.tests.arquillian.openejb.apache.org/}MyWebservicePort.in-interceptors", "wss4jin")
+                .p("cxf.jaxws.client.{http://client.jaxws.tests.arquillian.openejb.apache.org/}MyWebservicePort.out-interceptors", "loo,wss4jout")
 
                 .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}myWebservice.in-interceptors", "wss4jin")
                 .p("cxf.jaxws.client.{http://cxf.server.openejb.apache.org/}myWebservice.out-interceptors", "loo,wss4jout")

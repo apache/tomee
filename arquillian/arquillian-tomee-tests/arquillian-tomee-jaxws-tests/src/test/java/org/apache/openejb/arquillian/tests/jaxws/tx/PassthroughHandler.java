@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.server.cxf.handler;
+package org.apache.openejb.arquillian.tests.jaxws.tx;
 
 import jakarta.xml.ws.handler.Handler;
 import jakarta.xml.ws.handler.MessageContext;

@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf.fault;
+package org.apache.openejb.arquillian.tests.jaxws.fault;
 
 import jakarta.ejb.Stateless;
 import jakarta.jws.WebService;

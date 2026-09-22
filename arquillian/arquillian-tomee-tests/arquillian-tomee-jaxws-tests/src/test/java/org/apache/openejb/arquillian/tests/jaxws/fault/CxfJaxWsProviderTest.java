@@ -14,56 +14,51 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.fault;
 
-import junit.framework.TestCase;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.server.cxf.fault.AuthenticatorService;
-import org.apache.openejb.server.cxf.fault.WrongPasswordException;
-import org.apache.openejb.server.cxf.fault.WrongPasswordRuntimeException;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @version $Rev$
  */
-public class CxfJaxWsProviderTest extends TestCase {
+@RunWith(Arquillian.class)
+public class CxfJaxWsProviderTest {
+    @ArquillianResource
+    private URL base;
 
-    //START SNIPPET: setup	
-    private InitialContext initialContext;
-
-    //Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
-
-    protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
-
-        //Just for this test we change the default port from 4204 to avoid conflicts
-        properties.setProperty("httpejbd.port", "" + port);
-
-        initialContext = new InitialContext(properties);
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "openejb-cxf.war")
+                .addClasses(AuthenticatorService.class, AuthenticatorServiceBean.class, AuthenticatorServiceBeanNoHandler.class,
+                        DummyInterceptor.class, WrongPasswordException.class, WrongPasswordRuntimeException.class)
+                .addAsResource(AuthenticatorServiceBean.class.getPackage(), "handler.xml");
     }
-    //END SNIPPET: setup
 
+    @Test
     public void test00_runCheckedException() {
         try {
             AuthenticatorService withHandler = Service.create(
-                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBean?wsdl"),
+                new URL(base.toExternalForm() + "webservices/AuthenticatorServiceBean?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(withHandler);
 
             AuthenticatorService noHandler = Service.create(
-                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
+                new URL(base.toExternalForm() + "webservices/AuthenticatorServiceBeanNoHandler?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(noHandler);
@@ -93,16 +88,17 @@ public class CxfJaxWsProviderTest extends TestCase {
 
     }
 
+    @Test
     public void test01_runRuntimeException() {
         try {
             AuthenticatorService withHandler = Service.create(
-                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBean?wsdl"),
+                new URL(base.toExternalForm() + "webservices/AuthenticatorServiceBean?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(withHandler);
 
             AuthenticatorService noHandler = Service.create(
-                new URL("http://localhost:" + port + "/openejb-cxf/AuthenticatorServiceBeanNoHandler?wsdl"),
+                new URL(base.toExternalForm() + "webservices/AuthenticatorServiceBeanNoHandler?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AuthenticatorServiceBeanNoHandlerService"))
                 .getPort(AuthenticatorService.class);
             assertNotNull(noHandler);

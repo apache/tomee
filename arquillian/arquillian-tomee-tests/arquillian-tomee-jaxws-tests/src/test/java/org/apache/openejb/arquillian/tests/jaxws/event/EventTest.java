@@ -14,43 +14,50 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.event;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.cxf.event.ServerCreated;
 import org.apache.openejb.server.cxf.event.ServerDestroyed;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testing.RandomPort;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.junit.AfterClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 import jakarta.jws.WebService;
-import java.util.Properties;
 
 import static org.junit.Assert.assertNotNull;
 
-@EnableServices("jaxws")
-@RunWith(ApplicationComposer.class)
+// client side: the observer lives in the test JVM like a container level service, the embedded container shares this JVM
+@RunWith(Arquillian.class)
 public class EventTest {
-    @Module
-    @Classes(innerClassesAsBean = true)
-    public WebApp app() {
-        return new WebApp();
-    }
+    // a class rule wraps the Arquillian deployment: the observer is there before the deployment,
+    // the checks run after the undeployment (Arquillian runs @AfterClass before undeploying)
+    @ClassRule
+    public static final TestRule LISTENER = new ExternalResource() {
+        private final Observer observer = new Observer();
 
-    @RandomPort("http")
-    private int port;
+        @Override
+        protected void before() {
+            SystemInstance.get().addObserver(observer);
+        }
 
-    @Configuration
-    public Properties config() {
-        return new PropertiesBuilder().p("listener", "new://Service?class-name=" + Observer.class.getName()).build();
+        @Override
+        protected void after() {
+            SystemInstance.get().removeObserver(observer);
+            destroy();
+        }
+    };
+
+    @Deployment(testable = false)
+    public static WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class, "event.war").addClass(End.class);
     }
 
     @Test
@@ -60,7 +67,6 @@ public class EventTest {
         assertNotNull(Observer.created.getServer().getEndpoint());
     }
 
-    @AfterClass
     public static void destroy() {
         assertNotNull(Observer.destroyed);
         assertNotNull(Observer.destroyed.getServer());

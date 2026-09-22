@@ -14,18 +14,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.cdi;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.server.cxf.handler.SimpleHandler;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,36 +33,30 @@ import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
 
-@EnableServices("jax-ws")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class CdiHandlersTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
-
-    @Module
-    @Classes(value = {MyHandledWebservice.class, ACdiSimpleTaste.class, SimpleHandler.class}, cdi = true)
-    public WebApp module() {
-        return new WebApp().contextRoot("/test").addServlet("ws", MyHandledWebservice.class.getName(), "/ws");
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClasses(CdiHandlersTest.class, MyHandledWebservice.class, ACdiSimpleTaste.class, SimpleHandler.class)
+                .addAsResource(CdiHandlersTest.class.getPackage(), "handlers.xml", "handlers.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                        "<servlet><servlet-name>ws</servlet-name><servlet-class>" + MyHandledWebservice.class.getName() + "</servlet-class></servlet>" +
+                        "<servlet-mapping><servlet-name>ws</servlet-name><url-pattern>/ws</url-pattern></servlet-mapping>" +
+                        "</web-app>"));
     }
 
     @Test
     public void checkHandlersAreCDIBeans() throws MalformedURLException {
         SimpleHandler.reset();
-        final Service service = Service.create(new URL("http://localhost:" + port + "/test/ws?wsdl"), new QName("http://cxf.server.openejb.apache.org/", "MyHandledWebserviceService"));
+        final Service service = Service.create(new URL(base.toExternalForm() + "ws?wsdl"), new QName("http://cdi.jaxws.tests.arquillian.openejb.apache.org/", "MyHandledWebserviceService"));
         final MyHandledWsApi servicePort = service.getPort(MyHandledWsApi.class);
         servicePort.test();
         assertTrue(SimpleHandler.close);
@@ -95,4 +86,3 @@ public class CdiHandlersTest {
         }
     }
 }
-

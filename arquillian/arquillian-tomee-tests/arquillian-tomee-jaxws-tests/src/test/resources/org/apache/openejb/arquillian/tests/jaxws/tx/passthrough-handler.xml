@@ -15,14 +15,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
-<!-- $Rev: 602704 $ $Date: 2007-12-09 18:58:22 +0100 (dim., 09 déc. 2007) $ -->
-
-<jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
-  <jws:handler-chain>
-    <jws:handler>
-      <jws:handler-name>GreeterHandler</jws:handler-name>
-      <jws:handler-class>org.apache.openejb.server.cxf.handler.SimpleHandler</jws:handler-class>
-    </jws:handler>
-  </jws:handler-chain>
-</jws:handler-chains>
+<handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
+  <handler-chain>
+    <handler>
+      <handler-name>PassthroughHandler</handler-name>
+      <handler-class>org.apache.openejb.arquillian.tests.jaxws.tx.PassthroughHandler</handler-class>
+    </handler>
+  </handler-chain>
+</handler-chains>

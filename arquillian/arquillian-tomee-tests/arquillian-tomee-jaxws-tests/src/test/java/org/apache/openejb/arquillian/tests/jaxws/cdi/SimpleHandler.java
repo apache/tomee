@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.server.cxf.handler;
+package org.apache.openejb.arquillian.tests.jaxws.cdi;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -22,8 +22,6 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.xml.ws.handler.Handler;
 import jakarta.xml.ws.handler.MessageContext;
-
-import org.apache.openejb.server.cxf.CdiHandlersTest;
 
 @RequestScoped // otherwise can't test pre/post hooks
 public class SimpleHandler implements Handler {

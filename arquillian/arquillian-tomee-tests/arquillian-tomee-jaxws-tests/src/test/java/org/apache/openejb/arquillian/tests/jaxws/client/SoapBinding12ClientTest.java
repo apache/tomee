@@ -14,14 +14,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.client;
 
 import jakarta.ejb.Singleton;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,20 +38,24 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-@EnableServices("jax-ws")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class SoapBinding12ClientTest {
-    @Module
-    public WebApp module() {
-        return new WebApp().contextRoot("/test").addServlet("ws", MyWebservice12.class.getName(), "MyWebservice12");
+    @ArquillianResource
+    private URL base;
+
+    // MyWebservice12 is a @Singleton: no servlet declaration, it would add a second (pojo) port for the same interface
+    @Deployment
+    public static WebArchive module() {
+        return ShrinkWrap.create(WebArchive.class, "test.war").addClasses(SoapBinding12ClientTest.class);
     }
 
+    // with a single deployed port its address replaces this wsdlLocation, see JaxWsServiceReference
     @WebServiceRef(wsdlLocation = "http://127.0.0.1:4204/test/MyWebservice12?wsdl")
     private MyWsApi client;
 
     @Test
     public void check() throws IOException {
-        assertThat(IO.slurp(new URL("http://127.0.0.1:4204/test/MyWebservice12?wsdl")), containsString("<soap12"));
+        assertThat(IO.slurp(new URL(base.toExternalForm() + "webservices/MyWebservice12?wsdl")), containsString("<soap12"));
         assertEquals("ok", client.test(new Input("ok")).getAttribute());
     }
 

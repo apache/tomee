@@ -15,17 +15,17 @@
  *  limitations under the License.
  */
 
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.interceptor;
 
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import jakarta.ejb.Stateless;
-import jakarta.ejb.embeddable.EJBContainer;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptors;
 import jakarta.interceptor.InvocationContext;
@@ -33,35 +33,26 @@ import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(Arquillian.class)
 public class WebServiceWithAnUserInterceptorTest {
-    private static EJBContainer container;
-    private static int port = -1;
+    @ArquillianResource
+    private URL base;
 
-    @BeforeClass
-    public static void start() {
-        port = NetworkUtil.getNextAvailablePort();
-        final Properties properties = new Properties();
-        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf.*");
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        properties.setProperty("httpejbd.port", Integer.toString(port));
-        container = EJBContainer.createEJBContainer(properties);
-    }
-
-    @AfterClass
-    public static void close() {
-        container.close();
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "openejb-cxf.war")
+                .addClasses(WebServiceWithAnUserInterceptorTest.class, FooImpl.class, Foo.class, BarInterceptor.class);
     }
 
     @Test
     public void test() throws Exception {
         Foo foo = Service.create(
-            new URL("http://localhost:" + port + "/openejb-cxf/FooImpl?wsdl"),
-            new QName("http://cxf.server.openejb.apache.org/", "FooImplService"))
+            new URL(base.toExternalForm() + "webservices/FooImpl?wsdl"),
+            new QName("http://interceptor.jaxws.tests.arquillian.openejb.apache.org/", "FooImplService"))
             .getPort(Foo.class);
         assertNotNull(foo);
         assertEquals("bar", foo.hi());

@@ -14,19 +14,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.config;
 
 import org.apache.cxf.endpoint.Endpoint;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.Empty;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
+import org.apache.openejb.server.cxf.EndpointConfigurator;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,30 +33,20 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class CustomEndpointConfiguratorTest {
-    @Configuration
-    public Properties configuration() {
-        return new Properties() {{
-            setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        }};
-    }
-
-    @Module
-    public EjbModule module() {
-        final EjbModule module = new EjbModule(new EjbJar());
-        module.setOpenejbJar(new OpenejbJar());
-
-        final SingletonBean bean = new SingletonBean(MyWebservice.class);
-        bean.setLocalBean(new Empty());
-
-        final EjbDeployment deployment = new EjbDeployment(bean);
-        deployment.getProperties().setProperty("openejb.endpoint.configurator", CustomConfigurator.class.getName());
-
-        module.getOpenejbJar().addEjbDeployment(deployment);
-        module.getEjbJar().addEnterpriseBean(bean);
-
-        return module;
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "configurator.war")
+                .addClasses(CustomEndpointConfiguratorTest.class, MyWebservice.class, CustomConfigurator.class)
+                .addAsWebInfResource(new StringAsset(
+                        "<openejb-jar>\n" +
+                        "  <ejb-deployment ejb-name=\"MyWebservice\">\n" +
+                        "    <properties>\n" +
+                        "      openejb.endpoint.configurator = " + CustomConfigurator.class.getName() + "\n" +
+                        "    </properties>\n" +
+                        "  </ejb-deployment>\n" +
+                        "</openejb-jar>\n"), "openejb-jar.xml");
     }
 
     @Test

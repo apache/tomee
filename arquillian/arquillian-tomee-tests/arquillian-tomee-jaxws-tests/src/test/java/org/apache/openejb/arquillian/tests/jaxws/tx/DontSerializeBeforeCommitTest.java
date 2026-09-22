@@ -15,12 +15,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.arquillian.tests.jaxws.tx;
 
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,21 +46,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-@EnableServices("jaxws")
-@RunWith(ApplicationComposer.class)
-@Classes(innerClassesAsBean = true)
+@RunWith(Arquillian.class)
 public class DontSerializeBeforeCommitTest {
-    @RandomPort("http")
-    private int port;
+    @ArquillianResource
+    private URL base;
 
     @EJB
     private TheTxImpl bean;
 
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "openejb.war")
+                .addClasses(DontSerializeBeforeCommitTest.class, PassthroughHandler.class)
+                .addAsResource(PassthroughHandler.class.getPackage(), "passthrough-handler.xml");
+    }
+
     @Test
     public void test() throws MalformedURLException {
         bean.setCounter(0);
-        final TheTx client = Service.create(new URL("http://localhost:" + port + "/openejb/TheTxImpl?wsdl"),
-                new QName("http://cxf.server.openejb.apache.org/", "TheTxImplService"))
+        final TheTx client = Service.create(new URL(base.toExternalForm() + "webservices/TheTxImpl?wsdl"),
+                new QName("http://tx.jaxws.tests.arquillian.openejb.apache.org/", "TheTxImplService"))
                 .getPort(TheTx.class);
         try {
             client.compute(false);
