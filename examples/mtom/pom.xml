@@ -49,7 +49,18 @@
           <release>17</release>
         </configuration>
       </plugin>
-      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
+        <configuration>
+          <!--
+          one TomEE per test class: the @WebServiceRef resolves its port by SEI, EjbService and PojoService
+          share it, and TomEE keeps the port of an undeployed app registered (PortAddressRegistryImpl.removePort)
+          -->
+          <reuseForks>false</reuseForks>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -60,20 +71,38 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
-      <artifactId>tomee-microprofile</artifactId>
-      <version>11.0.0-SNAPSHOT</version>
+      <artifactId>tomee-plus-api</artifactId>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-junit</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-mockito</artifactId>
+      <artifactId>ziplock</artifactId>
       <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>arquillian-tomee-embedded</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>1.10.0.Final</version>
       <scope>test</scope>
     </dependency>
     <dependency>

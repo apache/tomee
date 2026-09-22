@@ -16,7 +16,7 @@
  */
 package org.superbiz.mtom;
 
-import org.apache.openejb.junit.ApplicationComposer;
+import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ import jakarta.xml.ws.WebServiceRef;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public abstract class AbstractServiceTest {
 
     @WebServiceRef

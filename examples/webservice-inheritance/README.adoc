@@ -258,40 +258,38 @@ public abstract class Wearable extends Item {
 ----
 package org.superbiz.inheritance;
 
-import junit.framework.TestCase;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.superbiz.inheritance.Tower.Fit;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.List;
-import java.util.Properties;
 
-public class InheritanceTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-    //START SNIPPET: setup  
-    private InitialContext initialContext;
+@RunWith(Arquillian.class)
+public class InheritanceTest {
 
-    protected void setUp() throws Exception {
+    //START SNIPPET: setup
+    @ArquillianResource
+    private URL base;
 
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        p.put("wakeBoardDatabase", "new://Resource?type=DataSource");
-        p.put("wakeBoardDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("wakeBoardDatabase.JdbcUrl", "jdbc:hsqldb:mem:wakeBoarddb");
-
-        p.put("wakeBoardDatabaseUnmanaged", "new://Resource?type=DataSource");
-        p.put("wakeBoardDatabaseUnmanaged.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("wakeBoardDatabaseUnmanaged.JdbcUrl", "jdbc:hsqldb:mem:wakeBoarddb");
-        p.put("wakeBoardDatabaseUnmanaged.JtaManaged", "false");
-
-        p.put("openejb.embedded.remotable", "true");
-
-        initialContext = new InitialContext(p);
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "webservice-inheritance.war")
+                .addClasses(Item.class, Tower.class, Wakeboard.class, WakeboardBinding.class, Wearable.class,
+                        WakeRiderImpl.class, WakeRiderWs.class)
+                .addAsResource("META-INF/persistence.xml");
     }
-    //END SNIPPET: setup    
+    //END SNIPPET: setup
 
     /**
      * Create a webservice client using wsdl url
@@ -299,9 +297,10 @@ public class InheritanceTest extends TestCase {
      * @throws Exception
      */
     //START SNIPPET: webservice
+    @Test
     public void testInheritanceViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://127.0.0.1:4204/WakeRiderImpl?wsdl"),
+                new URL(base.toExternalForm() + "webservices/WakeRiderImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "InheritanceWsService"));
         assertNotNull(service);
 
@@ -317,7 +316,6 @@ public class InheritanceTest extends TestCase {
         ws.addItem(wakeBoard);
         ws.addItem(wakeBoardbinding);
 
-
         List<Item> returnedItems = ws.getItems();
 
         assertEquals("testInheritanceViaWsInterface, nb Items", 4, returnedItems.size());
@@ -328,7 +326,7 @@ public class InheritanceTest extends TestCase {
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getBrand(), "Tower brand");
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getFit().ordinal(), Fit.Custom.ordinal());
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getItemName(), "Tower item name");
-        assertEquals("testInheritanceViaWsInterface, first Item", tower.getPrice(), 1.0d);
+        assertEquals("testInheritanceViaWsInterface, first Item", tower.getPrice(), 1.0d, 0.0d);
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getTubing(), "Tower tubing");
 
         //check item
@@ -336,14 +334,14 @@ public class InheritanceTest extends TestCase {
         item = (Item) returnedItems.get(1);
         assertEquals("testInheritanceViaWsInterface, second Item", item.getBrand(), "Item brand");
         assertEquals("testInheritanceViaWsInterface, second Item", item.getItemName(), "Item name");
-        assertEquals("testInheritanceViaWsInterface, second Item", item.getPrice(), 2.0d);
+        assertEquals("testInheritanceViaWsInterface, second Item", item.getPrice(), 2.0d, 0.0d);
 
         //check wakeboard
         assertEquals("testInheritanceViaWsInterface, third Item", returnedItems.get(2).getClass(), Wakeboard.class);
         wakeBoard = (Wakeboard) returnedItems.get(2);
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getBrand(), "Wakeboard brand");
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getItemName(), "Wakeboard item name");
-        assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getPrice(), 3.0d);
+        assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getPrice(), 3.0d, 0.0d);
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getSize(), "WakeBoard size");
 
         //check wakeboardbinding
@@ -351,7 +349,7 @@ public class InheritanceTest extends TestCase {
         wakeBoardbinding = (WakeboardBinding) returnedItems.get(3);
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getBrand(), "Wakeboardbinding brand");
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getItemName(), "Wakeboardbinding item name");
-        assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getPrice(), 4.0d);
+        assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getPrice(), 4.0d, 0.0d);
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getSize(), "WakeBoardbinding size");
     }
     //END SNIPPET: webservice
@@ -394,6 +392,35 @@ public class InheritanceTest extends TestCase {
 }
 ----
 
+== arquillian.xml
+
+The test deploys the example to TomEE embedded. `src/test/resources/arquillian.xml` defines the data sources the persistence unit uses:
+
+[source,xml]
+----
+<arquillian
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    >
+  <container qualifier="tomee" default="true">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="appWorkingDir">target/tomee-embedded</property>
+      <property name="properties">
+        wakeBoardDatabase = new://Resource?type=DataSource
+        wakeBoardDatabase.JdbcDriver = org.hsqldb.jdbcDriver
+        wakeBoardDatabase.JdbcUrl = jdbc:hsqldb:mem:wakeBoarddb
+
+        wakeBoardDatabaseUnmanaged = new://Resource?type=DataSource
+        wakeBoardDatabaseUnmanaged.JdbcDriver = org.hsqldb.jdbcDriver
+        wakeBoardDatabaseUnmanaged.JdbcUrl = jdbc:hsqldb:mem:wakeBoarddb
+        wakeBoardDatabaseUnmanaged.JtaManaged = false
+      </property>
+    </configuration>
+  </container>
+</arquillian>
+----
+
 == Running
 
 [source,console]
@@ -402,46 +429,22 @@ public class InheritanceTest extends TestCase {
  T E S T S
 -------------------------------------------------------
 Running org.superbiz.inheritance.InheritanceTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://tomee.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/webservice-inheritance
-INFO - openejb.base = /Users/dblevins/examples/webservice-inheritance
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Configuring Service(id=wakeBoardDatabaseUnmanaged, type=Resource, provider-id=Default JDBC Database)
-INFO - Configuring Service(id=wakeBoardDatabase, type=Resource, provider-id=Default JDBC Database)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/webservice-inheritance/target/classes
-INFO - Beginning load: /Users/dblevins/examples/webservice-inheritance/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/webservice-inheritance/classpath.ear
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean WakeRiderImpl: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Configuring PersistenceUnit(name=wakeboard-unit)
-INFO - Enterprise application "/Users/dblevins/examples/webservice-inheritance/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/webservice-inheritance/classpath.ear
-INFO - PersistenceUnit(name=wakeboard-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 396ms
-INFO - Created Ejb(deployment-id=WakeRiderImpl, ejb-name=WakeRiderImpl, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=WakeRiderImpl, ejb-name=WakeRiderImpl, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/webservice-inheritance/classpath.ear)
-INFO - Initializing network services
-INFO - Creating ServerService(id=httpejbd)
-INFO - Creating ServerService(id=cxf)
-INFO - Creating ServerService(id=admin)
-INFO - Creating ServerService(id=ejbd)
-INFO - Creating ServerService(id=ejbds)
-INFO - Initializing network services
-  ** Starting Services **
-  NAME                 IP              PORT  
-  httpejbd             127.0.0.1       4204  
-  admin thread         127.0.0.1       4200  
-  ejbd                 127.0.0.1       4201  
-  ejbd                 127.0.0.1       4203  
--------
-Ready!
-WARN - Found no persistent property in "org.superbiz.inheritance.WakeboardBinding"
-WARN - Found no persistent property in "org.superbiz.inheritance.Wakeboard"
-WARN - Found no persistent property in "org.superbiz.inheritance.WakeboardBinding"
-WARN - Found no persistent property in "org.superbiz.inheritance.Wakeboard"
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.442 sec
+INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
+INFO: Version: 11.0.0-SNAPSHOT
+INFO: Configuring Service(id=wakeBoardDatabase, type=Resource, provider-id=Default JDBC Database)
+INFO: Configuring Service(id=wakeBoardDatabaseUnmanaged, type=Resource, provider-id=Default JDBC Database)
+INFO: Creating Resource(id=wakeBoardDatabase)
+INFO: Creating Resource(id=wakeBoardDatabaseUnmanaged)
+INFO: ------------------------- localhost -> /webservice-inheritance
+INFO: Configuring enterprise application: /path/to/examples/webservice-inheritance/target/tomee-embedded/0/webservice-inheritance
+INFO: Auto-deploying ejb WakeRiderImpl: EjbDeployment(deployment-id=WakeRiderImpl)
+INFO: Created Ejb(deployment-id=WakeRiderImpl, ejb-name=WakeRiderImpl, container=Default Stateless Container)
+INFO: Started Ejb(deployment-id=WakeRiderImpl, ejb-name=WakeRiderImpl, container=Default Stateless Container)
+INFO: Webservice(wsdl=http://localhost:53482/webservice-inheritance/webservices/WakeRiderImpl, qname={http://superbiz.org/wsdl}InheritanceWsService) --> Ejb(id=WakeRiderImpl)
+INFO: Deployed Application(path=/path/to/examples/webservice-inheritance/target/tomee-embedded/0/webservice-inheritance)
+INFO: Creating Service {http://superbiz.org/wsdl}InheritanceWsService from WSDL: http://localhost:53482/webservice-inheritance/webservices/WakeRiderImpl?wsdl
+INFO: Undeploying app: /path/to/examples/webservice-inheritance/target/tomee-embedded/0/webservice-inheritance
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.792 s -- in org.superbiz.inheritance.InheritanceTest
 
 Results :
 

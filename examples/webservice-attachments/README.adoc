@@ -104,34 +104,39 @@ public interface AttachmentWs {
 ----
 package org.superbiz.attachment;
 
-import junit.framework.TestCase;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.mail.util.ByteArrayDataSource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
 import jakarta.xml.ws.soap.SOAPBinding;
 import java.net.URL;
-import java.util.Properties;
 
-public class AttachmentTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-    //START SNIPPET: setup  
-    private InitialContext initialContext;
+@RunWith(Arquillian.class)
+public class AttachmentTest {
 
-    protected void setUp() throws Exception {
+    //START SNIPPET: setup
+    @ArquillianResource
+    private URL base;
 
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
-
-        initialContext = new InitialContext(properties);
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "webservice-attachments.war")
+                .addClasses(AttachmentImpl.class, AttachmentWs.class);
     }
-    //END SNIPPET: setup    
+    //END SNIPPET: setup
 
     /**
      * Create a webservice client using wsdl url
@@ -139,9 +144,10 @@ public class AttachmentTest extends TestCase {
      * @throws Exception
      */
     //START SNIPPET: webservice
+    @Test
     public void testAttachmentViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://127.0.0.1:4204/AttachmentImpl?wsdl"),
+                new URL(base.toExternalForm() + "webservices/AttachmentImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AttachmentWsService"));
         assertNotNull(service);
 
@@ -161,14 +167,16 @@ public class AttachmentTest extends TestCase {
         DataSource source = new ByteArrayDataSource(request.getBytes(), "text/plain; charset=UTF-8");
 
         // not yet supported !
-//        response = ws.stringFromDataSource(source);
-//        assertEquals(request, response);
+        //        response = ws.stringFromDataSource(source);
+        //        assertEquals(request, response);
 
         // Data Handler
         response = ws.stringFromDataHandler(new DataHandler(source));
         assertEquals(request, response);
+
     }
     //END SNIPPET: webservice
+
 }
 ----
 
@@ -180,38 +188,18 @@ public class AttachmentTest extends TestCase {
  T E S T S
 -------------------------------------------------------
 Running org.superbiz.attachment.AttachmentTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://tomee.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/webservice-attachments
-INFO - openejb.base = /Users/dblevins/examples/webservice-attachments
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/webservice-attachments/target/classes
-INFO - Beginning load: /Users/dblevins/examples/webservice-attachments/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/webservice-attachments/classpath.ear
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean AttachmentImpl: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Enterprise application "/Users/dblevins/examples/webservice-attachments/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/webservice-attachments/classpath.ear
-INFO - Created Ejb(deployment-id=AttachmentImpl, ejb-name=AttachmentImpl, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=AttachmentImpl, ejb-name=AttachmentImpl, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/webservice-attachments/classpath.ear)
-INFO - Initializing network services
-INFO - Creating ServerService(id=httpejbd)
-INFO - Creating ServerService(id=cxf)
-INFO - Creating ServerService(id=admin)
-INFO - Creating ServerService(id=ejbd)
-INFO - Creating ServerService(id=ejbds)
-INFO - Initializing network services
-  ** Starting Services **
-  NAME                 IP              PORT  
-  httpejbd             127.0.0.1       4204  
-  admin thread         127.0.0.1       4200  
-  ejbd                 127.0.0.1       4201  
-  ejbd                 127.0.0.1       4203  
--------
-Ready!
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.034 sec
+INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
+INFO: Version: 11.0.0-SNAPSHOT
+INFO: ------------------------- localhost -> /webservice-attachments
+INFO: Configuring enterprise application: /path/to/examples/webservice-attachments/target/tomee-embedded/0/webservice-attachments
+INFO: Auto-deploying ejb AttachmentImpl: EjbDeployment(deployment-id=AttachmentImpl)
+INFO: Created Ejb(deployment-id=AttachmentImpl, ejb-name=AttachmentImpl, container=Default Stateless Container)
+INFO: Started Ejb(deployment-id=AttachmentImpl, ejb-name=AttachmentImpl, container=Default Stateless Container)
+INFO: Webservice(wsdl=http://localhost:53476/webservice-attachments/webservices/AttachmentImpl, qname={http://superbiz.org/wsdl}AttachmentWsService) --> Ejb(id=AttachmentImpl)
+INFO: Deployed Application(path=/path/to/examples/webservice-attachments/target/tomee-embedded/0/webservice-attachments)
+INFO: Creating Service {http://superbiz.org/wsdl}AttachmentWsService from WSDL: http://localhost:53476/webservice-attachments/webservices/AttachmentImpl?wsdl
+INFO: Undeploying app: /path/to/examples/webservice-attachments/target/tomee-embedded/0/webservice-attachments
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.997 s -- in org.superbiz.attachment.AttachmentTest
 
 Results :
 

@@ -17,53 +17,33 @@
 package org.superbiz.calculator;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import jakarta.ejb.embeddable.EJBContainer;
-import javax.naming.NamingException;
 import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
 
+@RunWith(Arquillian.class)
 public class CalculatorTest {
 
-    private static EJBContainer container;
+    @ArquillianResource
+    private URL base;
 
-    //Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
-
-    @BeforeClass
-    public static void setUp() throws Exception {
-        final Properties properties = new Properties();
-        properties.setProperty("openejb.embedded.remotable", "true");
-
-        //Just for this test we change the default port from 4204 to avoid conflicts
-        properties.setProperty("httpejbd.port", "" + port);
-
-        container = EJBContainer.createEJBContainer(properties);
-    }
-
-    @Before
-    public void inject() throws NamingException {
-        if (container != null) {
-            container.getContext().bind("inject", this);
-        }
-    }
-
-    @AfterClass
-    public static void close() {
-        if (container != null) {
-            container.close();
-        }
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "simple-webservice-without-interface.war")
+                .addClass(Calculator.class);
     }
 
     @Test
     public void wsdlExists() throws Exception {
-        final URL url = new URL("http://localhost:" + port + "/simple-webservice-without-interface/Calculator?wsdl");
+        final URL url = new URL(base.toExternalForm() + "webservices/Calculator?wsdl");
         assertTrue(IOUtils.readLines(url.openStream()).size() > 0);
         assertTrue(IOUtils.readLines(url.openStream()).toString().contains("CalculatorWsService"));
     }

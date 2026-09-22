@@ -16,7 +16,6 @@
  */
 package org.superbiz.calculator;
 
-import junit.framework.TestCase;
 import org.apache.cxf.binding.soap.saaj.SAAJInInterceptor;
 import org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor;
 import org.apache.cxf.endpoint.Client;
@@ -28,9 +27,15 @@ import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -41,31 +46,34 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-public class CalculatorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+@RunWith(Arquillian.class)
+public class CalculatorTest {
 
     //START SNIPPET: setup
+    @ArquillianResource
+    private URL base;
 
-    //Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
-
-    @Override
-    protected void setUp() throws Exception {
-        final Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
-
-        //Just for this test we change the default port from 4204 to avoid conflicts
-        properties.setProperty("httpejbd.port", "" + port);
-
-        new InitialContext(properties);
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "webservice-ws-security.war")
+                .addClasses(CalculatorImpl.class, CalculatorRemote.class, CalculatorWs.class, CustomPasswordHandler.class)
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "ejb-jar.xml")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/openejb-jar.xml"), "openejb-jar.xml")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/webservices.xml"), "webservices.xml")
+                .addAsResource("META-INF/CalculatorImplSign-server.properties")
+                .addAsResource("META-INF/CalculatorImplUsernameTokenPlainPasswordEncrypt-server.properties")
+                .addAsResource("META-INF/serverStore.jks");
     }
     //END SNIPPET: setup
 
     //START SNIPPET: webservice
+    @Test
     public void testCalculatorViaWsInterface() throws Exception {
-        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImpl?wsdl"),
+        final Service calcService = Service.create(new URL(base.toExternalForm() + "webservices/CalculatorImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -94,11 +102,12 @@ public class CalculatorTest extends TestCase {
         assertEquals(10, calc.sum(4, 6));
     }
 
+    @Test
     public void testCalculatorViaWsInterfaceFactoryBean() throws Exception {
         final JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 
         factory.setServiceClass(CalculatorWs.class);
-        factory.setAddress("http://localhost:" + port + "/webservice-ws-security/CalculatorImpl");
+        factory.setAddress(base.toExternalForm() + "webservices/CalculatorImpl");
 
         final CalculatorWs calc = (CalculatorWs) factory.create();
 
@@ -125,8 +134,9 @@ public class CalculatorTest extends TestCase {
         assertEquals(10, calc.sum(4, 6));
     }
 
+    @Test
     public void testCalculatorViaWsInterfaceWithTimestamp1way() throws Exception {
-        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplTimestamp1way?wsdl"),
+        final Service calcService = Service.create(new URL(base.toExternalForm() + "webservices/CalculatorImplTimestamp1way?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -153,8 +163,9 @@ public class CalculatorTest extends TestCase {
         assertEquals(12, calc.multiply(3, 4));
     }
 
+    @Test
     public void testCalculatorViaWsInterfaceWithTimestamp2ways() throws Exception {
-        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplTimestamp2ways?wsdl"),
+        final Service calcService = Service.create(new URL(base.toExternalForm() + "webservices/CalculatorImplTimestamp2ways?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -187,8 +198,9 @@ public class CalculatorTest extends TestCase {
         assertEquals(12, calc.multiply(3, 4));
     }
 
+    @Test
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPassword() throws Exception {
-        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenPlainPassword?wsdl"),
+        final Service calcService = Service.create(new URL(base.toExternalForm() + "webservices/CalculatorImplUsernameTokenPlainPassword?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -226,8 +238,9 @@ public class CalculatorTest extends TestCase {
         assertEquals(10, calc.sum(4, 6));
     }
 
+    @Test
     public void testCalculatorViaWsInterfaceWithUsernameTokenHashedPassword() throws Exception {
-        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenHashedPassword?wsdl"),
+        final Service calcService = Service.create(new URL(base.toExternalForm() + "webservices/CalculatorImplUsernameTokenHashedPassword?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -265,8 +278,9 @@ public class CalculatorTest extends TestCase {
         assertEquals(10, calc.sum(4, 6));
     }
 
+    @Test
     public void testCalculatorViaWsInterfaceWithUsernameTokenPlainPasswordEncrypt() throws Exception {
-        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
+        final Service calcService = Service.create(new URL(base.toExternalForm() + "webservices/CalculatorImplUsernameTokenPlainPasswordEncrypt?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
@@ -307,8 +321,9 @@ public class CalculatorTest extends TestCase {
         assertEquals(10, calc.sum(4, 6));
     }
 
+    @Test
     public void testCalculatorViaWsInterfaceWithSign() throws Exception {
-        final Service calcService = Service.create(new URL("http://localhost:" + port + "/webservice-ws-security/CalculatorImplSign?wsdl"),
+        final Service calcService = Service.create(new URL(base.toExternalForm() + "webservices/CalculatorImplSign?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
