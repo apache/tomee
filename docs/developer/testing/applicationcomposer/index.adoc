@@ -144,34 +144,18 @@ public class MyTest {
 Note: this can be put in a `@Module` method as well.
 
 === Services
-If you want to test a JAXRS or JAXWS service you need to activate these services.
-
-To do so just add the needed dependency and use `@EnableServices`:
+`@EnableServices` starts the listed server services, for instance `ejbd` for remote EJB clients:
 
 [source,java]
 ----
 // runner if needed etc...
-@EnableService("jaxrs") // jaxws supported as well
+@EnableServices("ejbd")
 public class MyTest {
    //...
 }
 ----
 
-=== Random port
-Services like JAXRS and JAXWS relies on HTTP. Often it is nice to have a random port to be able to deploy multiple tests/projects on the same CI platform at the same time.
-
-To shortcut all the needed logic you can use `@RandomPort`. It is simply an injection giving you either the port (int) or the root context (URL):
-
-[source,java]
-----
-// runner, services if needed etc...
-public class MyTest {
-   @RandomPort("http")
-   private int port;
-}
-----
-
-Note: you can generate this way multiple ports. The value is the name of the service it will apply on (being said http is an alias for httpejbd which is our embedded http layer).
+JAXRS and JAXWS endpoints are served by TomEE. To test them over HTTP, use TomEE Embedded (`tomee-embedded`) or the Arquillian TomEE Embedded/Remote adapters, which support `@RandomPort("http")` to get a random HTTP port.
 
 === Nice logs
 @SimpleLog annotation allows you to have one-liner logs

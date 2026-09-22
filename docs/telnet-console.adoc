@@ -26,7 +26,6 @@ OpenEJB ready.
 
 OpenEJB Remote Server ** Starting Services ** NAME IP PORT +
 webadmin 0.0.0.0 4203 +
-httpejbd 0.0.0.0 4204 +
 telnet 0.0.0.0 4202 +
 ejbd 0.0.0.0 4201 +
 admin 0.0.0.0 4200 +

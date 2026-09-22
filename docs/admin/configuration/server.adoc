@@ -10,7 +10,7 @@
 |===
 |Name	|Value|	Description
 |openejb.embedded.remotable|	bool|	activate or not the remote services when available
-|.bind, <service prefix>.port, <service prefix>.disabled, <service prefix>.threads	| host or IP, port, bool|override the host. Available for ejbd and httpejbd services (used by jaxws and jaxrs), number of thread to manage requests
+|.bind, <service prefix>.port, <service prefix>.disabled, <service prefix>.threads	| host or IP, port, bool|override the host. Available for the ejbd service, number of thread to manage requests
 |openejb.embedded.initialcontext.close	|LOGOUT or DESTROY|	configure the hook called when closing the initial context. Useful when starting OpenEJB from a new InitialContext([properties]) instantiation. By default, it simply logs out the logged user if it exists. DESTROY means clean the container.
 |jakarta.persistence.provider	|string|	override the JPA provider value
 |jakarta.persistence.transactionType	|string|	override the transaction type for persistence contexts

@@ -167,16 +167,6 @@ Default\ JMS\ Connection\ Factory.ResourceAdapter=Default JMS Resource Adapter
 # className: org.apache.geronimo.transaction.manager.GeronimoTransactionManager
 #
 
-# ServerService(id=httpejbd)
-# className: org.apache.openejb.server.httpd.HttpEjbServer
-#
-httpejbd.port=4204
-httpejbd.name=httpejbd
-httpejbd.disabled=false
-httpejbd.server=org.apache.openejb.server.httpd.HttpEjbServer
-httpejbd.threads=200
-httpejbd.bind=127.0.0.1
-
 # ServerService(id=telnet)
 # className: org.apache.openejb.server.telnet.TelnetServer
 #
