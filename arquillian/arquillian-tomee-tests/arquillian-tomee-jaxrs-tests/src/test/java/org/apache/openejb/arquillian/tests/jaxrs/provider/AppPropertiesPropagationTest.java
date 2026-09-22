@@ -14,7 +14,7 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,29 +41,32 @@ import jakarta.ws.rs.ext.MessageBodyWriter;
 import jakarta.ws.rs.ext.Provider;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.JaxrsProviders;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@EnableServices("jaxrs")
-@JaxrsProviders(AppPropertiesPropagationTest.Registrator.class)
-@RunWith(ApplicationComposer.class)
-@Classes(innerClassesAsBean = true)
+@RunWith(Arquillian.class)
 @Ignore("Not sure this is used - we can implement it back if needed as discussed in mailing list and slack")
 public class AppPropertiesPropagationTest {
-    @RandomPort("http")
-    private int port;
+    @ArquillianResource
+    private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() { // Registrator is a @Provider, packaging it registers it
+        return ShrinkWrap.create(WebArchive.class, "AppPropertiesPropagationTest.war")
+            .addClass(AppPropertiesPropagationTest.class);
+    }
 
     @Test
     public void checkStarIsNotAnIssue() {
-        assertEquals("yes", WebClient.create("http://localhost:" + port + "/openejb/")
+        assertEquals("yes", WebClient.create(base.toExternalForm())
                 .path("AppPropertiesPropagationTest/endpoint").get(String.class));
-        assertEquals("yes", WebClient.create("http://localhost:" + port + "/openejb/")
+        assertEquals("yes", WebClient.create(base.toExternalForm())
                 .path("AppPropertiesPropagationTest/endpoint/2").get(String.class));
     }
 

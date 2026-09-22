@@ -14,12 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.bval;
 
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,25 +37,30 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@Classes(innerClassesAsBean = true, cdi = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class AutoBValSimpleTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "AutoBValSimpleTest.war")
+            .addClass(AutoBValSimpleTest.class)
+            .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\" />"), "beans.xml");
+    }
 
     @Test
     public void passing() {
         assertEquals(
                 "Hello ok",
-                client().path("openejb/AutoBValSimpleTest/ok").request(MediaType.TEXT_PLAIN).get(String.class));
+                client().path("AutoBValSimpleTest/ok").request(MediaType.TEXT_PLAIN).get(String.class));
     }
 
     @Test
     public void failing() {
         assertEquals( // see org.apache.cxf.jaxrs.validation.ValidationExceptionMapper.toResponse()
                 Response.Status.BAD_REQUEST.getStatusCode(),
-                client().path("openejb/AutoBValSimpleTest/toolong").request(MediaType.TEXT_PLAIN).get().getStatus());
+                client().path("AutoBValSimpleTest/toolong").request(MediaType.TEXT_PLAIN).get().getStatus());
     }
 
     private WebTarget client() {

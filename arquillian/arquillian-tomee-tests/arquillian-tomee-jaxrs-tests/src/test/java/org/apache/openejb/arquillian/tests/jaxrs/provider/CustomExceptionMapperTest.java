@@ -15,54 +15,54 @@
  *  limitations under the License.
  */
 
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.config.DeploymentLoader;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import jakarta.ejb.Singleton;
-import jakarta.ejb.embeddable.EJBContainer;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
-import java.util.Properties;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(Arquillian.class)
 public class CustomExceptionMapperTest {
+    @ArquillianResource
+    private URL base;
 
-    private static EJBContainer container;
-    private static int port = -1;
-
-    @BeforeClass
-    public static void start() throws Exception {
-        port = NetworkUtil.getNextAvailablePort();
-        final Properties properties = new Properties();
-        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        properties.setProperty(DeploymentLoader.OPENEJB_ALTDD_PREFIX, "em");
-        properties.setProperty("httpejbd.port", Integer.toString(port));
-        properties.setProperty("cxf.jaxrs.skip-provider-scanning", "true");
-        container = EJBContainer.createEJBContainer(properties);
-    }
-
-    @AfterClass
-    public static void close() throws Exception {
-        if (container != null) {
-            container.close();
-        }
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "CustomExceptionMapperTest.war")
+            .addClass(CustomExceptionMapperTest.class)
+            .addAsWebInfResource(new StringAsset(
+                "<resources>\n" +
+                "  <Service class-name=\"" + EM.class.getName() + "\" id=\"em\" />\n" +
+                "</resources>\n"), "resources.xml")
+            .addAsWebInfResource(new StringAsset(
+                "<openejb-jar>\n" +
+                "  <pojo-deployment class-name=\"jaxrs-application\">\n" +
+                "    <properties>\n" +
+                "      cxf.jaxrs.providers = em\n" +
+                "      cxf.jaxrs.skip-provider-scanning = true\n" +
+                "    </properties>\n" +
+                "  </pojo-deployment>\n" +
+                "</openejb-jar>\n"), "openejb-jar.xml");
     }
 
     @Test
     public void exceptionMapper() {
-        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs")
+        final String response = WebClient.create(base.toExternalForm())
             .path("/exception-mapper/throw").get(String.class);
         assertEquals(FooException.class.getName(), response);
     }

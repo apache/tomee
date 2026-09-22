@@ -14,16 +14,19 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.ContainerProperties;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.apache.openejb.loader.SystemInstance;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
 import org.junit.runner.RunWith;
 
 import jakarta.validation.ConstraintViolation;
@@ -39,20 +42,43 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
-@RunWith(ApplicationComposer.class)
-@EnableServices("jaxrs")
-@Classes(innerClassesAsBean = true)
-@ContainerProperties(@ContainerProperties.Property(name = "org.apache.cxf.jaxrs.validation.ValidationExceptionMapper.activated", value = "false"))
+@RunWith(Arquillian.class)
 public class IgnoreMandatoryProviderTest {
-    @RandomPort("http")
+    private static final String DEACTIVATION = "org.apache.cxf.jaxrs.validation.ValidationExceptionMapper.activated";
+
+    // mandatory providers are only deactivated by container properties (CxfRSService#isActive), so the property is
+    // set around this class' deployment only; it needs the container in this JVM
+    @ClassRule
+    public static final ExternalResource DEACTIVATED_MAPPER = new ExternalResource() {
+        @Override
+        protected void before() {
+            assumeTrue("needs the container in the test JVM",
+                    System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+            SystemInstance.get().setProperty(DEACTIVATION, "false");
+        }
+
+        @Override
+        protected void after() {
+            SystemInstance.get().getProperties().remove(DEACTIVATION);
+        }
+    };
+
+    @ArquillianResource
     private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "IgnoreMandatoryProviderTest.war")
+            .addClass(IgnoreMandatoryProviderTest.class);
+    }
 
     @Test
     public void noHandler() throws IOException {
-        final Response response = WebClient.create(base.toExternalForm()).path("openejb/ignore-mandatory").get();
+        final Response response = WebClient.create(base.toExternalForm()).path("ignore-mandatory").get();
         assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, response.getStatus()); // 400 with the handler
-        assertTrue(IO.slurp(InputStream.class.cast(response.getEntity())).contains("<h3>Internal Server Error</h3>"));
+        assertTrue(IO.slurp(InputStream.class.cast(response.getEntity())).contains("Internal Server Error</h1>")); // Tomcat error report
     }
 
     @Path("ignore-mandatory")

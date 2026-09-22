@@ -14,12 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,16 +36,20 @@ import jakarta.ws.rs.core.MediaType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Classes(DefaultClientProvidersTest.TheEndpoint.class)
-@EnableServices("jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class DefaultClientProvidersTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL http;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "DefaultClientProvidersTest.war")
+            .addClass(DefaultClientProvidersTest.class);
+    }
 
     @Test
     public void json() {
-        final Json json = ClientBuilder.newBuilder().build().target(http.toExternalForm()).path("openejb/DefaultClientProvidersTest")
+        final Json json = ClientBuilder.newBuilder().build().target(http.toExternalForm()).path("DefaultClientProvidersTest")
                 .request().get(Json.class);
         assertNotNull(json);
         assertEquals("value", json.key);
@@ -52,7 +57,7 @@ public class DefaultClientProvidersTest {
 
     @Test
     public void jsonp() {
-        final JsonObject json = ClientBuilder.newBuilder().build().target(http.toExternalForm()).path("openejb/DefaultClientProvidersTest")
+        final JsonObject json = ClientBuilder.newBuilder().build().target(http.toExternalForm()).path("DefaultClientProvidersTest")
                 .request().get(JsonObject.class);
         assertNotNull(json);
         assertEquals("value", json.getString("key"));

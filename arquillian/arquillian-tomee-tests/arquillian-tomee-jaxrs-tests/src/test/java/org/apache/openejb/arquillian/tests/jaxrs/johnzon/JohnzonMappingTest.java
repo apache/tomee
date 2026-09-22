@@ -14,13 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.johnzon;
 
 import org.apache.johnzon.mapper.JohnzonProperty;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,18 +37,22 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@Classes(innerClassesAsBean = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class JohnzonMappingTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
+
+    @Deployment // in-container: the endpoint asserts with JUnit, which the testable archive brings along
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "JohnzonMappingTest.war")
+            .addClass(JohnzonMappingTest.class);
+    }
 
     @Test
     public void mapping() {
         assertEquals(
                 "no",
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/JohnzonMappingTest").request(MediaType.APPLICATION_JSON_TYPE)
+                ClientBuilder.newClient().target(base.toExternalForm()).path("JohnzonMappingTest").request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity("{\"_name\":\"yes\"}", MediaType.APPLICATION_JSON_TYPE), Payload.class)
                         .getName());
     }

@@ -14,31 +14,21 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.sys.Resources;
-import org.apache.openejb.config.sys.Service;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.PojoDeployment;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.reflection.Reflections;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.annotation.Annotation;
-import java.util.Properties;
+import java.net.URL;
 import jakarta.ejb.Singleton;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -52,56 +42,36 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class AdvancedProviderConfigTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-            .p("httpejbd.port", Integer.toString(port))
-            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
-            .build();
-    }
-
-    @Module
-    public static EjbModule service() throws Exception {
-        final EjbModule module = new EjbModule(new EjbJar(), new OpenejbJar());
-        final EnterpriseBean bean = new SingletonBean(AdvancedBean.class).localBean();
-        module.getEjbJar().addEnterpriseBean(bean);
-
-        final Resources resources = new Resources();
-
-        final Service feature = new Service("xml", null);
-        feature.setClassName(JAXBElementProvider.class.getName());
-        feature.getProperties().put("eventHandler", "$handler");
-        resources.getService().add(feature);
-
-        final Service handler = new Service("handler", null);
-        handler.setClassName(MyValidator.class.getName());
-        resources.getService().add(handler);
-
-        module.initResources(resources);
-
-        final PojoDeployment e = new PojoDeployment();
-        e.setClassName("jaxrs-application");
-        e.getProperties().setProperty("cxf.jaxrs.providers", "xml");
-        module.getOpenejbJar().getPojoDeployment().add(e);
-
-        return module;
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "AdvancedProviderConfigTest.war")
+            .addClass(AdvancedProviderConfigTest.class)
+            .addAsWebInfResource(new StringAsset(
+                "<resources>\n" +
+                "  <Service id=\"xml\" class-name=\"" + JAXBElementProvider.class.getName() + "\">\n" +
+                "    eventHandler = $handler\n" +
+                "  </Service>\n" +
+                "  <Service id=\"handler\" class-name=\"" + MyValidator.class.getName() + "\" />\n" +
+                "</resources>\n"), "resources.xml")
+            .addAsWebInfResource(new StringAsset(
+                "<openejb-jar>\n" +
+                "  <pojo-deployment class-name=\"jaxrs-application\">\n" +
+                "    <properties>\n" +
+                "      cxf.jaxrs.providers = xml\n" +
+                "    </properties>\n" +
+                "  </pojo-deployment>\n" +
+                "</openejb-jar>\n"), "openejb-jar.xml");
     }
 
     @Test
     public void check() throws Exception {
         assertEquals("true", ClientBuilder.newClient()
-                .target("http://127.0.0.1:" + port + "/AdvancedProviderConfigTest")
+                .target(base.toExternalForm())
                 .path("advanced-provider-config")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)

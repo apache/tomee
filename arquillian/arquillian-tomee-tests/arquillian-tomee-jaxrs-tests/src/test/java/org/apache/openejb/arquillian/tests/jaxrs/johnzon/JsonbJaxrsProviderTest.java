@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs.johnzon;
+package org.apache.openejb.arquillian.tests.jaxrs.johnzon;
 
 import org.apache.johnzon.mapper.JohnzonIgnore;
 import org.apache.johnzon.mapper.JohnzonProperty;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,23 +39,31 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class JsonbJaxrsProviderTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
 
-    @Module
-    public EjbJar beans() {
-        final EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new SingletonBean(Endpoint.class));
-        return ejbJar;
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "JsonbJaxrsProviderTest.war")
+            .addClass(JsonbJaxrsProviderTest.class)
+            .addAsWebInfResource(new StringAsset(
+                "<ejb-jar>\n" +
+                "  <enterprise-beans>\n" +
+                "    <session>\n" +
+                "      <ejb-name>Endpoint</ejb-name>\n" +
+                "      <ejb-class>" + Endpoint.class.getName() + "</ejb-class>\n" +
+                "      <session-type>Singleton</session-type>\n" +
+                "    </session>\n" +
+                "  </enterprise-beans>\n" +
+                "</ejb-jar>\n"), "ejb-jar.xml");
     }
 
     @Test
     public void run() throws IOException {
         assertEquals("{\"johnzon\":\"johnzon\",\"jsonb\":\"jsonb\",\"value\":\"value\"}",
-                     IO.slurp(new URL(base.toExternalForm() + getClass().getSimpleName() + "/test")));
+                     IO.slurp(new URL(base.toExternalForm() + "test")));
     }
 
     @Path("test")

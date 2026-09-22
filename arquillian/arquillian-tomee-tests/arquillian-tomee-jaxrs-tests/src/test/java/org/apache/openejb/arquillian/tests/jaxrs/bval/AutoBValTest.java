@@ -14,23 +14,20 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.bval;
 
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.ContainerProperties;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
@@ -39,13 +36,25 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@Classes(/*cdi = false, */innerClassesAsBean = true)
-@RunWith(ApplicationComposer.class)
-@ContainerProperties(@ContainerProperties.Property(name = "openejb.cxf.rs.bval.log.level", value = "INFO"))
-public class AutoBValNoCdiTest {
-    @RandomPort("http")
+@RunWith(Arquillian.class)
+public class AutoBValTest {
+    @ArquillianResource
     private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "AutoBValTest.war")
+            .addClass(AutoBValTest.class)
+            .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\" />"), "beans.xml")
+            .addAsWebInfResource(new StringAsset(
+                "<openejb-jar>\n" +
+                "  <pojo-deployment class-name=\"jaxrs-application\">\n" +
+                "    <properties>\n" +
+                "      cxf.jaxrs.bval.log.level = INFO\n" +
+                "    </properties>\n" +
+                "  </pojo-deployment>\n" +
+                "</openejb-jar>\n"), "openejb-jar.xml");
+    }
 
     @Test
     public void passing() {
@@ -53,7 +62,7 @@ public class AutoBValNoCdiTest {
         payload.setName("ok");
         assertEquals(
                 "ok",
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test").request(MediaType.APPLICATION_JSON_TYPE)
+                ClientBuilder.newClient().target(base.toExternalForm()).path("test").request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE), Payload.class)
                         .getName());
     }
@@ -63,7 +72,7 @@ public class AutoBValNoCdiTest {
         final Payload payload = new Payload();
         assertEquals(
                 Response.Status.BAD_REQUEST.getStatusCode(), // thanks to the mapper
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test").request(MediaType.APPLICATION_JSON_TYPE)
+                ClientBuilder.newClient().target(base.toExternalForm()).path("test").request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE)).getStatus());
     }
 
@@ -73,7 +82,7 @@ public class AutoBValNoCdiTest {
         payload.setName("empty");
         assertEquals(
                 Response.Status.BAD_REQUEST.getStatusCode(), // thanks to the mapper
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test").request(MediaType.APPLICATION_JSON_TYPE)
+                ClientBuilder.newClient().target(base.toExternalForm()).path("test").request(MediaType.APPLICATION_JSON_TYPE)
                         .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE)).getStatus());
     }
 
@@ -81,14 +90,14 @@ public class AutoBValNoCdiTest {
     public void checkVoidResponse() {
         assertEquals(
                 Response.Status.NO_CONTENT.getStatusCode(),
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test/simple").request().get().getStatus());
+                ClientBuilder.newClient().target(base.toExternalForm()).path("test/simple").request().get().getStatus());
     }
 
     @Test
     public void checkResponse() {
         assertEquals(
                 Response.Status.OK.getStatusCode(),
-                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test/simpleResponse").request().get().getStatus());
+                ClientBuilder.newClient().target(base.toExternalForm()).path("test/simpleResponse").request().get().getStatus());
     }
 
     @Path("test")

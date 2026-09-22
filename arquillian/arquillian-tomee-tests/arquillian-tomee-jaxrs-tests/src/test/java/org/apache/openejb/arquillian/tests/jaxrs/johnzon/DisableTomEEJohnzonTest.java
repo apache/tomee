@@ -14,15 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.johnzon;
 
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.ContainerProperties;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.JaxrsProviders;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,22 +48,30 @@ import static jakarta.ws.rs.client.Entity.entity;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@Classes(DisableTomEEJohnzonTest.Endpoint.class)
-@JaxrsProviders(DisableTomEEJohnzonTest.TestWriter.class)
-@ContainerProperties({
-        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider.activated", value = "false"),
-        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider.activated", value = "false")
-})
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 @Ignore("Not sure this is used - we can implement it back if needed as discussed in mailing list and slack. " +
         "This is partially implemented in the server side but not quite happy with the hack")
 public class DisableTomEEJohnzonTest {
 
     private static final String PAYLOAD = "{\"not\": \"johnzon\"}";
 
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() { // TestWriter is a @Provider, packaging it registers it
+        return ShrinkWrap.create(WebArchive.class, "DisableTomEEJohnzonTest.war")
+            .addClass(DisableTomEEJohnzonTest.class)
+            .addAsWebInfResource(new StringAsset(
+                "<openejb-jar>\n" +
+                "  <pojo-deployment class-name=\"jaxrs-application\">\n" +
+                "    <properties>\n" +
+                "      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider.activated = false\n" +
+                "      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider.activated = false\n" +
+                "    </properties>\n" +
+                "  </pojo-deployment>\n" +
+                "</openejb-jar>\n"), "openejb-jar.xml");
+    }
 
     @Test
     public void server() throws IOException {
@@ -76,7 +84,7 @@ public class DisableTomEEJohnzonTest {
     }
 
     private String url() {
-        return base.toExternalForm() + "openejb/test";
+        return base.toExternalForm() + "test";
     }
 
     @Path("test")

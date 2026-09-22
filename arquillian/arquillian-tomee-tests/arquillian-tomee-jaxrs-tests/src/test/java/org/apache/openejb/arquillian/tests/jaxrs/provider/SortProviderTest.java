@@ -14,20 +14,18 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposerRule;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,7 +33,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.Comparator;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -51,31 +48,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Ignore("no more supported by CXF - chaining providers")
+@RunWith(Arquillian.class)
 public class SortProviderTest {
-    @Rule
-    public final ApplicationComposerRule container = new ApplicationComposerRule(this);
+    @ArquillianResource
+    private URL base;
 
-    private final int port = NetworkUtil.getNextAvailablePort();
-
-    @Module
-    @Classes(innerClassesAsBean = true)
-    public WebApp web() {
-        return new WebApp();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-                .p("httpejbd.port", Integer.toString(port))
-                .p("cxf.jaxrs.provider-comparator", MyComp.class.getName())
-                .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
-                .build();
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "SortProviderTest.war")
+            .addClass(SortProviderTest.class)
+            .addAsWebInfResource(new StringAsset(
+                "<openejb-jar>\n" +
+                "  <pojo-deployment class-name=\"jaxrs-application\">\n" +
+                "    <properties>\n" +
+                "      cxf.jaxrs.provider-comparator = " + MyComp.class.getName() + "\n" +
+                "    </properties>\n" +
+                "  </pojo-deployment>\n" +
+                "</openejb-jar>\n"), "openejb-jar.xml");
     }
 
     @Test
     public void run() throws IOException {
         assertTrue(MyComp.saw);
-        assertEquals("it works!", IO.slurp(new URL("http://localhost:" + port + "/openejb/test")));
+        assertEquals("it works!", IO.slurp(new URL(base.toExternalForm() + "test")));
     }
 
     public static class MyComp implements Comparator<Object> {
