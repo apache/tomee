@@ -95,12 +95,6 @@
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.jettison</groupId>
-      <artifactId>jettison</artifactId>
-      <version>1.5.6</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
