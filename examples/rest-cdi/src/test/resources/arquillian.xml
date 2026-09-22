@@ -16,31 +16,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<arquillian
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     >
-  <container qualifier="embedded">
-    <configuration>
-      <property name="properties">
-        # to ensure we don't start remote container even if it is found at classpath
-        openejb.embedded.remotable = false
-      </property>
-    </configuration>
-  </container>
-  <container qualifier="tomee-embedded">
+  <container qualifier="tomee" default="true">
     <configuration>
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
-      <property name="dir">target/tomee-embedded</property>
-      <property name="appWorkingDir">target/work3</property>
-    </configuration>
-  </container>
-  <container qualifier="tomee-remote">
-    <configuration>
-      <property name="httpPort">-1</property>
-      <property name="stopPort">-1</property>
-      <property name="ajpPort">-1</property>
-      <property name="dir">target/tomee-remote</property>
-      <property name="appWorkingDir">target/work4</property>
+      <property name="appWorkingDir">target/tomee-embedded</property>
     </configuration>
   </container>
 </arquillian>

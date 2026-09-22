@@ -69,21 +69,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>test-embedded-remote</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <skip>${maven.test.skip}</skip>
-              <groups>org.superbiz.embedded.remote.EmbeddedRemote</groups>
-              <systemPropertyVariables>
-                <arquillian.launch>embedded-remote</arquillian.launch>
-                <openejb.arquillian.adapter>openejb</openejb.arquillian.adapter>
-              </systemPropertyVariables>
-            </configuration>
-          </execution>
-          <execution>
             <id>test-tomee-embedded</id>
             <phase>test</phase>
             <goals>
@@ -158,13 +143,6 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- additional container part for embedded JAX-RS test -->
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
