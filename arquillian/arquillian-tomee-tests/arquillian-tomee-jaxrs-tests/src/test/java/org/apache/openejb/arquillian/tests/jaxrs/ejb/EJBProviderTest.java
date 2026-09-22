@@ -14,15 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.ejb;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,26 +44,25 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class EJBProviderTest {
+    @ArquillianResource
+    private URL base;
 
-    @RandomPort("http")
-    private int port;
-
-    @Module
-    @Classes(cdi = true, value = {Helper.class, MyPro.class, Res.class})
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("foo");
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(Helper.class, MyPro.class, Res.class)
+            .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml");
     }
 
     @Test
     public void isEJB() {
-        assertEquals("Oh Yeah!", WebClient.create("http://localhost:" + port + "/foo").accept("provider/type").path("res2").get(String.class));
+        assertEquals("Oh Yeah!", WebClient.create(base.toExternalForm()).accept("provider/type").path("res2").get(String.class));
     }
 
     @Path("res2")

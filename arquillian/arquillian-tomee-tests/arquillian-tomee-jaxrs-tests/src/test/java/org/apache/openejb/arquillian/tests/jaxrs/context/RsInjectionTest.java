@@ -14,22 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.context;
 
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.jee.Empty;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.net.URL;
 import jakarta.ejb.Singleton;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,35 +38,22 @@ import jakarta.ws.rs.ext.Providers;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class RsInjectionTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-            .p("httpejbd.port", Integer.toString(port))
-            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
-            .build();
-    }
-
-    @Module
-    public static SingletonBean service() throws Exception {
-        final SingletonBean bean = new SingletonBean(RsInjection.class);
-        bean.setLocalBean(new Empty());
-        return bean;
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        // the endpoint checks the context path, so the context root must be "RsInjectionTest"
+        return ShrinkWrap.create(WebArchive.class, "RsInjectionTest.war")
+            .addClasses(RsInjection.class);
     }
 
     @Test
     public void rest() throws IOException {
         final String response = ClientBuilder.newClient()
-                .target("http://127.0.0.1:" + port + "/RsInjectionTest/")
+                .target(base.toExternalForm())
                 .path("injections/check")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)

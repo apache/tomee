@@ -14,15 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.cdi;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,26 +34,34 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class JndiForPojoEndpointsTest {
-    @RandomPort("http")
-    private int port;
+    @ArquillianResource
+    private URL base;
 
-    @Module
-    @Classes(cdi = true, value = {JndiEndpoint.class})
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("foo")
-            .addServlet(Application.class.getName(), null, "/api/*");
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(JndiEndpoint.class, ToVal.class)
+            .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml")
+            .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                "<servlet>" +
+                "<servlet-name>" + Application.class.getName() + "</servlet-name>" +
+                "</servlet>" +
+                "<servlet-mapping>" +
+                "<servlet-name>" + Application.class.getName() + "</servlet-name>" +
+                "<url-pattern>/api/*</url-pattern>" +
+                "</servlet-mapping>" +
+                "</web-app>"));
     }
 
     @Test
     public void injectionWorked() {
-        assertEquals("1", WebClient.create("http://localhost:" + port + "/foo/").path("/api/jndi").get(String.class));
+        assertEquals("1", WebClient.create(base.toExternalForm()).path("/api/jndi").get(String.class));
     }
 
     @Path("jndi")

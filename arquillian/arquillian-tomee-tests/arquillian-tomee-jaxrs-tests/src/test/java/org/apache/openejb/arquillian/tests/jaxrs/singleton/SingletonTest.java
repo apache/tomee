@@ -14,15 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.singleton;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,32 +39,39 @@ import static java.util.Arrays.asList;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class SingletonTest {
-    @RandomPort("httpejbd")
+    @ArquillianResource
     private URL base;
 
-    @Module
-    @Classes(cdi = true, innerClassesAsBean = true)
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("foo")
-            .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "jakarta.ws.rs.Application", MyCdiRESTApplication.class.getName());
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(TheResource.class, TheCdiResource.class, Incr.class, MyCdiRESTApplication.class)
+            .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml")
+            .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                "<servlet>" +
+                "<servlet-name>REST Application</servlet-name>" +
+                "<servlet-class>" + Application.class.getName() + "</servlet-class>" +
+                "<init-param>" +
+                "<param-name>jakarta.ws.rs.Application</param-name>" +
+                "<param-value>" + MyCdiRESTApplication.class.getName() + "</param-value>" +
+                "</init-param>" +
+                "</servlet>" +
+                "</web-app>"));
     }
 
     @Test
     public void checkStateStays() {
         for (int i = 0; i < 3; i++) {
-            assertEquals(i, WebClient.create(base.toExternalForm() + "foo/foo").accept(TEXT_PLAIN_TYPE).get(Integer.class).intValue());
+            assertEquals(i, WebClient.create(base.toExternalForm() + "foo").accept(TEXT_PLAIN_TYPE).get(Integer.class).intValue());
         }
     }
 
     @Test
     public void checkCdiInjections() {
         for (int i = 0; i < 3; i++) {
-            assertEquals(i, WebClient.create(base.toExternalForm() + "foo/cdi").accept(TEXT_PLAIN_TYPE).get(Integer.class).intValue());
+            assertEquals(i, WebClient.create(base.toExternalForm() + "cdi").accept(TEXT_PLAIN_TYPE).get(Integer.class).intValue());
         }
     }
 

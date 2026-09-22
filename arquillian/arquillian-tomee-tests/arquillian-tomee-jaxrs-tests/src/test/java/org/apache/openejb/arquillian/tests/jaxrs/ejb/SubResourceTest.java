@@ -14,16 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.ejb;
 
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,38 +33,36 @@ import jakarta.ws.rs.container.ResourceContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.util.Properties;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class SubResourceTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-            .p("httpejbd.port", Integer.toString(port))
-            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
-            .build();
-    }
-
-    @Module
-    public SingletonBean bean() {
-        return (SingletonBean) new SingletonBean(Endpoint1.class).localBean();
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(Endpoint1.class, Endpoint2.class)
+            .addAsWebInfResource(new StringAsset("<ejb-jar xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"4.0\">" +
+                "<enterprise-beans>" +
+                "<session>" +
+                "<ejb-name>Endpoint1</ejb-name>" +
+                "<local-bean/>" +
+                "<ejb-class>" + Endpoint1.class.getName() + "</ejb-class>" +
+                "<session-type>Singleton</session-type>" +
+                "</session>" +
+                "</enterprise-beans>" +
+                "</ejb-jar>"), "ejb-jar.xml");
     }
 
     @Test
     public void rest() throws IOException {
         final String response = ClientBuilder.newClient()
-                .target("http://127.0.0.1:" + port + "/SubResourceTest/")
+                .target(base.toExternalForm())
                 .path("sub1/sub2/value")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)

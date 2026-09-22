@@ -14,24 +14,20 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.security;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.JaxrsProviders;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.Principal;
-import java.util.Properties;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -44,42 +40,37 @@ import jakarta.ws.rs.ext.Provider;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class CustomSecurityContextTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
-
-    @Module
-    @JaxrsProviders(MySecuCtx.class)
-    @Classes(Res.class)
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("foo");
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(Res.class, MySecuCtx.class)
+            .addAsWebInfResource(new StringAsset("<openejb-jar>" +
+                "<pojo-deployment class-name=\"jaxrs-application\">" +
+                "<properties>" +
+                "cxf.jaxrs.providers = " + MySecuCtx.class.getName() + "\n" +
+                "cxf.jaxrs.skip-provider-scanning = true\n" +
+                "</properties>" +
+                "</pojo-deployment>" +
+                "</openejb-jar>"), "openejb-jar.xml");
     }
 
     @Test
     public void check() throws IOException {
         assertEquals("true", ClientBuilder.newClient()
-                .target("http://127.0.0.1:" + port)
-                .path("foo/sc")
+                .target(base.toExternalForm())
+                .path("sc")
                 .queryParam("role", "therole")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)
                 .get(String.class));
         assertEquals("false", ClientBuilder.newClient()
-                .target("http://127.0.0.1:" + port)
-                .path("foo/sc")
+                .target(base.toExternalForm())
+                .path("sc")
                 .queryParam("role", "another")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)

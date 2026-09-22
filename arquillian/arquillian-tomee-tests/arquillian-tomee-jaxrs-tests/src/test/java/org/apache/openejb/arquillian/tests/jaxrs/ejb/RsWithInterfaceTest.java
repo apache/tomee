@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.ejb;
 
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,39 +34,27 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.SecurityContext;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class RsWithInterfaceTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-            .p("httpejbd.port", Integer.toString(port))
-            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
-            .build();
-    }
-
-    @Module
-    public static Class<?>[] service() throws Exception {
-        return new Class<?>[]{RsImpl.class, App.class};
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(RsImpl.class, Rs.class, App.class);
     }
 
     @Test
     public void rest() throws IOException {
         final String response = ClientBuilder.newClient()
-                .target("http://127.0.0.1:" + port + "/RsWithInterfaceTest/")
+                .target(base.toExternalForm())
                 .path("itf/check")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)

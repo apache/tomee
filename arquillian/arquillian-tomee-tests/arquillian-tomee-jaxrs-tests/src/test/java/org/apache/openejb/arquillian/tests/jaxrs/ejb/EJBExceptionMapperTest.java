@@ -14,13 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.ejb;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,25 +35,31 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@Classes(cdi = true, innerClassesAsBean = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class EJBExceptionMapperTest {
-    @RandomPort("http")
-    private int port;
+    @ArquillianResource
+    private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(IllegalMapper.class, RESTIsCoolOne.class)
+            .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml");
+    }
 
     @Test
     public void security() {
-        final Response response = WebClient.create("http://localhost:" + port + "/openejb").path("/ejbsecu/rest").get();
+        final Response response = WebClient.create(base.toExternalForm()).path("/ejbsecu/rest").get();
         assertEquals(403, response.getStatus());
     }
 
     @Test
     public void businessError() {
-        final Response response = WebClient.create("http://localhost:" + port + "/openejb").path("/ejbsecu/oops").get();
+        final Response response = WebClient.create(base.toExternalForm()).path("/ejbsecu/oops").get();
         assertEquals(234, response.getStatus());
     }
 

@@ -15,53 +15,49 @@
  *     limitations under the License.
  */
 
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.ejb;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.openejb.arquillian.tests.jaxrs.beans.SimpleEJB;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
-import jakarta.ejb.embeddable.EJBContainer;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Request;
-import java.util.Properties;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(Arquillian.class)
 public class EjbDeploymentTest {
-    private static EJBContainer container;
-    private static RESTIsCoolTwo service;
-    private static int port = -1;
+    @ArquillianResource
+    private URL base;
 
-    @BeforeClass
-    public static void start() throws Exception {
-        port = NetworkUtil.getNextAvailablePort();
-        final Properties properties = new Properties();
-        properties.setProperty("httpejbd.port", Integer.toString(port));
-        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        properties.setProperty("cxf.jaxrs.skip-provider-scanning", "true");
-        container = EJBContainer.createEJBContainer(properties);
-        service = (RESTIsCoolTwo) container.getContext().lookup("java:/global/openejb-cxf-rs/RESTIsCoolTwo");
-    }
+    @EJB
+    private RESTIsCoolTwo service;
 
-    @AfterClass
-    public static void close() throws Exception {
-        if (container != null) {
-            container.close();
-        }
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(EjbDeploymentTest.class, SimpleEJB.class)
+            .addAsWebInfResource(new StringAsset("<openejb-jar>" +
+                "<ejb-deployment ejb-name=\"RESTIsCoolTwo\">" +
+                "<properties>cxf.jaxrs.skip-provider-scanning = true</properties>" +
+                "</ejb-deployment>" +
+                "</openejb-jar>"), "openejb-jar.xml");
     }
 
     @Test
@@ -72,22 +68,22 @@ public class EjbDeploymentTest {
 
     @Test
     public void rest() {
-        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/rest").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
+        final String response = WebClient.create(base.toExternalForm()).path("/ejb/rest").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("ok", response);
     }
 
     @Test
     public void restParameterInjected() {
-        String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
+        String response = WebClient.create(base.toExternalForm()).path("/ejb/param").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("true", response);
 
-        response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/param").query("arg", "foo").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
+        response = WebClient.create(base.toExternalForm()).path("/ejb/param").query("arg", "foo").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
         assertEquals("foo", response);
     }
 
     @Test
     public void restFieldInjected() {
-        final Boolean response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/ejb/field").accept(MediaType.TEXT_PLAIN_TYPE).get(Boolean.class);
+        final Boolean response = WebClient.create(base.toExternalForm()).path("/ejb/field").accept(MediaType.TEXT_PLAIN_TYPE).get(Boolean.class);
         assertEquals(true, response);
     }
 

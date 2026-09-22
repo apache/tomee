@@ -14,18 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.cdi;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,45 +34,42 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Context;
+import java.net.URL;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class CdiConstructorInjectionTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
-
-    @Module
-    @Classes(value = { FullCDI.class, Service.class, CDIAndContext.class }, cdi = true)
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("app")
-            .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "jakarta.ws.rs.Application", ConstructorApplication.class.getName());
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(FullCDI.class, Service.class, CDIAndContext.class, ConstructorApplication.class)
+            .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml")
+            .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                "<servlet>" +
+                "<servlet-name>REST Application</servlet-name>" +
+                "<servlet-class>" + Application.class.getName() + "</servlet-class>" +
+                "<init-param>" +
+                "<param-name>jakarta.ws.rs.Application</param-name>" +
+                "<param-value>" + ConstructorApplication.class.getName() + "</param-value>" +
+                "</init-param>" +
+                "</servlet>" +
+                "</web-app>"));
     }
 
     @Test
     public void standardCDI() {
-        assertEquals("service", WebClient.create("http://localhost:" + port + "/app").path("/foo").get(String.class));
+        assertEquals("service", WebClient.create(base.toExternalForm()).path("/foo").get(String.class));
     }
 
     @Test
     public void cdiAndContext() {
-        assertEquals("GET", WebClient.create("http://localhost:" + port + "/app").path("/bar").get(String.class));
+        assertEquals("GET", WebClient.create(base.toExternalForm()).path("/bar").get(String.class));
     }
 
     @Dependent

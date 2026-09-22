@@ -14,13 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.singleton;
 
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,16 +39,20 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@EnableServices("jax-rs")
-@Classes(value = SingletonProviderTest.ApplicationSample.class, context = "app")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class SingletonProviderTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
+
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(SingletonProviderTest.class);
+    }
 
     @Test
     public void check() throws Exception {
-        final HttpURLConnection conn = HttpURLConnection.class.cast(new URL(base.toExternalForm() + "app/need-provider").openConnection());
+        final HttpURLConnection conn = HttpURLConnection.class.cast(new URL(base.toExternalForm() + "need-provider").openConnection());
         assertEquals("ok", IO.slurp(conn.getInputStream()));
         conn.getInputStream().close();
         assertTrue(ApplicationSample.count > 0);

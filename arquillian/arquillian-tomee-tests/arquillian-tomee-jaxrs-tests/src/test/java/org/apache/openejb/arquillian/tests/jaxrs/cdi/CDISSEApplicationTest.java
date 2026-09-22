@@ -14,17 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.cdi;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,37 +41,34 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.sse.*;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class CDISSEApplicationTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
-
-    @Module
-    @Classes(cdi = true, value = {MyCdiRESTApplication.class, Resource.class})
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("foo")
-            .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "jakarta.ws.rs.Application", MyCdiRESTApplication.class.getName());
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(CDISSEApplicationTest.class)
+            .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml")
+            .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                "<servlet>" +
+                "<servlet-name>REST Application</servlet-name>" +
+                "<servlet-class>" + Application.class.getName() + "</servlet-class>" +
+                "<init-param>" +
+                "<param-name>jakarta.ws.rs.Application</param-name>" +
+                "<param-value>" + MyCdiRESTApplication.class.getName() + "</param-value>" +
+                "</init-param>" +
+                "</servlet>" +
+                "</web-app>"));
     }
 
     @Inject
@@ -86,7 +80,7 @@ public class CDISSEApplicationTest {
 
         final Runnable r = () -> {
             final Client client = ClientBuilder.newClient();
-            final WebTarget target = client.target("http://localhost:" + port + "/foo/sse");
+            final WebTarget target = client.target(base.toExternalForm() + "sse");
 
             final SseEventSource source = SseEventSource
                     .target(target)

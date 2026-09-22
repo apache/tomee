@@ -14,13 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.async;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,10 +50,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-@EnableServices("jaxrs")
-@Classes(cdi = true, innerClassesAsBean = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class SuspendedTest {
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClasses(SuspendedTest.class)
+            .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml");
+    }
+
     @Path("touch")
     @ApplicationScoped
     public static class Endpoint {
@@ -105,7 +112,7 @@ public class SuspendedTest {
         }
     }
 
-    @RandomPort("http")
+    @ArquillianResource
     private URL url;
 
     @Test
@@ -116,16 +123,16 @@ public class SuspendedTest {
             @Override
             public void run() {
                 try {
-                    response.set(WebClient.create(url.toExternalForm() + "openejb/touch").get());
+                    response.set(WebClient.create(url.toExternalForm() + "touch").get());
                 } finally {
                     end.countDown();
                 }
             }
         }.start();
         assertTrue(Endpoint.LATCH.await(1, MINUTES));
-        WebClient.create(url.toExternalForm() + "openejb/touch").path("answer").post("hello");
+        WebClient.create(url.toExternalForm() + "touch").path("answer").post("hello");
         end.await();
         assertEquals("hello", response.get().readEntity(String.class));
-        assertEquals("touch", WebClient.create(url.toExternalForm() + "openejb/touch").path("path").get(String.class));
+        assertEquals("touch", WebClient.create(url.toExternalForm() + "touch").path("path").get(String.class));
     }
 }
