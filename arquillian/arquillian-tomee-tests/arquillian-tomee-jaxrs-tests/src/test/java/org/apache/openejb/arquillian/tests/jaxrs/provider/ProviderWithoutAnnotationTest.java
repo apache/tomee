@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,18 +48,23 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
-@Classes(innerClassesAsBean = true)
+@RunWith(Arquillian.class)
 public class ProviderWithoutAnnotationTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "ProviderWithoutAnnotationTest.war")
+            .addClasses(App.class, Endpoint.class, FooWriter.class)
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
 
     @Test
     public void run() {
         final Client client = ClientBuilder.newClient();
         try {
-            assertEquals("foo", client.target(base.toExternalForm() + "openejb/api/ProviderWithoutAnnotationTest")
+            assertEquals("foo", client.target(base.toExternalForm() + "api/ProviderWithoutAnnotationTest")
                     .request("foo/bar")
                     .get(String.class));
         } finally {

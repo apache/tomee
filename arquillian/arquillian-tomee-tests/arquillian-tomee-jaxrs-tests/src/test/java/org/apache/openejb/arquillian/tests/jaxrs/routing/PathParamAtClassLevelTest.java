@@ -15,51 +15,48 @@
  *     limitations under the License.
  */
 
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.routing;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import jakarta.ejb.Stateless;
-import jakarta.ejb.embeddable.EJBContainer;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import java.util.Properties;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(Arquillian.class)
 public class PathParamAtClassLevelTest {
-    private static EJBContainer container;
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void start() throws Exception {
-        port = NetworkUtil.getNextAvailablePort();
-        final Properties properties = new Properties();
-        properties.setProperty(DeploymentFilterable.CLASSPATH_INCLUDE, ".*openejb-cxf-rs.*");
-        properties.setProperty("httpejbd.port", Integer.toString(port));
-        properties.setProperty("cxf.jaxrs.skip-provider-scanning", "true");
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        container = EJBContainer.createEJBContainer(properties);
-    }
-
-    @AfterClass
-    public static void close() throws Exception {
-        if (container != null) {
-            container.close();
-        }
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "PathParamAtClassLevelTest.war")
+            .addClasses(DoesItMatchWithPathParamAtClassLevel.class)
+            .addAsWebInfResource(new StringAsset(
+                "<openejb-jar>" +
+                "   <pojo-deployment class-name=\"jaxrs-application\">" +
+                "       <properties>" +
+                "           cxf.jaxrs.skip-provider-scanning = true\n" +
+                "       </properties>" +
+                "   </pojo-deployment>" +
+                "</openejb-jar>"), "openejb-jar.xml");
     }
 
     @Test
     public void rest() {
-        final String response = WebClient.create("http://localhost:" + port + "/openejb-cxf-rs").path("/match/openejb/test/normal").get(String.class);
+        final String response = WebClient.create(base.toExternalForm()).path("/match/openejb/test/normal").get(String.class);
         assertEquals("openejb", response);
     }
 

@@ -14,13 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.application;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,19 +29,24 @@ import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Application;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@RunWith(ApplicationComposer.class)
-@Classes({ ApplicationStarTest.MyEndpoint.class, ApplicationStarTest.MyApp.class })
+@RunWith(Arquillian.class)
 public class ApplicationStarTest {
-    @RandomPort("http")
-    private int port;
+    @ArquillianResource
+    private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "ApplicationStarTest.war")
+            .addClasses(MyEndpoint.class, MyApp.class);
+    }
 
     @Test
     public void checkStarIsNotAnIssue() {
-        assertEquals("ok", WebClient.create("http://localhost:" + port + "/openejb/").path("test").get(String.class));
+        assertEquals("ok", WebClient.create(base.toExternalForm()).path("test").get(String.class));
     }
 
     @Path("test")

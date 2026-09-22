@@ -14,19 +14,15 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,43 +40,37 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class ProviderWithConstructorTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-            .p("httpejbd.port", Integer.toString(port))
-            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
-            .build();
-    }
-
-    @Module
-    @Classes(value = {AnEndpointToCheckAProvider.class})
-    public WebApp war() {
-        return new WebApp()
-            .contextRoot("app")
-            .addServlet("REST Application", Application.class.getName())
-            .addInitParam("REST Application", "jakarta.ws.rs.Application", ApplicationWithProvider.class.getName());
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        // the provider writes the context path, so the archive name matters
+        return ShrinkWrap.create(WebArchive.class, "app.war")
+            .addClasses(AnEndpointToCheckAProvider.class, ApplicationWithProvider.class, ConstructorProvider.class)
+            .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                "<servlet>" +
+                "<servlet-name>REST Application</servlet-name>" +
+                "<servlet-class>" + Application.class.getName() + "</servlet-class>" +
+                "<init-param>" +
+                "<param-name>jakarta.ws.rs.Application</param-name>" +
+                "<param-value>" + ApplicationWithProvider.class.getName() + "</param-value>" +
+                "</init-param>" +
+                "</servlet>" +
+                "</web-app>"));
     }
 
     @Test
     public void checkServiceWasDeployed() {
-        assertEquals("/app", WebClient.create("http://localhost:" + port + "/app").path("/foo").accept("openejb/constructor").get(String.class));
+        assertEquals("/app", WebClient.create(base.toExternalForm()).path("/foo").accept("openejb/constructor").get(String.class));
     }
 
     @Path("/foo")

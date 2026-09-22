@@ -14,12 +14,14 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.response;
 
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.RandomPort;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,17 +39,22 @@ import java.util.Set;
 import static jakarta.ws.rs.core.MediaType.WILDCARD_TYPE;
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jaxrs")
-@Classes(cdi = true, innerClassesAsBean = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class LinkTest {
-    @RandomPort("http")
+    @ArquillianResource
     private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "LinkTest.war")
+            .addClasses(LinkEndpoint.class)
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
 
     @Test
     public void get() throws IOException {
         final Response response = ClientBuilder.newClient()
-                .target(base.toExternalForm()).path("openejb/link")
+                .target(base.toExternalForm()).path("link")
                 // cxf is not consistent for Link and other headers, see org.apache.cxf.transport.http.Headers.copyToResponse()
                 .property("org.apache.cxf.http.header.split", true)
                 .request(WILDCARD_TYPE).get();

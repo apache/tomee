@@ -14,65 +14,48 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.openejb.server.cxf.rs;
+package org.apache.openejb.arquillian.tests.jaxrs.application;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
-import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.apache.openejb.arquillian.tests.jaxrs.beans.MyFirstRestClass;
+import org.apache.openejb.arquillian.tests.jaxrs.beans.MySecondRestClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
+import java.net.URL;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices("jax-rs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class MultipleApplicationsTest {
+    @ArquillianResource
+    private URL base;
 
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder()
-            .p("httpejbd.port", Integer.toString(port))
-            .p(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true")
-            .build();
-    }
-
-    @Module
-    @Classes(cdi = true, value = {Application1.class, Application2.class, MyFirstRestClass.class})
-    public WebApp war() {
-        return new WebApp().contextRoot("foo");
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "MultipleApplicationsTest.war")
+            .addClasses(Application1.class, Application2.class, MyFirstRestClass.class, MySecondRestClass.class)
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     public void app1() {
-        assertEquals("Hi from REST World!", WebClient.create("http://localhost:" + port + "/foo/").path("app1/first/hi").get(String.class));
+        assertEquals("Hi from REST World!", WebClient.create(base.toExternalForm()).path("app1/first/hi").get(String.class));
     }
 
     @Test
     public void app2() {
-        assertEquals("hi bar", WebClient.create("http://localhost:" + port + "/foo/").path("app2/second/hi2/bar").get(String.class));
+        assertEquals("hi bar", WebClient.create(base.toExternalForm()).path("app2/second/hi2/bar").get(String.class));
     }
 
     @ApplicationPath("app1")
