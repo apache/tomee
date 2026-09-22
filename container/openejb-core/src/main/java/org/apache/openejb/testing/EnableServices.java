@@ -31,5 +31,4 @@ public @interface EnableServices {
 
     boolean jaxrs() default false;
     boolean jaxws() default false;
-    boolean httpDebug() default false;
 }

@@ -23,14 +23,10 @@
     <!-- runner helping properties
     -ea
     -Dopenejb.deploymentId.format={appId}/{ejbJarId}/{ejbName}
-    -Dopenejb.http.default-content-type=text/plain
-    -Dhttpejbd.print=REQUEST,RESPONSE
     -Dopenejb.jul.forceReload=true
-    -Dlogging.level.org.apache.openejb.server.httpd.HttpResponseImpl=FINEST
     -Dopenejb.cdi.filter.classloader=false
     -Dorg.apache.openejb.assembler.classic.WebAppBuilder=org.apache.openejb.web.LightweightWebAppBuilder
     -Dopenejb.cdi.debug=true
-    -Dopenejb.http.mock-request=true
     -Dopenejb.embedded.try-jsp=true
     -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->

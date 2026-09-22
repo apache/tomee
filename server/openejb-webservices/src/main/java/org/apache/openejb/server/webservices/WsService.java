@@ -47,7 +47,6 @@ import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -174,6 +173,10 @@ public abstract class WsService implements ServerService, SelfManaging {
     @Override
     public void start() throws ServiceException {
         wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
+        if (wsRegistry == null) {
+            LOGGER.warning("No " + WsRegistry.class.getName() + " available, web services will not be deployed");
+            return;
+        }
 
         if (portAddressRegistry == null) {
             portAddressRegistry = new PortAddressRegistryImpl();

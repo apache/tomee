@@ -19,7 +19,6 @@ package org.apache.openejb.server.httpd;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Component;
-import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +33,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @SimpleLog
-@EnableServices("http")
 @Classes(cdi = true, innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
 public class AppScopeInitEventTest {

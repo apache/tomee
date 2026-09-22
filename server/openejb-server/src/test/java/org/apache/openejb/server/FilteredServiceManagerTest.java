@@ -24,21 +24,13 @@ public class FilteredServiceManagerTest {
     @Test
     public void checkJaxRs() {
         final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"jaxrs"});
-        assertTrue(fsm.accept("httpejbd"));
         assertTrue(fsm.accept("cxf-rs"));
     }
 
     @Test
     public void checkJaxWs() {
         final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"jaxws"});
-        assertTrue(fsm.accept("httpejbd"));
         assertTrue(fsm.accept("cxf"));
-    }
-
-    @Test
-    public void checkEjbd() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"http"});
-        assertTrue(fsm.accept("httpejbd"));
     }
 
     @Test

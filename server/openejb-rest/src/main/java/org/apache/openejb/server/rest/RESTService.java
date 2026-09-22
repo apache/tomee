@@ -44,7 +44,6 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -1056,6 +1055,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
         SystemInstance.get().setComponent(RESTService.class, this);
 
         beforeStart();
+        if (rsRegistry == null) {
+            LOGGER.warning("No " + RsRegistry.class.getName() + " available, JAX-RS applications will not be deployed");
+            return;
+        }
 
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);

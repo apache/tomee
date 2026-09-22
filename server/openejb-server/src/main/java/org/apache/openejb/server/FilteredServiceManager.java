@@ -42,11 +42,9 @@ public class FilteredServiceManager extends SimpleServiceManager {
 
         for (final String service : services) {
             if (rsAliases.contains(service)) {
-                realServices.addAll(Arrays.asList("cxf-rs", "httpejbd"));
+                realServices.add("cxf-rs");
             } else if (wsAliases.contains(service)) {
-                realServices.addAll(Arrays.asList("cxf", "httpejbd"));
-            } else if ("http".equals(service)) {
-                realServices.add("httpejbd");
+                realServices.add("cxf");
             } else {
                 realServices.add(service);
             }

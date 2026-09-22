@@ -18,7 +18,6 @@ package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +28,6 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
-@EnableServices({"httpejbd"})
 @RunWith(ApplicationComposer.class)
 public class ServletContextListenerRegistrationTest {
     @Module

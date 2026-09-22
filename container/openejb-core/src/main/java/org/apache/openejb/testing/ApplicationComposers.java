@@ -1310,17 +1310,7 @@ public class ApplicationComposers {
         configuration.put(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
         final EnableServices annotation = testClass.getAnnotation(EnableServices.class);
-        if (annotation != null && annotation.httpDebug()) {
-            configuration.setProperty("httpejbd.print", "true");
-            configuration.setProperty("httpejbd.indent.xml", "true");
-            configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
-        }
         final org.apache.openejb.junit.EnableServices annotationOld = testClass.getAnnotation(org.apache.openejb.junit.EnableServices.class);
-        if (annotationOld != null && annotationOld.httpDebug()) {
-            configuration.setProperty("httpejbd.print", "true");
-            configuration.setProperty("httpejbd.indent.xml", "true");
-            configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
-        }
         final WebResource webResource = testClass.getAnnotation(WebResource.class);
         if (webResource != null && webResource.value().length > 0) {
             configuration.setProperty("openejb.embedded.http.resources", Join.join(",", webResource.value()));
@@ -1392,7 +1382,7 @@ public class ApplicationComposers {
                 }
 
                 final String service = field.getAnnotation(RandomPort.class).value();
-                final String key = ("http".equals(service) ? "httpejbd" : service) + ".port";
+                final String key = service + ".port";
                 final String existing = SystemInstance.get().getProperty(key);
                 final int random;
                 if (existing == null) {
