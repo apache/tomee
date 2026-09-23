@@ -18,6 +18,7 @@ package org.apache.tomee.security;
 
 import jakarta.el.ELProcessor;
 import jakarta.el.ELResolver;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.CDI;
@@ -30,8 +31,15 @@ import jakarta.security.enterprise.identitystore.PasswordHash;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
@@ -150,6 +158,51 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> proxiedAnnotation.clientSecret());
     }
 
+    // See TOMEE-4708
+    @Test
+    public void sharedProxyIsSafeUnderConcurrentEvaluation() throws Exception {
+        final OpenIdAuthenticationMechanismDefinition annotation =
+                ConfigDrivenDefinition.class.getAnnotation(OpenIdAuthenticationMechanismDefinition.class);
+
+        // the BeanManager variant is what TomEESecurityExtension uses for application-wide definitions
+        final OpenIdAuthenticationMechanismDefinition proxiedAnnotation = TomEEELInvocationHandler.of(
+                OpenIdAuthenticationMechanismDefinition.class, annotation, bm());
+
+        final int threads = 16;
+        final int iterations = 2000;
+        final CyclicBarrier barrier = new CyclicBarrier(threads);
+        final List<Throwable> failures = new CopyOnWriteArrayList<>();
+        final ExecutorService executor = Executors.newFixedThreadPool(threads);
+        try {
+            final List<Future<?>> futures = new java.util.ArrayList<>();
+            for (int t = 0; t < threads; t++) {
+                futures.add(executor.submit(() -> {
+                    try {
+                        barrier.await();
+                        for (int i = 0; i < iterations; i++) {
+                            Assert.assertFalse(proxiedAnnotation.tokenAutoRefresh());
+                            Assert.assertEquals(10000, proxiedAnnotation.tokenMinValidity());
+                        }
+                    } catch (final Throwable e) {
+                        failures.add(e);
+                    }
+                }));
+            }
+            for (final Future<?> future : futures) {
+                future.get(2, TimeUnit.MINUTES);
+            }
+        } finally {
+            executor.shutdownNow();
+        }
+
+        if (!failures.isEmpty()) {
+            final AssertionError error = new AssertionError(failures.size() + " of " + threads
+                    + " threads failed, first: " + failures.get(0));
+            failures.forEach(error::addSuppressed);
+            throw error;
+        }
+    }
+
     private BeanManager bm() {
         return CDI.current().getBeanManager();
     }
@@ -227,4 +280,26 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         }
     }
 
+
+    @OpenIdAuthenticationMechanismDefinition(
+            providerURI = "https://server.example.com",
+            clientId = "client",
+            tokenAutoRefreshExpression = "#{elHandlerTestConfig.isTrue('tokenAutoRefresh', false)}",
+            tokenMinValidityExpression = "#{elHandlerTestConfig.getInt('tokenMinValidity', 10000)}")
+    @Vetoed // keep the extension from registering this as a real OpenID mechanism
+    public static class ConfigDrivenDefinition {
+    }
+
+    // discovered by CDI so the BeanManager's ELResolver can resolve it, like an application's config bean
+    @Named("elHandlerTestConfig")
+    @ApplicationScoped
+    public static class Config {
+        public boolean isTrue(final String key, final boolean defaultValue) {
+            return defaultValue;
+        }
+
+        public int getInt(final String key, final int defaultValue) {
+            return defaultValue;
+        }
+    }
 }
