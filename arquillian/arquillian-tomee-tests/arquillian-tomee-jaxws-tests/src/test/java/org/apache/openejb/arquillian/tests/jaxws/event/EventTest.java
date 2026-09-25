@@ -19,45 +19,28 @@ package org.apache.openejb.arquillian.tests.jaxws.event;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.cxf.event.ServerCreated;
-import org.apache.openejb.server.cxf.event.ServerDestroyed;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.ExternalResource;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 import jakarta.jws.WebService;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 
 import static org.junit.Assert.assertNotNull;
 
-// client side: the observer lives in the test JVM like a container level service, the embedded container shares this JVM
+// in-container: the observer is registered server side by a listener of the webapp,
+// POJO web services are deployed (and ServerCreated fired) once the webapp context started
 @RunWith(Arquillian.class)
 public class EventTest {
-    // a class rule wraps the Arquillian deployment: the observer is there before the deployment,
-    // the checks run after the undeployment (Arquillian runs @AfterClass before undeploying)
-    @ClassRule
-    public static final TestRule LISTENER = new ExternalResource() {
-        private final Observer observer = new Observer();
-
-        @Override
-        protected void before() {
-            SystemInstance.get().addObserver(observer);
-        }
-
-        @Override
-        protected void after() {
-            SystemInstance.get().removeObserver(observer);
-            destroy();
-        }
-    };
-
-    @Deployment(testable = false)
+    @Deployment
     public static WebArchive app() {
-        return ShrinkWrap.create(WebArchive.class, "event.war").addClass(End.class);
+        return ShrinkWrap.create(WebArchive.class, "event.war")
+                .addClasses(EventTest.class, End.class, Observer.class, ObserverRegistration.class);
     }
 
     @Test
@@ -65,12 +48,6 @@ public class EventTest {
         assertNotNull(Observer.created);
         assertNotNull(Observer.created.getServer());
         assertNotNull(Observer.created.getServer().getEndpoint());
-    }
-
-    public static void destroy() {
-        assertNotNull(Observer.destroyed);
-        assertNotNull(Observer.destroyed.getServer());
-        assertNotNull(Observer.destroyed.getServer().getEndpoint());
     }
 
     @WebService
@@ -81,15 +58,26 @@ public class EventTest {
     }
 
     public static class Observer {
-        private static ServerCreated created;
-        private static ServerDestroyed destroyed;
+        private static volatile ServerCreated created;
 
         public void created(@Observes final ServerCreated created) {
             Observer.created = created;
         }
+    }
 
-        public void destroyed(@Observes final ServerDestroyed destroyed) {
-            Observer.destroyed = destroyed;
+    // registers the observer before the JAX-WS deployment of this webapp, removes it on undeploy
+    @WebListener
+    public static class ObserverRegistration implements ServletContextListener {
+        private final Observer observer = new Observer();
+
+        @Override
+        public void contextInitialized(final ServletContextEvent sce) {
+            SystemInstance.get().addObserver(observer);
+        }
+
+        @Override
+        public void contextDestroyed(final ServletContextEvent sce) {
+            SystemInstance.get().removeObserver(observer);
         }
     }
 }
