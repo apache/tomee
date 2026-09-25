@@ -73,14 +73,9 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>11.0.0-M1</version>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.jws</groupId>
-      <artifactId>jakarta.jws-api</artifactId>
-      <version>3.0.0</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -112,8 +107,8 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
       <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
