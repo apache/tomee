@@ -122,6 +122,9 @@ public abstract class RESTService implements ServerService, SelfManaging {
      * @param webApp the webapp containing EJB or Pojo rest services to deploy
      */
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
+        if (rsRegistry == null) {
+            return;
+        }
         if ("false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
             return;
         }
@@ -681,7 +684,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     public void afterApplicationCreated(@Observes final AssemblerAfterApplicationCreated event) {
-        if (!enabled)
+        if (!enabled || rsRegistry == null)
             return;
 
         final AppInfo appInfo = event.getApp();
