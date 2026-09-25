@@ -102,7 +102,7 @@ public final class OpenEJB {
             final Logger logger2 = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
             final String[] bannerValues = new String[]{
                 null, versionInfo.getUrl(), new Date().toString(), versionInfo.getCopyright(),
-                versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime(), null
+                versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime(), versionInfo.getRevision(), null
             };
             for (int i = 0; i < bannerValues.length; i++) {
                 if (bannerValues[i] == null) {
