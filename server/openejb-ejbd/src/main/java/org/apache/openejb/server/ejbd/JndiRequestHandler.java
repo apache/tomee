@@ -53,6 +53,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Queue;
 import jakarta.jms.Topic;
 import javax.naming.Context;
 import javax.naming.NameClassPair;
@@ -75,7 +76,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
