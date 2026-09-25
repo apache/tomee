@@ -23,30 +23,17 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile OpenAPI Reader</name>
   <properties>
-    <version.jakartaee-api>11.0.0-M1</version.jakartaee-api>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
     <version.microprofile.impl.openapi>4.2.4</version.microprofile.impl.openapi>
-    <version.openapi-api>4.1</version.openapi-api>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile-api</artifactId>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>4.0.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.openapi</groupId>
-      <artifactId>microprofile-openapi-api</artifactId>
-      <version>${version.openapi-api}</version>
     </dependency>
     <dependency>
       <groupId>io.smallrye</groupId>
@@ -68,8 +55,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
