@@ -16,18 +16,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<persistence version="1.0"
-             xmlns="http://java.sun.com/xml/ns/persistence"
+<persistence version="3.2"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd">
     <persistence-unit name="person-unit">
-        <!--<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <jta-data-source>demoDataSource</jta-data-source>
         <class>org.superbiz.domain.Person</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
-            <property name="openejb.jpa.init-entitymanager" value="true" />
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+            <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.HSQLPlatform"/>
+            <property name="eclipselink.ddl-generation" value="create-tables"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
         </properties>
     </persistence-unit>
 </persistence>
