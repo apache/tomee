@@ -44,8 +44,13 @@ public class Alerts {
     }
 
     public void addError(final String message, final Exception e) {
-        // todo add exception somehow
+        if (e == null) {
+            addError(message);
+            return;
+        }
+        errors.add(message + ": " + e);
         System.out.println(message);
+        e.printStackTrace(System.out);
     }
 
     public boolean hasWarnings() {
