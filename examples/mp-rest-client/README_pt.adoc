@@ -20,9 +20,9 @@ Para usar o MicroProfile Rest Client, são necessárias 3 alterações no seu pr
 [source,java]
 ----
  <dependency>
-     <groupId>org.eclipse.microprofile.rest.client</groupId>
-     <artifactId>microprofile-rest-client-api</artifactId>
-     <version>${version.microprofile.rest-client}</version>
+     <groupId>org.apache.tomee.bom</groupId>
+     <artifactId>tomee-microprofile-api</artifactId>
+     <version>11.0.0-SNAPSHOT</version>
      <scope>provided</scope>
  </dependency>
 ----
