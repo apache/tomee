@@ -58,9 +58,9 @@ The parent pom, trimmed to the minimum, looks like so:
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
-        <artifactId>jakartaee-api</artifactId>
-        <version>6.0-2</version>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>tomee-webprofile-api</artifactId>
+        <version>11.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -90,8 +90,8 @@ The `business-model/pom.xml` as follows:
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>jakartaee-api</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -129,8 +129,8 @@ embedded testing with OpenEJB:
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>jakartaee-api</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -143,9 +143,9 @@ embedded testing with OpenEJB:
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>10.0.0-M1-SNAPSHOT</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

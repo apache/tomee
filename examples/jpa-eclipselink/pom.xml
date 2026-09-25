@@ -27,7 +27,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <surefire.argline />
-    <version.eclipselink>4.0.8</version.eclipselink>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -65,9 +64,9 @@
   <dependencies>
     <!-- spec apis such as jakarta.persistence -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>11.0.0-M1</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plume-api</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -78,16 +77,9 @@
     </dependency>
     <!-- openejb container for running tests -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plume</artifactId>
       <version>11.0.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- EclipseLink dependencies -->
-    <dependency>
-      <groupId>org.eclipse.persistence</groupId>
-      <artifactId>eclipselink</artifactId>
-      <version>${version.eclipselink}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

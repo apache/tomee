@@ -4,7 +4,7 @@
 :jbake-status: published
 
 In this example a web service is created that stores and retrieves data from the database.
-https://jersey.github.io/[Jersey] will be used to create the web service.
+https://eclipse-ee4j.github.io/jersey/[Jersey] will be used to create the web service.
 For the database, https://www.eclipse.org/eclipselink/[EclipseLink] JPA provider will be used.
 
 The web service will store and retrieve information about persons:
@@ -109,13 +109,13 @@ This can be done in `webapp/WEB-INF/web.xml`:
 
 [source,xml]
 ----
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-         version="3.0">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_1.xsd"
+         version="6.1">
   <servlet>
     <servlet-name>Jersey Web Application</servlet-name>
-    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>jakarta.ws.rs.Application</param-name>
       <param-value>org.superbiz.service.JerseyApplication</param-value>
@@ -128,6 +128,16 @@ This can be done in `webapp/WEB-INF/web.xml`:
   </servlet-mapping>
 </web-app>
 ----
+
+Jersey is used instead of the CXF based JAX-RS implementation shipped with TomEE, so the webapp disables the latter
+in `webapp/WEB-INF/application.properties`:
+
+[source,properties]
+----
+openejb.jaxrs.on = false
+----
+
+EclipseLink is provided by the TomEE Plume distribution, which is also the one the test runs on.
 
 The web service is ready to be tested. For this, we will write an unit test using http://arquillian.org/[Arquillian]:
 
@@ -142,9 +152,14 @@ public class JerseyApplicationTest {
                 .addPackage(JerseyApplication.class.getPackage())
                 .addPackage(Person.class.getPackage())
                 .addPackage(PersonDAO.class.getPackage())
-                .addAsManifestResource(new FileAsset(new File("src/main/webapp/WEB-INF/web.xml")), "web.xml")
-                .addAsManifestResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
+                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/application.properties"), "application.properties")
+                .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsLibraries(Stream.of(Maven.resolver().loadPomFromFile("pom.xml")
+                                .importCompileAndRuntimeDependencies().resolve().withTransitivity().asFile())
+                        .filter(lib -> !lib.getName().startsWith("jakarta.")) // provided by the server
+                        .toArray(File[]::new));
     }
 
     @ArquillianResource

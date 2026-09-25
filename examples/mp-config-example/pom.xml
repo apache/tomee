@@ -23,27 +23,19 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile Config</name>
   <properties>
-    <version.jakartaee-api>11.0.0-M1</version.jakartaee-api>
-    <version.microprofile.config>3.1</version.microprofile.config>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
     <version.arquillian>1.10.0.Final</version.arquillian>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile-api</artifactId>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>${version.microprofile.config}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>

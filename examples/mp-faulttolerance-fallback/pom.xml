@@ -21,11 +21,9 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Fault Tolerance :: Fallback</name>
   <properties>
-    <version.microprofile.fault-tolerance-api>4.1</version.microprofile.fault-tolerance-api>
     <arquillian-junit-container.version>1.7.1.Final</arquillian-junit-container.version>
     <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     <maven-war-plugin.version>3.5.0</maven-war-plugin.version>
-    <jakartaee-api.version>11.0.0-M1</jakartaee-api.version>
     <junit.version>4.13.2</junit.version>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
@@ -33,15 +31,9 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>${jakartaee-api.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-      <artifactId>microprofile-fault-tolerance-api</artifactId>
-      <version>${version.microprofile.fault-tolerance-api}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile-api</artifactId>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -51,8 +43,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>

@@ -32,17 +32,17 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.dao.PersonDAO;
 import org.superbiz.domain.Person;
-import org.superbiz.init.Initializer;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -56,9 +56,14 @@ public class JerseyApplicationTest {
                 .addPackage(JerseyApplication.class.getPackage())
                 .addPackage(Person.class.getPackage())
                 .addPackage(PersonDAO.class.getPackage())
-                .addAsManifestResource(new FileAsset(new File("src/main/webapp/WEB-INF/web.xml")), "web.xml")
-                .addAsManifestResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"))
+                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/application.properties"), "application.properties")
+                .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsLibraries(Stream.of(Maven.resolver().loadPomFromFile("pom.xml")
+                                .importCompileAndRuntimeDependencies().resolve().withTransitivity().asFile())
+                        .filter(lib -> !lib.getName().startsWith("jakarta.")) // provided by the server
+                        .toArray(File[]::new));
     }
 
     @ArquillianResource

@@ -53,15 +53,9 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>11.0.0-M1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>4.0.0</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile-api</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -75,10 +69,20 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile</artifactId>
       <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
+      <exclusions>
+        <!--
+        The example does not use Jakarta Security. Its CDI extension expects the
+        ServletContext of a real Tomcat, which the ApplicationComposer does not provide.
+        -->
+        <exclusion>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>tomee-security</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <!--
