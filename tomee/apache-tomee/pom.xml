@@ -156,14 +156,6 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- needed to compile in intellij for tomcat patches -->
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- needed for BOM generation -->
     <dependency>
       <groupId>org.projectlombok</groupId>
