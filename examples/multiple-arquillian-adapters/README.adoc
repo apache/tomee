@@ -1,0 +1,348 @@
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: status=published
+= Multiple Arquillian Adapters
+
+This example shows how to run tests against several TomEE Arquillian adapters in one Maven module.
+The adapters are all on the test classpath:
+
+* `arquillian-openejb-embedded`, which runs OpenEJB embedded, with and without its remote (HTTP) layer
+* `arquillian-tomee-embedded`, which runs TomEE embedded in the test JVM
+* `arquillian-tomee-remote`, which runs TomEE in a separate process
+
+Each test class is tagged with a JUnit category.
+Each surefire execution runs only one category and tells Arquillian which adapter and which `arquillian.xml` container to use.
+
+== The application
+
+The application has two beans.
+The first is a stateless EJB:
+
+[source,java]
+----
+package org.superbiz;
+
+import jakarta.ejb.Stateless;
+
+@Stateless
+public class SomeEJB {
+
+    public String ok() {
+        return "ejb";
+    }
+}
+----
+
+The second is a stateless EJB that is also a JAX-RS resource:
+
+[source,java]
+----
+package org.superbiz;
+
+import jakarta.ejb.Stateless;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+
+@Path("/rest")
+@Stateless
+public class SomeRest {
+
+    @GET
+    @Path("/ok")
+    public String ok() {
+        return "rest";
+    }
+}
+----
+
+== Dependencies
+
+The pom declares all three TomEE Arquillian adapters.
+It also declares `ziplock`, which the embedded remote test uses to read the HTTP response, and the `tomee-webprofile` BOM, which provides the container parts the embedded JAX-RS test needs:
+
+[source,xml]
+----
+<!-- additional container part for embedded JAX-RS test -->
+<dependency>
+  <groupId>org.apache.tomee.bom</groupId>
+  <artifactId>tomee-webprofile</artifactId>
+  <version>11.0.0-SNAPSHOT</version>
+  <scope>test</scope>
+</dependency>
+<!-- arquillian adapters -->
+<dependency>
+  <groupId>org.apache.tomee</groupId>
+  <artifactId>arquillian-openejb-embedded</artifactId>
+  <version>${tomee.version}</version>
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>org.apache.tomee</groupId>
+  <artifactId>arquillian-tomee-embedded</artifactId>
+  <version>${tomee.version}</version>
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>org.apache.tomee</groupId>
+  <artifactId>arquillian-tomee-remote</artifactId>
+  <version>${tomee.version}</version>
+  <scope>test</scope>
+</dependency>
+----
+
+== Selecting the adapter with surefire executions
+
+With several adapters on the classpath, each test run has to say which one to use.
+The pom turns off surefire's default execution with `<skip>true</skip>` in the plugin-level configuration.
+It then defines four executions in the `test` phase.
+Each execution sets three things:
+
+* `groups`: the JUnit category to run
+* `arquillian.launch`: the container qualifier to use from `arquillian.xml`
+* `openejb.arquillian.adapter`: the TomEE adapter to activate (`openejb`, `tomee-embedded` or `tomee-remote`)
+
+[source,xml]
+----
+<plugin>
+  <!--
+  Redefining execution to:
+  1. set the right arquillian adapter
+  2. set the category to execute (include/exclude works too)
+  3. set the arquillian launcher to use
+  -->
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <version>3.5.3</version>
+  <executions>
+    <execution>
+      <id>test-embedded</id>
+      <phase>test</phase>
+      <goals>
+        <goal>test</goal>
+      </goals>
+      <configuration>
+        <skip>${maven.test.skip}</skip>
+        <argLine>-Djdk.attach.allowAttachSelf</argLine>
+        <groups>org.superbiz.embedded.standalone.Embedded</groups>
+        <systemPropertyVariables>
+          <arquillian.launch>embedded</arquillian.launch>
+          <openejb.arquillian.adapter>openejb</openejb.arquillian.adapter>
+        </systemPropertyVariables>
+      </configuration>
+    </execution>
+    <execution>
+      <id>test-embedded-remote</id>
+      <phase>test</phase>
+      <goals>
+        <goal>test</goal>
+      </goals>
+      <configuration>
+        <skip>${maven.test.skip}</skip>
+        <groups>org.superbiz.embedded.remote.EmbeddedRemote</groups>
+        <systemPropertyVariables>
+          <arquillian.launch>embedded-remote</arquillian.launch>
+          <openejb.arquillian.adapter>openejb</openejb.arquillian.adapter>
+        </systemPropertyVariables>
+      </configuration>
+    </execution>
+    <execution>
+      <id>test-tomee-embedded</id>
+      <phase>test</phase>
+      <goals>
+        <goal>test</goal>
+      </goals>
+      <configuration>
+        <skip>${maven.test.skip}</skip>
+        <groups>org.superbiz.tomee.embedded.TomEEEmbedded</groups>
+        <argLine>-Djdk.attach.allowAttachSelf</argLine>
+        <systemPropertyVariables>
+          <arquillian.launch>tomee-embedded</arquillian.launch>
+          <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
+        </systemPropertyVariables>
+      </configuration>
+    </execution>
+    <execution>
+      <id>test-tomee-remote</id>
+      <phase>test</phase>
+      <goals>
+        <goal>test</goal>
+      </goals>
+      <configuration>
+        <skip>${maven.test.skip}</skip>
+        <groups>org.superbiz.tomee.remote.TomEERemote</groups>
+        <systemPropertyVariables>
+          <arquillian.launch>tomee-remote</arquillian.launch>
+          <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+        </systemPropertyVariables>
+      </configuration>
+    </execution>
+  </executions>
+  <configuration>
+    <skip>true</skip>
+    <parallel>none</parallel>
+    <threadCount>1</threadCount>
+  </configuration>
+</plugin>
+----
+
+The two OpenEJB executions use the same adapter (`openejb`).
+They differ only in the `arquillian.launch` qualifier, so each picks a different container configuration.
+
+== Container configurations in arquillian.xml
+
+`src/test/resources/arquillian.xml` defines one `<container>` for each qualifier used in the pom:
+
+[source,xml]
+----
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    >
+  <container qualifier="embedded">
+    <configuration>
+      <property name="properties">
+        # to ensure we don't start remote container even if it is found at classpath
+        openejb.embedded.remotable = false
+      </property>
+    </configuration>
+  </container>
+  <container qualifier="embedded-remote">
+    <configuration>
+      <property name="properties">
+        # optional if found at classpath
+        openejb.embedded.remotable = true
+      </property>
+    </configuration>
+  </container>
+  <container qualifier="tomee-embedded">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="dir">target/tomee-embedded</property>
+      <property name="appWorkingDir">target/work3</property>
+    </configuration>
+  </container>
+  <container qualifier="tomee-remote">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="ajpPort">-1</property>
+      <property name="dir">target/tomee-remote</property>
+      <property name="appWorkingDir">target/work4</property>
+    </configuration>
+  </container>
+</arquillian>
+----
+
+* `embedded` sets `openejb.embedded.remotable = false`, so OpenEJB runs without its remote layer.
+* `embedded-remote` sets `openejb.embedded.remotable = true`, so the embedded container also serves HTTP. The JAX-RS test needs this.
+* `tomee-embedded` and `tomee-remote` set their ports to `-1`, which asks for random free ports. Each also gets its own `dir` and `appWorkingDir` under `target`, so the two containers don't share files.
+
+== The tests
+
+Each test class is annotated with `@Category`.
+The category is a marker interface in the same package, for example:
+
+[source,java]
+----
+package org.superbiz.embedded.standalone;
+
+public interface Embedded {
+
+}
+----
+
+The other marker interfaces are `EmbeddedRemote`, `TomEEEmbedded` and `TomEERemote`.
+
+=== OpenEJB embedded
+
+This test deploys a jar that contains `SomeEJB`.
+It checks that the injected EJB is not `null` and that it returns `"ejb"`:
+
+[source,java]
+----
+@Category(Embedded.class)
+@RunWith(Arquillian.class)
+public class OpenEJBEmbeddedTest {
+
+    @EJB
+    private SomeEJB ejb;
+
+    @Deployment
+    public static JavaArchive jar() {
+        return ShrinkWrap.create(JavaArchive.class).addClass(SomeEJB.class);
+    }
+
+    @Test
+    public void check() {
+        assertNotNull(ejb);
+        assertEquals("ejb", ejb.ok());
+    }
+}
+----
+
+=== OpenEJB embedded with HTTP
+
+This test deploys `SomeRest` in a jar named `my-webapp.jar`.
+It calls the REST endpoint over HTTP on port `4204` and expects `"rest"`:
+
+[source,java]
+----
+@Category(EmbeddedRemote.class)
+@RunWith(Arquillian.class)
+public class OpenEJBEmbeddedRemoteTest {
+
+    @Deployment
+    public static JavaArchive jar() {
+        return ShrinkWrap.create(JavaArchive.class, "my-webapp.jar").addClass(SomeRest.class);
+    }
+
+    @Test
+    public void check() throws IOException {
+        final String content = IO.slurp(new URL("http://localhost:4204/my-webapp/rest/ok"));
+        assertEquals("rest", content);
+    }
+}
+----
+
+=== TomEE embedded and TomEE remote
+
+`TomEEEmbeddedTest` and `TomEERemoteTest` deploy a `test.war` that contains `SomeEJB`.
+Both run the same check as the OpenEJB embedded test.
+The remote test also adds its category interface to the archive, because the test class is loaded inside the remote server:
+
+[source,java]
+----
+@Category(TomEERemote.class)
+@RunWith(Arquillian.class)
+public class TomEERemoteTest {
+
+    @EJB
+    private SomeEJB ejb;
+
+    @Deployment
+    public static WebArchive war() {
+        // use test name for the war otherwise arquillian ejb enricher doesn't work
+        // don't forget the category otherwise it will fail since the runner parse annotations
+        // in embedded mode it is not so important
+        return ShrinkWrap.create(WebArchive.class, "test.war").addClasses(SomeEJB.class, TomEERemote.class);
+    }
+
+    @Test
+    public void check() {
+        assertNotNull(ejb);
+        assertEquals("ejb", ejb.ok());
+    }
+}
+----
+
+== Running
+
+[source,bash]
+----
+mvn clean test
+----
+
+This command runs all four surefire executions in turn: `test-embedded`, `test-embedded-remote`, `test-tomee-embedded` and `test-tomee-remote`.
+Each execution runs only the tests in its category, against its own adapter.
+The pom has no profiles for choosing a single adapter.
+To add another adapter or configuration, add a category interface, an `arquillian.xml` container and a matching surefire execution.
+Passing `-Dmaven.test.skip=true` skips all four executions.

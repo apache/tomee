@@ -1,0 +1,197 @@
+:index-group: DataSources
+:jbake-type: page
+:jbake-status: status=published
+= DataSource Definition
+
+This example shows how to declare a `DataSource` directly in application code with the
+`@DataSourceDefinition` annotation. You do not need an entry in `tomee.xml`,
+`resources.xml` or a system property. The container reads the annotation, creates
+a pooled data source backed by an in-memory H2 database, binds it in JNDI and
+injects it with `@Resource`.
+
+== Persister
+
+The whole definition lives on a single CDI bean:
+
+[source,java]
+----
+package org.superbiz.dsdef;
+
+import jakarta.annotation.Resource;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.inject.Named;
+import javax.sql.DataSource;
+
+@DataSourceDefinition(transactional = true,
+        url = "jdbc:h2:mem:persister",
+        className = "org.h2.jdbcx.JdbcDataSource",
+        user = "sa",
+        password = "",
+        name = "java:app/jdbc/persister",
+        initialPoolSize = 1,
+        maxPoolSize = 3
+)
+@Named
+public class Persister {
+
+    @Resource(lookup = "java:app/jdbc/persister")
+    private DataSource ds;
+
+    public DataSource getDs() {
+        return ds;
+    }
+}
+----
+
+The annotation attributes describe the data source:
+
+* `className` is the `DataSource` implementation of the JDBC driver, here H2's `org.h2.jdbcx.JdbcDataSource`.
+* `url`, `user` and `password` are the connection settings. `jdbc:h2:mem:persister` is an in-memory H2 database.
+* `name` is the JNDI name the data source is bound to. The `java:app` namespace makes it visible to the whole application.
+* `initialPoolSize` and `maxPoolSize` configure the connection pool.
+* `transactional = true` makes the data source take part in container-managed transactions.
+
+The `ds` field uses `@Resource(lookup = "java:app/jdbc/persister")`, so it receives the
+data source declared on the same class. `@Named` makes `Persister` a CDI bean that the
+test can inject.
+
+== beans.xml
+
+`src/main/resources/META-INF/beans.xml` is an empty marker that turns on CDI for the module:
+
+[source,xml]
+----
+<beans xmlns="http://java.sun.com/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd"/>
+----
+
+== Dependencies
+
+The example compiles against the Jakarta EE Web Profile API. It adds the H2 driver as a
+regular dependency and the embedded TomEE container as a test dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.tomee.bom</groupId>
+  <artifactId>tomee-webprofile-api</artifactId>
+  <version>11.0.0-SNAPSHOT</version>
+  <scope>provided</scope>
+</dependency>
+<dependency>
+  <groupId>com.h2database</groupId>
+  <artifactId>h2</artifactId>
+  <version>2.4.240</version>
+</dependency>
+<dependency>
+  <groupId>junit</groupId>
+  <artifactId>junit</artifactId>
+  <version>4.13.2</version>
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>org.apache.tomee.bom</groupId>
+  <artifactId>tomee-webprofile</artifactId>
+  <version>11.0.0-SNAPSHOT</version>
+  <scope>test</scope>
+</dependency>
+----
+
+== DataSourceDefinitionTest
+
+The test starts an embedded container with `EJBContainer.createEJBContainer()` and
+injects the `Persister` bean into the test instance by binding the test to the
+`inject` name:
+
+[source,java]
+----
+public class DataSourceDefinitionTest {
+
+    private static EJBContainer container;
+
+    @Inject
+    private Persister persister;
+
+    @BeforeClass
+    public static void start() {
+        container = EJBContainer.createEJBContainer();
+    }
+
+    @Before
+    public void inject() throws NamingException {
+        container.getContext().bind("inject", this);
+    }
+
+    @AfterClass
+    public static void stop() {
+        container.close();
+    }
+----
+
+`checkDs` makes sure the injected data source is a TomEE-managed pool
+(`DbcpManagedDataSource`) and that the pool uses the values from the annotation.
+It then opens a connection, creates a table, inserts a row, commits and reads the row back:
+
+[source,java]
+----
+    @Test
+    public void checkDs() throws SQLException {
+        final DataSource ds = persister.getDs();
+        assertNotNull(ds);
+        assertThat(ds, instanceOf(DbcpManagedDataSource.class));
+
+        final DbcpManagedDataSource castedDs = (DbcpManagedDataSource) ds;
+
+        final String driver = castedDs.getDriverClassName();
+        assertEquals("org.h2.jdbcx.JdbcDataSource", driver);
+
+        final String user = castedDs.getUserName();
+        assertEquals("sa", user);
+
+        final String url = castedDs.getUrl();
+        assertEquals("jdbc:h2:mem:persister", url);
+
+        final int initPoolSize = castedDs.getInitialSize();
+        assertEquals(1, initPoolSize);
+
+        final int maxIdle = castedDs.getMaxIdle();
+        assertEquals(3, maxIdle);
+
+        final Connection connection = ds.getConnection();
+        assertNotNull(connection);
+
+        execute(connection, "CREATE TABLE TEST(ID INT PRIMARY KEY, NAME VARCHAR(255))");
+        execute(connection, "INSERT INTO TEST(ID, NAME) VALUES(1, 'foo')");
+        connection.commit();
+
+        final PreparedStatement statement = ds.getConnection().prepareStatement("SELECT NAME FROM TEST");
+        statement.execute();
+        final ResultSet set = statement.getResultSet();
+
+        assertTrue(set.next());
+        assertEquals("foo", set.getString("NAME"));
+    }
+----
+
+`lookup` checks that the data source is bound under the name given in the annotation,
+and that the JNDI lookup returns the same object that was injected into `Persister`:
+
+[source,java]
+----
+    @Test
+    public void lookup() throws NamingException {
+        final Object o = container.getContext().lookup("java:app/jdbc/persister");
+        assertNotNull(o);
+        assertEquals(persister.getDs(), o);
+    }
+----
+
+== Running
+
+Run the tests from the example directory:
+
+[source,bash]
+----
+mvn clean test
+----

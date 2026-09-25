@@ -1,0 +1,471 @@
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: status=published
+= Simple EAR
+
+This example shows how to package a small Jakarta EE application as an
+Enterprise Archive (EAR) with Maven and how to test it against TomEE. It
+uses the moviefun code found in many other examples and splits it into
+five Maven modules:
+
+* `moviefun-business-model` - the JPA entity, the `persistence.xml` and the
+  `Movies` business interface
+* `moviefun-business-logic` - the `MoviesBean` stateless session bean (EJB module)
+* `moviefun-webapp` - a servlet and JSPs that use the EJB (web module)
+* `moviefun-ear` - packages the EJB module and the web module into an EAR
+* `moviefun-functional-tests` - deploys the EAR to a remote TomEE with
+  Arquillian and checks the web pages with HtmlUnit
+
+The dependencies between the modules look like this:
+
+[source]
+----
+moviefun-business-model
+        ^         ^
+        |         | (provided)
+moviefun-business-logic   moviefun-webapp
+        ^  (ejb)            ^  (war)
+        |                   |
+        +---- moviefun-ear -+
+                  ^  (ear, test scope)
+                  |
+        moviefun-functional-tests
+----
+
+== Project layout
+
+The parent pom lists the modules in build order:
+
+[source,xml]
+----
+<groupId>org.superbiz</groupId>
+<artifactId>moviefun-ear-parent</artifactId>
+<version>11.0.0-SNAPSHOT</version>
+<packaging>pom</packaging>
+<name>TomEE :: Examples :: Simple EAR</name>
+<modules>
+  <module>moviefun-business-model</module>
+  <module>moviefun-business-logic</module>
+  <module>moviefun-webapp</module>
+  <module>moviefun-ear</module>
+  <module>moviefun-functional-tests</module>
+</modules>
+----
+
+It also turns on filtering for `src/test/resources` and passes the TomEE
+version to the tests as the `tomee.version` system property.
+
+== Business model
+
+The `moviefun-business-model` module is a plain jar holding the `Movie`
+entity:
+
+[source,java]
+----
+@Entity
+public class Movie implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    private String director;
+    private String title;
+    private int year;
+    private String genre;
+    private int rating;
+
+    // constructors, getters and setters
+}
+----
+
+the persistence unit that maps it:
+
+[source,xml]
+----
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+
+  <persistence-unit name="movie-unit">
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+    <class>org.superbiz.model.Movie</class>
+
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+----
+
+and the `@Local` business interface that both the EJB module and the web
+module compile against:
+
+[source,java]
+----
+@Local
+public interface Movies {
+    Movie find(Long id);
+
+    void addMovie(Movie movie);
+
+    void editMovie(Movie movie);
+
+    void deleteMovieId(long id);
+
+    List<Movie> getMovies();
+
+    List<Movie> findAll(int firstResult, int maxResults);
+
+    int countAll();
+
+    int count(String field, String searchTerm);
+
+    List<Movie> findRange(String field, String searchTerm, int firstResult, int maxResults);
+
+    void clean();
+}
+----
+
+Because the interface lives in the model module, the webapp only needs the
+model jar to talk to the EJB and does not depend on the business logic
+module at all.
+
+== Business logic
+
+The `moviefun-business-logic` module depends on the model and contains the
+EJB. An empty `META-INF/ejb-jar.xml` marks the jar as an EJB module:
+
+[source,xml]
+----
+<ejb-jar/>
+----
+
+`MoviesBean` is a stateless session bean that implements `Movies` using an
+`EntityManager` for the `movie-unit` persistence unit:
+
+[source,java]
+----
+@Stateless
+public class MoviesBean implements Movies {
+
+    @PersistenceContext(unitName = "movie-unit")
+    private EntityManager entityManager;
+
+    @Override
+    public void addMovie(Movie movie) {
+        entityManager.persist(movie);
+    }
+
+    @Override
+    public void deleteMovieId(long id) {
+        Movie movie = entityManager.find(Movie.class, id);
+        entityManager.remove(movie);
+    }
+
+    @Override
+    public List<Movie> getMovies() {
+        CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
+        cq.select(cq.from(Movie.class));
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    // find, editMovie, findAll, countAll, count, findRange and clean
+    // are implemented with the Criteria API in the same way
+}
+----
+
+== Webapp
+
+The `moviefun-webapp` module is packaged as a war. It depends on the
+business model with `provided` scope, so the model classes are not copied
+into `WEB-INF/lib`; inside the EAR they come from the EAR's `lib` directory
+instead (see below).
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.superbiz</groupId>
+  <artifactId>moviefun-business-model</artifactId>
+  <version>${project.version}</version>
+  <scope>provided</scope>
+</dependency>
+----
+
+`ActionServlet` gets the EJB from the EJB module injected through its
+`Movies` interface and uses it to add, remove, list and search movies
+before forwarding to `WEB-INF/moviefun.jsp`:
+
+[source,java]
+----
+@WebServlet("/moviefun/*")
+public class ActionServlet extends HttpServlet {
+
+    public static int PAGE_SIZE = 5;
+
+    @EJB
+    private Movies moviesBean;
+
+    private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("Add".equals(action)) {
+            // read the form fields and call moviesBean.addMovie(...)
+        } else if ("Remove".equals(action)) {
+            // call moviesBean.deleteMovieId(...) for every selected id
+        } else {
+            // page through moviesBean.findAll(...) or moviesBean.findRange(...)
+        }
+
+        request.getRequestDispatcher("WEB-INF/moviefun.jsp").forward(request, response);
+    }
+}
+----
+
+`index.jsp` links to two pages: `setup.jsp`, which seeds the database with
+sample data, and `moviefun`, the servlet above. `setup.jsp` looks up the
+bean through the `java:comp/env` entry created by the servlet's `@EJB`
+field:
+
+[source,java]
+----
+InitialContext initialContext = new InitialContext();
+Movies moviesBean = (Movies) initialContext.lookup("java:comp/env/org.superbiz.moviefun.ActionServlet/moviesBean");
+
+moviesBean.addMovie(new Movie("Wedding Crashers", "David Dobkin", "Comedy", 7, 2005));
+moviesBean.addMovie(new Movie("Starsky & Hutch", "Todd Phillips", "Action", 6, 2004));
+moviesBean.addMovie(new Movie("Shanghai Knights", "David Dobkin", "Action", 6, 2003));
+moviesBean.addMovie(new Movie("I-Spy", "Betty Thomas", "Adventure", 5, 2002));
+moviesBean.addMovie(new Movie("The Royal Tenenbaums", "Wes Anderson", "Comedy", 8, 2001));
+moviesBean.addMovie(new Movie("Zoolander", "Ben Stiller", "Comedy", 6, 2001));
+moviesBean.addMovie(new Movie("Shanghai Noon", "Tom Dey", "Comedy", 7, 2000));
+----
+
+== EAR packaging
+
+The `moviefun-ear` module has `ear` packaging and depends on the EJB module
+(type `ejb`) and on the web module (type `war`):
+
+[source,xml]
+----
+<artifactId>moviefun-ear</artifactId>
+<packaging>ear</packaging>
+
+<dependencies>
+  <dependency>
+    <groupId>org.superbiz</groupId>
+    <artifactId>moviefun-business-logic</artifactId>
+    <version>${project.version}</version>
+    <type>ejb</type>
+  </dependency>
+  <dependency>
+    <groupId>org.superbiz</groupId>
+    <artifactId>moviefun-webapp</artifactId>
+    <type>war</type>
+    <version>${project.version}</version>
+  </dependency>
+</dependencies>
+----
+
+The `maven-ear-plugin` generates the `application.xml`, maps the web module
+to the `/moviefun` context root and puts library jars into `lib`:
+
+[source,xml]
+----
+<plugin>
+  <artifactId>maven-ear-plugin</artifactId>
+  <version>3.4.0</version>
+  <configuration>
+    <version>8</version>
+    <generateApplicationXml>true</generateApplicationXml>
+    <defaultLibBundleDir>lib</defaultLibBundleDir>
+    <modules>
+      <webModule>
+        <groupId>org.superbiz</groupId>
+        <artifactId>moviefun-webapp</artifactId>
+        <contextRoot>/moviefun</contextRoot>
+      </webModule>
+      <ejbModule>
+        <groupId>org.superbiz</groupId>
+        <artifactId>moviefun-business-logic</artifactId>
+      </ejbModule>
+    </modules>
+  </configuration>
+</plugin>
+----
+
+`moviefun-business-model` is not listed directly; it is a transitive
+dependency of the EJB module, so the plugin places it in the EAR's `lib`
+directory, where it is visible to both the EJB module and the web module.
+
+== Testing
+
+=== Business logic test
+
+`MoviesTest` in `moviefun-business-logic` tests the EJB without a server.
+It boots OpenEJB through `LocalInitialContextFactory`, sets
+`openejb.deployments.classpath.ear` to `true` so the modules found on the
+test classpath are deployed together as one application, and defines the
+two data sources required by `persistence.xml` as in-memory HSQLDB
+databases:
+
+[source,java]
+----
+public class MoviesTest extends TestCase {
+
+    public void test() throws Exception {
+        Properties p = new Properties();
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+
+        p.put("openejb.deployments.classpath.ear", "true");
+
+        p.put("movieDatabase", "new://Resource?type=DataSource");
+        p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+
+        p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
+        p.put("movieDatabaseUnmanaged.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabaseUnmanaged.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+        p.put("movieDatabaseUnmanaged.JtaManaged", "false");
+
+        Context context = new InitialContext(p);
+
+        Movies movies = (Movies) context.lookup("MoviesBeanLocal");
+
+        movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+        movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
+        movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
+
+        List<Movie> list = movies.getMovies();
+        assertEquals("List.size()", 3, list.size());
+
+        for (Movie movie : list) {
+            movies.deleteMovieId(movie.getId());
+        }
+
+        assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+    }
+}
+----
+
+It adds three movies, checks that `getMovies()` returns them, deletes them
+and checks that the list is empty again.
+
+=== Functional tests
+
+The `moviefun-functional-tests` module tests the packaged EAR end to end.
+It depends on the EAR produced by the sibling module:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.superbiz</groupId>
+  <artifactId>moviefun-ear</artifactId>
+  <version>${project.version}</version>
+  <type>ear</type>
+  <scope>test</scope>
+</dependency>
+----
+
+together with `arquillian-tomee-remote`, the ShrinkWrap Maven resolver and
+HtmlUnit. The Arquillian container is configured in
+`src/test/resources/arquillian.xml`; a port of `-1` makes the adapter pick
+a free port, and TomEE is unpacked below `target`:
+
+[source,xml]
+----
+<container qualifier="tomee" default="true">
+  <configuration>
+    <property name="httpPort">-1</property>
+    <property name="stopPort">-1</property>
+    <property name="tomcatVersion"></property>
+    <property name="dir">target/apache-tomee-remote</property>
+    <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+  </configuration>
+</container>
+----
+
+`MoviesArquillianHtmlUnitTest` does not assemble the archive itself.
+Its `@Deployment` method resolves the `moviefun-ear` artifact with the
+ShrinkWrap Maven resolver. The version is read from `version.properties`,
+a filtered test resource containing `version=${tomee.version}`:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+@RunAsClient
+public class MoviesArquillianHtmlUnitTest {
+
+    @Deployment
+    public static EnterpriseArchive createDeployment() {
+        ResourceBundle mavenVersion = ResourceBundle.getBundle("version");
+
+        final EnterpriseArchive enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:" + mavenVersion.getString("version"))
+                .withoutTransitivity().asSingle(EnterpriseArchive.class);
+
+        System.out.println(enterpriseArchive.toString(true));
+
+        return enterpriseArchive;
+    }
+
+    @ArquillianResource
+    private URL deploymentUrl;
+
+    @Test
+    public void testShouldMakeSureWebappIsWorking() throws Exception {
+        final String url = "http://" + deploymentUrl.getHost() + ":" + deploymentUrl.getPort() + "/moviefun";
+
+        WebClient webClient = new WebClient();
+        HtmlPage page = webClient.getPage(url + "/setup.jsp");
+
+        assertMoviesPresent(page);
+
+        page = webClient.getPage(url + "/moviefun");
+
+        assertMoviesPresent(page);
+        webClient.close();
+    }
+
+    private void assertMoviesPresent(HtmlPage page) {
+        String pageAsText = page.asNormalizedText();
+        assertTrue(pageAsText.contains("Wedding Crashers"));
+        assertTrue(pageAsText.contains("Starsky & Hutch"));
+        assertTrue(pageAsText.contains("Shanghai Knights"));
+        assertTrue(pageAsText.contains("I-Spy"));
+        assertTrue(pageAsText.contains("The Royal Tenenbaums"));
+    }
+}
+----
+
+The test runs as a client. After the EAR is deployed under the `/moviefun`
+context root, it opens `setup.jsp` to seed the database, then opens the
+servlet at `/moviefun/moviefun`, and checks on both pages that the seeded
+movies are listed. This covers the whole chain: web module, `@EJB`
+injection across modules, the stateless bean and JPA.
+
+The module also contains `DeployInWebAppsDirectoryTest`, which copies the
+EAR into the `webapps` directory of a TomEE started by the remote adapter
+instead of using the Arquillian deployer. It is currently marked
+`@Ignore("Not implemented yet")` and does not run.
+
+=== Running the tests
+
+The functional tests resolve the EAR as a Maven artifact, so it has to be
+installed in the local Maven repository first. Build the example from the
+`simple-ear` directory with:
+
+[source,bash]
+----
+mvn clean install
+----
+
+Running only `mvn test` or `mvn verify` does not install `moviefun-ear`,
+so the ShrinkWrap resolver cannot find it (or picks up an old copy from
+the local repository). Once the example has been installed, the
+business logic test can also be run on its own:
+
+[source,bash]
+----
+mvn -pl moviefun-business-logic test
+----

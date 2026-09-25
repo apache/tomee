@@ -1,0 +1,211 @@
+:index-group: Misc
+:jbake-type: page
+:jbake-status: status=published
+= Basic Scala EJB
+
+This example shows that an EJB does not have to be written in Java. The
+`GreetingService` singleton bean is written in Scala, compiled with Maven and
+tested with ScalaTest against the embedded OpenEJB container, which injects the
+bean into the Scala test class just as it would into a Java one.
+
+== The bean
+
+`GreetingService` is a plain Scala class carrying the usual Jakarta EE
+annotations: `@Singleton` makes it a singleton session bean, `@LocalBean` exposes
+a no-interface view, and `@Lock(LockType.READ)` lets concurrent callers invoke it
+without waiting on each other.
+
+The companion `object` holds the default name. The `hi` method uses a Scala
+default parameter value, so it can be called with or without an argument. A
+`null` name falls back to the default as well.
+
+[source,scala]
+----
+package org.superbiz
+
+import jakarta.ejb.{LocalBean, Lock, LockType, Singleton}
+
+object GreetingService {
+  val DefaultName = "Scala"
+}
+
+@LocalBean
+@Singleton
+@Lock(LockType.READ)
+class GreetingService {
+  def hi(name: String = GreetingService.DefaultName) = {
+    if (name != null) {
+      "hi " + name
+    } else {
+      "hi " + GreetingService.DefaultName
+    }
+  }
+}
+----
+
+An empty `src/main/resources/META-INF/beans.xml` is also part of the module:
+
+[source,xml]
+----
+<beans/>
+----
+
+== Building Scala sources with Maven
+
+The `pom.xml` sets the source directories to `src/main/scala` and
+`src/test/scala` and uses the `scala-maven-plugin` to compile them. Its
+`compile` and `testCompile` goals are bound to the build, and the Scala version
+comes from the `scala.full-version` property (`2.13.15`):
+
+[source,xml]
+----
+<properties>
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <scala.version>2.13</scala.version>
+  <scala.full-version>${scala.version}.15</scala.full-version>
+</properties>
+
+<build>
+  <sourceDirectory>src/main/scala</sourceDirectory>
+  <testSourceDirectory>src/test/scala</testSourceDirectory>
+  <plugins>
+    <!-- compile scala sources -->
+    <plugin>
+      <groupId>net.alchim31.maven</groupId>
+      <artifactId>scala-maven-plugin</artifactId>
+      <version>4.9.7</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>compile</goal>
+            <goal>testCompile</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <scalaVersion>${scala.full-version}</scalaVersion>
+      </configuration>
+    </plugin>
+    ...
+  </plugins>
+</build>
+----
+
+The tests are ScalaTest suites rather than JUnit tests, so Surefire is skipped
+and the `scalatest-maven-plugin` runs them in the `test` phase instead. It
+writes its reports to `target/surefire-reports`:
+
+[source,xml]
+----
+<!-- disable surefire because we use scalatest -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <version>3.5.3</version>
+  <configuration>
+    <skipTests>true</skipTests>
+  </configuration>
+</plugin>
+<!-- enable scalatest as a replacement for surefire -->
+<plugin>
+  <groupId>org.scalatest</groupId>
+  <artifactId>scalatest-maven-plugin</artifactId>
+  <version>2.2.0</version>
+  <configuration>
+    <forkMode>never</forkMode>
+    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+    <junitxml>.</junitxml>
+    <filereports>TestSuite.txt</filereports>
+  </configuration>
+  <executions>
+    <execution>
+      <id>test</id>
+      <goals>
+        <goal>test</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The Jakarta EE API comes from the `tomee-webprofile-api` BOM (scope
+`provided`), and the `tomee-webprofile` BOM (scope `test`) supplies the
+embedded container for the tests. The module also depends on `scala-library`
+and on `scalatest_2.13` for testing.
+
+== Testing
+
+`GreetingServiceTest` is a ScalaTest `AnyFunSuite`. It mixes in
+`BeforeAndAfterAll` and `BeforeAndAfterEach` to manage the embedded container:
+
+* `beforeAll` starts the container with `EJBContainer.createEJBContainer()`,
+  which deploys `GreetingService`.
+* `beforeEach` binds the test instance under the name `inject`, so the
+  container fills the `@Inject` field `service` before each test.
+* `afterAll` closes the container.
+
+[source,scala]
+----
+package org.superbiz
+
+import jakarta.ejb.embeddable.EJBContainer
+import jakarta.inject.Inject
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.funsuite.AnyFunSuite
+
+class GreetingServiceTest extends AnyFunSuite with BeforeAndAfterAll with BeforeAndAfterEach {
+  @Inject
+  private var service: GreetingService = null
+
+  test("Hi scala") {
+    val message = service hi "scala"
+    assert(message == "hi scala")
+  }
+
+  test("Default Hi") {
+    val message = service.hi()
+    assert(message == "hi Scala")
+  }
+
+  test("Hi null") {
+    val message = service.hi(null)
+    assert(message == "hi Scala") // when called with null we use default name
+  }
+
+  private var container: EJBContainer = null
+
+  override def beforeAll() {
+    container = EJBContainer.createEJBContainer()
+  }
+
+  override def beforeEach() {
+    container.getContext().bind("inject", this)
+  }
+
+  override def afterAll() {
+    if (container != null) {
+      container.close()
+    }
+  }
+}
+----
+
+The three tests check each branch of `hi`:
+
+* `Hi scala` calls the method with an explicit name, using Scala infix
+  notation (`service hi "scala"`), and expects `hi scala`.
+* `Default Hi` calls `service.hi()` without an argument, so the default
+  parameter value applies, and expects `hi Scala`.
+* `Hi null` passes `null` and expects the default name, `hi Scala`.
+
+== Running
+
+Run the tests with Maven:
+
+[source,bash]
+----
+mvn clean test
+----
+
+The example also has a `build.sbt` file for sbt users. The Maven build
+described above is the one covered in this README.
