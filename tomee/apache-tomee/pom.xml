@@ -587,30 +587,6 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.apache.tomee.patch</groupId>
-            <artifactId>tomee-patch-plugin</artifactId>
-            <configuration>
-              <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
-              <skipTransform>true</skipTransform>
-              <createTarGz>true</createTarGz>
-              <skips>
-                <jars>
-                  <bcpkix-jdk18on-1.85.jar>org.bouncycastle:bcpkix-jdk18on:jar:1.85</bcpkix-jdk18on-1.85.jar>
-                  <bcprov-jdk18on-1.85.jar>org.bouncycastle:bcprov-jdk18on:jar:1.85</bcprov-jdk18on-1.85.jar>
-                  <bcutil-jdk18on-1.85.jar>org.bouncycastle:bcutil-jdk18on:jar:1.85</bcutil-jdk18on-1.85.jar>
-                </jars>
-              </skips>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <phase>package</phase>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.6.3</version>
@@ -816,30 +792,6 @@
                     </artifact>
                   </artifacts>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.tomee.patch</groupId>
-            <artifactId>tomee-patch-plugin</artifactId>
-            <configuration>
-              <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
-              <skipTransform>true</skipTransform>
-              <createTarGz>true</createTarGz>
-              <skips>
-                <jars>
-                  <bcpkix-jdk18on-1.85.jar>org.bouncycastle:bcpkix-jdk18on:jar:1.85</bcpkix-jdk18on-1.85.jar>
-                  <bcprov-jdk18on-1.85.jar>org.bouncycastle:bcprov-jdk18on:jar:1.85</bcprov-jdk18on-1.85.jar>
-                  <bcutil-jdk18on-1.85.jar>org.bouncycastle:bcutil-jdk18on:jar:1.85</bcutil-jdk18on-1.85.jar>
-                </jars>
-              </skips>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <phase>package</phase>
               </execution>
             </executions>
           </plugin>
