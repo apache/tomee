@@ -27,6 +27,8 @@ import org.apache.openejb.util.reflection.Reflections;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.ClassRule;
+import org.junit.rules.ExternalResource;
 
 import jakarta.ejb.Singleton;
 import jakarta.servlet.ServletContextEvent;
@@ -42,7 +44,20 @@ import java.util.LinkedList;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+import static org.junit.Assume.assumeTrue;
+
 public class LoggingJAXRSCommons {
+
+    // the tests reflect into the OpenEJB logging internals of the JVM they run in,
+    // inherited by the subclasses and evaluated before Arquillian deploys the archive
+    @ClassRule
+    public static final ExternalResource EMBEDDED_ONLY = new ExternalResource() {
+        @Override
+        protected void before() {
+            assumeTrue("needs the container in the test JVM",
+                    System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+        }
+    };
 
     // static: filled by LogCapture during the deployment, read by the in-container test
     protected static Collection<String> msgs;

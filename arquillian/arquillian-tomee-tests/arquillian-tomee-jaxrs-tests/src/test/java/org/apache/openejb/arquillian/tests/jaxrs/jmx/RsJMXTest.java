@@ -37,6 +37,7 @@ import java.net.URL;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 // client side so the class rule sees the name set by the test; the embedded container shares the JVM and its MBeanServer
 @RunWith(Arquillian.class)
@@ -48,7 +49,8 @@ public class RsJMXTest {
 
     @Deployment(testable = false)
     public static WebArchive war() {
-        return ShrinkWrap.create(WebArchive.class, "app.war").addClasses(RsJMXTest.class, AnEndpoint.class);
+        // only the endpoint: the test class and its JUnit class rule stay on the client side
+        return ShrinkWrap.create(WebArchive.class, "app.war").addClass(AnEndpoint.class);
     }
 
     @Test
@@ -66,12 +68,22 @@ public class RsJMXTest {
         */
     }
 
-    // Arquillian runs @AfterClass before the undeployment, a class rule runs after it
+    // Arquillian runs @AfterClass before the undeployment, a class rule runs after it.
+    // The MBeanServer is read in the test JVM, so it is only the server's one with tomee-embedded;
+    // the assumption is evaluated before Arquillian deploys the archive.
     @ClassRule
-    public static final TestRule AFTER = new ExternalResource() {
+    public static final TestRule EMBEDDED_ONLY_AND_AFTER = new ExternalResource() {
+        @Override
+        protected void before() {
+            assumeTrue("needs the container in the test JVM",
+                    System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+        }
+
         @Override
         protected void after() {
-            assertFalse(LocalMBeanServer.get().isRegistered(name));
+            if (name != null) {
+                assertFalse(LocalMBeanServer.get().isRegistered(name));
+            }
         }
     };
 
