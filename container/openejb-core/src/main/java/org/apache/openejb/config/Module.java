@@ -26,10 +26,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Module {
     // note: 0 is reserved for internal app, don't set it to 0!
-    private static int currentId = 1; // unique id to be able to bind something for each module in the jndi tree
+    private static final AtomicInteger CURRENT_ID = new AtomicInteger(1); // unique id to be able to bind something for each module in the jndi tree
 
     private boolean isStandaloneModule = true;
 
@@ -45,7 +46,7 @@ public class Module {
 
     public Module(final boolean needId) {
         if (needId) {
-            uniqueId = Integer.toString(currentId++);
+            uniqueId = Integer.toString(CURRENT_ID.getAndIncrement());
         }
     }
 
