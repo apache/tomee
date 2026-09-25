@@ -241,6 +241,8 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
     }
 
     public void start(final BeanContext info) throws OpenEJBException {
+        instanceManager.start(info);
+
         final EjbTimerService timerService = info.getEjbTimerService();
         if (timerService != null) {
             timerService.start();

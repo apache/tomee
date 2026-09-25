@@ -239,28 +239,11 @@ public class MdbInstanceManager {
             }
         }
 
-        // activate the endpoint
+        // the endpoint is activated in start(), once the other beans of the application are started
         try {
 
             final MdbPoolContainer.MdbActivationContext activationContext = new MdbPoolContainer.MdbActivationContext(Thread.currentThread().getContextClassLoader(), beanContext, resourceAdapter, endpointFactory, activationSpec);
             activationContexts.put(beanContext, activationContext);
-
-            boolean activeOnStartup = true;
-            String activeOnStartupSetting = beanContext.getActivationProperties().get("MdbActiveOnStartup");
-
-            if (activeOnStartupSetting == null) {
-                activeOnStartupSetting = beanContext.getActivationProperties().get("DeliveryActive");
-            }
-
-            if (activeOnStartupSetting != null) {
-                activeOnStartup = Boolean.parseBoolean(activeOnStartupSetting);
-            }
-
-            if (activeOnStartup) {
-                activationContext.start();
-            } else {
-                logger.info("Not auto-activating endpoint for " + beanContext.getDeploymentID());
-            }
 
             String jmxControlName = beanContext.getActivationProperties().get("MdbJMXControl");
             if (jmxControlName == null) {
@@ -301,6 +284,23 @@ public class MdbInstanceManager {
         }
 
         data.getPool().start();
+    }
+
+    public void start(final BeanContext beanContext) throws OpenEJBException {
+        final MdbPoolContainer.MdbActivationContext activationContext = activationContexts.get(beanContext);
+        if (activationContext == null) {
+            return;
+        }
+
+        if (BaseMdbContainer.isActiveOnStartup(beanContext)) {
+            try {
+                activationContext.start();
+            } catch (final ResourceException e) {
+                throw new OpenEJBException(e);
+            }
+        } else {
+            logger.info("Not auto-activating endpoint for " + beanContext.getDeploymentID());
+        }
     }
 
     public void undeploy(final BeanContext beanContext) {
