@@ -442,7 +442,10 @@ public class MPJWTFilter implements Filter {
                     final Key key = publicKeys.values().iterator().next();
                     builder.setVerificationKey(key);
                 } else if (publicKeys.size() > 1) {
-                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(asJwks(publicKeys)));
+                    final JwksVerificationKeyResolver resolver = new JwksVerificationKeyResolver(asJwks(publicKeys));
+                    // the kid header is optional, without it try the keys against the signature
+                    resolver.setDisambiguateWithVerifySignature(true);
+                    builder.setVerificationKeyResolver(resolver);
                 }
 
                 final Map<String, Key> decryptKeys;
