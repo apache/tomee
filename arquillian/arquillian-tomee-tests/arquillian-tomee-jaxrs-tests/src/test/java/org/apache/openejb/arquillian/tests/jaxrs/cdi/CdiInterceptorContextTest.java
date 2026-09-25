@@ -54,7 +54,7 @@ public class CdiInterceptorContextTest {
     public static WebArchive war() {
         // the interceptor checks the request URI, so the context root must be "app"
         return ShrinkWrap.create(WebArchive.class, "app.war")
-            .addClasses(Endpoint.class, Perfect.class, AnswerPerfect.class, PerfectApplication.class)
+            .addClass(CdiInterceptorContextTest.class)
             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\">" +
                 "<interceptors><class>" + AnswerPerfect.class.getName() + "</class></interceptors>" +
                 "</beans>"), "beans.xml")

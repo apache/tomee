@@ -52,7 +52,7 @@ public class SimpleApplicationWithLongMappingWithNoAppPathTest {
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "SimpleApplicationWithLongMappingWithNoAppPathTest.war")
             .addClasses(MySecondRestClass.class, HookedRest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class,
-                MyRESTApplication.class, MyRootRESTApp.class)
+                MyRESTApplication.class, SimpleApplicationWithLongMappingWithNoAppPathTest.class)
             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"4.0\" bean-discovery-mode=\"all\"/>"), "beans.xml")
             .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
                 "<servlet>" +

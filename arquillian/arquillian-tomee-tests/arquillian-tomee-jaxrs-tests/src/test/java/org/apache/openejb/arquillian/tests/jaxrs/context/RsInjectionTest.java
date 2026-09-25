@@ -47,7 +47,7 @@ public class RsInjectionTest {
     public static WebArchive war() {
         // the endpoint checks the context path, so the context root must be "RsInjectionTest"
         return ShrinkWrap.create(WebArchive.class, "RsInjectionTest.war")
-            .addClasses(RsInjection.class);
+            .addClass(RsInjectionTest.class);
     }
 
     @Test

@@ -48,8 +48,7 @@ public class JAXRSWithInterfaceTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "JAXRSWithInterfaceTest.war")
-            .addClasses(Itf.class, Impl.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class,
-                InterfaceApp.class)
+            .addClasses(JAXRSWithInterfaceTest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
                 "<servlet>" +

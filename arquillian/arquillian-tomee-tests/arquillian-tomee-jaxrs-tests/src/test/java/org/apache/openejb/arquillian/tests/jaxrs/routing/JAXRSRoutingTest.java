@@ -48,8 +48,7 @@ public class JAXRSRoutingTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "JAXRSRoutingTest.war")
-            .addClasses(RestWithInjections.class, FirstService.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class,
-                NoClassAtPathApplication.class)
+            .addClasses(JAXRSRoutingTest.class, RestWithInjections.class, SimpleEJB.class, MyExpertRestClass.class, MyFirstRestClass.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
                 "<servlet>" +

@@ -43,7 +43,7 @@ public class PathParamAtClassLevelTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "PathParamAtClassLevelTest.war")
-            .addClasses(DoesItMatchWithPathParamAtClassLevel.class)
+            .addClass(PathParamAtClassLevelTest.class)
             .addAsWebInfResource(new StringAsset(
                 "<openejb-jar>" +
                 "   <pojo-deployment class-name=\"jaxrs-application\">" +

@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
 public class SubResourceTest {
@@ -46,7 +45,7 @@ public class SubResourceTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(Endpoint1.class, Endpoint2.class)
+            .addClass(SubResourceTest.class)
             .addAsWebInfResource(new StringAsset("<ejb-jar xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"4.0\">" +
                 "<enterprise-beans>" +
                 "<session>" +
@@ -79,7 +78,9 @@ public class SubResourceTest {
         public Endpoint2 uno(@PathParam("i") final int discr) {
             if (2 == discr) {
                 final Endpoint2 resource = rc.getResource(Endpoint2.class);
-                assertNotNull(resource);
+                if (resource == null) {
+                    throw new IllegalStateException("ResourceContext returned no " + Endpoint2.class.getName());
+                }
                 return resource;
             }
             return null;

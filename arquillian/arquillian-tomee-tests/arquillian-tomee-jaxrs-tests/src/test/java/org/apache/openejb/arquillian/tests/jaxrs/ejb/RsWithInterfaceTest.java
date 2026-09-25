@@ -48,7 +48,7 @@ public class RsWithInterfaceTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(RsImpl.class, Rs.class, App.class);
+            .addClass(RsWithInterfaceTest.class);
     }
 
     @Test

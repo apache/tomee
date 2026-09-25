@@ -48,7 +48,7 @@ public class CustomSecurityContextTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(Res.class, MySecuCtx.class)
+            .addClass(CustomSecurityContextTest.class)
             .addAsWebInfResource(new StringAsset("<openejb-jar>" +
                 "<pojo-deployment class-name=\"jaxrs-application\">" +
                 "<properties>" +

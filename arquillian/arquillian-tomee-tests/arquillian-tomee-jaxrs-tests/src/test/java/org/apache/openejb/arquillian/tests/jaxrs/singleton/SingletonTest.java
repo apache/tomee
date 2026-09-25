@@ -47,7 +47,7 @@ public class SingletonTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(TheResource.class, TheCdiResource.class, Incr.class, MyCdiRESTApplication.class)
+            .addClass(SingletonTest.class)
             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml")
             .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
                 "<servlet>" +

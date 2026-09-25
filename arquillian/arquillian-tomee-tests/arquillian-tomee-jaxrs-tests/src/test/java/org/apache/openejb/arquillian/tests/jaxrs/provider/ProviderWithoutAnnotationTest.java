@@ -56,7 +56,7 @@ public class ProviderWithoutAnnotationTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "ProviderWithoutAnnotationTest.war")
-            .addClasses(App.class, Endpoint.class, FooWriter.class)
+            .addClass(ProviderWithoutAnnotationTest.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

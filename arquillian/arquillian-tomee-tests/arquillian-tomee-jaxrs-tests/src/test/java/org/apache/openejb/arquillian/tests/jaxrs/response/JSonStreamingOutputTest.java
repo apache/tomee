@@ -49,7 +49,7 @@ public class JSonStreamingOutputTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "JSonStreamingOutputTest.war")
-            .addClasses(En.class)
+            .addClass(JSonStreamingOutputTest.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

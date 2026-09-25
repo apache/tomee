@@ -56,7 +56,7 @@ public class EJBProviderTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(Helper.class, MyPro.class, Res.class)
+            .addClass(EJBProviderTest.class)
             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml");
     }
 
@@ -103,7 +103,10 @@ public class EJBProviderTest {
                             final MediaType mediaType,
                             final MultivaluedMap<String, Object> httpHeaders,
                             final OutputStream entityStream) throws IOException, WebApplicationException {
-            assertEquals(MyPro.class, sc.getInvokedBusinessInterface());
+            if (!MyPro.class.equals(sc.getInvokedBusinessInterface())) {
+                throw new IllegalStateException("expected invoked business interface " + MyPro.class.getName()
+                        + " but was " + sc.getInvokedBusinessInterface());
+            }
             entityStream.write(helper.data().getBytes());
         }
     }

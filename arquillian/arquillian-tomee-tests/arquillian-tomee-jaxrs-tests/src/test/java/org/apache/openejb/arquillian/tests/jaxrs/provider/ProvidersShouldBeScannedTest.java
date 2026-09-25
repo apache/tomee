@@ -43,7 +43,7 @@ public class ProvidersShouldBeScannedTest {
     @Deployment(testable = false)
     public static WebArchive service() {
         return ShrinkWrap.create(WebArchive.class, "ProvidersShouldBeScannedTest.war")
-            .addClasses(NeedAProvider.class, DontLetResourcesFail.class);
+            .addClass(ProvidersShouldBeScannedTest.class);
     }
 
     @Test

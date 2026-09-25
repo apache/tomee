@@ -41,7 +41,7 @@ public class OptionsTest {
     @Deployment(testable = false)
     public static WebArchive service() {
         return ShrinkWrap.create(WebArchive.class, "OptionsTest.war")
-            .addClasses(OptionsBean.class);
+            .addClass(OptionsTest.class);
     }
 
     @Test

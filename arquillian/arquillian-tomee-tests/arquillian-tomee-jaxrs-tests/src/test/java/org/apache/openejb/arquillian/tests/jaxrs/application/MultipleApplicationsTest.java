@@ -44,7 +44,7 @@ public class MultipleApplicationsTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "MultipleApplicationsTest.war")
-            .addClasses(Application1.class, Application2.class, MyFirstRestClass.class, MySecondRestClass.class)
+            .addClasses(MultipleApplicationsTest.class, MyFirstRestClass.class, MySecondRestClass.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

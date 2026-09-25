@@ -40,7 +40,7 @@ public class NoPathOnImplTest {
     @Deployment(testable = false)
     public static WebArchive service() {
         return ShrinkWrap.create(WebArchive.class, "NoPathOnImplTest.war")
-            .addClasses(API.class, Impl.class);
+            .addClass(NoPathOnImplTest.class);
     }
 
     @Test

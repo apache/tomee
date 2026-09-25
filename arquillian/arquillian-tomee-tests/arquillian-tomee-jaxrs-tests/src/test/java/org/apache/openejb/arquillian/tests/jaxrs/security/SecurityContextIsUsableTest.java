@@ -54,7 +54,7 @@ public class SecurityContextIsUsableTest {
     public static WebArchive war() {
         // the user logs in with BASIC auth against a realm of the webapp
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(RsImpl.class, RestUserRealm.class)
+            .addClass(SecurityContextIsUsableTest.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsManifestResource(new StringAsset("<Context>" +
                 "<Realm className=\"" + LazyRealm.class.getName() + "\" realmClass=\"" + RestUserRealm.class.getName() + "\"/>" +

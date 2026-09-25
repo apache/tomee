@@ -50,7 +50,7 @@ public class RsCDIInterceptorTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(InterceptedEJBRs.class, InterceptedRs.class, MockingInterceptor.class, IBinding.class)
+            .addClass(RsCDIInterceptorTest.class)
             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\">" +
                 "<interceptors><class>" + MockingInterceptor.class.getName() + "</class></interceptors>" +
                 "</beans>"), "beans.xml");

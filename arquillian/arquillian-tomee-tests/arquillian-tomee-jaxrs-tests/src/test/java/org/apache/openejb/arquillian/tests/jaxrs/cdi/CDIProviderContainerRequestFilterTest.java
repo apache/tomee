@@ -51,7 +51,7 @@ public class CDIProviderContainerRequestFilterTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(Endpoint.class, ABean.class, JWTAuthenticationFilter.class)
+            .addClass(CDIProviderContainerRequestFilterTest.class)
             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml");
     }
 

@@ -45,7 +45,7 @@ public class ApplicationRsInjectionTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "ApplicationRsInjectionTest.war")
-            .addClasses(Dummy.class)
+            .addClass(ApplicationRsInjectionTest.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

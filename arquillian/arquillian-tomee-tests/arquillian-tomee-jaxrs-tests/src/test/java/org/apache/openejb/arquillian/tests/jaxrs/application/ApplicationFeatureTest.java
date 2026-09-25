@@ -50,7 +50,7 @@ public class ApplicationFeatureTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "ApplicationFeatureTest.war")
-            .addClasses(MyEndpoint.class, MyFeature.class, MyApp.class);
+            .addClass(ApplicationFeatureTest.class);
     }
 
     @Test

@@ -47,7 +47,7 @@ public class EJBExceptionMapperTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(IllegalMapper.class, RESTIsCoolOne.class)
+            .addClass(EJBExceptionMapperTest.class)
             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" bean-discovery-mode=\"all\" version=\"4.0\"/>"), "beans.xml");
     }
 

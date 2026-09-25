@@ -44,7 +44,7 @@ public class ApplicationFromWebXmlTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "ApplicationFromWebXmlTest.war")
-            .addClasses(MyFirstRestClass.class, XmlApplication.class)
+            .addClasses(ApplicationFromWebXmlTest.class, MyFirstRestClass.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
                 "<servlet>" +

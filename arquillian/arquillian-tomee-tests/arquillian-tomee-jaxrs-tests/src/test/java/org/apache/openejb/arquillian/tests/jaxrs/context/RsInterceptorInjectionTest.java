@@ -21,7 +21,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,7 +55,7 @@ public class RsInterceptorInjectionTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class)
-            .addClasses(RsInjection.class, RsEjbInterceptor.class, FooException.class);
+            .addClass(RsInterceptorInjectionTest.class);
     }
 
     @Test
@@ -119,40 +118,52 @@ public class RsInterceptorInjectionTest {
         @AroundInvoke
         private Object invoke(InvocationContext context) throws Exception {
             // Are they injected?
-            Assert.assertNotNull("httpHeaders", httpHeaders);
-            Assert.assertNotNull("providers", providers);
-            Assert.assertNotNull("response", response);
-            Assert.assertNotNull("request", request);
-            Assert.assertNotNull("httpServletRequest", httpServletRequest);
-            Assert.assertNotNull("uriInfo", uriInfo);
-            Assert.assertNotNull("securityContext", securityContext);
-            Assert.assertNotNull("contextResolver", contextResolver);
+            checkNotNull("httpHeaders", httpHeaders);
+            checkNotNull("providers", providers);
+            checkNotNull("response", response);
+            checkNotNull("request", request);
+            checkNotNull("httpServletRequest", httpServletRequest);
+            checkNotNull("uriInfo", uriInfo);
+            checkNotNull("securityContext", securityContext);
+            checkNotNull("contextResolver", contextResolver);
 
             // Do the thread locals actually point anywhere?
-            Assert.assertTrue(httpHeaders.getRequestHeaders().size() > 0);
-            Assert.assertTrue(providers.getExceptionMapper(FooException.class) == null);
-            Assert.assertTrue(response.getHeaderNames() != null);
-            Assert.assertTrue(request.getMethod() != null);
-            Assert.assertTrue(httpServletRequest.getMethod() != null);
-            Assert.assertTrue(uriInfo.getPath() != null);
+            check(httpHeaders.getRequestHeaders().size() > 0, "httpHeaders.getRequestHeaders().size() > 0");
+            check(providers.getExceptionMapper(FooException.class) == null, "providers.getExceptionMapper(FooException.class) == null");
+            check(response.getHeaderNames() != null, "response.getHeaderNames() != null");
+            check(request.getMethod() != null, "request.getMethod() != null");
+            check(httpServletRequest.getMethod() != null, "httpServletRequest.getMethod() != null");
+            check(uriInfo.getPath() != null, "uriInfo.getPath() != null");
 // TODO OPENEJB-1979 - JAX-RS SecurityContext.isCallerInRole always returns true in Embedded EJBContainer
 //            Assert.assertTrue(!securityContext.isUserInRole("ThereIsNoWayThisShouldEverPass"));
-            Assert.assertTrue(contextResolver.getContext(null) == null);
+            check(contextResolver.getContext(null) == null, "contextResolver.getContext(null) == null");
 
             context.proceed();
 
             // Test again to ensure thread locals are still valid
-            Assert.assertTrue(httpHeaders.getRequestHeaders().size() > 0);
-            Assert.assertTrue(providers.getExceptionMapper(FooException.class) == null);
-            Assert.assertTrue(response.getHeaderNames() != null);
-            Assert.assertTrue(request.getMethod() != null);
-            Assert.assertTrue(httpServletRequest.getMethod() != null);
-            Assert.assertTrue(uriInfo.getPath() != null);
+            check(httpHeaders.getRequestHeaders().size() > 0, "httpHeaders.getRequestHeaders().size() > 0");
+            check(providers.getExceptionMapper(FooException.class) == null, "providers.getExceptionMapper(FooException.class) == null");
+            check(response.getHeaderNames() != null, "response.getHeaderNames() != null");
+            check(request.getMethod() != null, "request.getMethod() != null");
+            check(httpServletRequest.getMethod() != null, "httpServletRequest.getMethod() != null");
+            check(uriInfo.getPath() != null, "uriInfo.getPath() != null");
 // TODO OPENEJB-1979 - JAX-RS SecurityContext.isCallerInRole always returns true in Embedded EJBContainer
 //            Assert.assertTrue(!securityContext.isUserInRole("ThereIsNoWayThisShouldEverPass"));
-            Assert.assertTrue(contextResolver.getContext(null) == null);
+            check(contextResolver.getContext(null) == null, "contextResolver.getContext(null) == null");
 
             return true;
+        }
+
+        private static void checkNotNull(final String name, final Object value) {
+            if (value == null) {
+                throw new IllegalStateException(name + " was not injected");
+            }
+        }
+
+        private static void check(final boolean condition, final String description) {
+            if (!condition) {
+                throw new IllegalStateException("check failed: " + description);
+            }
         }
     }
 

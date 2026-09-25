@@ -47,7 +47,7 @@ public class LinkTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "LinkTest.war")
-            .addClasses(LinkEndpoint.class)
+            .addClass(LinkTest.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

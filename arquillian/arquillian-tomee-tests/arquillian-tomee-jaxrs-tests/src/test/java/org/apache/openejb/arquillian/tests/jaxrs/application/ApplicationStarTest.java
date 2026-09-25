@@ -41,7 +41,7 @@ public class ApplicationStarTest {
     @Deployment(testable = false)
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "ApplicationStarTest.war")
-            .addClasses(MyEndpoint.class, MyApp.class);
+            .addClass(ApplicationStarTest.class);
     }
 
     @Test

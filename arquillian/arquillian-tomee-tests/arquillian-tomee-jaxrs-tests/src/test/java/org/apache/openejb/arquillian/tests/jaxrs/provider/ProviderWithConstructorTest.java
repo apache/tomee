@@ -55,7 +55,7 @@ public class ProviderWithConstructorTest {
     public static WebArchive war() {
         // the provider writes the context path, so the archive name matters
         return ShrinkWrap.create(WebArchive.class, "app.war")
-            .addClasses(AnEndpointToCheckAProvider.class, ApplicationWithProvider.class, ConstructorProvider.class)
+            .addClass(ProviderWithConstructorTest.class)
             .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
                 "<servlet>" +
                 "<servlet-name>REST Application</servlet-name>" +
