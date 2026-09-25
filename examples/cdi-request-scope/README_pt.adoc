@@ -122,45 +122,22 @@ public class RestaurantTest {
 
 == Executando
 
-Na saida você pode ver que existem duas instâncias de `Soup` criadas - uma para cada requisição.
+O teste chama `orderSoup()` duas vezes, uma com "Tomato Soup" e outra com "Potato Soup". Nas duas
+chamadas o `Chef` recebe a sopa indicada pelo `Waiter`, porque os dois beans compartilham a mesma
+instância de `Soup` durante a chamada.
+
+As duas chamadas vêm da thread do teste, que não é uma requisição HTTP. Para essas chamadas locais
+de EJB o container mantém um único contexto de requisição para a thread, então o bean `Soup` é
+criado apenas uma vez e a saída mostra um único `Soup created`. Em uma aplicação web, cada
+requisição HTTP tem o seu próprio contexto de requisição e, portanto, a sua própria instância de `Soup`.
 
 [source,console]
 ----
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running org.superbiz.cdi.requestscope.RestaurantTest
-Apache OpenEJB 10.0.0-M1-SNAPSHOT    build: 20111224-11:09
-http://tomee.apache.org/
-INFO - openejb.home = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
-INFO - openejb.base = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
-INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope\target\classes
-INFO - Beginning load: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope\target\classes
-INFO - Configuring enterprise application: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean cdi-request-scope.Comp: Container(type=MANAGED, id=Default Managed Container)
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Chef: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Enterprise application "c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope" loaded.
-INFO - Assembling app: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
-INFO - Jndi(name="java:global/cdi-request-scope/Chef!org.superbiz.cdi.requestscope.Chef")
-INFO - Jndi(name="java:global/cdi-request-scope/Chef")
-INFO - Jndi(name="java:global/cdi-request-scope/Waiter!org.superbiz.cdi.requestscope.Waiter")
-INFO - Jndi(name="java:global/cdi-request-scope/Waiter")
-INFO - Created Ejb(deployment-id=Chef, ejb-name=Chef, container=Default Stateless Container)
-INFO - Created Ejb(deployment-id=Waiter, ejb-name=Waiter, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=Chef, ejb-name=Chef, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=Waiter, ejb-name=Waiter, container=Default Stateless Container)
-INFO - Deployed Application(path=c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope)
+[INFO] Running org.superbiz.cdi.requestscope.RestaurantTest
+...
+INFO: Deployed Application(path=.../examples/cdi-request-scope)
 Soup created
-Soup created
-INFO - Undeploying app: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.412 sec
-
-Results :
-
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+INFO: Undeploying app: .../examples/cdi-request-scope
+...
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
