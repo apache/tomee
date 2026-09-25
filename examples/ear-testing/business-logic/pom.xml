@@ -61,9 +61,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>11.0.0-M1</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile-api</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -77,8 +77,8 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile</artifactId>
       <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
