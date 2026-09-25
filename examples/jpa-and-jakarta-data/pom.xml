@@ -65,11 +65,11 @@
   </repositories>
 
   <dependencies>
-    <!-- Jakarta EE API (includes JPA, CDI, EJB, etc.) -->
+    <!-- TomEE Web Profile API (includes JPA, CDI, EJB, Jakarta Data, etc.) -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>11.0.0-M1</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile-api</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
@@ -81,19 +81,11 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- OpenEJB container for running tests -->
+    <!-- TomEE server (includes OpenEJB container and Jakarta Data provider) -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- TomEE Jakarta Data provider -->
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jakarta-data</artifactId>
-      <version>${tomee.version}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 
