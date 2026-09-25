@@ -24,6 +24,7 @@ be configured by method too if you need to be more precise.
 [source,java]
 ----
 @Path("/greeting")
+@RequestScoped
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 public class GreetingService {

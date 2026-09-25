@@ -16,6 +16,9 @@
  */
 package org.superbiz.rest;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class Greeting {
 
     public String doSomething(final String value) {
