@@ -229,29 +229,12 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
 
 
-        // activate the endpoint
+        // the endpoint is activated in start(), once the other beans of the application are started
         CURRENT.set(beanContext);
         try {
 
             final MdbActivationContext activationContext = new MdbActivationContext(Thread.currentThread().getContextClassLoader(), beanContext, resourceAdapter, endpointFactory, activationSpec);
             activationContexts.put(beanContext, activationContext);
-
-            boolean activeOnStartup = true;
-            String activeOnStartupSetting = beanContext.getActivationProperties().get("MdbActiveOnStartup");
-
-            if (activeOnStartupSetting == null) {
-                activeOnStartupSetting = beanContext.getActivationProperties().get("DeliveryActive");
-            }
-
-            if (activeOnStartupSetting != null) {
-                activeOnStartup = Boolean.parseBoolean(activeOnStartupSetting);
-            }
-
-            if (activeOnStartup) {
-                activationContext.start();
-            } else {
-                logger.info("Not auto-activating endpoint for " + beanContext.getDeploymentID());
-            }
 
             String jmxName = beanContext.getActivationProperties().get("MdbJMXControl");
             if (jmxName == null) {
@@ -368,6 +351,22 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
     }
 
     public void start(final BeanContext info) throws OpenEJBException {
+        final MdbActivationContext activationContext = activationContexts.get(info);
+        if (activationContext != null) {
+            if (BaseMdbContainer.isActiveOnStartup(info)) {
+                CURRENT.set(info);
+                try {
+                    activationContext.start();
+                } catch (final ResourceException e) {
+                    throw new OpenEJBException(e);
+                } finally {
+                    CURRENT.remove();
+                }
+            } else {
+                logger.info("Not auto-activating endpoint for " + info.getDeploymentID());
+            }
+        }
+
         final EjbTimerService timerService = info.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
