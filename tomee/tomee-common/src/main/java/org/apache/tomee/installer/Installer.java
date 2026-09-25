@@ -16,14 +16,17 @@
  */
 package org.apache.tomee.installer;
 
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Function;
 import java.util.jar.JarFile;
 
@@ -138,6 +141,7 @@ public class Installer implements InstallerInterface {
 
         commentDeploymentDir();
         installConfigFiles(true);
+        installServerInfo();
 
         removeTomcatLibJar("annotations-api.jar");
         // addJavaeeInEndorsed();
@@ -171,6 +175,49 @@ public class Installer implements InstallerInterface {
         // overwrite the catalina.bat file
         if (!Installers.writeAll(setclasspath, bat, alerts)) {
             alerts.addInfo("Can't add workarounds for setclasspath.bat");
+        }
+    }
+
+    // Tomcat reads its server info from org/apache/catalina/util/ServerInfo.properties, and the lib/ directory comes
+    // before lib/catalina.jar in common.loader, so this copy with the TomEE version shows up in the startup log,
+    // ServletContext#getServerInfo(), error pages and "catalina.sh version"
+    private void installServerInfo() {
+        final String serverInfoPath = "org/apache/catalina/util/ServerInfo.properties";
+        final File serverInfoFile = new File(paths.getCatalinaLibDir(), serverInfoPath);
+        if (serverInfoFile.exists()) {
+            return;
+        }
+
+        try (final JarFile catalinaJar = new JarFile(new File(paths.getCatalinaLibDir(), "catalina.jar"))) {
+            final String tomcatServerInfo = Installers.readEntry(catalinaJar, serverInfoPath, alerts);
+            if (tomcatServerInfo == null) {
+                return;
+            }
+
+            final Properties tomcatServerInfoProperties = new Properties();
+            tomcatServerInfoProperties.load(new StringReader(tomcatServerInfo));
+            final String info = tomcatServerInfoProperties.getProperty("server.info");
+            final int slash = info == null ? -1 : info.indexOf('/');
+            if (slash < 0) {
+                return;
+            }
+
+            // not OpenEjbVersion, it uses the context classloader which doesn't see openejb-core during the build
+            final String tomeeVersion = IO.readProperties(Installer.class.getClassLoader().getResourceAsStream("openejb-version.properties"), new Properties())
+                    .getProperty("version");
+            final String tomeeInfo = info.substring(0, slash) + " (TomEE)" + info.substring(slash) + " (" + tomeeVersion + ")";
+
+            if (!serverInfoFile.getParentFile().isDirectory() && !serverInfoFile.getParentFile().mkdirs()) {
+                alerts.addWarning("Unable to create " + serverInfoFile.getParentFile().getAbsolutePath());
+                return;
+            }
+            if (Installers.writeAll(serverInfoFile, tomcatServerInfo.replace("server.info=" + info,
+                    "# Overrides server.info of catalina.jar, remove this file to report plain Apache Tomcat\n" +
+                    "server.info=" + tomeeInfo), alerts)) {
+                alerts.addInfo("Add TomEE server info to lib");
+            }
+        } catch (final IOException e) {
+            alerts.addWarning("Unable to add TomEE server info to lib: " + e.getMessage());
         }
     }
 
@@ -587,12 +634,9 @@ public class Installer implements InstallerInterface {
                         "\n" +
                         "# ----- Execute The Requested Command");
 
-        newCatalinaSh = newCatalinaSh.replace("    \"$_RUNJAVA\"   \\\n" +
-            "      -classpath \"$CATALINA_HOME/lib/catalina.jar\" \\\n" +
-            "      org.apache.catalina.util.ServerInfo",
-            "   eval \"\\\"$_RUNJAVA\\\"\" \"$JAVA_OPTS\" \\\n" +
-                "         -classpath \"\\\"$CATALINA_HOME/lib/catalina.jar:$CATALINA_HOME/lib/openejb-core-"+ properties.get("tomee.version") + ".jar\\\"\" \\\n" +
-                "         org.apache.catalina.util.ServerInfo");
+        // "catalina.sh version" should see lib/org/apache/catalina/util/ServerInfo.properties like common.loader does
+        newCatalinaSh = newCatalinaSh.replace("-classpath \"\\\"$CATALINA_HOME/bin/tomcat-juli.jar:$CATALINA_HOME/lib/*\\\"\"",
+            "-classpath \"\\\"$CATALINA_BASE/lib:$CATALINA_HOME/lib:$CATALINA_HOME/bin/tomcat-juli.jar:$CATALINA_HOME/lib/*\\\"\"");
 
         // overwrite the catalina.sh file
         if (Installers.writeAll(paths.getCatalinaShFile(), newCatalinaSh, alerts)) {
@@ -644,8 +688,8 @@ public class Installer implements InstallerInterface {
                         "\r\n" +
                         "rem ----- Execute The Requested Command");
 
-        newCatalinaBat = newCatalinaBat.replace("%_EXECJAVA% %JAVA_OPTS% -classpath \"%CATALINA_HOME%\\lib\\catalina.jar\" org.apache.catalina.util.ServerInfo",
-            "%_EXECJAVA% %JAVA_OPTS% -classpath \"%CATALINA_HOME%\\lib\\catalina.jar;%CATALINA_HOME%\\lib\\openejb-core-" + properties.get("tomee.version") + ".jar\" org.apache.catalina.util.ServerInfo");
+        newCatalinaBat = newCatalinaBat.replace("-classpath \"%CATALINA_HOME%\\bin\\tomcat-juli.jar;%CATALINA_HOME%\\lib\\*\"",
+            "-classpath \"%CATALINA_BASE%\\lib;%CATALINA_HOME%\\lib;%CATALINA_HOME%\\bin\\tomcat-juli.jar;%CATALINA_HOME%\\lib\\*\"");
 
         // overwrite the catalina.bat file
         if (Installers.writeAll(paths.getCatalinaBatFile(), newCatalinaBat, alerts)) {
