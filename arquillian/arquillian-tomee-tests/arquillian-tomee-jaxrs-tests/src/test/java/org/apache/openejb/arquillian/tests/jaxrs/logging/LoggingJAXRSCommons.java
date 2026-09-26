@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.tests.jaxrs.logging;
 
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.log.LoggerCreator;
 import org.apache.openejb.server.rest.RESTService;
 import org.apache.openejb.util.JuliLogStream;
@@ -55,7 +56,7 @@ public class LoggingJAXRSCommons {
         @Override
         protected void before() {
             assumeTrue("needs the container in the test JVM",
-                    System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+                    ArquillianUtil.isCurrentAdapter("tomee-embedded"));
         }
     };
 

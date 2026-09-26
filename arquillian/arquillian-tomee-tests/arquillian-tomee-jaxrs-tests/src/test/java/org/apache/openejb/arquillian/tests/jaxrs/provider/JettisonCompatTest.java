@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.loader.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -48,7 +49,7 @@ public class JettisonCompatTest {
         @Override
         protected void before() {
             assumeTrue("needs jettison in the container",
-                    System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+                    ArquillianUtil.isCurrentAdapter("tomee-embedded"));
         }
     };
 

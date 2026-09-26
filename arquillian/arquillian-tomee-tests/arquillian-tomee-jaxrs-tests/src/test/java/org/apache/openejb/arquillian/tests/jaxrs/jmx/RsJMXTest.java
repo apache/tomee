@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jaxrs.jmx;
 
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -76,7 +77,7 @@ public class RsJMXTest {
         @Override
         protected void before() {
             assumeTrue("needs the container in the test JVM",
-                    System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+                    ArquillianUtil.isCurrentAdapter("tomee-embedded"));
         }
 
         @Override

@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.tests.jaxrs.provider;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -55,7 +56,7 @@ public class IgnoreMandatoryProviderTest {
         @Override
         protected void before() {
             assumeTrue("needs the container in the test JVM",
-                    System.getProperty("openejb.arquillian.adapter", "embedded").contains("embedded"));
+                    ArquillianUtil.isCurrentAdapter("tomee-embedded"));
             SystemInstance.get().setProperty(DEACTIVATION, "false");
         }
 
