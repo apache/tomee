@@ -1,0 +1,157 @@
+:index-group: Security
+:jbake-type: page
+:jbake-status: status=published
+= CDI, EJBContext and JAAS
+
+This example shows how a user who logs in programmatically in a servlet
+through a JAAS realm is seen as the caller principal of an EJB. The servlet
+calls `HttpServletRequest.login(...)`, and a CDI-injected stateless bean then
+reads the caller name from its `EJBContext`.
+
+The example is a plain WAR. It has no tests. Instead, it uses the
+`tomee-maven-plugin` to start a TomEE with its own `server.xml` and
+JAAS configuration.
+
+== The EJB: reading the caller from EJBContext
+
+`PrinciaplEjb` is a `@Stateless` bean. It gets its `EJBContext` injected with
+`@Resource` and returns the name of the current caller principal:
+
+[source,java]
+----
+@Stateless
+public class PrinciaplEjb {
+
+    @Resource
+    private EJBContext context;
+
+    public String info() {
+        return context.getCallerPrincipal().getName();
+    }
+}
+----
+
+The bean contains no security code of its own. It only reports the identity
+that the container passes to it.
+
+== The servlet: programmatic login
+
+`LogginServlet` is mapped to `/ejbcontext`. It gets the EJB injected with
+CDI's `@Inject` (not `@EJB`). It logs the user in with the `myUser` and
+`myPass` request parameters, then writes the caller name returned by the EJB
+and the result of `isUserInRole("admin")`:
+
+[source,java]
+----
+@WebServlet(urlPatterns = "/ejbcontext")
+public class LogginServlet extends HttpServlet {
+
+    @Inject
+    private PrinciaplEjb bean;
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.login(req.getParameter("myUser"), req.getParameter("myPass"));
+        // think to persist the information in the session if you need it later
+        resp.getWriter().write("logged user ==> " + bean.info() + "; isUserInRole(admin)? " + req.isUserInRole("admin"));
+    }
+}
+----
+
+The servlet overrides `service(...)`, so it handles every HTTP method.
+`req.login(...)` only authenticates the current request. As the comment in the
+code says, you have to store the information in the session yourself if you
+need it in later requests.
+
+== The TomEE configuration
+
+The files in `src/main/tomee/conf` are copied into the `conf` folder of the
+TomEE that the `tomee-maven-plugin` runs.
+
+=== The JAAS realm in server.xml
+
+The `Engine` uses Tomcat's `JAASRealm`. The realm points to the
+`PropertiesLoginModule` login context and tells Tomcat which principal classes
+stand for users and which stand for roles:
+
+[source,xml]
+----
+<Realm className="org.apache.catalina.realm.JAASRealm" appName="PropertiesLoginModule"
+       userClassNames="org.apache.openejb.core.security.jaas.UserPrincipal"
+       roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal">
+</Realm>
+----
+
+=== The JAAS login module
+
+`login.config` defines the `PropertiesLoginModule` entry that the realm
+references. It uses OpenEJB's `PropertiesLoginModule`, which reads users and
+groups from two property files:
+
+[source]
+----
+PropertiesLoginModule {
+    org.apache.openejb.core.security.jaas.PropertiesLoginModule required
+    Debug=false
+    UsersFile="users.properties"
+    GroupsFile="groups.properties";
+};
+----
+
+`users.properties` defines a user `tomee` with the password `tomee`:
+
+[source,properties]
+----
+tomee=tomee
+----
+
+`groups.properties` puts that user in the `admin` group:
+
+[source,properties]
+----
+admin=tomee
+----
+
+=== The plugin configuration
+
+The JVM has to know where `login.config` is. The `pom.xml` sets the
+`java.security.auth.login.config` system property to the copy of the file
+inside the TomEE that the plugin builds under `target/apache-tomee`:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.tomee.maven</groupId>
+  <artifactId>tomee-maven-plugin</artifactId>
+  <version>11.0.0-SNAPSHOT</version>
+  <configuration>
+    <systemVariables>
+      <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>
+      <org.apache.catalina.STRICT_SERVLET_COMPLIANCE>false</org.apache.catalina.STRICT_SERVLET_COMPLIANCE>
+    </systemVariables>
+  </configuration>
+</plugin>
+----
+
+== Running the example
+
+The example has no automated tests. Build the WAR and start TomEE with the
+plugin:
+
+[source,bash]
+----
+mvn clean install tomee:run
+----
+
+Then call the servlet with the credentials from `users.properties`:
+
+[source,bash]
+----
+curl "http://localhost:8080/cdi-ejbcontext-jaas/ejbcontext?myUser=tomee&myPass=tomee"
+----
+
+The response shows the name that the EJB reads from its `EJBContext`, followed
+by the result of `isUserInRole("admin")`. For the user `tomee` this should be
+`tomee` and `true`, because `groups.properties` puts `tomee` in the `admin`
+group. If the credentials are wrong, `req.login(...)` throws a
+`ServletException`.

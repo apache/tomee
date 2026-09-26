@@ -210,7 +210,7 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
 
         private static final String WELL_KNOWN_CONFIGURATION_PATH = "/.well-known/openid-configuration";
 
-        private OpenIdProviderMetadata cached = null;
+        private volatile OpenIdProviderMetadata cached = null;
 
         public AutoResolvingProviderMetadata(OpenIdAuthenticationMechanismDefinition delegate) {
             super(delegate);

@@ -1,0 +1,107 @@
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Groovy CDI
+
+This example shows that a class written in http://groovy-lang.org[Groovy] can be used as a CDI bean.
+A Groovy class is injected with `@Inject` into an Arquillian test, which is also written in Groovy,
+and runs in the embedded OpenEJB container.
+
+== Compiling the Groovy sources
+
+The Groovy code lives in `src/main/groovy` and `src/test/groovy`. It is compiled by the
+`gmavenplus-plugin`, which runs its `compile` and `compileTests` goals:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.codehaus.gmavenplus</groupId>
+  <artifactId>gmavenplus-plugin</artifactId>
+  <version>4.2.1</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>compile</goal>
+        <goal>compileTests</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The Groovy runtime comes from the `org.codehaus.groovy:groovy-all` dependency. The test
+dependencies are JUnit 4, `arquillian-openejb-embedded`, `ziplock` and `arquillian-junit-container`.
+
+== The bean
+
+`Hello` is a plain Groovy class (`src/main/groovy/org/superbiz/Hello.groovy`, in package
+`org.superbiz.groovy`). It has no annotations. Its `hi()` method returns the string `"hi"`:
+
+[source,groovy]
+----
+package org.superbiz.groovy
+
+class Hello {
+
+    def hi() {
+        "hi"
+    }
+}
+----
+
+The module also contains an empty `src/main/resources/META-INF/beans.xml`:
+
+[source,xml]
+----
+<beans>
+</beans>
+----
+
+== The test
+
+`HelloTest` is a JUnit 4 test written in Groovy and run by the `Arquillian` runner.
+The `@Deployment` method builds a `WebArchive` that contains:
+
+* the jar that holds `GroovyObject`, found with ziplock's `JarLocation.jarLocation(...)` and added
+  as a library, so the Groovy runtime is available in the deployment;
+* an empty `WEB-INF/beans.xml`, which turns on CDI for the archive;
+* the `Hello` class.
+
+The `Hello` instance is injected with `@Inject`. The test checks that it was injected and
+that `hi()` returns `"hi"`:
+
+[source,groovy]
+----
+@RunWith(Arquillian.class)
+class HelloTest {
+
+    @Inject
+    private Hello hello
+
+    @Deployment
+    static WebArchive war() {
+        ShrinkWrap.create(WebArchive.class)
+                  .addAsLibraries(JarLocation.jarLocation(GroovyObject.class))
+                  .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+                  .addClasses(Hello.class)
+    }
+
+    @Test
+    void hello() {
+        assertNotNull hello
+        assertEquals "hi", hello.hi()
+    }
+}
+----
+
+== Running the example
+
+From the `examples/groovy-cdi` directory, run:
+
+[source,bash]
+----
+$ mvn clean test
+----
+
+Maven compiles the Groovy sources with GMavenPlus, and Surefire runs `HelloTest` in the embedded
+OpenEJB container.

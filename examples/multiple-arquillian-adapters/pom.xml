@@ -121,9 +121,9 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>11.0.0-M1</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile-api</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- common arquillian dependencies -->
@@ -137,13 +137,6 @@
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
       <version>${arquillian.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- utility test deps -->
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>ziplock</artifactId>
-      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- arquillian adapters -->

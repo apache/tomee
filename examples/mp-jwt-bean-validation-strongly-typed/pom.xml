@@ -25,10 +25,8 @@
   <name>TomEE :: Examples :: MicroProfile JWT Bean Validation, Strongly-typed Annotations</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.jakartaee-api>11.0.0-M1</version.jakartaee-api>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
-    <mp-jwt.version>2.1</mp-jwt.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -96,15 +94,9 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>jakartaee-api</artifactId>
-      <version>${version.jakartaee-api}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${mp-jwt.version}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile-api</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -124,15 +116,9 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${tomee.version}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>

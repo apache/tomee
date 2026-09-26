@@ -175,7 +175,7 @@
     <module>testing-security-4</module>
     <module>testing-transactions</module>
     <module>testing-transactions-bmt</module>
-<!--    <module>tomee-jersey-eclipselink</module>-->
+    <module>tomee-jersey-eclipselink</module>
     <module>tomee-jms-portability</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>

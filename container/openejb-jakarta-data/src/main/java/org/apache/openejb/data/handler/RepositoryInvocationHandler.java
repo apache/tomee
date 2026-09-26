@@ -30,7 +30,7 @@ import jakarta.data.repository.Update;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Status;
-import jakarta.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.executable.ExecutableValidator;
@@ -43,9 +43,7 @@ import org.apache.openejb.data.query.CriteriaQueryBuilder;
 import org.apache.openejb.data.query.FindAnnotationExecutor;
 import org.apache.openejb.data.query.MethodNameParser;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 
-import javax.naming.NamingException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -167,43 +165,33 @@ public class RepositoryInvocationHandler implements InvocationHandler {
     }
 
     private Object executeInTransaction(final EntityManager em, final Method method, final Object[] args) throws Exception {
-        final UserTransaction ut = lookupUserTransaction();
-        if (ut == null) {
+        // The container TransactionManager, not UserTransaction: a CDI @Transactional method forbids any UserTransaction use
+        // for its whole duration, and repositories are routinely called from exactly those methods.
+        final TransactionManager tm = SystemInstance.get().getComponent(TransactionManager.class);
+        if (tm == null) {
             return doInvoke(em, method, args);
         }
 
-        final boolean startedTx = ut.getStatus() != Status.STATUS_ACTIVE;
+        final boolean startedTx = tm.getStatus() == Status.STATUS_NO_TRANSACTION;
         if (startedTx) {
-            ut.begin();
+            tm.begin();
         }
         try {
             final Object result = doInvoke(em, method, args);
             if (startedTx) {
-                ut.commit();
+                tm.commit();
             }
             return result;
         } catch (final Exception e) {
             if (startedTx) {
                 try {
-                    ut.rollback();
+                    tm.rollback();
                 } catch (final Exception rollbackEx) {
                     LOGGER.log(Level.WARNING, "Rollback failed", rollbackEx);
                 }
             }
             throw mapException(e);
         }
-    }
-
-    private UserTransaction lookupUserTransaction() {
-        try {
-            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            if (containerSystem != null) {
-                return (UserTransaction) containerSystem.getJNDIContext().lookup("comp/UserTransaction");
-            }
-        } catch (final NamingException e) {
-            LOGGER.log(Level.FINE, "UserTransaction not available via JNDI", e);
-        }
-        return null;
     }
 
     private Object doInvoke(final EntityManager em, final Method method, final Object[] args) {

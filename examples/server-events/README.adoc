@@ -1,0 +1,148 @@
+:index-group: Other Features
+:jbake-type: page
+:jbake-status: status=published
+= Server Events
+
+TomEE (through OpenEJB) fires internal events during its lifecycle, for example when the assembler has created an application.
+Any plain Java class can observe these events with a method whose parameter is annotated with `org.apache.openejb.observer.Observes`.
+Note that this is the OpenEJB observer API, not CDI's `jakarta.enterprise.event.Observes`.
+
+This example shows two ways to register such an observer:
+
+* as a service declared in the container configuration (`MyListener`)
+* as an extension discovered automatically from `META-INF/org.apache.openejb.extension` (`AutoDiscoveredListener`)
+
+== An observer registered as a service
+
+`MyListener` observes `Object`, so it receives every event fired by the server and logs it.
+It also has a setter, which makes `logAllEvent` a property that can be set from the service configuration.
+
+[source,java]
+----
+package org.superbiz.event;
+
+import org.apache.openejb.observer.Observes;
+
+import java.util.logging.Logger;
+
+/**
+ * registered as service in openejb.xml, tomee.xml, resources.xml or openejb system properties:
+ *
+ * listener = new://Service?class-name=org.superbiz.event.MyListener
+ * listener.logAllEvent = true
+ */
+public class MyListener {
+
+    private static final Logger LOGGER = Logger.getLogger(MyListener.class.getName());
+
+    private static boolean logAllEvent = false; // static for testing
+
+    public void global(@Observes final Object event) {
+        LOGGER.info(">>> an event occurred -> " + event.toString());
+    }
+
+    // configurable
+    public void setLogAllEvent(boolean logAllEvent) {
+        this.logAllEvent = logAllEvent;
+    }
+
+    public static boolean isLogAllEvent() {
+        return logAllEvent;
+    }
+}
+----
+
+As the Javadoc says, the class is not picked up on its own: it has to be declared as a service in `openejb.xml`, `tomee.xml`, `resources.xml` or as OpenEJB system properties:
+
+[source,properties]
+----
+listener = new://Service?class-name=org.superbiz.event.MyListener
+listener.logAllEvent = true
+----
+
+== An auto-discovered observer
+
+`AutoDiscoveredListener` only observes `AssemblerAfterApplicationCreated`, the event fired once an application has been created, and stores the application id.
+
+[source,java]
+----
+package org.superbiz.event;
+
+import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
+import org.apache.openejb.observer.Observes;
+
+public class AutoDiscoveredListener {
+
+    private static String appName;
+
+    public void appCreated(@Observes final AssemblerAfterApplicationCreated appCreatedEvent) {
+        appName = appCreatedEvent.getApp().appId;
+    }
+
+    public static String getAppName() {
+        return appName;
+    }
+}
+----
+
+It needs no service declaration. Instead, its fully qualified class name is listed in `src/main/resources/META-INF/org.apache.openejb.extension`:
+
+[source,properties]
+----
+org.superbiz.event.AutoDiscoveredListener
+----
+
+== Testing
+
+The test runs with the embedded OpenEJB Arquillian adapter (`arquillian-openejb-embedded`).
+`src/test/resources/arquillian.xml` registers `MyListener` as a service through the container properties:
+
+[source,xml]
+----
+<arquillian
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    >
+  <container qualifier="openejb" default="true">
+    <configuration>
+      <property name="properties">
+        listener = new://Service?class-name=org.superbiz.event.MyListener
+        listener.logAllEvent = true
+      </property>
+    </configuration>
+  </container>
+</arquillian>
+----
+
+The deployment is a `listener-test.jar` that contains both listeners and an `org.apache.openejb.extension` manifest resource naming `AutoDiscoveredListener`:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class ListenerTest {
+
+    @Deployment
+    public static JavaArchive jar() {
+        return ShrinkWrap.create(JavaArchive.class, "listener-test.jar")
+                .addClasses(MyListener.class, AutoDiscoveredListener.class)
+                .addAsManifestResource(new StringAsset(AutoDiscoveredListener.class.getName()), ArchivePaths.create("org.apache.openejb.extension"));
+    }
+
+    @Test
+    public void check() {
+        assertEquals("listener-test", AutoDiscoveredListener.getAppName());
+        assertTrue(MyListener.isLogAllEvent());
+    }
+}
+----
+
+The test checks that:
+
+* `AutoDiscoveredListener` received the `AssemblerAfterApplicationCreated` event for the deployed application, whose id is `listener-test`
+* `MyListener` was created from the service configuration and its `logAllEvent` property was set to `true`
+
+Run it with:
+
+[source,bash]
+----
+mvn clean test
+----

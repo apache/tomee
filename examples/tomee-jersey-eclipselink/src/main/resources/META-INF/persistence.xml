@@ -27,7 +27,6 @@
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.HSQLPlatform"/>
-      <property name="eclipselink.target-server" value="org.eclipse.persistence.transaction.JTATransactionController"/>
       <property name="eclipselink.ddl-generation" value="create-tables"/>
       <property name="eclipselink.ddl-generation.output-mode" value="database"/>
     </properties>

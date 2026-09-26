@@ -1,0 +1,200 @@
+:index-group: Security
+:jbake-type: page
+:jbake-status: status=published
+= REST and JAAS
+
+This example shows how to secure a JAX-RS endpoint in TomEE using JAAS.
+Tomcat's `JAASRealm` delegates authentication to OpenEJB's
+`PropertiesLoginModule`, which reads users and groups from two properties
+files. The servlet container protects the REST URLs with BASIC authentication,
+and the EJB container checks the caller's role with `@RolesAllowed` before
+the resource method runs.
+
+The example has no Java code besides the REST resource. The rest is
+configuration in `src/main/tomee/conf` and `WEB-INF/web.xml`.
+
+== The REST resource
+
+`JAASSecuredRestEndpoint` is a JAX-RS resource that is also a `@Singleton`
+EJB, so EJB security annotations apply to it. The `jaas` method is restricted
+to the `superUser` role and returns the name of the authenticated caller,
+taken from the injected `SessionContext`:
+
+[source,java]
+----
+package org.superbiz.jaxrs.jaas;
+
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Singleton;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+
+@Path("rest")
+@Singleton
+@Lock(LockType.READ)
+public class JAASSecuredRestEndpoint {
+
+    @Resource
+    private SessionContext ctx;
+
+    @GET
+    @Path("jaas")
+    @RolesAllowed("superUser")
+    public String getPrincipalName() {
+        return ctx.getCallerPrincipal().getName();
+    }
+}
+----
+
+`@Lock(LockType.READ)` allows concurrent requests to the singleton, since
+the method does not change any state.
+
+== The JAAS login module
+
+`src/main/tomee/conf/login.config` declares a JAAS application named
+`PropertiesLoginModule` backed by
+`org.apache.openejb.core.security.jaas.PropertiesLoginModule`:
+
+[source]
+----
+PropertiesLoginModule {
+    org.apache.openejb.core.security.jaas.PropertiesLoginModule required
+    Debug=false
+    UsersFile="users.properties"
+    GroupsFile="groups.properties";
+};
+----
+
+The login module looks up both files in the TomEE `conf` directory.
+`users.properties` maps each user name to its password:
+
+[source]
+----
+tomee=tomee
+adminOnly=adminOnly
+----
+
+`groups.properties` maps each group (role) to a comma-separated list of users:
+
+[source]
+----
+admin=tomee,adminOnly
+superUser=tomee
+----
+
+So `tomee` has the roles `admin` and `superUser`, while `adminOnly` only has
+`admin`.
+
+== The Tomcat realm
+
+`src/main/tomee/conf/server.xml` configures a `JAASRealm` on the engine. Its
+`appName` matches the entry in `login.config`. `userClassNames` and
+`roleClassNames` tell Tomcat which principals created by the login module
+represent the user and its roles:
+
+[source,xml]
+----
+<Server port="8005" shutdown="SHUTDOWN">
+  <Listener className="org.apache.tomee.catalina.ServerListener"/>
+  <Listener className="org.apache.catalina.security.SecurityListener"/>
+
+  <Service name="Catalina">
+    <Connector port="8080" protocol="HTTP/1.1"/>
+    <Engine name="Catalina" defaultHost="localhost">
+
+      <Realm className="org.apache.catalina.realm.JAASRealm" appName="PropertiesLoginModule"
+             userClassNames="org.apache.openejb.core.security.jaas.UserPrincipal"
+             roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal">
+      </Realm>
+
+      <Host name="localhost" appBase="webapps"/>
+    </Engine>
+  </Service>
+</Server>
+----
+
+== The web.xml security constraint
+
+`WEB-INF/web.xml` enables BASIC authentication and protects every URL under
+`/rest/*`. The `<role-name>*</role-name>` auth constraint only requires the
+caller to be authenticated with one of the declared roles; the finer-grained
+check is left to `@RolesAllowed` on the resource. The transport guarantee
+`CONFIDENTIAL` requires the requests to use HTTPS.
+
+[source,xml]
+----
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>PropertiesLoginModule</realm-name>
+  </login-config>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Secured REST Service with JAAS</web-resource-name>
+      <url-pattern>/rest/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>*</role-name>
+      <!-- we'll use JAAS so don't filter too much here -->
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-role>
+    <role-name>admin</role-name>
+  </security-role>
+  <security-role>
+    <role-name>superUser</role-name>
+  </security-role>
+</web-app>
+----
+
+== Running the example
+
+The `tomee-maven-plugin` copies `src/main/tomee/conf` into the TomEE
+instance it builds, deploys the application as `ROOT` and points the JVM to
+the JAAS configuration through the `java.security.auth.login.config` system
+property:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.tomee.maven</groupId>
+  <artifactId>tomee-maven-plugin</artifactId>
+  <version>11.0.0-SNAPSHOT</version>
+  <configuration>
+    <systemVariables>
+      <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>
+    </systemVariables>
+    <context>ROOT</context>
+  </configuration>
+</plugin>
+----
+
+The example does not contain automated tests, so `mvn clean test` only
+compiles it. To try it, build and start TomEE with:
+
+[source]
+----
+mvn clean package tomee:run
+----
+
+The endpoint is `rest/jaas` under the root context. Because of the
+`CONFIDENTIAL` transport guarantee and the fact that the provided `server.xml`
+only defines a plain HTTP connector on port 8080, you need to add an HTTPS
+connector (with a keystore placed in `src/main/tomee/conf`) before calling it.
+Then:
+
+* `tomee` / `tomee` has the `superUser` role and gets its principal name, `tomee`, back.
+* `adminOnly` / `adminOnly` is authenticated but only has `admin`, so `@RolesAllowed("superUser")` rejects the call.
+* Requests without credentials or with a wrong password are rejected by the BASIC authentication.

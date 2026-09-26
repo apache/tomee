@@ -1,0 +1,438 @@
+:index-group: Java EE Connectors
+:jbake-type: page
+:jbake-status: status=published
+= Connectors in EAR Files
+
+This example shows a Jakarta Connectors (JCA) resource adapter packaged as a RAR inside an EAR, next to a WAR that uses it.
+The resource adapter supports both directions:
+
+* *outbound*: a REST endpoint in the WAR gets a `SampleConnectionFactory` injected and sends a message through a connection;
+* *inbound*: the resource adapter delivers that message to a message-driven bean in the WAR, which implements the adapter's `InboundListener` interface.
+
+The message is stored in a singleton and can be read back over HTTP, so a single POST followed by a GET exercises the full round trip.
+
+== Module layout
+
+The example is a Maven multi-module build. The parent `pom.xml` lists the modules in build order:
+
+[source,xml]
+----
+<modules>
+  <module>connector-sample-api</module>
+  <module>connector-sample-impl</module>
+  <module>connector-sample-rar</module>
+  <module>connector-sample-war</module>
+  <module>connector-sample-ear</module>
+  <module>connector-sample-functional-tests</module>
+</modules>
+----
+
+[options="header"]
+|===
+|Module |Packaging |Contents
+|`connector-sample-api` |jar |The interfaces shared by the adapter and the application: `SampleConnectionFactory`, `SampleConnection` and `InboundListener`.
+|`connector-sample-impl` |jar |The resource adapter implementation (`org.superbiz.connector.adapter`). Depends on the API with `provided` scope.
+|`connector-sample-rar` |rar |Wraps the impl jar and adds `META-INF/ra.xml`.
+|`connector-sample-war` |war |The application: a REST endpoint, a message-driven bean and a singleton. Depends on the API with `provided` scope.
+|`connector-sample-ear` |ear |Bundles the RAR, the WAR and the API jar into one enterprise archive.
+|`connector-sample-functional-tests` |jar |Arquillian tests that deploy an EAR to a remote TomEE Plus.
+|===
+
+The API jar is the one piece of code both sides need, so it is not packaged in the RAR or in the WAR. It goes into the EAR's `lib` directory, where the adapter and the web application can both see it.
+
+== The API
+
+The outbound contract is a connection factory and a connection:
+
+[source,java]
+----
+public interface SampleConnectionFactory extends Serializable, Referenceable {
+    public SampleConnection getConnection() throws ResourceException;
+}
+
+public interface SampleConnection {
+    public void sendMessage(final String message);
+    public void close();
+}
+----
+
+The inbound contract is the message listener interface that message-driven beans implement:
+
+[source,java]
+----
+public interface InboundListener {
+    public void receiveMessage(final String message);
+}
+----
+
+== The resource adapter
+
+`SampleResourceAdapter` keeps track of every activated endpoint. When a message-driven bean is deployed, the container calls `endpointActivation`, and the adapter creates a `MessageEndpoint` and stores it. `sendMessage` passes a message to every registered endpoint by casting it to `InboundListener`:
+
+[source,java]
+----
+@Connector(description = "Sample Resource Adapter", displayName = "Sample Resource Adapter", eisType = "Sample Resource Adapter", version = "1.0")
+public class SampleResourceAdapter implements ResourceAdapter {
+
+    final Map<SampleActivationSpec, EndpointTarget> targets = new ConcurrentHashMap<>();
+
+    public void endpointActivation(final MessageEndpointFactory messageEndpointFactory, final ActivationSpec activationSpec)
+            throws ResourceException
+    {
+        final SampleActivationSpec sampleActivationSpec = (SampleActivationSpec) activationSpec;
+
+        try {
+            final MessageEndpoint messageEndpoint = messageEndpointFactory.createEndpoint(null);
+            final EndpointTarget target = new EndpointTarget(messageEndpoint);
+            targets.put(sampleActivationSpec, target);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void endpointDeactivation(MessageEndpointFactory messageEndpointFactory, ActivationSpec activationSpec) {
+        final SampleActivationSpec sampleActivationSpec = (SampleActivationSpec) activationSpec;
+
+        final EndpointTarget endpointTarget = targets.get(sampleActivationSpec);
+        if (endpointTarget == null) {
+            throw new IllegalStateException("No EndpointTarget to undeploy for ActivationSpec " + activationSpec);
+        }
+
+        endpointTarget.messageEndpoint.release();
+    }
+
+    public void sendMessage(final String message) {
+        final Collection<EndpointTarget> endpoints = this.targets.values();
+        for (final EndpointTarget endpoint : endpoints) {
+            endpoint.invoke(message);
+        }
+    }
+
+    public static class EndpointTarget {
+        private final MessageEndpoint messageEndpoint;
+
+        public EndpointTarget(final MessageEndpoint messageEndpoint) {
+            this.messageEndpoint = messageEndpoint;
+        }
+
+        public void invoke(final String message) {
+            ((InboundListener)this.messageEndpoint).receiveMessage(message);
+        }
+    }
+
+    // start, stop and getXAResources omitted
+}
+----
+
+`SampleActivationSpec` links the `InboundListener` interface to this adapter through `@Activation`:
+
+[source,java]
+----
+@Activation(messageListeners = InboundListener.class)
+public class SampleActivationSpec implements ActivationSpec {
+    // holds the ResourceAdapter and the bean class
+}
+----
+
+The outbound side follows the usual JCA pattern. `SampleManagedConnectionFactory` is declared with `@ConnectionDefinition` and implements `ResourceAdapterAssociation`, so the container gives it a reference to the resource adapter:
+
+[source,java]
+----
+@ConnectionDefinition(connectionFactory = SampleConnectionFactory.class,
+        connectionFactoryImpl = SampleConnectionFactoryImpl.class,
+        connection = SampleConnection.class,
+        connectionImpl = SampleConnectionImpl.class)
+public class SampleManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation {
+
+    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException {
+        return new SampleConnectionFactoryImpl(this, cxManager);
+    }
+
+    public Object createConnectionFactory() throws ResourceException {
+        throw new ResourceException("This resource adapter doesn't support non-managed environments");
+    }
+
+    public ManagedConnection createManagedConnection(Subject subject,
+                                                     ConnectionRequestInfo cxRequestInfo) throws ResourceException {
+        return new SampleManagedConnection(this);
+    }
+
+    // matchManagedConnections, log writer and resource adapter accessors omitted
+}
+----
+
+`SampleConnectionFactoryImpl.getConnection()` asks the container's `ConnectionManager` for a connection. The `SampleConnectionImpl` handle it returns delegates `sendMessage` to its `SampleManagedConnection`, which hands the message to the resource adapter:
+
+[source,java]
+----
+void sendMessage(final String message) {
+    final SampleResourceAdapter resourceAdapter = (SampleResourceAdapter) mcf.getResourceAdapter();
+    resourceAdapter.sendMessage(message);
+}
+----
+
+This is where outbound and inbound meet. Sending a message on an outbound connection delivers it to every activated message-driven bean.
+
+== The RAR descriptor
+
+`connector-sample-rar/src/main/rar/META-INF/ra.xml` declares the resource adapter class, the outbound connection definition (without transaction support) and the inbound message listener with its activation spec:
+
+[source,xml]
+----
+<connector xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/connector_1_7.xsd"
+           version="1.7">
+    <description>Sample Resource Adapter</description>
+    <display-name>Sample Resource Adapter</display-name>
+    <eis-type>Sample Resource Adapter</eis-type>
+    <resourceadapter-version>1.0</resourceadapter-version>
+    <license>
+        <license-required>false</license-required>
+    </license>
+    <resourceadapter>
+        <resourceadapter-class>org.superbiz.connector.adapter.SampleResourceAdapter</resourceadapter-class>
+        <config-property>
+            <config-property-name>interval</config-property-name>
+            <config-property-type>int</config-property-type>
+            <config-property-value>15</config-property-value>
+        </config-property>
+        <outbound-resourceadapter>
+            <connection-definition>
+                <managedconnectionfactory-class>org.superbiz.connector.adapter.SampleManagedConnectionFactory</managedconnectionfactory-class>
+                <connectionfactory-interface>SampleConnectionFactory</connectionfactory-interface>
+                <connectionfactory-impl-class>org.superbiz.connector.adapter.SampleConnectionFactoryImpl</connectionfactory-impl-class>
+                <connection-interface>SampleConnection</connection-interface>
+                <connection-impl-class>org.superbiz.connector.adapter.SampleConnectionImpl</connection-impl-class>
+            </connection-definition>
+            <transaction-support>NoTransaction</transaction-support>
+            <reauthentication-support>false</reauthentication-support>
+        </outbound-resourceadapter>
+        <inbound-resourceadapter>
+            <messageadapter>
+                <messagelistener>
+                    <messagelistener-type>org.superbiz.connector.api.InboundListener</messagelistener-type>
+                    <activationspec>
+                        <activationspec-class>org.superbiz.connector.adapter.SampleActivationSpec</activationspec-class>
+                    </activationspec>
+                </messagelistener>
+            </messageadapter>
+        </inbound-resourceadapter>
+    </resourceadapter>
+</connector>
+----
+
+The `connector-sample-rar` module has `rar` packaging and a single dependency on `connector-sample-impl`, so the RAR contains the impl jar and this descriptor.
+
+== The web application
+
+The WAR also has a TomEE-specific `WEB-INF/resources.xml`. It declares the resource adapter, a message-driven container bound to it, and the connection factory:
+
+[source,xml]
+----
+<resources>
+    <Resource id="SampleResourceAdapter" class-name="org.superbiz.connector.adapter.SampleResourceAdapter">
+    </Resource>
+
+    <Container id="SampleMDBContainer" ctype="MESSAGE">
+        ResourceAdapter=SampleResourceAdapter
+        ActivationSpecClass=org.superbiz.connector.adapter.SampleActivationSpec
+        MessageListenerInterface=org.superbiz.connector.api.InboundListener
+    </Container>
+
+    <Resource id="SampleConnectionFactory" type="org.superbiz.connector.api.SampleConnectionFactory" class-name="org.superbiz.connector.adapter.SampleManagedConnectionFactory">
+        ResourceAdapter=SampleResourceAdapter
+        TransactionSupport=none
+    </Resource>
+</resources>
+----
+
+`Sender` is a singleton EJB that is also a JAX-RS resource. A POST takes a connection from the injected `SampleConnectionFactory` and sends the request body. A GET returns every message received so far, one per line:
+
+[source,java]
+----
+@Singleton
+@Lock(LockType.READ)
+@Path("")
+public class Sender {
+
+    @Resource
+    private SampleConnectionFactory cf;
+
+    @EJB
+    private MessagesReceived messagesReceived;
+
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void sendMessage(final String message) {
+        try {
+            final SampleConnection connection = cf.getConnection();
+            connection.sendMessage(message);
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getMessages() {
+        final StringBuilder sb = new StringBuilder();
+        final List<String> messages = this.messagesReceived.getMessagesReceived();
+        for (int i = 0; i < messages.size(); i++) {
+            if (i > 0) {
+                sb.append("\n");
+            }
+            sb.append(messages.get(i));
+        }
+
+        return sb.toString();
+    }
+}
+----
+
+`Receiver` is the inbound endpoint. Because it implements `InboundListener`, not a JMS `MessageListener`, it is driven by the resource adapter:
+
+[source,java]
+----
+@MessageDriven(name = "Receiver")
+public class Receiver implements InboundListener {
+
+    @EJB
+    private MessagesReceived messagesReceived;
+
+    @Resource
+    private MessageDrivenContext context;
+
+    @Override
+    public void receiveMessage(String message) {
+        messagesReceived.messageReceived(message);
+    }
+}
+----
+
+`MessagesReceived` is a `@Singleton` that stores the received messages in a list.
+
+== The EAR
+
+`connector-sample-ear` uses the `maven-ear-plugin` to generate `application.xml`. It maps the WAR to the `/sample` context root, registers the RAR as a connector module, and puts library dependencies (the API jar) in `lib`:
+
+[source,xml]
+----
+<plugin>
+  <artifactId>maven-ear-plugin</artifactId>
+  <version>3.4.0</version>
+  <configuration>
+    <version>6</version>
+    <generateApplicationXml>true</generateApplicationXml>
+    <defaultLibBundleDir>lib</defaultLibBundleDir>
+    <modules>
+      <webModule>
+        <groupId>org.superbiz</groupId>
+        <artifactId>connector-sample-war</artifactId>
+        <contextRoot>/sample</contextRoot>
+      </webModule>
+      <rarModule>
+        <groupId>org.superbiz</groupId>
+        <artifactId>connector-sample-rar</artifactId>
+      </rarModule>
+    </modules>
+  </configuration>
+</plugin>
+----
+
+== Testing
+
+The tests are in `connector-sample-functional-tests`. They do not deploy the EAR built by Maven. Instead, each test builds the same structure with ShrinkWrap: an API jar in `lib`, a RAR that contains the impl jar and the real `ra.xml`, and a WAR that contains the `org.superbiz.application` classes and the real `resources.xml`. The descriptors are read from the sibling modules through the `Basedir` helper. The generated `application.xml` matches the one from the EAR module:
+
+[source,java]
+----
+final EnterpriseArchive enterpriseArchive = ShrinkWrap.create(EnterpriseArchive.class, "connector-sample.ear");
+enterpriseArchive.addAsLibraries(apiJar);
+enterpriseArchive.addAsModule(rar);
+enterpriseArchive.addAsModule(webArchive);
+
+ApplicationDescriptor applicationXml = Descriptors.create(ApplicationDescriptor.class);
+applicationXml.displayName("connector-sample-ear");
+applicationXml.createModule()
+        .getOrCreateWeb()
+            .webUri("connector-sample-war.war")
+            .contextRoot("/sample")
+        .up().up()
+        .createModule().connector("connector-sample-ra.rar")
+        .up().libraryDirectory("lib");
+----
+
+=== EARTest
+
+`EARTest` runs with the Arquillian `arquillian-tomee-remote` adapter against TomEE Plus, configured in `src/test/resources/arquillian.xml`. The `${tomee.version}` placeholder is filled in by Maven resource filtering:
+
+[source,xml]
+----
+<container qualifier="tomee" default="true">
+  <configuration>
+    <property name="httpPort">-1</property>
+    <property name="stopPort">-1</property>
+    <property name="version">${tomee.version}</property>
+    <property name="classifier">plus</property>
+    <property name="openejbVersion">${tomee.version}</property>
+    <property name="dir">target/apache-tomee-remote</property>
+    <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+  </configuration>
+</container>
+----
+
+The test runs as a client. It POSTs `Hello, world` to `/sample/` and expects `204`. Then it GETs the same URL and expects `Hello, world` back, which proves the message went out through the connection factory and came back in through the message-driven bean:
+
+[source,java]
+----
+@Test
+public void testShouldMakeSureWebappIsWorking() throws Exception {
+    final String url = "http://" + deploymentUrl.getHost() + ":" + deploymentUrl.getPort() + "/sample/";
+    final WebClient webClient = WebClient.create(url);
+    final Response response = webClient.path("").type(MediaType.TEXT_PLAIN_TYPE).post("Hello, world");
+    assertEquals(204, response.getStatus());
+
+    final String result = webClient.path("").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
+    assertEquals("Hello, world", result);
+}
+----
+
+=== DeployInWebAppsDirectoryTest
+
+`DeployInWebAppsDirectoryTest` uses `RemoteTomEEContainer` only to start and stop TomEE Plus. It deploys by copying the exported EAR into the server's `webapps` directory, which is the path fixed in TOMEE-2145. It retries the same POST/GET check for up to 30 attempts, one second apart, while TomEE picks up the archive. Then it stops the container and starts it again to make sure it still starts with the EAR in `webapps`:
+
+[source,java]
+----
+container.start();
+final File webapps = new File(configuration.getDir(), "apache-tomee-" + configuration.getClassifier() + "-" + configuration.getVersion() + "/webapps");
+webapps.mkdirs();
+
+final InputStream is = createDeployment().as(ZipExporter.class).exportAsInputStream();
+IO.copy(is, new File(webapps, "connector-sample.ear"));
+
+final String appUrl = "http://localhost:" + configuration.getHttpPort() + "/sample/";
+attempt(new Callable<Void>() {
+    @Override
+    public Void call() throws Exception {
+        runTests(appUrl);
+        return null;
+    }
+}, 30);
+
+container.stop();
+
+// restart the container, make sure all is still well
+container.start();
+----
+
+=== Running
+
+The functional tests module depends on the other modules' artifacts, including the EAR and the WAR's `classes` jar. Build the whole example from the `connector-ear` directory:
+
+[source,bash]
+----
+mvn clean install
+----
+
+Both tests download and start a TomEE Plus distribution of the version set by `tomee.version` in the parent POM.

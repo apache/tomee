@@ -33,6 +33,7 @@ public final class OpenEjbVersion {
     private final String version;//${pom.version}
     private final String date;//@DATE-REPLACED-BY-MAVEN@
     private final String time;//@TIME-REPLACED-BY-MAVEN@
+    private final String revision;//${buildNumber}
     private static OpenEjbVersion openEjbVersion;
 
     private OpenEjbVersion() {
@@ -50,6 +51,7 @@ public final class OpenEjbVersion {
         version = info.getProperty("version");
         date = info.getProperty("date");
         time = info.getProperty("time");
+        revision = info.getProperty("revision");
 
         JavaSecurityManagers.setSystemProperty("openejb.version", version);
         JavaSecurityManagers.setSystemProperty("tomee.version", version);
@@ -72,6 +74,10 @@ public final class OpenEjbVersion {
 
     public String getTime() {
         return time;
+    }
+
+    public String getRevision() {
+        return revision;
     }
 
     public String getUrl() {
