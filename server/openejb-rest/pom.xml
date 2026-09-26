@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-http</artifactId>
+      <artifactId>openejb-server</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

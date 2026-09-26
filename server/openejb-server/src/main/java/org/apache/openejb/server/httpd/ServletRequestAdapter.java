@@ -21,6 +21,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpUpgradeHandler;
 import jakarta.servlet.http.Part;
 import java.io.BufferedReader;
@@ -48,13 +49,9 @@ public class ServletRequestAdapter implements HttpRequest {
         request.setAttribute(HttpRequest.SERVLET_CONTEXT, servletContext);
     }
 
+    @Override
     public HttpSession getSession(boolean create) {
-        jakarta.servlet.http.HttpSession session = request.getSession(create);
-        if (session != null) {
-            return new ServletSessionAdapter(session);
-        } else {
-            return null;
-        }
+        return request.getSession(create);
     }
 
     @Override
@@ -92,13 +89,9 @@ public class ServletRequestAdapter implements HttpRequest {
         request.logout();
     }
 
+    @Override
     public HttpSession getSession() {
-        jakarta.servlet.http.HttpSession session = request.getSession();
-        if (session != null) {
-            return new ServletSessionAdapter(session);
-        } else {
-            return null;
-        }
+        return request.getSession();
     }
 
     @Override

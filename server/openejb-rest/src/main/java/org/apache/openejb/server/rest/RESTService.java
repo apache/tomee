@@ -42,7 +42,6 @@ import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
-import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -1007,13 +1006,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private void undeployRestObject(final String appId, final String context) {
-        HttpListener listener = rsRegistry.removeListener(appId, context);
+        final HttpListener listener = rsRegistry.removeListener(appId, context);
         if (listener != null) {
-
-            if (BasicAuthHttpListenerWrapper.class.isInstance(listener)) {
-                listener = BasicAuthHttpListenerWrapper.class.cast(listener).getHttpListener();
-            }
-
             checkUndeploy(listener);
         }
     }

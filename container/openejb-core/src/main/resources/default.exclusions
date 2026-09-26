@@ -190,7 +190,6 @@ openejb-cxf-transport
 openejb-derby
 openejb-ejbd
 openejb-hsql
-openejb-http
 openejb-javaagent
 openejb-jee
 openejb-jpa-integration

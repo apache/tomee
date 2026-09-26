@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.httpd;
+package org.apache.tomee.catalina.remote;
 
 import org.apache.openejb.util.reflection.Reflections;
 import org.junit.Test;

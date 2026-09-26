@@ -15,13 +15,10 @@ Provided you have the openejb-ejbd jar in your classpath along with it's depende
 (openejb-server, openejb-client, openejb-core), then those services will be brought online
 and remote clients will be able to connect into your vm and invoke beans.
 
-If you want to add more ServerServices such as the http version of the ejbd protocol you'd
-simply add the openejb-httpejbd jar to your classpath.  A number of ServerServices are
-available currently:
+Other ServerServices are brought online the same way, by adding their jar to your
+classpath.  A number of ServerServices are available currently:
 
   * openejb-ejbd
-  * openejb-http
-  * openejb-telnet
   * openejb-derbynet
   * openejb-hsql
   * openejb-activemq

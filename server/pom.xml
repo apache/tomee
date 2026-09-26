@@ -34,7 +34,6 @@
     <module>openejb-ejbd</module>
     <module>openejb-server</module>
     <module>openejb-client</module>
-    <module>openejb-http</module>
     <module>openejb-activemq</module>
     <module>openejb-derbynet</module>
     <module>openejb-hsql</module>

@@ -35,7 +35,7 @@ public class InstallerTest {
         assertVersion("openejb-derbynet-8.0.7-SNAPSHOT.jar", "openejb-derbynet-8.0.7-SNAPSHOT.jar");
         assertVersion("openejb-ejbd-8.0.7-SNAPSHOT.jar", "openejb-ejbd-8.0.7-20210418.032656-163.jar");
         assertVersion("openejb-hsql-8.0.7-SNAPSHOT.jar", "openejb-hsql-8.0.7-20210418.032814-163.jar");
-        assertVersion("openejb-http-8.0.7-SNAPSHOT.jar", "openejb-http-8.0.7-20210418.032703-163.jar");
+        assertVersion("openejb-ejbd-8.0.7-SNAPSHOT.jar", "openejb-ejbd-8.0.7-20210418.032703-163.jar");
         assertVersion("openejb-javaagent-8.0.7-SNAPSHOT.jar", "openejb-javaagent-8.0.7-20210418.032436-163.jar");
         assertVersion("openejb-javaagent.jar", "openejb-javaagent.jar");
         assertVersion("openejb-jee-8.0.7-SNAPSHOT.jar", "openejb-jee-8.0.7-20210418.032447-163.jar");
@@ -71,7 +71,7 @@ public class InstallerTest {
         assertVersion("openejb-derbynet-8.0.7-SNAPSHOT.jar", "openejb-derbynet-8.0.7-SNAPSHOT.jar");
         assertVersion("openejb-ejbd-8.0.7-SNAPSHOT.jar", "openejb-ejbd-8.0.7-20210418.032656-163.jar");
         assertVersion("openejb-hsql-8.0.7-SNAPSHOT.jar", "openejb-hsql-8.0.7-20210418.032814-163.jar");
-        assertVersion("openejb-http-8.0.7-SNAPSHOT.jar", "openejb-http-8.0.7-20210418.032703-163.jar");
+        assertVersion("openejb-ejbd-8.0.7-SNAPSHOT.jar", "openejb-ejbd-8.0.7-20210418.032703-163.jar");
         assertVersion("openejb-javaagent-8.0.7-SNAPSHOT.jar", "openejb-javaagent-8.0.7-20210418.032436-163.jar");
         assertVersion("openejb-javaagent.jar", "openejb-javaagent.jar");
         assertVersion("openejb-jee-8.0.7-SNAPSHOT.jar", "openejb-jee-8.0.7-20210418.032447-163.jar");
