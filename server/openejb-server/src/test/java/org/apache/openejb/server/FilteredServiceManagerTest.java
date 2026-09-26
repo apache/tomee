@@ -18,24 +18,20 @@ package org.apache.openejb.server;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class FilteredServiceManagerTest {
     @Test
-    public void checkJaxRs() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"jaxrs"});
-        assertTrue(fsm.accept("cxf-rs"));
-    }
-
-    @Test
-    public void checkJaxWs() {
-        final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"jaxws"});
-        assertTrue(fsm.accept("cxf"));
-    }
-
-    @Test
-    public void checkDefault() {
+    public void acceptsListedServicesOnly() {
         final FilteredServiceManager fsm = new FilteredServiceManager(new String[]{"foo"});
+        assertTrue(fsm.accept("foo"));
+        assertFalse(fsm.accept("cxf-rs"));
+    }
+
+    @Test
+    public void acceptsAllWhenNoneListed() {
+        final FilteredServiceManager fsm = new FilteredServiceManager(new String[0]);
         assertTrue(fsm.accept("foo"));
     }
 }

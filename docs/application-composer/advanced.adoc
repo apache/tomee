@@ -36,19 +36,14 @@ public class MyTest {
 }
 ----
 
-JAXRS and JAXWS endpoints are served by TomEE. To test them over HTTP,
-use TomEE Embedded (`tomee-embedded`) or the Arquillian TomEE
-Embedded/Remote adapters, which support `@RandomPort("http")` to get a
-random HTTP port.
+The ApplicationComposer has no HTTP server, so it doesn't deploy JAXRS or
+JAXWS endpoints. To test them over HTTP, use the TomEE Embedded runners
+(`tomee-embedded`), which support `@RandomPort("http")` to get a random
+HTTP port, or the Arquillian TomEE Embedded/Remote adapters.
 
 == Nice logs
 
 `@SimpleLog` annotation allows you to have one-liner logs
-
-== @JaxrsProvider
-
-`@JaxrsProvider` allows you to specify on a `@Module` method the list of
-JAXRS provider you want to use.
 
 == Dependencies without hacky code
 
@@ -91,7 +86,8 @@ an instance (or Class) implementing `FallbackPropertyInjector`.
 
 == @WebResource
 
-Allow for web application to add folders containing web resources.
+Adds folders containing web resources to the web application. Only the
+TomEE Embedded runners serve them.
 
 == Limitations for Single Instance Application Composer
 

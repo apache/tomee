@@ -6,7 +6,7 @@
 
 TomEE has several arquillian adapter flavors:
 
-- openejb-embedded: a plain embedded OpenEJB supporting most of EE features
+- openejb-embedded: a plain embedded OpenEJB supporting most of EE features, without an HTTP server (no servlet, JAX-RS or JAX-WS endpoints)
 - tomee-embedded: a full TomEE running in the same JVM
 - tomee-remote: a standard TomEE running in its own process as in production
 
