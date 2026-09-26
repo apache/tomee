@@ -216,18 +216,6 @@
       <version>${version.openwebbeans}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
     <!-- ActiveMQ is optional in openejb-core (embedded needs openejb-core + all deps)-->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -275,6 +263,48 @@
               <useFile>false</useFile>
               <disableXmlReport>false</disableXmlReport>
               <excludedGroups>javaee-full,se</excludedGroups>
+              <excludes> <!-- need an HTTP server, run in cdi-tomee -->
+                <exclude>org/jboss/cdi/tck/interceptors/tests/contract/interceptorLifeCycle/environment/jndi/ejb/InterceptorEnvironmentJNDISessionBeanTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/interceptors/tests/contract/interceptorLifeCycle/environment/jndi/InterceptorEnvironmentJNDITest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/activation/ActivateRequestContextinEETest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/application/ApplicationContextTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/application/async/ApplicationContextAsyncListenerTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/application/destroy/ApplicationContextDestructionTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/application/event/ApplicationScopeEventMultiWarTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/ClientConversationContextTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/determination/ConversationDeterminationTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/event/LongRunningConversationLifecycleEventTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/event/notattached/DestroyConversationNotAssociatedWithCurrentRequestEventTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/event/TransientConversationLifecycleEventTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/filter/ConversationFilterTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/InvalidatingSessionDestroysConversationTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/LongRunningConversationPropagatedByFacesContextTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/ManualCidPropagationTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/conversation/servlet/ServletConversationTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/async/RequestContextAsyncListenerTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/event/async/RequestScopeEventAsyncTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/event/RequestScopeEventTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/event/timeout/RequestScopeEventTimeoutTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/jaxrs/RequestContextTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/postconstruct/EagerSingletonPostConstructCallbackTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/postconstruct/SimpleBeanPostConstructCallbackTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/request/RequestContextTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/session/async/SessionContextAsyncListenerTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/session/event/SessionScopeEventTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/session/listener/SessionContextHttpSessionListenerTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/session/listener/SessionContextServletRequestListenerTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/session/listener/shutdown/SessionContextListenerShutdownTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/context/session/SessionContextTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/decorators/definition/lifecycle/DecoratorInstanceIsDependentObjectTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/deployment/shutdown/ApplicationShutdownLifecycleTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/event/observer/priority/contextLifecycleEvent/ee/RequestContextLifecycleEventObserverOrderingTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/implementation/builtin/metadata/ee/BuiltinMetadataEEBeanTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/implementation/builtin/servlet/ServletContainerBuiltinBeanTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/implementation/simple/ee/components/JavaEEComponentsTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/lookup/clientProxy/incontainer/ClientProxyTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/lookup/el/integration/IntegrationWithUnifiedELTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/lookup/injection/non/contextual/InjectionIntoNonContextualComponentTest.java</exclude>
+              </excludes>
               <dependenciesToScan>
                 <dependency>jakarta.enterprise:cdi-tck-core-impl</dependency>
                 <dependency>jakarta.enterprise:cdi-tck-web-impl</dependency>
@@ -301,8 +331,6 @@
                 <admin.disabled>true</admin.disabled>
                 <ejbd.disabled>true</ejbd.disabled>
                 <ejbds.disabled>true</ejbds.disabled>
-                <httpejbd.port>0</httpejbd.port>
-                <!-- random port for http one -> CI friendly -->
 
                 <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
                 <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
@@ -311,11 +339,6 @@
 
                 <openejb.jul.forceReload>true</openejb.jul.forceReload>
                 <openejb.strict.interface.declaration>true</openejb.strict.interface.declaration>
-                <openejb.http.mock-request>true</openejb.http.mock-request>
-                <openejb.http.default-content-type>text/plain</openejb.http.default-content-type>
-                <!-- TODO: remove it -->
-                <openejb.http.eviction.duration>1 second</openejb.http.eviction.duration>
-                <openejb.embedded.try-jsp>true</openejb.embedded.try-jsp>
                 <openejb.deploymentId.format>{appId}/{ejbJarId}/{ejbName}</openejb.deploymentId.format>
                 <org.apache.openejb.assembler.classic.WebAppBuilder>org.apache.openejb.web.LightweightWebAppBuilder</org.apache.openejb.assembler.classic.WebAppBuilder>
               </systemPropertyVariables>

@@ -58,6 +58,7 @@
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
       <version>11.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -73,6 +74,24 @@
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
       <version>11.0.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>ziplock</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>arquillian-tomee-embedded</artifactId>
+      <version>11.0.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>1.10.0.Final</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

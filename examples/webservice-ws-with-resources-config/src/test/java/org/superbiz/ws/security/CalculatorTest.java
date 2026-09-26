@@ -18,13 +18,17 @@ package org.superbiz.ws.security;
 
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.hamcrest.CoreMatchers;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import jakarta.ejb.embeddable.EJBContainer;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -35,26 +39,31 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(Arquillian.class)
 public class CalculatorTest {
+
+    @ArquillianResource
+    private URL base;
+
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "webservice-ws-with-resources-config.war")
+                .addClasses(Calculator.class, CalculatorBean.class, PasswordCallbackHandler.class, CalculatorTest.class)
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/openejb-jar.xml"), "openejb-jar.xml")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml");
+    }
 
     @Test
     public void call() throws MalformedURLException {
-        final EJBContainer container = EJBContainer.createEJBContainer(new Properties() {{
-            setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-            setProperty("httpejbd.port", "0"); // random port to avoid issue on CI, default is 4204
-        }});
-        final int port = Integer.parseInt(SystemInstance.get().getProperty("httpejbd.port")); // get back the random port
-
         // normal call
 
         final Service service = Service.create(
-                new URL("http://127.0.0.1:" + port + "/webservice-ws-with-resources-config/CalculatorBean?wsdl"),
+                new URL(base.toExternalForm() + "webservices/CalculatorBean?wsdl"),
                 new QName("http://security.ws.superbiz.org/", "CalculatorBeanService"));
 
         final Calculator calculator = service.getPort(Calculator.class);
@@ -96,8 +105,6 @@ public class CalculatorTest {
         } catch (SOAPFaultException sfe) {
             assertThat(sfe.getMessage(), CoreMatchers.containsString("A security error was encountered when verifying the message"));
         }
-
-        container.close();
 
         // valid it passed because all was fine and not because the server config was not here
         assertTrue(PasswordCallbackHandler.wasCalled());

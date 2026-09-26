@@ -90,19 +90,6 @@ Example: -D<service>.port=<port>
    java.naming.security.principal   = myuser
    java.naming.security.credentials = mypass
 
- openejb start -Dhttpejbd.port=8888
-
- The server will start up and the EJB over HTTP service will bind
- to IP 127.0.0.1 and port 8888.
-
- The following properties would then be used to get an InitialContext
- from the HTTP/Remote Server.
-
-   java.naming.factory.initial      = org.apache.openejb.client.RemoteInitialContextFactory
-   java.naming.provider.url         = http://127.0.0.1:8888/openejb
-   java.naming.security.principal   = myuser
-   java.naming.security.credentials = mypass
-
 
 Example: -D<service>.only_from=<addresses>
 

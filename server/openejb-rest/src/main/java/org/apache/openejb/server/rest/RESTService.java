@@ -42,9 +42,7 @@ import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
-import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -1005,13 +1003,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private void undeployRestObject(final String appId, final String context) {
-        HttpListener listener = rsRegistry.removeListener(appId, context);
+        final HttpListener listener = rsRegistry.removeListener(appId, context);
         if (listener != null) {
-
-            if (BasicAuthHttpListenerWrapper.class.isInstance(listener)) {
-                listener = BasicAuthHttpListenerWrapper.class.cast(listener).getHttpListener();
-            }
-
             checkUndeploy(listener);
         }
     }
@@ -1053,10 +1046,13 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     @Override
     public void start() throws ServiceException {
-        SystemInstance.get().setComponent(RESTService.class, this);
-
         beforeStart();
+        if (rsRegistry == null) {
+            LOGGER.warning("No " + RsRegistry.class.getName() + " available, JAX-RS applications will not be deployed");
+            return;
+        }
 
+        SystemInstance.get().setComponent(RESTService.class, this);
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);
         if (assembler != null) {
@@ -1070,9 +1066,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     protected void beforeStart() {
         rsRegistry = SystemInstance.get().getComponent(RsRegistry.class);
-        if (rsRegistry == null && SystemInstance.get().getComponent(HttpListenerRegistry.class) != null) {
-            rsRegistry = new RsRegistryImpl();
-        }
     }
 
     @Override

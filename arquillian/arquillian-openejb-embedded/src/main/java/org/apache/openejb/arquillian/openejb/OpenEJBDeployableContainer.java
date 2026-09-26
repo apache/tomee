@@ -24,12 +24,9 @@ import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.arquillian.common.TestObserver;
-import org.apache.openejb.arquillian.openejb.server.ServiceManagers;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
-import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AppModule;
@@ -38,10 +35,8 @@ import org.apache.openejb.config.DeploymentFilterable;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.LocalInitialContext;
 import org.apache.openejb.core.LocalInitialContextFactory;
-import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.web.lifecycle.test.MockHttpSession;
 import org.apache.webbeans.web.lifecycle.test.MockServletContext;
@@ -49,9 +44,7 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -266,33 +259,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
 
-        // if service manager is started allow @ArquillianResource URL injection
-        if (PROPERTIES.containsKey(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE)) {
-            final ProtocolMetaData metaData = ServiceManagers.protocolMetaData(appInfoProducer.get());
-            HTTPContext http = null;
-            for (final WebAppInfo webapp : info.appInfo.webApps) {
-                for (final ServletInfo servletInfo : webapp.servlets) {
-                    if (http == null) {
-                        http = HTTPContext.class.cast(metaData.getContexts().iterator().next());
-                        http.add(new Servlet(servletInfo.servletName, webapp.contextRoot));
-                    }
-                }
-                for (final ClassListInfo classListInfo : webapp.webAnnotatedClasses) {
-                    for (final String path : classListInfo.list) {
-                        if (!path.contains("!")) {
-                            continue;
-                        }
-                        if (http == null) {
-                            http = HTTPContext.class.cast(metaData.getContexts().iterator().next());
-                        }
-                        http.add(new Servlet(path.substring(path.lastIndexOf('!') + 2).replace(".class", "").replace("/", "."), webapp.contextRoot));
-                    }
-                }
-            }
-            if (metaData != null) {
-                return metaData;
-            }
-        }
         return new ProtocolMetaData();
     }
 
@@ -321,24 +287,6 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
                     }
                 }
                 final AppContext appCtx = assembler.createApplication(appInfo, module.getClassLoader());
-                if (isEmbeddedWebAppBuilder && PROPERTIES.containsKey(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE) && !appCtx.getWebContexts().isEmpty()) {
-                    cls.add(new Closeable() {
-                        @Override
-                        public void close() throws IOException {
-                            try {
-                                final SessionManager sessionManager = SystemInstance.get().getComponent(SessionManager.class);
-                                if (sessionManager != null) {
-                                    for (final WebContext web : appCtx.getWebContexts()) {
-                                        sessionManager.destroy(web);
-                                    }
-                                }
-                            } catch (final Throwable e) {
-                                // no-op
-                            }
-                        }
-                    });
-                }
-
                 final ServletContext appServletContext = new MockServletContext();
                 final HttpSession appSession = new MockHttpSession();
 

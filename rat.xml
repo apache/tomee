@@ -71,7 +71,6 @@
           <exclude name="arquillian/arquillian-tomee-tests/src/test/resources/org/apache/openejb/arquillian/tests/jaxrs/foo"/>
           <exclude name="arquillian/arquillian-tomee-tests/arquillian-tomee-webprofile-tests/src/test/resources/test.getresources"/>
           <exclude name="arquillian/arquillian-openejb-embedded/src/main/resources/META-INF/services/cucumber.runtime.io.ResourceIteratorFactory" />
-          <exclude name="arquillian/arquillian-openejb-embedded/src/main/resources/META-INF/services/org.apache.openejb.server.httpd.EmbeddedServletContext$ResourceProvider" />
           <exclude name="arquillian/arquillian-openejb-embedded/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension" />
           <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension" />
           <exclude name="arquillian/arquillian-openejb-embedded-4/src/main/resources/META-INF/services/cucumber.runtime.io.ResourceIteratorFactory" />
@@ -88,7 +87,6 @@
           <exclude name="server/openejb-cxf/src/main/resources/META-INF/cxf.extension"/>
           <exclude name="server/openejb-cxf-rs/src/main/resources/META-INF/services/jakarta.ws.rs.ext.RuntimeDelegate"/>
           <exclude name="server/openejb-ejbd/activemq-data/**"/>
-          <exclude name="server/openejb-http/activemq-data/**"/>
           <exclude name="examples/datasource-ciphered-password/src/test/resources/META-INF/beans.xml"/>
           <exclude name="examples/decorators/src/main/resources/META-INF/beans.xml"/>
           <exclude name="examples/webapps/rest-example/TODO"/>

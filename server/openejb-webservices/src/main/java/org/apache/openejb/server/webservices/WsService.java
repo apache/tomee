@@ -47,7 +47,6 @@ import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -173,15 +172,18 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     @Override
     public void start() throws ServiceException {
-        wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
-        if (wsRegistry == null && SystemInstance.get().getComponent(HttpListenerRegistry.class) != null) {
-            wsRegistry = new OpenEJBHttpWsRegistry();
-        }
-
         if (portAddressRegistry == null) {
             portAddressRegistry = new PortAddressRegistryImpl();
             SystemInstance.get().setComponent(PortAddressRegistry.class, portAddressRegistry);
         }
+
+        // @WebServiceRef clients only need the port address registry, publishing endpoints needs a WsRegistry
+        wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
+        if (wsRegistry == null) {
+            LOGGER.warning("No " + WsRegistry.class.getName() + " available, web services will not be deployed");
+            return;
+        }
+
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);
@@ -301,38 +303,36 @@ public abstract class WsService implements ServerService, SelfManaging {
                         ejbLocations.put(bean.ejbDeploymentId, location);
 
                         final ClassLoader classLoader = beanContext.getClassLoader();
-                        if (wsRegistry != null) {
-                            String auth = authMethod;
-                            String realm = realmName;
-                            String transport = transportGuarantee;
+                        String auth = authMethod;
+                        String realm = realmName;
+                        String transport = transportGuarantee;
 
-                            if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
-                                auth = portInfo.authMethod;
-                                realm = portInfo.realmName;
-                                transport = portInfo.transportGuarantee;
-                            }
+                        if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
+                            auth = portInfo.authMethod;
+                            realm = portInfo.realmName;
+                            transport = portInfo.transportGuarantee;
+                        }
 
-                            final WebAppInfo webAppInfo = webContextByEjb.get(bean.ejbClass);
-                            String context = webAppInfo != null ? webAppInfo.contextRoot : null;
-                            String moduleId = webAppInfo != null ? webAppInfo.moduleId : null;
-                            if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
-                                context = ejbJar.moduleName;
-                            }
+                        final WebAppInfo webAppInfo = webContextByEjb.get(bean.ejbClass);
+                        String context = webAppInfo != null ? webAppInfo.contextRoot : null;
+                        String moduleId = webAppInfo != null ? webAppInfo.moduleId : null;
+                        if (context == null && !OLD_WEBSERVICE_DEPLOYMENT) {
+                            context = ejbJar.moduleName;
+                        }
 
-                            final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, host, location, realm, transport, auth, moduleId);
-                            alreadyDeployed.add(beanContext);
+                        final List<String> addresses = wsRegistry.addWsContainer(container, classLoader, context, host, location, realm, transport, auth, moduleId);
+                        alreadyDeployed.add(beanContext);
 
-                            // one of the registered addresses to be the canonical address
-                            final String address = HttpUtil.selectSingleAddress(addresses);
+                        // one of the registered addresses to be the canonical address
+                        final String address = HttpUtil.selectSingleAddress(addresses);
 
-                            if (address != null) {
-                                // register wsdl location
-                                portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
-                                setWsdl(container, address);
-                                LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
-                                ejbAddresses.put(bean.ejbDeploymentId, address);
-                                addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
-                            }
+                        if (address != null) {
+                            // register wsdl location
+                            portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                            setWsdl(container, address);
+                            LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
+                            ejbAddresses.put(bean.ejbDeploymentId, address);
+                            addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
                         }
                     } catch (final Throwable e) {
                         LOGGER.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
@@ -421,46 +421,44 @@ public abstract class WsService implements ServerService, SelfManaging {
                     target, context, webApp.contextRoot, bindings,
                     new ServiceConfiguration(PojoUtil.findConfiguration(pojoConfiguration, target.getName()), appInfo.services));
 
-                if (wsRegistry != null) {
-                    String auth = authMethod;
-                    String realm = realmName;
-                    String transport = transportGuarantee;
+                String auth = authMethod;
+                String realm = realmName;
+                String transport = transportGuarantee;
 
-                    if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
-                        auth = portInfo.authMethod;
-                        realm = portInfo.realmName;
-                        transport = portInfo.transportGuarantee;
-                    }
+                if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
+                    auth = portInfo.authMethod;
+                    realm = portInfo.realmName;
+                    transport = portInfo.transportGuarantee;
+                }
 
-                    // give servlet a reference to the webservice container
-                    final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, host(webApp), servlet, realm, transport, auth, webApp.moduleId);
+                // give servlet a reference to the webservice container
+                final List<String> addresses = wsRegistry.setWsContainer(container, classLoader, webApp.contextRoot, host(webApp), servlet, realm, transport, auth, webApp.moduleId);
 
-                    // one of the registered addresses to be the connonical address
-                    final String address = HttpUtil.selectSingleAddress(addresses);
+                // one of the registered addresses to be the connonical address
+                final String address = HttpUtil.selectSingleAddress(addresses);
 
-                    if (address != null) {
-                        // add address to global registry
-                        portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
-                        setWsdl(container, address);
-                        LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
+                if (address != null) {
+                    // add address to global registry
+                    portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                    setWsdl(container, address);
+                    LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
 
-                        /*
-                        In POJO webservices it is very common to have the same JAW-WS endpoint published under different URLs
-                        using url-pattern for the servlet. We only deploy one instance of the WsServlet and keep the same
-                        set of url-pattern the user defined. At the moment we can't add additional ports, with different
-                        addresses. So at least we should list other URLs so the user knows they are successfully deployed
-                        and is aware of the different URLs
-                         */
-                        for (String urlAddress : addresses) {
-                            if (address.equals(urlAddress)) {
-                                continue;
-                            }
-                            LOGGER.info("Webservice(wsdl=" + urlAddress + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
+                    /*
+                    In POJO webservices it is very common to have the same JAW-WS endpoint published under different URLs
+                    using url-pattern for the servlet. We only deploy one instance of the WsServlet and keep the same
+                    set of url-pattern the user defined. At the moment we can't add additional ports, with different
+                    addresses. So at least we should list other URLs so the user knows they are successfully deployed
+                    and is aware of the different URLs
+                     */
+                    for (String urlAddress : addresses) {
+                        if (address.equals(urlAddress)) {
+                            continue;
                         }
-
-                        servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
-                        addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
+                        LOGGER.info("Webservice(wsdl=" + urlAddress + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
                     }
+
+                    servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
+                    addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
                 }
             } catch (final Throwable e) {
                 LOGGER.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
@@ -506,8 +504,8 @@ public abstract class WsService implements ServerService, SelfManaging {
 
                         // remove container from web server
                         final String location = ejbLocations.get(enterpriseBean.ejbDeploymentId);
-                        if (this.wsRegistry != null && location != null) {
-                            this.wsRegistry.removeWsContainer(location, ejbJar.moduleId);
+                        if (location != null) {
+                            wsRegistry.removeWsContainer(location, ejbJar.moduleId);
                         }
 
                         // destroy webservice container
@@ -545,12 +543,10 @@ public abstract class WsService implements ServerService, SelfManaging {
                     }
 
                     // clear servlet's reference to the webservice container
-                    if (this.wsRegistry != null) {
-                        try {
-                            this.wsRegistry.clearWsContainer(webApp.contextRoot, host(webApp), servlet, webApp.moduleId);
-                        } catch (final IllegalArgumentException ignored) {
-                            // no-op
-                        }
+                    try {
+                        wsRegistry.clearWsContainer(webApp.contextRoot, host(webApp), servlet, webApp.moduleId);
+                    } catch (final IllegalArgumentException ignored) {
+                        // no-op
                     }
 
                     // destroy webservice container

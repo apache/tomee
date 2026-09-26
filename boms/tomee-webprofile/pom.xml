@@ -493,11 +493,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-http</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-jakarta-data</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1663,16 +1658,6 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-hsql</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-http</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

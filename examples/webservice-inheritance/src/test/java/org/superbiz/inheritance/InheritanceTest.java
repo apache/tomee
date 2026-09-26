@@ -16,46 +16,38 @@
  */
 package org.superbiz.inheritance;
 
-import junit.framework.TestCase;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.superbiz.inheritance.Tower.Fit;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.List;
-import java.util.Properties;
 
-public class InheritanceTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-    //START SNIPPET: setup	
-    private InitialContext initialContext;
+@RunWith(Arquillian.class)
+public class InheritanceTest {
 
-    //Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
+    //START SNIPPET: setup
+    @ArquillianResource
+    private URL base;
 
-    protected void setUp() throws Exception {
-
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        p.put("wakeBoardDatabase", "new://Resource?type=DataSource");
-        p.put("wakeBoardDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("wakeBoardDatabase.JdbcUrl", "jdbc:hsqldb:mem:wakeBoarddb");
-
-        p.put("wakeBoardDatabaseUnmanaged", "new://Resource?type=DataSource");
-        p.put("wakeBoardDatabaseUnmanaged.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("wakeBoardDatabaseUnmanaged.JdbcUrl", "jdbc:hsqldb:mem:wakeBoarddb");
-        p.put("wakeBoardDatabaseUnmanaged.JtaManaged", "false");
-
-        p.put("openejb.embedded.remotable", "true");
-
-        //Just for this test we change the default port from 4204 to avoid conflicts
-        p.put("httpejbd.port", "" + port);
-
-        initialContext = new InitialContext(p);
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "webservice-inheritance.war")
+                .addClasses(Item.class, Tower.class, Wakeboard.class, WakeboardBinding.class, Wearable.class,
+                        WakeRiderImpl.class, WakeRiderWs.class)
+                .addAsResource("META-INF/persistence.xml");
     }
-    //END SNIPPET: setup    
+    //END SNIPPET: setup
 
     /**
      * Create a webservice client using wsdl url
@@ -63,9 +55,10 @@ public class InheritanceTest extends TestCase {
      * @throws Exception
      */
     //START SNIPPET: webservice
+    @Test
     public void testInheritanceViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://localhost:" + port + "/webservice-inheritance/WakeRiderImpl?wsdl"),
+                new URL(base.toExternalForm() + "webservices/WakeRiderImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "InheritanceWsService"));
         assertNotNull(service);
 
@@ -91,7 +84,7 @@ public class InheritanceTest extends TestCase {
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getBrand(), "Tower brand");
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getFit().ordinal(), Fit.Custom.ordinal());
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getItemName(), "Tower item name");
-        assertEquals("testInheritanceViaWsInterface, first Item", tower.getPrice(), 1.0d);
+        assertEquals("testInheritanceViaWsInterface, first Item", tower.getPrice(), 1.0d, 0.0d);
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getTubing(), "Tower tubing");
 
         //check item
@@ -99,14 +92,14 @@ public class InheritanceTest extends TestCase {
         item = (Item) returnedItems.get(1);
         assertEquals("testInheritanceViaWsInterface, second Item", item.getBrand(), "Item brand");
         assertEquals("testInheritanceViaWsInterface, second Item", item.getItemName(), "Item name");
-        assertEquals("testInheritanceViaWsInterface, second Item", item.getPrice(), 2.0d);
+        assertEquals("testInheritanceViaWsInterface, second Item", item.getPrice(), 2.0d, 0.0d);
 
         //check wakeboard
         assertEquals("testInheritanceViaWsInterface, third Item", returnedItems.get(2).getClass(), Wakeboard.class);
         wakeBoard = (Wakeboard) returnedItems.get(2);
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getBrand(), "Wakeboard brand");
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getItemName(), "Wakeboard item name");
-        assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getPrice(), 3.0d);
+        assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getPrice(), 3.0d, 0.0d);
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getSize(), "WakeBoard size");
 
         //check wakeboardbinding
@@ -114,7 +107,7 @@ public class InheritanceTest extends TestCase {
         wakeBoardbinding = (WakeboardBinding) returnedItems.get(3);
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getBrand(), "Wakeboardbinding brand");
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getItemName(), "Wakeboardbinding item name");
-        assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getPrice(), 4.0d);
+        assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getPrice(), 4.0d, 0.0d);
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getSize(), "WakeBoardbinding size");
     }
     //END SNIPPET: webservice

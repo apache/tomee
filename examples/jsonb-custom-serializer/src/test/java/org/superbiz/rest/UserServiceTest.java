@@ -19,35 +19,42 @@
 package org.superbiz.rest;
 
 import java.io.IOException;
+import java.net.URL;
 
 import jakarta.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.superbiz.AddressSerializer;
 import org.superbiz.JAXRSApplication;
 import org.superbiz.JSONBConfiguration;
+import org.superbiz.UserDeserializer;
+import org.superbiz.model.Address;
 import org.superbiz.model.User;
 
-@EnableServices(value = "jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class UserServiceTest {
 
-	@Module
-	@Classes({ UserService.class, JAXRSApplication.class, JSONBConfiguration.class })
-	public WebApp app() {
-		return new WebApp().contextRoot("test");
+	@ArquillianResource
+	private URL base;
+
+	@Deployment(testable = false)
+	public static WebArchive app() {
+		return ShrinkWrap.create(WebArchive.class)
+				.addClasses(UserService.class, JAXRSApplication.class, JSONBConfiguration.class,
+						AddressSerializer.class, UserDeserializer.class, Address.class, User.class);
 	}
 
 	@Test
 	public void get() throws IOException {
-		final String message = WebClient.create("http://localhost:4204").path("/test/api/users").get(String.class);
+		final String message = WebClient.create(base.toExternalForm()).path("api/users").get(String.class);
 
 		Assert.assertTrue(message.contains("modified - addr1"));
 	}
@@ -55,7 +62,7 @@ public class UserServiceTest {
 	@Test
 	public void post() throws IOException {
 		final String inputJson = "{ \"id\": 1, \"name\": \"user1\", \"extra\": \"extraField\"}";
-		final User responseUser = WebClient.create("http://localhost:4204").path("/test/api/users")
+		final User responseUser = WebClient.create(base.toExternalForm()).path("api/users")
 				.type(MediaType.APPLICATION_JSON).post(inputJson, User.class);
 
 		Assert.assertTrue(!responseUser.getName().equals("user1"));

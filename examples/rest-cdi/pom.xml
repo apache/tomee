@@ -24,6 +24,7 @@
   <name>TomEE :: Examples :: REST CDI</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tomee.version>11.0.0-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -36,6 +37,14 @@
           <source>17</source>
           <target>17</target>
           <release>17</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
+        <configuration>
+          <argLine>-Djdk.attach.allowAttachSelf</argLine>
         </configuration>
       </plugin>
       
@@ -54,8 +63,14 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
-      <artifactId>tomee-webprofile-api</artifactId>
-      <version>11.0.0-SNAPSHOT</version>
+      <artifactId>tomee-plus-api</artifactId>
+      <version>${tomee.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>4.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -64,25 +79,29 @@
       <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
-    <!--
-    The <scope>test</scope> guarantees that non of your runtime
-    code is dependent on any OpenEJB classes.
-    -->
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
-      <artifactId>tomee-webprofile</artifactId>
-      <version>11.0.0-SNAPSHOT</version>
+      <artifactId>tomee-plus</artifactId>
+      <version>${tomee.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <!--
-        The example does not use Jakarta Security. Its CDI extension expects the
-        ServletContext of a real Tomcat, which the ApplicationComposer does not provide.
-        -->
-        <exclusion>
-          <groupId>org.apache.tomee</groupId>
-          <artifactId>tomee-security</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>ziplock</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>arquillian-tomee-embedded</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>1.10.0.Final</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <!--

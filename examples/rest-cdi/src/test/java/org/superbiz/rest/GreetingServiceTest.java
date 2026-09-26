@@ -18,44 +18,39 @@ package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.util.Properties;
+import java.net.URL;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-@EnableServices(value = "jaxrs", httpDebug = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class GreetingServiceTest {
-    private int port;
 
-    @Configuration
-    public Properties randomPort() {
-        port = NetworkUtil.getNextAvailablePort();
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
+    @ArquillianResource
+    private URL base;
 
-    @Module
-    @Classes(value = {GreetingService.class, Greeting.class}, cdi = true) // This enables the CDI magic
-    public WebApp app() {
-        return new WebApp().contextRoot("test");
+    @Deployment(testable = false)
+    public static WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClasses(GreetingService.class, Greeting.class, Request.class, Response.class)
+                // This enables the CDI magic
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"/>"), "beans.xml");
     }
 
     @Test
     public void getXml() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm()).path("greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
@@ -63,7 +58,7 @@ public class GreetingServiceTest {
 
     @Test
     public void postXml() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm()).path("greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .type(MediaType.APPLICATION_XML_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
@@ -72,7 +67,7 @@ public class GreetingServiceTest {
 
     @Test
     public void getJson() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm(), asList(new JohnzonProvider<GreetingService.Greet>())).path("greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
@@ -80,7 +75,7 @@ public class GreetingServiceTest {
 
     @Test
     public void postJson() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm(), asList(new JohnzonProvider<GreetingService.Greet>())).path("greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();

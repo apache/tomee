@@ -69,23 +69,21 @@ public class GreetingService {
 
 === Test for the JAXRS service
 
-The test uses the OpenEJB ApplicationComposer to make it trivial.
+The test uses Arquillian with the TomEE embedded adapter, so the REST
+service runs in a real TomEE.
 
-The idea is first to activate the jaxrs services. This is done using
-@EnableServices annotation.
-
-Then we create on the fly the application simply returning an object
-representing the web.xml. Here we simply use it to define the context
-root but you can use it to define your REST Application too. And to
-complete the application definition we add @Classes annotation to define
-the set of classes to use in this app.
+The @Deployment method creates on the fly the web application to deploy
+with the classes of this example. The beans.xml with
+bean-discovery-mode="all" makes Greeting a CDI bean, so it can be
+injected in GreetingService. testable = false runs the test methods as a
+client of the deployed application, and @ArquillianResource injects its
+base URL.
 
 Finally to test it we use cxf client API to call the REST service in
 get() and post() methods.
 
-NOTE: to show we use JSON or XML depending on the test method we
-activated on EnableServices the attribute httpDebug which prints the
-http messages in the logs.
+The container is configured in src/test/resources/arquillian.xml:
+httpPort set to -1 starts TomEE on a random port.
 
 [source,java]
 ----
@@ -93,44 +91,39 @@ package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.johnzon.jaxrs.JohnzonProvider;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openejb.util.NetworkUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.util.Properties;
+import java.net.URL;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-@EnableServices(value = "jaxrs", httpDebug = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class GreetingServiceTest {
-    private int port;
 
-    @Configuration
-    public Properties randomPort() {
-        port = NetworkUtil.getNextAvailablePort();
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
+    @ArquillianResource
+    private URL base;
 
-    @Module
-    @Classes(value = {GreetingService.class, Greeting.class}, cdi = true) // This enables the CDI magic
-    public WebApp app() {
-        return new WebApp().contextRoot("test");
+    @Deployment(testable = false)
+    public static WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClasses(GreetingService.class, Greeting.class, Request.class, Response.class)
+                // This enables the CDI magic
+                .addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\"/>"), "beans.xml");
     }
 
     @Test
     public void getXml() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm()).path("greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
@@ -138,7 +131,7 @@ public class GreetingServiceTest {
 
     @Test
     public void postXml() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm()).path("greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .type(MediaType.APPLICATION_XML_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
@@ -147,7 +140,7 @@ public class GreetingServiceTest {
 
     @Test
     public void getJson() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm(), asList(new JohnzonProvider<GreetingService.Greet>())).path("greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(GreetingService.Greet.class).getMessage();
         assertEquals("Hi REST!", message);
@@ -155,7 +148,7 @@ public class GreetingServiceTest {
 
     @Test
     public void postJson() throws IOException {
-        final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm(), asList(new JohnzonProvider<GreetingService.Greet>())).path("greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
@@ -177,393 +170,20 @@ Which should create output like the following.
 
 [source,java]
 ----
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
 Running org.superbiz.rest.GreetingServiceTest
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Succeeded in installing singleton service
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Using 'print=true'
-FINE - Using default '.xml=false'
-FINE - Using default 'stream.count=false'
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT  
-INFO -   httpejbd             127.0.0.1       44455 
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.GreetingServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /tmp for stateful session passivation
-INFO - Enterprise application "/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest" loaded.
-INFO - Creating dedicated application classloader for GreetingServiceTest
-INFO - Assembling app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by org.apache.openejb.util.proxy.LocalBeanProxyFactory$Unsafe (file:/home/daniel/.m2/repository/org/apache/tomee/openejb-core/10.0.0-M1-SNAPSHOT/openejb-core-10.0.0-M1-SNAPSHOT.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
-WARNING: Please consider reporting this to the maintainers of org.apache.openejb.util.proxy.LocalBeanProxyFactory$Unsafe
-WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-WARNING: All illegal access operations will be denied in a future release
-INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
-INFO - OpenWebBeans Container is starting...
-INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
-INFO - All injection points were validated successfully.
-INFO - OpenWebBeans Container has started, it took 476 ms.
-INFO - Using readers:
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@693b3e2
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@c68e0782
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@ef757da4
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@778a403d
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@7bca3240
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@2407e67e
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@b06cecc0
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@493b69a5
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@5dfe78fe
-INFO - Using writers:
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@5ec30d6b
-INFO -      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@58b50d53
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@b06cecc0
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@7bca3240
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@693b3e2
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@c68e0782
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@ef757da4
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@778a403d
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@2407e67e
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@493b69a5
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@5dfe78fe
-INFO - Using exception mappers:
-INFO -      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@8dfc1000
-INFO -      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@b734211e
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@2716b807
-INFO - REST Application: http://127.0.0.1:44455/test/         -> org.apache.openejb.server.rest.InternalApplication@e4c4de9b
-INFO -      Service URI: http://127.0.0.1:44455/test/greeting -> Pojo org.superbiz.rest.GreetingService
-INFO -               GET http://127.0.0.1:44455/test/greeting ->      Greet message()         
-INFO -              POST http://127.0.0.1:44455/test/greeting ->      Greet lowerCase(Request)
-INFO - Deployed Application(path=/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest)
-FINE - ******************* REQUEST ******************
-GET http://localhost:44455/test/greeting/
-Accept=[application/xml]
-Cache-Control=[no-cache]
-User-Agent=[Apache-CXF/3.3.7]
-Connection=[keep-alive]
-Host=[localhost:44455]
-Pragma=[no-cache]
-
-
-**********************************************
-
-FINE - HTTP/1.1 200 OK
-Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
-Connection: close
-Content-Length: 97
-Date: Sun, 15 Nov 2020 20:48:49 GMT
-Content-Type: application/xml
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><greet><message>Hi REST!</message></greet>
-INFO - Undeploying app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Succeeded in installing singleton service
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Using 'print=true'
-FINE - Using default '.xml=false'
-FINE - Using default 'stream.count=false'
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT  
-INFO -   httpejbd             127.0.0.1       36735 
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.GreetingServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /tmp for stateful session passivation
-INFO - Enterprise application "/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest" loaded.
-INFO - Creating dedicated application classloader for GreetingServiceTest
-INFO - Assembling app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
-INFO - OpenWebBeans Container is starting...
-INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
-INFO - All injection points were validated successfully.
-INFO - OpenWebBeans Container has started, it took 109 ms.
-INFO - Using readers:
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@db2555f8
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@73151fc3
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@280eff60
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@e6d6d01c
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@9aa666e
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@de52b81d
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@2773d96d
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@5a199358
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@8b965c01
-INFO - Using writers:
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@7a775189
-INFO -      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@b03af552
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@2773d96d
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@9aa666e
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@db2555f8
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@73151fc3
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@280eff60
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@e6d6d01c
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@de52b81d
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@5a199358
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@8b965c01
-INFO - Using exception mappers:
-INFO -      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@d855787e
-INFO -      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@16616b4d
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@874c811e
-INFO - REST Application: http://127.0.0.1:36735/test/         -> org.apache.openejb.server.rest.InternalApplication@27131dcb
-INFO -      Service URI: http://127.0.0.1:36735/test/greeting -> Pojo org.superbiz.rest.GreetingService
-INFO -               GET http://127.0.0.1:36735/test/greeting ->      Greet message()         
-INFO -              POST http://127.0.0.1:36735/test/greeting ->      Greet lowerCase(Request)
-INFO - Deployed Application(path=/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest)
-FINE - ******************* REQUEST ******************
-POST http://localhost:36735/test/greeting/
-Accept=[application/xml]
-Cache-Control=[no-cache]
-User-Agent=[Apache-CXF/3.3.7]
-Connection=[keep-alive]
-Host=[localhost:36735]
-Pragma=[no-cache]
-Content-Length=[97]
-Content-Type=[application/xml]
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><request><value>Hi REST!</value></request>
-**********************************************
-
-FINE - HTTP/1.1 200 OK
-Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
-Connection: close
-Content-Length: 97
-Date: Sun, 15 Nov 2020 20:48:50 GMT
-Content-Type: application/xml
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><greet><message>hi rest!</message></greet>
-INFO - Undeploying app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Succeeded in installing singleton service
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-SEVERE - MBean Object org.apache.cxf.bus.extension.ExtensionManagerBus@85333fc register to MBeanServer failed : javax.management.InstanceAlreadyExistsException: org.apache.cxf:bus.id=openejb.cxf.bus,type=Bus,instance.id=139670524
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Using 'print=true'
-FINE - Using default '.xml=false'
-FINE - Using default 'stream.count=false'
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT  
-INFO -   httpejbd             127.0.0.1       42019 
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.GreetingServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /tmp for stateful session passivation
-INFO - Enterprise application "/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest" loaded.
-INFO - Creating dedicated application classloader for GreetingServiceTest
-INFO - Assembling app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
-INFO - OpenWebBeans Container is starting...
-INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
-INFO - All injection points were validated successfully.
-INFO - OpenWebBeans Container has started, it took 80 ms.
-INFO - Using readers:
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@3f537f62
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@db539692
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@df3f15ad
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@ad292069
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@f8ae41f1
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@63f3092c
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@1988f4f7
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@77b845b1
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@76debaaf
-INFO - Using writers:
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@a74630bf
-INFO -      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@abe4d74b
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@1988f4f7
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@f8ae41f1
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@3f537f62
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@db539692
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@df3f15ad
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@ad292069
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@63f3092c
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@77b845b1
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@76debaaf
-INFO - Using exception mappers:
-INFO -      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@3916141e
-INFO -      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@dd2239cb
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@d549b1a8
-INFO - REST Application: http://127.0.0.1:42019/test/         -> org.apache.openejb.server.rest.InternalApplication@bbcd5d77
-INFO -      Service URI: http://127.0.0.1:42019/test/greeting -> Pojo org.superbiz.rest.GreetingService
-INFO -               GET http://127.0.0.1:42019/test/greeting ->      Greet message()         
-INFO -              POST http://127.0.0.1:42019/test/greeting ->      Greet lowerCase(Request)
-INFO - Deployed Application(path=/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest)
-FINE - ******************* REQUEST ******************
-GET http://localhost:42019/test/greeting/
-Accept=[application/json]
-Cache-Control=[no-cache]
-User-Agent=[Apache-CXF/3.3.7]
-Connection=[keep-alive]
-Host=[localhost:42019]
-Pragma=[no-cache]
-
-
-**********************************************
-
-FINE - HTTP/1.1 200 OK
-Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
-Connection: close
-Content-Length: 22
-Date: Sun, 15 Nov 2020 20:48:51 GMT
-Content-Type: application/json
-
-{"message":"Hi REST!"}
-INFO - Undeploying app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Succeeded in installing singleton service
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-SEVERE - MBean Object org.apache.cxf.bus.extension.ExtensionManagerBus@85333fc register to MBeanServer failed : javax.management.InstanceAlreadyExistsException: org.apache.cxf:bus.id=openejb.cxf.bus,type=Bus,instance.id=139670524
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Using 'print=true'
-FINE - Using default '.xml=false'
-FINE - Using default 'stream.count=false'
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT  
-INFO -   httpejbd             127.0.0.1       33015 
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.GreetingServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /tmp for stateful session passivation
-INFO - Enterprise application "/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest" loaded.
-INFO - Creating dedicated application classloader for GreetingServiceTest
-INFO - Assembling app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@1b048504
-INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
-INFO - OpenWebBeans Container is starting...
-INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
-INFO - All injection points were validated successfully.
-INFO - OpenWebBeans Container has started, it took 95 ms.
-INFO - Using readers:
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@68b824ec
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@55233ec4
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@628c68e0
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@db9db667
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@3ae6d4db
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@8a500f50
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@d662719e
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@f142ede7
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@6c372f1e
-INFO - Using writers:
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@38e7693a
-INFO -      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@8d587dd5
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@d662719e
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@3ae6d4db
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@68b824ec
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@55233ec4
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@628c68e0
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@db9db667
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@8a500f50
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@52f938e6
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@75f6fb76
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@f142ede7
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@6c372f1e
-INFO - Using exception mappers:
-INFO -      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@c67a80b8
-INFO -      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@6ba782bb
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@20db75dc
-INFO - REST Application: http://127.0.0.1:33015/test/         -> org.apache.openejb.server.rest.InternalApplication@cf272dee
-INFO -      Service URI: http://127.0.0.1:33015/test/greeting -> Pojo org.superbiz.rest.GreetingService
-INFO -               GET http://127.0.0.1:33015/test/greeting ->      Greet message()         
-INFO -              POST http://127.0.0.1:33015/test/greeting ->      Greet lowerCase(Request)
-INFO - Deployed Application(path=/home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest)
-FINE - ******************* REQUEST ******************
-POST http://localhost:33015/test/greeting/
-Accept=[application/json]
-Cache-Control=[no-cache]
-User-Agent=[Apache-CXF/3.3.7]
-Connection=[keep-alive]
-Host=[localhost:33015]
-Pragma=[no-cache]
-Content-Length=[20]
-Content-Type=[application/json]
-
-{"value":"Hi REST!"}
-**********************************************
-
-FINE - HTTP/1.1 200 OK
-Server: OpenEJB/10.0.0-M1-SNAPSHOT Linux/5.0.0-23-generic (amd64)
-Connection: close
-Content-Length: 22
-Date: Sun, 15 Nov 2020 20:48:51 GMT
-Content-Type: application/json
-
-{"message":"hi rest!"}
-INFO - Undeploying app: /home/daniel/git/apache/tomee/examples/rest-cdi/GreetingServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.706 sec
-
-Results :
+INFO: Starting TomEE from: /tmp/arquillian-apache-tomee-22867
+INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
+INFO: Starting ProtocolHandler ["http-nio-52890"]
+INFO: Configuring enterprise application: /path/to/tomee/examples/rest-cdi/target/tomee-embedded/0/022cf261-98dd-43e1-a5c4-921ec4c12c14
+INFO: Enterprise application "/path/to/tomee/examples/rest-cdi/target/tomee-embedded/0/022cf261-98dd-43e1-a5c4-921ec4c12c14" loaded.
+INFO: Deployed Application(path=/path/to/tomee/examples/rest-cdi/target/tomee-embedded/0/022cf261-98dd-43e1-a5c4-921ec4c12c14)
+INFO: REST Application: http://localhost:52890/022cf261-98dd-43e1-a5c4-921ec4c12c14/         -> org.apache.openejb.server.rest.InternalApplication
+INFO:      Service URI: http://localhost:52890/022cf261-98dd-43e1-a5c4-921ec4c12c14/greeting -> Pojo org.superbiz.rest.GreetingService
+INFO:               GET http://localhost:52890/022cf261-98dd-43e1-a5c4-921ec4c12c14/greeting ->      Greet message()
+INFO:              POST http://localhost:52890/022cf261-98dd-43e1-a5c4-921ec4c12c14/greeting ->      Greet lowerCase(Request)
+INFO: Undeploying app: /path/to/tomee/examples/rest-cdi/target/tomee-embedded/0/022cf261-98dd-43e1-a5c4-921ec4c12c14
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.178 s -- in org.superbiz.rest.GreetingServiceTest
+Results:
 
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-
 ----

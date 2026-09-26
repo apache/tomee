@@ -103,9 +103,6 @@ import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.httpd.BeginWebBeansListener;
-import org.apache.openejb.server.httpd.EndWebBeansListener;
-import org.apache.openejb.server.httpd.HttpSession;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -148,6 +145,7 @@ import javax.naming.StringRefAddr;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.SessionTrackingMode;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import jakarta.transaction.TransactionManager;
 import jakarta.transaction.TransactionSynchronizationRegistry;
@@ -353,7 +351,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             systemInstance.setComponent(HttpServletRequest.class, HttpServletRequestProxy.get());
         }
         if (systemInstance.getComponent(HttpSession.class) == null) {
-            systemInstance.setComponent(jakarta.servlet.http.HttpSession.class, HttpSessionProxy.get());
+            systemInstance.setComponent(HttpSession.class, HttpSessionProxy.get());
         }
         if (systemInstance.getComponent(ServletContext.class) == null) {
             systemInstance.setComponent(ServletContext.class, ServletContextProxy.get());

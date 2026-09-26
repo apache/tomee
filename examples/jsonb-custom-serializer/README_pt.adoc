@@ -244,53 +244,62 @@ public class User {
 
 == Acessando o endpoint rest
 
-O teste gera um aplicativo da web openejb e chama o endpoint do usuário
+O teste implanta o aplicativo da web no TomEE embedded com o Arquillian e chama o endpoint do usuário
 
 [source,java]
 ----
+package org.superbiz.rest;
+
 import java.io.IOException;
+import java.net.URL;
 
 import jakarta.ws.rs.core.MediaType;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.superbiz.AddressSerializer;
 import org.superbiz.JAXRSApplication;
 import org.superbiz.JSONBConfiguration;
+import org.superbiz.UserDeserializer;
+import org.superbiz.model.Address;
 import org.superbiz.model.User;
 
-@EnableServices(value = "jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class UserServiceTest {
 
-    @Module
-    @Classes({ UserService.class, JAXRSApplication.class, JSONBConfiguration.class })
-    public WebApp app() {
-        return new WebApp().contextRoot("test");
-    }
+	@ArquillianResource
+	private URL base;
 
-    @Test
-    public void get() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/api/users").get(String.class);
+	@Deployment(testable = false)
+	public static WebArchive app() {
+		return ShrinkWrap.create(WebArchive.class)
+				.addClasses(UserService.class, JAXRSApplication.class, JSONBConfiguration.class,
+						AddressSerializer.class, UserDeserializer.class, Address.class, User.class);
+	}
 
-        Assert.assertTrue(message.contains("modified - addr1"));
-    }
+	@Test
+	public void get() throws IOException {
+		final String message = WebClient.create(base.toExternalForm()).path("api/users").get(String.class);
 
-    @Test
-    public void post() throws IOException {
-        final String inputJson = "{ \"id\": 1, \"name\": \"user1\", \"extra\": \"extraField\"}";
-        final User responseUser = WebClient.create("http://localhost:4204").path("/test/api/users")
-                .type(MediaType.APPLICATION_JSON).post(inputJson, User.class);
+		Assert.assertTrue(message.contains("modified - addr1"));
+	}
 
-        Assert.assertTrue(!responseUser.getName().equals("user1"));
-        Assert.assertTrue(responseUser.getName().equals("user1" + "extraField"));
-    }
+	@Test
+	public void post() throws IOException {
+		final String inputJson = "{ \"id\": 1, \"name\": \"user1\", \"extra\": \"extraField\"}";
+		final User responseUser = WebClient.create(base.toExternalForm()).path("api/users")
+				.type(MediaType.APPLICATION_JSON).post(inputJson, User.class);
+
+		Assert.assertTrue(!responseUser.getName().equals("user1"));
+		Assert.assertTrue(responseUser.getName().equals("user1" + "extraField"));
+	}
 
 }
 ----
@@ -303,162 +312,25 @@ Ao executar, você verá uma saída semelhante à seguinte.
 
 [source,console]
 ----
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
+Running org.superbiz.rest.JsonbRecordMethodVisibilityTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.099 s -- in org.superbiz.rest.JsonbRecordMethodVisibilityTest
 Running org.superbiz.rest.UserServiceTest
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@7823a2f9
-INFO - Succeeded in installing singleton service
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT  
-INFO -   httpejbd             127.0.0.1       4204  
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
-INFO - Auto-deploying ejb UserService: EjbDeployment(deployment-id=UserService)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.UserServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /tmp for stateful session passivation
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean UserService: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Creating Container(id=Default Stateless Container)
-INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest" loaded.
-INFO - Creating dedicated application classloader for UserServiceTest
-INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
-INFO - Jndi(name=UserServiceLocalBean) --> Ejb(deployment-id=UserService)
-INFO - Jndi(name=global/test/UserService!org.superbiz.rest.UserService) --> Ejb(deployment-id=UserService)
-INFO - Jndi(name=global/test/UserService) --> Ejb(deployment-id=UserService)
-INFO - Created Ejb(deployment-id=UserService, ejb-name=UserService, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=UserService, ejb-name=UserService, container=Default Stateless Container)
-INFO - Using readers:
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@6a1d204a
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@28a0fd6c
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@2b62442c
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@66629f63
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@841e575
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@27a5328c
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@5ab14cb9
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@62dae245
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@4b6579e8
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@6fff253c
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@6c6357f9
-INFO - Using writers:
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@591e58fa
-INFO -      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@3954d008
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@4b6579e8
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@841e575
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@6a1d204a
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@28a0fd6c
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@2b62442c
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@66629f63
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@27a5328c
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@5ab14cb9
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@62dae245
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@6fff253c
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@6c6357f9
-INFO - Using exception mappers:
-INFO -      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@403132fc
-INFO -      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@32cb636e
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@71c5b236
-INFO -      org.apache.openejb.server.cxf.rs.CxfRsHttpListener$CxfResponseValidationExceptionMapper@2cab9998
-INFO - REST Application: http://127.0.0.1:4204/test/api       -> org.superbiz.JAXRSApplication@285d851a
-INFO -      Service URI: http://127.0.0.1:4204/test/api/users ->  EJB org.superbiz.rest.UserService
-INFO -               GET http://127.0.0.1:4204/test/api/users ->      List<User> users()
-INFO -              POST http://127.0.0.1:4204/test/api/users ->      User addUser(User)
-INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest)
-INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@7823a2f9
-INFO - Succeeded in installing singleton service
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT  
-INFO -   httpejbd             127.0.0.1       4204  
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
-INFO - Auto-deploying ejb UserService: EjbDeployment(deployment-id=UserService)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.UserServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /tmp for stateful session passivation
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean UserService: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Creating Container(id=Default Stateless Container)
-INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest" loaded.
-INFO - Creating dedicated application classloader for UserServiceTest
-INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
-INFO - Jndi(name=UserServiceLocalBean) --> Ejb(deployment-id=UserService)
-INFO - Jndi(name=global/test/UserService!org.superbiz.rest.UserService) --> Ejb(deployment-id=UserService)
-INFO - Jndi(name=global/test/UserService) --> Ejb(deployment-id=UserService)
-INFO - Created Ejb(deployment-id=UserService, ejb-name=UserService, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=UserService, ejb-name=UserService, container=Default Stateless Container)
-INFO - Using readers:
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@51a06cbe
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@6cc0bcf6
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@29539e36
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@32f61a31
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@f5c79a6
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@669253b7
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@5ab14cb9
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@62dae245
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@3dddbe65
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@49a64d82
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@344561e0
-INFO - Using writers:
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@66d23e4a
-INFO -      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@36ac8a63
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@3dddbe65
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@f5c79a6
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@51a06cbe
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@6cc0bcf6
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@29539e36
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@32f61a31
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@669253b7
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@5ab14cb9
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@62dae245
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@49a64d82
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@344561e0
-INFO - Using exception mappers:
-INFO -      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@4d9d1b69
-INFO -      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@5305c37d
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@52c8295b
-INFO -      org.apache.openejb.server.cxf.rs.CxfRsHttpListener$CxfResponseValidationExceptionMapper@251f7d26
-INFO - REST Application: http://127.0.0.1:4204/test/api       -> org.superbiz.JAXRSApplication@77b21474
-INFO -      Service URI: http://127.0.0.1:4204/test/api/users ->  EJB org.superbiz.rest.UserService
-INFO -               GET http://127.0.0.1:4204/test/api/users ->      List<User> users()
-INFO -              POST http://127.0.0.1:4204/test/api/users ->      User addUser(User)
-INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest)
-INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.31 sec
+INFO: Starting TomEE from: /tmp/arquillian-apache-tomee-24081
+INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
+INFO: Starting ProtocolHandler ["http-nio-52997"]
+INFO: Configuring enterprise application: /path/to/tomee/examples/jsonb-custom-serializer/target/tomee-embedded/0/f603a20e-e090-463d-9547-20b127a58e2d
+INFO: Enterprise application "/path/to/tomee/examples/jsonb-custom-serializer/target/tomee-embedded/0/f603a20e-e090-463d-9547-20b127a58e2d" loaded.
+INFO: Deployed Application(path=/path/to/tomee/examples/jsonb-custom-serializer/target/tomee-embedded/0/f603a20e-e090-463d-9547-20b127a58e2d)
+INFO: Provider{clazz=org.superbiz.JSONBConfiguration, discovered=true, singleton=false}
+INFO: REST Application: http://localhost:52997/f603a20e-e090-463d-9547-20b127a58e2d/api       -> org.superbiz.JAXRSApplication
+INFO:      Service URI: http://localhost:52997/f603a20e-e090-463d-9547-20b127a58e2d/api/users ->  EJB org.superbiz.rest.UserService
+INFO:               GET http://localhost:52997/f603a20e-e090-463d-9547-20b127a58e2d/api/users ->      List<User> users()
+INFO:              POST http://localhost:52997/f603a20e-e090-463d-9547-20b127a58e2d/api/users ->      User addUser(User)
+INFO: Undeploying app: /path/to/tomee/examples/jsonb-custom-serializer/target/tomee-embedded/0/f603a20e-e090-463d-9547-20b127a58e2d
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.856 s -- in org.superbiz.rest.UserServiceTest
+Results:
 
-Results :
-
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-    
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 ----
 
 === Dentro do jar

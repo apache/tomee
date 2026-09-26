@@ -43,7 +43,6 @@ files will be created:
     admin.properties           (network socket for administration)
     ejbd.properties            (network socket for ejb invocations)
     hsql.properties            (network socket for hsql client access)
-    httpejbd.properties        (network socket for ejb invocations over http)
     telnet.properties          (network socket for telnet "server") 
 
 These files can be edited as desired.  If at any time you are unhappy

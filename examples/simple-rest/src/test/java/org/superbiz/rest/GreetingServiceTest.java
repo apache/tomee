@@ -17,37 +17,39 @@
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices(value = "jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class GreetingServiceTest {
 
-    @Module
-    @Classes(GreetingService.class)
-    public WebApp app() {
-        return new WebApp().contextRoot("test");
+    @ArquillianResource
+    private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class).addClass(GreetingService.class);
     }
 
     @Test
     public void get() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/").get(String.class);
+        final String message = WebClient.create(base.toExternalForm()).path("greeting/").get(String.class);
         assertEquals("Hi REST!", message);
     }
 
     @Test
     public void post() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/").post("Hi REST!", String.class);
+        final String message = WebClient.create(base.toExternalForm()).path("greeting/").post("Hi REST!", String.class);
         assertEquals("hi rest!", message);
     }
 }

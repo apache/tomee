@@ -19,7 +19,6 @@ package org.apache.tomee.catalina.remote;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.httpd.ServerServlet;
 import org.apache.tomee.catalina.IgnoredStandardContext;
 import org.apache.tomee.catalina.OpenEJBValve;
 

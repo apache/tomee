@@ -25,13 +25,9 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.FilterInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.ListenerInfo;
-import org.apache.openejb.assembler.classic.ParamValueInfo;
-import org.apache.openejb.assembler.classic.PortInfo;
-import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.cdi.CdiBuilder;
@@ -41,7 +37,6 @@ import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Event;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OpenEjbVersion;
@@ -57,22 +52,15 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.annotation.WebInitParam;
 import jakarta.servlet.annotation.WebListener;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.ws.rs.core.Application;
 import java.io.File;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -80,36 +68,12 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.Arrays.asList;
 
 public class LightweightWebAppBuilder implements WebAppBuilder {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LightweightWebAppBuilder.class);
 
-    private static Method addServletMethod;
-    private static Method removeServletMethod;
-    private static Method addFilterMethod;
-    private static Method removeFilterMethod;
-    private static Method addDefaults;
-
-    static {
-        try {
-            final Class<?> utilClass = Class.forName("org.apache.openejb.server.httpd.util.HttpUtil", true/*setFactory()*/, LightweightWebAppBuilder.class.getClassLoader());
-            addServletMethod = utilClass.getMethod("addServlet", String.class, WebContext.class, String.class);
-            removeServletMethod = utilClass.getMethod("removeServlet", String.class, WebContext.class);
-            addFilterMethod = utilClass.getMethod("addFilter", String.class, WebContext.class, String.class, FilterConfig.class);
-            removeFilterMethod = utilClass.getMethod("removeFilter", String.class, WebContext.class);
-            addDefaults = utilClass.getMethod("addDefaultsIfAvailable", WebContext.class);
-        } catch (final Exception e) {
-            LOGGER.info("Web features will not be available, add openejb-http if you need them");
-        }
-    }
-
-    private final Map<WebAppInfo, DeployedWebObjects> servletDeploymentInfo = new HashMap<>();
     private final Map<WebAppInfo, List<Object>> listeners = new HashMap<>();
     private final Map<WebAppInfo, ServletContextEvent> servletContextEvents = new HashMap<>();
     private final Map<String, ClassLoader> loaderByWebContext = new HashMap<>();
@@ -227,10 +191,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 }
             }
 
-            final DeployedWebObjects deployedWebObjects = new DeployedWebObjects();
-            deployedWebObjects.webContext = webContext;
-            servletDeploymentInfo.put(webAppInfo, deployedWebObjects);
-
             if (webContext.getWebBeansContext() != null && webContext.getWebBeansContext().getBeanManagerImpl().isInUse()) {
                 final Thread thread = Thread.currentThread();
                 final ClassLoader old = thread.getContextClassLoader();
@@ -240,140 +200,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 } finally {
                     thread.setContextClassLoader(old);
                 }
-            }
-
-            if (addServletMethod == null) { // can't manage filter/servlets
-                continue;
-            }
-
-            // register filters
-            for (final FilterInfo info : webAppInfo.filters) {
-                switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
-                    @Override
-                    public void run() {
-                        for (final String mapping : info.mappings) {
-                            final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, info.initParams);
-                            try {
-                                addFilterMethod.invoke(null, info.classname, webContext, mapping, config);
-                                deployedWebObjects.filterMappings.add(mapping);
-                            } catch (final Exception e) {
-                                LOGGER.warning(e.getMessage(), e);
-                            }
-                        }
-                    }
-                });
-            }
-            for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
-                final String url = info.name;
-                for (final String filterPath : info.list) {
-                    final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, filterPath);
-                    final WebFilter annotation = clazz.getAnnotation(WebFilter.class);
-                    if (annotation != null) {
-                        final Properties initParams = new Properties();
-                        for (final WebInitParam param : annotation.initParams()) {
-                            initParams.put(param.name(), param.value());
-                        }
-
-                        final FilterConfig config = new SimpleFilterConfig(sce.getServletContext(), info.name, initParams);
-                        for (final String[] mappings : asList(annotation.urlPatterns(), annotation.value())) {
-                            switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (final String mapping : mappings) {
-                                        try {
-                                            addFilterMethod.invoke(null, clazz.getName(), webContext, mapping, config);
-                                            deployedWebObjects.filterMappings.add(mapping);
-                                        } catch (final Exception e) {
-                                            LOGGER.warning(e.getMessage(), e);
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-
-            final Map<String, PortInfo> ports = new TreeMap<>();
-            for (final PortInfo port : webAppInfo.portInfos) {
-                ports.put(port.serviceLink, port);
-            }
-
-            // register servlets
-            for (final ServletInfo info : webAppInfo.servlets) {
-                if ("true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
-                    // skip jaxrs servlets
-                    boolean skip = false;
-                    for (final ParamValueInfo pvi : info.initParams) {
-                        if ("jakarta.ws.rs.Application".equals(pvi.name) || Application.class.getName().equals(pvi.name)) {
-                            skip = true;
-                        }
-                    }
-
-                    if (skip) {
-                        continue;
-                    }
-
-                    if (info.servletClass == null) {
-                        try {
-                            if (Application.class.isAssignableFrom(classLoader.loadClass(info.servletName))) {
-                                continue;
-                            }
-                        } catch (final Exception e) {
-                            // no-op
-                        }
-                    }
-                }
-
-                // If POJO web services, it will be overriden with WsServlet
-                if (ports.containsKey(info.servletName) || ports.containsKey(info.servletClass)) {
-                    continue;
-                }
-
-                // deploy
-                for (final String mapping : info.mappings) {
-                    switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                addServletMethod.invoke(null, info.servletClass, webContext, mapping);
-                                deployedWebObjects.mappings.add(mapping);
-                            } catch (final Exception e) {
-                                LOGGER.warning(e.getMessage(), e);
-                            }
-                        }
-                    });
-                }
-            }
-
-            for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
-                final String url = info.name;
-                for (final String servletPath : info.list) {
-                    final Class<?> clazz = loadFromUrls(webContext.getClassLoader(), url, servletPath);
-                    final WebServlet annotation = clazz.getAnnotation(WebServlet.class);
-                    if (annotation != null) {
-                        for (final String[] mappings : asList(annotation.urlPatterns(), annotation.value())) {
-                            switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (final String mapping : mappings) {
-                                        try {
-                                            addServletMethod.invoke(null, clazz.getName(), webContext, mapping);
-                                            deployedWebObjects.mappings.add(mapping);
-                                        } catch (final Exception e) {
-                                            LOGGER.warning(e.getMessage(), e);
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-
-            if (addDefaults != null && tryJsp()) {
-                addDefaults.invoke(null, webContext);
-                deployedWebObjects.mappings.add("*\\.jsp");
             }
         }
     }
@@ -407,19 +233,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         }
     }
 
-    private static boolean tryJsp() {
-        return "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.embedded.try-jsp", "true"));
-    }
-
-    public Collection<Object> listenersFor(final String context) {
-        for (final Map.Entry<WebAppInfo, List<Object>> info : listeners.entrySet()) {
-            if (context != null && context.replace("/", "").equals(info.getKey().contextRoot.replace("/", ""))) {
-                return info.getValue();
-            }
-        }
-        return null;
-    }
-
     private static Class<?> loadFromUrls(final ClassLoader loader, final String url, final String path) throws ClassNotFoundException {
         final String classname;
         if (path.startsWith("archive:") && path.contains(".war/")) {
@@ -444,32 +257,8 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
     @Override
     public void undeployWebApps(final AppInfo appInfo) throws Exception {
         for (final WebAppInfo webAppInfo : appInfo.webApps) {
-            final DeployedWebObjects context = servletDeploymentInfo.remove(webAppInfo);
             final ServletContextEvent sce = servletContextEvents.remove(webAppInfo);
             final List<Object> listenerInstances = listeners.remove(webAppInfo);
-
-            if (addServletMethod != null) {
-                switchServletContextIfNeeded(sce.getServletContext(), new Runnable() {
-                    @Override
-                    public void run() {
-                        for (final String mapping : context.mappings) {
-                            try {
-                                removeServletMethod.invoke(null, mapping, context.webContext);
-                            } catch (final Exception e) {
-                                // no-op
-                            }
-                        }
-
-                        for (final String mapping : context.filterMappings) {
-                            try {
-                                removeFilterMethod.invoke(null, mapping, context.webContext);
-                            } catch (final Exception e) {
-                                // no-op
-                            }
-                        }
-                    }
-                });
-            }
 
             if (listenerInstances != null) {
                 for (final Object instance : listenerInstances) {
@@ -489,12 +278,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
     @Override
     public Map<ClassLoader, Map<String, Set<String>>> getJsfClasses() {
         return Collections.emptyMap(); // while we don't manage servlet in embedded mode we don't need it
-    }
-
-    private static class DeployedWebObjects {
-        public List<String> mappings = new ArrayList<>();
-        public List<String> filterMappings = new ArrayList<>();
-        public WebContext webContext;
     }
 
     private static class EmbeddedInitialContext implements Context {
@@ -656,39 +439,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         }
     }
 
-    private static class SimpleFilterConfig implements FilterConfig {
-        private final Properties params;
-        private final String name;
-        private final ServletContext servletContext;
-
-        public SimpleFilterConfig(final ServletContext sc, final String name, final Properties initParams) {
-            this.name = name;
-            params = initParams;
-            servletContext = sc;
-        }
-
-        @Override
-        public String getFilterName() {
-            return name;
-        }
-
-        @Override
-        public ServletContext getServletContext() {
-            return servletContext;
-        }
-
-        @Override
-        public String getInitParameter(final String name) {
-            return params.getProperty(name);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Enumeration<String> getInitParameterNames() {
-            return new ArrayEnumeration(params.keySet());
-        }
-    }
-
     @Event
     public static class EmbeddedServletContextCreated {
         private final ServletContext context;
@@ -711,7 +461,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
     public static class LightServletContext extends MockServletContext {
         private final Map<String, Object> attributes = new ConcurrentHashMap<>();
-        private final ServletContext delegate; // EmbeddedServletContext has some resource handling we want to reuse here, TODO: move it here?
+        private final ServletContext delegate;
         private final ClassLoader loader;
 
         public LightServletContext(final ServletContext delegate, final ClassLoader loader) {

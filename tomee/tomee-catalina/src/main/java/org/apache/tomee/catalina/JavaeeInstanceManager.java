@@ -69,7 +69,7 @@ public class JavaeeInstanceManager implements InstanceManager {
             final String name = clazz.getName();
             if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(name)
                     || "org.apache.tomee.myfaces.TomEEMyFacesContextListener".equals(name)
-                    || "org.apache.openejb.server.httpd.EEFilter".equals(name)
+                    || EEFilter.class.getName().equals(name)
                     || "org.apache.catalina.servlets.DefaultServlet".equals(name)
                     || "org.apache.jasper.servlet.JspServlet".equals(name)) {
                 return clazz.newInstance();
@@ -160,7 +160,7 @@ public class JavaeeInstanceManager implements InstanceManager {
         final String name = o.getClass().getName();
         if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(name)
                 || "org.apache.tomee.myfaces.TomEEMyFacesContextListener".equals(name)
-                || "org.apache.openejb.server.httpd.EEFilter".equals(name)
+                || EEFilter.class.getName().equals(name)
                 || "org.apache.catalina.servlets.DefaultServlet".equals(name)
                 || "org.apache.jasper.servlet.JspServlet".equals(name)) {
             return;

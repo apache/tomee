@@ -19,26 +19,25 @@ package org.superbiz.rest;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
 import org.apache.openejb.util.NetworkUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices(value = "jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class EmailServiceTest {
 
     private static final int SMTP_TEST_PORT = NetworkUtil.getNextAvailablePort();
@@ -50,25 +49,26 @@ public class EmailServiceTest {
     private static GreenMail mailServer;
     private static CountDownLatch started = new CountDownLatch(1);
 
-    @Module
-    @Classes(EmailService.class)
-    public WebApp app() {
-        return new WebApp().contextRoot("test");
-    }
+    @ArquillianResource
+    private URL base;
 
-    @Configuration
-    public Properties config() {
-        //Note: We can also configure this via a resource.xml or via tomee.xml
-        Properties properties = new Properties();
-        properties.put("tomee/mail/mySMTP", "new://Resource?type=jakarta.mail.Session");
-        properties.put("tomee/mail/mySMTP.mail.debug", "false");
-        properties.put("tomee/mail/mySMTP.mail.transport.protocol", "smtp");
-        properties.put("tomee/mail/mySMTP.mail.smtp.host", "localhost");
-        properties.put("tomee/mail/mySMTP.mail.smtp.port", SMTP_TEST_PORT);
-        properties.put("tomee/mail/mySMTP.mail.smtp.auth", "true");
-        properties.put("tomee/mail/mySMTP.mail.smtp.user", USER_NAME);
-        properties.put("tomee/mail/mySMTP.password", USER_PASSWORD);
-        return properties;
+    @Deployment(testable = false)
+    public static WebArchive app() {
+        //Note: We can also configure this via tomee.xml
+        return ShrinkWrap.create(WebArchive.class)
+                .addClass(EmailService.class)
+                .addAsWebInfResource(new StringAsset(
+                        "<resources>\n" +
+                        "  <Resource id=\"tomee/mail/mySMTP\" type=\"jakarta.mail.Session\">\n" +
+                        "    mail.debug = false\n" +
+                        "    mail.transport.protocol = smtp\n" +
+                        "    mail.smtp.host = localhost\n" +
+                        "    mail.smtp.port = " + SMTP_TEST_PORT + "\n" +
+                        "    mail.smtp.auth = true\n" +
+                        "    mail.smtp.user = " + USER_NAME + "\n" +
+                        "    password = " + USER_PASSWORD + "\n" +
+                        "  </Resource>\n" +
+                        "</resources>"), "resources.xml");
     }
 
     @BeforeClass
@@ -92,7 +92,7 @@ public class EmailServiceTest {
 
     @Test
     public void post() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/email/").post("Hello TomEE", String.class);
+        final String message = WebClient.create(base.toExternalForm()).path("email/").post("Hello TomEE", String.class);
         assertEquals("Sent", message);
     }
 

@@ -59,9 +59,11 @@ public interface CalculatorWs {
 
 == Calculator WSDL
 
-The wsdl for our service is autmatically created for us and available at
-`http://127.0.0.1:4204/Calculator?wsdl`. In TomEE or Tomcat this would
-be at `http://127.0.0.1:8080/simple-webservice/Calculator?wsdl`
+The wsdl for our service is automatically created for us. With the jar
+deployed in TomEE it is available at
+`http://127.0.0.1:8080/simple-webservice/Calculator?wsdl`, inside a war
+(like the one the test deploys) at
+`http://127.0.0.1:8080/simple-webservice/webservices/Calculator?wsdl`
 
 [source,xml]
 ----
@@ -147,7 +149,7 @@ be at `http://127.0.0.1:8080/simple-webservice/Calculator?wsdl`
   </wsdl:binding>
   <wsdl:service name="CalculatorService">
     <wsdl:port binding="tns:CalculatorServiceSoapBinding" name="CalculatorPort">
-      <soap:address location="http://127.0.0.1:4204/Calculator?wsdl"/>
+      <soap:address location="http://127.0.0.1:8080/simple-webservice/webservices/Calculator"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
@@ -165,33 +167,37 @@ our service.
 
 [source,java]
 ----
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import jakarta.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(Arquillian.class)
 public class CalculatorTest {
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty("openejb.embedded.remotable", "true");
-        //properties.setProperty("httpejbd.print", "true");
-        //properties.setProperty("httpejbd.indent.xml", "true");
-        EJBContainer.createEJBContainer(properties);
+    @ArquillianResource
+    private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "simple-webservice.war")
+                .addClasses(Calculator.class, CalculatorWs.class);
     }
 
     @Test
     public void test() throws Exception {
         Service calculatorService = Service.create(
-                new URL("http://127.0.0.1:4204/Calculator?wsdl"),
+                new URL(base.toExternalForm() + "webservices/Calculator?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorService"));
 
         assertNotNull(calculatorService);
@@ -203,9 +209,26 @@ public class CalculatorTest {
 }
 ----
 
-For easy testing we’ll use the Embeddable EJBContainer API part of EJB
-3.1 to boot CXF in our testcase. This will deploy our application in the
-embedded container and bring the web service online so we can invoke it.
+For easy testing we use Arquillian with TomEE embedded. The test deploys
+a war with our service to TomEE, which brings the web service online so
+we can invoke it. `@ArquillianResource` injects the base URL of the
+deployed war, and `src/test/resources/arquillian.xml` starts TomEE on a
+random HTTP port:
+
+[source,xml]
+----
+<arquillian
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    >
+  <container qualifier="tomee" default="true">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="appWorkingDir">target/tomee-embedded</property>
+    </configuration>
+  </container>
+</arquillian>
+----
 
 == Running
 
@@ -220,71 +243,18 @@ When run you should see output similar to the following.
  T E S T S
 -------------------------------------------------------
 Running org.superbiz.calculator.ws.CalculatorTest
-INFO - ********************************************************************************
-INFO - OpenEJB http://tomee.apache.org/
-INFO - Startup: Sat Feb 18 19:11:50 PST 2012
-INFO - Copyright 1999-2024 (C) Apache OpenEJB Project, All Rights Reserved.
-INFO - Version: 4.0.0-beta-3
-INFO - Build date: 20120218
-INFO - Build time: 03:32
-INFO - ********************************************************************************
-INFO - openejb.home = /Users/dblevins/work/all/trunk/openejb/examples/simple-webservice
-INFO - openejb.base = /Users/dblevins/work/all/trunk/openejb/examples/simple-webservice
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@16bdb503
-INFO - succeeded in installing singleton service
-INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Beginning load: /Users/dblevins/work/all/trunk/openejb/examples/simple-webservice/target/classes
-INFO - Using 'openejb.embedded=true'
-INFO - Configuring enterprise application: /Users/dblevins/work/all/trunk/openejb/examples/simple-webservice
-INFO - Auto-deploying ejb Calculator: EjbDeployment(deployment-id=Calculator)
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean Calculator: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Creating Container(id=Default Stateless Container)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.calculator.ws.CalculatorTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T for stateful session passivation
-INFO - Enterprise application "/Users/dblevins/work/all/trunk/openejb/examples/simple-webservice" loaded.
-INFO - Assembling app: /Users/dblevins/work/all/trunk/openejb/examples/simple-webservice
-INFO - ignoreXmlConfiguration == true
-INFO - ignoreXmlConfiguration == true
-INFO - existing thread singleton service in SystemInstance() org.apache.openejb.cdi.ThreadSingletonServiceImpl@16bdb503
-INFO - OpenWebBeans Container is starting...
-INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
-INFO - All injection points were validated successfully.
-INFO - OpenWebBeans Container has started, it took [62] ms.
-INFO - Created Ejb(deployment-id=Calculator, ejb-name=Calculator, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=Calculator, ejb-name=Calculator, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/work/all/trunk/openejb/examples/simple-webservice)
-INFO - Initializing network services
-INFO - can't find log4j MDC class
-INFO - Creating ServerService(id=httpejbd)
-INFO - Creating ServerService(id=cxf)
-INFO - Creating ServerService(id=admin)
-INFO - Creating ServerService(id=ejbd)
-INFO - Creating ServerService(id=ejbds)
-INFO - Initializing network services
-INFO -   ** Starting Services **
-INFO -   NAME                 IP              PORT
-INFO -   httpejbd             127.0.0.1       4204
-INFO - Creating Service {http://superbiz.org/wsdl}CalculatorService from class org.superbiz.calculator.ws.CalculatorWs
-INFO - Setting the server's publish address to be http://nopath:80
-INFO - Webservice(wsdl=http://127.0.0.1:4204/Calculator, qname={http://superbiz.org/wsdl}CalculatorService) --> Ejb(id=Calculator)
-INFO -   admin thread         127.0.0.1       4200
-INFO -   ejbd                 127.0.0.1       4201
-INFO -   ejbd                 127.0.0.1       4203
-INFO - -------
-INFO - Ready!
-INFO - Creating Service {http://superbiz.org/wsdl}CalculatorService from WSDL: http://127.0.0.1:4204/Calculator?wsdl
-INFO - Creating Service {http://superbiz.org/wsdl}CalculatorService from WSDL: http://127.0.0.1:4204/Calculator?wsdl
-INFO - Default SAAJ universe not set
-INFO - TX NotSupported: Suspended transaction null
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.584 sec
+INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
+INFO: Version: 11.0.0-SNAPSHOT
+INFO: ------------------------- localhost -> /simple-webservice
+INFO: Configuring enterprise application: /path/to/examples/simple-webservice/target/tomee-embedded/0/simple-webservice
+INFO: Auto-deploying ejb Calculator: EjbDeployment(deployment-id=Calculator)
+INFO: Created Ejb(deployment-id=Calculator, ejb-name=Calculator, container=Default Stateless Container)
+INFO: Started Ejb(deployment-id=Calculator, ejb-name=Calculator, container=Default Stateless Container)
+INFO: Webservice(wsdl=http://localhost:53468/simple-webservice/webservices/Calculator, qname={http://superbiz.org/wsdl}CalculatorService) --> Ejb(id=Calculator)
+INFO: Deployed Application(path=/path/to/examples/simple-webservice/target/tomee-embedded/0/simple-webservice)
+INFO: Creating Service {http://superbiz.org/wsdl}CalculatorService from WSDL: http://localhost:53468/simple-webservice/webservices/Calculator?wsdl
+INFO: Undeploying app: /path/to/examples/simple-webservice/target/tomee-embedded/0/simple-webservice
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.255 s -- in org.superbiz.calculator.ws.CalculatorTest
 
 Results :
 

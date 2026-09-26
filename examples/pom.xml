@@ -33,7 +33,6 @@
     <module>access-timeout</module>
     <module>alternate-descriptors</module>
     <module>application-composer</module>
-    <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
     <module>arquillian-jpa</module>
     <module>async-methods</module>
@@ -129,8 +128,6 @@
     <module>realm-in-tomee</module>
     <module>reload-persistence-unit-properties</module>
     <module>resources-declared-in-webapp</module>
-    <module>rest-applicationcomposer-mockito</module>
-    <module>rest-applicationcomposer</module>
     <module>rest-cdi</module>
     <module>rest-jaas</module>
     <module>rest-on-ejb</module>

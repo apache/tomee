@@ -35,6 +35,8 @@ import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.cxf.rs.CxfRSService;
+import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.tomee.catalina.TomEEWebappClassLoader;
@@ -76,6 +78,19 @@ public class ReloadingLoaderTest {
 
         SystemInstance.get().setComponent(OpenEjbConfiguration.class, configuration);
         SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
+        SystemInstance.get().setComponent(RsRegistry.class, new RsRegistry() { // the app has no endpoint to publish
+            @Override
+            public AddressInfo createRsHttpListener(final String appId, final String webContext, final HttpListener listener,
+                                                    final ClassLoader classLoader, final String path, final String virtualHost,
+                                                    final String auth, final String realm) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public HttpListener removeListener(final String appId, final String context) {
+                return null;
+            }
+        });
         SystemInstance.get().setComponent(WebAppEnricher.class, new WebAppEnricher() {
             @Override
             public URL[] enrichment(final ClassLoader webappClassLoader) {

@@ -49,7 +49,6 @@ import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
@@ -68,7 +67,6 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.PojoDeployment;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.rest.RESTResourceFinder;
@@ -80,7 +78,6 @@ import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.reflection.Reflections;
 import org.apache.openejb.web.LightweightWebAppBuilder;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.spi.ContextsService;
@@ -468,7 +465,7 @@ public class ApplicationComposers {
                     webModulesNb++;
                     addWebApp(
                             appModule, testBean, additionalDescriptors,
-                            method.getAnnotation(Descriptors.class), method.getAnnotation(JaxrsProviders.class),
+                            method.getAnnotation(Descriptors.class),
                             webApp,
                             globalJarsAnnotation, jarsAnnotation,
                             classes, excludes, cdiInterceptors, cdiAlternatives, cdiDecorators, cdiStereotypes, cdi, innerClassesAsBean,
@@ -638,7 +635,7 @@ public class ApplicationComposers {
             webapp.setContextRoot(classClasses.context());
             addWebApp(
                     appModule, testBean, additionalDescriptors,
-                    null, null,
+                    null,
                     webapp, globalJarsAnnotation, null, classClasses.value(), classClasses.excludes(),
                     classClasses.cdiInterceptors(), classClasses.cdiAlternatives(), classClasses.cdiDecorators(), classClasses.cdiStereotypes(),
                     classClasses.cdi(), classClasses.innerClassesAsBean(), testClass.getAnnotation(Default.class) != null);
@@ -802,7 +799,6 @@ public class ApplicationComposers {
     private void addWebApp(final AppModule appModule, final ManagedBean testBean,
                            final Map<String, URL> additionalDescriptors,
                            final Descriptors descriptors,
-                           final JaxrsProviders providers,
                            final WebApp webapp, final Jars globalJarsAnnotation,
                            final Jars jarsAnnotation,
                            final Class<?>[] cdiClasses,
@@ -850,18 +846,6 @@ public class ApplicationComposers {
         }
 
         Class<?>[] classes = cdiClasses;
-        final Class<?>[] providersClasses = providers == null ? null : providers.value();
-        for (final JaxrsProviders p : asList(testClass.getAnnotation(JaxrsProviders.class), providers)) {
-            if (p != null) {
-                if (classes == null) {
-                    classes = p.value();
-                } else {
-                    final Collection<Class<?>> newClasses = new ArrayList<>(asList(classes));
-                    newClasses.addAll(asList(p.value()));
-                    classes = newClasses.toArray(new Class<?>[newClasses.size()]);
-                }
-            }
-        }
         if (innerClassesAsBean) {
             final Collection<Class<?>> inners = new LinkedList<>();
             for (final Class<?> clazz : testClass.getClasses()) {
@@ -913,19 +897,6 @@ public class ApplicationComposers {
         final IAnnotationFinder finder = finderFromClasses(webModule, classes, libs, excludes);
         webModule.setFinder(finder);
         ejbModule.setFinder(webModule.getFinder());
-        if (providersClasses != null) {
-            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-            if (openejbJar == null) {
-                openejbJar = new OpenejbJar();
-                ejbModule.setOpenejbJar(openejbJar);
-            }
-            final PojoDeployment pojoDeployment = new PojoDeployment();
-            pojoDeployment.setClassName(providers.applicationName());
-            pojoDeployment.getProperties().setProperty("cxf.jaxrs.providers", Join.join(",", providersClasses).replace("class ", ""));
-            // it is specified so skip scanning otherwise we'll get them twice
-            pojoDeployment.getProperties().setProperty("cxf.jaxrs.skip-provider-scanning", "true");
-            openejbJar.getPojoDeployment().add(pojoDeployment);
-        }
     }
 
     public void enrich(final Object inputTestInstance) throws org.apache.openejb.OpenEJBException {
@@ -1310,21 +1281,7 @@ public class ApplicationComposers {
         configuration.put(DEPLOYMENTS_CLASSPATH_PROPERTY, "false");
 
         final EnableServices annotation = testClass.getAnnotation(EnableServices.class);
-        if (annotation != null && annotation.httpDebug()) {
-            configuration.setProperty("httpejbd.print", "true");
-            configuration.setProperty("httpejbd.indent.xml", "true");
-            configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
-        }
         final org.apache.openejb.junit.EnableServices annotationOld = testClass.getAnnotation(org.apache.openejb.junit.EnableServices.class);
-        if (annotationOld != null && annotationOld.httpDebug()) {
-            configuration.setProperty("httpejbd.print", "true");
-            configuration.setProperty("httpejbd.indent.xml", "true");
-            configuration.setProperty("logging.level.OpenEJB.server.http", "FINE");
-        }
-        final WebResource webResource = testClass.getAnnotation(WebResource.class);
-        if (webResource != null && webResource.value().length > 0) {
-            configuration.setProperty("openejb.embedded.http.resources", Join.join(",", webResource.value()));
-        }
 
         Openejb openejb = null;
         final Map<Object, List<Method>> configs = new HashMap<>();
@@ -1392,7 +1349,11 @@ public class ApplicationComposers {
                 }
 
                 final String service = field.getAnnotation(RandomPort.class).value();
-                final String key = ("http".equals(service) ? "httpejbd" : service) + ".port";
+                if ("http".equals(service)) {
+                    throw new IllegalArgumentException("@RandomPort(\"http\") needs an HTTP server, "
+                            + "use the TomEE embedded runners instead of the ApplicationComposer");
+                }
+                final String key = service + ".port";
                 final String existing = SystemInstance.get().getProperty(key);
                 final int random;
                 if (existing == null) {
@@ -1471,14 +1432,7 @@ public class ApplicationComposers {
                 || annotation != null || annotationOld != null) {
             try {
                 if (annotation != null) {
-                    final List<String> value = new ArrayList<>(asList(annotation.value()));
-                    if (annotation.jaxrs()) {
-                        value.add("jaxrs");
-                    }
-                    if (annotation.jaxws()) {
-                        value.add("jaxws");
-                    }
-                    initFilteredServiceManager(value.toArray(new String[value.size()]));
+                    initFilteredServiceManager(annotation.value());
                 }
                 if (annotationOld != null) {
                     initFilteredServiceManager(annotationOld.value());
@@ -1587,26 +1541,6 @@ public class ApplicationComposers {
                 }
             }
         });
-        if (!appContext.getWebContexts().isEmpty()) {
-            beforeDestroyAfterRunnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        final Object sessionManager = SystemInstance.get().getComponent(
-                                ParentClassLoaderFinder.Helper.get().loadClass("org.apache.openejb.server.httpd.session.SessionManager")
-                        );
-                        if (sessionManager != null) {
-                            final Class<?>[] paramTypes = {WebContext.class};
-                            for (final WebContext web : appContext.getWebContexts()) {
-                                Reflections.invokeByReflection(sessionManager, "destroy", paramTypes, new Object[]{web});
-                            }
-                        }
-                    } catch (final Throwable e) {
-                        // no-op
-                    }
-                }
-            });
-        }
         for (final Map.Entry<Object, ClassFinder> m : testClassFinders.entrySet()) {
             for (final Method mtd : m.getValue().findAnnotatedMethods(PostConstruct.class)) {
                 if (mtd.getParameterTypes().length == 0) {

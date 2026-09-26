@@ -16,40 +16,38 @@
  */
 package org.superbiz.calculator.wsh;
 
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import jakarta.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
 import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(Arquillian.class)
 public class CalculatorTest {
 
-    //Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
+    @ArquillianResource
+    private URL base;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty("openejb.embedded.remotable", "true");
-
-        //Just for this test we change the default port from 4204 to avoid conflicts
-        properties.setProperty("httpejbd.port", "" + port);
-
-        //properties.setProperty("httpejbd.print", "true");
-        //properties.setProperty("httpejbd.indent.xml", "true");
-        EJBContainer.createEJBContainer(properties);
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "webservice-handlerchain.war")
+                .addClasses(Calculator.class, CalculatorWs.class, Inflate.class, Increment.class)
+                .addAsResource("org/superbiz/calculator/wsh/handlers.xml");
     }
 
     @Test
     public void testCalculatorViaWsInterface() throws Exception {
         final Service calculatorService = Service.create(
-                new URL("http://localhost:" + port + "/webservice-handlerchain/Calculator?wsdl"),
+                new URL(base.toExternalForm() + "webservices/Calculator?wsdl"),
                 new QName("http://superbiz.org/wsdl", "CalculatorService"));
 
         assertNotNull(calculatorService);

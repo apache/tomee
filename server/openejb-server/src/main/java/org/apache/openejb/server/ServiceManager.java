@@ -240,8 +240,7 @@ public abstract class ServiceManager {
                         name = name.toLowerCase(Locale.ENGLISH);
                         return name.equals("ejbd.properties")
                             || name.equals("ejbds.properties")
-                            || name.equals("admin.properties")
-                            || name.equals("httpejbd.properties");
+                            || name.equals("admin.properties");
                     }
                 });
 

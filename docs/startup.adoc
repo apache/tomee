@@ -73,10 +73,7 @@ ejbd service should be bound. | +
 | _--examples_ | Show examples of how to use the options. | | -h,
 --_help_ | Print this help message. | | _--hsql-bind _ | Sets the host
 to which the hsql service should be bound.| | _--hsql-port _ | Sets the
-port to which the hsql service should be bound.| | _--httpejbd-bind _ |
-Sets the host to which the httpejbd service should be bound.| |
-_--httpejbd-port _ | Sets the port to which the httpejbd service should
-be bound.| | _--local-copy _ | Instructs the container system to marshal
+port to which the hsql service should be bound.| | _--local-copy _ | Instructs the container system to marshal
 (ie, copy) all calls between beans. | | _--telnet-bind _ | Sets the host
 to which the telnet service should be bound.| | _--telnet-port _ | Sets
 the port to which the telnet service should be bound.| | -v, --_version_
@@ -196,24 +193,6 @@ java.naming.provider.url = ejbd://127.0.0.1:8765
 java.naming.security.principal = myuser java.naming.security.credentials
 = mypass
 
-_openejb start -Dhttpejbd.port=8888_
-
-The server will start up and the EJB over HTTP service will bind to IP
-127.0.0.1 and port 8888.
-
-The following properties would then be used to get an InitialContext
-from the HTTP/Remote Server.
-
-[source,properties]
-----
-   java.naming.factory.initial      =
-----
-
-org.apache.openejb.client.RemoteInitialContextFactory
-java.naming.provider.url = http://127.0.0.1:8888/openejb
-java.naming.security.principal = myuser java.naming.security.credentials
-= mypass
-
 == Example: -D.only_from=
 
 _openejb start -Dadmin.only_from=192.168.1.12_
@@ -266,6 +245,6 @@ http://tomee.apache.org/
 OpenEJB ready.
 ----
 
-OpenEJB Remote Server ** Starting Services ** NAME IP PORT httpejbd
-0.0.0.0 4204 telnet 0.0.0.0 4202 ejbd 0.0.0.0 4201 hsql 0.0.0.0 9001
+OpenEJB Remote Server ** Starting Services ** NAME IP PORT telnet
+0.0.0.0 4202 ejbd 0.0.0.0 4201 hsql 0.0.0.0 9001
 admin thread 0.0.0.0 4200 ------- Ready!

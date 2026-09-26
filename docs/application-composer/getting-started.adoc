@@ -22,31 +22,8 @@ The minimum required one is `openejb-core`:
 </dependency>
 ----
 
-If you need JAXRS services you'll add (or replace thanks to transitivity
-of maven) `openejb-cxf-rs`:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.openejb</groupId>
-  <artifactId>openejb-cxf-rs</artifactId>
-  <version>${openejb.version></version>
-</dependency>
-----
-
-If you need JAXWS services you'll add (or replace thanks to transitivity
-of maven) `openejb-cxf`:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.openejb</groupId>
-  <artifactId>openejb-cxf</artifactId>
-  <version>${openejb.version></version>
-</dependency>
-----
-
-etc...
+JAXRS and JAXWS endpoints are served by TomEE; to test them over HTTP use
+TomEE Embedded or the Arquillian TomEE adapters.
 
 == ApplicationComposer Components
 
