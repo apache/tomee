@@ -67,8 +67,6 @@ public class TestRunner extends junit.textui.TestRunner {
                 runLocalTests();
             } else if (args[0].equals("remote")) {
                 runRemoteTests();
-            } else if (args[0].equals("http")) {
-                runRemoteHttpTests();
             } else if (args[0].equals("tomcat")) {
                 runTomcatRemoteHttpTests();
             } else {
@@ -125,17 +123,6 @@ public class TestRunner extends junit.textui.TestRunner {
         System.out
             .println("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|\n");
         System.out.println("Running EJB compliance tests on Remote Server");
-        System.out.println("_________________________________________________");
-    }
-
-    private static void runRemoteHttpTests() {
-        setDefault("openejb.test.server", "org.apache.openejb.test.RemoteHttpTestServer");
-        setDefault("openejb.test.database", "org.apache.openejb.test.HsqldbTestDatabase");
-
-        System.out.println("_________________________________________________");
-        System.out
-            .println("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|\n");
-        System.out.println("Running EJB compliance tests on HTTP/Remote Server");
         System.out.println("_________________________________________________");
     }
 
