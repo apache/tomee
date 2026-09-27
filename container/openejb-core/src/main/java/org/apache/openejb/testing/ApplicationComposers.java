@@ -1348,12 +1348,7 @@ public class ApplicationComposers {
                     field.setAccessible(true);
                 }
 
-                final String service = field.getAnnotation(RandomPort.class).value();
-                if ("http".equals(service)) {
-                    throw new IllegalArgumentException("@RandomPort(\"http\") needs an HTTP server, "
-                            + "use the TomEE embedded runners instead of the ApplicationComposer");
-                }
-                final String key = service + ".port";
+                final String key = field.getAnnotation(RandomPort.class).value() + ".port";
                 final String existing = SystemInstance.get().getProperty(key);
                 final int random;
                 if (existing == null) {
