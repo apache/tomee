@@ -205,12 +205,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tomee-catalina</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${version.openwebbeans}</version>
@@ -263,14 +257,11 @@
               <useFile>false</useFile>
               <disableXmlReport>false</disableXmlReport>
               <excludedGroups>javaee-full,se</excludedGroups>
-              <excludes> <!-- need an HTTP server, run in cdi-tomee -->
-                <exclude>org/jboss/cdi/tck/interceptors/tests/contract/interceptorLifeCycle/environment/jndi/ejb/InterceptorEnvironmentJNDISessionBeanTest.java</exclude>
-                <exclude>org/jboss/cdi/tck/interceptors/tests/contract/interceptorLifeCycle/environment/jndi/InterceptorEnvironmentJNDITest.java</exclude>
+              <excludes> <!-- need an HTTP server or servlet request, session or context objects, run in cdi-tomee -->
                 <exclude>org/jboss/cdi/tck/tests/context/activation/ActivateRequestContextinEETest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/application/ApplicationContextTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/application/async/ApplicationContextAsyncListenerTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/application/destroy/ApplicationContextDestructionTest.java</exclude>
-                <exclude>org/jboss/cdi/tck/tests/context/application/event/ApplicationScopeEventMultiWarTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/conversation/ClientConversationContextTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/conversation/determination/ConversationDeterminationTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/conversation/event/LongRunningConversationLifecycleEventTest.java</exclude>
@@ -284,7 +275,6 @@
                 <exclude>org/jboss/cdi/tck/tests/context/request/async/RequestContextAsyncListenerTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/request/event/async/RequestScopeEventAsyncTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/request/event/RequestScopeEventTest.java</exclude>
-                <exclude>org/jboss/cdi/tck/tests/context/request/event/timeout/RequestScopeEventTimeoutTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/request/jaxrs/RequestContextTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/request/postconstruct/EagerSingletonPostConstructCallbackTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/request/postconstruct/SimpleBeanPostConstructCallbackTest.java</exclude>
@@ -295,10 +285,12 @@
                 <exclude>org/jboss/cdi/tck/tests/context/session/listener/SessionContextServletRequestListenerTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/session/listener/shutdown/SessionContextListenerShutdownTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/context/session/SessionContextTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/decorators/builtin/http/request/BuiltinHttpServletRequestDecoratorTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/decorators/builtin/http/servletcontext/BuiltinServletContextDecoratorTest.java</exclude>
+                <exclude>org/jboss/cdi/tck/tests/decorators/builtin/http/session/BuiltinHttpSessionDecoratorTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/decorators/definition/lifecycle/DecoratorInstanceIsDependentObjectTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/deployment/shutdown/ApplicationShutdownLifecycleTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/event/observer/priority/contextLifecycleEvent/ee/RequestContextLifecycleEventObserverOrderingTest.java</exclude>
-                <exclude>org/jboss/cdi/tck/tests/implementation/builtin/metadata/ee/BuiltinMetadataEEBeanTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/implementation/builtin/servlet/ServletContainerBuiltinBeanTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/implementation/simple/ee/components/JavaEEComponentsTest.java</exclude>
                 <exclude>org/jboss/cdi/tck/tests/lookup/clientProxy/incontainer/ClientProxyTest.java</exclude>
@@ -327,10 +319,6 @@
                 <topic>new://Resource?type=Topic</topic>
                 <jdbc>new://Resource?type=DataSource</jdbc>
                 <jms>new://Resource?type=jakarta.jms.ConnectionFactory</jms>
-
-                <admin.disabled>true</admin.disabled>
-                <ejbd.disabled>true</ejbd.disabled>
-                <ejbds.disabled>true</ejbds.disabled>
 
                 <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
                 <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
