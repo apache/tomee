@@ -180,12 +180,11 @@ public abstract class WsService implements ServerService, SelfManaging {
         // @WebServiceRef clients only need the port address registry, publishing endpoints needs a WsRegistry
         wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
         if (wsRegistry == null) {
-            LOGGER.warning("No " + WsRegistry.class.getName() + " available, web services will not be deployed");
+            LOGGER.info("No " + WsRegistry.class.getName() + " available, web services will not be deployed");
             return;
         }
 
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);
         SystemInstance.get().setComponent(WsService.class, this);
         if (assembler != null) {

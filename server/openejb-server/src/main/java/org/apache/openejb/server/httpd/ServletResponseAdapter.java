@@ -191,11 +191,6 @@ public class ServletResponseAdapter implements HttpResponse {
         return response.getLocale();
     }
 
-    @SuppressWarnings({"deprecation"})
-    public void setStatusMessage(String responseString) {
-        response.setStatus(getStatus());
-    }
-
     public void flushBuffer() throws IOException {
         response.flushBuffer();
     }

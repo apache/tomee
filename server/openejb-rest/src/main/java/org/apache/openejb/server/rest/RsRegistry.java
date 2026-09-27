@@ -21,7 +21,7 @@ import org.apache.openejb.server.httpd.HttpListener;
 
 
 public interface RsRegistry {
-    AddressInfo createRsHttpListener(String appId, String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost, String auth, String realm);
+    AddressInfo createRsHttpListener(String appId, String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost);
 
     HttpListener removeListener(String appId, String context);
 

@@ -55,7 +55,6 @@ public final class LogCategory {
     public static final LogCategory AXIS2 = new LogCategory("axis");
     public static final LogCategory CXF = new LogCategory("cxf");
     public static final LogCategory TIMER = new LogCategory("Timer");
-    public static final LogCategory HTTPSERVER = OPENEJB_SERVER.createChild("http");
     public static final LogCategory SERVICEPOOL = OPENEJB_SERVER.createChild("pool");
     public static final LogCategory OPENEJB_SQL = OPENEJB.createChild("sql");
     public static final LogCategory MONITORING = OPENEJB.createChild("monitoring");

@@ -18,91 +18,26 @@ package org.apache.openejb.server.httpd;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.Map;
-
-
 /**
- * An interface to take care of HTTP Requests.  It parses headers, content, form and url
- * parameters.
+ * The HTTP request handed to an {@link HttpListener}, backed by a servlet request.
  */
 public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
-
-
-    /**
-     * Request methods
-     */
-    public static enum Method {
-        OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT, PATCH, UNSUPPORTED
-    }
-
-    //
-    // Header variables
-    //
-    /**
-     * the Accept header
-     */
-    public static final String HEADER_ACCEPT = "Accept";
-    /**
-     * the Accept-Encoding header
-     */
-    public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
-    /**
-     * the Accept-Language header
-     */
-    public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
-    /**
-     * the Content-Type header
-     */
-    public static final String HEADER_CONTENT_TYPE = "Content-Type";
-    /**
-     * the Content-Length header
-     */
-    public static final String HEADER_CONTENT_LENGTH = "Content-Length";
-    /**
-     * the Connection header
-     */
-    public static final String HEADER_CONNECTION = "Connection";
-    /**
-     * the Cache-Control header
-     */
-    public static final String HEADER_CACHE_CONTROL = "Cache-Control";
-    /**
-     * the Host header
-     */
-    public static final String HEADER_HOST = "Host";
-    /**
-     * the User-Agent header
-     */
-    public static final String HEADER_USER_AGENT = "User-Agent";
-    /**
-     * the Set-Cookie header
-     */
-    public static final String HEADER_SET_COOKIE = "Set-Cookie";
-    /**
-     * the Cookie header
-     */
-    public static final String HEADER_COOKIE = "Cookie";
 
     //
     // Common attribute values
     //
     /**
-     * If the https server implementation is based on Servlets, the real HttpServletRequest
-     * will be registered in the request attributes using this name.
+     * The real HttpServletRequest is registered in the request attributes using this name.
      */
     public static final String SERVLET_REQUEST = HttpRequest.class.getName() + "@ServletRequest";
 
     /**
-     * If the https server implementation is based on Servlets, the real HttpServletResponse
-     * will be registered in the request attributes using this name.
+     * The real HttpServletResponse is registered in the request attributes using this name.
      */
     public static final String SERVLET_RESPONSE = HttpRequest.class.getName() + "@ServletResponse";
 
     /**
-     * If the https server implementation is based on Servlets, the real ServletContext
-     * will be registered in the request attributes using this name.  Note: a ServletContext
-     * may not be registered even if HttpServletRequest and HttpServletResponse objects are
-     * registered.
+     * The real ServletContext is registered in the request attributes using this name.
      */
     public static final String SERVLET_CONTEXT = HttpRequest.class.getName() + "@ServletContext";
 
@@ -112,21 +47,6 @@ public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
      * @param name
      */
     String getParameter(String name);
-
-    /**
-     * Gets all the form and URL query parameters
-     *
-     * @return All the form and URL query parameters
-     */
-    Map getParameters();
-
-
-    /**
-     * Gets the URI for the current URL page.
-     *
-     * @return The URI
-     */
-    public java.net.URI getURI();
 
     int getContentLength();
 

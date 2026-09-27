@@ -35,13 +35,10 @@ import org.apache.openejb.cdi.OpenEJBLifecycle;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.observer.Event;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.webbeans.spi.ContainerLifecycle;
-import org.apache.webbeans.web.lifecycle.test.MockServletContext;
 import org.apache.webbeans.web.lifecycle.test.MockServletContextEvent;
 
 import javax.naming.Binding;
@@ -57,19 +54,14 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 import java.io.File;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class LightweightWebAppBuilder implements WebAppBuilder {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LightweightWebAppBuilder.class);
@@ -128,12 +120,9 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             webContext.getInjections().addAll(injections);
             webContext.setInitialContext(new EmbeddedInitialContext(webContext.getJndiEnc(), webContext.getBindings()));
 
-            final ServletContext component = SystemInstance.get().getComponent(ServletContext.class);
-            final ServletContextEvent sce = component == null ? new MockServletContextEvent() :
-                    new ServletContextEvent(new LightServletContext(component, webContext.getClassLoader()));
+            final ServletContextEvent sce = new MockServletContextEvent();
             servletContextEvents.put(webAppInfo, sce);
             webContext.setServletContext(sce.getServletContext());
-            SystemInstance.get().fireEvent(new EmbeddedServletContextCreated(sce.getServletContext()));
 
             appContext.getWebContexts().add(webContext);
             cs.addWebContext(webContext);
@@ -436,90 +425,6 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         @Override
         public String getNameInNamespace() throws NamingException {
             return null;
-        }
-    }
-
-    @Event
-    public static class EmbeddedServletContextCreated {
-        private final ServletContext context;
-
-        public EmbeddedServletContextCreated(ServletContext context) {
-            this.context = context;
-        }
-
-        public ServletContext getContext() {
-            return context;
-        }
-
-        @Override
-        public String toString() {
-            return "EmbeddedServletContextCreated{" +
-                    "context=" + context +
-                    '}';
-        }
-    }
-
-    public static class LightServletContext extends MockServletContext {
-        private final Map<String, Object> attributes = new ConcurrentHashMap<>();
-        private final ServletContext delegate;
-        private final ClassLoader loader;
-
-        public LightServletContext(final ServletContext delegate, final ClassLoader loader) {
-            this.delegate = delegate;
-            this.loader = loader;
-        }
-
-        @Override
-        public ClassLoader getClassLoader() {
-            return loader;
-        }
-
-        @Override
-        public URL getResource(final String path) throws MalformedURLException {
-            return delegate.getResource(path);
-        }
-
-        @Override
-        public InputStream getResourceAsStream(final String path) {
-            return delegate.getResourceAsStream(path);
-        }
-
-        @Override
-        public int getMajorVersion() {
-            return 3;
-        }
-
-        @Override
-        public int getEffectiveMajorVersion() {
-            return 3;
-        }
-
-        @Override
-        public String getVirtualServerName() {
-            return "openejb-embedded";
-        }
-
-        @Override
-        public void setAttribute(final String name, final Object object) {
-            attributes.put(name, object);
-        }
-
-        @Override
-        public Object getAttribute(final String name) {
-            final Object o = attributes.get(name);
-            return o == null ? delegate.getAttribute(name) : o;
-        }
-
-        @Override
-        public Enumeration<String> getAttributeNames() {
-            final Set<String> c = new HashSet<>(attributes.keySet());
-            c.addAll(Collections.list(delegate.getAttributeNames()));
-            return Collections.enumeration(c);
-        }
-
-        @Override
-        public String getServerInfo() {
-            return "EmbeddedOpenEJB/" + OpenEjbVersion.get().getVersion();
         }
     }
 }

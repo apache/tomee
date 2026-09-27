@@ -39,13 +39,6 @@ public interface HttpResponse extends java.io.Serializable, HttpServletResponse 
     public void setContentType(String type);
 
     /**
-     * Sets the response string to be sent to the browser
-     *
-     * @param responseString the response string
-     */
-    void setStatusMessage(String responseString);
-
-    /**
      * Flushes the output buffer to the client.
      */
     void flushBuffer() throws IOException;

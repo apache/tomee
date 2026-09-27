@@ -27,8 +27,6 @@ import jakarta.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -116,14 +114,6 @@ public class ServletRequestAdapter implements HttpRequest {
     @Override
     public int getIntHeader(String s) {
         return request.getIntHeader(s);
-    }
-
-    public URI getURI() {
-        try {
-            return new URI(request.getScheme(), null, request.getServerName(), request.getServerPort(), request.getRequestURI(), request.getQueryString(), null);
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
     }
 
     public int getContentLength() {
@@ -298,10 +288,6 @@ public class ServletRequestAdapter implements HttpRequest {
     @Override
     public BufferedReader getReader() throws IOException {
         return request.getReader();
-    }
-
-    public Map getParameters() {
-        return request.getParameterMap();
     }
 
     @Override

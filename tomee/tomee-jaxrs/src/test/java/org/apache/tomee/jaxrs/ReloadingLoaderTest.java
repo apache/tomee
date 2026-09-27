@@ -81,8 +81,7 @@ public class ReloadingLoaderTest {
         SystemInstance.get().setComponent(RsRegistry.class, new RsRegistry() { // the app has no endpoint to publish
             @Override
             public AddressInfo createRsHttpListener(final String appId, final String webContext, final HttpListener listener,
-                                                    final ClassLoader classLoader, final String path, final String virtualHost,
-                                                    final String auth, final String realm) {
+                                                    final ClassLoader classLoader, final String path, final String virtualHost) {
                 throw new UnsupportedOperationException();
             }
 
