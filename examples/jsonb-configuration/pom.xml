@@ -47,12 +47,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>ziplock</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-embedded</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
