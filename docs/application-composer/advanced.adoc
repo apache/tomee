@@ -24,8 +24,18 @@ Note: this can be put in a `@Module` method as well.
 
 == Services
 
-`@EnableServices` starts the listed server services, for instance `ejbd`
-for remote EJB clients:
+`@EnableServices` starts the listed server services. Each service needs
+its module on the classpath, for instance `openejb-ejbd` for `ejbd`
+(remote EJB clients):
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.tomee</groupId>
+  <artifactId>openejb-ejbd</artifactId>
+  <version>${openejb.version}</version>
+</dependency>
+----
 
 [source,java]
 ----
@@ -33,6 +43,18 @@ for remote EJB clients:
 @EnableServices("ejbd")
 public class MyTest {
    //...
+}
+----
+
+`@RandomPort` picks a free port for the named service and injects it as
+an `int` or as a `URL` (`http://localhost:<port>/`):
+
+[source,java]
+----
+@EnableServices("ejbd")
+public class MyTest {
+   @RandomPort("ejbd")
+   private int port;
 }
 ----
 
@@ -86,8 +108,8 @@ an instance (or Class) implementing `FallbackPropertyInjector`.
 
 == @WebResource
 
-Adds folders containing web resources to the web application. Only the
-TomEE Embedded runners serve them.
+Sets the folder containing the web resources (docBase) of the web
+application. Only the TomEE Embedded runners use it, with a single folder.
 
 == Limitations for Single Instance Application Composer
 
