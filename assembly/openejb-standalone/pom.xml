@@ -245,12 +245,6 @@
                       <arg value="remote" />
                     </java>
 
-                    <java jar="target/openejb-{project.version}-test.jar" fork="yes">
-                      <sysproperty key="openejb.home" value="${openejb.home}" />
-                      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
-                      <arg value="http" />
-                    </java>
-
                   </target>
                 </configuration>
               </execution>
