@@ -34,6 +34,7 @@ import jakarta.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
@@ -54,14 +55,14 @@ public class CdiHandlersTest {
     }
 
     @Test
-    public void checkHandlersAreCDIBeans() throws MalformedURLException {
+    public void checkHandlersAreCDIBeans() throws MalformedURLException, InterruptedException {
         SimpleHandler.reset();
         final Service service = Service.create(new URL(base.toExternalForm() + "ws?wsdl"), new QName("http://cdi.jaxws.tests.arquillian.openejb.apache.org/", "MyHandledWebserviceService"));
         final MyHandledWsApi servicePort = service.getPort(MyHandledWsApi.class);
         servicePort.test();
         assertTrue(SimpleHandler.close);
         assertTrue(SimpleHandler.handled);
-        assertTrue(SimpleHandler.pre);
+        assertTrue(SimpleHandler.preDestroyed.await(1, MINUTES));
         assertTrue(SimpleHandler.post);
     }
 

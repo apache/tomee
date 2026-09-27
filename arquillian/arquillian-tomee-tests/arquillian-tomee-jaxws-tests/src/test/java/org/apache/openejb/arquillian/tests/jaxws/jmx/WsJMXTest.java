@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.arquillian.tests.jaxws.jmx;
 
+import org.apache.openejb.arquillian.common.ArquillianUtil;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -26,7 +27,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
@@ -43,6 +43,7 @@ import java.net.URL;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 // client side, the embedded container shares this JVM and its MBeanServer
 @RunWith(Arquillian.class)
@@ -63,14 +64,13 @@ public class WsJMXTest {
     public static WebArchive war() {
         return ShrinkWrap.create(WebArchive.class, "app.war")
                 .addClasses(AnEjbEndpoint.class, AnPojoEndpoint.class)
-                // no mapping for the servlet, the endpoint gets the default /AnPojoEndpointService one
                 .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
                         "<servlet><servlet-name>toto</servlet-name><servlet-class>" + AnPojoEndpoint.class.getName() + "</servlet-class></servlet>" +
+                        "<servlet-mapping><servlet-name>toto</servlet-name><url-pattern>/AnPojoEndpointService</url-pattern></servlet-mapping>" +
                         "</web-app>"));
     }
 
     @Test
-    @Ignore("TOMEE-4707 a pojo endpoint servlet without servlet-mapping gets the default /AnPojoEndpointService address but TomcatWsRegistry doesn't map it, its WSDL is a 404")
     public void checkServiceWasDeployed() throws Exception {
         assertTrue(LocalMBeanServer.get().isRegistered(names[0]));
         assertTrue(LocalMBeanServer.get().isRegistered(names[1]));
@@ -78,9 +78,16 @@ public class WsJMXTest {
         assertThat(String.class.cast(LocalMBeanServer.get().invoke(names[1], "getWsdl", new Object[0], new String[0])), CoreMatchers.containsString("<soap:address location=\"" + base.toExternalForm() + "AnPojoEndpointService\"/>"));
     }
 
-    // Arquillian runs @AfterClass before the undeployment, a class rule runs after it
+    // Arquillian runs @AfterClass before the undeployment, a class rule runs after it;
+    // the assumption is evaluated before Arquillian deploys the archive
     @ClassRule
-    public static final TestRule AFTER = new ExternalResource() {
+    public static final TestRule EMBEDDED_ONLY_AND_AFTER = new ExternalResource() {
+        @Override
+        protected void before() {
+            assumeTrue("needs the container in the test JVM",
+                    ArquillianUtil.isCurrentAdapter("tomee-embedded"));
+        }
+
         @Override
         protected void after() {
             assertFalse(LocalMBeanServer.get().isRegistered(names[0]));

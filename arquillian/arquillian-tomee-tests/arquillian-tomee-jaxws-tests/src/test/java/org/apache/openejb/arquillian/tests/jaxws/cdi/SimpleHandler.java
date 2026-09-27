@@ -23,17 +23,20 @@ import jakarta.inject.Inject;
 import jakarta.xml.ws.handler.Handler;
 import jakarta.xml.ws.handler.MessageContext;
 
+import java.util.concurrent.CountDownLatch;
+
 @RequestScoped // otherwise can't test pre/post hooks
 public class SimpleHandler implements Handler {
-    public static boolean pre = false;
-    public static boolean post = false;
-    public static boolean handled = false;
-    public static boolean close = false;
+    // the request scope can end after the client got the response
+    public static volatile CountDownLatch preDestroyed = new CountDownLatch(1);
+    public static volatile boolean post = false;
+    public static volatile boolean handled = false;
+    public static volatile boolean close = false;
 
     public static void reset() {
         handled = false;
         close = false;
-        pre = false;
+        preDestroyed = new CountDownLatch(1);
         post = false;
     }
 
@@ -47,7 +50,7 @@ public class SimpleHandler implements Handler {
 
     @PreDestroy
     public void pre() {
-        pre = true;
+        preDestroyed.countDown();
     }
 
     @Override

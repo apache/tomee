@@ -134,8 +134,7 @@ public class RsInterceptorInjectionTest {
             check(request.getMethod() != null, "request.getMethod() != null");
             check(httpServletRequest.getMethod() != null, "httpServletRequest.getMethod() != null");
             check(uriInfo.getPath() != null, "uriInfo.getPath() != null");
-// TODO OPENEJB-1979 - JAX-RS SecurityContext.isCallerInRole always returns true in Embedded EJBContainer
-//            Assert.assertTrue(!securityContext.isUserInRole("ThereIsNoWayThisShouldEverPass"));
+            check(!securityContext.isUserInRole("ThereIsNoWayThisShouldEverPass"), "!securityContext.isUserInRole(\"ThereIsNoWayThisShouldEverPass\")");
             check(contextResolver.getContext(null) == null, "contextResolver.getContext(null) == null");
 
             context.proceed();
@@ -147,8 +146,7 @@ public class RsInterceptorInjectionTest {
             check(request.getMethod() != null, "request.getMethod() != null");
             check(httpServletRequest.getMethod() != null, "httpServletRequest.getMethod() != null");
             check(uriInfo.getPath() != null, "uriInfo.getPath() != null");
-// TODO OPENEJB-1979 - JAX-RS SecurityContext.isCallerInRole always returns true in Embedded EJBContainer
-//            Assert.assertTrue(!securityContext.isUserInRole("ThereIsNoWayThisShouldEverPass"));
+            check(!securityContext.isUserInRole("ThereIsNoWayThisShouldEverPass"), "!securityContext.isUserInRole(\"ThereIsNoWayThisShouldEverPass\")");
             check(contextResolver.getContext(null) == null, "contextResolver.getContext(null) == null");
 
             return true;

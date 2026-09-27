@@ -86,9 +86,7 @@ public class CDIProviderContainerRequestFilterTest {
 
         @Override
         public void filter(final ContainerRequestContext request) throws IOException {
-            if (bean != null) { // EJBContainer tests
-                request.abortWith(Response.ok(bean.user() + "@" + resourceInfo.getResourceMethod().getName()).build());
-            }
+            request.abortWith(Response.ok(bean.user() + "@" + resourceInfo.getResourceMethod().getName()).build());
         }
     }
 }

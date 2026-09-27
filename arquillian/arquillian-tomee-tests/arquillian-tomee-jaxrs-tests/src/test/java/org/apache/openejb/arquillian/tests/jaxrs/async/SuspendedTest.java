@@ -39,10 +39,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URL;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.assertEquals;
@@ -116,23 +116,11 @@ public class SuspendedTest {
     private URL url;
 
     @Test
-    public void run() throws InterruptedException {
-        final AtomicReference<Response> response = new AtomicReference<>();
-        final CountDownLatch end = new CountDownLatch(1);
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    response.set(WebClient.create(url.toExternalForm() + "touch").get());
-                } finally {
-                    end.countDown();
-                }
-            }
-        }.start();
+    public void run() throws Exception {
+        final CompletableFuture<Response> response = CompletableFuture.supplyAsync(() -> WebClient.create(url.toExternalForm() + "touch").get());
         assertTrue(Endpoint.LATCH.await(1, MINUTES));
         WebClient.create(url.toExternalForm() + "touch").path("answer").post("hello");
-        end.await();
-        assertEquals("hello", response.get().readEntity(String.class));
+        assertEquals("hello", response.get(1, MINUTES).readEntity(String.class));
         assertEquals("touch", WebClient.create(url.toExternalForm() + "touch").path("path").get(String.class));
     }
 }

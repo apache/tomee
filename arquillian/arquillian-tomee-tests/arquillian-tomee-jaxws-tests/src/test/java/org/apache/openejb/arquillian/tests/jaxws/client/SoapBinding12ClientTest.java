@@ -49,8 +49,7 @@ public class SoapBinding12ClientTest {
         return ShrinkWrap.create(WebArchive.class, "test.war").addClasses(SoapBinding12ClientTest.class);
     }
 
-    // with a single deployed port its address replaces this wsdlLocation, see JaxWsServiceReference
-    @WebServiceRef(wsdlLocation = "http://127.0.0.1:4204/test/MyWebservice12?wsdl")
+    @WebServiceRef
     private MyWsApi client;
 
     @Test
