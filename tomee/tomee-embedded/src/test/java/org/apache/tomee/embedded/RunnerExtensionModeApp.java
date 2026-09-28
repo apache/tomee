@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.tomee.embedded;
 
-package org.apache.tomee.embedded.junit.jupiter;
+import org.apache.openejb.testing.Application;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.RandomPort;
 
-import org.junit.jupiter.api.extension.ExtendWith;
+// the application of the *RunnerExtensionModeTest, selected by the surefire execution
+@Application
+@Classes(context = "app")
+public class RunnerExtensionModeApp {
+    @RandomPort("http")
+    private int port;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Inherited
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(org.apache.tomee.embedded.junit.jupiter.TomEEEmbeddedExtension.class)
-public @interface RunWithTomEEEmbedded {
-
-    /**
-     * The test container lifecycle <em>mode</em> to use.
-     */
-    ExtensionMode mode() default ExtensionMode.AUTO;
+    public int getPort() {
+        return port;
+    }
 }
