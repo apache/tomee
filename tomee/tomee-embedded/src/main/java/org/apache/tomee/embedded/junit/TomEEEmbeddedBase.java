@@ -27,7 +27,11 @@ public class TomEEEmbeddedBase {
     private static final AtomicReference<TomEEEmbeddedApplicationRunner> RUNNER = new AtomicReference<>();
 
     public void start(final Object marker) throws Exception {
-        getRunner().start(marker.getClass(), (Properties) null);
+        start(marker.getClass());
+    }
+
+    public void start(final Class<?> marker) throws Exception {
+        getRunner().start(marker, (Properties) null);
     }
 
     public void close() {
