@@ -64,6 +64,34 @@ public class HealthEndpointTest {
         assertEquals(200, get(tomee, "/test/health/live").getStatus());
     }
 
+    @Test
+    public void applicationAtTheContextRoot() throws Exception {
+        final TomEE tomee = deploy(Archive.archive()
+                                          .add(HealthEndpointTest.class)
+                                          .add(RootApp.class)
+                                          .add(HelloResource.class)
+                                          .asJar());
+
+        assertEquals(200, get(tomee, "/test/hello").getStatus());
+        assertEquals(200, get(tomee, "/test/health").getStatus());
+        assertEquals(200, get(tomee, "/test/health/live").getStatus());
+    }
+
+    @Test
+    public void multipleApplications() throws Exception {
+        final TomEE tomee = deploy(Archive.archive()
+                                          .add(HealthEndpointTest.class)
+                                          .add(ListingApp.class)
+                                          .add(OtherApp.class)
+                                          .add(HelloResource.class)
+                                          .asJar());
+
+        assertEquals(200, get(tomee, "/test/api/hello").getStatus());
+        assertEquals(200, get(tomee, "/test/other/hello").getStatus());
+        assertEquals(200, get(tomee, "/test/health").getStatus());
+        assertEquals(200, get(tomee, "/test/health/live").getStatus());
+    }
+
     private static TomEE deploy(final File appJar) throws Exception {
         return TomEE.microprofile()
                     .add("webapps/test/WEB-INF/beans.xml", "")
@@ -86,6 +114,22 @@ public class HealthEndpointTest {
 
     @ApplicationPath("/api")
     public static class ScanningApp extends Application {
+    }
+
+    @ApplicationPath("/")
+    public static class RootApp extends Application {
+        @Override
+        public Set<Class<?>> getClasses() {
+            return Set.of(HelloResource.class);
+        }
+    }
+
+    @ApplicationPath("/other")
+    public static class OtherApp extends Application {
+        @Override
+        public Set<Class<?>> getClasses() {
+            return Set.of(HelloResource.class);
+        }
     }
 
     @Path("hello")
