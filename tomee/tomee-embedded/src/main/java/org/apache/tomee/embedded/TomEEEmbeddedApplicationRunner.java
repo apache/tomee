@@ -378,6 +378,7 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             SHUTDOWN_TASKS.remove(hook);
             hook = null;
             app = null;
+            started = false; // allow to start again, e.g. for the next test
         }
     }
 
