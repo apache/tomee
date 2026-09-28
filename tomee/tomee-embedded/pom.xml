@@ -226,6 +226,7 @@
                 <exclude>**/SingleInstanceRunnerExtensionTest*</exclude>
                 <exclude>**/NoScannerSingleRunnerTest*</exclude>
                 <exclude>**/NoScannerSingleRunnerExtensionTest*</exclude>
+                <exclude>**/*RunnerExtensionModeTest*</exclude>
               </excludes>
             </configuration>
           </execution>
@@ -240,6 +241,43 @@
               </includes>
               <systemPropertyVariables>
                 <tomee.application-composer.application>org.apache.tomee.embedded.SingleInstanceRunnerTest$TheApp</tomee.application-composer.application>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>junit5-extension-modes</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <!-- the test classes need to share the JVM to start the container more than once / to share it -->
+              <forkCount>1</forkCount>
+              <reuseForks>true</reuseForks>
+              <includes>
+                <include>**/*RunnerExtensionModeTest*</include>
+              </includes>
+              <excludes>
+                <exclude>**/PerJvm*RunnerExtensionModeTest*</exclude>
+              </excludes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.RunnerExtensionModeApp</tomee.application-composer.application>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>junit5-extension-mode-per-jvm</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <!-- the test classes need to share the JVM to start the container more than once / to share it -->
+              <forkCount>1</forkCount>
+              <reuseForks>true</reuseForks>
+              <includes>
+                <include>**/PerJvm*RunnerExtensionModeTest*</include>
+              </includes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.RunnerExtensionModeApp</tomee.application-composer.application>
               </systemPropertyVariables>
             </configuration>
           </execution>

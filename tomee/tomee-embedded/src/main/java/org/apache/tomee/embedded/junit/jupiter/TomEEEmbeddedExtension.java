@@ -25,6 +25,7 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstances;
+import org.junit.platform.commons.util.AnnotationUtils;
 
 import java.util.List;
 
@@ -32,34 +33,53 @@ public class TomEEEmbeddedExtension implements BeforeAllCallback, AfterAllCallba
 
     private static final TomEEEmbeddedBase BASE = new TomEEEmbeddedBase();
 
+    // the container of PER_JVM is never closed, so the other modes can't be used once it is started
+    private static volatile boolean perJvm;
+
     @Override
-    public void afterAll(ExtensionContext context) {
-        if (isPerClass(context)) {
+    public void beforeAll(final ExtensionContext context) throws Exception {
+        final ExtensionMode mode = getMode(context);
+        validate(mode);
+
+        if (mode != ExtensionMode.PER_EACH) {
+            BASE.start(context.getRequiredTestClass());
+            if (mode == ExtensionMode.PER_JVM) {
+                perJvm = true;
+            }
+            if (isPerClass(context)) {
+                doInject(context);
+            }
+        }
+    }
+
+    @Override
+    public void afterAll(final ExtensionContext context) {
+        if (getMode(context) == ExtensionMode.PER_ALL) {
             BASE.close();
         }
     }
 
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
-
-        if (isPerClass(context)) {
-            BASE.start(context.getRequiredTestInstance());
+    public void beforeEach(final ExtensionContext context) throws Exception {
+        final boolean perEach = getMode(context) == ExtensionMode.PER_EACH;
+        if (perEach) {
+            BASE.start(context.getRequiredTestClass());
+        }
+        if (perEach || !isPerClass(context)) {
             doInject(context);
         }
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-        if (!isPerClass(context)) {
+    public void afterEach(final ExtensionContext context) {
+        if (getMode(context) == ExtensionMode.PER_EACH) {
             BASE.close();
         }
     }
 
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        if (!isPerClass(context)) {
-            BASE.start(context.getRequiredTestInstance());
-            doInject(context);
+    private void validate(final ExtensionMode mode) {
+        if (perJvm && mode != ExtensionMode.PER_JVM) {
+            throw new OpenEJBRuntimeException("Cannot run PER_JVM in combination with PER_ALL, PER_EACH or AUTO");
         }
     }
 
@@ -76,6 +96,18 @@ public class TomEEEmbeddedExtension implements BeforeAllCallback, AfterAllCallba
                 throw new OpenEJBRuntimeException(e);
             }
         });
+    }
+
+    // resolves AUTO to the mode matching the lifecycle of the test instance
+    ExtensionMode getMode(final ExtensionContext context) {
+        final ExtensionMode mode = context.getTestClass()
+                .flatMap(test -> AnnotationUtils.findAnnotation(test, RunWithTomEEEmbedded.class))
+                .map(RunWithTomEEEmbedded::mode)
+                .orElse(ExtensionMode.AUTO);
+        if (mode == ExtensionMode.AUTO) {
+            return isPerClass(context) ? ExtensionMode.PER_ALL : ExtensionMode.PER_EACH;
+        }
+        return mode;
     }
 
     boolean isPerClass(final ExtensionContext context) {
