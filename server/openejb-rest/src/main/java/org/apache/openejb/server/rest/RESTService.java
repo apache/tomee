@@ -269,8 +269,16 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     }
                 }
 
+                if (!webApp.restApplications.isEmpty() && deploymentWithApplication && !webApp.containerRestClass.isEmpty()) {
+                    final Application application = new InternalApplication(null);
+                    addContainerResources(application, webApp, classLoader);
+                    pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
+                    deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, application, "/" + wildcard);
+                }
+
                 if (webApp.restApplications.isEmpty()) {
                     final Application application = new InternalApplication(null);
+                    addContainerResources(application, webApp, classLoader);
                     for (final String clazz : webApp.restClass) {
                         try {
                             final Class<?> loaded = classLoader.loadClass(clazz);
@@ -369,6 +377,16 @@ public abstract class RESTService implements ServerService, SelfManaging {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
             additionalProviders.addAll(appProviders(jaxRsProviders, classLoader));
+        }
+    }
+
+    private static void addContainerResources(final Application application, final WebAppInfo webApp, final ClassLoader classLoader) {
+        for (final String clazz : webApp.containerRestClass) {
+            try {
+                application.getClasses().add(classLoader.loadClass(clazz));
+            } catch (final ClassNotFoundException e) {
+                throw new OpenEJBRestRuntimeException("can't load class " + clazz, e);
+            }
         }
     }
 
@@ -479,6 +497,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             } // else keep application prefix
 
             final Set<String> restClasses = new HashSet<>(webApp.restClass);
+            restClasses.addAll(webApp.containerRestClass);
             restClasses.addAll(webApp.ejbRestServices);
 
             for (final String clazz : restClasses) {
