@@ -227,6 +227,8 @@
                 <exclude>**/NoScannerSingleRunnerTest*</exclude>
                 <exclude>**/NoScannerSingleRunnerExtensionTest*</exclude>
                 <exclude>**/*RunnerExtensionModeTest*</exclude>
+                <exclude>**/ResourceInjectionExtensionTest*</exclude>
+                <exclude>**/ResourceByTypeInjectionExtensionTest*</exclude>
               </excludes>
             </configuration>
           </execution>
@@ -292,6 +294,34 @@
               </includes>
               <systemPropertyVariables>
                 <tomee.application-composer.application>org.apache.tomee.embedded.NoScannerSingleRunnerTest$ScanApp</tomee.application-composer.application>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>single-server-resource-by-type-injection</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/ResourceByTypeInjectionExtensionTest*</include>
+              </includes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.ResourceByTypeInjectionExtensionTest$TheApp</tomee.application-composer.application>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>single-server-resource-injection</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/ResourceInjectionExtensionTest*</include>
+              </includes>
+              <systemPropertyVariables>
+                <tomee.application-composer.application>org.apache.tomee.embedded.ResourceInjectionExtensionTest$TheApp</tomee.application-composer.application>
               </systemPropertyVariables>
             </configuration>
           </execution>
