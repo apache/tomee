@@ -17,8 +17,13 @@
 package org.apache.tomee.embedded;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.config.AutoConfig;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.ApplicationComposers;
 import org.apache.openejb.testing.Classes;
@@ -37,7 +42,10 @@ import org.apache.xbean.finder.archive.FileArchive;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 import jakarta.enterprise.inject.Vetoed;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +54,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +71,9 @@ import java.util.logging.Logger;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 import static org.apache.openejb.loader.JarLocation.jarLocation;
 import static org.apache.openejb.util.Classes.ancestors;
 
@@ -85,6 +96,8 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
             }
         });
     }
+
+    private static final Logger LOGGER = Logger.getLogger(TomEEEmbeddedApplicationRunner.class.getName());
 
     private volatile boolean started = false;
     private volatile Object app;
@@ -455,12 +468,109 @@ public class TomEEEmbeddedApplicationRunner implements AutoCloseable {
                     }
                     final TomEEEmbeddedArgs args = SystemInstance.get().getComponent(TomEEEmbeddedArgs.class);
                     f.set(target, args == null ? new String[0] : args.getArgs());
+                } else if (f.isAnnotationPresent(Resource.class)) {
+                    injectResource(target, f);
                 }
             }
             aClass = aClass.getSuperclass();
         }
 
         SystemInstance.get().fireEvent(new TomEEEmbeddedApplicationRunnerInjection(target));
+    }
+
+    // the descriptor and the test instances are not components of the deployed application so the container
+    // didn't create any resource-ref for them, we link the container resources the same way AutoConfig does it:
+    // explicit lookup or name, otherwise the field name and then the first resource matching the type.
+    // Only fields are supported and only container resources (openejb/Resource/<id>) are resolved.
+    private void injectResource(final Object target, final Field field) throws IllegalAccessException {
+        if (field.getType().isPrimitive() || Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
+            return;
+        }
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
+        }
+        if (field.get(target) != null) { // already injected, don't override it
+            return;
+        }
+
+        final Resource resource = field.getAnnotation(Resource.class);
+        final Class<?> type = field.getType();
+        final boolean explicit = !resource.lookup().isEmpty() || !resource.name().isEmpty();
+        final Object value;
+        if (!resource.lookup().isEmpty()) {
+            value = lookupResource(resource.lookup(), type);
+        } else if (!resource.name().isEmpty()) {
+            value = findResource(resource.name(), type, false);
+        } else {
+            value = findResource(field.getName(), type, true);
+        }
+
+        if (value != null) {
+            field.set(target, value);
+        } else { // explicit ones are likely a mistake, the other ones can be something else than a container resource
+            LOGGER.log(explicit ? WARNING : FINE, "Can't find a resource to inject in " + field);
+        }
+    }
+
+    private Object lookupResource(final String lookup, final Class<?> type) {
+        try {
+            final Object value = new InitialContext().lookup(lookup);
+            if (type.isInstance(value)) {
+                return value;
+            }
+        } catch (final NamingException | RuntimeException e) {
+            LOGGER.log(FINE, "Can't lookup " + lookup + ", trying the container resources", e);
+        }
+        return lookupContainerResource(AutoConfig.findResourceId(findResourceIds(null), lookup), type);
+    }
+
+    // explicit names don't fallback on another resource of the same type to not inject an unexpected resource
+    private Object findResource(final String name, final Class<?> type, final boolean fallbackOnType) {
+        final List<String> typedIds = findResourceIds(type.getName());
+        Object value = lookupContainerResource(AutoConfig.findResourceId(typedIds, name), type);
+        if (value == null) { // any type, can be a subtype
+            value = lookupContainerResource(AutoConfig.findResourceId(findResourceIds(null), name), type);
+        }
+        if (value == null && fallbackOnType) { // first one of the expected type
+            for (final String id : typedIds) {
+                value = lookupContainerResource(id, type);
+                if (value != null) {
+                    break;
+                }
+            }
+        }
+        return value;
+    }
+
+    private List<String> findResourceIds(final String type) {
+        final List<String> ids = new ArrayList<>();
+        final OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        if (configuration == null || configuration.facilities == null) {
+            return ids;
+        }
+        for (final ResourceInfo info : configuration.facilities.resources) {
+            if (type == null || type.equals(info.className) || ConfigurationFactory.isResourceType(info.service, info.types, type)) {
+                ids.add(info.id);
+                ids.addAll(info.aliases);
+            }
+        }
+        return ids;
+    }
+
+    private Object lookupContainerResource(final String id, final Class<?> type) {
+        if (id == null) {
+            return null;
+        }
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        if (containerSystem == null) {
+            return null;
+        }
+        try {
+            final Object value = containerSystem.getJNDIContext().lookup("openejb/Resource/" + id);
+            return type.isInstance(value) ? value : null;
+        } catch (final NamingException e) {
+            return null;
+        }
     }
 
     @Retention(RUNTIME)
