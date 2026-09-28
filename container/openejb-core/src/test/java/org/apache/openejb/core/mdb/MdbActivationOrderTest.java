@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -50,6 +51,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * A resource adapter may deliver messages as soon as an endpoint is activated, for example
@@ -66,6 +68,8 @@ public class MdbActivationOrderTest {
             assembler.destroy();
         }
         SystemInstance.reset();
+        PendingMessageResourceAdapter.failActivation = false;
+        PendingMessageResourceAdapter.deactivations = 0;
     }
 
     @Parameterized.Parameters(name = "pool={0}")
@@ -78,6 +82,29 @@ public class MdbActivationOrderTest {
 
     @Test
     public void pendingMessageIsDeliveredToStartedSessionBeans() throws Exception {
+        createApplication();
+
+        if (ListenerBean.failure != null) {
+            throw new AssertionError("pending message failed", ListenerBean.failure);
+        }
+        assertEquals(List.of("Hello pending"), ListenerBean.received);
+    }
+
+    @Test
+    public void failedActivationIsNotDeactivated() throws Exception {
+        PendingMessageResourceAdapter.failActivation = true;
+
+        try {
+            createApplication();
+            fail("the application must not start if the endpoint can't be activated");
+        } catch (final OpenEJBException expected) {
+            // no-op
+        }
+
+        assertEquals(0, PendingMessageResourceAdapter.deactivations);
+    }
+
+    private void createApplication() throws Exception {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
@@ -104,11 +131,6 @@ public class MdbActivationOrderTest {
         ListenerBean.failure = null;
 
         assembler.createApplication(config.configureApplication(ejbJar));
-
-        if (ListenerBean.failure != null) {
-            throw new AssertionError("pending message failed", ListenerBean.failure);
-        }
-        assertEquals(List.of("Hello pending"), ListenerBean.received);
     }
 
     @Stateless
@@ -141,6 +163,9 @@ public class MdbActivationOrderTest {
     }
 
     public static class PendingMessageResourceAdapter implements jakarta.resource.spi.ResourceAdapter {
+        static boolean failActivation;
+        static int deactivations;
+
         @Override
         public void start(final BootstrapContext bootstrapContext) {
         }
@@ -151,6 +176,10 @@ public class MdbActivationOrderTest {
 
         @Override
         public void endpointActivation(final MessageEndpointFactory factory, final ActivationSpec spec) throws ResourceException {
+            if (failActivation) {
+                throw new ResourceException("activation failed");
+            }
+
             final MessageEndpoint endpoint = factory.createEndpoint(null);
             try {
                 endpoint.beforeDelivery(PendingMessageListener.class.getMethod("onMessage", String.class));
@@ -165,6 +194,7 @@ public class MdbActivationOrderTest {
 
         @Override
         public void endpointDeactivation(final MessageEndpointFactory factory, final ActivationSpec spec) {
+            deactivations++;
         }
 
         @Override

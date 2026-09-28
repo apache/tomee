@@ -687,6 +687,10 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
                 Thread.currentThread().setContextClassLoader(classLoader);
                 resourceAdapter.endpointActivation(endpointFactory, activationSpec);
                 logger.info("Activated endpoint for " + beanContext.getDeploymentID());
+            } catch (final ResourceException | RuntimeException e) {
+                // the endpoint is not active, so it must not be deactivated on undeploy
+                started.set(false);
+                throw e;
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);
             }
