@@ -40,5 +40,8 @@ public interface RsHttpListener extends HttpListener {
 
     void undeploy();
 
-    void deployApplication(Application application, String prefix, String webContext, Collection<Object> additionalProviders, Map<String, EJBRestServiceInfo> restEjbs, ClassLoader classLoader, Collection<Injection> injections, Context context, WebBeansContext owbCtx, ServiceConfiguration serviceConfiguration);
+    /**
+     * @param containerResources resource classes the container deploys along with the application, outside of its name bindings
+     */
+    void deployApplication(Application application, Collection<Class<?>> containerResources, String prefix, String webContext, Collection<Object> additionalProviders, Map<String, EJBRestServiceInfo> restEjbs, ClassLoader classLoader, Collection<Injection> injections, Context context, WebBeansContext owbCtx, ServiceConfiguration serviceConfiguration);
 }

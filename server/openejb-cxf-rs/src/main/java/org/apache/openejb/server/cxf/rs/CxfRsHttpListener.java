@@ -183,6 +183,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private final CxfRSService service;
     private HttpDestination destination;
     private Server server;
+    private Collection<Class<?>> containerResources = Collections.emptySet();
     private String context = "";
     private String servlet = "";
     private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<>();
@@ -359,7 +360,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     public boolean isCXFResource(final HttpServletRequest request) {
         try {
-            if (!applicationProvidesResources(findApplication())) { // nothing is registered in JAX-RS
+            if (containerResources.isEmpty() && !applicationProvidesResources(findApplication())) { // nothing is registered in JAX-RS
                 return false;
             }
 
@@ -634,15 +635,18 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     @Override
-    public void deployApplication(final Application application, final String prefix, final String webContext,
+    public void deployApplication(final Application application, final Collection<Class<?>> containerResources,
+                                  final String prefix, final String webContext,
                                   final Collection<Object> additionalProviders,
                                   final Map<String, EJBRestServiceInfo> restEjbs, final ClassLoader classLoader,
                                   final Collection<Injection> injections, final Context context, final WebBeansContext owbCtx,
                                   final ServiceConfiguration serviceConfiguration) {
+        this.containerResources = containerResources;
+
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
-            final ApplicationData applicationData = getApplicationData(application, prefix, additionalProviders);
+            final ApplicationData applicationData = getApplicationData(application, containerResources, prefix, additionalProviders);
 
             logApplication(applicationData);
 
@@ -655,7 +659,9 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             final List<Class<?>> classes = new ArrayList<>();
 
-            for (final Class<?> clazz : application.getClasses()) {
+            final Set<Class<?>> resourceClasses = new LinkedHashSet<>(application.getClasses());
+            resourceClasses.addAll(containerResources);
+            for (final Class<?> clazz : resourceClasses) {
                 if (!additionalProviders.contains(clazz) && !clazz.isInterface()) {
                     classes.add(clazz);
 
@@ -737,6 +743,13 @@ public class CxfRsHttpListener implements RsHttpListener {
              * com/sun/ts/tests/jaxrs/spec/filter/globalbinding/JAXRSClient#globalBoundResourceTest_from_standalone
              */
             setApplication(factory, application);
+
+            // the container resources are outside of the application, so its name bindings don't apply to them
+            for (final ClassResourceInfo cri : factory.getServiceFactory().getClassResourceInfo()) {
+                if (containerResources.contains(cri.getServiceClass())) {
+                    cri.setNameBindings(AnnotationUtils.getNameBindings(factory.getBus(), cri.getServiceClass()));
+                }
+            }
 
             this.context = webContext;
             if (!webContext.startsWith("/")) {
@@ -820,7 +833,8 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
-    private ApplicationData getApplicationData(final Application application, final String prefix, final Collection<Object> additionalProviders) {
+    private ApplicationData getApplicationData(final Application application, final Collection<Class<?>> containerResources,
+                                               final String prefix, final Collection<Object> additionalProviders) {
 
         final ApplicationData applicationData = new ApplicationData(prefix, application);
 
@@ -893,6 +907,10 @@ public class CxfRsHttpListener implements RsHttpListener {
                 applicationData.addResource(discovered, clazz, null);
 
             }
+        }
+
+        for (final Class<?> clazz : containerResources) {
+            applicationData.addResource(false, clazz, null);
         }
 
         for (final Object singleton : application.getSingletons()) {

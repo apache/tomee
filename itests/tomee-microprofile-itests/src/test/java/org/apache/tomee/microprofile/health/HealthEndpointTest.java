@@ -18,7 +18,10 @@ package org.apache.tomee.microprofile.health;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NameBinding;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -27,9 +30,11 @@ import org.apache.tomee.server.composer.TomEE;
 import org.junit.Test;
 
 import java.io.File;
+import java.lang.annotation.Retention;
 import java.net.URL;
 import java.util.Set;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -78,6 +83,34 @@ public class HealthEndpointTest {
     }
 
     @Test
+    public void scanningApplicationAtTheContextRoot() throws Exception {
+        final TomEE tomee = deploy(Archive.archive()
+                                          .add(HealthEndpointTest.class)
+                                          .add(RootScanningApp.class)
+                                          .add(HelloResource.class)
+                                          .asJar());
+
+        assertEquals(200, get(tomee, "/test/hello").getStatus());
+        assertEquals(200, get(tomee, "/test/health").getStatus());
+        assertEquals(200, get(tomee, "/test/health/live").getStatus());
+    }
+
+    @Test
+    public void applicationWithNameBindingsAtTheContextRoot() throws Exception {
+        final TomEE tomee = deploy(Archive.archive()
+                                          .add(HealthEndpointTest.class)
+                                          .add(Denied.class)
+                                          .add(DeniedRootApp.class)
+                                          .add(DenyingFilter.class)
+                                          .add(HelloResource.class)
+                                          .asJar());
+
+        assertEquals(403, get(tomee, "/test/hello").getStatus());
+        assertEquals(200, get(tomee, "/test/health").getStatus());
+        assertEquals(200, get(tomee, "/test/health/live").getStatus());
+    }
+
+    @Test
     public void multipleApplications() throws Exception {
         final TomEE tomee = deploy(Archive.archive()
                                           .add(HealthEndpointTest.class)
@@ -121,6 +154,32 @@ public class HealthEndpointTest {
         @Override
         public Set<Class<?>> getClasses() {
             return Set.of(HelloResource.class);
+        }
+    }
+
+    @ApplicationPath("/")
+    public static class RootScanningApp extends Application {
+    }
+
+    @NameBinding
+    @Retention(RUNTIME)
+    public @interface Denied {
+    }
+
+    @Denied
+    @ApplicationPath("/")
+    public static class DeniedRootApp extends Application {
+        @Override
+        public Set<Class<?>> getClasses() {
+            return Set.of(HelloResource.class, DenyingFilter.class);
+        }
+    }
+
+    @Denied
+    public static class DenyingFilter implements ContainerRequestFilter {
+        @Override
+        public void filter(final ContainerRequestContext requestContext) {
+            requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
         }
     }
 
