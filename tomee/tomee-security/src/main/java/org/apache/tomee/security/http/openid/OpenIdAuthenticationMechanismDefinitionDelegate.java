@@ -202,7 +202,7 @@ public class OpenIdAuthenticationMechanismDefinitionDelegate implements OpenIdAu
     public static class AutoResolvingProviderMetadata extends OpenIdAuthenticationMechanismDefinitionDelegate {
         private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, AutoResolvingProviderMetadata.class);
 
-        private OpenIdProviderMetadata cached = null;
+        private volatile OpenIdProviderMetadata cached = null;
 
         public AutoResolvingProviderMetadata(OpenIdAuthenticationMechanismDefinition delegate) {
             super(delegate);

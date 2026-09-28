@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,15 +35,22 @@ public class TomEEELInvocationHandler implements InvocationHandler {
     private static final Pattern EL_EXPRESSION_PATTERN = Pattern.compile("[#$]\\{([^{}]+)}");
 
     private final Annotation annotation;
-    private final ELProcessor processor;
+
+    // ElProcessor isn't threadsafe, so use a Supplier
+    private final Supplier<ELProcessor> processors;
 
     public TomEEELInvocationHandler(final Annotation annotation, final ELProcessor processor) {
+        this(annotation, () -> processor);
+    }
+
+    private TomEEELInvocationHandler(final Annotation annotation, final Supplier<ELProcessor> processors) {
         this.annotation = annotation;
-        this.processor = processor;
+        this.processors = processors;
     }
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        final ELProcessor processor = processors.get();
 
         // todo optimize and cache methods
 
@@ -56,7 +64,7 @@ public class TomEEELInvocationHandler implements InvocationHandler {
         // Nested annotation with possible EL attributes (e.g. OpenIdAuthenticationMechanismDefinition -> LogoutDefinition)
         if (method.getReturnType().isAnnotation())
         {
-            return of(((Class<Annotation>) method.getReturnType()), (Annotation) method.invoke(annotation, args), processor);
+            return of(((Class<Annotation>) method.getReturnType()), (Annotation) method.invoke(annotation, args), processors);
         }
 
         // If return value is not a String or an array of string, there is another method with "Expression" at the end and a return type String
@@ -200,15 +208,21 @@ public class TomEEELInvocationHandler implements InvocationHandler {
     }
 
     public static <T extends Annotation> T of(final Class<T> annotationClass, final T annotation, final BeanManager beanManager) {
-        final ELProcessor elProcessor = new ELProcessor();
-        elProcessor.getELManager().addELResolver(beanManager.getELResolver());
-        return of(annotationClass, annotation, elProcessor);
+        return of(annotationClass, annotation, () -> {
+            final ELProcessor elProcessor = new ELProcessor();
+            elProcessor.getELManager().addELResolver(beanManager.getELResolver());
+            return elProcessor;
+        });
     }
 
     public static <T extends Annotation> T of(final Class<T> annotationClass, final T annotation, final ELProcessor elProcessor) {
+        return of(annotationClass, annotation, () -> elProcessor);
+    }
+
+    private static <T extends Annotation> T of(final Class<T> annotationClass, final T annotation, final Supplier<ELProcessor> processors) {
         return (T) Proxy.newProxyInstance(annotation.getClass().getClassLoader(),
                                           new Class[]{annotationClass},
-                                          new TomEEELInvocationHandler(annotation, elProcessor));
+                                          new TomEEELInvocationHandler(annotation, processors));
     }
 
 }
