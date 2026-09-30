@@ -32,6 +32,7 @@ updates:
       - dependency-name: "org.openjfx:*"
         # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.smallrye:*"
+      - dependency-name: "io.smallrye.*:*"
         # Ignore MicroMeter Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.micrometer:*"
       - dependency-name: "io.opentelemetry:*"
@@ -75,6 +76,11 @@ updates:
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
+
+        # Ignore Maven 4 only plugin releases - the build runs on Maven 3
+      - dependency-name: "org.apache.maven.plugins:*"
+        versions:
+          - ">= 4.0.0-alpha-1"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -99,6 +105,7 @@ updates:
       - dependency-name: "org.openjfx:*"
         # Ignore MicroProfile Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.smallrye:*"
+      - dependency-name: "io.smallrye.*:*"
         # Ignore MicroMeter Implementation Updates - need to be carefully reviewed to align with target MP spec version
       - dependency-name: "io.micrometer:*"
       - dependency-name: "io.opentelemetry:*"
@@ -142,6 +149,11 @@ updates:
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
+
+        # Ignore Maven 4 only plugin releases - the build runs on Maven 3
+      - dependency-name: "org.apache.maven.plugins:*"
+        versions:
+          - ">= 4.0.0-alpha-1"
 
   - package-ecosystem: "github-actions"
     directory: "/"
