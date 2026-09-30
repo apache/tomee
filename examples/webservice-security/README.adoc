@@ -118,27 +118,55 @@ public interface CalculatorWs {
 ----
 package org.superbiz.calculator;
 
-import junit.framework.TestCase;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.util.Properties;
 
-public class CalculatorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+@RunWith(Arquillian.class)
+public class CalculatorTest {
 
     //START SNIPPET: setup
-    private InitialContext initialContext;
+    @ArquillianResource
+    private URL base;
 
-    protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
+    @Deployment(testable = false)
+    public static JavaArchive jar() {
+        return ShrinkWrap.create(JavaArchive.class, "webservice-security.jar")
+                .addClasses(CalculatorImpl.class, CalculatorRemote.class, CalculatorWs.class)
+                .addAsManifestResource("META-INF/ejb-jar.xml", "ejb-jar.xml")
+                .addAsManifestResource("META-INF/openejb-jar.xml", "openejb-jar.xml");
+    }
 
-        initialContext = new InitialContext(properties);
+    // the WSDL is protected by the same BASIC auth as the endpoint
+    @Before
+    public void wsdlCredentials() {
+        Authenticator.setDefault(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("jane", "waterfall".toCharArray());
+            }
+        });
+    }
+
+    @After
+    public void resetWsdlCredentials() {
+        Authenticator.setDefault(null);
     }
     //END SNIPPET: setup
 
@@ -148,8 +176,9 @@ public class CalculatorTest extends TestCase {
      * @throws Exception
      */
     //START SNIPPET: webservice
+    @Test
     public void testCalculatorViaWsInterface() throws Exception {
-        URL url = new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl");
+        URL url = new URL(base.toExternalForm() + "CalculatorImpl?wsdl");
         QName calcServiceQName = new QName("http://superbiz.org/wsdl", "CalculatorWsService");
         Service calcService = Service.create(url, calcServiceQName);
         assertNotNull(calcService);
@@ -161,7 +190,41 @@ public class CalculatorTest extends TestCase {
         assertEquals(12, calc.multiply(3, 4));
     }
     //END SNIPPET: webservice
+
 }
+----
+
+== arquillian.xml
+
+The test deploys the jar to TomEE embedded, which serves the EJB web service with the BASIC auth of `openejb-jar.xml`. `src/test/resources/arquillian.xml` defines the users, their roles and the role the BASIC auth constraint requires:
+
+[source,xml]
+----
+<arquillian
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    >
+  <container qualifier="tomee" default="true">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="appWorkingDir">target/tomee-embedded</property>
+      <property name="properties">
+        # role required by the BASIC auth constraint of the webservice-security module endpoints
+        tomee.jaxws.security-role.webservice-security = Administrator
+      </property>
+      <!-- <user>=<password> -->
+      <property name="users">
+        jane=waterfall
+        joe=cool
+      </property>
+      <!-- <user>=<role>[,<role>] -->
+      <property name="roles">
+        jane=Administrator
+        joe=Administrator
+      </property>
+    </configuration>
+  </container>
+</arquillian>
 ----
 
 == Running
@@ -172,41 +235,17 @@ public class CalculatorTest extends TestCase {
  T E S T S
 -------------------------------------------------------
 Running org.superbiz.calculator.CalculatorTest
-Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-http://tomee.apache.org/
-INFO - openejb.home = /Users/dblevins/examples/webservice-security
-INFO - openejb.base = /Users/dblevins/examples/webservice-security
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Found EjbModule in classpath: /Users/dblevins/examples/webservice-security/target/classes
-INFO - Beginning load: /Users/dblevins/examples/webservice-security/target/classes
-INFO - Configuring enterprise application: /Users/dblevins/examples/webservice-security/classpath.ear
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean CalculatorImpl: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Enterprise application "/Users/dblevins/examples/webservice-security/classpath.ear" loaded.
-INFO - Assembling app: /Users/dblevins/examples/webservice-security/classpath.ear
-INFO - Jndi(name=CalculatorImplRemote) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Jndi(name=global/classpath.ear/webservice-security/CalculatorImpl!org.superbiz.calculator.CalculatorRemote) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Jndi(name=global/classpath.ear/webservice-security/CalculatorImpl) --> Ejb(deployment-id=CalculatorImpl)
-INFO - Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
-INFO - Deployed Application(path=/Users/dblevins/examples/webservice-security/classpath.ear)
-INFO - Initializing network services
-INFO - Creating ServerService(id=httpejbd)
-INFO - Creating ServerService(id=cxf)
-INFO - Creating ServerService(id=admin)
-INFO - Creating ServerService(id=ejbd)
-INFO - Creating ServerService(id=ejbds)
-INFO - Initializing network services
-  ** Starting Services **
-  NAME                 IP              PORT  
-  httpejbd             127.0.0.1       4204  
-  admin thread         127.0.0.1       4200  
-  ejbd                 127.0.0.1       4201  
-  ejbd                 127.0.0.1       4203  
--------
-Ready!
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.481 sec
+INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
+INFO: Version: 11.0.0-SNAPSHOT
+INFO: Configuring enterprise application: /path/to/examples/webservice-security/target/tomee-embedded/0/webservice-security.jar
+INFO: Auto-deploying ejb CalculatorImpl: EjbDeployment(deployment-id=CalculatorImpl)
+INFO: Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+INFO: Started Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+INFO: Webservice(wsdl=http://localhost:53487/webservice-security/CalculatorImpl, qname={http://superbiz.org/wsdl}CalculatorWsService) --> Ejb(id=CalculatorImpl)
+INFO: Deployed Application(path=/path/to/examples/webservice-security/target/tomee-embedded/0/webservice-security.jar)
+INFO: Creating Service {http://superbiz.org/wsdl}CalculatorWsService from WSDL: http://localhost:53487/webservice-security/CalculatorImpl?wsdl
+INFO: Undeploying app: /path/to/examples/webservice-security/target/tomee-embedded/0/webservice-security.jar
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.925 s -- in org.superbiz.calculator.CalculatorTest
 
 Results :
 

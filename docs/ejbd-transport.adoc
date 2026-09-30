@@ -10,10 +10,9 @@ interface. Nevertheless, it is not based on IIOP.
 
 Ejbd Transport is different using TomEE or OpenEJB.
 
-In OpenEJB, it uses openejb http layer and ejbd is configured through
-ejbd service (same for ejbds). So to activate/deactivate them use
-conf/ejbd(s).properties files. You can set property disabled to true if
-you don't want them to be started.
+In OpenEJB, ejbd and ejbds are services with their own sockets. To
+activate/deactivate them use conf/ejbd(s).properties files. You can set
+property disabled to true if you don't want them to be started.
 
 In TomEE the transport is the Tomcat one. It uses a servlet brought by
 TomEE webapp. Here is the servlet as defined in TomEE webapp:
@@ -22,7 +21,7 @@ TomEE webapp. Here is the servlet as defined in TomEE webapp:
 ----
 <servlet>
     <servlet-name>ServerServlet</servlet-name>
-    <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
+    <servlet-class>org.apache.tomee.catalina.remote.ServerServlet</servlet-class>
 </servlet>
 
 <servlet-mapping>

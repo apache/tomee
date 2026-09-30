@@ -19,7 +19,6 @@ package org.apache.openejb.server;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This implementation is mainly used in the application composer to get the most from
@@ -31,27 +30,7 @@ public class FilteredServiceManager extends SimpleServiceManager {
 
     public FilteredServiceManager(final String[] services) {
         setServiceManager(this);
-        this.services = convertServices(services);
-
-    }
-
-    private Collection<String> convertServices(final String[] services) {
-        final Set<String> realServices = new HashSet<>();
-        final Collection<String> rsAliases = Arrays.asList("rest", "jaxrs", "jax-rs", "cxf-rs");
-        final Collection<String> wsAliases = Arrays.asList("jaxws", "jax-ws", "cxf");
-
-        for (final String service : services) {
-            if (rsAliases.contains(service)) {
-                realServices.addAll(Arrays.asList("cxf-rs", "httpejbd"));
-            } else if (wsAliases.contains(service)) {
-                realServices.addAll(Arrays.asList("cxf", "httpejbd"));
-            } else if ("http".equals(service)) {
-                realServices.add("httpejbd");
-            } else {
-                realServices.add(service);
-            }
-        }
-        return realServices;
+        this.services = new HashSet<>(Arrays.asList(services));
     }
 
     @Override

@@ -25,7 +25,6 @@ import org.apache.cxf.endpoint.ManagedEndpoint;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.feature.Feature;
-import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceImpl;
@@ -39,7 +38,6 @@ import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.sse.SseContextProvider;
-import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.jaxrs.utils.HttpUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
@@ -81,7 +79,6 @@ import org.apache.openejb.server.cxf.rs.sse.TomEESseEventSinkContextProvider;
 import org.apache.openejb.server.cxf.transport.HttpDestination;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
-import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
@@ -105,11 +102,7 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import javax.naming.Context;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -140,16 +133,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -163,16 +153,12 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     public static final String CXF_JAXRS_PREFIX = "cxf.jaxrs.";
     public static final String PROVIDERS_KEY = CXF_JAXRS_PREFIX + "providers";
-    public static final String STATIC_RESOURCE_KEY = CXF_JAXRS_PREFIX + "static-resources-list";
     public static final String STATIC_SUB_RESOURCE_RESOLUTION_KEY = "staticSubresourceResolution";
     public static final String RESOURCE_COMPARATOR_KEY = CXF_JAXRS_PREFIX + "resourceComparator";
 
     private static final String GLOBAL_PROVIDERS = SystemInstance.get().getProperty(PROVIDERS_KEY);
     public static final boolean TRY_STATIC_RESOURCES = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.static-first", "true"));
     private static final boolean FAIL_ON_CONSTRAINED_TO = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.jaxrs.fail-on-constrainedto", "true"));
-
-    private static final Map<String, String> STATIC_CONTENT_TYPES;
-    private static final String[] DEFAULT_WELCOME_FILES = new String[]{"/index.html", "/index.htm"};
 
     // we have proxies etc so we can't really give it to cxf properly,
     // bval impl supports it (message just uses Object instead of the real instance)
@@ -184,27 +170,11 @@ public class CxfRsHttpListener implements RsHttpListener {
     private HttpDestination destination;
     private Server server;
     private String context = "";
-    private String servlet = "";
-    private final Collection<Pattern> staticResourcesList = new CopyOnWriteArrayList<>();
     private final List<ObjectName> jmxNames = new ArrayList<>();
     private final Collection<CreationalContext<?>> toRelease = new LinkedHashSet<>();
     private final Collection<CdiSingletonResourceProvider> singletons = new LinkedHashSet<>();
 
     private static final char[] URL_SEP = new char[]{'?', '#', ';'};
-
-    static {
-        STATIC_CONTENT_TYPES = new HashMap<>();
-        STATIC_CONTENT_TYPES.put("html", "text/html");
-        STATIC_CONTENT_TYPES.put("htm", "text/html");
-        STATIC_CONTENT_TYPES.put("xhtml", "text/html");
-        STATIC_CONTENT_TYPES.put("txt", "text/plain");
-        STATIC_CONTENT_TYPES.put("css", "text/css");
-        STATIC_CONTENT_TYPES.put("jpg", "image/jpg");
-        STATIC_CONTENT_TYPES.put("png", "image/png");
-        STATIC_CONTENT_TYPES.put("ico", "image/ico");
-        STATIC_CONTENT_TYPES.put("pdf", "application/pdf");
-        STATIC_CONTENT_TYPES.put("xsd", "application/xml");
-    }
 
     private String pattern;
 
@@ -220,37 +190,9 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
-        // fix the address (to manage multiple connectors)
-        {
-            ServletRequest unwrapped = httpRequest;
-            while (ServletRequestAdapter.class.isInstance(unwrapped)) {
-                unwrapped = ServletRequestAdapter.class.cast(unwrapped).getRequest();
-            }
-            while (HttpServletRequestWrapper.class.isInstance(unwrapped)) {
-                unwrapped = HttpServletRequestWrapper.class.cast(unwrapped).getRequest();
-            }
-            if (HttpRequestImpl.class.isInstance(unwrapped)) {
-                final HttpRequestImpl requestImpl = HttpRequestImpl.class.cast(unwrapped);
-                requestImpl.initPathFromContext((!context.startsWith("/") ? "/" : "") + context);
-                requestImpl.initServletPath(servlet);
-            }
-        }
-
-        boolean matchedStatic = false;
-        if (TRY_STATIC_RESOURCES || (matchedStatic = matchPath(httpRequest))) {
-            final String pathInfo = httpRequest.getPathInfo();
-            if (serveStaticContent(httpRequest, httpResponse, pathInfo)) {
-                if (matchedStatic) { // we should have gotten the resource
-                    throw new ServletException("Static resource " + pathInfo + " is not available");
-                }
-                return; // ok that's a surely rest service
-            }
-        }
-
         doInvoke(httpRequest, httpResponse);
     }
 
-    // normal endpoint without static resource handling
     public void doInvoke(final HttpRequest httpRequest, final HttpResponse httpResponse) throws IOException {
         String baseURL = BaseUrlHelper.getBaseURL(pattern != null ? new ServletRequestAdapter(httpRequest) {
             @Override // we have a filter so we need the computed servlet path to not break CXF
@@ -270,23 +212,6 @@ public class CxfRsHttpListener implements RsHttpListener {
         } finally {
             CxfUtil.clearBusLoader(oldLoader);
         }
-    }
-
-    public boolean matchPath(final HttpServletRequest request) {
-        if (staticResourcesList.isEmpty()) {
-            return false;
-        }
-
-        String path = request.getRequestURI().substring(request.getContextPath().length());
-        if (path.isEmpty()) {
-            path = "/";
-        }
-        for (final Pattern pattern : staticResourcesList) {
-            if (pattern.matcher(path).matches()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public InputStream findStaticContent(final HttpServletRequest request, final String[] welcomeFiles) throws ServletException {
@@ -310,32 +235,6 @@ public class CxfRsHttpListener implements RsHttpListener {
             return null; // "/" resolves to an empty string otherwise, we need to avoid it
         }
         return request.getServletContext().getResourceAsStream(pathInfo);
-    }
-
-    public boolean serveStaticContent(final HttpServletRequest request,
-                                      final HttpServletResponse response,
-                                      final String pathInfo) throws ServletException {
-        final InputStream is = findStaticContent(request, DEFAULT_WELCOME_FILES);
-        if (is == null) {
-            return false;
-        }
-        try (is) {
-            final int ind = pathInfo.lastIndexOf(".");
-            if (ind != -1 && ind < pathInfo.length()) {
-                final String type = STATIC_CONTENT_TYPES.get(pathInfo.substring(ind + 1));
-                if (type != null) {
-                    response.setContentType(type);
-                }
-            }
-
-            final ServletOutputStream os = response.getOutputStream();
-            IOUtils.copy(is, os);
-            os.flush();
-            response.setStatus(HttpURLConnection.HTTP_OK);
-        } catch (final IOException ex) {
-            throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
-        }
-        return true;
     }
 
     private Application findApplication() {
@@ -779,11 +678,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
 
-            final int servletIdx = 1 + this.context.substring(1).indexOf('/');
-            if (servletIdx > 0) {
-                this.servlet = this.context.substring(servletIdx);
-                this.context = this.context.substring(0, servletIdx);
-            }
             destination = (HttpDestination) server.getDestination();
 
             final String base;
@@ -1255,18 +1149,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                 factory.setResourceComparator(instance);
             } catch (final Exception e) {
                 LOGGER.error("Can't create the resource comparator " + resourceComparator, e);
-            }
-        }
-
-        // static resources
-        final String staticResources = serviceConfiguration.getProperties().getProperty(STATIC_RESOURCE_KEY);
-        if (staticResources != null) {
-            final String[] resources = staticResources.split(",");
-            for (final String r : resources) {
-                final String trimmed = r.trim();
-                if (!trimmed.isEmpty()) {
-                    staticResourcesList.add(Pattern.compile(trimmed));
-                }
             }
         }
 

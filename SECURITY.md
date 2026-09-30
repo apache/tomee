@@ -58,8 +58,7 @@ Reports against the TomEE-provided web applications shipped with standard distri
 
 Data received via any TomEE-exposed connector or transport is considered to be untrusted, regardless of protocol. This explicitly covers the OpenEJB transports under `server/`:
 
-- `openejb-ejbd` — the EJBd binary protocol.
-- `openejb-http` — OpenEJB's HTTP transport for remote EJB and REST invocations.
+- `openejb-ejbd` — the EJBd binary protocol, on its own socket or over HTTP through TomEE's `/tomee/ejb` servlet.
 - `openejb-hessian` — Hessian RPC transport.
 - `openejb-ssh` — SSH-based admin transport.
 - CXF-backed JAX-WS and JAX-RS endpoints exposed by TomEE itself (separate from application-provided endpoints in the *Deployed applications* section).

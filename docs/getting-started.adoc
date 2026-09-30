@@ -50,7 +50,6 @@ OpenEJB ready.
  OpenEJB Remote Server
       ** Starting Services **
       NAME             IP          PORT
-      httpejbd         0.0.0.0         4204
       admin thread         0.0.0.0         4200
       ejbd             0.0.0.0         4201
       hsql             0.0.0.0         9001

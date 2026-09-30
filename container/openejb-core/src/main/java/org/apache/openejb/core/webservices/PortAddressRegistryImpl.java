@@ -87,7 +87,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
 
         // remove from portById
         final PortAddress portAddress = portsById.remove(portId);
-        if (portAddress != null) {
+        if (portAddress == null) {
             // port was not registered
             return;
         }
@@ -119,7 +119,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         if (ports != null) {
             ports.remove(portId);
             if (ports.isEmpty()) {
-                portsByServiceId.remove(serviceId);
+                portsByServiceQName.remove(serviceQName);
             }
         }
     }

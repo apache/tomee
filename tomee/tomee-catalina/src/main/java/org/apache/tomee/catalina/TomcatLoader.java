@@ -232,10 +232,7 @@ public class TomcatLoader implements Loader {
         }
 
         // optional services
-        if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {
-            // in embedded mode we use regex, in tomcat we use tomcat servlet mapping
-            SystemInstance.get().setProperty("openejb.rest.wildcard", "*");
-        }
+        optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService");
         optionalService(properties, "org.apache.tomee.webservices.TomeeJaxWsService");
 
         // Start OpenEJB

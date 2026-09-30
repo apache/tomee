@@ -50,7 +50,6 @@ public interface ServletContextProxy extends ServletContext, Serializable {
                 return new Serialized();
             }
 
-            // ITE are handled by Proxys
             final Request request = OpenEJBSecurityListener.requests.get();
             if (request != null) {
                 return method.invoke(request.getServletContext(), args);

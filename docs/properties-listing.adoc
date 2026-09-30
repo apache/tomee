@@ -34,8 +34,8 @@ prefix>.threads
 
 host or IP, port, bool
 
-override the host. Available for ejbd and httpejbd services (used by
-jaxws and jaxrs), number of thread to manage requests
+override the host. Available for the ejbd service, number of thread to
+manage requests
 
 openejb.embedded.initialcontext.close
 

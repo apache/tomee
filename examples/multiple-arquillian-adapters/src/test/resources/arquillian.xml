@@ -26,14 +26,6 @@
       </property>
     </configuration>
   </container>
-  <container qualifier="embedded-remote">
-    <configuration>
-      <property name="properties">
-        # optional if found at classpath
-        openejb.embedded.remotable = true
-      </property>
-    </configuration>
-  </container>
   <container qualifier="tomee-embedded">
     <configuration>
       <property name="httpPort">-1</property>

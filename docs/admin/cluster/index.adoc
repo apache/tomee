@@ -115,7 +115,7 @@ All of the above settings except server can be modified as required. The port an
 
 The group setting can be changed to further group/cluster servers that may use the same multicast channel. As shown below the client also has an optional group setting which can be used to select an appropriate server cluster from the multicast channel (See MultiPulse Client).
 
-The next step is to ensure that the advertised services are configured for discovery. Edit the ejbd.properties file (and any other enabled services such as http, etc.) and ensure that the discovery option is set to a value that remote clients will be able to resolve.
+The next step is to ensure that the advertised services are configured for discovery. Edit the ejbd.properties file (and any other enabled services such as ejbds) and ensure that the discovery option is set to a value that remote clients will be able to resolve.
 
 [source,properties]
 ----

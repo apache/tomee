@@ -42,9 +42,7 @@ import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
-import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -111,10 +109,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private RsRegistry rsRegistry;
     private final List<DeployedService> services = new ArrayList<>();
     private String virtualHost = "localhost";
-    private String auth = "NONE";
-    private String realm = "PropertiesLogin";
     protected boolean enabled = true;
-    private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
+    private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", "*");
 
     /**
      * Deployment of JAX-RS services starts in response to a AfterApplicationCreated event
@@ -540,7 +536,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         final RsHttpListener listener = createHttpListener();
         final String host = findHost(contextRoot, appInfo.webApps);
-        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appInfo.appId, contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), host, auth, realm);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appInfo.appId, contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), host);
 
         services.add(new DeployedService(address.complete, contextRoot, application.getClass().getName(), appInfo.appId));
         listener.deployApplication(application, address.complete.substring(0, address.complete.length() - wildcard.length()), nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
@@ -845,7 +841,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                                  final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
         final String nopath = getAddress(contextRoot, o.getClass());
         final RsHttpListener listener = createHttpListener();
-        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost, auth, realm);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(new DeployedService(address.complete, web, o.getClass().getName(), appId));
         listener.deploySingleton(contextRoot, getFullContext(address.base, contextRoot), o, appInstance, additionalProviders, configuration);
@@ -862,7 +858,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         final String nopath = getAddress(contextRoot, loadedClazz);
         final RsHttpListener listener = createHttpListener();
-        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost, auth, realm);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(new DeployedService(address.complete, contextRoot, loadedClazz.getName(), appId));
         listener.deployPojo(classLoader, contextRoot, getFullContext(address.base, contextRoot), loadedClazz, app, injections, context, owbCtx,
@@ -875,7 +871,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                            final Collection<ServiceInfo> serviceInfos) {
         final String nopath = getAddress(context, beanContext.getBeanClass());
         final RsHttpListener listener = createHttpListener();
-        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost, auth, realm);
+        final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appId, web, listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
 
         services.add(new DeployedService(address.complete, context, beanContext.getBeanClass().getName(), appId));
         listener.deployEJB(context, getFullContext(address.base, context), beanContext,
@@ -1005,13 +1001,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private void undeployRestObject(final String appId, final String context) {
-        HttpListener listener = rsRegistry.removeListener(appId, context);
+        final HttpListener listener = rsRegistry.removeListener(appId, context);
         if (listener != null) {
-
-            if (BasicAuthHttpListenerWrapper.class.isInstance(listener)) {
-                listener = BasicAuthHttpListenerWrapper.class.cast(listener).getHttpListener();
-            }
-
             checkUndeploy(listener);
         }
     }
@@ -1053,10 +1044,13 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     @Override
     public void start() throws ServiceException {
-        SystemInstance.get().setComponent(RESTService.class, this);
-
         beforeStart();
+        if (rsRegistry == null) {
+            LOGGER.info("No " + RsRegistry.class.getName() + " available, JAX-RS applications will not be deployed");
+            return;
+        }
 
+        SystemInstance.get().setComponent(RESTService.class, this);
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);
         if (assembler != null) {
@@ -1070,9 +1064,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     protected void beforeStart() {
         rsRegistry = SystemInstance.get().getComponent(RsRegistry.class);
-        if (rsRegistry == null && SystemInstance.get().getComponent(HttpListenerRegistry.class) != null) {
-            rsRegistry = new RsRegistryImpl();
-        }
     }
 
     @Override
@@ -1116,8 +1107,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
 
         virtualHost = props.getProperty("virtualHost", "localhost");
-        auth = props.getProperty("auth", "NONE");
-        realm = props.getProperty("realm", "PropertiesLogin");
         enabled = ServiceManager.isEnabled(props);
     }
 
@@ -1127,22 +1116,6 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
     public void setVirtualHost(final String virtualHost) {
         this.virtualHost = virtualHost;
-    }
-
-    public String getAuth() {
-        return auth;
-    }
-
-    public void setAuth(final String auth) {
-        this.auth = auth;
-    }
-
-    public String getRealm() {
-        return realm;
-    }
-
-    public void setRealm(final String realm) {
-        this.realm = realm;
     }
 
     // look WebServiceHelperImpl before updating it

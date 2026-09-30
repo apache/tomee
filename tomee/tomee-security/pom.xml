@@ -32,11 +32,6 @@
   <name>TomEE :: TomEE :: Security</name>
   <description>Implementation of Java EE Security JSR-375</description>
 
-  <properties>
-    <!-- Reset Jetty Version to not clash with HtmlUnit -->
-    <version.jetty />
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>

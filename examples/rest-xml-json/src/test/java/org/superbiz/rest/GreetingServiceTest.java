@@ -17,32 +17,34 @@
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@EnableServices(value = "jaxrs", httpDebug = true)
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class GreetingServiceTest {
 
-    @Module
-    @Classes(GreetingService.class)
-    public WebApp app() {
-        return new WebApp().contextRoot("test");
+    @ArquillianResource
+    private URL base;
+
+    @Deployment(testable = false)
+    public static WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class).addClasses(GreetingService.class, Request.class, Response.class);
     }
 
     @Test
     public void getXml() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm()).path("greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .get(String.class);
         assertEquals("<response><value>Hi REST!</value></response>", message.replaceAll("<\\?[^>]*\\?>", "").trim());
@@ -50,8 +52,8 @@ public class GreetingServiceTest {
 
     @Test
     public void postXml() throws IOException {
-        final String message = WebClient.create("http://localhost:4204")
-                .path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm())
+                .path("greeting/")
                 .type(MediaType.APPLICATION_XML_TYPE)
                 .accept(MediaType.APPLICATION_XML_TYPE)
                 .post("<request><value>Hi REST!</value></request>", String.class);
@@ -60,8 +62,8 @@ public class GreetingServiceTest {
 
     @Test
     public void getJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204")
-                .path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm())
+                .path("greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(String.class);
         assertEquals("{\"value\":\"Hi REST!\"}", message);
@@ -69,8 +71,8 @@ public class GreetingServiceTest {
 
     @Test
     public void postJson() throws IOException {
-        final String message = WebClient.create("http://localhost:4204")
-                .path("/test/greeting/")
+        final String message = WebClient.create(base.toExternalForm())
+                .path("greeting/")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .post(new Request("Hi REST!"), String.class);

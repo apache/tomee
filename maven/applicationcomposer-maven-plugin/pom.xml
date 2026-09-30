@@ -40,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
+      <artifactId>openejb-ejbd</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
