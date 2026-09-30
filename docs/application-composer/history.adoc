@@ -41,7 +41,7 @@ quickly extended to TestNG too, and today you can even use it to write
 `main(String[])` - even in a shade!
 
 API was greatly simplified, and it allows you pretty easily to deploy
-with a simple shade a JAXRS/JAXWS/JMS service!
+with a simple shade an EJB/JMS service!
 
 == Going further
 

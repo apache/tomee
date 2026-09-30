@@ -16,15 +16,27 @@
  */
 package org.superbiz.mtom;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-@EnableServices("jaxws") // maybe this should be @Inherited like @RunWith
 public class PojoServiceTest extends AbstractServiceTest {
 
-    @Module
-    public WebApp module() {
-        return new WebApp().addServlet("ws", PojoService.class.getName(), "/ws");
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "mtom-pojo.war")
+                .addClasses(PojoService.class, AbstractService.class, Service.class, Request.class, Response.class)
+                .addClasses(PojoServiceTest.class, AbstractServiceTest.class)
+                .setWebXML(new StringAsset("<web-app xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" version=\"6.0\">" +
+                        "<servlet>" +
+                        "<servlet-name>ws</servlet-name>" +
+                        "<servlet-class>" + PojoService.class.getName() + "</servlet-class>" +
+                        "</servlet>" +
+                        "<servlet-mapping>" +
+                        "<servlet-name>ws</servlet-name>" +
+                        "<url-pattern>/ws</url-pattern>" +
+                        "</servlet-mapping>" +
+                        "</web-app>"));
     }
 }

@@ -1,5 +1,5 @@
 = Securing a Web Service
-:index-group: OpenEJB Standalone Server
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
@@ -29,16 +29,14 @@ It has no impact on developments. It allows you :
 [arabic]
 . To secure data over the network with data encrypted during transport
 . To identify the end user with SSLv3 with client certificate required
-. OpenEJB supports BASIC authentication over HTTP(S), using the
-configured JAAS provider. This will honor any EJB security roles you
-have set up using
-
+. TomEE supports BASIC, DIGEST and CLIENT-CERT authentication over
+HTTP(S) for EJB web services deployed from an EJB jar, configured with
+`<web-service-security>` in `openejb-jar.xml` and checked against the
+Tomcat realm. Web services inside a WAR are secured with the security
+constraints of its `web.xml`. This will honor any EJB security roles you
+have set up.
 . See the webservice-security example in the OpenEJB codebase
 https://github.com/apache/tomee/tree/master/examples
-
-_Warning: Currently only BASIC is the only HTTP authentication mechanism
-available when running OpenEJB standalone or in a unit test, but we hope
-to support DIGEST in the future._
 
 WS-Security: works at the message (SOAP) level, enables a higher-level
 security, Nowadays, SOAP implementations use other protocols than just

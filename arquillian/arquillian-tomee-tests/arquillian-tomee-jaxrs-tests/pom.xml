@@ -46,6 +46,12 @@
       <version>4.5.14</version>
       <scope>test</scope>
     </dependency>
+    <dependency> <!-- JettisonCompatTest, not shipped with TomEE -->
+      <groupId>org.codehaus.jettison</groupId>
+      <artifactId>jettison</artifactId>
+      <version>1.5.6</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <properties>
