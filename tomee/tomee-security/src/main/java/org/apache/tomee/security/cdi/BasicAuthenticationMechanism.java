@@ -24,6 +24,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.BasicAuthentica
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.security.enterprise.credential.BasicAuthenticationCredential;
+import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +54,12 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         try {
             final BasicAuthenticationCredential credential = parseAuthenticationHeader(request.getHeader(AUTHORIZATION));
-            final CredentialValidationResult result = identityStoreHandler.validate(credential);
+
+            // IdentityStore#validate(Credential) dispatches to an overload only on an *exact* parameter
+            // type match, so a store declaring the idiomatic validate(UsernamePasswordCredential) would
+            // never be called with the BasicAuthenticationCredential subclass. Hand it the base type.
+            final CredentialValidationResult result = identityStoreHandler.validate(
+                    new UsernamePasswordCredential(credential.getCaller(), credential.getPassword()));
 
             if (result.getStatus().equals(VALID)) {
                 return httpMessageContext.notifyContainerAboutLogin(result);
