@@ -37,6 +37,8 @@ public class WebAppInfo extends CommonInfoObject {
     public final Set<String> watchedResources = new TreeSet<>();
     public final Set<String> restClass = new TreeSet<>();
     public final Set<String> restApplications = new TreeSet<>();
+    /** Resource classes the container contributes, deployed at the context root whatever applications the webapp declares. */
+    public final Set<String> containerRestClass = new TreeSet<>();
     public final Set<String> ejbWebServices = new TreeSet<>();
     public final Set<String> ejbRestServices = new TreeSet<>();
     public final Set<ClassListInfo> webAnnotatedClasses = new LinkedHashSet<>();
