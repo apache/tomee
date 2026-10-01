@@ -241,6 +241,8 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
     }
 
     public void start(final BeanContext info) throws OpenEJBException {
+        instanceManager.start(info);
+
         final EjbTimerService timerService = info.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
@@ -524,6 +526,10 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                 Thread.currentThread().setContextClassLoader(classLoader);
                 resourceAdapter.endpointActivation(endpointFactory, activationSpec);
                 logger.info("Activated endpoint for " + beanContext.getDeploymentID());
+            } catch (final ResourceException | RuntimeException e) {
+                // the endpoint is not active, so it must not be deactivated on undeploy
+                started.set(false);
+                throw e;
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);
             }
