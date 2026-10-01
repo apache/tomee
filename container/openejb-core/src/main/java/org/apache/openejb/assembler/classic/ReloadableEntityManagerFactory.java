@@ -279,7 +279,8 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
 
     @Override
     public synchronized void close() {
-        if (delegate != null) {
+        // the application may have closed the EMF itself, closing it twice is an error
+        if (delegate != null && delegate.isOpen()) {
             delegate.close();
         }
     }
