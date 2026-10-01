@@ -44,6 +44,14 @@ public interface BaseMdbContainer {
 
     Properties getProperties();
 
+    static boolean isActiveOnStartup(final BeanContext beanContext) {
+        String activeOnStartupSetting = beanContext.getActivationProperties().get("MdbActiveOnStartup");
+        if (activeOnStartupSetting == null) {
+            activeOnStartupSetting = beanContext.getActivationProperties().get("DeliveryActive");
+        }
+        return activeOnStartupSetting == null || Boolean.parseBoolean(activeOnStartupSetting);
+    }
+
     void deploy(BeanContext beanContext) throws OpenEJBException;
 
     void start(BeanContext info) throws OpenEJBException;
