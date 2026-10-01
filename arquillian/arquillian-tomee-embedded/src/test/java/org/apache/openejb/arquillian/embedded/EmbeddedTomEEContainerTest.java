@@ -71,6 +71,11 @@ public class EmbeddedTomEEContainerTest {
         assertEquals("foo", read);
     }
     
+    /**
+     * EE.5.3.4 and Enterprise Beans 10.4.4 require the component naming context to be read only, but
+     * TomEE only enforces that when openejb.forceReadOnlyAppNamingContext is turned on, so that
+     * applications writing into their own naming context keep working. Without it the write succeeds.
+     */
     @Test
     public void testEjbCanCreateSubContextByDefault() throws Exception {
     	String originalValue = System.getProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY);
@@ -79,11 +84,11 @@ public class EmbeddedTomEEContainerTest {
     	}
         try {
 	        String result = ejb.createSubContext();
-	        assertEquals("Cannot create sub context", "created", result);
+	        assertEquals("created", result);
         } finally {
         	if(originalValue == null) {
         		System.clearProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY);
-        	} 
+        	}
         }
     }
 }
