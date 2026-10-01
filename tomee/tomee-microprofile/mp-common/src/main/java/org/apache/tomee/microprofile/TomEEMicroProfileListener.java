@@ -120,6 +120,12 @@ public class TomEEMicroProfileListener {
                             className -> className.equals(MicroProfileHealthChecksEndpoint.class.getName()));
                 });
 
+        // The health endpoint serves the whole runtime, so it must not depend on the webapp's JAX-RS applications,
+        // which only deploy the classes they list.
+        if (webApp.restClass.remove(MicroProfileHealthChecksEndpoint.class.getName())) {
+            webApp.containerRestClass.add(MicroProfileHealthChecksEndpoint.class.getName());
+        }
+
         // we need to register the OpenAPI servlet, but in order to generate the OpenAPI model, SmallRye uses Jandex,
         // a XBean Finder equivalent from JBoss. This seems to be a library used in many placed, so we want to build the
         // index only once and pass it everywhere it's needed. Also in order to build the index, we need the entire

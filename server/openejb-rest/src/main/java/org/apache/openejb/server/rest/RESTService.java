@@ -82,6 +82,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -162,6 +163,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
         try {
             boolean deploymentWithApplication = "true".equalsIgnoreCase(appInfo.properties.getProperty(OPENEJB_USE_APPLICATION_PROPERTY, APPLICATION_DEPLOYMENT));
             if (deploymentWithApplication) {
+                final Set<Class<?>> containerResources = loadContainerResources(webApp, classLoader);
+                boolean applicationAtContextRoot = false;
                 Class<?> appClazz;
                 for (final String app : webApp.restApplications) {
                     Application application;
@@ -258,15 +261,25 @@ public abstract class RESTService implements ServerService, SelfManaging {
                             }
                         }
 
-                        if (!application.getClasses().isEmpty() || !application.getSingletons().isEmpty()) {
+                        // CXF runs one server per address, so the container resources join the application at the context root
+                        final boolean atContextRoot = ("/" + wildcard).equals(prefix);
+                        final Set<Class<?>> appContainerResources = atContextRoot ? containerResources : Collections.emptySet();
+                        applicationAtContextRoot |= atContextRoot;
+
+                        if (!application.getClasses().isEmpty() || !application.getSingletons().isEmpty() || !appContainerResources.isEmpty()) {
                             pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
-                            deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, application, prefix);
+                            deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, application, appContainerResources, prefix);
                         }
                     }
 
                     if (!deploymentWithApplication) {
                         fullServletDeployment(appInfo, webApp, webContext, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations);
                     }
+                }
+
+                if (!webApp.restApplications.isEmpty() && deploymentWithApplication && !applicationAtContextRoot && !containerResources.isEmpty()) {
+                    pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
+                    deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, new InternalApplication(null), containerResources, "/" + wildcard);
                 }
 
                 if (webApp.restApplications.isEmpty()) {
@@ -292,7 +305,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     addEjbToApplication(application, restEjbs);
 
                     if (deploymentWithApplication) {
-                        if (!application.getClasses().isEmpty() || !application.getSingletons().isEmpty()) {
+                        if (!application.getClasses().isEmpty() || !application.getSingletons().isEmpty() || !containerResources.isEmpty()) {
                             final String path = appPrefix(webApp, application.getClass());
                             final String prefix;
                             if (path != null) {
@@ -302,7 +315,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                             }
 
                             pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
-                            deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, application, prefix);
+                            deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, application, containerResources, prefix);
                         }
                     } else {
                         fullServletDeployment(appInfo, webApp, webContext, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations);
@@ -370,6 +383,18 @@ public abstract class RESTService implements ServerService, SelfManaging {
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
             additionalProviders.addAll(appProviders(jaxRsProviders, classLoader));
         }
+    }
+
+    private static Set<Class<?>> loadContainerResources(final WebAppInfo webApp, final ClassLoader classLoader) {
+        final Set<Class<?>> resources = new HashSet<>();
+        for (final String clazz : webApp.containerRestClass) {
+            try {
+                resources.add(classLoader.loadClass(clazz));
+            } catch (final ClassNotFoundException e) {
+                throw new OpenEJBRestRuntimeException("can't load class " + clazz, e);
+            }
+        }
+        return resources;
     }
 
     private void addEjbToApplication(final Application application, final Map<String, EJBRestServiceInfo> restEjbs) {
@@ -479,6 +504,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
             } // else keep application prefix
 
             final Set<String> restClasses = new HashSet<>(webApp.restClass);
+            restClasses.addAll(webApp.containerRestClass);
             restClasses.addAll(webApp.ejbRestServices);
 
             for (final String clazz : restClasses) {
@@ -509,7 +535,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         LOGGER.info("Using deployment by endpoint instead of by application for JAXRS deployment because an old configuration (by class/ejb) was found on " + clazz);
     }
 
-    private void deployApplication(final AppInfo appInfo, final String contextRoot, final Map<String, EJBRestServiceInfo> restEjbs, final ClassLoader classLoader, final Collection<Injection> injections, final WebBeansContext owbCtx, final Context context, final Collection<Object> additionalProviders, final Collection<IdPropertiesInfo> pojoConfigurations, final Application application, final String prefix) {
+    private void deployApplication(final AppInfo appInfo, final String contextRoot, final Map<String, EJBRestServiceInfo> restEjbs, final ClassLoader classLoader, final Collection<Injection> injections, final WebBeansContext owbCtx, final Context context, final Collection<Object> additionalProviders, final Collection<IdPropertiesInfo> pojoConfigurations, final Application application, final Collection<Class<?>> containerResources, final String prefix) {
         // get configuration
         Properties configuration;
         if (InternalApplication.class.equals(application.getClass())) {
@@ -543,7 +569,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final RsRegistry.AddressInfo address = rsRegistry.createRsHttpListener(appInfo.appId, contextRoot, listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), host, auth, realm);
 
         services.add(new DeployedService(address.complete, contextRoot, application.getClass().getName(), appInfo.appId));
-        listener.deployApplication(application, address.complete.substring(0, address.complete.length() - wildcard.length()), nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
+        listener.deployApplication(application, containerResources, address.complete.substring(0, address.complete.length() - wildcard.length()), nopath.substring(NOPATH_PREFIX.length(), nopath.length() - wildcard.length()), additionalProviders, restEjbs, // app config
                 classLoader, injections, context, owbCtx, // injection/webapp context
                 new ServiceConfiguration(configuration, appInfo.services)); // deployment config
     }
@@ -743,7 +769,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
                         deployApplication(appInfo, next.getValue().path, restEjbs, comp.getClassLoader(), comp.getInjections(),
                                 containerSystem.getAppContext(appInfo.appId).getWebBeansContext(), comp.getJndiContext(),
-                                providers, pojoConfigurations, application, wildcard);
+                                providers, pojoConfigurations, application, Collections.emptySet(), wildcard);
                     } else {
                         for (final Map.Entry<String, EJBRestServiceInfo> ejb : restEjbs.entrySet()) {
                             final BeanContext ctx = ejb.getValue().context;
