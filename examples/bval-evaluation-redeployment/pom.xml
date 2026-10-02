@@ -20,15 +20,15 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>bval-evaluation-redeployment</artifactId>
-  <version>10.2.1-SNAPSHOT</version>
+  <version>10.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>TomEE :: Examples :: Bean Validation Evaluation on Re-Deployment</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.test.version>10.2.0</tomee.test.version>
-    <openejb.test.version>10.2.0</openejb.test.version>
+    <tomee.test.version>10.3.0-SNAPSHOT</tomee.test.version>
+    <openejb.test.version>10.3.0-SNAPSHOT</openejb.test.version>
   </properties>
 
   <modules>

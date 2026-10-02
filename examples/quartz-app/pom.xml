@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz.quartz</groupId>
   <artifactId>quartz-app</artifactId>
-  <version>10.2.1-SNAPSHOT</version>
+  <version>10.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TomEE :: Examples :: Quartz</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>10.2.0</tomee.version>
+    <tomee.version>10.3.0-SNAPSHOT</tomee.version>
   </properties>
   <modules>
     <module>quartz-ra</module>

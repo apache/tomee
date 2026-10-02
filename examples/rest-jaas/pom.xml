@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>rest-jaas</artifactId>
-  <version>10.2.1-SNAPSHOT</version>
+  <version>10.3.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: JAXRS and JAAS</name>
   <dependencies>
