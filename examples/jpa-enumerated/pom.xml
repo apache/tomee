@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>jpa-enumerated</artifactId>
   <packaging>jar</packaging>
-  <version>10.2.1-SNAPSHOT</version>
+  <version>10.3.0-SNAPSHOT</version>
   <name>TomEE :: Examples :: JPA @Enumerated</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
