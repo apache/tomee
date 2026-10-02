@@ -16,33 +16,55 @@
  */
 package org.superbiz.calculator;
 
-import junit.framework.TestCase;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.util.Properties;
 
-public class CalculatorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+@RunWith(Arquillian.class)
+public class CalculatorTest {
 
     //START SNIPPET: setup
-    private InitialContext initialContext;
+    @ArquillianResource
+    private URL base;
 
-    //Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
+    @Deployment(testable = false)
+    public static JavaArchive jar() {
+        return ShrinkWrap.create(JavaArchive.class, "webservice-security.jar")
+                .addClasses(CalculatorImpl.class, CalculatorRemote.class, CalculatorWs.class)
+                .addAsManifestResource("META-INF/ejb-jar.xml", "ejb-jar.xml")
+                .addAsManifestResource("META-INF/openejb-jar.xml", "openejb-jar.xml");
+    }
 
-    protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
+    // the WSDL is protected by the same BASIC auth as the endpoint
+    @Before
+    public void wsdlCredentials() {
+        Authenticator.setDefault(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("jane", "waterfall".toCharArray());
+            }
+        });
+    }
 
-        //Just for this test we change the default port from 4204 to avoid conflicts
-        properties.setProperty("httpejbd.port", "" + port);
-
-        initialContext = new InitialContext(properties);
+    @After
+    public void resetWsdlCredentials() {
+        Authenticator.setDefault(null);
     }
     //END SNIPPET: setup
 
@@ -52,8 +74,9 @@ public class CalculatorTest extends TestCase {
      * @throws Exception
      */
     //START SNIPPET: webservice
+    @Test
     public void testCalculatorViaWsInterface() throws Exception {
-        URL url = new URL("http://localhost:" + port + "/webservice-security/CalculatorImpl?wsdl");
+        URL url = new URL(base.toExternalForm() + "CalculatorImpl?wsdl");
         QName calcServiceQName = new QName("http://superbiz.org/wsdl", "CalculatorWsService");
         Service calcService = Service.create(url, calcServiceQName);
         assertNotNull(calcService);

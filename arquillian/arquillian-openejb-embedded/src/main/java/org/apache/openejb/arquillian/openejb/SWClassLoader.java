@@ -145,23 +145,6 @@ public class SWClassLoader extends ClassLoader implements Closeable {
         return super.findResources(name);
     }
 
-    public URL getWebResource(final String name) {
-        for (final Archive<?> a : archives) {
-            if (!WebArchive.class.isInstance(a)) {
-                continue;
-            }
-            final Node node = a.get(name);
-            if (node != null) {
-                try {
-                    return new URL(null, "archive:" + a.getName() + (!name.startsWith("/") ? "/" : "") + name, new ArchiveStreamHandler());
-                } catch (final MalformedURLException e) {
-                    // no-op
-                }
-            }
-        }
-        return null;
-    }
-
     public LinkedList<Archive<?>> findNodes(final String name) {
         final LinkedList<Archive<?>> items = new LinkedList<>();
         for (final Archive<?> a : archives) {

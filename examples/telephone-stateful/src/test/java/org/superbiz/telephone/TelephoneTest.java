@@ -38,7 +38,7 @@ public class TelephoneTest extends TestCase {
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
 
-        //Just for this test we change the default port from 4204 to avoid conflicts
+        //Just for this test we change the default port from 4201 to avoid conflicts
         properties.setProperty("ejbd.port", "" + port);
 
         // Uncomment these properties to change the defaults

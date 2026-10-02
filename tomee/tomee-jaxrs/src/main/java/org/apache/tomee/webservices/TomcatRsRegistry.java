@@ -62,7 +62,7 @@ public class TomcatRsRegistry implements RsRegistry {
     }
 
     @Override
-    public AddressInfo createRsHttpListener(final String appId, final String webContext, final HttpListener listener, final ClassLoader classLoader, final String completePath, final String virtualHost, final String auth, final String realm) {
+    public AddressInfo createRsHttpListener(final String appId, final String webContext, final HttpListener listener, final ClassLoader classLoader, final String completePath, final String virtualHost) {
         String path = webContext;
         if (path == null) {
             throw new NullPointerException("contextRoot is null");
@@ -106,7 +106,7 @@ public class TomcatRsRegistry implements RsRegistry {
         final String description = "tomee-jaxrs-" + listener;
 
         String mapping = completePath;
-        if (!completePath.endsWith("/*")) { // respect servlet spec (!= from our embedded listeners)
+        if (!completePath.endsWith("/*")) { // respect servlet spec
             if (completePath.endsWith("*")) {
                 mapping = completePath.substring(0, completePath.length() - 1);
             }

@@ -44,6 +44,10 @@
       <artifactId>arquillian-tomee-embedded</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
     </dependency>
@@ -87,7 +91,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.18.1</version>
-        <configuration> <!-- arquillian tomee embedded and openejb can conflict, since first one is suite scoped -->
+        <configuration> <!-- arquillian tomee embedded is suite scoped, each test class gets its own JVM -->
           <reuseForks>false</reuseForks>
         </configuration>
       </plugin>

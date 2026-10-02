@@ -16,40 +16,39 @@
  */
 package org.superbiz.attachment;
 
-import junit.framework.TestCase;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.mail.util.ByteArrayDataSource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
 import jakarta.xml.ws.soap.SOAPBinding;
 import java.net.URL;
-import java.util.Properties;
 
-public class AttachmentTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-    //START SNIPPET: setup	
-    private InitialContext initialContext;
+@RunWith(Arquillian.class)
+public class AttachmentTest {
 
-    //Random port to avoid test conflicts
-    private static final int port = Integer.parseInt(System.getProperty("httpejbd.port", "" + org.apache.openejb.util.NetworkUtil.getNextAvailablePort()));
+    //START SNIPPET: setup
+    @ArquillianResource
+    private URL base;
 
-    protected void setUp() throws Exception {
-
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.setProperty("openejb.embedded.remotable", "true");
-
-        //Just for this test we change the default port from 4204 to avoid conflicts
-        properties.setProperty("httpejbd.port", "" + port);
-
-        initialContext = new InitialContext(properties);
+    @Deployment(testable = false)
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "webservice-attachments.war")
+                .addClasses(AttachmentImpl.class, AttachmentWs.class);
     }
-    //END SNIPPET: setup    
+    //END SNIPPET: setup
 
     /**
      * Create a webservice client using wsdl url
@@ -57,9 +56,10 @@ public class AttachmentTest extends TestCase {
      * @throws Exception
      */
     //START SNIPPET: webservice
+    @Test
     public void testAttachmentViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://localhost:" + port + "/webservice-attachments/AttachmentImpl?wsdl"),
+                new URL(base.toExternalForm() + "webservices/AttachmentImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "AttachmentWsService"));
         assertNotNull(service);
 

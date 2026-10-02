@@ -16,14 +16,16 @@
  */
 package org.superbiz.mtom;
 
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-@EnableServices("jaxws") // maybe this should be @Inherited like @RunWith
 public class EjbServiceTest extends AbstractServiceTest {
 
-    @Module
-    public Class<?>[] module() {
-        return new Class<?>[]{EjbService.class};
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class, "mtom-ejb.war")
+                .addClasses(EjbService.class, AbstractService.class, Service.class, Request.class, Response.class)
+                .addClasses(EjbServiceTest.class, AbstractServiceTest.class);
     }
 }

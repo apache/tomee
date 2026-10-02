@@ -30,7 +30,6 @@ public class CustomPasswordHandler implements CallbackHandler {
         WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
 
         if (pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN) {
-            // TODO get the password from the users.properties if possible
             pc.setPassword("waterfall");
 
         } else if (pc.getUsage() == WSPasswordCallback.DECRYPT) {

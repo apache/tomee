@@ -43,8 +43,8 @@ server cluster from the multicast channel (See MultiPulse Client).
 
 The next step is to ensure that the advertised services are configured
 for discovery. Edit the `ejbd.properties` file (and any other enabled
-services such as http, etc.) and ensure that the `discovery` option is
-set to a value that remote clients will be able to resolve.
+services such as ejbds) and ensure that the `discovery` option is set to
+a value that remote clients will be able to resolve.
 
 [source,properties]
 ----
