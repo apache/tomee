@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.client.FlushableGZIPOutputStream;
 import org.apache.openejb.client.KeepAliveStyle;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServicePool;
@@ -161,7 +162,7 @@ public class KeepAliveServer implements ServerService {
     private BlockingQueue<Runnable> getQueue() {
         if (this.threadQueue == null) {
             // this can be null if timer fires before service is fully initialized
-            final ServicePool incoming = Unwrappable.class.isInstance(service) ? Unwrappable.class.cast(service).unwrap(ServicePool.class) : null;
+            final ServicePool incoming = findPool(service);
             if (incoming == null) {
                 return null;
             }
@@ -169,6 +170,31 @@ public class KeepAliveServer implements ServerService {
             this.threadQueue = incoming.getThreadPool().getQueue();
         }
         return this.threadQueue;
+    }
+
+    /**
+     * Finds the {@link ServicePool} running the given service. The pool wraps the service,
+     * so a plain service (like {@link EjbServer}) cannot unwrap it and is looked up among
+     * the started pools instead, matching by identity so each service gets its own pool.
+     */
+    static ServicePool findPool(final ServerService service) {
+        if (Unwrappable.class.isInstance(service)) {
+            final ServicePool pool = Unwrappable.class.cast(service).unwrap(ServicePool.class);
+            if (pool != null) {
+                return pool;
+            }
+        }
+
+        final ServicePool.Registry registry = SystemInstance.get().getComponent(ServicePool.Registry.class);
+        if (registry == null) {
+            return null;
+        }
+        for (final ServicePool pool : registry.getPools()) {
+            if (pool.unwrap(service.getClass()) == service) {
+                return pool;
+            }
+        }
+        return null;
     }
 
     /**
