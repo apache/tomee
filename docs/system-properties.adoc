@@ -44,9 +44,8 @@ For example, when OpenEJB starts it prints out the following:
 [source,java]
 ----
   ** Starting Services **
-  NAME             IP          PORT  
-  httpejbd         0.0.0.0         4204  
-  telnet           0.0.0.0         4202  
+  NAME             IP          PORT
+  telnet           0.0.0.0         4202
   ejbd             0.0.0.0         4201  
   hsql             0.0.0.0         9001  
   activemq         127.0.0.1       4206  

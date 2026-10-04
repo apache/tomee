@@ -47,7 +47,7 @@
     </packages>
 
     <classes>
-      <!-- fails due to integration issue within openejb-http, but passes on cdi-tomee -->
+      <!-- needs HTTP sessions, which the embedded container does not provide, passes on cdi-tomee -->
       <class name="org.jboss.cdi.tck.tests.context.session.event.SessionScopeEventTest">
         <methods>
           <exclude name=".*"/>

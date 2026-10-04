@@ -16,30 +16,36 @@
  */
 package jug.rest;
 
+import jug.dao.SubjectDao;
+import jug.domain.Subject;
+import jug.monitoring.VoteCounter;
 import jug.routing.DataSourceInitializer;
 import jug.routing.PollingRouter;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.loader.IO;
-import org.junit.AfterClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import jakarta.annotation.Resource;
-import jakarta.ejb.embeddable.EJBContainer;
 import jakarta.inject.Inject;
-import javax.naming.NamingException;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.net.URL;
 
 import static org.junit.Assert.assertTrue;
 
+@RunWith(Arquillian.class)
 public class SubjectServiceTest {
-
-    private static EJBContainer container;
 
     @Inject
     private DataSourceInitializer init;
@@ -47,29 +53,32 @@ public class SubjectServiceTest {
     @Resource(name = "ClientRouter", type = PollingRouter.class)
     private PollingRouter router;
 
-    @BeforeClass
-    public static void start() {
-        final Properties properties = new Properties();
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        properties.setProperty(EJBContainer.APP_NAME, "polling/api");
-        properties.setProperty(EJBContainer.PROVIDER, "openejb");
-        container = EJBContainer.createEJBContainer(properties);
+    @ArquillianResource
+    private URL base;
+
+    @Deployment
+    public static WebArchive archive() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClasses(SubjectServiceTest.class, VoteCounter.class)
+                .addPackage(Subject.class.getPackage()) // domain
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource(new StringAsset("polling-domain"), "exclusions.list")
+                .addPackage(PollingRouter.class.getPackage()) // core
+                .addPackage(SubjectDao.class.getPackage()) // core
+                .addPackage(SubjectService.class.getPackage()); // front
     }
 
     @Before
-    public void inject() throws NamingException {
-        container.getContext().bind("inject", this);
+    public void inject() {
         init.init();
-    }
-
-    @AfterClass
-    public static void stop() {
-        container.close();
     }
 
     @Test
     public void createVote() throws IOException {
-        final Response response = WebClient.create("http://localhost:4204/polling/")
+        final Response response = WebClient.create(base.toExternalForm())
                 .path("api/subject/create")
                 .accept("application/json")
                 .query("name", "TOMEE_JUG_JSON")

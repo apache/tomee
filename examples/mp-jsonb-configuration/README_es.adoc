@@ -130,48 +130,54 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
 
 == Accediendo al recurso Rest
 
-La prueba activa una aplicación web openejb e invoca el recurso rest `/users`
+La prueba despliega la aplicación web en TomEE embedded con Arquillian e invoca el recurso rest `/users`
 
 [source,java]
 ----
+package org.superbiz.rest;
+
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.JAXRSApplication;
 import org.superbiz.JSONBConfiguration;
+import org.superbiz.model.User;
 
-@EnableServices(value = "jaxrs")
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class UserServiceTest {
 
-    @Module
-    @Classes({ UserService.class, JAXRSApplication.class, JSONBConfiguration.class })
-    public WebApp app() {
-        return new WebApp().contextRoot("test");
-    }
+	@ArquillianResource
+	private URL base;
 
-    @Test
-    public void get() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/api/users").get(String.class);
-        System.out.println(message);
+	@Deployment(testable = false)
+	public static WebArchive app() {
+		return ShrinkWrap.create(WebArchive.class)
+				.addClasses(UserService.class, JAXRSApplication.class, JSONBConfiguration.class, User.class);
+	}
 
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy - MM - dd");
+	@Test
+	public void get() throws IOException {
+		final String message = WebClient.create(base.toExternalForm()).path("api/users").get(String.class);
+		System.out.println(message);
 
-        // test withDateFormat("yyyy - MM - dd")
-        Assert.assertTrue(message.contains(sdf.format(new Date())));
-        // test withFormatting(true)
-        Assert.assertTrue(message.contains(System.getProperty("line.separator")));
-    }
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy - MM - dd");
+
+		// test withDateFormat("yyyy - MM - dd")
+		Assert.assertTrue(message.contains(sdf.format(new Date())));
+		// test withFormatting(true)
+		Assert.assertTrue(message.contains(System.getProperty("line.separator")));
+	}
 
 }
 ----
@@ -184,100 +190,34 @@ Cuando se ejecute, debería ver una salida similar a la siguiente:
 
 [source,console]
 ----
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
 Running org.superbiz.rest.UserServiceTest
-INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@7823a2f9
-INFO - Succeeded in installing singleton service
-INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
-INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-INFO - Creating TransactionManager(id=Default Transaction Manager)
-INFO - Creating SecurityService(id=Default Security Service)
-INFO - Initializing network services
-INFO - Creating ServerService(id=cxf-rs)
-INFO - Creating ServerService(id=httpejbd)
-INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
-INFO - Initializing network services
-INFO -   ** Bound Services **
-INFO -   NAME                 IP              PORT
-INFO -   httpejbd             127.0.0.1       4204
-INFO - -------
-INFO - Ready!
-INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest
-INFO - Auto-deploying ejb UserService: EjbDeployment(deployment-id=UserService)
-INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-INFO - Auto-creating a container for bean org.superbiz.rest.UserServiceTest: Container(type=MANAGED, id=Default Managed Container)
-INFO - Creating Container(id=Default Managed Container)
-INFO - Using directory /tmp for stateful session passivation
-INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
-INFO - Auto-creating a container for bean UserService: Container(type=STATELESS, id=Default Stateless Container)
-INFO - Creating Container(id=Default Stateless Container)
-INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest" loaded.
-INFO - Creating dedicated application classloader for UserServiceTest
-INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest
-INFO - Jndi(name=UserServiceLocalBean) --> Ejb(deployment-id=UserService)
-INFO - Jndi(name=global/test/UserService!org.superbiz.rest.UserService) --> Ejb(deployment-id=UserService)
-INFO - Jndi(name=global/test/UserService) --> Ejb(deployment-id=UserService)
-INFO - Created Ejb(deployment-id=UserService, ejb-name=UserService, container=Default Stateless Container)
-INFO - Started Ejb(deployment-id=UserService, ejb-name=UserService, container=Default Stateless Container)
-INFO - Using readers:
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@2f94c4db
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@6b5966e1
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@65e61854
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@1568159
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@4fcee388
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@6f80fafe
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@63cd604c
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@593e824f
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@72ccd81a
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@6d8792db
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@64bc21ac
-INFO - Using writers:
-INFO -      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@493dfb8e
-INFO -      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@5d25e6bb
-INFO -      org.apache.cxf.jaxrs.provider.StringTextProvider@72ccd81a
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@4fcee388
-INFO -      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@2f94c4db
-INFO -      org.apache.cxf.jaxrs.provider.FormEncodingProvider@6b5966e1
-INFO -      org.apache.cxf.jaxrs.provider.MultipartProvider@65e61854
-INFO -      org.apache.cxf.jaxrs.provider.SourceProvider@1568159
-INFO -      org.apache.cxf.jaxrs.provider.JAXBElementProvider@6f80fafe
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@63cd604c
-INFO -      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@593e824f
-INFO -      org.apache.cxf.jaxrs.provider.BinaryDataProvider@6d8792db
-INFO -      org.apache.cxf.jaxrs.provider.DataSourceProvider@64bc21ac
-INFO - Using exception mappers:
-INFO -      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@361c294e
-INFO -      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@6fff253c
-INFO -      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@7859e786
-INFO -      org.apache.openejb.server.cxf.rs.CxfRsHttpListener$CxfResponseValidationExceptionMapper@285d851a
-INFO - REST Application: http://127.0.0.1:4204/test/api       -> org.superbiz.JAXRSApplication@5af28b27
-INFO -      Service URI: http://127.0.0.1:4204/test/api/users ->  EJB org.superbiz.rest.UserService
-INFO -               GET http://127.0.0.1:4204/test/api/users ->      List<User> users()
-INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest)
+INFO: Starting TomEE from: /tmp/arquillian-apache-tomee-24910
+INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
+INFO: Starting ProtocolHandler ["http-nio-53035"]
+INFO: Configuring enterprise application: /path/to/tomee/examples/mp-jsonb-configuration/target/tomee-embedded/0/4835cda6-1e53-4232-ad75-25e7dd844887
+INFO: Enterprise application "/path/to/tomee/examples/mp-jsonb-configuration/target/tomee-embedded/0/4835cda6-1e53-4232-ad75-25e7dd844887" loaded.
+INFO: Deployed Application(path=/path/to/tomee/examples/mp-jsonb-configuration/target/tomee-embedded/0/4835cda6-1e53-4232-ad75-25e7dd844887)
+INFO: Provider{clazz=org.superbiz.JSONBConfiguration, discovered=true, singleton=false}
+INFO: REST Application: http://localhost:53035/4835cda6-1e53-4232-ad75-25e7dd844887/api       -> org.superbiz.JAXRSApplication
+INFO:      Service URI: http://localhost:53035/4835cda6-1e53-4232-ad75-25e7dd844887/api/users ->  EJB org.superbiz.rest.UserService
+INFO:               GET http://localhost:53035/4835cda6-1e53-4232-ad75-25e7dd844887/api/users ->      List<User> users()
 [
   {
     "Id":1,
     "Name":"user 1",
-    "Registration":"2018 - 12 - 28"
+    "Registration":"2026 - 09 - 22"
   },
   {
     "Id":2,
     "Name":"user 2",
-    "Registration":"2018 - 12 - 28"
+    "Registration":"2026 - 09 - 22"
   }
 ]
-INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest
-INFO - Stopping network services
-INFO - Stopping server services
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.203 sec
-
-Results :
+INFO: Undeploying app: /path/to/tomee/examples/mp-jsonb-configuration/target/tomee-embedded/0/4835cda6-1e53-4232-ad75-25e7dd844887
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.056 s -- in org.superbiz.rest.UserServiceTest
+Results:
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
 ----
 
 === Dentro del jar

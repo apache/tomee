@@ -17,54 +17,58 @@
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.openejb.OpenEjbContainer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import jakarta.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import javax.naming.NamingException;
+import jakarta.ejb.EJB;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+@RunWith(Arquillian.class)
 public class UserServiceTest {
 
-    private static Context context;
-    private static UserService service;
     private static List<User> users = new ArrayList<>();
 
-    @BeforeClass
-    public static void start() throws NamingException {
-        Properties properties = new Properties();
-        properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-        context = EJBContainer.createEJBContainer(properties).getContext();
+    @ArquillianResource
+    private URL base;
 
-        // create some records
-        service = (UserService) context.lookup("java:global/rest-on-ejb/UserService");
-        users.add(service.create("foo", "foopwd", "foo@foo.com"));
-        users.add(service.create("bar", "barpwd", "bar@bar.com"));
+    @EJB
+    private UserService service;
+
+    @Deployment
+    public static WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClasses(User.class, UserService.class)
+                .addAsResource(new ClassLoaderAsset("META-INF/persistence.xml"), "META-INF/persistence.xml");
     }
 
-    @AfterClass
-    public static void close() throws NamingException {
-        if (context != null) {
-            context.close();
+    @Before
+    public void createSomeRecords() {
+        if (users.isEmpty()) { // the test runs inside TomEE, the records are created once for all tests
+            users.add(service.create("foo", "foopwd", "foo@foo.com"));
+            users.add(service.create("bar", "barpwd", "bar@bar.com"));
         }
     }
 
     @Test
     public void create() {
-        WebClient.create("http://localhost:4204/rest-on-ejb")
+        WebClient.create(base.toExternalForm())
                 .path("/user/create")
                 .query("name", "dummy")
                 .query("pwd", "unbreakable")
@@ -84,7 +88,7 @@ public class UserServiceTest {
     public void delete() throws Exception {
         User user = service.create("todelete", "dontforget", "delete@me.com");
 
-        WebClient.create("http://localhost:4204/rest-on-ejb").path("/user/delete/" + user.getId()).delete();
+        WebClient.create(base.toExternalForm()).path("/user/delete/" + user.getId()).delete();
 
         user = service.find(user.getId());
         assertNull(user);
@@ -92,7 +96,7 @@ public class UserServiceTest {
 
     @Test
     public void show() {
-        User user = WebClient.create("http://localhost:4204/rest-on-ejb")
+        User user = WebClient.create(base.toExternalForm())
                 .path("/user/show/" + users.iterator().next().getId())
                 .get(User.class);
         assertEquals("foo", user.getFullname());
@@ -102,7 +106,7 @@ public class UserServiceTest {
 
     @Test
     public void list() throws Exception {
-        String users = WebClient.create("http://localhost:4204/rest-on-ejb")
+        String users = WebClient.create(base.toExternalForm())
                 .path("/user/list")
                 .get(String.class);
         assertEquals(users,
@@ -132,7 +136,7 @@ public class UserServiceTest {
     @Test
     public void update() throws Exception {
         User created = service.create("name", "pwd", "mail");
-        Response response = WebClient.create("http://localhost:4204/rest-on-ejb")
+        Response response = WebClient.create(base.toExternalForm())
                 .path("/user/update/" + created.getId())
                 .query("name", "corrected")
                 .query("pwd", "userpwd")

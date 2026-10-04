@@ -69,10 +69,6 @@
       <artifactId>openejb-ejbd</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-http</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <scope>provided</scope>
