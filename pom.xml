@@ -192,7 +192,7 @@
     <version.microprofile.impl.openapi>4.2.4</version.microprofile.impl.openapi>
     <version.microprofile.impl.opentelemetry>2.15.1</version.microprofile.impl.opentelemetry>
     <version.opentelemetry>1.62.0</version.opentelemetry>
-    <version.opentelemetry.instrumentation>2.27.0</version.opentelemetry.instrumentation>
+    <version.opentelemetry.instrumentation>2.31.1</version.opentelemetry.instrumentation>
     <version.opentelemetry.declarative-config>1.62.0-alpha</version.opentelemetry.declarative-config>
 
     <!-- Jackson and snakeyaml required by OpenAPI Impl -->
