@@ -33,6 +33,7 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -69,6 +70,10 @@ public class SQLLoginModuleTest {
         st.execute();
         st.setString(1, "daniel");
         st.setString(2, "password");
+        st.execute();
+        // account without a stored password
+        st.setString(1, "nopassword");
+        st.setNull(2, Types.VARCHAR);
         st.execute();
         st.close();
 
@@ -135,6 +140,27 @@ public class SQLLoginModuleTest {
     public void testBadPWLogin() throws LoginException {
         final LoginContext context = new LoginContext("SQLLogin",
             new UsernamePasswordCallbackHandler("jonathan", "badpass"));
+        context.login();
+    }
+
+    @Test(expected = FailedLoginException.class)
+    public void testNullStoredAndNullProvidedPasswordLogin() throws LoginException {
+        final LoginContext context = new LoginContext("SQLLogin",
+            new UsernamePasswordCallbackHandler("nopassword", null));
+        context.login();
+    }
+
+    @Test(expected = FailedLoginException.class)
+    public void testNullStoredPasswordLogin() throws LoginException {
+        final LoginContext context = new LoginContext("SQLLogin",
+            new UsernamePasswordCallbackHandler("nopassword", "anything"));
+        context.login();
+    }
+
+    @Test(expected = FailedLoginException.class)
+    public void testNullProvidedPasswordLogin() throws LoginException {
+        final LoginContext context = new LoginContext("SQLLogin",
+            new UsernamePasswordCallbackHandler("jonathan", null));
         context.login();
     }
 
