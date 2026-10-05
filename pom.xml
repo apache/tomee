@@ -231,7 +231,7 @@
     <version.wss4j>4.0.2</version.wss4j>
     <version.xmlsec>4.0.3</version.xmlsec>
     <version.krazo>2.0.2</version.krazo>
-    <version.jose4j>0.9.6</version.jose4j>
+    <version.jose4j>0.9.7</version.jose4j>
     <version.sxc>0.10</version.sxc>
 
     <!-- JDBC Drivers -->
