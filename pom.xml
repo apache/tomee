@@ -1452,7 +1452,7 @@
       <dependency>
         <groupId>io.github.librewsdl4j</groupId>
         <artifactId>libre-wsdl4j</artifactId>
-        <version>1.12.0</version>
+        <version>1.13.0</version>
       </dependency>
       <dependency>
         <groupId>xmlunit</groupId>
