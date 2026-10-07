@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -69,6 +70,8 @@ public class JakartaDataTransactionalTest {
             .addClass(SimpleItem.class)
             .addClass(SimpleItemRepository.class)
             .addClass(TransactionalItemService.class)
+            .addClass(ItemInserted.class)
+            .addClass(ItemInsertedObserver.class)
             .addAsResource(new StringAsset(PERSISTENCE_XML), "META-INF/persistence.xml")
             .addAsWebInfResource(new StringAsset(BEANS_XML), "beans.xml");
     }
@@ -78,6 +81,9 @@ public class JakartaDataTransactionalTest {
 
     @Inject
     private SimpleItemRepository repository;
+
+    @Inject
+    private ItemInsertedObserver observer;
 
     @Test
     public void insertAndFindInsideTransactional() {
@@ -103,5 +109,17 @@ public class JakartaDataTransactionalTest {
         service.delete(id);
 
         assertTrue("Deleted item should not be found", repository.findById(id).isEmpty());
+    }
+
+    /**
+     * An after success observer runs in the transaction's after completion phase, where the
+     * committed transaction is still associated with the thread but no longer active.
+     */
+    @Test
+    public void findInsideAfterSuccessObserver() {
+        service.insertAndNotify("tx-observed");
+
+        assertNull("Repository call in the observer failed: " + observer.getFailure(), observer.getFailure());
+        assertEquals("tx-observed", observer.getLabel());
     }
 }

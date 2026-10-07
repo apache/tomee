@@ -30,6 +30,7 @@ import jakarta.data.repository.Update;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Status;
+import jakarta.transaction.Transaction;
 import jakarta.transaction.TransactionManager;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -172,7 +173,12 @@ public class RepositoryInvocationHandler implements InvocationHandler {
             return doInvoke(em, method, args);
         }
 
-        final boolean startedTx = tm.getStatus() == Status.STATUS_NO_TRANSACTION;
+        final int status = tm.getStatus();
+        final boolean startedTx = status != Status.STATUS_ACTIVE && status != Status.STATUS_MARKED_ROLLBACK;
+
+        // A transaction that is completing or completed, as seen from an after completion callback such as a
+        // CDI after success observer, is still bound to the thread but can no longer be joined.
+        final Transaction completedTx = startedTx && status != Status.STATUS_NO_TRANSACTION ? tm.suspend() : null;
         if (startedTx) {
             tm.begin();
         }
@@ -191,6 +197,10 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                 }
             }
             throw mapException(e);
+        } finally {
+            if (completedTx != null) {
+                tm.resume(completedTx);
+            }
         }
     }
 
