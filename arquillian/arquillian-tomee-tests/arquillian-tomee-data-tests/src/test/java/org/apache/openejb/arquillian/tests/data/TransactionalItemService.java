@@ -17,6 +17,7 @@
 package org.apache.openejb.arquillian.tests.data;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
@@ -30,9 +31,19 @@ public class TransactionalItemService {
     @Inject
     private SimpleItemRepository repository;
 
+    @Inject
+    private Event<ItemInserted> itemInserted;
+
     @Transactional
     public Long insert(final String label) {
         return repository.insert(new SimpleItem(label)).getId();
+    }
+
+    @Transactional
+    public Long insertAndNotify(final String label) {
+        final Long id = repository.insert(new SimpleItem(label)).getId();
+        itemInserted.fire(new ItemInserted(id));
+        return id;
     }
 
     @Transactional
