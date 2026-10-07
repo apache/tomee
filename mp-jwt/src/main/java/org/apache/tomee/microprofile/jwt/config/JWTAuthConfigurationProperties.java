@@ -120,7 +120,15 @@ public class JWTAuthConfigurationProperties {
                 config.getOptionalValue("mp.jwt.decrypt.key.algorithm", String.class).orElse(null),
                 config.getOptionalValue("mp.jwt.verify.publickey.algorithm", String.class).orElse(null),
                 config.getOptionalValue(TOKEN_AGE, Integer.class).orElse(null),
-                config.getOptionalValue(CLOCK_SKEW, Integer.class).orElse(0));
+                validateClockSkew(config.getOptionalValue(CLOCK_SKEW, Integer.class).orElse(0)));
+    }
+
+    static Integer validateClockSkew(final Integer clockSkew) {
+        if (clockSkew != null && clockSkew < 0) {
+            throw new DeploymentException("Invalid " + CLOCK_SKEW + " value: " + clockSkew +
+                    ". The clock skew must be zero or a positive number of seconds.");
+        }
+        return clockSkew;
     }
   
     private Boolean queryAllowExp(){
