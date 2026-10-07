@@ -22,6 +22,7 @@ import jakarta.ws.rs.NameBinding;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.PreMatching;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -125,6 +126,20 @@ public class HealthEndpointTest {
         assertEquals(200, get(tomee, "/test/health/live").getStatus());
     }
 
+    @Test
+    public void applicationWithItsOwnProvider() throws Exception {
+        final TomEE tomee = deploy(Archive.archive()
+                                          .add(HealthEndpointTest.class)
+                                          .add(UnavailableApp.class)
+                                          .add(UnavailableFilter.class)
+                                          .add(HelloResource.class)
+                                          .asJar());
+
+        assertEquals(503, get(tomee, "/test/api/hello").getStatus());
+        assertEquals(200, get(tomee, "/test/health").getStatus());
+        assertEquals(200, get(tomee, "/test/health/live").getStatus());
+    }
+
     private static TomEE deploy(final File appJar) throws Exception {
         return TomEE.microprofile()
                     .add("webapps/test/WEB-INF/beans.xml", "")
@@ -180,6 +195,22 @@ public class HealthEndpointTest {
         @Override
         public void filter(final ContainerRequestContext requestContext) {
             requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
+        }
+    }
+
+    @ApplicationPath("/api")
+    public static class UnavailableApp extends Application {
+        @Override
+        public Set<Class<?>> getClasses() {
+            return Set.of(HelloResource.class, UnavailableFilter.class);
+        }
+    }
+
+    @PreMatching
+    public static class UnavailableFilter implements ContainerRequestFilter {
+        @Override
+        public void filter(final ContainerRequestContext requestContext) {
+            requestContext.abortWith(Response.status(Response.Status.SERVICE_UNAVAILABLE).build());
         }
     }
 
