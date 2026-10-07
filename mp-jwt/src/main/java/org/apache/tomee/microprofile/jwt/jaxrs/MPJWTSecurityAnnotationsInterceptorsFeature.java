@@ -30,28 +30,25 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Provider
 public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeature {
 
-    private final ConcurrentMap<Method, Set<String>> rolesAllowed = new ConcurrentHashMap<>();
-    private final Set<Method> denyAll = new HashSet<>();
-    private final Set<Method> permitAll = new HashSet<>();
-
     @Override
     public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
 
-        final boolean hasSecurity = processSecurityAnnotations(resourceInfo.getResourceClass(), resourceInfo.getResourceMethod());
+        // the constraint is resolved per resource class: an inherited resource method is the same
+        // java.lang.reflect.Method for every subclass, so it cannot be used as a shared key
+        final MPJWTSecurityAnnotationsInterceptor interceptor =
+                processSecurityAnnotations(resourceInfo.getResourceClass(), resourceInfo.getResourceMethod());
 
-        if (hasSecurity) { // no need to add interceptor on the resources that don(t have any security requirements to enforce
-            context.register(new MPJWTSecurityAnnotationsInterceptor(resourceInfo, rolesAllowed, denyAll, permitAll));
+        if (interceptor != null) { // no need to add interceptor on the resources that don(t have any security requirements to enforce
+            context.register(interceptor);
         }
 
     }
 
-    private boolean processSecurityAnnotations(final Class clazz, final Method method) {
+    private MPJWTSecurityAnnotationsInterceptor processSecurityAnnotations(final Class clazz, final Method method) {
 
         final List<Class<? extends Annotation>[]> classSecurityAnnotations = hasClassLevelAnnotations(clazz,
                 RolesAllowed.class, PermitAll.class, DenyAll.class);
@@ -60,7 +57,7 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
                 RolesAllowed.class, PermitAll.class, DenyAll.class);
 
         if (classSecurityAnnotations.isEmpty() && methodSecurityAnnotations.isEmpty()) {
-            return false; // nothing to do
+            return null; // nothing to do
         }
 
         /*
@@ -74,51 +71,22 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
             throw new IllegalStateException(method.toString() + " has more than one security annotation (RolesAllowed, PermitAll, DenyAll).");
         }
 
-        if (methodSecurityAnnotations.isEmpty()) { // no need to deal with class level annotations if the method has some
-            final RolesAllowed classRolesAllowed = (RolesAllowed) clazz.getAnnotation(RolesAllowed.class);
-            final PermitAll classPermitAll = (PermitAll) clazz.getAnnotation(PermitAll.class);
-            final DenyAll classDenyAll = (DenyAll) clazz.getAnnotation(DenyAll.class);
-
-            if (classRolesAllowed != null) {
-                Set<String> roles = new HashSet<>();
-                final Set<String> previous = rolesAllowed.putIfAbsent(method, roles);
-                if (previous != null) {
-                    roles = previous;
-                }
-                roles.addAll(Arrays.asList(classRolesAllowed.value()));
-            }
-
-            if (classPermitAll != null) {
-                permitAll.add(method);
-            }
-
-            if (classDenyAll != null) {
-                denyAll.add(method);
-            }
+        if (!methodSecurityAnnotations.isEmpty()) { // method level annotations override class level ones
+            return toInterceptor(method.getAnnotation(RolesAllowed.class),
+                    method.isAnnotationPresent(DenyAll.class),
+                    method.isAnnotationPresent(PermitAll.class));
         }
 
-        final RolesAllowed mthdRolesAllowed = method.getAnnotation(RolesAllowed.class);
-        final PermitAll mthdPermitAll = method.getAnnotation(PermitAll.class);
-        final DenyAll mthdDenyAll = method.getAnnotation(DenyAll.class);
+        return toInterceptor((RolesAllowed) clazz.getAnnotation(RolesAllowed.class),
+                clazz.isAnnotationPresent(DenyAll.class),
+                clazz.isAnnotationPresent(PermitAll.class));
+    }
 
-        if (mthdRolesAllowed != null) {
-            Set<String> roles = new HashSet<>();
-            final Set<String> previous = rolesAllowed.putIfAbsent(method, roles);
-            if (previous != null) {
-                roles = previous;
-            }
-            roles.addAll(Arrays.asList(mthdRolesAllowed.value()));
-        }
-
-        if (mthdPermitAll != null) {
-            permitAll.add(method);
-        }
-
-        if (mthdDenyAll != null) {
-            denyAll.add(method);
-        }
-
-        return true;
+    private MPJWTSecurityAnnotationsInterceptor toInterceptor(final RolesAllowed rolesAllowed,
+                                                              final boolean denyAll,
+                                                              final boolean permitAll) {
+        final Set<String> roles = rolesAllowed == null ? null : new HashSet<>(Arrays.asList(rolesAllowed.value()));
+        return new MPJWTSecurityAnnotationsInterceptor(roles, denyAll, permitAll);
     }
 
     private List<Class<? extends Annotation>[]> hasClassLevelAnnotations(final Class clazz, final Class<? extends Annotation>... annotationsToCheck) {
