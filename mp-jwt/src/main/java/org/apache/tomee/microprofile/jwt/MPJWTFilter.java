@@ -80,6 +80,8 @@ public class MPJWTFilter implements Filter {
 
     private static final Logger VALIDATION = Logger.getInstance(JWTLogCategories.VALIDATION, MPJWTFilter.class);
 
+    static final String PRE_LOGIN_STATE = "MP_JWT_PRE_LOGIN_STATE";
+
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
     }
@@ -98,13 +100,6 @@ public class MPJWTFilter implements Filter {
         try {
             final MPJWTServletRequestWrapper wrappedRequest = new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get());
             chain.doFilter(wrappedRequest, response);
-
-            Object state = request.getAttribute("MP_JWT_PRE_LOGIN_STATE");
-            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            if (TomcatSecurityService.class.isInstance(securityService) && state != null) {
-                final TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
-                tomcatSecurityService.exitWebApp(state);
-            }
         } catch (final Exception e) {
             // this is an alternative to the @Provider bellow which requires registration on the fly
             // or users to add it into their webapp for scanning or into the Application itself
@@ -117,6 +112,26 @@ public class MPJWTFilter implements Filter {
             } else {
                 throw e;
             }
+        } finally {
+            // token validation pushes the caller identity (and the run-as subject, if any) onto
+            // the current thread; restore it on every exit path so a failing request does not
+            // leak its security context to the next request served by this pooled thread
+            exitWebApp(request);
+        }
+    }
+
+    private static void exitWebApp(final ServletRequest request) {
+        final Object state = request.getAttribute(PRE_LOGIN_STATE);
+        if (state == null) {
+            return;
+        }
+
+        // remove it first so the state is never restored twice for the same request
+        request.removeAttribute(PRE_LOGIN_STATE);
+
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        if (TomcatSecurityService.class.isInstance(securityService)) {
+            TomcatSecurityService.class.cast(securityService).exitWebApp(state);
         }
     }
 
@@ -362,7 +377,7 @@ public class MPJWTFilter implements Filter {
                 final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
                 Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
 
-                request.setAttribute("MP_JWT_PRE_LOGIN_STATE", state);
+                request.setAttribute(PRE_LOGIN_STATE, state);
             }
 
             // TODO Also check if it is an async request and add a listener to close off the state
