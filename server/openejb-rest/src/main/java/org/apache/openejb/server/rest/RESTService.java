@@ -154,6 +154,8 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
         final Collection<Object> additionalProviders = new HashSet<>();
         addAppProvidersIfNeeded(appInfo, webApp, classLoader, additionalProviders);
+        // the providers of the webapp itself, before the declared applications add their own
+        final Collection<Object> webAppProviders = new HashSet<>(additionalProviders);
 
         Collection<IdPropertiesInfo> pojoConfigurations = null; // done lazily
         try {
@@ -275,7 +277,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
                 if (!webApp.restApplications.isEmpty() && deploymentWithApplication && !applicationAtContextRoot && !containerResources.isEmpty()) {
                     pojoConfigurations = PojoUtil.findPojoConfig(pojoConfigurations, appInfo, webApp);
-                    deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, additionalProviders, pojoConfigurations, new InternalApplication(null), containerResources, "/" + wildcard);
+                    deployApplication(appInfo, webApp.contextRoot, restEjbs, classLoader, injections, owbCtx, context, webAppProviders, pojoConfigurations, new InternalApplication(null), containerResources, "/" + wildcard);
                 }
 
                 if (webApp.restApplications.isEmpty()) {
