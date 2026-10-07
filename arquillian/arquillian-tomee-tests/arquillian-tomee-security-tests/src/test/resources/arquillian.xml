@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+  <!--
+    Both containers use the conf/ files of src/test/resources/security-conf: several global UserDatabase
+    resources, some of them bound to a UserDatabaseRealm (one with a digesting CredentialHandler).
+  -->
+  <container qualifier="tomee-embedded" default="true">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="dir">target/apache-tomee-embedded</property>
+      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+      <property name="classpathConfiguration">security-conf.properties</property>
+      <property name="properties">
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.security
+      </property>
+    </configuration>
+  </container>
+  <container qualifier="tomee-remote">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="ajpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="dir">target/apache-tomee-remote</property>
+      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+      <property name="cleanOnStartUp">true</property>
+      <property name="simpleLog">true</property>
+      <property name="conf">src/test/resources/security-conf</property>
+      <!-- same as security-conf/server.xml plus the TomEE ServerListener a standalone server needs -->
+      <property name="serverXml">src/test/tomee/server.xml</property>
+      <property name="properties">
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.security
+      </property>
+    </configuration>
+  </container>
+</arquillian>
