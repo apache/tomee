@@ -49,7 +49,6 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
-import org.jose4j.jwt.NumericDate;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -425,11 +424,9 @@ public class MPJWTFilter implements Filter {
                 if (authContextInfo.getIssuer() != null) {
                     builder.setExpectedIssuer(authContextInfo.getIssuer());
                 }
-                if (authContextInfo.getClockSkew()>= 0) {
-                    builder.setAllowedClockSkewInSeconds(authContextInfo.getClockSkew());
-                } else {
-                    builder.setEvaluationTime(NumericDate.fromSeconds(0));
-                }
+                // never let a negative skew weaken or disable the exp/nbf/iat time checks
+                final Integer clockSkew = authContextInfo.getClockSkew();
+                builder.setAllowedClockSkewInSeconds(clockSkew == null ? 0 : Math.max(0, clockSkew));
 
                 final Map<String, Key> publicKeys;
                 try {
