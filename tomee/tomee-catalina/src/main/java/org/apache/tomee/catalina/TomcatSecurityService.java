@@ -144,6 +144,17 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
     @Override
     public Set<String> getLogicalRoles(final Principal[] principals, final Set<String> logicalRoles) {
+        // the caller's own principals are resolved through the realm only, never by name
+        final Set<Principal> callerPrincipals = new HashSet<>();
+        for (final Principal principal : principals) {
+            if (principal instanceof TomcatUser user) {
+                callerPrincipals.add(user.getTomcatPrincipal());
+                if (user.getTomcatPrincipal() instanceof GenericPrincipal genericPrincipal) {
+                    callerPrincipals.add(genericPrincipal.getUserPrincipal());
+                }
+            }
+        }
+
         final Set<String> roles = new LinkedHashSet<>(logicalRoles.size());
         for (final String logicalRole : logicalRoles) {
             for (final Principal principal : principals) {
@@ -152,7 +163,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
                         roles.add(logicalRole);
                         break;
                     }
-                } else if (principal != null) {
+                } else if (principal != null && !callerPrincipals.contains(principal)) {
                     final String name = principal.getName();
                     if (logicalRole.equals(name)) {
                         roles.add(logicalRole);
