@@ -192,7 +192,8 @@ public class Files {
         try {
             File file;
             try {
-                file = File.createTempFile("temp", "dir");
+                // created atomically with owner-only permissions on POSIX file systems
+                file = java.nio.file.Files.createTempDirectory("temp").toFile();
             } catch (final Throwable e) {
                 //Use a local tmp directory
                 final File tmp = new File("tmp");
@@ -203,16 +204,9 @@ public class Files {
                     throw new IOException("Failed to create local tmp directory: " + tmp.getAbsolutePath());
                 }
 
-                file = File.createTempFile("temp", "dir", tmp);
+                file = java.nio.file.Files.createTempDirectory(tmp.toPath(), "temp").toFile();
             }
 
-            hackJDK4715154();
-
-            if (!file.delete()) {
-                throw new IOException("Failed to create temp dir. Delete failed");
-            }
-
-            mkdir(file);
             deleteOnExit(file);
 
             return file;
