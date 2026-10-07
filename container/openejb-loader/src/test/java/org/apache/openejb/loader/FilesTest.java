@@ -20,11 +20,15 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FilesTest {
@@ -71,5 +75,25 @@ public class FilesTest {
 
         final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, String.format("Completed File.%1$s in %2$sms" , remove ? "remove" : "delete", String.valueOf(time)));
+    }
+
+    @Test
+    public void tmpdirCreatesDistinctPrivateDirectories() throws Exception {
+        final File dir1 = Files.tmpdir();
+        final File dir2 = Files.tmpdir();
+
+        assertTrue(dir1.isDirectory());
+        assertTrue(dir2.isDirectory());
+        assertNotEquals(dir1.getAbsoluteFile(), dir2.getAbsoluteFile());
+
+        for (final File dir : new File[]{dir1, dir2}) {
+            if (java.nio.file.Files.getFileStore(dir.toPath()).supportsFileAttributeView(PosixFileAttributeView.class)) {
+                final Set<PosixFilePermission> permissions = java.nio.file.Files.getPosixFilePermissions(dir.toPath());
+                for (final PosixFilePermission permission : permissions) {
+                    assertFalse("tmpdir must be owner-only but has " + permission,
+                            permission.name().startsWith("GROUP_") || permission.name().startsWith("OTHERS_"));
+                }
+            }
+        }
     }
 }
