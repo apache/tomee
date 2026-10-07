@@ -286,23 +286,7 @@ public class TomcatWsRegistry implements WsRegistry {
             context.setLoginConfig(loginConfig);
 
             //Setup a default Security Constraint
-            final String securityRole = SystemInstance.get().getProperty(TOMEE_JAXWS_SECURITY_ROLE_PREFIX + name, "default");
-            for (final String role : securityRole.split(",")) {
-                final SecurityCollection collection = new SecurityCollection();
-                collection.addMethod("GET");
-                collection.addMethod("POST");
-                collection.addPattern("/*");
-                collection.setName(role);
-
-                final SecurityConstraint sc = new SecurityConstraint();
-                sc.addAuthRole("*");
-                sc.addCollection(collection);
-                sc.setAuthConstraint(true);
-                sc.setUserConstraint(transportGuarantee);
-
-                context.addConstraint(sc);
-                context.addSecurityRole(role);
-            }
+            addSecurityConstraints(context, name, transportGuarantee);
 
             //Set the proper authenticator
             if ("BASIC".equals(authMethod)) {
@@ -322,6 +306,32 @@ public class TomcatWsRegistry implements WsRegistry {
         }
 
         return context;
+    }
+
+    /**
+     * Protects the whole endpoint context (TomEE owned, never a user webapp) for every HTTP method.
+     * No method is added to the collection on purpose: a collection without methods covers all verbs,
+     * whereas enumerating some (e.g. GET/POST) would leave the others (PUT, DELETE, ...) unauthenticated.
+     */
+    static void addSecurityConstraints(final Context context, final String name, final String transportGuarantee) {
+        final String securityRole = SystemInstance.get().getProperty(TOMEE_JAXWS_SECURITY_ROLE_PREFIX + name, "default");
+        for (final String role : securityRole.split(",")) {
+            final SecurityCollection collection = new SecurityCollection();
+            collection.addPattern("/*");
+            collection.setName(role);
+
+            final SecurityConstraint sc = new SecurityConstraint();
+            sc.addAuthRole("*");
+            sc.addCollection(collection);
+            sc.setAuthConstraint(true);
+            sc.setUserConstraint(transportGuarantee);
+
+            context.addConstraint(sc);
+            context.addSecurityRole(role);
+        }
+
+        // reject any method a constraint would not cover
+        context.setDenyUncoveredHttpMethods(true);
     }
 
     private void addServlet(final Container host, final Context context, final String mapping, final HttpListener httpListener, final String path,
