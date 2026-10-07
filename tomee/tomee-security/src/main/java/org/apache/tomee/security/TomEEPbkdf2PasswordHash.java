@@ -16,6 +16,10 @@
  */
 package org.apache.tomee.security;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import jakarta.enterprise.context.Dependent;
@@ -25,6 +29,9 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Dependent // important because it's tight to the identity store it's injected into
 public class TomEEPbkdf2PasswordHash implements Pbkdf2PasswordHash {
@@ -36,6 +43,26 @@ public class TomEEPbkdf2PasswordHash implements Pbkdf2PasswordHash {
     public static final int HASH_BYTE_SIZE = 18;
     public static final int PBKDF2_ITERATIONS = 64000;
 
+    // algorithms allowed by the spec, plus SHA1 which is the historical default of this class
+    private static final Set<String> SUPPORTED_ALGORITHMS = Set.of(
+            "PBKDF2WithHmacSHA1",
+            "PBKDF2WithHmacSHA224",
+            "PBKDF2WithHmacSHA256",
+            "PBKDF2WithHmacSHA384",
+            "PBKDF2WithHmacSHA512");
+
+    private static final int MIN_ITERATIONS = 1024;
+
+    // opt-out to accept hashes (and configuration) with weak parameters, e.g. legacy hashes
+    public static final String ALLOW_WEAK_PARAMETERS = "tomee.security.pbkdf2.allow-weak-parameters";
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.TOMEE_SECURITY, TomEEPbkdf2PasswordHash.class);
+
+    // warn once per JVM when rejecting, once per distinct algorithm/iterations combination when accepting
+    private static final int MAX_WARNED_PARAMETERS = 64;
+    private static final AtomicBoolean WARNED_REJECTED = new AtomicBoolean();
+    private static final Set<String> WARNED_PARAMETERS = ConcurrentHashMap.newKeySet();
+
     private SecureRandom random = new SecureRandom();
 
     // These are configured by default to constants above, but can be overridden with parameters in initialize()
@@ -46,15 +73,30 @@ public class TomEEPbkdf2PasswordHash implements Pbkdf2PasswordHash {
 
     @Override
     public void initialize(final Map<String, String> parameters) {
-        // todo read from parameters and set fields
         final String algorithmParameter = parameters.get("Pbkdf2PasswordHash.Algorithm");
-        if (algorithmParameter != null) { // todo also check withing a list of supported algorithm maybe
+        if (algorithmParameter != null) {
+            if (!SUPPORTED_ALGORITHMS.contains(algorithmParameter)) {
+                final String message = "Unsupported algorithm " + algorithmParameter
+                                       + ". Supported algorithms are " + SUPPORTED_ALGORITHMS;
+                if (!allowWeakParameters()) {
+                    throw new IllegalArgumentException(message);
+                }
+                LOGGER.warning(message + ". Accepted because " + ALLOW_WEAK_PARAMETERS + " is true");
+            }
             configuredAlgorithm = algorithmParameter;
         }
 
         final String iterationsParameter = parameters.get("Pbkdf2PasswordHash.Iterations");
         if (iterationsParameter != null) {
-            configuredIterations = Integer.parseInt(iterationsParameter);
+            final int iterations = Integer.parseInt(iterationsParameter);
+            if (iterations < MIN_ITERATIONS) {
+                final String message = "Invalid number of iterations " + iterations + ". Must be >= " + MIN_ITERATIONS;
+                if (iterations < 1 || !allowWeakParameters()) {
+                    throw new IllegalArgumentException(message);
+                }
+                LOGGER.warning(message + ". Accepted because " + ALLOW_WEAK_PARAMETERS + " is true");
+            }
+            configuredIterations = iterations;
         }
 
         final String saltSizeParameter = parameters.get("Pbkdf2PasswordHash.SaltSizeBytes");
@@ -80,45 +122,72 @@ public class TomEEPbkdf2PasswordHash implements Pbkdf2PasswordHash {
 
     @Override
     public boolean verify(final char[] password, final String hashedPassword) {
+        if (password == null || hashedPassword == null) {
+            return false;
+        }
 
-        // todo introduce a pojo that has all values and can serialize and deserialize from/to a String
-        // todo introduce strongly typed exceptions
-
-        final String[] params = hashedPassword.split(":");
+        // format: algorithm:iterations:salt:hash, every part comes from storage so validate it
+        final String[] params = hashedPassword.split(":", -1);
         if (params.length != 4) {
-            throw new RuntimeException("Missing fields in hashed password.");
+            return false;
         }
 
         final String algorithm = params[0];
-        // todo check supported algorithms in a finite list?
-
-        int iterations = 0;
+        final int iterations;
         try {
             iterations = Integer.parseInt(params[1]);
         } catch (final NumberFormatException ex) {
-            throw new RuntimeException("Could not parse the iteration as an integer.", ex);
+            return false;
+        }
+        if (algorithm.isEmpty() || iterations < 1) {
+            return false;
         }
 
-        if (iterations < 1) {
-            throw new RuntimeException("Invalid number of iterations. Must be >= 1.");
+        final boolean weak = !SUPPORTED_ALGORITHMS.contains(algorithm) || iterations < MIN_ITERATIONS;
+        if (weak && !allowWeakParameters()) {
+            if (WARNED_REJECTED.compareAndSet(false, true)) {
+                LOGGER.warning("Rejected a stored PBKDF2 hash with an unsupported algorithm or fewer than "
+                               + MIN_ITERATIONS + " iterations. Set " + ALLOW_WEAK_PARAMETERS
+                               + "=true to accept legacy hashes");
+            }
+            return false;
         }
 
-        byte[] salt = null;
+        final byte[] salt;
+        final byte[] expectedHash;
         try {
             salt = fromBase64(params[2]);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Base64 decoding of salt failed.", ex );
-        }
-
-        byte[] expectedHash = null;
-        try {
             expectedHash = fromBase64(params[3]);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Base64 decoding of pbkdf2 output failed.", ex);
+        } catch (final IllegalArgumentException ex) {
+            return false;
+        }
+        if (salt.length == 0 || expectedHash.length == 0) {
+            return false;
         }
 
-        final byte[] actual = pbkdf2(password, salt, iterations, expectedHash.length, algorithm);
+        final byte[] actual;
+        try {
+            actual = pbkdf2(password, salt, iterations, expectedHash.length, algorithm);
+        } catch (final RuntimeException ex) {
+            return false;
+        }
+        if (weak) {
+            warnWeak(algorithm, iterations);
+        }
         return slowEquals(expectedHash, actual);
+    }
+
+    private static boolean allowWeakParameters() {
+        return Boolean.parseBoolean(SystemInstance.get().getProperty(ALLOW_WEAK_PARAMETERS, "false"));
+    }
+
+    private static void warnWeak(final String algorithm, final int iterations) {
+        final String key = algorithm + ":" + iterations;
+        if (WARNED_PARAMETERS.size() < MAX_WARNED_PARAMETERS && WARNED_PARAMETERS.add(key)) {
+            LOGGER.warning("Accepted a stored PBKDF2 hash with weak parameters (algorithm " + algorithm
+                           + ", " + iterations + " iterations) because " + ALLOW_WEAK_PARAMETERS
+                           + " is true. The hash should be regenerated");
+        }
     }
 
     private byte[] pbkdf2(final char[] password, final byte[] salt, final int iterations, final int length, final String algorithm) {
