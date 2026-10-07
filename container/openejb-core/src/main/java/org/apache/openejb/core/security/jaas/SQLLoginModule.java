@@ -349,15 +349,14 @@ public class SQLLoginModule implements LoginModule {
      * This method checks if the provided password is correct. The original
      * password may have been digested.
      *
+     * A missing stored password (NULL column) or a missing provided password
+     * always fails: absence of a credential must never authenticate.
+     *
      * @param real     Original password in digested form if applicable
      * @param provided User provided password in clear text
      * @return true If the password is correct
      */
     private boolean checkPassword(final String real, final String provided) {
-        if (real == null && provided == null) {
-            return true;
-        }
-
         if (real == null || provided == null) {
             return false;
         }
