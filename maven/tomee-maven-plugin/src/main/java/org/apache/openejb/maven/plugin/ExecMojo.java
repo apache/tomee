@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.loader.AdminShutdownSecret;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
@@ -205,7 +206,7 @@ public class ExecMojo extends BuildTomEEMojo {
                     Files.FileRuntimeException.class, Files.FileDoesNotExistException.class, Files.NoopOutputStream.class,
                     LoaderRuntimeException.class,
                     Pipe.class, IO.class, Zips.class, JarLocation.class,
-                    RemoteServer.class, RemoteServer.CleanUpThread.class,
+                    RemoteServer.class, RemoteServer.CleanUpThread.class, AdminShutdownSecret.class,
                     OpenEJBRuntimeException.class, Join.class, QuickServerXmlParser.class,
                     Options.class, Options.NullLog.class, Options.TomEEPropertyAdapter.class, Options.NullOptions.class,
                     Options.Log.class, JavaSecurityManagers.class)) {

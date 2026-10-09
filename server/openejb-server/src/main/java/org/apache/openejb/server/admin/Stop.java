@@ -17,7 +17,9 @@
 package org.apache.openejb.server.admin;
 
 import org.apache.openejb.client.RequestType;
+import org.apache.openejb.loader.AdminShutdownSecret;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,17 +35,36 @@ public class Stop {
     private static final String HELP_BASE = "META-INF/org.apache.openejb.cli/";
 
     public static void stop(final String host, final int port) {
+        stop(host, port, readSecret());
+    }
+
+    public static void stop(final String host, final int port, final String secret) {
 
         try (Socket socket = new Socket(host, port);
              OutputStream out = socket.getOutputStream()) {
 
-            out.write(RequestType.STOP_REQUEST_Stop.getCode());
+            out.write(AdminShutdownSecret.stopMessage(RequestType.STOP_REQUEST_Stop.getCode(), secret));
+            out.flush();
 
+            if (secret == null) {
+                System.err.println("No shutdown secret found, the server refuses the request unless "
+                    + AdminShutdownSecret.REQUIRED_PROPERTY + "=false. Pass it with -s <secret> or -D"
+                    + AdminShutdownSecret.PROPERTY + "=<secret>.");
+            }
         } catch (ConnectException e) {
             System.out.println(":: server not running ::");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * The configured secret if any, else the one the local server wrote at startup.
+     */
+    private static String readSecret() {
+        return AdminShutdownSecret.findInConf(
+            SystemInstance.get().getOptions().get(AdminShutdownSecret.PROPERTY, (String) null),
+            SystemInstance.get().getConf(null));
     }
 
     public void stop() {
@@ -57,6 +78,8 @@ public class Stop {
 
             int port = 4200;
 
+            String secret = null;
+
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-h")) {
                     if (args.length > i + 1) {
@@ -65,6 +88,10 @@ public class Stop {
                 } else if (args[i].equals("-p")) {
                     if (args.length > i + 1) {
                         port = Integer.parseInt(args[++i]);
+                    }
+                } else if (args[i].equals("-s")) {
+                    if (args.length > i + 1) {
+                        secret = args[++i];
                     }
                 } else if (args[i].equals("--help")) {
                     printHelp();
@@ -75,7 +102,7 @@ public class Stop {
                 }
             }
 
-            stop(host, port);
+            stop(host, port, secret != null ? secret : readSecret());
         } catch (Exception re) {
             System.err.println("[EJB Server] FATAL ERROR: " + re.getMessage());
             re.printStackTrace();

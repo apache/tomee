@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.loader.AdminShutdownSecret;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.JavaSecurityManagers;
@@ -583,6 +584,53 @@ public class RemoteServer {
     }
 
     /**
+     * Tomcat gets the configured command followed by a NUL. The standalone
+     * admin daemon expects a stop code byte, its shutdown secret and a NUL,
+     * so a plain stop command gets the secret appended when one is found.
+     */
+    byte[] shutdownMessage() {
+        if (!tomcat && isPlainStopCommand(command)) {
+            final String secret = findShutdownSecret();
+            if (secret != null) {
+                return AdminShutdownSecret.stopMessage(command.charAt(0), secret);
+            }
+        }
+
+        final String shutdown = command + Character.toString((char) 0);
+        final byte[] message = new byte[shutdown.length()];
+        for (int i = 0; i < shutdown.length(); i++) {
+            message[i] = (byte) shutdown.charAt(i);
+        }
+        return message;
+    }
+
+    /**
+     * The server writes the secret to the conf directory of openejb.base,
+     * which defaults to openejb.home.
+     */
+    private String findShutdownSecret() {
+        final String configured = options.get(AdminShutdownSecret.PROPERTY, (String) null);
+        final String base = options.get("openejb.base", (String) null);
+        if (base != null) {
+            final String secret = AdminShutdownSecret.find(configured, new File(base));
+            if (secret != null) {
+                return secret;
+            }
+        }
+        return AdminShutdownSecret.find(configured, getHome());
+    }
+
+    private static boolean isPlainStopCommand(final String command) {
+        if (command == null || command.isEmpty() || "QqSs".indexOf(command.charAt(0)) < 0) {
+            return false;
+        }
+        return command.length() == 1
+            || "stop".equalsIgnoreCase(command)
+            || "shutdown".equalsIgnoreCase(command)
+            || "quit".equalsIgnoreCase(command);
+    }
+
+    /**
      * Send the shutdown message to the running server
      *
      * @param attempts How many times to try to send the message before giving up
@@ -592,10 +640,7 @@ public class RemoteServer {
         OutputStream stream = null;
         try (Socket socket = new Socket(host, portShutdown)) {
             stream = socket.getOutputStream();
-            final String shutdown = command + Character.toString((char) 0);
-            for (int i = 0; i < shutdown.length(); i++) {
-                stream.write(shutdown.charAt(i));
-            }
+            stream.write(shutdownMessage());
             stream.flush();
         } catch (final Exception e) {
             if (attempts > 0) {

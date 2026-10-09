@@ -7,6 +7,10 @@ OPTIONS
             Default host is 127.0.0.1
  -p port    Stops the server running on the specified port. 
             Default port is 4201.
+ -s secret  Secret required by the server to accept the stop request.
+            Defaults to the openejb.admin.shutdown.secret property or to
+            the conf/admin-shutdown.secret file the server writes at
+            startup.
 
 OpenEJB -- EJB Container System and EJB Server.
 For OpenEJB updates and additional information, visit
