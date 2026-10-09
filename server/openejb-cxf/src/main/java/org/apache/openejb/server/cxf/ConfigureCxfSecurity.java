@@ -109,6 +109,9 @@ public class ConfigureCxfSecurity {
             // if WS Security is used with a JAX-WS handler (See EjbInterceptor), we have to deal with mustUnderstand flag
             // in WS Security headers. So, let's add an interceptor
             endpoint.getInInterceptors().add(new WSSPassThroughInterceptor());
+
+            // undo the logins of the message even when it fails
+            endpoint.getOutFaultInterceptors().add(WSSLoginCleanupInterceptor.OUT_FAULT);
         }
 
         if (null != outProps && !outProps.isEmpty()) {
