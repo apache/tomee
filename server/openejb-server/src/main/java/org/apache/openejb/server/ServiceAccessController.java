@@ -22,6 +22,7 @@ import org.apache.openejb.server.auth.ExactIPAddressPermission;
 import org.apache.openejb.server.auth.ExactIPv6AddressPermission;
 import org.apache.openejb.server.auth.IPAddressPermission;
 import org.apache.openejb.server.auth.IPAddressPermissionFactory;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.auth.PermitAllPermission;
 
 import java.io.IOException;
@@ -40,9 +41,18 @@ import java.util.StringTokenizer;
 @Managed
 public class ServiceAccessController extends ServerServiceFilter implements Unwrappable {
 
+    /**
+     * When true, restores the legacy behavior where localhost and clients
+     * connecting from the server's own address are always admitted, even
+     * if they are not listed in only_from.
+     */
+    public static final String IMPLICIT_LOCAL_ACCESS = "openejb.server.only_from.implicit-local";
+
     private final Event rejections = new Event();
 
     private IPAddressPermission[] hostPermissions;
+
+    private boolean implicitLocalAccess;
 
     public ServiceAccessController(final ServerService next) {
         super(next);
@@ -62,10 +72,8 @@ public class ServiceAccessController extends ServerServiceFilter implements Unwr
     }
 
     public void checkHostsAuthorization(final InetAddress clientAddress, final InetAddress serverAddress) throws SecurityException {
-        // Check the client ip against the server ip. Hosts are
-        // allowed to access themselves, so if these ips
-        // match, the following for loop will be skipped.
-        if (clientAddress.equals(serverAddress)) {
+        // legacy mode only: hosts are allowed to access themselves
+        if (implicitLocalAccess && clientAddress.equals(serverAddress)) {
             return;
         }
 
@@ -87,8 +95,9 @@ public class ServiceAccessController extends ServerServiceFilter implements Unwr
         if (ipString == null) {
             permissions.add(new PermitAllPermission());
         } else {
-            final String hostname = "localhost";
-            addIPAddressPermissions(permissions, hostname);
+            if (implicitLocalAccess) {
+                addIPAddressPermissions(permissions, "localhost");
+            }
 
             final StringTokenizer st = new StringTokenizer(ipString, ", \n\t");
             while (st.hasMoreTokens()) {
@@ -124,6 +133,7 @@ public class ServiceAccessController extends ServerServiceFilter implements Unwr
 
     @Override
     public void init(final Properties props) throws Exception {
+        implicitLocalAccess = SystemInstance.get().getOptions().get(IMPLICIT_LOCAL_ACCESS, false);
         parseAdminIPs(props);
         super.init(props);
     }
