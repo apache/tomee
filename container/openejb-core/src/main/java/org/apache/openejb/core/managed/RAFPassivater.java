@@ -22,7 +22,11 @@ import org.apache.openejb.spi.Serializer;
 import org.apache.openejb.util.JavaSecurityManagers;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,6 +38,7 @@ public class RAFPassivater implements PassivationStrategy {
 
     int fileID;
     Hashtable masterTable = new Hashtable();
+    private Path directory;
 
     static class Pointer {
         int fileid;
@@ -50,28 +55,32 @@ public class RAFPassivater implements PassivationStrategy {
     public void init(final Properties props) throws SystemException {
     }
 
+    // the files are deserialized on activation, so keep them in an owner-only
+    // directory with an unpredictable name instead of the shared tmp dir
+    private File passivationFile(final int id) throws IOException {
+        if (directory == null) {
+            final String tmp = JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp");
+            directory = Files.createTempDirectory(Paths.get(tmp), "openejb-passivation-");
+        }
+        return directory.resolve("passivation" + id + ".ser").toFile();
+    }
+
+    private File createPassivationFile(final int id) throws IOException {
+        final File file = passivationFile(id);
+        // fails if the file already exists and never follows a link
+        Files.createFile(file.toPath());
+        return file;
+    }
+
     public synchronized void passivate(final Map stateTable)
         throws SystemException {
-        try (final RandomAccessFile ras =
-                     new RandomAccessFile(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp") +
-                             File.separator + "passivation" + fileID + ".ser", "rw")) {
-            fileID++;
-
+        final int id = fileID++;
+        try (final RandomAccessFile ras = new RandomAccessFile(createPassivationFile(id), "rw")) {
             final Iterator iterator = stateTable.keySet().iterator();
-            Pointer lastPointer = null;
             while (iterator.hasNext()) {
-                final Object id = iterator.next();
-                final Object obj = stateTable.get(id);
-                final byte[] bytes = Serializer.serialize(obj);
-                final long filepointer = ras.getFilePointer();
-
-                if (lastPointer == null) {
-                    lastPointer = new Pointer(fileID, filepointer, (int) filepointer);
-                } else {
-                    lastPointer = new Pointer(fileID, filepointer, (int) (filepointer - lastPointer.filepointer));
-                }
-
-                masterTable.put(id, lastPointer);
+                final Object key = iterator.next();
+                final byte[] bytes = Serializer.serialize(stateTable.get(key));
+                masterTable.put(key, new Pointer(id, ras.getFilePointer(), bytes.length));
                 ras.write(bytes);
             }
         } catch (final Exception e) {
@@ -87,13 +96,10 @@ public class RAFPassivater implements PassivationStrategy {
             return null;
         }
 
-        try (final RandomAccessFile ras =
-                     new RandomAccessFile(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp") +
-                             File.separator + "passivation" + pointer.fileid + ".ser", "r")) {
+        try (final RandomAccessFile ras = new RandomAccessFile(passivationFile(pointer.fileid), "r")) {
             final byte[] bytes = new byte[pointer.bytesize];
             ras.seek(pointer.filepointer);
             ras.readFully(bytes);
-            ras.close();
             return Serializer.deserialize(bytes);
         } catch (final Exception e) {
             throw new SystemException(e);
