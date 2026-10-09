@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server.cxf;
 
+import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
@@ -25,10 +27,14 @@ import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.message.token.UsernameToken;
 import org.apache.wss4j.dom.validate.UsernameTokenValidator;
 
+import jakarta.servlet.http.HttpServletRequest;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.login.LoginException;
 
 public class OpenEJBLoginValidator extends UsernameTokenValidator {
+    // request attribute holding the logins of the request, CxfWsContainer releases the ones of its thread
+    public static final String LOGINS = WSSLoginCleanupInterceptor.Logins.KEY;
+
     @Override
     protected void verifyDigestPassword(final UsernameToken usernameToken,
                                         final RequestData data) throws WSSecurityException {
@@ -47,6 +53,7 @@ public class OpenEJBLoginValidator extends UsernameTokenValidator {
         final String user = usernameToken.getName();
         final String password = pwCb.getPassword();
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        final Object previousState = securityService.currentState();
         final Object token;
         try {
             securityService.disassociate();
@@ -57,6 +64,14 @@ public class OpenEJBLoginValidator extends UsernameTokenValidator {
             }
         } catch (final LoginException e) {
             throw new SecurityException("cannot log user " + user, e);
+        }
+
+        // undo the login once the message is processed, a message can carry several tokens
+        if (data.getMsgContext() instanceof Message message) {
+            WSSLoginCleanupInterceptor.register(message, token, previousState, securityService.currentState());
+            if (message.get(AbstractHTTPDestination.HTTP_REQUEST) instanceof HttpServletRequest request) {
+                request.setAttribute(LOGINS, WSSLoginCleanupInterceptor.Logins.of(message, false));
+            }
         }
     }
 }

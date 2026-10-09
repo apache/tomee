@@ -22,11 +22,13 @@ import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
+import org.apache.openejb.spi.SecurityService;
 
 import javax.management.ObjectName;
 
@@ -81,11 +83,36 @@ public abstract class CxfWsContainer implements HttpListener {
     public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        final Object securityState = securityService == null ? null : securityService.currentState();
         try {
             destination.invoke(null, request.getServletContext(), request, response);
         } finally {
-            if (oldLoader != null) {
-                CxfUtil.clearBusLoader(oldLoader);
+            try {
+                if (securityService != null) {
+                    restoreSecurityState(securityService, securityState, request);
+                }
+            } finally {
+                if (oldLoader != null) {
+                    CxfUtil.clearBusLoader(oldLoader);
+                }
+            }
+        }
+    }
+
+    // a ws-security login associates the caller with the current (pooled) thread,
+    // undo it once the request is done so it can't leak into the next one
+    private static void restoreSecurityState(final SecurityService securityService, final Object securityState,
+                                             final HttpRequest request) {
+        if (securityService.currentState() != securityState) {
+            securityService.setState(securityState);
+        }
+
+        // logins done by this thread, the ones of a resumed chain are released by WSSLoginCleanupInterceptor
+        if (request.getAttribute(OpenEJBLoginValidator.LOGINS) instanceof WSSLoginCleanupInterceptor.Logins logins) {
+            logins.release(true);
+            if (logins.isEmpty()) {
+                request.removeAttribute(OpenEJBLoginValidator.LOGINS);
             }
         }
     }
