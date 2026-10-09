@@ -21,6 +21,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -35,7 +36,9 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
     protected String ejbdEndpoint;
 
     /**
-     * Flag to force https usage.
+     * Flag to force https usage. Without it, the command is sent over plain http
+     * unless only an https port is configured; a warning is logged when credentials
+     * would then be sent in clear text to a host other than the loopback one.
      */
     @Parameter(property = "tomee-plugin.command-force-https", defaultValue = "false")
     protected boolean forceHttps;
@@ -65,7 +68,9 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
 
         final Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put(Context.PROVIDER_URL, providerUrl());
+        final String providerUrl = providerUrl();
+        props.put(Context.PROVIDER_URL, providerUrl);
+        warnIfCleartextCredentials(providerUrl);
         if (user != null) {
             props.put(Context.SECURITY_PRINCIPAL, user);
         }
@@ -87,7 +92,23 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
         }
     }
 
-    private String providerUrl() {
+    void warnIfCleartextCredentials(final String providerUrl) {
+        if ((user != null || password != null) && providerUrl.startsWith("http://") && !isLoopback(tomeeHost)) {
+            getLog().warn("Sending credentials over plain http to '" + tomeeHost + "', they can be intercepted. "
+                    + "Configure an https port (tomee-plugin.https) and set tomee-plugin.command-force-https=true.");
+        }
+    }
+
+    private static boolean isLoopback(final String host) {
+        if (host == null) {
+            return true;
+        }
+        final String h = host.toLowerCase(Locale.ENGLISH);
+        return "localhost".equals(h) || h.endsWith(".localhost") || h.startsWith("127.")
+                || "::1".equals(h) || "[::1]".equals(h) || "0:0:0:0:0:0:0:1".equals(h);
+    }
+
+    String providerUrl() {
         if (forceHttps || (tomeeHttpPort == null && tomeeHttpsPort != null)) {
             return "https://" + tomeeHost + ":" + tomeeHttpsPort + ejbdEndpoint;
         }
