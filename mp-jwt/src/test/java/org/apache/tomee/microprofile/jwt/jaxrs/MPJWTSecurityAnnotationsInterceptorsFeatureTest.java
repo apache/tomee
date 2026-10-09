@@ -90,6 +90,38 @@ public class MPJWTSecurityAnnotationsInterceptorsFeatureTest {
     public static class NoAnnotationResource extends BaseResource {
     }
 
+    @RolesAllowed("base")
+    public static class SecuredBaseResource {
+        public String get() {
+            return "ok";
+        }
+
+        @PermitAll
+        public String open() {
+            return "ok";
+        }
+    }
+
+    public static class UnannotatedSecuredChildResource extends SecuredBaseResource {
+        public String own() {
+            return "ok";
+        }
+    }
+
+    @RolesAllowed("child")
+    public static class AnnotatedSecuredChildResource extends SecuredBaseResource {
+        public String own() {
+            return "ok";
+        }
+    }
+
+    @RolesAllowed("mid")
+    public static class MidResource extends BaseResource {
+    }
+
+    public static class LeafResource extends MidResource {
+    }
+
     public static class EmptyMethodRolesResource {
         @RolesAllowed({})
         public String get() {
@@ -115,6 +147,44 @@ public class MPJWTSecurityAnnotationsInterceptorsFeatureTest {
         assertAllowed(admin, "admin");
         assertForbidden(user, "admin");
         assertAllowed(user, "user");
+    }
+
+    @Test
+    public void inheritedMethodKeepsDeclaringClassConstraint() throws Exception {
+        final MPJWTSecurityAnnotationsInterceptorsFeature feature = new MPJWTSecurityAnnotationsInterceptorsFeature();
+
+        final ContainerRequestFilter unannotated = configure(feature, UnannotatedSecuredChildResource.class, "get");
+        assertForbidden(unannotated);
+        assertForbidden(unannotated, "user");
+        assertAllowed(unannotated, "base");
+
+        final ContainerRequestFilter annotated = configure(feature, AnnotatedSecuredChildResource.class, "get");
+        assertForbidden(annotated, "child");
+        assertAllowed(annotated, "base");
+
+        assertAllowed(configure(feature, UnannotatedSecuredChildResource.class, "open"));
+        assertAllowed(configure(feature, AnnotatedSecuredChildResource.class, "open"));
+    }
+
+    @Test
+    public void methodDeclaredInSubclassUsesSubclassConstraint() throws Exception {
+        final MPJWTSecurityAnnotationsInterceptorsFeature feature = new MPJWTSecurityAnnotationsInterceptorsFeature();
+
+        final ContainerRequestFilter annotated = configure(feature, AnnotatedSecuredChildResource.class, "own");
+        assertForbidden(annotated, "base");
+        assertAllowed(annotated, "child");
+
+        assertNull(configure(feature, UnannotatedSecuredChildResource.class, "own"));
+    }
+
+    @Test
+    public void closestAnnotatedSuperclassSecuresUnannotatedDeclaringClass() throws Exception {
+        final MPJWTSecurityAnnotationsInterceptorsFeature feature = new MPJWTSecurityAnnotationsInterceptorsFeature();
+
+        final ContainerRequestFilter leaf = configure(feature, LeafResource.class, "get");
+        assertForbidden(leaf);
+        assertForbidden(leaf, "admin");
+        assertAllowed(leaf, "mid");
     }
 
     @Test
