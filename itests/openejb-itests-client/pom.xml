@@ -89,6 +89,13 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${project.version}</version>
+      <!-- provided by the container, keeps it out of the itests ear -->
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-itests-beans</artifactId>
       <version>${project.version}</version>
     </dependency>

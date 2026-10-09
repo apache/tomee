@@ -174,3 +174,8 @@ following command:
 ----
 D:\openejb-3.0.0-SNAPSHOT>bin\openejb stop
 ----
+
+The stop request carries the secret the server writes to
+`conf/admin-shutdown.secret` at startup. To stop a server from another
+machine, pass it with `bin/openejb stop -h <host> -s <secret>` or set a
+fixed one on both sides with `-Dopenejb.admin.shutdown.secret=<secret>`.

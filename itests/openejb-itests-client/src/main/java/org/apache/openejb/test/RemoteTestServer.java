@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.test;
 
+import org.apache.openejb.loader.AdminShutdownSecret;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -114,11 +116,14 @@ public class RemoteTestServer implements org.apache.openejb.test.TestServer {
             try {
                 System.out.println("[] STOP SERVER");
 
-                final Socket socket = new Socket("localhost", 4200);
-                final OutputStream out = socket.getOutputStream();
+                final String openejbHome = System.getProperty("openejb.home");
+                final String secret = AdminShutdownSecret.find(openejbHome == null ? null : new File(openejbHome));
 
-                out.write("Stop".getBytes());
-
+                try (Socket socket = new Socket("localhost", 4200);
+                     OutputStream out = socket.getOutputStream()) {
+                    out.write(AdminShutdownSecret.stopMessage('S', secret));
+                    out.flush();
+                }
             } catch (final Exception e) {
                 e.printStackTrace();
             }
