@@ -7,9 +7,9 @@
 = Linux Service
 
 Depending on your flavor of Linux, there are likely a few different ways you can run TomEE as a service.
-This page demonstrates running as a service with systemd, and has been tested with RedHat Enterprise Linux.
+This page demonstrates running as a service with systemd, and has been tested with RedHat Enterprise Linux and Ubuntu.
 
-Create a file `/etc/systemd/system/tomee.service` with the following content:
+Create a dedicated user and group (here `tomee`) that owns the TomEE installation, then create a file `/etc/systemd/system/tomee.service` with the following content:
 
 [source]
 ----
@@ -18,25 +18,28 @@ Description=Apache TomEE
 After=network.target
 
 [Service]
-User=<user to run as>
+User=tomee
+Group=tomee
+WorkingDirectory=/opt/tomee
 Type=forking
-Environment=JAVA_HOME=/usr/lib/jvm/jre
+Environment=JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64
 Environment=CATALINA_PID=/opt/tomee/temp/tomee.pid
 Environment=CATALINA_HOME=/opt/tomee
 Environment=CATALINA_BASE=/opt/tomee
-Environment=CATALINA_OPTS='-server'
-Environment=JAVA_OPTS='-Djava.awt.headless=true'
+Environment=CATALINA_OPTS=-server
+Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Djava.awt.headless=true -Xms2g -Xmx3g"
 ExecStart=/opt/tomee/bin/startup.sh
 ExecStop=/opt/tomee/bin/shutdown.sh
-KillSignal=SIGCONT
 
 [Install]
 WantedBy=multi-user.target
 ----
 
-The file above assumes TomEE is extracted to `/opt/tomee`, and that `JAVA_HOME` is at `/usr/lib/jvm/jre` - adjust these to match your installation.
+The file above assumes TomEE is extracted to `/opt/tomee` and that `JAVA_HOME` is at `/usr/lib/jvm/java-25-openjdk-amd64` - adjust these, and the heap settings in `JAVA_OPTS`, to match your installation.
 
-Once done, run `sudo systemctl daemon-reload` so systemd is aware of the new service.
+A value containing spaces has to be quoted as a whole (`"JAVA_OPTS=..."`), and comments are not allowed inside a value.
+
+Once done, run `sudo systemctl daemon-reload` so systemd is aware of the new service, and `sudo systemctl enable tomee` to start it at boot.
 
 You should now be able to use the following commands to control the TomEE service:
 
