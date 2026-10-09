@@ -19,6 +19,8 @@ package org.apache.tomee.microprofile.jwt;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.inject.Inject;
+import jakarta.servlet.AsyncEvent;
+import jakarta.servlet.AsyncListener;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -69,6 +71,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -117,21 +120,80 @@ public class MPJWTFilter implements Filter {
             // the current thread; restore it on every exit path so a failing request does not
             // leak its security context to the next request served by this pooled thread
             exitWebApp(request);
+
+            // the token may still be validated lazily once the request went async,
+            // so restore that state when the async request is over
+            if (request.isAsyncStarted()) {
+                try {
+                    request.getAsyncContext().addListener(new AsyncExitWebAppListener(request));
+                } catch (final IllegalStateException e) {
+                    // the async request already completed concurrently
+                }
+            }
         }
     }
 
     private static void exitWebApp(final ServletRequest request) {
         final Object state = request.getAttribute(PRE_LOGIN_STATE);
-        if (state == null) {
-            return;
+        if (state instanceof PreLoginState preLoginState && preLoginState.restore()) {
+            request.removeAttribute(PRE_LOGIN_STATE);
+        }
+    }
+
+    /**
+     * Security state pushed by the token validation. {@link TomcatSecurityService} keeps the
+     * identity and the run-as stack in thread locals, so it can only be restored on the thread
+     * which pushed it, and at most once.
+     */
+    static final class PreLoginState {
+
+        private final TomcatSecurityService securityService;
+        private final Object state;
+        private final Thread thread = Thread.currentThread();
+        private final AtomicBoolean restored = new AtomicBoolean();
+
+        PreLoginState(final TomcatSecurityService securityService, final Object state) {
+            this.securityService = securityService;
+            this.state = state;
         }
 
-        // remove it first so the state is never restored twice for the same request
-        request.removeAttribute(PRE_LOGIN_STATE);
+        boolean restore() {
+            if (thread != Thread.currentThread() || !restored.compareAndSet(false, true)) {
+                return false;
+            }
 
-        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        if (TomcatSecurityService.class.isInstance(securityService)) {
-            TomcatSecurityService.class.cast(securityService).exitWebApp(state);
+            securityService.exitWebApp(state);
+            return true;
+        }
+    }
+
+    private static final class AsyncExitWebAppListener implements AsyncListener {
+
+        private final ServletRequest request;
+
+        private AsyncExitWebAppListener(final ServletRequest request) {
+            this.request = request;
+        }
+
+        @Override
+        public void onComplete(final AsyncEvent event) {
+            exitWebApp(request);
+        }
+
+        @Override
+        public void onTimeout(final AsyncEvent event) {
+            exitWebApp(request);
+        }
+
+        @Override
+        public void onError(final AsyncEvent event) {
+            exitWebApp(request);
+        }
+
+        @Override
+        public void onStartAsync(final AsyncEvent event) {
+            // listeners are dropped when the request goes async again
+            event.getAsyncContext().addListener(this);
         }
     }
 
@@ -369,18 +431,15 @@ public class MPJWTFilter implements Filter {
                 throw new InvalidTokenException(token, e);
             }
 
-            // TODO - do the login here, save the state to the request so we can recover it later.
-
             final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
             if (TomcatSecurityService.class.isInstance(securityService)) {
                 TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
                 final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
-                Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
+                final Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
 
-                request.setAttribute(PRE_LOGIN_STATE, state);
+                // restored by the filter, or by its async listener for async requests
+                request.setAttribute(PRE_LOGIN_STATE, new PreLoginState(tomcatSecurityService, state));
             }
-
-            // TODO Also check if it is an async request and add a listener to close off the state
 
             return jsonWebToken;
 
