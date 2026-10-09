@@ -17,6 +17,7 @@
 package org.apache.openejb.server;
 
 import junit.framework.TestCase;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.auth.IPAddressPermission;
 import org.apache.openejb.server.auth.IPAddressPermissionFactory;
 
@@ -28,6 +29,78 @@ import java.net.Socket;
 import java.util.Properties;
 
 public class ServiceAccessControllerTest extends TestCase {
+
+    private static final byte[] LOOPBACK = {127, 0, 0, 1};
+    private static final byte[] SERVER = {10, 0, 0, 5};
+    private static final byte[] LISTED = {121, 122, 123, 124};
+
+    @Override
+    protected void tearDown() throws Exception {
+        SystemInstance.reset();
+        super.tearDown();
+    }
+
+    public void testOnlyFromDoesNotAdmitUnlistedLocalhost() throws Exception {
+        final ServiceAccessController controller = newController("121.122.123.124");
+
+        assertRejected(controller, LOOPBACK, LOOPBACK);
+        assertRejected(controller, LOOPBACK, SERVER);
+    }
+
+    public void testOnlyFromDoesNotAdmitUnlistedSelfAddress() throws Exception {
+        final ServiceAccessController controller = newController("121.122.123.124");
+
+        assertRejected(controller, SERVER, SERVER);
+    }
+
+    public void testOnlyFromAdmitsListedHost() throws Exception {
+        final ServiceAccessController controller = newController("121.122.123.124");
+
+        controller.checkHostsAuthorization(InetAddress.getByAddress(LISTED), InetAddress.getByAddress(SERVER));
+    }
+
+    public void testOnlyFromLocalhostAdmitsLoopback() throws Exception {
+        final ServiceAccessController controller = newController("localhost");
+
+        for (final InetAddress local : InetAddress.getAllByName("localhost")) {
+            controller.checkHostsAuthorization(local, local);
+        }
+        assertRejected(controller, LISTED, LOOPBACK);
+    }
+
+    public void testNoOnlyFromPermitsAll() throws Exception {
+        final ServiceAccessController controller = newController(null);
+
+        controller.checkHostsAuthorization(InetAddress.getByAddress(new byte[]{(byte) 198, 51, 100, 7}), InetAddress.getByAddress(SERVER));
+    }
+
+    public void testImplicitLocalAccessRestoresLegacyBehavior() throws Exception {
+        SystemInstance.get().setProperty(ServiceAccessController.IMPLICIT_LOCAL_ACCESS, "true");
+        final ServiceAccessController controller = newController("121.122.123.124");
+
+        controller.checkHostsAuthorization(InetAddress.getByAddress(LOOPBACK), InetAddress.getByAddress(SERVER));
+        controller.checkHostsAuthorization(InetAddress.getByAddress(SERVER), InetAddress.getByAddress(SERVER));
+        assertRejected(controller, new byte[]{121, 122, 123, 125}, SERVER);
+    }
+
+    private static ServiceAccessController newController(final String onlyFrom) throws Exception {
+        final ServiceAccessController controller = new ServiceAccessController(new MockServerService());
+        final Properties properties = new Properties();
+        if (onlyFrom != null) {
+            properties.put("only_from", onlyFrom);
+        }
+        controller.init(properties);
+        return controller;
+    }
+
+    private static void assertRejected(final ServiceAccessController controller, final byte[] client, final byte[] server) throws Exception {
+        try {
+            controller.checkHostsAuthorization(InetAddress.getByAddress(client), InetAddress.getByAddress(server));
+            fail("client should have been rejected");
+        } catch (final SecurityException expected) {
+            // ok
+        }
+    }
 
     public void testWrongExactIPAddressPermission1() throws Exception {
         try {
