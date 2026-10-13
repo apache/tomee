@@ -19,15 +19,29 @@ package org.apache.openejb.cipher;
 
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.util.Base64;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * This {@link org.apache.openejb.cipher.PasswordCipher} implementation uses a the Triple-DES encryption
- * algorithm.
+ * This {@link org.apache.openejb.cipher.PasswordCipher} implementation uses the Triple-DES
+ * algorithm with a <b>static key</b> embedded in this class.
+ * <p>
+ * The key is identical in every distribution and publicly available, so values produced by
+ * this cipher are only obfuscated, not encrypted: anyone who obtains a ciphered value (for
+ * instance from a configuration file in a source repository or a backup) can decode it.
+ * Do not rely on it to keep passwords confidential. Use a {@link PasswordCipher} backed by a
+ * secret that is kept outside the configuration (custom implementation or a {@code cdi:}
+ * cipher, see {@link CdiPasswordCipher}) instead.
+ * <p>
+ * A warning is logged once the first time this cipher is used.
  */
 public class StaticDESPasswordCipher implements PasswordCipher {
+
+    private static final AtomicBoolean WARNED = new AtomicBoolean();
 
     private static final byte[] _3desData = {
         (byte) 0x76, (byte) 0x6F, (byte) 0xBA, (byte) 0x39, (byte) 0x31,
@@ -51,6 +65,8 @@ public class StaticDESPasswordCipher implements PasswordCipher {
         if (null == plainPassword || plainPassword.length() == 0) {
             throw new IllegalArgumentException("plainPassword cannot be null nor empty.");
         }
+
+        warnOnce();
 
         final byte[] plaintext = plainPassword.getBytes();
         try {
@@ -77,6 +93,8 @@ public class StaticDESPasswordCipher implements PasswordCipher {
             throw new IllegalArgumentException("encodedPassword cannot be null nor empty.");
         }
 
+        warnOnce();
+
         try {
             final byte[] cipherText = Base64.decodeBase64(
                 String.valueOf(encodedPassword).getBytes());
@@ -94,4 +112,15 @@ public class StaticDESPasswordCipher implements PasswordCipher {
         }
     }
 
+    private static void warnOnce() {
+        if (WARNED.compareAndSet(false, true)) {
+            Logger.getInstance(LogCategory.OPENEJB, StaticDESPasswordCipher.class)
+                .warning("The Static3DES password cipher uses a static key shipped with TomEE: ciphered values "
+                    + "are only obfuscated, not protected. Use a PasswordCipher relying on a secret key instead.");
+        }
+    }
+
+    static void resetWarning() { // for tests
+        WARNED.set(false);
+    }
 }
