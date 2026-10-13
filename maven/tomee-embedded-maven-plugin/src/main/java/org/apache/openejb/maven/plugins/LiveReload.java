@@ -20,6 +20,8 @@ public class LiveReload {
     private String watchedFolder;
     private String path = "/"; // then endpoint is bound to /livereload so to match default we need to set it to ROOT
     private int port = 35729;
+    private String host = "localhost"; // address the connector binds to
+    private boolean allowAnyOrigin; // accept websocket handshakes from non loopback pages
 
     public String getWatchedFolder() {
         return watchedFolder;
@@ -43,5 +45,21 @@ public class LiveReload {
 
     public void setPort(final int port) {
         this.port = port;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(final String host) {
+        this.host = host;
+    }
+
+    public boolean isAllowAnyOrigin() {
+        return allowAnyOrigin;
+    }
+
+    public void setAllowAnyOrigin(final boolean allowAnyOrigin) {
+        this.allowAnyOrigin = allowAnyOrigin;
     }
 }

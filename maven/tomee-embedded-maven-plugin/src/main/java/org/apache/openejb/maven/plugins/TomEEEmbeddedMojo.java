@@ -586,7 +586,8 @@ public class TomEEEmbeddedMojo extends AbstractMojo {
         if (liveReload != null) {
             LiveReloadInstaller.install(
                 liveReload.getPath(), liveReload.getPort(),
-                liveReload.getWatchedFolder() == null ? docBase.getAbsolutePath() : liveReload.getWatchedFolder());
+                liveReload.getWatchedFolder() == null ? docBase.getAbsolutePath() : liveReload.getWatchedFolder(),
+                liveReload.getHost(), liveReload.isAllowAnyOrigin());
         }
     }
 
