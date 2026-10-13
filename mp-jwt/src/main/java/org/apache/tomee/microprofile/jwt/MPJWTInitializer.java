@@ -42,7 +42,7 @@ public class MPJWTInitializer implements ServletContainerInitializer {
         for (Class<?> clazz : classes) {
             final LoginConfig loginConfig = clazz.getAnnotation(LoginConfig.class);
 
-            if (loginConfig.authMethod() == null && !"MP-JWT".equals(loginConfig.authMethod())) {
+            if (loginConfig == null || !"MP-JWT".equals(loginConfig.authMethod())) {
                 continue;
             }
 
