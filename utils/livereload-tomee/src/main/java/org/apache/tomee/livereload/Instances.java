@@ -35,6 +35,7 @@ public class Instances {
     private final LogCategory logCategory = LogCategory.OPENEJB.createChild("livereload");
     private final Mapper mapper = new MapperBuilder().build();
     private final FileWatcher watcher = new FileWatcher(logCategory, mapper);
+    private volatile boolean allowAnyOrigin;
 
     public FileWatcher getWatcher() {
         return watcher;
@@ -46,5 +47,13 @@ public class Instances {
 
     public LogCategory getLogCategory() {
         return logCategory;
+    }
+
+    public boolean isAllowAnyOrigin() {
+        return allowAnyOrigin;
+    }
+
+    public void setAllowAnyOrigin(final boolean allowAnyOrigin) {
+        this.allowAnyOrigin = allowAnyOrigin;
     }
 }

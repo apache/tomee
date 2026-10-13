@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import static java.util.Arrays.asList;
 
-@ServerEndpoint("/livereload")
+@ServerEndpoint(value = "/livereload", configurator = LoopbackOriginConfigurator.class)
 public class LiveReloadEndpoint {
     private static final Command HELLO = new Command();
     static {

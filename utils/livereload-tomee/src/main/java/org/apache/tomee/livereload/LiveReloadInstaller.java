@@ -39,11 +39,22 @@ import java.util.Collections;
 
 
 public class LiveReloadInstaller {
+    public static final String DEFAULT_HOST = "localhost";
+
     private LiveReloadInstaller() {
         // no-op
     }
 
-    public static void install(String path, final int port, final String folder) {
+    public static void install(final String path, final int port, final String folder) {
+        install(path, port, folder, null, false);
+    }
+
+    /**
+     * @param address the address the livereload connector binds to, loopback ("localhost") when null or empty
+     * @param allowAnyOrigin if false websocket handshakes coming from a non loopback page origin are rejected
+     */
+    public static void install(final String path, final int port, final String folder,
+                               final String address, final boolean allowAnyOrigin) {
         final Server server = TomcatHelper.getServer();
         if (server == null) {
             throw new IllegalStateException("tomcat not yet starting");
@@ -56,10 +67,12 @@ public class LiveReloadInstaller {
             throw new IllegalStateException("host not started, call LiveReloadInstaller.install() later.");
         }
 
-        // add connector
+        // add connector, dev only so loopback by default
         final Connector connector = new Connector();
         connector.setPort(port);
+        connector.setProperty("address", address == null || address.isEmpty() ? DEFAULT_HOST : address);
         connector.setProperty("connectionTimeout", "30000");
+        Instances.get().setAllowAnyOrigin(allowAnyOrigin);
         service.addConnector(connector);
 
         // and the endpoint and start the watcher
