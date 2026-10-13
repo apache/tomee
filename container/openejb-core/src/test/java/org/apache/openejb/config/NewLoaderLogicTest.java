@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.util.LogCategory;
+import org.apache.xbean.finder.filter.Filters;
 import org.junit.Test;
 
 import java.io.File;
@@ -26,9 +26,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -59,39 +56,11 @@ public class NewLoaderLogicTest {
         exclusions.getParentFile().mkdirs();
         Files.write(exclusions.toPath(), "internal-\n".getBytes(StandardCharsets.UTF_8));
 
-        final List<LogRecord> records = new ArrayList<>();
-        final Handler handler = new Handler() {
-            @Override
-            public void publish(final LogRecord record) {
-                records.add(record);
-            }
+        final List<URL> scannable = DeploymentLoader.filterWebappUrls(webUrls, null, exclusions.toURI().toURL());
+        assertEquals(Collections.singletonList(appJar), scannable);
 
-            @Override
-            public void flush() {
-                // no-op
-            }
-
-            @Override
-            public void close() {
-                // no-op
-            }
-        };
-        final Logger logger = Logger.getLogger(LogCategory.OPENEJB_STARTUP_CONFIG.getName());
-        logger.addHandler(handler);
-        try {
-            final List<URL> scannable = DeploymentLoader.filterWebappUrls(webUrls, null, exclusions.toURI().toURL());
-            assertEquals(Collections.singletonList(appJar), scannable);
-        } finally {
-            logger.removeHandler(handler);
-        }
-
-        final List<String> messages = new ArrayList<>();
-        for (final LogRecord record : records) {
-            if (record.getMessage().startsWith("Application jars not scanned")) {
-                messages.add(record.getMessage());
-            }
-        }
-        assertEquals(1, messages.size());
-        assertTrue(messages.get(0), messages.get(0).contains("[ant-reporting-web.jar (prefix 'ant-')]"));
+        // only the application jar dropped by the container list is reported, not the one excluded by the app itself
+        assertEquals(Collections.singletonList("ant-reporting-web.jar (prefix 'ant-')"),
+                new ArrayList<>(DeploymentLoader.builtinExcludedWebappJars(webUrls, scannable, Filters.prefixes("internal-"))));
     }
 }
