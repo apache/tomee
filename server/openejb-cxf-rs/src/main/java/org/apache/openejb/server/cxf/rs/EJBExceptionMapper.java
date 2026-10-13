@@ -23,8 +23,22 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Providers;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
+/**
+ * Maps {@link EJBException}s to the mapper of their cause when one is registered.
+ * Otherwise a 500 response is returned. The exception message is only written to the
+ * response body when {@value #EXPOSE_MESSAGE} is set to {@code true}, it is logged otherwise.
+ */
 public class EJBExceptionMapper implements ExceptionMapper<EJBException> {
+    public static final String EXPOSE_MESSAGE = "openejb.jaxrs.ejb-exception-mapper.expose-message";
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RS, EJBExceptionMapper.class);
+
+    private final boolean exposeMessage = SystemInstance.get().getOptions().get(EXPOSE_MESSAGE, false);
+
     @Context
     private Providers providers;
 
@@ -44,7 +58,14 @@ public class EJBExceptionMapper implements ExceptionMapper<EJBException> {
         return defaultResponse(ejbException);
     }
 
-    private Response defaultResponse(Exception cause) {
-        return Response.serverError().type(MediaType.TEXT_PLAIN_TYPE).entity(cause.getMessage()).build();
+    private Response defaultResponse(final Exception cause) {
+        if (exposeMessage) {
+            return Response.serverError().type(MediaType.TEXT_PLAIN_TYPE).entity(cause.getMessage()).build();
+        }
+        LOGGER.warning("Unmapped EJB exception, returning a 500 response: {0}", String.valueOf(cause));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Unmapped EJB exception", cause);
+        }
+        return Response.serverError().build();
     }
 }
