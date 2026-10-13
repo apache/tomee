@@ -1150,7 +1150,51 @@ public class DeploymentLoader implements DeploymentFilterable {
         } catch (final MalformedURLException e) {
             return Arrays.asList(webUrls);
         }
-        return urls.getUrls();
+
+        final List<URL> scannable = urls.getUrls();
+        final Collection<String> excludedWebappJars = builtinExcludedWebappJars(webUrls, scannable, excludeFilter);
+        if (!excludedWebappJars.isEmpty()) {
+            LOGGER.info("Application jars not scanned for annotations (e.g. @WebServlet, @ServletSecurity, @RolesAllowed)"
+                + " because their name matches a container scan exclusion prefix: " + excludedWebappJars
+                + ". To scan them, set the system property openejb.additional.include to the listed prefix"
+                + " (this re-enables scanning of every jar with that prefix and needs a restart)");
+        }
+        return scannable;
+    }
+
+    // webapp jars dropped by the container exclusion list, reported as "jar (prefix 'p')";
+    // jars excluded by WEB-INF/exclusions.list or custom filters are explicit so not reported
+    static Collection<String> builtinExcludedWebappJars(final URL[] webUrls, final List<URL> scannable, final Filter excludeFilter) {
+        final Set<String> kept = new HashSet<>();
+        for (final URL url : scannable) {
+            kept.add(url.toExternalForm());
+        }
+
+        final Collection<String> excluded = new ArrayList<>();
+        for (final URL url : webUrls) {
+            if (kept.contains(url.toExternalForm())) {
+                continue;
+            }
+            try {
+                final File file = URLs.toFile(url);
+                if (!file.getAbsolutePath().replace('\\', '/').contains("/WEB-INF/")) {
+                    continue;
+                }
+                final String name = NameFiltering.filter(file).getName();
+                if (excludeFilter != null && excludeFilter.accept(name)) {
+                    continue;
+                }
+                for (final String prefix : NewLoaderLogic.getExclusions()) {
+                    if (name.startsWith(prefix) || prefix.endsWith("-") && name.equals(prefix.substring(0, prefix.length() - 1) + ".jar")) {
+                        excluded.add(file.getName() + " (prefix '" + prefix + "')");
+                        break;
+                    }
+                }
+            } catch (final IllegalArgumentException iae) {
+                // no-op
+            }
+        }
+        return excluded;
     }
 
     public static void addBeansXmls(final WebModule webModule) {
