@@ -197,10 +197,12 @@ java.naming.security.principal = myuser java.naming.security.credentials
 
 _openejb start -Dadmin.only_from=192.168.1.12_
 
-Adds 192.168.1.12 to the list of IP addresses that are authorized to
-shut down the server or access the server via a telnet client. The host
-that this server was started on is always allowed to administer the
-server.
+Sets 192.168.1.12 as the only IP address that is authorized to shut
+down the server or access the server via a telnet client. Only the
+listed hosts are allowed, so add localhost to the list to keep local
+access. Setting `-Dopenejb.server.only_from.implicit-local=true`
+restores the legacy behavior where the host this server was started on
+is always allowed.
 
 Multiple hosts can be given administrative access to this server by
 listing all the host names separated by commas as such:

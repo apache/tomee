@@ -95,10 +95,12 @@ Example: -D<service>.only_from=<addresses>
 
  openejb start -Dadmin.only_from=192.168.1.12
 
- Adds 192.168.1.12 to the list of IP addresses that are
+ Sets 192.168.1.12 as the only IP address that is
  authorized to shutdown the server or access the server
- via a telnet client.  The host that this server was
- started on is always allowed to administer the server.
+ via a telnet client.  Only the listed hosts are allowed,
+ add localhost to the list to keep local access.  Setting
+ -Dopenejb.server.only_from.implicit-local=true restores
+ the legacy behavior of always admitting the local host.
 
  Multiple hosts can be given administrative access to
  this server by listing all the host names separated
