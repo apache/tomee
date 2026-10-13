@@ -42,18 +42,23 @@ mkdir -p /usr/share/tomee-${classifier}/lib
 ${libLinks}
 
 mkdir -p /var/log/tomee-${classifier}
+mkdir -p /var/lib/tomee-${classifier}/work
+# Pre-create the host config base so Tomcat does not try (and fail) to create it.
+mkdir -p /var/lib/tomee-${classifier}/conf/Catalina/localhost
 
 chown -R root:apachetomee /var/log/tomee-${classifier}
 chown -R root:apachetomee /var/lib/tomee-${classifier}
 chown -R root:apachetomee /etc/tomee-${classifier}
 chown -R root:apachetomee /var/lib/tomee-${classifier}-user-data
 
-# users from the apachetomee group should be able to change settings.
-# there is no need to be root.
-chmod -R g+w /etc/tomee-${classifier}
+# The service runs as the apachetomee user, so the configuration and the catalina base
+# (conf links, bin/setenv.sh) must stay read-only for that group. Change settings as root.
+chmod -R g+rX,g-w /etc/tomee-${classifier}
+chmod -R g+rX,g-w /var/lib/tomee-${classifier}
 
+# Directories the service writes to at runtime.
+chmod -R g+w /var/lib/tomee-${classifier}/work
 chmod -R g+w /var/log/tomee-${classifier}
-chmod -R g+w /var/lib/tomee-${classifier}
 chmod -R g+w /var/lib/tomee-${classifier}-user-data
 
 update-rc.d tomee-${classifier} defaults >/dev/null 2>&1
