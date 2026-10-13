@@ -1751,6 +1751,8 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
     private void unzip(final File mvnTomEE) {
         try (ZipFile in = new ZipFile(mvnTomEE)) {
+            final String destinationPath = catalinaBase.getCanonicalPath();
+            final String destinationPrefix = destinationPath.endsWith(File.separator) ? destinationPath : destinationPath + File.separator;
 
             final Enumeration<? extends ZipEntry> entries = in.entries();
             while (entries.hasMoreElements()) {
@@ -1767,6 +1769,13 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                     name = name.substring(idx + 1);
                 }
                 final File dest = new File(catalinaBase.getAbsolutePath(), name);
+
+                // only extract entries resolving inside the destination directory
+                final String destPath = dest.getCanonicalPath();
+                if (!destPath.equals(destinationPath) && !destPath.startsWith(destinationPrefix)) {
+                    throw new IOException("Zip entry escapes the destination directory: " + entry.getName());
+                }
+
                 if (!dest.exists()) {
                     final File parent = dest.getParentFile();
                     if ((!parent.exists() && !parent.mkdirs())
