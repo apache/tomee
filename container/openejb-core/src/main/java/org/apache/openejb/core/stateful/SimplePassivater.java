@@ -33,10 +33,18 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.Properties;
 
 public class SimplePassivater implements PassivationStrategy {
+
+    /**
+     * When true and no passivation directory is configured, session state is
+     * written directly into java.io.tmpdir as in previous releases instead of
+     * a private, owner-only temporary directory.
+     */
+    public static final String SHARED_TMPDIR = "openejb.stateful.passivation.shared-tmpdir";
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private File sessionDirectory;
@@ -56,8 +64,12 @@ public class SimplePassivater implements PassivationStrategy {
         try {
             if (dir != null) {
                 sessionDirectory = SystemInstance.get().getBase().getDirectory(dir);
-            } else {
+            } else if (SystemInstance.get().getOptions().get(SHARED_TMPDIR, false)) {
                 sessionDirectory = new File(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp"));
+            } else {
+                // created atomically and owner-only, other local users can't read passivated state
+                sessionDirectory = Files.createTempDirectory("openejb-passivation-").toFile();
+                sessionDirectory.deleteOnExit();
             }
 
             if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {
