@@ -25,4 +25,12 @@ Example: -p
  
  Sends a stop request to the server running on IP 127.0.0.1 and port 8765.
 
+Example: -s
+
+ openejb stop -h myhost.foo.com -s 3f9c...
+
+ Sends a stop request with the given secret.  Stop requests without the
+ secret are refused; when run on the server machine the secret is read
+ from the conf/admin-shutdown.secret file the server writes at startup.
+
 Bug Reports to <users@tomee.apache.org>
