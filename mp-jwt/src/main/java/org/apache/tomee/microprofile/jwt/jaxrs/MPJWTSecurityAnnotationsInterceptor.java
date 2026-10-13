@@ -23,45 +23,49 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
+/**
+ * Enforces the security constraint resolved for a single resource class / resource method pair.
+ */
 public class MPJWTSecurityAnnotationsInterceptor implements ContainerRequestFilter {
 
-    private final jakarta.ws.rs.container.ResourceInfo resourceInfo;
-    private final ConcurrentMap<Method, Set<String>> rolesAllowed;
-    private final Set<Method> denyAll;
-    private final Set<Method> permitAll;
+    private final Set<String> rolesAllowed;
+    private final boolean denyAll;
+    private final boolean permitAll;
 
-    public MPJWTSecurityAnnotationsInterceptor(final jakarta.ws.rs.container.ResourceInfo resourceInfo,
-                                               final ConcurrentMap<Method, Set<String>> rolesAllowed,
-                                               final Set<Method> denyAll,
-                                               final Set<Method> permitAll) {
-        this.resourceInfo = resourceInfo;
-        this.rolesAllowed = rolesAllowed;
+    /**
+     * @param rolesAllowed the allowed roles, or {@code null} if no {@code @RolesAllowed} applies;
+     *                     an empty set denies every caller
+     * @param denyAll      whether {@code @DenyAll} applies
+     * @param permitAll    whether {@code @PermitAll} applies
+     */
+    public MPJWTSecurityAnnotationsInterceptor(final Set<String> rolesAllowed,
+                                               final boolean denyAll,
+                                               final boolean permitAll) {
+        this.rolesAllowed = rolesAllowed == null ? null : Collections.unmodifiableSet(new LinkedHashSet<>(rolesAllowed));
         this.denyAll = denyAll;
         this.permitAll = permitAll;
     }
 
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException {
-        if (permitAll.contains(resourceInfo.getResourceMethod())) {
+        if (permitAll) {
             return;
         }
 
-        if (denyAll.contains(resourceInfo.getResourceMethod())) {
+        if (denyAll) {
             forbidden(requestContext);
             return;
         }
 
-        final Set<String> roles = rolesAllowed.get(resourceInfo.getResourceMethod());
-
-        if (roles != null && !roles.isEmpty()) {
+        if (rolesAllowed != null) {
             final SecurityContext securityContext = requestContext.getSecurityContext();
             boolean hasAtLeasOneValidRole = false;
-            for (String role : roles) {
+            for (String role : rolesAllowed) {
                 if (securityContext.isUserInRole(role)) {
                     hasAtLeasOneValidRole = true;
                     break;
