@@ -51,4 +51,22 @@
       </property>
     </configuration>
   </container>
+  <container qualifier="tomee-remote-secpol">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="ajpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="dir">target/apache-tomee-remote</property>
+      <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+      <property name="cleanOnStartUp">true</property>
+      <property name="simpleLog">true</property>
+      <property name="conf">src/test/resources/security-conf</property>
+      <!-- same as security-conf/server.xml plus the TomEE ServerListener a standalone server needs -->
+      <property name="serverXml">src/test/tomee/server.xml</property>
+      <property name="properties">
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.security
+        jakarta.security.jacc.policy.provider=sun.security.provider.PolicyFile
+      </property>
+    </configuration>
+  </container>
 </arquillian>

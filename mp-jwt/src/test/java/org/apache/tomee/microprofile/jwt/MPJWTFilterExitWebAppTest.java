@@ -359,12 +359,12 @@ public class MPJWTFilterExitWebAppTest {
 
         @Override
         public ServletRequest getRequest() {
-            throw new UnsupportedOperationException();
+            return null; // AsyncEvent(AsyncContext) reads both with some Servlet API versions
         }
 
         @Override
         public ServletResponse getResponse() {
-            throw new UnsupportedOperationException();
+            return null; // AsyncEvent(AsyncContext) reads both with some Servlet API versions
         }
 
         @Override
