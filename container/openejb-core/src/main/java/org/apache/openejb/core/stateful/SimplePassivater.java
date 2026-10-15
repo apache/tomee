@@ -64,12 +64,8 @@ public class SimplePassivater implements PassivationStrategy {
         try {
             if (dir != null) {
                 sessionDirectory = SystemInstance.get().getBase().getDirectory(dir);
-            } else if (SystemInstance.get().getOptions().get(SHARED_TMPDIR, false)) {
-                sessionDirectory = new File(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp"));
             } else {
-                // created atomically and owner-only, other local users can't read passivated state
-                sessionDirectory = Files.createTempDirectory("openejb-passivation-").toFile();
-                sessionDirectory.deleteOnExit();
+                sessionDirectory = defaultSessionDirectory();
             }
 
             if (!sessionDirectory.exists() && !sessionDirectory.mkdirs()) {
@@ -141,6 +137,21 @@ public class SimplePassivater implements PassivationStrategy {
 
             throw new SystemException(t);
         }
+    }
+
+    /**
+     * Passivation directory used when none is configured: a private, owner-only
+     * temporary directory, or java.io.tmpdir itself with {@link #SHARED_TMPDIR}.
+     */
+    public static File defaultSessionDirectory() throws IOException {
+        if (SystemInstance.get().getOptions().get(SHARED_TMPDIR, false)) {
+            return new File(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp"));
+        }
+
+        // created atomically and owner-only, other local users can't read passivated state
+        final File directory = Files.createTempDirectory("openejb-passivation-").toFile();
+        directory.deleteOnExit();
+        return directory;
     }
 
     private File sessionFile(final Object primaryKey) throws IOException {
