@@ -218,7 +218,7 @@
     <version.mojarra>4.0.26</version.mojarra>
     <!-- org.hibernate -->
     <version.hibernate.orm>6.6.58.Final</version.hibernate.orm>
-    <version.hibernate.validator>8.0.5.Final</version.hibernate.validator>
+    <version.hibernate.validator>8.0.6.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
     <version.wss4j>4.0.2</version.wss4j>
