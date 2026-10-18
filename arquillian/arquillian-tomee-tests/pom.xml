@@ -171,7 +171,7 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
-      <version>1.18.11</version>
+      <version>1.18.15</version>
       <scope>provided</scope>
     </dependency>
     <!-- just to get it in the correct order -->
