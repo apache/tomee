@@ -224,7 +224,7 @@
     <!-- org.glassfish -->
     <version.mojarra>4.1.18</version.mojarra>
     <!-- org.hibernate -->
-    <version.hibernate.orm>7.4.11.Final</version.hibernate.orm>
+    <version.hibernate.orm>7.4.13.Final</version.hibernate.orm>
     <!-- libraries hibernate-core needs at runtime, keep in sync with its pom (used by the Jakarta Data TCK) -->
     <version.hibernate.models>1.1.2</version.hibernate.models>
     <version.hibernate.classmate>1.7.1</version.hibernate.classmate>
