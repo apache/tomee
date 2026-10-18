@@ -132,7 +132,7 @@
     <version.arquillian-protocol-servlet-jakarta>1.8.0.Final</version.arquillian-protocol-servlet-jakarta>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.resolver.bom>3.3.7</version.shrinkwrap.resolver.bom>
-    <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
+    <version.shrinkwrap.shrinkwrap>2.0.0.Final</version.shrinkwrap.shrinkwrap>
 
     <version.tomee-quartz-shade>2.5.1</version.tomee-quartz-shade>
     <version.xbean>5.0.0</version.xbean>
