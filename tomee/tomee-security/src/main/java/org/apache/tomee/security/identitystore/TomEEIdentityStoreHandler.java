@@ -16,6 +16,9 @@
  */
 package org.apache.tomee.security.identitystore;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -40,6 +43,9 @@ import static jakarta.security.enterprise.identitystore.IdentityStore.Validation
 
 @ApplicationScoped
 public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
+    private static final Logger LOGGER = Logger.getInstance(
+            LogCategory.TOMEE_SECURITY, TomEEIdentityStoreHandler.class);
+
     @Inject
     private Instance<IdentityStore> identityStores;
 
@@ -88,6 +94,21 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
                 return INVALID_RESULT;
 
             } else {
+                // No store validated the credential at all. The usual cause is that every store
+                // fell through to IdentityStore#validate(Credential), which dispatches to a
+                // validate(...) overload only on an exact parameter type match - so a store
+                // declaring an overload for a super- or subclass of the credential is silently
+                // never called. Without this the caller just sees a 401 with nothing logged.
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("No IdentityStore validated a credential of type " + credential.getClass().getName()
+                            + "; consulted " + authenticationStores.size() + " store(s): "
+                            + authenticationStores.stream()
+                                                  .map(store -> store.getClass().getName())
+                                                  .collect(Collectors.joining(", "))
+                            + ". Check that a store declares validate(" + credential.getClass().getSimpleName()
+                            + ") or validate(Credential).");
+                }
+
                 return NOT_VALIDATED_RESULT;
             }
 
