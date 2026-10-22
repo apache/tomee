@@ -230,7 +230,7 @@
     <version.hibernate.classmate>1.7.1</version.hibernate.classmate>
     <version.hibernate.bytebuddy>1.18.8</version.hibernate.bytebuddy>
     <version.hibernate.antlr4>4.13.2</version.hibernate.antlr4>
-    <version.hibernate.validator>9.1.4.Final</version.hibernate.validator>
+    <version.hibernate.validator>9.1.5.Final</version.hibernate.validator>
 
     <!-- Other API and Impl. not in Jakarta EE -->
     <version.wss4j>4.0.2</version.wss4j>
