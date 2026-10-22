@@ -26,12 +26,16 @@ import jakarta.transaction.Transaction;
 import jakarta.transaction.TransactionManager;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.io.Serializable;
 import java.util.Map;
 
 public class TxThreadContextProvider implements ThreadContextProvider, Serializable {
     public static final TxThreadContextProvider INSTANCE = new TxThreadContextProvider();
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TxThreadContextProvider.class);
 
     @Override
     public ThreadContextSnapshot currentContext(final Map<String, String> props) {
@@ -56,7 +60,10 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
             try {
                 TransactionManager tm = OpenEJB.getTransactionManager();
                 if (tm != null) {
-                    return new TxThreadContextRestorer(tm.suspend());
+                    final Transaction suspended = tm.suspend();
+                    if (suspended != null) {
+                        return new TxThreadContextRestorer(suspended);
+                    }
                 }
 
                 return ThreadContextProviderUtil.NOOP_RESTORER;
@@ -75,8 +82,19 @@ public class TxThreadContextProvider implements ThreadContextProvider, Serializa
 
         @Override
         public void endContext() throws IllegalStateException {
+            if (transaction == null) {
+                return;
+            }
+
+            final TransactionManager tm = OpenEJB.getTransactionManager();
+            if (tm == null) {
+                // the container was shut down while the context was active, there is nothing left to resume into
+                LOGGER.warning("Cannot resume transaction " + transaction + ", the TransactionManager is no longer available");
+                return;
+            }
+
             try {
-                OpenEJB.getTransactionManager().resume(transaction);
+                tm.resume(transaction);
             } catch (SystemException | InvalidTransactionException e) {
                 throw new OpenEJBRuntimeException(e);
             }
