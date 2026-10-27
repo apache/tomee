@@ -266,7 +266,8 @@
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.18</version>
+          <!-- RAT 0.17/0.18 share mutable option groups across parallel checks and can lose exclusions. -->
+          <version>0.16.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
