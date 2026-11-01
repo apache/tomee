@@ -33,6 +33,8 @@
     <jsonb-tck.version>3.0.0</jsonb-tck.version>
     <jsonp-tck.version>2.1.1</jsonp-tck.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+    <!-- Surefire 3.6+ drops TestNG suiteXmlFiles, see TOMEE-4732 -->
+    <surefire.version>3.5.3</surefire.version>
   </properties>
 
   <modules>
