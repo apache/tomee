@@ -26,7 +26,7 @@
 
   <properties>
     <tomee.version>11.0.0-SNAPSHOT</tomee.version>
-    <version.opentelemetry>1.62.0</version.opentelemetry>
+    <version.opentelemetry>1.67.0</version.opentelemetry>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
   </properties>
