@@ -58,7 +58,7 @@ public final class Pipe implements Runnable {
         try {
             int i;
 
-            final byte[] buf = new byte[1];
+            final byte[] buf = new byte[8192];
 
             while ((i = in.read(buf)) != -1) {
                 out.write(buf, 0, i);

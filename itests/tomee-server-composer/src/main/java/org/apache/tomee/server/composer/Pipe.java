@@ -17,6 +17,7 @@
 package org.apache.tomee.server.composer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.Future;
@@ -49,17 +50,34 @@ public final class Pipe implements Runnable {
     }
 
     public synchronized void run() {
+        // read byte by byte (the watchers block a byte[] read until it is full) but copy per line:
+        // Surefire 3.6+ captures a stack trace for every write to a forked test JVM's System.out
+        final byte[] buffer = new byte[8192];
+        int length = 0;
         try {
             int i = -1;
 
             while ((i = in.read()) != -1) {
                 out.write(i);
-                for (final OutputStream stream : cc) {
-                    stream.write(i);
+                buffer[length++] = (byte) i;
+                if (i == '\n' || length == buffer.length || in.available() == 0) {
+                    copy(buffer, length);
+                    length = 0;
                 }
             }
+            copy(buffer, length);
         } catch (final Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void copy(final byte[] buffer, final int length) throws IOException {
+        if (length == 0) {
+            return;
+        }
+        for (final OutputStream stream : cc) {
+            stream.write(buffer, 0, length);
+            stream.flush();
         }
     }
 }

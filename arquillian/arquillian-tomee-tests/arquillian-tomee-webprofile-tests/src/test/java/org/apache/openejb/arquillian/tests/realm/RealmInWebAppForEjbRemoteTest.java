@@ -66,7 +66,11 @@ public class RealmInWebAppForEjbRemoteTest
         p.put(Context.SECURITY_CREDENTIALS, "ee");
         p.put("openejb.authentication.realmName", "realm-test"); // webapp name to force login using the matching realm
         final Context ctx = new InitialContext(p);
-        final Simple myBean = Simple.class.cast(ctx.lookup("java:global/realm-test/SimpleEJB!" + Simple.class.getName()));
-        assertEquals("tom", myBean.name());
+        try {
+            final Simple myBean = Simple.class.cast(ctx.lookup("java:global/realm-test/SimpleEJB!" + Simple.class.getName()));
+            assertEquals("tom", myBean.name());
+        } finally {
+            ctx.close(); // logs out
+        }
     }
 }
