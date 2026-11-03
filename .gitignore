@@ -25,5 +25,6 @@ transformer/transformer-0.1.0-SNAPSHOT/
 *.zip
 
 CLAUDE.md
-.claude
+.claude/*
+!.claude/skills/
 tck-dev
