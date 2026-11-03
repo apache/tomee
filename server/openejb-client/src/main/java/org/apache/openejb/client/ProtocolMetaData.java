@@ -30,7 +30,7 @@ import java.util.Arrays;
  *
  * Protocol-Version   = "OEJP" "/" 1*DIGIT "." 1*DIGIT
  *
- * Some compatability is guaranteed with the major part of the version number.
+ * Some compatibility is guaranteed with the major part of the version number.
  *
  * @version $Revision$ $Date$
  */

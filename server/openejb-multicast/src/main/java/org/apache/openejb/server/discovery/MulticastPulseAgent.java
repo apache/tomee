@@ -145,7 +145,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 }
             }
         } catch (final Exception e) {
-            LOG.warning("Invalid ignore parameter. Should be a lowercase single host or comma seperated list of hosts to ignore like: ignore=host1,host2,ipv4,ipv6");
+            LOG.warning("Invalid ignore parameter. Should be a lowercase single host or comma separated list of hosts to ignore like: ignore=host1,host2,ipv4,ipv6");
         }
 
         this.multicast = o.get("bind", this.multicast);
