@@ -915,7 +915,7 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# openejb.jaxrs.application = \n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreRequests = false\n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreMessageWriters = true\n");
-                systemPropertiesWriter.write("# Replace the Jonhzon JSON Providers with the following classes [comma seperated, no spaces]\n");
+                systemPropertiesWriter.write("# Replace the Johnzon JSON Providers with the following classes [comma separated, no spaces]\n");
                 systemPropertiesWriter.write("# openejb.jaxrs.jsonProviders =\n");
 
                 systemPropertiesWriter.write("#\n");
