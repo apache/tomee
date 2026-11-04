@@ -739,7 +739,7 @@ run:
 -------------------------------------------------------
 Running org.superbiz.calculator.CalculatorTest
 INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
-INFO: Version: 11.0.0-SNAPSHOT
+INFO: Version: 11.0.0-M2-SNAPSHOT
 INFO: ------------------------- localhost -> /webservice-ws-security
 INFO: Configuring enterprise application: /path/to/examples/webservice-ws-security/target/tomee-embedded/0/webservice-ws-security
 INFO: Auto-deploying ejb CalculatorImplEncrypt2ways: EjbDeployment(deployment-id=CalculatorImplEncrypt2ways)

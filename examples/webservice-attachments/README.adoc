@@ -189,7 +189,7 @@ public class AttachmentTest {
 -------------------------------------------------------
 Running org.superbiz.attachment.AttachmentTest
 INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
-INFO: Version: 11.0.0-SNAPSHOT
+INFO: Version: 11.0.0-M2-SNAPSHOT
 INFO: ------------------------- localhost -> /webservice-attachments
 INFO: Configuring enterprise application: /path/to/examples/webservice-attachments/target/tomee-embedded/0/webservice-attachments
 INFO: Auto-deploying ejb AttachmentImpl: EjbDeployment(deployment-id=AttachmentImpl)
