@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>groovy-jpa</artifactId>
   <packaging>jar</packaging>
-  <version>11.0.0-M2-SNAPSHOT</version>
+  <version>11.0.0-M2</version>
   <name>TomEE :: Examples :: Groovy JPA</name>
 
   <properties>
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <type>pom</type>
     </dependency>
     <dependency>
@@ -107,13 +107,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

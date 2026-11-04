@@ -19,18 +19,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-config-source-database</artifactId>
-  <version>11.0.0-M2-SNAPSHOT</version>
+  <version>11.0.0-M2</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile Config Source Database</name>
   <properties>
     <version.arquillian>1.10.0.Final</version.arquillian>
-    <tomee.version>11.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M2</tomee.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-microprofile-api</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

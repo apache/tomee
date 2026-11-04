@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-opentelemetry-metrics</artifactId>
-  <version>11.0.0-M2-SNAPSHOT</version>
+  <version>11.0.0-M2</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile OpenTelemetry Metrics</name>
 
   <properties>
-    <tomee.version>11.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M2</tomee.version>
     <version.opentelemetry>1.62.0</version.opentelemetry>
     <version.arquillian.bom>1.7.1.Final</version.arquillian.bom>
     <junit.version>4.13.2</junit.version>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-microprofile-api</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <!-- OpenTelemetry API — provided by TomEE MicroProfile at runtime -->
@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-microprofile</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

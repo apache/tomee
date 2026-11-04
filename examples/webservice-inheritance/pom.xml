@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-inheritance</artifactId>
   <packaging>jar</packaging>
-  <version>11.0.0-M2-SNAPSHOT</version>
+  <version>11.0.0-M2</version>
   <name>TomEE :: Examples :: Webservice Inheritance</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -81,13 +81,13 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-embedded</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

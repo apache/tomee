@@ -19,11 +19,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-config-example</artifactId>
-  <version>11.0.0-M2-SNAPSHOT</version>
+  <version>11.0.0-M2</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MicroProfile Config</name>
   <properties>
-    <tomee.version>11.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M2</tomee.version>
     <version.arquillian>1.10.0.Final</version.arquillian>
   </properties>
   <dependencies>

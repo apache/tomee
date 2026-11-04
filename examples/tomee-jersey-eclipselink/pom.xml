@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>tomee-jersey-eclipselink</artifactId>
-  <version>11.0.0-M2-SNAPSHOT</version>
+  <version>11.0.0-M2</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: TomEE, Jersey, Eclipselink</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>11.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M2</tomee.version>
     <version.jersey>4.0.2</version.jersey>
     <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
   </properties>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plume-api</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <!-- Jersey replaces the CXF based JAX-RS implementation of TomEE for this webapp -->
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plume</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -138,7 +138,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>11.0.0-M2-SNAPSHOT</version>
+        <version>11.0.0-M2</version>
         <configuration>
           <tomeeClassifier>plume</tomeeClassifier>
         </configuration>

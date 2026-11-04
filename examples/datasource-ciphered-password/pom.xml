@@ -20,11 +20,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>datasource-ciphered-password</artifactId>
   <packaging>jar</packaging>
-  <version>11.0.0-M2-SNAPSHOT</version>
+  <version>11.0.0-M2</version>
   <name>TomEE :: Examples :: Datasource Ciphered Password</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>11.0.0-M2-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M2</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-webprofile-api</artifactId>
-      <version>11.0.0-M2-SNAPSHOT</version>
+      <version>11.0.0-M2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
