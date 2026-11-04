@@ -33,7 +33,7 @@
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>11.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M2-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
@@ -72,7 +72,7 @@
             <systemProperties>
               <property>
                 <name>tomee.version</name>
-                <value>11.0.0-SNAPSHOT</value>
+                <value>11.0.0-M2-SNAPSHOT</value>
               </property>
             </systemProperties>
           </configuration>

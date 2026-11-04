@@ -236,7 +236,7 @@ The test deploys the jar to TomEE embedded, which serves the EJB web service wit
 -------------------------------------------------------
 Running org.superbiz.calculator.CalculatorTest
 INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
-INFO: Version: 11.0.0-SNAPSHOT
+INFO: Version: 11.0.0-M2-SNAPSHOT
 INFO: Configuring enterprise application: /path/to/examples/webservice-security/target/tomee-embedded/0/webservice-security.jar
 INFO: Auto-deploying ejb CalculatorImpl: EjbDeployment(deployment-id=CalculatorImpl)
 INFO: Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)

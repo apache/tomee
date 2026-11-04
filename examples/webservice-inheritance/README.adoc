@@ -430,7 +430,7 @@ The test deploys the example to TomEE embedded. `src/test/resources/arquillian.x
 -------------------------------------------------------
 Running org.superbiz.inheritance.InheritanceTest
 INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
-INFO: Version: 11.0.0-SNAPSHOT
+INFO: Version: 11.0.0-M2-SNAPSHOT
 INFO: Configuring Service(id=wakeBoardDatabase, type=Resource, provider-id=Default JDBC Database)
 INFO: Configuring Service(id=wakeBoardDatabaseUnmanaged, type=Resource, provider-id=Default JDBC Database)
 INFO: Creating Resource(id=wakeBoardDatabase)

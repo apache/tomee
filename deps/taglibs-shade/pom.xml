@@ -195,7 +195,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/taglibs-shade-11.0.0-SNAPSHOT.jar</file>
+                  <file>${project.build.directory}/taglibs-shade-11.0.0-M2-SNAPSHOT.jar</file>
                   <type>jar</type>
                   <classifier>optional</classifier>
                 </artifact>
