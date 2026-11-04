@@ -16,7 +16,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>11.0.0-M2</version>
+  <version>11.0.0-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in EAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,7 +45,7 @@
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-plus-api</artifactId>
-        <version>11.0.0-M2</version>
+        <version>11.0.0-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

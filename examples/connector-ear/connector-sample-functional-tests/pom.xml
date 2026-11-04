@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>connector-ear</artifactId>
-    <version>11.0.0-M2</version>
+    <version>11.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>connector-sample-functional-test</artifactId>
@@ -122,7 +122,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>11.0.0-M2</version>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

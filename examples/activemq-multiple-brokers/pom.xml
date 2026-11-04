@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multi-broker</artifactId>
   <packaging>war</packaging>
-  <version>11.0.0-M2</version>
+  <version>11.0.0-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Multi-Broker</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>11.0.0-M2</tomee.version>
+    <tomee.version>11.0.0-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>3.3.4</version.shrinkwrap.resolver>
   </properties>
   <build>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>11.0.0-M2</version>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -106,7 +106,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>11.0.0-M2</version>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>

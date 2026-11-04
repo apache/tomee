@@ -22,12 +22,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-jms</artifactId>
   <packaging>war</packaging>
-  <version>11.0.0-M2</version>
+  <version>11.0.0-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple JMS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.arquillian>1.10.0.Final</version.arquillian>
-    <tomee.version>11.0.0-M2</tomee.version>
+    <tomee.version>11.0.0-SNAPSHOT</tomee.version>
     <activemq.port>61616</activemq.port>
   </properties>
   <build>
@@ -100,7 +100,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>11.0.0-M2</version>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -116,7 +116,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>11.0.0-M2</version>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>

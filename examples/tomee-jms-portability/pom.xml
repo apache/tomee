@@ -21,7 +21,7 @@
   <groupId>com.company.tutorials</groupId>
   <artifactId>simple-tomee</artifactId>
   <packaging>war</packaging>
-  <version>11.0.0-M2</version>
+  <version>1.0</version>
   <name>TomEE :: TomEE :: IBM MQ AMQ Portability Examples :: MDB Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>11.0.0-M2</version>
+      <version>11.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
