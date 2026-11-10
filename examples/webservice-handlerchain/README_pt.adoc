@@ -192,7 +192,7 @@ Simplesmente execute `mvn clean install` e você verá resultado semelhante o se
 -------------------------------------------------------
 Running org.superbiz.calculator.wsh.CalculatorTest
 INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
-INFO: Version: 11.0.0-SNAPSHOT
+INFO: Version: 11.0.0-M2-SNAPSHOT
 INFO: ------------------------- localhost -> /webservice-handlerchain
 INFO: Configuring enterprise application: /path/to/examples/webservice-handlerchain/target/tomee-embedded/0/webservice-handlerchain
 INFO: Auto-deploying ejb Calculator: EjbDeployment(deployment-id=Calculator)

@@ -22,7 +22,7 @@ Para usar o MicroProfile Rest Client, são necessárias 3 alterações no seu pr
  <dependency>
      <groupId>org.apache.tomee.bom</groupId>
      <artifactId>tomee-microprofile-api</artifactId>
-     <version>11.0.0-SNAPSHOT</version>
+     <version>11.0.0-M2-SNAPSHOT</version>
      <scope>provided</scope>
  </dependency>
 ----

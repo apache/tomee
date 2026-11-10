@@ -55,7 +55,7 @@ O pom principal, aparado ao mínimo, tem a seguinte aparência:
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-webprofile-api</artifactId>
-        <version>11.0.0-SNAPSHOT</version>
+        <version>11.0.0-M2-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -140,7 +140,7 @@ teste incorporado com o OpenEJB:
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-webprofile</artifactId>
-      <version>11.0.0-SNAPSHOT</version>
+      <version>11.0.0-M2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

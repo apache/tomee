@@ -26,7 +26,7 @@
   <name>TomEE :: Examples :: Simple CMP2 Entity</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>11.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>11.0.0-M2-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>

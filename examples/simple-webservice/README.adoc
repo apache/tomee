@@ -244,7 +244,7 @@ When run you should see output similar to the following.
 -------------------------------------------------------
 Running org.superbiz.calculator.ws.CalculatorTest
 INFO: Starting Servlet engine: [Apache Tomcat/11.0.25]
-INFO: Version: 11.0.0-SNAPSHOT
+INFO: Version: 11.0.0-M2-SNAPSHOT
 INFO: ------------------------- localhost -> /simple-webservice
 INFO: Configuring enterprise application: /path/to/examples/simple-webservice/target/tomee-embedded/0/simple-webservice
 INFO: Auto-deploying ejb Calculator: EjbDeployment(deployment-id=Calculator)
