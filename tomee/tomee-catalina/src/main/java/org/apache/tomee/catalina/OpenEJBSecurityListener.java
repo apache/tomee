@@ -64,7 +64,11 @@ public class OpenEJBSecurityListener implements AsyncListener {
         try {
             exit();
         } finally {
-            requests.remove();
+            try {
+                requests.remove();
+            } finally {
+                TransactionCleanup.clean();
+            }
         }
     }
 
@@ -96,7 +100,13 @@ public class OpenEJBSecurityListener implements AsyncListener {
             try {
                 getNext().invoke(request, response);
             } finally {
-                requests.remove();
+                try {
+                    requests.remove();
+                } finally {
+                    // on the Host pipeline, so this wraps requestDestroyed and the error page
+                    // handling in StandardHostValve too, see TransactionCleanup
+                    TransactionCleanup.clean();
+                }
             }
         }
     }

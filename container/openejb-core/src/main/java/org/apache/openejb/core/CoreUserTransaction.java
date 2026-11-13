@@ -51,7 +51,11 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
     }
 
     public static void resetError(final RuntimeException old) {
-        ERROR.set(old);
+        if (old == null) { // don't pin an empty entry to the thread, these are pooled
+            ERROR.remove();
+        } else {
+            ERROR.set(old);
+        }
     }
 
     public static RuntimeException error() {
