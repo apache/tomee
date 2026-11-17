@@ -217,7 +217,7 @@
     <version.geronimo-mail_2.1_provider>1.1.1</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.2.0</version.johnzon>
     <version.myfaces>4.1.4</version.myfaces>
-    <version.openjpa>4.1.1</version.openjpa>
+    <version.openjpa>4.2.0</version.openjpa>
     <version.openwebbeans>4.1.1</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>5.0.2</version.eclipselink>
@@ -921,6 +921,18 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <!-- TODO: remove once OpenJPA 4.2.0 is released -->
+    <repository>
+      <id>openjpa-4.2.0-staging</id>
+      <name>OpenJPA 4.2.0 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-1017/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <!-- transitive dependency from WSS4J -->
     <repository>
       <id>B_shibboleth</id>
@@ -932,6 +944,18 @@
     </repository>
   </repositories>
   <pluginRepositories>
+    <!-- TODO: remove once OpenJPA 4.2.0 is released -->
+    <pluginRepository>
+      <id>openjpa-4.2.0-staging</id>
+      <name>OpenJPA 4.2.0 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-1017/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
     <pluginRepository>
       <id>apache-plugin-snapshot</id>
       <name>Apache Software Foundation Plugin Snapshot Repository</name>
