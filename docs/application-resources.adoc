@@ -211,7 +211,9 @@ accessed via properties.getProperty("username");
 Resources can also be defined within an application, and optionally use
 classes from the application's classpath. To define resources in a .war
 file, include a `WEB-INF/resources.xml`. For an ejb-jar module, use
-`META-INF/resources.xml`.
+`META-INF/resources.xml`. For an .ear file, use the `META-INF/resources.xml`
+of the EAR itself; read <<ear-resource-injection,Injecting resources declared in an EAR>>
+before injecting those.
 
 The format of `resources.xml` uses the same `<Resource>` tag as
 `tomee.xml`. One key difference is the root element of the XML is
@@ -234,6 +236,59 @@ application, alongside your application code, rather than requiring a
 
 Application resources are bound in JNDI under
 openejb:Resource/appname/resource id.
+
+[[ear-resource-injection]]
+=== Injecting resources declared in an EAR
+
+Inside an EAR, TomEE registers each resource of the EAR's
+`META-INF/resources.xml` under its id prefixed with the application name,
+for example `myapp/stopWords` for `<Resource id="stopWords" ...>` in
+`myapp.ear`. A plain `@Resource` without a matching name relies on the
+field name instead:
+
+[source,java]
+----
+@Stateless
+public class TextService {
+
+    @Resource // looked up as "stopWords", but the resource is registered as "myapp/stopWords"
+    private WordFilter stopWords;
+
+    @Resource // looked up as "medicalWords", registered as "myapp/medicalWords"
+    private WordFilter medicalWords;
+}
+----
+
+The field name does not match the prefixed id. TomEE then falls back to
+the *first resource of the requested type* and only logs this at `DEBUG`
+level. As long as the application defines a single resource of that type,
+the result is still right. With several resources of the same type, every
+field silently receives the same instance: in the example above both
+`stopWords` and `medicalWords` get whichever `WordFilter` resource is
+listed first. Deployment succeeds, and the application simply works with
+the wrong configuration.
+
+This happens whether the EAR is deployed at startup (for example from
+`apps/`) or at runtime, and setting `Lazy` does not change it. The same
+code works where resources are registered without that prefix, such as
+resources from `tomee.xml` or tests using the ApplicationComposer, so the
+problem often only shows up once an application is packaged as an EAR.
+
+To get the intended resource, name it explicitly, using either of these:
+
+[source,java]
+----
+// works inside and outside an EAR
+@Resource(lookup = "openejb:Resource/stopWords")
+private WordFilter stopWords;
+
+// the id as registered; ties the code to the application name "myapp"
+@Resource(name = "myapp/stopWords")
+private WordFilter stopWords;
+----
+
+The `lookup` form is usually the better choice, since it does not depend
+on the name of the EAR.
 
 == Additional resource properties
 
