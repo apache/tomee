@@ -33,18 +33,12 @@ variable substitution. Properties are not case-sensitive. If a property
 is specified that is not supported by the declared Topic a warning will
 be logged. If a Topic is needed by the application and one is not
 declared, TomEE will create one dynamically using default settings.
-Multiple Topic declarations are allowed. # Supported Properties
+Multiple Topic declarations are allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-destination
-
-String
-
-Specifies the name of the topic
+[options="header"]
+|===
+|Property |Type |Default |Description
+|destination |String | |Specifies the name of the topic
+|===

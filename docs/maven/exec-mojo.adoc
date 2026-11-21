@@ -197,7 +197,7 @@ File
 -
 
 (no description)Default value is:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}-exec.jar.User
+`${project.build.directory}/${project.build.finalName}-exec.jar`. User
 property is: tomee-plugin.exec-file.
 
 externalRepositories
@@ -517,7 +517,7 @@ File
 -
 
 (no description)Default value is:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}.$\{project.packaging}.
+`${project.build.directory}/${project.build.finalName}.${project.packaging}`.
 
 webappClasses
 
@@ -580,7 +580,7 @@ File
 -
 
 (no description)Default value is:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}.zip.User
+`${project.build.directory}/${project.build.finalName}.zip`. User
 property is: tomee-plugin.zip-file.
 
 Parameter Details
@@ -790,7 +790,7 @@ Required: No
 User Property: tomee-plugin.exec-file
 
 Default:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}-exec.jar
+`${project.build.directory}/${project.build.finalName}-exec.jar`
 
 externalRepositories:
 
@@ -1194,7 +1194,7 @@ Type: java.io.File
 Required: No
 
 Default:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}.$\{project.packaging}
+`${project.build.directory}/${project.build.finalName}.${project.packaging}`
 
 webappClasses:
 
@@ -1274,4 +1274,4 @@ Required: No
 User Property: tomee-plugin.zip-file
 
 Default:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}.zip
+`${project.build.directory}/${project.build.finalName}.zip`

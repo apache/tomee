@@ -8,7 +8,7 @@
 
 === CMP_ENTITY
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Container id="Foo" type="CMP_ENTITY"/>`
 
 Declarable in properties via:
 
@@ -33,7 +33,7 @@ Supports the following properties:
 
 === BMP_ENTITY
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Container id="Foo" type="BMP_ENTITY"/>`
 
 Declarable in properties via:
 
@@ -56,7 +56,7 @@ Default value is `10`.
 
 === STATELESS
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Container id="Foo" type="STATELESS"/>`
 
 Declarable in properties via:
 
@@ -90,7 +90,7 @@ Default value is `true`.
 
 === STATEFUL
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Container id="Foo" type="STATEFUL"/>`
 
 Declarable in properties via:
 
@@ -129,7 +129,7 @@ Default value is `100`.
 
 === MESSAGE
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Container id="Foo" type="MESSAGE"/>`
 
 Declarable in properties via:
 
@@ -166,7 +166,7 @@ Default value is `10`.
 
 === javax.sql.DataSource
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Resource id="Foo" type="javax.sql.DataSource"/>`
 
 Declarable in properties via:
 
@@ -280,7 +280,7 @@ Default value is `false`.
 
 === ActiveMQResourceAdapter
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Resource id="Foo" type="ActiveMQResourceAdapter"/>`
 
 Declarable in properties via:
 
@@ -311,7 +311,7 @@ Default value is *Default Unmanaged JDBC Database*.
 
 === jakarta.jms.ConnectionFactory
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Resource id="Foo" type="jakarta.jms.ConnectionFactory"/>`
 
 Declarable in properties via:
 
@@ -353,7 +353,7 @@ Default value is `15`.
 
 === jakarta.jms.Queue
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Resource id="Foo" type="jakarta.jms.Queue"/>`
 
 Declarable in properties via:
 
@@ -375,7 +375,7 @@ Supports the following properties:
 
 === jakarta.jms.Topic
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Resource id="Foo" type="jakarta.jms.Topic"/>`
 
 Declarable in properties via:
 
@@ -397,7 +397,7 @@ Supports the following properties:
 
 === jakarta.mail.Session
 
-Declarable in `tomee.xml` via
+Declarable in `tomee.xml` via `<Resource id="Foo" type="jakarta.mail.Session"/>`
 
 Declarable in properties via:
 

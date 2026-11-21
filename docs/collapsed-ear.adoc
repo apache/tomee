@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= One archive
+== One archive
 
 The basic idea of this approach is that your Servlets and EJBs are
 together in your WAR file as one app.
@@ -16,7 +16,7 @@ no EAR required.
 file).
 * EJBs can see Servlet classes and vice versa.
 
-= Not quite J2EE (it is truly Java EE6)
+== Not quite J2EE (it is truly Java EE6)
 
 This is very different from J2EE or Java EE 5 as there aren't several
 levels of separation and classloader hierarchy. This is going to take
@@ -31,16 +31,20 @@ J2EE classloading rules:
 ejb-jar, and one for each WAR file.
 * Servlets can see EJBs, but EJBs cannot see servlets.
 
-To pull that off, J2EE has to kill you on packaging: * You cannot have
-EJB classes and Servlet classes in the same archive. * You need at least
+To pull that off, J2EE has to kill you on packaging:
+
+* You cannot have
+EJB classes and Servlet classes in the same archive.
+* You need at least
 three archives to combine servlets and ejbs; 1 EAR containing 1 EJB jar
-and 1 servlet WAR. * Shared libraries must go in the EAR and be included
+and 1 servlet WAR.
+* Shared libraries must go in the EAR and be included
 in a specially formatted 'Class-Path' entry in the EAR's MANIFEST file.
 
 Critically speaking, forcing more than one classloader on an application
 is where J2EE "jumps the shark" for a large majority of people's needs.
 
-= Example with Tomcat
+== Example with Tomcat
 
 If you want to try to work with Servlets/JSP and OpenEJB using Tomcat,
 see the link:deploying-in-tomee.html[setup page] and the

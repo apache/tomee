@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-= Defaults, Overrides and Order
+== Defaults, Overrides and Order
 
 When booting up OpenEJB for testing via the `LocalInitialContextFactory`
 or the newer `EJBContainer.createEJBContainer()` API part of EJB 3.1
@@ -44,7 +44,7 @@ InitialContext properties. You can put 100% of your configuration in a
 You can manage the properties how you wish and there is no need for
 redundant definitions if you do not want them.
 
-= What is configurable?
+== What is configurable?
 
 Everything you can configure via an openejb.xml (minus the element) can
 be configured/overridden via properties. See
@@ -64,7 +64,7 @@ PersistenceUnits in Tests].
 OpenEJB has many flags that can also be set as properties. See
 link:properties-listing.html[OpenEJB Properties] for details on those.
 
-= Example of using InitialContext properties
+== Example of using InitialContext properties
 
 [source,java]
 ----
@@ -94,10 +94,10 @@ p.put("openejb.validation.output.level ", " verbose");
 InitialContext initialContext = new InitialContext(p);
 ----
 
-= Example of using jndi.properties
+== Example of using jndi.properties
 
 Here's an example of the same properties being specified via a
-`jndi.properties file`. This file just needs to be placed in the
+`jndi.properties` file. This file just needs to be placed in the
 classpath, not in a subdirectory of a path in the classpath such as
 META-INF, but at the root of any of the paths in the classpath.
 

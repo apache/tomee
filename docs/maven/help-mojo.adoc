@@ -1,10 +1,9 @@
+= tomee:help
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-
-tomee:help
 
 Full name:
 
@@ -21,49 +20,14 @@ The goal is thread-safe and supports parallel builds.
 
 Optional Parameters
 
-Name
-
-Type
-
-Since
-
-Description
-
-detail
-
-boolean
-
--
-
-If true, display all settable properties for each goal. Default value is:
-false. User property is: detail.
-
-goal
-
-String
-
--
-
-The name of the goal for which to show help. If unspecified, all goals
-will be displayed.User property is: goal.
-
-indentSize
-
-int
-
--
-
-The number of spaces per indentation level, should be positive.Default
-value is: 2.User property is: indentSize.
-
-lineLength
-
-int
-
--
-
-The maximum length of a display line, should be positive.Default value
-is: 80.User property is: lineLength.
+[options="header"]
+|===
+|Name |Type |Since |Description
+|detail |boolean |- |If true, display all settable properties for each goal. Default value is: false. User property is: detail.
+|goal |String |- |The name of the goal for which to show help. If unspecified, all goals will be displayed.User property is: goal.
+|indentSize |int |- |The number of spaces per indentation level, should be positive.Default value is: 2.User property is: indentSize.
+|lineLength |int |- |The maximum length of a display line, should be positive.Default value is: 80.User property is: lineLength.
+|===
 
 Parameter Details
 

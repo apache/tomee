@@ -78,7 +78,7 @@ See link:../../admin/cluster/index.html[Cluster] page for more details on the op
 
 The context configuration can take additional configuration to handle EJB security:
 
-[source,properties]
+[source,java]
 ----
 p.put("openejb.authentication.realmName", "my-realm"); // optional
 p.put(Context.SECURITY_PRINCIPAL, "alfred");

@@ -4,8 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= 
-Via annotation
+== Via annotation
 
 [source,java]
 ----
@@ -33,7 +32,7 @@ public class MyEjbRemoteRefBean implements MyBeanInterface {
 }
 ----
 
-= Via xml
+== Via xml
 
 The above `@EJB` annotation usage is 100% equivalent to the following xml.
 

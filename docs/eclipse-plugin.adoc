@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= What is it?
+== What is it?
 
 The _OpenEJB Eclipse Plugin_ will be a suite of tools made available via
 Eclipse to make EJB development with OpenEJB easier. The initial
@@ -15,7 +15,7 @@ and Eclipse project integration. From there, the sky is the limit so
 feel free to suggest features on the
 link:https://lists.apache.org/list.html?dev@tomee.apache.org[TomEE Dev list].
 
-= How to get involved?
+== How to get involved?
 
 Just the same as getting involved with any part of OpenEJB -- send a
 mail to the
@@ -23,19 +23,19 @@ link:https://lists.apache.org/list.html?dev@tomee.apache.org[TomEE Dev
 list] and say "Hi!" We're a very relaxed group so no need to be perfect
 or overly prepared. Just dive right in, we're always happy to have more.
 
-= Where do I get it?
+== Where do I get it?
 
 The initiative is just launching, but you can grab what we have right
 here and start hacking.
 
 https://github.com/apache/tomee/
 
-= What do I need to help?
+== What do I need to help?
 
 https://www.eclipse.org[Eclipse] https://www.eclipse.org/webtools[Eclipse
 Web Tools]
 
-= Resources
+== Resources
 
 EclipseCon
 Presentation for Extending WTP

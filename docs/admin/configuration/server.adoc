@@ -26,8 +26,8 @@
 |openejb.deployments.classpath.ear	|bool|	deploy the classpath as an ear
 |openejb.webservices.enabled|	bool	|activate or not webservices
 |openejb.validation.output.level|	TERSE or MEDIUM or VERBOSE|	level of the logs used to report validation errors
-|openejb.user.mbeans.list	* or a list of classes separated by ,|	list of mbeans to deploy automatically
-|openejb.deploymentId.format	composition (+string) of {ejbName} {ejbType} {ejbClass} and {ejbClass.simpleName}	default {ejbName}. The format to use to deploy ejbs.
+|openejb.user.mbeans.list	|* or a list of classes separated by ,|	list of mbeans to deploy automatically
+|openejb.deploymentId.format	|composition (+string) of {ejbName} {ejbType} {ejbClass} and {ejbClass.simpleName}	|default {ejbName}. The format to use to deploy ejbs.
 |openejb.deployments.classpath	|bool|	whether or not deploy from classpath
 |openejb.deployments.classpath.include and openejb.deployments.classpath.exclude	|regex|	regex to filter the scanned classpath (when you are in this case)
 |openejb.deployments.package.include and openejb.deployments.package.exclude|	regex|	regex to filter scanned packages

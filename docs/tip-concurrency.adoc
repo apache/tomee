@@ -22,7 +22,7 @@ add this to your `META-INF/ejb-jar.xml`:
             <ejb-name>*</ejb-name>
             <concurrency-management-type>Bean</concurrency-management-type>
         </session>
-    <enterprise-beans>
+    </enterprise-beans>
 </ejb-jar>
 ----
 

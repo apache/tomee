@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-The _`@LocalClient_` annotation (org.apache.openejb.api.LocalClient) is an
+The `@LocalClient` annotation (org.apache.openejb.api.LocalClient) is an
 innovation that crosses concepts of a Java EE Application Client with a
 plain Java SE client. This particular annotation is focused on clients
 of an Embeddable EJB container, i.e. local clients. There is another
@@ -31,7 +31,7 @@ that needs to pull objects from the Embedded EJB container. Classes with
 module may have as many classes annotated with `@LocalClient` as it
 wishes.
 
-= Injection
+== Injection
 
 The injection occurs via acquiring a LocalInitialContext via the
 LocalInitialContextFactory and calling _bind("inject", instance)_
@@ -62,7 +62,7 @@ public class MoviesTest extends TestCase {
 }
 ----
 
-= Discovery
+== Discovery
 
 All EJB modules are scanned for `@LocalClient` classes, even if those EJB
 Modules are inside .war files as with the

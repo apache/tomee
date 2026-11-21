@@ -8,7 +8,7 @@ This document
 details the various ways to get OpenEJB to detect applications you would
 like deployed while in an embedded mode.
 
-= Empty ejb-jar.xml approach (recommended)
+== Empty ejb-jar.xml approach (recommended)
 
 Simplify the issue of searching for annotated applications by adding an
 `ejb-jar.xml` like this to your app:
@@ -79,14 +79,11 @@ The exclude and the include are applied separately and the results of
 each are combined to create the list of paths OpenEJB will
 scrape for annotations.
 
-[source,java]
-----
-*Note:* by default these settings will only affect which jars OpenEJB will
- scan for annotated components when no descriptor is found.  If you would
- like to use these settings to also filter out jars that do contain
- descriptors, set the *openejb.deployments.classpath.filter.descriptors*
- property to _true_.  The default is _false_.
-----
+NOTE: By default these settings will only affect which jars OpenEJB will
+scan for annotated components when no descriptor is found.  If you would
+like to use these settings to also filter out jars that do contain
+descriptors, set the *openejb.deployments.classpath.filter.descriptors*
+property to _true_.  The default is _false_.
 
 == Troubleshooting
 
@@ -100,7 +97,7 @@ for your ejb module is in the classpath, a little debug code like this
 in your test setup will help you see what OpenEJB sees (which may be
 nothing):
 
-[source,properties]
+[source,java]
 ----
 Enumeration<URL> ejbJars =
 this.getClass().getClassLoader().getResources("META-INF/ejb-jar.xml");

@@ -9,9 +9,9 @@ EntityManagerFactory can be configured via the `@PersistenceUnit`
 annotation or in xml. Annotations and xml have equal function in both
 lookup and injection.
 
-= Injection and Lookup
+== Injection and Lookup
 
-== Via annotation
+=== Via annotation
 
 [source,java]
 ----
@@ -38,7 +38,7 @@ public class MyBean implements MyInterface {
 }
 ----
 
-== Via xml
+=== Via xml
 
 The above `@PersistenceUnit` annotation usage is 100% equivalent to the
 following xml.
@@ -80,7 +80,7 @@ public class MyBean implements MyInterface {
 }
 ----
 
-= Via xml
+=== Via xml
 
 The above `@PersistenceUnit` annotation usage is 100% equivalent to the
 following xml.

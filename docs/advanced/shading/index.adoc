@@ -195,7 +195,7 @@ shadowJar {
 
 Then run:
 
-[source,properties]
+[source,bash]
 ----
 gradle clean build shadowJar
 ----

@@ -4,14 +4,15 @@
 :jbake-type: page
 :jbake-status: published
 
-= Properties Command line Tool
+== Properties Command line Tool
 
 To see all configurable properties in use by OpenEJB, use the
 following tool against a running server:
 
-________________________
+[source,bash]
+----
 ./bin/openejb properties
-________________________
+----
 
 The output of this tool takes all overrideable components OpenEJB sees
 and outputs their properties along with the current value. This allows
@@ -28,7 +29,7 @@ component declarations. The only warning is that any properties of type
 ".password" will have their values masked, so make sure you edit them if
 you reapply them back into conf/openejb.xml or conf/system.properties.
 
-= Property Overriding
+== Property Overriding
 
 Any component configured in OpenEJB via the openejb.xml (and some that
 aren't) can be overridden using system properties. The format is:
@@ -52,7 +53,7 @@ is created).
 At startup, OpenEJB will find the component with the given id and apply
 the new property value before constructing the individual component.
 
-= Example output
+== Example output
 
 [source,properties]
 ----

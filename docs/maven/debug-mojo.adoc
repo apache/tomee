@@ -478,7 +478,7 @@ File
 -
 
 (no description)Default value is:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}.$\{project.packaging}.
+`${project.build.directory}/${project.build.finalName}.${project.packaging}`.
 
 webappClasses
 
@@ -1081,7 +1081,7 @@ Type: java.io.File
 Required: No
 
 Default:
-latexmath:[${project.build.directory}/$]\{project.build.finalName}.$\{project.packaging}
+`${project.build.directory}/${project.build.finalName}.${project.packaging}`
 
 webappClasses:
 

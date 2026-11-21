@@ -31,27 +31,12 @@ applications is _REQUIRED_. The default transaction attribute for EJB
 
 A simplistic way to visualize the transaction attributes is as follows.
 
-Failing
-
-Correcting
-
-No Change
-
-Transacted
-
-MANDATORY
-
-REQUIRED, REQUIRES_NEW
-
-SUPPORTS
-
-Not Transacted
-
-NEVER
-
-NOT_SUPPORTED
-
-SUPPORTS
+[options="header"]
+|===
+| |Failing |Correcting |No Change
+|Transacted |MANDATORY |REQUIRED, REQUIRES_NEW |SUPPORTS
+|Not Transacted |NEVER |NOT_SUPPORTED |SUPPORTS
+|===
 
 The "_Transacted_" and "_Not Transacted_" categories represent the
 container guarantee, i.e. if the bean method will or will not be invoked
@@ -185,7 +170,7 @@ public static class MyBean implements MyBusinessInterface {
 * _codeBlue_ will be invoked with the attribute of _SUPPORTS_
 * _codeGreen_ will be invoked with the attribute of _REQUIRED_
 
-= Illegal Usage
+== Illegal Usage
 
 Generally, transaction annotations cannot be made on AroundInvoke
 methods and most callbacks.

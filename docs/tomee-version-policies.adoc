@@ -3,8 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-. # TomEE
-versioning policies
+= TomEE versioning policies
 
 TomEE version policy is made of three dot-separated numbers: x.y.z
 
@@ -36,20 +35,9 @@ targeting JavaEE 7 are not yet certified.
 To make it more explicit here is a small table showing the targeted
 JavaEE version and the related certification state by version:
 
-TomEE Version
-
-JavaEE Version
-
-Certified
-
-1.x
-
-6
-
-Yes
-
-7.x
-
-7
-
-No
+[options="header"]
+|===
+|TomEE Version |JavaEE Version |Certified
+|1.x |6 |Yes
+|7.x |7 |No
+|===

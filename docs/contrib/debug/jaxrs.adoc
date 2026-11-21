@@ -17,4 +17,3 @@ Key breakpoints for deployment
 Key breakpoints for runtime
 
  - org.apache.cxf.jaxrs.utils.JAXRSUtils#findTargetMethod
- - 

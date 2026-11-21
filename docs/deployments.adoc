@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-= The 'Deployments' element in tomee.xml
+== The 'Deployments' element in tomee.xml
 
 == A single jar
 

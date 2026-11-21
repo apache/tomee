@@ -4,12 +4,13 @@
 :jbake-type: page
 :jbake-status: published
 
-= Security - How To.
+== Security - How To.
 
-We currently have two authentication mechanisms to choose from: *
-_PropertiesLoginModule_ (a basic text file based login that looks up
-users and groups from the specified properties files) * _SQLLoginModule_
-(database based login that looks up users and groups in a database
+We currently have two authentication mechanisms to choose from:
+
+* _PropertiesLoginModule_ (a basic text file based login that looks up
+users and groups from the specified properties files)
+* _SQLLoginModule_ (database based login that looks up users and groups in a database
 through SQL queries)
 
 To make your program authenticate itself to the server, simply construct
@@ -46,24 +47,12 @@ Reference Guide .
 
 Supported options:
 
-Option
-
-Description
-
-Required
-
-UsersFile
-
-name of the properties file that contains the users and their passwords
-
-_yes_
-
-GroupsFile
-
-name of the properties file that contains the groups and their member
-lists
-
-_yes_
+[options="header"]
+|===
+|Option |Description |Required
+|UsersFile |name of the properties file that contains the users and their passwords |_yes_
+|GroupsFile |name of the properties file that contains the groups and their member lists |_yes_
+|===
 
 _UsersFile_ and _GroupsFile_ are read in on every login, so +you can
 update them+ on a running system and those users will "show up"
@@ -94,71 +83,26 @@ their groups (or "roles" in the EJB world).
 
 Supported options:
 
-Option
+[options="header"]
+|===
+|Option |Description |Required
+|dataSourceName |the name of a data source |_yes_ (alternative 1)
+|jdbcURL |a standard JDBC URL |_yes_ (alternative 2)
+|jdbcDriver |the fully qualified class name of the database driver |no
+|jdbcUser |the user name for accessing the database |no
+|jdbcPassword |the password for accessing the database |no
+|userSelect |the SQL query that returns a list of users and their passwords |_yes_
+|groupSelect |the SQL query that returns a list of users and groups (roles) |_yes_
+|digest |the name of the digest algorithm (e.g. "MD5" or "SHA") for digest authentication |no
+|encoding |the digest encoding, can be "hex" or "base64" |no
+|===
 
-Description
-
-Required
-
-dataSourceName
-
-the name of a data source
-
-_yes_ (alternative 1)
-
-jdbcURL
-
-a standard JDBC URL
-
-_yes_ (alternative 2)
-
-jdbcDriver
-
-the fully qualified class name of the database driver
-
-no
-
-jdbcUser
-
-the user name for accessing the database
-
-no
-
-jdbcPassword
-
-the password for accessing the database
-
-no
-
-userSelect
-
-the SQL query that returns a list of users and their passwords
-
-_yes_
-
-groupSelect
-
-the SQL query that returns a list of users and groups (roles)
-
-_yes_
-
-digest
-
-the name of the digest algorithm (e.g. "MD5" or "SHA") for digest
-authentication
-
-no
-
-encoding
-
-the digest encoding, can be "hex" or "base64"
-
-no
-
-= PLUG POINTS
+== PLUG POINTS
 
 There are four-five different plug points where you could customize the
-functionality. From largest to smallest: - _The SecurityService
+functionality. From largest to smallest:
+
+* _The SecurityService
 interface_: As before all security work (authentication and
 authorization) is behind this interface, only the methods on it have
 been updated. If you want to do something really "out there" or need

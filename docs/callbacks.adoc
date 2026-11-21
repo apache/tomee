@@ -19,7 +19,7 @@ For an Interceptor, the syntax includes InvocationContext as follows:
 * @PostConstruct <any-scope> void <method-name>(InvocationContext)
 * @PreDestroy <any-scope> void <method-name>(InvocationContext)
 * @PrePassivate <any-scope> void <method-name>(InvocationContext)
-* @PostActivate <any-scope> void &ltmethod-name>(InvocationContext)
+* @PostActivate <any-scope> void <method-name>(InvocationContext)
 
 The AroundInvoke syntax for an EJB or Interceptor is the same:
 

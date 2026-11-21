@@ -4,8 +4,7 @@
 :jbake-status: published
 
 
-= Maven
-Information
+= Maven Information
 
 This page is intended to provide an insight into basic
 https://maven.apache.org/[Maven] usage for users that are not all that
@@ -42,7 +41,7 @@ git clone https://github.com/apache/tomee.git
 
 Or that you may of course also be using your own project pom.xml
 
-If you want to use the latest snapshot locate the __ section in your
+If you want to use the latest snapshot locate the `<repositories>` section in your
 pom.xml and ensure the following repository exists:
 
 [source,xml]

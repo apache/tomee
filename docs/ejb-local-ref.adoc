@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Via annotation
+== Via annotation
 
 Usable by EJB, Interceptor, Servlet, Filter, or Listener
 
@@ -34,7 +34,7 @@ public class MyEjbLocalRefBean implements MyBeanInterface {
 }
 ----
 
-= Via xml
+== Via xml
 
 The above `@EJB` annotation usage is 100% equivalent to the following xml.
 

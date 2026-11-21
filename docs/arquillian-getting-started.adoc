@@ -39,6 +39,6 @@ useful and can really help testing Java EE applications. That's also an
 opportunity to get the most out of TomEE (lightweight, fast,
 feature-rich, etc).
 
-[tip]
+
 TIP: See http://arquillian.org[Arquillian.org] for a great quick-start
 tutorial on Arquillian itself.

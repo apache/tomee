@@ -82,4 +82,6 @@ InitialContext ctx = new InitialContext(p);
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
 ----
 
-== Remote Client using @EJB Injection see here: ejb-refs
+== Remote Client using @EJB Injection
+
+See link:ejb-refs.html[ejb-refs].

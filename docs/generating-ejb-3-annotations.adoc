@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Generating EJB 3 annotations
+
 
 The OpenEJB Eclipse plugin is able to provide some assistance in helping
 you migrate EJB 2.x projects to EJB 3.0, by analyzing your `ejb-jar.xml`
@@ -43,10 +43,9 @@ Select or deselect the other options as appropriate, and select 'Next'.
 
 Options:
 
-[source,java]
-----
-* Alter SessionBean interfaces - This option makes your session beans
-----
+* Alter SessionBean interfaces - This option makes your session beans implement your remote / local interfaces as opposed to jakarta.ejb.SessionBean, and stops your remote / local interfaces extending jakarta.ejb.EJBObject.
+* Add `@Remote` and `@RemoteHome` annotations - This adds `@Remote` and `@RemoteHome` annotations appropriately.
+* Convert entity beans to POJOs - This option converts abstract CMP classes to POJOs generating simple getters and setters.
 
 implement your remote / local interfaces as opposed to
 jakarta.ejb.SessionBean, and stops your remote / local interfaces

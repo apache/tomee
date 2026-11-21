@@ -4,14 +4,14 @@
 :jbake-type: page
 :jbake-status: published
 
-= Accessing EJBs Locally
+== Accessing EJBs Locally
 
 When OpenEJB is embedded in your app, server, IDE, or JUnit, you can use
 what we call the Local Server and avoid the network overhead and enjoy
 an easy way to embed OpenEJB. Instead of putting the app in the server,
 put the server in the app!
 
-= Say what?! A local server?
+== Say what?! A local server?
 
 Yes, you read correctly. OpenEJB can be embedded and treated as your
 very own personal EJB container.
@@ -28,12 +28,12 @@ out completely!
 So, if you wish to access ejbs locally and not in client/server mode,
 you can do so by embedding OpenEJB as a library and accessing ejbs
 through OpenEJB's built-in IntraVM (Local) Server. Why would someone
-want to do this? * Your application is a server or other middleware *
-You want to write an app that can be both stand alone _and_ distributed
-* To test your EJBs with JUnit and don't want to start/stop servers and
-other nonsense * Imagine the power from being able to use your IDE
-debugger to step from your Client all the way into your EJB and back
-with no remote debugging voodoo.
+want to do this?
+
+* Your application is a server or other middleware
+* You want to write an app that can be both stand alone _and_ distributed
+* To test your EJBs with JUnit and don't want to start/stop servers and other nonsense
+* Imagine the power from being able to use your IDE debugger to step from your Client all the way into your EJB and back with no remote debugging voodoo.
 
 In this case, your application, test suite, IDE, or client accesses
 beans as you would from any other EJB Server. The EJB Server just
@@ -49,6 +49,6 @@ things. All it does is dish out proxies to your app that can be used to
 shoot calls right into the EJB Container. Very light, very fast, very
 easy for testing, debugging, developing, etc.
 
-= Embedding
+== Embedding
 
 See link:embedding.html[Embedding] for details.

@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Things to watch out for
+== Things to watch out for
 
 == Critical: Always set jta-data-source and non-jta-data-source
 
@@ -39,8 +39,11 @@ EntityManager in the scope of the transaction started around its method
 and returns some persistent objects, by the time you get them the
 transaction has completed and now the objects are detached.
 
-=== Solutions 1. Call EntityManager.merge(..) inside the bean code to
-reattach your object. 1. Use PersistenceContextType.EXTENDED as in
+=== Solutions
+
+. Call EntityManager.merge(..) inside the bean code to reattach your object.
+. Use PersistenceContextType.EXTENDED as in `@PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.EXTENDED)` for EntityManager refs instead of the default of PersistenceContextType.TRANSACTION.
+. If testing, use a technique to execute transactions in your test code. That's described here in Unit testing transactions
 '@PersistenceContext(unitName = "movie-unit", type =
 PersistenceContextType.EXTENDED)' for EntityManager refs instead of the
 default of PersistenceContextType.TRANSACTION. 1. If testing, use a

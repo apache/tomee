@@ -21,7 +21,7 @@ apache-openejb-[version]\NOTICE
 apache-openejb-[version]\README.txt
 ----
 
-= Directories
+== Directories
 
 == bin/
 

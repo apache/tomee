@@ -5,14 +5,14 @@
 :jbake-status: published
 
 
-= What is a Deployment ID?
+== What is a Deployment ID?
 
 Every bean deployed in OpenEJB has a unique deployment-id that
 identifies it within the scope of the entire container system. The
 server and container system refer beans at run-time using the bean's
 deployment id.
 
-== Like ejb-name
+=== Like ejb-name
 
 This deployment id is much like the `<ejb-name>` element of the `ejb-jar.xml`, with
 one very important difference. The `<ejb-name>` is only required to be unique within
@@ -26,7 +26,7 @@ Furthermore, users should be able to buy a packaged set of beans (a jar
 with an `ejb-jar.xml` in it) and deploy it into an EJB Container without
 modification.
 
-== The ejb-name is not unique
+=== The ejb-name is not unique
 
 Let's consider this, what happens if two vendors each sell a package
 (jar) that contains a bean with the PurchaseOrder? Both are completely
@@ -42,7 +42,7 @@ and deploy it into an EJB Container without modification. This is all
 fine and dandy, but it still leaves it up to the EJB Container/Server
 providers to settle the difference.
 
-== The deployment-id is unique
+=== The deployment-id is unique
 
 OpenEJB solves this with the OpenEJB-specific deployment id. By
 requiring that each bean deployed into OpenEJB has a unique name, we can
@@ -51,7 +51,7 @@ Furthermore, it allows you to deploy different versions of the same
 package several times in the same container system, each time giving the
 beans new deployment ids.
 
-== Using ejb-name as deployment-id anyway
+=== Using ejb-name as deployment-id anyway
 
 If you're lazy -- as any truly great programmer should be -- and don't
 want to type a deployment id for each bean every time you deploy a jar,
@@ -61,9 +61,9 @@ the bean's OpenEJB deployment id. This leaves it up to you to guarantee
 that bean's ejb-name will be unique across all beans and jars in the
 container system. In other words, be very careful with the -D option!
 
-= How is it used?
+== How is it used?
 
-== In the container system
+=== In the container system
 
 In the container system, the deployment id is used to index the bean in
 a system-wide registry. This registry is referred to on every call made
@@ -71,7 +71,7 @@ in the container system. Being able to safely hash and cache bean
 information by id is a must. This stresses the importance of unique ids
 for every bean deployed in OpenEJB.
 
-== In the Local Server
+=== In the Local Server
 
 The Local (IntraVM) Server is an integral part of the container system
 and the two are, in many ways, inseparable. The Local Server takes care
@@ -118,15 +118,18 @@ javax.naming.NameNotFoundException.
 In short...
 
 For beans:
+
 - Each bean has its own private, personalized JNDI namespace
 - The names in it are the same names it uses in its `ejb-jar.xml`
 - Beans can only access their private namespace, period
 
-For non-beans (everyone else): - Non-bean clients share the public,
-global JNDI namespace - The names in it are the deployment ids of all
-the beans - Non-bean clients can only access the one global namespace
+For non-beans (everyone else):
 
-== In the Remote Server
+- Non-bean clients share the public, global JNDI namespace
+- The names in it are the deployment ids of all the beans
+- Non-bean clients can only access the one global namespace
+
+=== In the Remote Server
 
 The Remote Server has a public, global namespace just as the Local
 Server does. The difference being that the Remote Server only serves
@@ -147,7 +150,7 @@ Object bean = initialContext.lookup("/my/bean/Foo");
 ...
 ----
 
-= What happens if there is a duplicate deployment ID?
+== What happens if there is a duplicate deployment ID?
 
 The deployment ID uniquely identifies the bean in the OpenEJB container
 system. Therefore, no two beans can share the same deployment ID.

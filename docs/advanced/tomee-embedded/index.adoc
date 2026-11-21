@@ -55,7 +55,7 @@ The default configuration allows to start tomee without issue but you can desire
 |tempDir|${java.io.tmpdir}/tomee-embedded_${timestamp}|tomcat needs a docBase, in case you don't provide one, one will be created there
 |webResourceCached |true|should web resources be cached by tomcat (set false in frontend dev)
 |configuration-location|-|location (classpath or file) to a .properties to configure the server
-[pre-task|-|Runnable or org.apache.tomee.embedded.LifecycleTask implementations to execute before the container starts
+|pre-task|-|Runnable or org.apache.tomee.embedded.LifecycleTask implementations to execute before the container starts
 |classes-filter|-|implementation of a custom xbean Filter to ignore not desired classes during scanning
 |basic|-|set /* under BASIC authentication for the realm "Security", authentication role being "*"
 |===
@@ -108,8 +108,8 @@ NOTE: if you already do a custom shade/fatjar this is not really impacting since
 
 `FatApp` main (same package as tomee embedded `Main`) just wraps the default main ensuring:
 
-- ̀`--as-war` is used
-- ̀`--single-classloader` is used
+- `--as-war` is used
+- `--single-classloader` is used
 - `--configuration-location=tomee-embedded.properties` is set if `tomee-embedded.properties` is found in the classpath
 
 == configuration-location

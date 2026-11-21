@@ -4,8 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= InitialContext
-properties
+== InitialContext properties
 
 You can configure data sources from within your test case (avoiding the
 need for an `openejb.xml` entirely) like so:
@@ -37,7 +36,6 @@ p.put("myDataSource.JdbcUrl", "jdbc:derby:myDatabaseOne;create=true");
 p.put("myDataSourceTwo", "new://Resource?type=DataSource&classpath=/path/to/driverVersionTwo.jar");
 p.put("myDataSourceTwo.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
 p.put("myDataSource.JdbcUrl", "jdbc:derby:myDatabaseTwo;create=true");
-[source,java]
 ----
 
 This will allow an application to communicate through legacy drivers to

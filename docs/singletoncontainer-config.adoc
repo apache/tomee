@@ -36,24 +36,15 @@ is specified that is not supported by the declared SingletonContainer a
 warning will be logged. If a SingletonContainer is needed by the
 application and one is not declared, TomEE will create one dynamically
 using default settings. Multiple SingletonContainer declarations are
-allowed. # Supported Properties
+allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-accessTimeout
-
-time
-
-30 seconds
-
-Specifies the maximum time an invocation could wait for the `@Singleton`
-bean instance to become available before giving up.
+[options="header"]
+|===
+|Property |Type |Default |Description
+|accessTimeout |time |30 seconds |Specifies the maximum time an invocation could wait for the `@Singleton` bean instance to become available before giving up.
+|===
 
 == accessTimeout
 

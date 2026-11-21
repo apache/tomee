@@ -5,15 +5,15 @@
 :jbake-status: published
 
 
-= NAME
+== NAME
 
 openejb validate - OpenEJB Validation Tool
 
-= SYNOPSIS
+== SYNOPSIS
 
 openejb validate [options] jarfiles
 
-= NOTE
+== NOTE
 
 The OpenEJB Validation tool must be executed from the OPENEJB_HOME
 directory. This is the directory where OpenEJB was installed or
@@ -45,22 +45,25 @@ in shorthand as shown below.
 
 _openejb validate -help_
 
-= DESCRIPTION
+== DESCRIPTION
 
-The validation tool currently checks for the following things: * Does
-the Jar have all the ejb-class class files * Does the Jar have all the
-home class files * Does the Jar have all the remote class files * Is the
-ejb-class a sub-interface of SessionBean or EntityBean * Is the home a
-sub-interface of EJBHome * Is the remote a sub-interface of EJBObject *
-Are all the methods in the remote interface implemented in the ejb-class
-* Are there create methods in the home interface * Are the create
-methods in the home interface implemented in the ejb-class * Are the
-required post create methods in the ejb-class of EntityBeans * Are there
-any create methods in the ejb-class, but not in the home interface
+The validation tool currently checks for the following things:
+
+* Does the Jar have all the ejb-class class files
+* Does the Jar have all the home class files
+* Does the Jar have all the remote class files
+* Is the ejb-class a sub-interface of SessionBean or EntityBean
+* Is the home a sub-interface of EJBHome
+* Is the remote a sub-interface of EJBObject
+* Are all the methods in the remote interface implemented in the ejb-class
+* Are there create methods in the home interface
+* Are the create methods in the home interface implemented in the ejb-class
+* Are the required post create methods in the ejb-class of EntityBeans
+* Are there any create methods in the ejb-class, but not in the home interface
 
 More checks will be added in the future.
 
-= OPTIONS
+== OPTIONS
 
 -v
 
@@ -97,7 +100,7 @@ Print this help message.
 
 Show examples of how to use the options.
 
-= COMMON ISSUES
+== COMMON ISSUES
 
 == Mislocated class or NoClassDefFoundError
 

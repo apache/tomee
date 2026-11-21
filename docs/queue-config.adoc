@@ -33,18 +33,12 @@ variable substitution. Properties are not case-sensitive. If a property
 is specified that is not supported by the declared Queue a warning will
 be logged. If a Queue is needed by the application and one is not
 declared, TomEE will create one dynamically using default settings.
-Multiple Queue declarations are allowed. # Supported Properties
+Multiple Queue declarations are allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-destination
-
-String
-
-Specifies the name of the queue
+[options="header"]
+|===
+|Property |Type |Default |Description
+|destination |String | |Specifies the name of the queue
+|===

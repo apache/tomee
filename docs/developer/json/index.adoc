@@ -178,7 +178,8 @@ TomEE uses by default Johnzon as JAX-RS provider for versions 7.x. If you want h
 </openejb-jar>
 ----
 
-2. Create a WEB-INF/resources.xml to define johnzon service which will be used to instantiate the provider
+[start=2]
+. Create a WEB-INF/resources.xml to define johnzon service which will be used to instantiate the provider
 
 [source,xml]
 ----

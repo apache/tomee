@@ -142,7 +142,7 @@ line or via system properties. So it is possible to easily set the
 
 A bash example might look something like:
 
-[source,java]
+[source,bash]
 ----
 #!/bin/bash
 

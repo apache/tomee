@@ -28,8 +28,8 @@ An ApplicationComposer needs at minimum a module (the application you need to de
 
 To do so you have two cases:
 
-before TomEE 7.x: you can only write method(s) decorated with `@Module`
-since TomEE 7.x: you can skip it and use `@Classes` directly on the ApplicationComposer class as a shortcut for:
+* before TomEE 7.x: you can only write method(s) decorated with `@Module`
+* since TomEE 7.x: you can skip it and use `@Classes` directly on the ApplicationComposer class as a shortcut for:
 
 [source,java]
 ----
@@ -180,10 +180,10 @@ This annotation allows you to control which extensions are activated during the 
 === @AppResource
 This annotation allows injection of few particular test resources like:
 
-the test AppModule (application meta)
-the test Context (JNDI)
-the test ApplicationComposers (underlying runner)
-ContextProvider: allow to mock JAXRS contexts
+* the test AppModule (application meta)
+* the test Context (JNDI)
+* the test ApplicationComposers (underlying runner)
+* ContextProvider: allow to mock JAXRS contexts
 
 === @MockInjector
 Allows to mock EJB injections. It decorates a dedicated method returning an instance (or Class) implementing FallbackPropertyInjector.
@@ -204,7 +204,14 @@ using ApplicationComposer runner:
 ----
 
 using ApplicationComposerRule rule:
-public class MyTest { `@Rule` // or `@ClassRule` if you want the container/application lifecycle be bound to the class and not test methods public final ApplicationComposerRule rule = new ApplicationComposerRule(this); }
+
+[source,java]
+----
+public class MyTest {
+    @Rule // or @ClassRule if you want the container/application lifecycle be bound to the class and not test methods
+    public final ApplicationComposerRule rule = new ApplicationComposerRule(this);
+}
+----
 
 Tip: since TomEE 7.x ApplicationComposerRule is decomposed in 2 rules if you need: ContainerRule and DeployApplication. Using JUnit RuleChain you can chain them to get the same behavior as ApplicationComposerRule or better deploy multiple ApplicationComposer models and controlling their deployment ordering (to mock a remote service for instance).
 

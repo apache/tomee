@@ -62,122 +62,25 @@ is specified that is not supported by the declared TransactionManager a
 warning will be logged. If a TransactionManager is needed by the
 application and one is not declared, TomEE will create one dynamically
 using default settings. Multiple TransactionManager declarations are
-allowed. # Supported Properties
+allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-adler32Checksum
-
-boolean
-
-true
-
-Requires TxRecovery
-
-bufferSizeKb
-
-int
-
-32
-
-Requires TxRecovery
-
-checksumEnabled
-
-boolean
-
-true
-
-Requires TxRecovery
-
-defaultTransactionTimeout
-
-time
-
-10 minutes
-
-flushSleepTime
-
-time
-
-50 Milliseconds
-
-Requires TxRecovery
-
-logFileDir
-
-String
-
-txlog
-
-Requires TxRecovery
-
-logFileExt
-
-String
-
-log
-
-Requires TxRecovery
-
-logFileName
-
-String
-
-howl
-
-Requires TxRecovery
-
-maxBlocksPerFile
-
-int
-
--1
-
-Requires TxRecovery
-
-maxBuffers
-
-int
-
-0
-
-Requires TxRecovery
-
-maxLogFiles
-
-int
-
-2
-
-Requires TxRecovery
-
-minBuffers
-
-int
-
-4
-
-Requires TxRecovery
-
-threadsWaitingForceThreshold
-
-int
-
--1
-
-Requires TxRecovery
-
-txRecovery
-
-boolean
-
-false
-
-When set to true, Howl logging is enabled
+[options="header"]
+|===
+|Property |Type |Default |Description
+|adler32Checksum |boolean |true |Requires TxRecovery
+|bufferSizeKb |int |32 |Requires TxRecovery
+|checksumEnabled |boolean |true |Requires TxRecovery
+|defaultTransactionTimeout |time |10 minutes |
+|flushSleepTime |time |50 Milliseconds |Requires TxRecovery
+|logFileDir |String |txlog |Requires TxRecovery
+|logFileExt |String |log |Requires TxRecovery
+|logFileName |String |howl |Requires TxRecovery
+|maxBlocksPerFile |int |-1 |Requires TxRecovery
+|maxBuffers |int |0 |Requires TxRecovery
+|maxLogFiles |int |2 |Requires TxRecovery
+|minBuffers |int |4 |Requires TxRecovery
+|threadsWaitingForceThreshold |int |-1 |Requires TxRecovery
+|txRecovery |boolean |false |When set to true, Howl logging is enabled
+|===

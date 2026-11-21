@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Short Overview
+== Short Overview
 
 == Configuration Properties
 
@@ -17,9 +17,11 @@ pointed by the property is searched for resources before openejb.home.
 * _openejb.loader_ - OpenEJB loader that's responsible for loading EJBs.
 There are 3 different loader types: +
 ** _tomcat-webapp_ - set it when inside of Tomcat scoped at just the
-webapp, aka. link:collapsed-ear.html[Collapsed EAR] ** _tomcat_ - set it
-when inside of Tomcat scoped for all webapps to share ** _system_ (also:
-bootstrap) ** _embedded_ (also: noload)
+webapp, aka. link:collapsed-ear.html[Collapsed EAR]
+** _tomcat_ - set it
+when inside of Tomcat scoped for all webapps to share
+** _system_ (also: bootstrap)
+** _embedded_ (also: noload)
 * _openejb.configurator_ (default:
 _org.openejb.alt.config.ConfigurationFactory_ ) - a class that builds
 org.openejb.alt.assembler.classic.OpenEjbConfiguration object;
@@ -69,11 +71,15 @@ system (perhaps embedded in Swing apps, in Tomcat, running as a
 standalone Server, or even in Groovy as Mr. Strachan did!) but without
 the need to copy all the OpenEJB system libraries everywhere.
 
-_openejb.home_ * can be set explicitly via a system property. * if not
-set it default's to user.dir, which is the current working directory.
+_openejb.home_
 
-_openejb.base_ * can be set explicitly via a system property. * If not
-set it default's to openejb.home.
+* can be set explicitly via a system property.
+* if not set it defaults to user.dir, which is the current working directory.
+
+_openejb.base_
+
+* can be set explicitly via a system property.
+* If not set it defaults to openejb.home.
 
 _openejb.configuration_ * can be set to explicitly point to the file
 containing your configuration. * If set to a relative path, we first

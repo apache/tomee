@@ -35,18 +35,12 @@ is specified that is not supported by the declared SecurityService a
 warning will be logged. If a SecurityService is needed by the
 application and one is not declared, TomEE will create one dynamically
 using default settings. Multiple SecurityService declarations are
-allowed. # Supported Properties
+allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-defaultUser
-
-String
-
-guest
+[options="header"]
+|===
+|Property |Type |Default |Description
+|defaultUser |String |guest |
+|===

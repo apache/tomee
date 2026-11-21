@@ -78,7 +78,7 @@ directly as shown below. Unfortunately, this does not work as the Java
 EE annotation classes do not permit usage on parameters. If you'd like
 to see that change as much as we do, definitely voice your support by
 sending a note to
-mailto:jsr-316-comments@jcp.org.html[jsr-316-comments@jcp.org]
+mailto:jsr-316-comments@jcp.org[jsr-316-comments@jcp.org]
 
 Not yet possible
 

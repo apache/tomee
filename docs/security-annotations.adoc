@@ -252,7 +252,7 @@ public class OpenSourceProjectBean implements Project {
 * Allow anyone logged-in or not to invoke 'svnCheckout'.
 * Allow _no one_ logged-in or not to invoke 'deleteProject'.
 
-= Illegal Usage
+== Illegal Usage
 
 Generally, security restrictions cannot be made on AroundInvoke methods
 and most callbacks.
@@ -279,13 +279,10 @@ public class MyStatefulBean implements  MyBusinessInterface  {
 
     @AroundInvoke
     @RolesAllowed({"committer"})
-    public Object invoke(InvocationContext invocationContext) throws
-----
+    public Object invoke(InvocationContext invocationContext) throws Exception {
+        return invocationContext.proceed();
+    }
 
-Exception \{ return invocationContext.proceed(); }
-
-[source,java]
-----
     @PostActivate
     @RolesAllowed({"committer"})
     public void activated(){

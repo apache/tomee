@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Sample persistence.xml
+== Sample persistence.xml
 
 For a unit called "movie-unit" using two datasources called
 "movieDatabase" and "movieDatabaseUnmanaged" the following

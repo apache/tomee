@@ -25,7 +25,7 @@ way to solve a problem without duplicating entire descriptors, please
 let us know. You should never have to go the long way to do something
 simple.
 
-= openejb.altdd.prefix
+== openejb.altdd.prefix
 
 To use this functionality, just set the new "openejb.altdd.prefix"
 system property or `InitialContext` property to something like "_test_",
@@ -69,7 +69,7 @@ be "test" and could be anything you choose. You can also have as many
 prefixed files as you need and could even go as far as to have one
 prefix per individual test.
 
-= More than one prefix
+== More than one prefix
 
 It is possible to have several prefixes, specified in order of
 preference, so that it is possible to avoid duplicating descriptors that

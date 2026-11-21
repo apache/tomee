@@ -60,133 +60,27 @@ is specified that is not supported by the declared StatelessContainer a
 warning will be logged. If a StatelessContainer is needed by the
 application and one is not declared, TomEE will create one dynamically
 using default settings. Multiple StatelessContainer declarations are
-allowed. # Supported Properties
+allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-accessTimeout
-
-time
-
-30 seconds
-
-Specifies the time an invocation should wait for an instance of the pool
-to become available.
-
-callbackThreads
-
-int
-
-5
-
-The number of threads for constructing and destroying beans.
-
-closeTimeout
-
-time
-
-5 minutes
-
-Maximum time to wait for instances to be destroyed when shutting down
-the pool
-
-garbageCollection
-
-boolean
-
-false
-
-Allows Garbage Collection to be used as a mechanism for shrinking the
-pool.
-
-idleTimeout
-
-time
-
-0 minutes
-
-Specifies the maximum time that an instance should be allowed to sit
-idly in the pool without use before it should be retired and removed.
-
-maxAge
-
-time
-
-0 hours
-
-Specifies the maximum time that an instance should live before it should
-be retired and removed from use.
-
-maxAgeOffset
-
-int
-
--1
-
-Applies to MaxAge usage and would rarely be changed, but is a nice
-feature to understand.
-
-maxSize
-
-int
-
-10
-
-Specifies the size of the instance pool for this stateless SessionBean
-container.
-
-minSize
-
-int
-
-0
-
-Specifies the minimum number of bean instances that should be in the
-pool for each bean.
-
-replaceAged
-
-boolean
-
-true
-
-When `ReplaceAged` is enabled, any instances in the pool that expire due
-to reaching their `MaxAge` will be replaced immediately so that the pool
-will remain at its current size.
-
-replaceFlushed
-
-boolean
-
-false
-
-When `ReplaceFlushed` is enabled, any instances in the pool that are
-flushed will be replaced immediately so that the pool will remain at its
-current size.
-
-strictPooling
-
-boolean
-
-true
-
-StrictPooling tells the container what to do when the pool reaches its
-maximum size and there are incoming requests that need instances.
-
-sweepInterval
-
-time
-
-5 minutes
-
-The frequency in which the container will sweep the pool and evict
-expired instances.
+[options="header"]
+|===
+|Property |Type |Default |Description
+|accessTimeout |time |30 seconds |Specifies the time an invocation should wait for an instance of the pool to become available.
+|callbackThreads |int |5 |The number of threads for constructing and destroying beans.
+|closeTimeout |time |5 minutes |Maximum time to wait for instances to be destroyed when shutting down the pool
+|garbageCollection |boolean |false |Allows Garbage Collection to be used as a mechanism for shrinking the pool.
+|idleTimeout |time |0 minutes |Specifies the maximum time that an instance should be allowed to sit idly in the pool without use before it should be retired and removed.
+|maxAge |time |0 hours |Specifies the maximum time that an instance should live before it should be retired and removed from use.
+|maxAgeOffset |int |-1 |Applies to MaxAge usage and would rarely be changed, but is a nice feature to understand.
+|maxSize |int |10 |Specifies the size of the instance pool for this stateless SessionBean container.
+|minSize |int |0 |Specifies the minimum number of bean instances that should be in the pool for each bean.
+|replaceAged |boolean |true |When `ReplaceAged` is enabled, any instances in the pool that expire due to reaching their `MaxAge` will be replaced immediately so that the pool will remain at its current size.
+|replaceFlushed |boolean |false |When `ReplaceFlushed` is enabled, any instances in the pool that are flushed will be replaced immediately so that the pool will remain at its current size.
+|strictPooling |boolean |true |StrictPooling tells the container what to do when the pool reaches its maximum size and there are incoming requests that need instances.
+|sweepInterval |time |5 minutes |The frequency in which the container will sweep the pool and evict expired instances.
+|===
 
 == accessTimeout
 

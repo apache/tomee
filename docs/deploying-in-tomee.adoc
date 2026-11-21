@@ -4,7 +4,8 @@
 :jbake-status: published
 
 
-NOTE: Licensed to the Apache Software Foundation (ASF) under
+////
+Licensed to the Apache Software Foundation (ASF) under
 one or more contributor license agreements. See the NOTICE file
 distributed with this work for additional information regarding
 copyright ownership. The ASF licenses this file to you under the Apache
@@ -16,6 +17,7 @@ License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for
 the specific language governing permissions and limitations under the
 License.
+////
 
 = Deploying in TomEE
 
@@ -61,7 +63,9 @@ You should not worry though, as it is an accepted feature of Java EE 6.
 ejb-jar, and one for each WAR file.
 * Servlets can see EJBs, but EJBs cannot see Servlets.
 
-To pull that off, J2EE has to kill you on packaging: - You cannot have
+To pull that off, J2EE has to kill you on packaging:
+
+* You cannot have
 EJB classes and Servlet classes in the same archive.
 
 * You need at least three archives to combine Servlets and EJBs; 1 EAR

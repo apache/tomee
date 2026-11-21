@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-= OpenEJB JSR-107 (JCACHE) Integration
+== OpenEJB JSR-107 (JCACHE) Integration
 
 This page is for the collaboration for those involved with the
 integration of JSR-107 into OpenEJB.

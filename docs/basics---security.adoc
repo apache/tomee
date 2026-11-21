@@ -17,7 +17,9 @@ annotation based security.
 There's a few things that should be noted about security from the server
 side perspective.
 
-=== Security Propagation Note, this is partially documented in the EJB 3
+=== Security Propagation
+
+Note, this is partially documented in the EJB 3
 spec section 14.8.1.1.
 
 [arabic]

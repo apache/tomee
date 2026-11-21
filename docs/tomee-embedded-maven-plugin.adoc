@@ -607,7 +607,7 @@ force webapp to be reloadable
 (no description)
 
 - Type: boolean
- -Required: No
+- Required: No
 - User Property: `tomee-embedded-plugin.skipHttp`
 - Default: `false`
 

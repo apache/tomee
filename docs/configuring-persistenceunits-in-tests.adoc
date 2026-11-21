@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Overriding the persistence.xml
+== Overriding the persistence.xml
 
 The most common situation in EJB related testing by far is the need to
 alter your `persistence.xml` for a test environment.

@@ -4,28 +4,14 @@
 :jbake-type: page
 :jbake-status: published
 
-= Client/Server transports
+== Client/Server transports
 
-jar
-
-transport description
-
-openejb-ejbd-3.0.jar
-
-provides the 'ejbd' protocol. A binary protocol traveling over a socket
-
-openejb-derbynet-3.0.jar
-
-allows for derby to be accessed via its network driver
-
-openejb-hsql-3.0.jar
-
-allows for hsqldb to be accessed via its network driver
-
-openejb-activemq-3.0.jar
-
-supports remote jms clients via activemq
-
-openejb-telnet-3.0.jar
-
-allows for connecting to the server via telnet for monitoring
+[options="header"]
+|===
+|jar|transport description
+|openejb-ejbd-3.0.jar|provides the 'ejbd' protocol. A binary protocol traveling over a socket
+|openejb-derbynet-3.0.jar|allows for derby to be accessed via its network driver
+|openejb-hsql-3.0.jar|allows for hsqldb to be accessed via its network driver
+|openejb-activemq-3.0.jar|supports remote jms clients via activemq
+|openejb-telnet-3.0.jar|allows for connecting to the server via telnet for monitoring
+|===

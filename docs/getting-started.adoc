@@ -4,13 +4,20 @@
 :jbake-type: page
 :jbake-status: published
 
-== The following instructions are written using Eclipse 3.2.
+The following instructions are written using Eclipse 3.2.
 We will refer to the installation location of OpenEJB as OPENEJB_HOME
 
 Here are some basic steps you need to perform to get started with
-OpenEJB 1. Download and install OpenEJB 1. Setup your development
-environment 1. Write an EJB 1. Write an EJB client 1. Start the server
-1. Deploy the EJB 1. Run the client 1. Stop the server
+OpenEJB:
+
+. Download and install OpenEJB
+. Setup your development environment
+. Write an EJB
+. Write an EJB client
+. Start the server
+. Deploy the EJB
+. Run the client
+. Stop the server
 
 == 1. Download and Install OpenEJB
 
@@ -100,7 +107,7 @@ public class GreetingBean implements Greeting {
 in the OPENEJB_HOME/apps directory.
 . Open the command prompt and type in the following command:
 +
-d:-3.0.0-SNAPSHOT > bindeploy apps.jar
+`D:\openejb-3.0.0-SNAPSHOT>bin\openejb deploy apps\greeting.jar`
 
 This should give you the following output:
 
@@ -108,7 +115,7 @@ This should give you the following output:
 ----
 D:\openejb-3.0.0-SNAPSHOT>bin\openejb deploy apps\greeting.jar
 
-Application deployed successfully at \{0\}
+Application deployed successfully at {0}
 
 App(id=D:\openejb-3.0.0-SNAPSHOT\apps\greeting.jar)
 
@@ -166,9 +173,10 @@ My First Remote Stateless Session Bean
 
 == 8. Stop the server
 
-There are two ways to stop the server: 1. You can press Ctrl+c on the
-command prompt to stop the server 1. On the command prompt type in the
-following command:
+There are two ways to stop the server:
+
+. You can press Ctrl+c on the command prompt to stop the server
+. On the command prompt type in the following command:
 
 [source,java]
 ----

@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Overview
+== Overview
 
 As noted in the Injection of
 env-entry Example, the EJB 3.0 supported env-entry types are fairly
@@ -29,9 +29,9 @@ The source for this example is the "custom-injection" directory located
 in the openejb-examples.zip available on the
 https://tomee.apache.org/download-ng.html[download page].
 
-= The Code
+== The Code
 
-== Bean Class
+=== Bean Class
 
 [source,java]
 ----
@@ -82,7 +82,7 @@ public class Stratocaster {
 }
 ----
 
-== The META-INF/env-entries.properties file
+=== The META-INF/env-entries.properties file
 
 [source,properties]
 ----
@@ -93,7 +93,7 @@ pickups=S,S,S
 style=VINTAGE
 ----
 
-== The Custom Type and Editor
+=== The Custom Type and Editor
 
 Support for java.lang.Enum types is already built-in, but we've decided
 we'd like to allow abbreviated versions of the enum constants to be
@@ -133,7 +133,7 @@ public enum Pickup {
 }
 ----
 
-= Test Case
+== Test Case
 
 [source,java]
 ----
@@ -168,14 +168,14 @@ public class StratocasterTest extends TestCase {
 }
 ----
 
-= Running it
+== Running it
 
 Running the example is fairly simple. In the "custom-injection"
-directory of the openejb:download.html[examples zip], just run:
+directory of the https://tomee.apache.org/download-ng.html[examples zip], just run:
 
-___________________
+----
 $ mvn clean install
-___________________
+----
 
 Which should create output like the following.
 

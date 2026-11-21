@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-= Adding a JavaAgent
+== Adding a JavaAgent
 
 NOTE: The java agent is only required if using OpenJPA as your
 persistence provider or if using CMP.

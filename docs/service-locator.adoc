@@ -10,7 +10,7 @@ really fun service locator code. Creating the exact layout you want
 using the exact data you want means you can create robust libraries for
 pulling things out of JNDI.
 
-= Lookup examples
+== Lookup examples
 
 To get the creative juices flowing here are a few examples of lookup
 methods you could create for your service locator, the jndi name formats
@@ -47,8 +47,12 @@ public class MyLocator {
 }
 ----
 
-== Just the interface Usable with JNDI name formats ending in the full
-class name of the interface such as: - \{interfaceClass}
+== Just the interface
+
+Usable with JNDI name formats ending in the full
+class name of the interface such as:
+
+* \{interfaceClass}
 
 [source,java]
 ----
@@ -80,13 +84,17 @@ or deploymentID and ending in the full class name of the interface
 
 * \{ejbName}/\{interfaceClass}
 * \{deploymentId}/\{interfaceClass}
-+
-public T lookup(String prefix, Class type) \{ return (T) lookup(prefix +
-"/" + type.getName()); }
-+
-MyLocator locator = new MyLocator(); Widget redWidget =
-locator.lookup("RedWidgetBean", Widget.class); +
+
+[source,java]
+----
+public <T> T lookup(String prefix, Class<T> type) {
+    return (T) lookup(prefix + "/" + type.getName());
+}
+
+MyLocator locator = new MyLocator();
+Widget redWidget = locator.lookup("RedWidgetBean", Widget.class);
 Widget blueWidget = locator.lookup("BlueWidgetBean", Widget.class);
+----
 
 Or with a common prefix or with a common prefix supplied in constructor
 such as: - \{moduleId}/\{ejbName}/\{interfaceClass} -

@@ -29,7 +29,7 @@ reach the endpoint. Applies server-wide, including datasource references; it
 does not add per-user authorization. See link:ejbd-transport.html[Ejbd Transport]
 for compatibility and configuration details.
 
-.bind, <service prefix>.port, <service prefix>.disabled, <service
+<service prefix>.bind, <service prefix>.port, <service prefix>.disabled, <service
 prefix>.threads
 
 host or IP, port, bool

@@ -26,10 +26,14 @@ transaction. Examples are
 
 == Behaviour
 
-The basic default behaviours are 1. A transaction starts at the
+The basic default behaviours are:
+
+. A transaction starts at the
 beginning of the first EJB method call, in a chain of calls that are
-participating in the given transaction 1. A transaction ends at the end
-of the first EJB method, in the same chain 1. If a bean that has started
+participating in the given transaction
+. A transaction ends at the end
+of the first EJB method, in the same chain
+. If a bean that has started
 a transaction, uses another bean, that bean will automatically use the
 same transaction as the calling bean.
 

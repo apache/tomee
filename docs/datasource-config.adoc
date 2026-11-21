@@ -83,7 +83,7 @@ myDataSource.validationQuery =
 ----
 
 Properties and xml can be mixed. Properties will override the xml
-allowing for easy configuration change without the need for $\{} style
+allowing for easy configuration change without the need for `${}` style
 variable substitution. Properties are not case-sensitive. If a property
 is specified that is not supported by the declared DataSource a warning
 will be logged. If a DataSource is needed by the application and one is
@@ -96,254 +96,39 @@ MySQL, Oracle and other common databases.
 
 == Supported Properties
 
-Property
-
-Type
-
-Default
-
-Description
-
-accessToUnderlyingConnectionAllowed
-
-boolean
-
-false
-
-If true the raw physical connection to the database can be accessed
-
-alternateUsernameAllowed
-
-boolean
-
-false
-
-If true allow an alternate username and password to be specified on the
-connection, rather than those specified in the DataSource definition.
-
-connectionProperties
-
-String
-
-The connection properties that will be sent to the JDBC driver when
-establishing new connections
-
-defaultAutoCommit
-
-boolean
-
-true
-
-The default auto-commit state of new connections
-
-defaultReadOnly
-
-String
-
-The default read-only state of new connections If not set then the
-setReadOnly method will not be called. (Some drivers don't support read
-only mode, ex: Informix)
-
-definition
-
-String
-
-ignoreDefaultValues
-
-boolean
-
-false
-
-use only all set values in this config will need a lot of properties but
-allow to not set some values
-
-initialSize
-
-int
-
-0
-
-The size to reach when creating the datasource.
-
-jdbcDriver
-
-String
-
-org.hsqldb.jdbcDriver
-
-Driver class name
-
-jdbcUrl
-
-java.net.URI
-
-jdbc:hsqldb:mem:hsqldb
-
-Url for creating connections
-
-jtaManaged
-
-boolean
-
-true
-
-Determines whether or not this data source should be JTA managed or user
-managed.
-
-maxActive
-
-int
-
-20
-
-The maximum number of active connections that can be allocated from this
-pool at the same time, or a negative number for no limit. N.B. When
-using dbcp2 with TomEE 7 ("DataSourceCreator dbcp"), "MaxTotal" should
-be used as opposed to "MaxActive".
-
-maxIdle
-
-int
-
-20
-
-The maximum number of connections that can remain idle in the pool,
-without extra ones being released, or a negative number for no limit.
-
-maxOpenPreparedStatements
-
-int
-
-0
-
-The maximum number of open statements that can be allocated from the
-statement pool at the same time, or zero for no limit.
-
-maxWaitTime
-
-time
-
--1 millisecond
-
-The maximum amount of time that the pool will wait (when there are no
-available connections) for a connection to be returned before throwing
-an exception, or -1 to wait indefinitely.
-
-minEvictableIdleTime
-
-time
-
-30 minutes
-
-The minimum amount of time a connection may sit idle in the pool before
-it is eligible for eviction by the idle connection evictor (if any).
-
-minIdle
-
-int
-
-0
-
-The minimum number of connections that can remain idle in the pool,
-without extra ones being created, or zero to create none.
-
-numTestsPerEvictionRun
-
-int
-
-3
-
-The number of connections to examine during each run of the idle
-connection evictor thread (if any).
-
-password
-
-String
-
-Default password
-
-passwordCipher
-
-String
-
-PlainText
-
-poolPreparedStatements
-
-boolean
-
-false
-
-If true, a statement pool is created for each Connection and
-PreparedStatements created by one of the following methods are pooled:
-
-serviceId
-
-String
-
-testOnBorrow
-
-boolean
-
-true
-
-If true connections will be validated before being returned from the
-pool. If the validation fails, the connection is destroyed, and a new
-connection will be retrieved from the pool (and validated).
-
-testOnReturn
-
-boolean
-
-false
-
-If true connections will be validated before being returned to the pool.
-If the validation fails, the connection is destroyed instead of being
-returned to the pool.
-
-testWhileIdle
-
-boolean
-
-false
-
-If true connections will be validated by the idle connection evictor (if
-any). If the validation fails, the connection is destroyed and removed
-from the pool
-
-timeBetweenEvictionRuns
-
-time
-
--1 millisecond
-
-The number of milliseconds to sleep between runs of the idle connection
-evictor thread. When set to a negative number, no idle connection
-evictor thread will be run.
-
-userName
-
-String
-
-sa
-
-Default user name
-
-validationQuery
-
-String
-
-The SQL query that will be used to validate connections from this pool
-before returning them to the caller. If specified, this query MUST be an
-SQL SELECT statement that returns at least one row.
-
-LogSql
-
-boolean
-
-false
-
-Whether SQL queries should be logged or not
+[options="header"]
+|===
+| Property | Type | Default | Description
+| accessToUnderlyingConnectionAllowed | boolean | false | If true the raw physical connection to the database can be accessed
+| alternateUsernameAllowed | boolean | false | If true allow an alternate username and password to be specified on the connection, rather than those specified in the DataSource definition.
+| connectionProperties | String |  | The connection properties that will be sent to the JDBC driver when establishing new connections
+| defaultAutoCommit | boolean | true | The default auto-commit state of new connections
+| defaultReadOnly | String |  | The default read-only state of new connections If not set then the setReadOnly method will not be called. (Some drivers don't support read only mode, ex: Informix)
+| definition | String |  |
+| ignoreDefaultValues | boolean | false | use only all set values in this config will need a lot of properties but allow to not set some values
+| initialSize | int | 0 | The size to reach when creating the datasource.
+| jdbcDriver | String | org.hsqldb.jdbcDriver | Driver class name
+| jdbcUrl | java.net.URI | jdbc:hsqldb:mem:hsqldb | Url for creating connections
+| jtaManaged | boolean | true | Determines whether or not this data source should be JTA managed or user managed.
+| maxActive | int | 20 | The maximum number of active connections that can be allocated from this pool at the same time, or a negative number for no limit. N.B. When using dbcp2 with TomEE 7 ("DataSourceCreator dbcp"), "MaxTotal" should be used as opposed to "MaxActive".
+| maxIdle | int | 20 | The maximum number of connections that can remain idle in the pool, without extra ones being released, or a negative number for no limit.
+| maxOpenPreparedStatements | int | 0 | The maximum number of open statements that can be allocated from the statement pool at the same time, or zero for no limit.
+| maxWaitTime | time | -1 millisecond | The maximum amount of time that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception, or -1 to wait indefinitely.
+| minEvictableIdleTime | time | 30 minutes | The minimum amount of time a connection may sit idle in the pool before it is eligible for eviction by the idle connection evictor (if any).
+| minIdle | int | 0 | The minimum number of connections that can remain idle in the pool, without extra ones being created, or zero to create none.
+| numTestsPerEvictionRun | int | 3 | The number of connections to examine during each run of the idle connection evictor thread (if any).
+| password | String |  | Default password
+| passwordCipher | String | PlainText |
+| poolPreparedStatements | boolean | false | If true, a statement pool is created for each Connection and PreparedStatements created by one of the following methods are pooled:
+| serviceId | String |  |
+| testOnBorrow | boolean | true | If true connections will be validated before being returned from the pool. If the validation fails, the connection is destroyed, and a new connection will be retrieved from the pool (and validated).
+| testOnReturn | boolean | false | If true connections will be validated before being returned to the pool. If the validation fails, the connection is destroyed instead of being returned to the pool.
+| testWhileIdle | boolean | false | If true connections will be validated by the idle connection evictor (if any). If the validation fails, the connection is destroyed and removed from the pool
+| timeBetweenEvictionRuns | time | -1 millisecond | The number of milliseconds to sleep between runs of the idle connection evictor thread. When set to a negative number, no idle connection evictor thread will be run.
+| userName | String | sa | Default user name
+| validationQuery | String |  | The SQL query that will be used to validate connections from this pool before returning them to the caller. If specified, this query MUST be an SQL SELECT statement that returns at least one row.
+| LogSql | boolean | false | Whether SQL queries should be logged or not
+|===
 
 == accessToUnderlyingConnectionAllowed
 
@@ -390,8 +175,7 @@ The allowed values for this property are:
 * `REPEATABLE_READ`
 * `SERIALIZABLE`
 
-Note: Most JDBC drivers do not support all isolation levels
-DefaultTransactionIsolation
+Note: Most JDBC drivers do not support all isolation levels.
 
 == initialSize
 

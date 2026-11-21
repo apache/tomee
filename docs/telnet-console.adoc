@@ -6,7 +6,7 @@
 
 NOTE: Availability: Since OpenEJB 0.9
 
-= Basic Usage
+== Basic Usage
 
 To use OpenEJB's Telnet Console, simply boot your server normally.
 
@@ -24,12 +24,17 @@ OpenEJB ready.
 [init]
 ----
 
-OpenEJB Remote Server ** Starting Services ** NAME IP PORT +
-webadmin 0.0.0.0 4203 +
-telnet 0.0.0.0 4202 +
-ejbd 0.0.0.0 4201 +
-admin 0.0.0.0 4200 +
-------- Ready!
+----
+OpenEJB Remote Server
+  ** Starting Services **
+  NAME      IP       PORT
+  webadmin  0.0.0.0  4203
+  telnet    0.0.0.0  4202
+  ejbd      0.0.0.0  4201
+  admin     0.0.0.0  4200
+-------
+Ready!
+----
 
 Then in another shell telnet in
 
@@ -41,16 +46,23 @@ _______________________
 ----
 Trying ::1...
 Connected to localhost.
-Escape character is '^]
-----
+Escape character is '^]'.
+OpenEJB Remote Server Console
+type 'help' for a list of commands
+[openejb] $ help
+stop
+exit
+system
+version
+lookup
+help
+[openejb] $ system
+Containers:
+ Default BMP Container
+ Default CMP Container
+ Default Stateful Container
+ Default Stateless Container
 
-'. OpenEJB Remote Server Console type 'help' for a list of commands
-[openejb] $ help stop exit system version lookup help [openejb] $ system
-Containers: Default BMP Container Default CMP Container Default Stateful
-Container Default Stateless Container
-
-[source,java]
-----
 Deployments:
  client/tests/stateful/EncBean
  client/tests/entity/cmp/RMI-over-IIOP/EJBHome
@@ -88,12 +100,11 @@ Deployments:
  httpd/session
  client/tests/entity/cmp/allowed_operations/EntityHome
  client/tests/stateless/RMI-over-IIOP/EJBHome
-[openejb]
+[openejb] $ exit
+Connection closed by foreign host.
 ----
 
-$ exit Connection closed by foreign host.
-
-= Configuring the Telnet Service
+== Configuring the Telnet Service
 
 The configuration of all server services (network facing services) is
 done in xinet.d style config files. The telnet shell is controlled via
@@ -117,7 +128,7 @@ ____________________________
 You can change the IP, port, and even the number of threads allowed to
 concurrently access the Telnet service via this file.
 
-= Disabling the Telnet Service
+== Disabling the Telnet Service
 
 Simply edit the config file and set 'disabled' to true
 
@@ -128,7 +139,7 @@ Simply edit the config file and set 'disabled' to true
 
 Then restart OpenEJB.
 
-= Restricting Access
+== Restricting Access
 
 It is unlikely you want just anyone to be able to log in and execute
 commands. While you can't restrict access on a user basis, yet, you can

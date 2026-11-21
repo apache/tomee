@@ -37,22 +37,29 @@ downloaded file to whichever directory you want to install OpenEJB in.
 
 After extracting the file contents, you should now see a directory named
 openejb-3.0. If you look under this directory, you will find a few more
-directories: - _bin_: Contains commands to start/stop the server (You
+directories:
+
+* _bin_: Contains commands to start/stop the server (You
 can also do a lot of other stuff like deploy/undeploy, but we will just
-talk about things needed to get you started) - _lib_: Contains several
+talk about things needed to get you started)
+* _lib_: Contains several
 jar files (you only need a few of these jars in your classpath to do
-EJB development) - _apps_: Once you create your EJB's and jar them up,
+EJB development)
+* _apps_: Once you create your EJB's and jar them up,
 you can place your jar file in this directory and start the server. The
-server will automatically deploy all the EJB's contained in this JAR. -
-_conf_: This directory contains all the configuration files. Although
+server will automatically deploy all the EJB's contained in this JAR.
+* _conf_: This directory contains all the configuration files. Although
 you may not see any file except for a README.txt file right now,
 after you start the server, the required configuration files will be
 automatically created. It is highly recommended to read the README.txt
-file under this directory - _logs_: Contains log files.
+file under this directory
+* _logs_: Contains log files.
 
 == Setup your development environment
 
-=== Create a working directory Assuming you are in your home directory,
+=== Create a working directory
+
+Assuming you are in your home directory,
 create a directory named projects
 
 [source,bash]
@@ -67,20 +74,30 @@ Go to the projects directory
 karan@poweredge:~$ cd projects
 ----
 
-We will do all our work in this directory. ### Install Java Download and
+We will do all our work in this directory.
+
+=== Install Java
+
+Download and
 install Java (version 5 or higher). Also set it up so that you can run
-the java and javac commands from any directory ### Set OPENEJB_HOME We
-will set up this variable to refer to the openejb install location.
+the java and javac commands from any directory
+
+=== Set OPENEJB_HOME
+
+We will set up this variable to refer to the openejb install location.
 
 [source,bash]
 ----
-karan@poweredge:~/projects$ export
+karan@poweredge:~/projects$ export OPENEJB_HOME=/home/karan/install/openejb-3.0
 ----
 
-OPENEJB_HOME=/home/karan/install/openejb-3.0
+== Write an EJB
 
-== Write an EJB Whatever files you create should be placed under the
-projects directory ### Create the Remote Interface Using your favorite
+Whatever files you create should be placed under the projects directory.
+
+=== Create the Remote Interface
+
+Using your favorite
 editor, create a file named Hello.java (shown below)
 
 [source,java]
@@ -93,7 +110,9 @@ public interface Hello{
 }
 ----
 
-=== Create the Bean Class Now create a file named HelloBean.java (shown
+=== Create the Bean Class
+
+Now create a file named HelloBean.java (shown
 below)
 
 [source,java]
@@ -108,7 +127,9 @@ public class HelloBean implements Hello{
 }
 ----
 
-=== Compile the source code Since we have imported the
+=== Compile the source code
+
+Since we have imported the
 jakarta.ejb.Stateless and jakarta.ejb.Remote annotations, we need these in
 our classpath to compile our source code. These annotations can be found
 in the $OPENEJB_HOME/lib/javaee-5.0-1.jar. Let's compile our source (make
@@ -116,15 +137,16 @@ sure you are in the projects directory)
 
 [source,bash]
 ----
-karan@poweredge:~/projects$ javac -cp $OPENEJB_HOME/lib/javaee-5.0-1.jar -d
+karan@poweredge:~/projects$ javac -cp $OPENEJB_HOME/lib/javaee-5.0-1.jar -d . *.java
 ----
-
-. *.java
 
 The above will compile all the .java files and also create the required
 packages. You should now see a package named org under the project's
-directory. All class files should be under org/acme directory. ###
-Package the EJB To package the EJB into a JAR, run the following command
+directory. All class files should be under org/acme directory.
+
+=== Package the EJB
+
+To package the EJB into a JAR, run the following command
 while you are in the projects directory
 
 [source,bash]
@@ -146,7 +168,9 @@ adding: org/acme/Hello.class(in = 203) (out= 168)(deflated 17%)
 adding: org/acme/HelloBean.class(in = 383) (out= 275)(deflated 28%)
 ----
 
-== Write an EJB Client Now we will write a Client class which will
+== Write an EJB Client
+
+Now we will write a Client class which will
 lookup the EJB , invoke the sayHello() business method and print the
 value returned from the method. While you are in the projects directory,
 create a new file named HelloClient.java . Add the following to this
@@ -160,25 +184,31 @@ import javax.naming.InitialContext;
 import javax.naming.Context;
 import javax.rmi.PortableRemoteObject;
 public class HelloClient{
-        public static void main(String[]
+    public static void main(String[] args) throws Exception {
+        Properties props = new Properties();
+        props.put(Context.INITIAL_CONTEXT_FACTORY,"org.apache.openejb.client.RemoteInitialContextFactory");
+        props.put(Context.PROVIDER_URL,"ejbd://127.0.0.1:4201");
+        Context ctx = new InitialContext(props);
+        Object ref = ctx.lookup("HelloBeanRemote");
+        Hello h = (Hello)PortableRemoteObject.narrow(ref,Hello.class);
+        String result = h.sayHello();
+        System.out.println(result);
+    }
+}
 ----
 
-args) throws Exception\{ Properties props = new Properties();
+=== Compile HelloClient.java
 
-props.put(Context.INITIAL_CONTEXT_FACTORY,"org.apache.openejb.client.RemoteInitialContextFactory");
-props.put(Context.PROVIDER_URL,"ejbd://127.0.0.1:4201"); Context ctx =
-new InitialContext(props); Object ref = ctx.lookup("HelloBeanRemote");
-Hello h = (Hello)PortableRemoteObject.narrow(ref,Hello.class); String
-result = h.sayHello(); System.out.println(result); } }
-
-=== Compile HelloClient.java Run the following command:
+Run the following command:
 
 [source,bash]
 ----
 karan@poweredge:~/projects$ javac  -d . HelloClient.java
 ----
 
-== Start the Server Go to the OpenEJB install directory (i.e.
+== Start the Server
+
+Go to the OpenEJB install directory (i.e.
 OPENEJB_HOME) and run the following command:
 
 [source,bash]
@@ -195,18 +225,24 @@ karan@poweredge:~/install/openejb-3.0$ bin/openejb start
 Apache OpenEJB 3.0    build: 20070926-12:34
 http://tomee.apache.org/
 OpenEJB ready.
+OpenEJB Remote Server
+  ** Starting Services **
+  NAME         IP          PORT
+  telnet       0.0.0.0     4202
+  ejbd         0.0.0.0     4201
+  hsql         0.0.0.0     9001
+  admin thread 0.0.0.0     4200
+-------
+Ready!
 ----
-
-OpenEJB Remote Server ** Starting Services ** NAME IP PORT +
-telnet 0.0.0.0 4202 +
-ejbd 0.0.0.0 4201 +
-hsql 0.0.0.0 9001 +
-admin thread 0.0.0.0 4200 +
-------- Ready!
 
 Take out a minute to browse through the conf and logs directories. You
 should now see some configuration and log files under the respective
-directories. ## Deploy the EJB We will now use the deploy command to
+directories.
+
+== Deploy the EJB
+
+We will now use the deploy command to
 deploy the EJB in hello.jar. While you are in the projects directory,
 run the following command:
 
@@ -229,17 +265,17 @@ App(id=/home/karan/projects/hello.jar)
 
 Notice how the output neatly lays out various deployment details. One
 thing you might want to note from the output is the JNDI name. This is
-the JNDI name we used in the client to lookup the EJB ## Run the Client
+the JNDI name we used in the client to lookup the EJB.
+
+== Run the Client
+
 While you are in the projects directory, run the following command to
 run the client:
 
 [source,bash]
 ----
-karan@poweredge:~/projects$ java -cp
+karan@poweredge:~/projects$ java -cp $OPENEJB_HOME/lib/openejb-client-3.0.jar:$OPENEJB_HOME/lib/javaee-5.0-1.jar:. org.acme.HelloClient
 ----
-
-latexmath:[$OPENEJB_HOME/lib/openejb-client-3.0.jar:$]OPENEJB_HOME/lib/javaee-5.0-1.jar:.
-org.acme.HelloClient
 
 The above should give you the following output:
 
@@ -248,11 +284,13 @@ The above should give you the following output:
 Hello World!!!!
 ----
 
-== Help! It didn't work for me!!. No problem, we are here to help.
+== Help! It didn't work for me!!
+
+No problem, we are here to help.
 Just send us an email at users@tomee.apache.org. If possible, send us
 the contents of logs/openejb.log file in the email.
 
-= Looking for more?
+== Looking for more?
 
 More EJB 3.0 examples, sample applications, tutorials and howtos
 available link:https://github.com/apache/tomee/tree/main/examples[here] .

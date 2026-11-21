@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-The __ element is used to configure a _javax.sql.DataSource_. It is also
+The `<Resource>` element is used to configure a _javax.sql.DataSource_. It is also
 used to configure other resources like Timers, Topics, Queues. We will
 see some examples of using `<Resource>` to configure a DataSource.
 

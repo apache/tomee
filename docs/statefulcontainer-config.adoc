@@ -47,83 +47,21 @@ is specified that is not supported by the declared StatefulContainer a
 warning will be logged. If a StatefulContainer is needed by the
 application and one is not declared, TomEE will create one dynamically
 using default settings. Multiple StatefulContainer declarations are
-allowed. # Supported Properties
+allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-accessTimeout
-
-time
-
-30 seconds
-
-Specifies the maximum time an invocation could wait for the `@Stateful`
-bean instance to become available before giving up.
-
-bulkPassivate
-
-int
-
-100
-
-Property name that specifies the number of instances to passivate at one
-time when doing bulk passivation.
-
-cache
-
-String
-
-org.apache.openejb.core.stateful.SimpleCache
-
-The cache is responsible for managing stateful bean instances. The cache
-can page instances to disk as memory is filled and can destroy abandoned
-instances. A different cache implementation can be used by setting this
-property to the fully qualified class name of the Cache implementation.
-
-capacity
-
-int
-
-1000
-
-Specifies the size of the bean pools for this stateful SessionBean
-container.
-
-frequency
-
-int
-
-60
-
-Specifies the frequency (in seconds) at which the bean cache is checked
-for idle beans.
-
-passivator
-
-String
-
-org.apache.openejb.core.stateful.SimplePassivater
-
-The passivator is responsible for writing beans to disk at passivation
-time. Different passivators can be used by setting this property to the
-fully qualified class name of the `PassivationStrategy` implementation.
-The passivator is not responsible for invoking any callbacks or other
-processing, its only responsibility is to write the bean state to disk.
-
-timeOut
-
-time
-
-20
-
-Specifies the time a bean can be idle before it is removed by the
-container.
+[options="header"]
+|===
+|Property |Type |Default |Description
+|accessTimeout |time |30 seconds |Specifies the maximum time an invocation could wait for the `@Stateful` bean instance to become available before giving up.
+|bulkPassivate |int |100 |Property name that specifies the number of instances to passivate at one time when doing bulk passivation.
+|cache |String |org.apache.openejb.core.stateful.SimpleCache |The cache is responsible for managing stateful bean instances. The cache can page instances to disk as memory is filled and can destroy abandoned instances. A different cache implementation can be used by setting this property to the fully qualified class name of the Cache implementation.
+|capacity |int |1000 |Specifies the size of the bean pools for this stateful SessionBean container.
+|frequency |int |60 |Specifies the frequency (in seconds) at which the bean cache is checked for idle beans.
+|passivator |String |org.apache.openejb.core.stateful.SimplePassivater |The passivator is responsible for writing beans to disk at passivation time. Different passivators can be used by setting this property to the fully qualified class name of the `PassivationStrategy` implementation. The passivator is not responsible for invoking any callbacks or other processing, its only responsibility is to write the bean state to disk.
+|timeOut |time |20 |Specifies the time a bean can be idle before it is removed by the container.
+|===
 
 == accessTimeout
 

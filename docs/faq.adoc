@@ -4,10 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-== 
- General
-
- 
+== General
 
 === What spec version does OpenEJB support?
 
@@ -42,9 +39,7 @@ database like Derby, so it is usable in any application regardless if
 that application is run via Maven, Ant, Intellij, Eclipse, NetBeans,
 JUnit, TestNG, etc.
 
-== Can I start and stop OpenEJB from an IDE? If yes, which IDE is
-
-supported by OpenEJB?
+=== Can I start and stop OpenEJB from an IDE? If yes, which IDE is supported by OpenEJB?
 
 The short answer is yes. The basic approach for all embedding scenarios
 is to 1) add OpenEJB to your classpath, and 2) construct your
@@ -58,7 +53,7 @@ link:application-discovery-via-the-classpath.html[Application
 discovery via the classpath] for various ways to have your applications
 discovered.
 
-== During embedded testing, how can I externalize all my DataSource configuration?
+=== During embedded testing, how can I externalize all my DataSource configuration?
 
 Create an openejb.xml file in any directory that gets added to your test
 classpath. For maven, something that winds up directly under
@@ -67,26 +62,16 @@ your test case do this:
 
 [source,java]
 ----
-   protected void setUp() throws Exception {
-       Properties properties = new Properties();
-       properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, 
-----
+protected void setUp() throws Exception {
+    Properties properties = new Properties();
+    properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+        "org.apache.openejb.client.LocalInitialContextFactory");
 
-"org.apache.openejb.client.LocalInitialContextFactory");
+    URL config = this.getClass().getClassLoader().getResource("openejb.xml");
+    properties.setProperty("openejb.configuration", config.toExternalForm());
 
-[source,properties]
-----
-       URL config =
-----
-
-this.getClass().getClassLoader().getResource("openejb.xml");
-properties.setProperty("openejb.configuration",
-config.toExternalForm());
-
-[source,java]
-----
-       initialContext = new InitialContext(properties);
-   }
+    initialContext = new InitialContext(properties);
+}
 ----
 
 The file itself doesn't have to be called "openejb.xml", you could have

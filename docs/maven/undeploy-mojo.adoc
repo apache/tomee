@@ -1,10 +1,9 @@
+= tomee:undeploy
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-
-tomee:undeploy
 
 Full name:
 

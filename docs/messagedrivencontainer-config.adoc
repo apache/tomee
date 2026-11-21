@@ -42,46 +42,15 @@ is specified that is not supported by the declared
 MessageDrivenContainer a warning will be logged. If a
 MessageDrivenContainer is needed by the application and one is not
 declared, TomEE will create one dynamically using default settings.
-Multiple MessageDrivenContainer declarations are allowed. # Supported
-Properties
+Multiple MessageDrivenContainer declarations are allowed.
 
-Property
+== Supported Properties
 
-Type
-
-Default
-
-Description
-
-activationSpecClass
-
-String
-
-org.apache.activemq.ra.ActiveMQActivationSpec
-
-Specifies the activation spec class
-
-instanceLimit
-
-int
-
-10
-
-Specifies the maximum number of bean instances that are allowed to exist
-for each MDB deployment.
-
-messageListenerInterface
-
-String
-
-jakarta.jms.MessageListener
-
-Specifies the message listener interface handled by this container
-
-resourceAdapter
-
-String
-
-Default JMS Resource Adapter
-
-The resource adapter delivers messages to the container
+[options="header"]
+|===
+|Property |Type |Default |Description
+|activationSpecClass |String |org.apache.activemq.ra.ActiveMQActivationSpec |Specifies the activation spec class
+|instanceLimit |int |10 |Specifies the maximum number of bean instances that are allowed to exist for each MDB deployment.
+|messageListenerInterface |String |jakarta.jms.MessageListener |Specifies the message listener interface handled by this container
+|resourceAdapter |String |Default JMS Resource Adapter |The resource adapter delivers messages to the container
+|===

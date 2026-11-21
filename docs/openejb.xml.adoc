@@ -50,8 +50,9 @@ separator with no effect on OpenEJB.
 The openejb.xml file itself functions as an override, default values are
 specified via other means (service-jar.xml files in the classpath),
 therefore you only need to specify property values here for 2 reasons:
-1. you wish to for documentation purposes 2. you need to change the
-default value
+
+. you wish to for documentation purposes
+. you need to change the default value
 
 The default openejb.xml file has most of the useful properties for each
 component explicitly listed with default values for documentation

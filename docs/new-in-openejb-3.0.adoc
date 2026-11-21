@@ -18,16 +18,21 @@ OpenEJB 3.0 supports the EJB 3.0 specification as well as the prior EJB
 * Service Locator (ala SessionContext.lookup)
 * POJO-style beans
 
-EJB 2.x features since OpenEJB 1.0 also include: - MessageDriven Beans -
-Container-Managed Persistence (CMP) 2.0 - Timers
+EJB 2.x features since OpenEJB 1.0 also include:
 
-The two aspects of EJB that OpenEJB does not yet support are: - Web
-Services (JAX-WS, JAX-RPC) - CORBA
+* MessageDriven Beans
+* Container-Managed Persistence (CMP) 2.0
+* Timers
+
+The two aspects of EJB that OpenEJB does not yet support are:
+
+* Web Services (JAX-WS, JAX-RPC)
+* CORBA
 
 JAX-WS and CORBA support will be added in future releases. Support for
 the JAX-RPC API is not a planned feature.
 
-= Extensions to EJB 3.0
+== Extensions to EJB 3.0
 
 == CMP via JPA
 
@@ -137,11 +142,23 @@ for beginners and people using OpenEJB in a classroom setting.
 
 == Most configurable JNDI names ever
 
-= General Improvements
+== General Improvements
 
-== Online Deployment ## Security Service ## Connection Pooling ##
-Configuration Overriding ## Flexible JNDI Name Formatting ## Cleaner
-Embedding ## Tomcat 6 Support ## Business locals remotable
+=== Online Deployment
+
+=== Security Service
+
+=== Connection Pooling
+
+=== Configuration Overriding
+
+=== Flexible JNDI Name Formatting
+
+=== Cleaner Embedding
+
+=== Tomcat 6 Support
+
+=== Business locals remotable
 
 If you want to make business local interfaces remotable, you can set
 this property:

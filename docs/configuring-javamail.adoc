@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Declaring a JavaMail Resource
+== Declaring a JavaMail Resource
 
 The basics are that any properties listed in the element are given
 directly to the javamail provider via
@@ -47,7 +47,7 @@ java ... -DSuperbizMail.mail.smtp.host=localhost
 
 === Code example for gmail XOAUTH2
 
-[source,bash]
+[source,java]
 ----
 Properties props = new Properties();
 props.setProperty("mail.imap.port", "993");
@@ -70,7 +70,7 @@ store.connect("imap.gmail.com", "<username>@gmail.com", "<YourAccesToken>");
 
 `tomee.xml` example:
 
-[source,bash]
+[source,xml]
 ----
 <Resource id="ImapSession" type="jakarta.mail.Session">
 mail.imap.ssl.enable=true
@@ -86,7 +86,7 @@ accessToken=<YourAccesToken>
 
 Usage example:
 
-[source,bash]
+[source,java]
 ----
 private final String from = "<username>@gmail.com";
 

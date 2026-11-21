@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Getting Stuff from the Container
+== Getting Stuff from the Container
 
 Generally speaking the only way to get a
 Container-Managed Resource is via

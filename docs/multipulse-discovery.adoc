@@ -28,7 +28,7 @@ group       = default
 ----
 
 You just need to enable the agent by setting `disabled = false`. It is
-advisable to disable multicast in the `multicast.properties file`, or at
+advisable to disable multicast in the `multicast.properties` file, or at
 least to use a different bind address or port should you wish to use
 both.
 

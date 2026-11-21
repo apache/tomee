@@ -40,7 +40,7 @@ performance reasons, so it must be set at VM startup.
 == Server-side
 
 On the server requests/responses are logged in java.util.logging `FINE`
-in category`"OpenEJB.server.remote.ejb`. The code for that is similar to
+in category `OpenEJB.server.remote.ejb`. The code for that is similar to
 this:
 
 [source,java]

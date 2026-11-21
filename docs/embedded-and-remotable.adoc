@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Overview
+== Overview
 
 This example shows how to use OpenEJB3's remoting capabilities in an
 embedded scenario. By remoting we mean that you wish to allow _clients
@@ -48,18 +48,18 @@ for network sockets. This example shows the use of OpenEJB in an
 embedded environment where connection _outside_ the vm is
 required.
 
-= The Code
+== The Code
 
 For this example we have a simple Stateful bean called TelephoneBean as
 defined below. As a simple way of demonstrating the state we have two
 methods: speak and listen. You call _speak_ and pass in some text, then
 you call _listen_ to get your answer.
 
-== bean
+=== bean
 
 link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/main/java/org/superbiz/telephone/TelephoneBean.java[TelephoneBean.java]
 
-== business interface
+=== business interface
 
 link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/main/java/org/superbiz/telephone/Telephone.java[Telephone.java]
 
@@ -75,33 +75,31 @@ identical usage of `@Local`.
 
 The critical thing to know is that if you add another interface the
 rules change and require that you specify both interfaces in the `@Remote`
-annotation as in `@Remote`(\{Telephone.class, SecondInterface.class}).
+annotation as in `@Remote({Telephone.class, SecondInterface.class})`.
 ====
 
-= Embedding
+== Embedding
 
 We're going to embed OpenEJB3 into a plain JUnit TestCase as a simple
 means of demonstrating the remote capabilities. We'll do the embedding
-in our test setUp method, then will make two test methods: - one for
-invoking the bean's remote interface via the
+in our test setUp method, then will make two test methods:
+
+* one for invoking the bean's remote interface via the
 _LocalInitialContextFactory_ which goes straight against the embedded
-container system - one for invoking the bean's remote interface via the
+container system
+* one for invoking the bean's remote interface via the
 _RemoteInitialContextFactory_ which connects to a Socket and
 communicates to the embedded container system over the ejbd protocol.
 
-== setUp
+=== setUp
 
 link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java[TelephoneTest.java]
 
-== LocalInitialContextFactory: making in-vm calls to a remote business
-
-interface
+=== LocalInitialContextFactory: making in-vm calls to a remote business interface
 
 link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java[TelephoneTest.java]
 
-== RemoteInitialContextFactory: making networked calls to a remote
-
-business interface
+=== RemoteInitialContextFactory: making networked calls to a remote business interface
 
 This is the part you would want to do in apps that are running a
 different VM than the one in which the ejb container is embedded. These
@@ -111,18 +109,21 @@ like any other remote EJB client.
 
 link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java[TelephoneTest.java]
 
-= Maven setup
+== Maven setup
 
 link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/pom.xml[pom.xml]
 
 link:https://github.com/apache/tomee/blob/main/examples/telephone-stateful/pom.xml[pom.xml]
 
-= Running
+== Running
 
 Running the example is fairly simple. In the "telephone-stateful"
 directory of the link:https://github.com/apache/tomee/tree/main/examples/telephone-stateful[telephone-stateful example], just run:
 
+[source,bash]
+----
 $ mvn clean install
+----
 
 Which should create output like the following.
 
@@ -135,8 +136,6 @@ Running org.superbiz.telephone.TelephoneTest
 Apache OpenEJB 3.0    build: 20080408-04:13
 http://tomee.apache.org/
 INFO - openejb.home =
-----
-
 /Users/dblevins/work/openejb-3.0/examples/telephone-stateful INFO -
 openejb.base =
 /Users/dblevins/work/openejb-3.0/examples/telephone-stateful INFO -
@@ -163,14 +162,12 @@ Ejb(deployment-id=TelephoneBean) INFO - Created
 Ejb(deployment-id=TelephoneBean, ejb-name=TelephoneBean,
 container=Default Stateful Container) INFO - Deployed
 Application(path=/Users/dblevins/work/openejb-3.0/examples/telephone-stateful/target/classes)
-** Starting Services ** NAME IP PORT +
-ejbd 127.0.0.1 4201 +
-admin thread 127.0.0.1 4200 +
+** Starting Services ** NAME IP PORT
+ejbd 127.0.0.1 4201
+admin thread 127.0.0.1 4200
 ------- Ready! Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time
 elapsed: 0.89 sec
 
-[source,properties]
-----
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0

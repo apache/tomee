@@ -1,5 +1,5 @@
 http://www.apache.org/licenses/LICENSE-2.0.html[image:http://img.shields.io/:license-apache-blue.svg[License]]
-https://github.com/apache/tomee/tomee/fork[image:https://img.shields.io/github/forks/apache/tomee.svg?style=social&label=Fork[GitHub
+https://github.com/apache/tomee/fork[image:https://img.shields.io/github/forks/apache/tomee.svg?style=social&label=Fork[GitHub
 forks]]
 https://github.com/apache/tomee[image:https://img.shields.io/github/stars/apache/tomee.svg?style=social&label=Star[GitHub
 stars]]
@@ -22,8 +22,8 @@ Official website: https://tomee.apache.org
 
 '''''
 
-* link:#to-start-using-tomee[Start using TomEE]
-* link:#to-start-developing-tomEE[Start developing TomEE]
+* link:#start-using-tomee[Start using TomEE]
+* link:#start-developing-tomee[Start developing TomEE]
 * link:#contributing[Contributing]
 * link:#changelog[Changelog]
 * link:#license[License]
