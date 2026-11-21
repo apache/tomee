@@ -75,13 +75,13 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |persistJavaagents|false|should javaagent be saved or just use for this plugin run
 |webapps|-|additional applications to deploy
 |warFile|${project.build.directory}/${project.build.finalName}.${project.packaging}|the war to deploy
-|workWarFile|${project.build.directory}/${project.build.finalName}"|the exploded war to deploy
+|workWarFile|${project.build.directory}/${project.build.finalName}|the exploded war to deploy
 |removeDefaultWebapps|true| should default webapps (ROOT, docs, ...) be deleted
 |deployOpenEjbApplication|false|should openejb internal application be deployed
 |removeTomeeWebapp|true|should tomee webapp (with EJBd adapter) be deployed
 |tomeeAlreadyInstalled|false|skip all the setup configuration
 |ejbRemote|true|should EJBd be activated
-|checkStarted|false|should the plugin check the server is up (useful when used with `pre-integration` phase
+|checkStarted|false|should the plugin check the server is up (useful when used with `pre-integration` phase)
 |checkStartedAttempts|60| only active, if `checkStarted` is set to `true`. Specifies amount of connection attempts (active waiting) for the server to be up
 |useConsole|true|wait for the end of the execution reading inputs from the console (like `quit` command)
 |useOpenEJB|false|use openejb-standalone instead of tomee
@@ -93,7 +93,7 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |===
 
 
-Synchronization are blocks defining a source and target folder and both are synchronized. It typically copies
+Synchronizations are blocks defining a source and target folder and both are synchronized. It typically copies
 `src/main/webapp` resources in `target/apache-tomee/webapps/myapp/`.
 
 
@@ -169,7 +169,7 @@ remove:prefix
 
 == Build
 
-Excepted synchronization, build plugin inherit from `run` Mojo its configuration. It just adds the following:
+Except for synchronization, the build plugin inherits its configuration from the `run` Mojo. It just adds the following:
 
 [.table.table-bordered,options="header"]
 |===

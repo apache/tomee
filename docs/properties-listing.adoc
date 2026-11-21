@@ -34,7 +34,7 @@ prefix>.threads
 
 host or IP, port, bool
 
-override the host. Available for the ejbd service, number of thread to
+override the host. Available for the ejbd service, number of threads to
 manage requests
 
 openejb.embedded.initialcontext.close
@@ -89,7 +89,7 @@ openejb.descriptors.output.folder
 
 path
 
-where to dump deployement descriptors if activated.
+where to dump deployment descriptors if activated.
 
 openejb.strict.interface.declaration
 
@@ -229,7 +229,7 @@ string
 +
 +
 +
-prefix use for altDD (example test to use a test.ejb-jar.xml).
+prefix used for altDD (example test to use a test.ejb-jar.xml).
 +
 +
 +
@@ -243,7 +243,7 @@ list of interceptor (qualified names) separated by a comma or a space
 +
 +
 +
-add these interceptor on all beans
+add these interceptors on all beans
 +
 +
 +
@@ -334,7 +334,7 @@ openejb.cxf.jax-rs.providers
 +
 the list of the qualified name of the JAX-RS providers separated by
 comma or space. Note: to specify a provider for a specific service
-suffix its class qualified name by ".providers", the value follow the
+suffix its class qualified name by ".providers", the value follows the
 same rules. Note 2: default is a shortcut for jaxb and json providers.
 +
 +
@@ -367,7 +367,7 @@ axis2, sun or null
 +
 +
 +
-specified the saaj configuration
+specifies the saaj configuration
 +
 +
 +
@@ -537,7 +537,7 @@ color in uppercase
 +
 +
 +
-set a color for a particular level. Color are BLACK, RED, GREEN, YELLOW,
+set a color for a particular level. Colors are BLACK, RED, GREEN, YELLOW,
 BLUE, MAGENTA, CYAN, WHITE, DEFAULT.
 +
 +
@@ -585,7 +585,7 @@ boolean
 +
 +
 if true /tomee webapp is auto-deployed and EJBd is active (true by
-default for 1.x, false for 7.x excepted for tomee maven plugin and
+default for 1.x, false for 7.x except for tomee maven plugin and
 arquillian)
 +
 +
@@ -667,7 +667,7 @@ openejb.myfaces.disable-default-values
 
 bool
 
-by default TomEE will initialize myfaces with some its default values to
+by default TomEE will initialize myfaces with some of its default values to
 avoid useless logging
 
 openejb.web.xml.major
@@ -687,7 +687,7 @@ openejb.servicemanager.enabled
 
 bool
 
-run all services detected or only known available services (WS and RS
+run all services detected or only known available services (WS and RS)
 
 tomee.jaxws.oldsubcontext
 
@@ -702,7 +702,7 @@ bool
 
 add a hash after the module name of the webmodule if it is generated
 from the webmodule location, it avoids conflicts between multiple
-deployment (through ear) of the same webapp. Note: it disactivated by
+deployment (through ear) of the same webapp. Note: it is deactivated by
 default since names are less nice this way.
 
 openejb.session.manager

@@ -61,7 +61,7 @@ several paths)_
 several paths with Win specific escapes)_
 
 Note the filtering is done on URLs in the classpath, so forward slashes
-should always be used even on OSs using backslash ("").
+should always be used even on OSs using backslash ("\").
 
 There are also the _openejb.deployments.classpath.exclude_ and
 _openejb.exclude-include.order_ properties if you wish to work in the

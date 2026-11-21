@@ -13,7 +13,7 @@ prevents to develop web resources in place. TomEE embedded maven plugin
 solves it directly allowing to directly deploy the war project in place
 using "classpath as war" option.
 
-It also allows to use a flat classpath deployment which is often use
+It also allows to use a flat classpath deployment which is often used
 with microservices.
 
 == tomee-embedded:run
@@ -364,7 +364,7 @@ User property is: `tomee-embedded-plugin.useProjectClasspath`.
 |-
 
 |(no description) +
-Default value is: `${project.build.directory}/{project.build.finalName}`.
+Default value is: `${project.build.directory}/${project.build.finalName}`.
 
 |<<webResourceCached, webResourceCached>>
 
@@ -653,7 +653,7 @@ force webapp to be reloadable
 
 - Type: java.io.File
 - Required: No
-- Default: `${project.build.directory}/{project.build.finalName}`
+- Default: `${project.build.directory}/${project.build.finalName}`
 
 [[webResourceCached]]*webResourceCached:* +
 (no description)

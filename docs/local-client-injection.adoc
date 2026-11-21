@@ -20,7 +20,7 @@ differences:
 [arabic]
 . Declaring field/method injection points as 'static' is not required
 . References to EntityManagers via `@PersistenceContext` are allowed
-. References to local business interfaces via `@EJB` is allowed
+. References to local business interfaces via `@EJB` are allowed
 . References to UserTransaction via `@Resource` is allowed
 
 As well since this is not a heavyweight Java EE Application Client, you
@@ -72,7 +72,7 @@ contain a META-INF/application-client.xml file will be scanned for
 
 If you see the following error message and are absolutely sure the
 module containing your `@LocalClient` class is being properly identified
-as an EJB module or a Client module, than it is possible you are seeing
+as an EJB module or a Client module, then it is possible you are seeing
 some classloading issues.
 
 ----

@@ -20,16 +20,16 @@ OSes. Before running these scripts you need to set the environment
 variable _OPENEJB_HOME_ to the path of the directory where you unpacked
 the OpenEJB installation.
 
-From now on we will refer to this directory as and assume that you
-unpacked OpenEJB into the directory _C:-3.0_ The startup scripts are
+From now on we will refer to this directory as _OPENEJB_HOME_ and assume that you
+unpacked OpenEJB into the directory _C:\openejb-3.0_. The startup scripts are
 present in the /bin directory. You can set this directory in the system
 _PATH_ for starting openejb from the command shell.
 
 In Windows, the remote server can be executed as follows:
 
-_C:-3.0> binstart_
+`C:\openejb-3.0> bin\openejb start`
 
-In UNIX, Linux, or Mac OS X, the deploy tool can be executed as follows:
+In UNIX, Linux, or Mac OS X, the remote server can be executed as follows:
 
 `[user@host openejb-3.0]# ./bin/openejb start`
 
@@ -41,7 +41,7 @@ command.
 
 From here on out, it will be assumed that you know how to execute the
 right openejb script for your operating system and commands will appear
-in shorthand as show below.
+in shorthand as shown below.
 
 _openejb start -help_
 
@@ -59,7 +59,7 @@ know something may not work as you expected it.
 
 OpenEJB itself is configured with the OpenEJB configuration file, which
 is extremely simple and self-documenting. This file is located at
-c:-3.0.xml.
+`C:\openejb-3.0\conf\openejb.xml`.
 
 = OPTIONS
 
@@ -131,7 +131,7 @@ passed by reference and never copied.
 
 == CONFIG OVERRIDE EXAMPLES
 
-== Example: -D.bind=
+== Example: -D<service>.bind=<address>
 
 _openejb start -Dejbd.bind=10.45.67.8_
 
@@ -174,7 +174,7 @@ telnet client as such:
 
 _telnet myhost.foo.com 4202_
 
-== Example: -D.port=
+== Example: -D<service>.port=<port>
 
 _openejb start -Dejbd.port=8765_
 
@@ -193,7 +193,7 @@ java.naming.provider.url = ejbd://127.0.0.1:8765
 java.naming.security.principal = myuser java.naming.security.credentials
 = mypass
 
-== Example: -D.only_from=
+== Example: -D<service>.only_from=<addresses>
 
 _openejb start -Dadmin.only_from=192.168.1.12_
 
@@ -212,23 +212,23 @@ _openejb start -Dadmin.only_from=192.168.1.12,joe.foo.com,robert_
 The first host in the string names the host explicitly using an IP
 address (192.168.1.12).
 
-The second host uses a DNS name (joe.foo.com) to refer to the hosts IP
+The second host uses a DNS name (joe.foo.com) to refer to the host's IP
 address. The DNS name will be resolved and the IP will be added to the
 admin list.
 
-The third address refers to the host by a name (robert)that the
+The third address refers to the host by a name (robert) that the
 operating system is able to resolve into a valid IP address. This is
 usually done via a hosts file, internal DNS server, or Windows Domain
 Server.
 
-== Example: -D.threads=
+== Example: -D<service>.threads=<max>
 
 _openejb start -Dejbd.threads=200_
 
 Sets the max number of concurrent threads that can enter the EJBd Server
 Service to 200.
 
-== Example: -D.disabled=
+== Example: -D<service>.disabled=<true|false>
 
 _openejb start -Dtelnet.disabled=true_
 

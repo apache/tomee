@@ -21,7 +21,7 @@ file).
 This is very different from J2EE or Java EE 5 as there aren't several
 levels of separation and classloader hierarchy. This is going to take
 some getting used to, and it should be understood that this style of
-packaging isn't J2EE compliant. Who would care tough as it is a feature
+packaging isn't J2EE compliant. Who would care though as it is a feature
 of Java EE 6 we would've been waiting for so long.
 
 J2EE classloading rules:

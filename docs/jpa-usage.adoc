@@ -15,7 +15,7 @@ it's very difficult to guarantee one or the other will be the only one
 needed. Often times the JPA Provider itself will require both internally
 to do various optimizations or other special features.
 
-* The _jta-data-source_ should always have it's OpenEJB-specific
+* The _jta-data-source_ should always have its OpenEJB-specific
 '_JtaManaged_' property set to '_true_' (this is the default)
 * The _non-jta-data-source_ should always have it's OpenEJB-specific
 '_JtaManaged_' property set to '_false_'.
@@ -26,7 +26,7 @@ to configure 'JtaManaged' and a full list of properties for DataSources.
 == Be detach aware
 
 A warning for any new JPA user is by default all objects will detach at
-the end of a transaction. People typically discover this when the go to
+the end of a transaction. People typically discover this when they go to
 remove or update an object they fetched previously and get an exception
 like "You cannot perform operation delete on detached object".
 

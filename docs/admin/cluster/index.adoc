@@ -18,7 +18,7 @@ Tomitribe also demonstrated you can distribute `@Stateful` beans easily relying 
 
 == Load balancing
 
-TomEE being an HTTP server all HTTP load balancer such as HTTPd (a.k.a. Apache2), ngnix, F5 etc... will work.
+TomEE being an HTTP server, any HTTP load balancer such as HTTPd (a.k.a. Apache2), nginx, F5 etc... will work.
 
 More documentation on HTTPd link can be found on https://tomcat.apache.org/connectors-doc/webserver_howto/apache.html[Tomcat] website.
 
@@ -127,7 +127,7 @@ threads     = 20
 discovery   = ejb:ejbd://{bind}:{port}
 ----
 
-NOTE: If either 0.0.0.0 (IPv4) or [::] (IPv6) wildcard bind addresses are used then the server will actually broadcast all of it's known public hosts to clients. Clients will then cycle though and attempt to connect to the provided hosts until successful.
+NOTE: If either 0.0.0.0 (IPv4) or [::] (IPv6) wildcard bind addresses are used then the server will actually broadcast all of its known public hosts to clients. Clients will then cycle through and attempt to connect to the provided hosts until successful.
 
 If localhost is used then only clients on the same physical machine will actually 'see' the server response.
 
@@ -209,7 +209,7 @@ InitialContext remoteContext = new InitialContext(p);
 
 If the server at 192.168.1.20:4201 supports failover, so will the client.
 
-In this scenario the list of servers used for failover is supplied entirely by the server at 192.168.1.20:4201. The server could have aquired the list via multicast or multipoint (or both), but this detail is not visible to the client.
+In this scenario the list of servers used for failover is supplied entirely by the server at 192.168.1.20:4201. The server could have acquired the list via multicast or multipoint (or both), but this detail is not visible to the client.
 
 ===== Considerations
 

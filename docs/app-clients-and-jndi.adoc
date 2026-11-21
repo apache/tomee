@@ -8,7 +8,7 @@ There are some slight differences between the way OpenEJB
 does app clients and the way Geronimo does app clients
 
 Neither uses the names created via the openejb.jndiname.format. So
-changing that will (should) have no affect. The idea is that users
+changing that will (should) have no effect. The idea is that users
 should be able to set it to be whatever they want it to be and that
 should not break the App Client code. The openejb.jndiname.format is
 specifically for "plain" clients and allows them to get the names as
@@ -63,7 +63,7 @@ not EJB related. Either way the OpenEJB EJBd protocol can carry the
 In Geronimo App Clients the id is set to "Deployments" and that tells
 OpenEJB not to look in the "openejb/remote" section of JNDI as it
 normally would. It will instead use the "openejb/Deployments" section
-of JNDI were the names follow a predictable and unchanging format.
+of JNDI where the names follow a predictable and unchanging format.
 
 In OpenEJB App Clients the id is set to the name of the App Client, and
 we instead look in "openejb/client//" where names are formatted by the

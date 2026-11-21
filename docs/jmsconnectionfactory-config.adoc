@@ -78,7 +78,7 @@ int
 
 10
 
-Maximum number of physical connection to the ActiveMQ broker
+Maximum number of physical connections to the ActiveMQ broker
 
 poolMinSize
 

@@ -9,7 +9,7 @@ _Also see Testing Transactions
 for an example of how to use and test EJB transaction attributes_
 
 The _jakarta.ejb.TransactionAttribute_ annotation (`@TransactionAttribute`)
-can be applied to a bean class or it's methods.
+can be applied to a bean class or its methods.
 
 Usage of the `@TransactionAttribute` requires you to specify one of six
 different transaction attribute types defined via the
@@ -56,7 +56,7 @@ SUPPORTS
 The "_Transacted_" and "_Not Transacted_" categories represent the
 container guarantee, i.e. if the bean method will or will not be invoked
 in a transaction. The "_Failing_", "_Correcting_", and "_No Change_"
-categories represent the action take by the container to achieve that
+categories represent the action taken by the container to achieve that
 guarantee.
 
 For example, _Never_ and _Mandatory_ are categorized as "_Failing_" and
@@ -111,7 +111,7 @@ execute the method, then _resume_ the caller's transaction.
 ==== SUPPORTS
 
 A _SUPPORTS_ method is guaranteed to adopt the exact transactional state
-of the caller. These methods can be invoked by caller's _inside or
+of the caller. These methods can be invoked by callers _inside or
 outside_ of a transaction. The container will do nothing to change that
 state.
 

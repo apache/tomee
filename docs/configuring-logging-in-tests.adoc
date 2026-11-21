@@ -7,7 +7,7 @@
 = embedded.logging.properties
 
 When in embedded mode OpenEJB uses an embedded.logging.properties file
-packed in our openejb-core jar which use to configure the logging. This
+packed in our openejb-core jar which is used to configure the logging. This
 logging configuration is a bit lighter than the conf/logging.properties
 file created in a full standalone OpenEJB setup.
 
@@ -25,7 +25,7 @@ OpenEJB will not attempt to configure logging at all, and you can
 configure logging with Log4j directly using any of its APIs; xml,
 properties, or code.
 
-There are a couple good reasons for _not_ replacing the
+There are a couple of good reasons for _not_ replacing the
 embedded.logging.properties file.
 
 [arabic]

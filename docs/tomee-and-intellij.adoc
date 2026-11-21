@@ -37,7 +37,7 @@ We will use one of the existing
 https://github.com/apache/tomee/tree/main/examples[examples]
 for this demo. Let's import it.
 
-Give a minute while Intellij imports the dependencies.
+Give it a minute while Intellij imports the dependencies.
 
 It's time to run the application. Open "Edit Configurations".
 

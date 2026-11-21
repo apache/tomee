@@ -49,7 +49,7 @@ The default configuration allows to start tomee without issue but you can desire
 |loginConfig|-|which LoginConfig to use, relies on `org.apache.tomee.embedded.LoginConfigBuilder` to create it
 |securityConstraints|-|add some security constraints, use `org.apache.tomee.embedded.SecurityConstaintBuilder` to build them
 |realm|-|which realm to use (useful to switch to `JAASRealm` for instance) without modifying the application
-|deployOpenEjbApp|false|should internal openejb application be delpoyed
+|deployOpenEjbApp|false|should internal openejb application be deployed
 |users|-|a map of user/password
 |roles|-|a map of role/users
 |tempDir|${java.io.tmpdir}/tomee-embedded_${timestamp}|tomcat needs a docBase, in case you don't provide one, one will be created there
@@ -79,7 +79,7 @@ NOTE: this is still a TomEE so all system properties work (for instance to creat
 |===
 |Name|Default|Description
 |--path|-|location of application(s) to deploy
-|--context|-|Context name for applications (same order than paths)
+|--context|-|Context name for applications (same order as paths)
 |-p or --port|8080|http port
 |-s or --shutdown|8005|shutdown port
 |-d or --directory|./.apache-tomee|tomee work directory
@@ -87,7 +87,7 @@ NOTE: this is still a TomEE so all system properties work (for instance to creat
 |-b or --doc-base|-|where web resources are for classpath deployment
 |--renaming|-|for fat war only, is renaming of the context supported
 |--serverxml|-|the server.xml location
-|--tomeexml|-|the server.xml location
+|--tomeexml|-|the tomee.xml location
 |--property|-|a list of container properties (values follow the format x=y)
 |===
 
@@ -184,7 +184,7 @@ properties.openejb.container.additional.include = com.fasterxml.jackson,org.apac
 
 == Application Runner
 
-Since TomEE 7.0.2, TomEE provide a light ApplicationComposer integration for TomEE Embedded (all features are not yet supported but the main ones are):
+Since TomEE 7.0.2, TomEE provides a light ApplicationComposer integration for TomEE Embedded (all features are not yet supported but the main ones are):
 `org.apache.tomee.embedded.TomEEEmbeddedApplicationRunner`. It relies on the definition of an `@Application`:
 
 [source,java]

@@ -13,7 +13,7 @@ To join the network, the server must be configured to know the address
 of at least one server in the network and connect to it. When it does
 both servers will exchange the full list of all the other servers each
 knows about. Each server will then connect to any new servers they've
-just learned about and repeat the processes with those new servers. The
+just learned about and repeat the process with those new servers. The
 end result is that everyone has a direct connection to everyone 100% of
 the time, hence the made-up term "multipoint" to describe this situation
 of each server having multiple point-to-point connections which create a
@@ -44,7 +44,7 @@ disabled    = false
 initialServers = 192.168.1.20:4212, 192.168.1.30:4212, 192.168.1.40:4212
 ----
 
-The above configuration shows the server has an `port` `4212` open for
+The above configuration shows the server has a `port` `4212` open for
 connections by other servers for multipoint communication. The
 `initialServers` list should be a comma separated list of other similar
 servers on the network. Only one of the servers listed is required to be

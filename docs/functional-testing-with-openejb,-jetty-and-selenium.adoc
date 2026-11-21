@@ -11,7 +11,7 @@ You can use tools like Selenium, or HtmlUnit to run functional tests as
 if the user were sat at their browser typing text, and clicking links
 and buttons. This however means you have to have your app running on
 your app server, and you need to have consistent test data - otherwise a
-test might pass on one developers machine, but fail on another. Here's
+test might pass on one developer's machine, but fail on another. Here's
 one approach that you could take to completely deploy your webapp within
 a test, and functionally test it with a tool like Selenium. There's also
 some sample code demonstrating this, available
@@ -208,7 +208,7 @@ public abstract class FunctionalTestCase extends TestCase {
 }
 ----
 
-and I can then I write a test like this:
+and I can then write a test like this:
 
 [source,java]
 ----

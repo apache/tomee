@@ -62,7 +62,7 @@ InitialContext ctx = new InitialContext(p);
 
 If you don't have any EJBs or clients to run, try the ubiquitous
 link:hello-world.html[Hello World] example. Add the following
-library to your clients classpath:
+libraries to your client's classpath:
 
 * openejb-client-x.x.x.jar
 * jakartaee-api-x.x.jar

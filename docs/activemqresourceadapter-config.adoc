@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-A ActiveMQResourceAdapter can be declared via xml in the
+An ActiveMQResourceAdapter can be declared via xml in the
 `<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
 using a declaration like the following. All properties in the element
 body are optional.
@@ -20,7 +20,7 @@ body are optional.
 </Resource>
 ----
 
-Alternatively, a ActiveMQResourceAdapter can be declared via properties
+Alternatively, an ActiveMQResourceAdapter can be declared via properties
 in the `<tomee-home>/conf/system.properties` file or via Java
 VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `jakarta.ejb.embeddable.EJBContainer` API or
@@ -39,7 +39,7 @@ Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style
 variable substitution. Properties are not case-sensitive. If a property
 is specified that is not supported by the declared
-ActiveMQResourceAdapter a warning will be logged. If a
+ActiveMQResourceAdapter a warning will be logged. If an
 ActiveMQResourceAdapter is needed by the application and one is not
 declared, TomEE will create one dynamically using default settings.
 Multiple ActiveMQResourceAdapter declarations are allowed.

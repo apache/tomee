@@ -6,7 +6,7 @@
 
 = Properties Command line Tool
 
-To see all configurable properties in use by OpenEJB, using the
+To see all configurable properties in use by OpenEJB, use the
 following tool against a running server:
 
 ________________________

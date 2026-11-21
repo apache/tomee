@@ -11,15 +11,15 @@ Most resources will be created automatically if there is no matching resources -
 when an injection will be found. To avoid that use `openejb.offline` property and set it to `true`.
 See link:server.html[Server Configuration] for more detail.
 
-== Definition a resource: how does it work?
+== Defining a resource: how does it work?
 
-Before all let see how properties syntax is equivalent to XML one (system.properties and tomee.xml typically).
+Before all let's see how properties syntax is equivalent to XML one (system.properties and tomee.xml typically).
 
 Properties syntax uses dot notation to represent setters/properties which are plain properties in XML syntax
 and a URL syntax with query parameters to define the resource where it is directly the resource and tag attributes in XML.
 Finally, the id is an attribute in XML and the key of the resource definition in properties.
 
-Let see it with a sample, both declarations are the same:
+Let's see it with a sample, both declarations are the same:
 
 [source,properties]
 ----
@@ -36,7 +36,7 @@ myDataSource.UserName = sa
 </Resource>
 ----
 
-One started you can get injected any resource using `@Resource`:
+Once started you can get injected any resource using `@Resource`:
 
 [source,java]
 ----
@@ -94,7 +94,7 @@ configure it here are the common properties:
 
 You can set the boolean `JtaManaged` to false if you don't want your datasource to be using JTA - if you manage transactions yourself.
 
-Then other configurations are linked the pool the datasource is using.
+Then other configurations are linked to the pool the datasource is using.
 By default, TomEE uses https://tomcat.apache.org/tomcat-11.0-doc/jdbc-pool.html[tomcat-jdbc] but we also provide
 https://commons.apache.org/proper/commons-dbcp/configuration.html[commons-dbcp] (2 for TomEE 7.x and 1 for TomEE 1.x).
 The properties are then the related configurations with these particular
@@ -111,7 +111,7 @@ entries we try to keep in sync for both:
 
 ==== Password and ciphering
 
-DataSource were the first resource to support password ciphering. Originally it was another property which is still supported.
+DataSources were the first resource to support password ciphering. Originally it was another property which is still supported.
 It is called `PasswordCipher`. Its value is the ciphering algorithm and it affects the password value. However `cipher:xxx`
 is still supported on `Password` value. Default `PasswordCipher` being `PlainText` it behaves as no ciphering is in place by default.
 
@@ -246,11 +246,11 @@ allowed values: `xa`, `local` or `none`. Default to `xa`.
 
 ==== PoolMaxSize
 
-Maximum number of physical connection to the ActiveMQ broker.
+Maximum number of physical connections to the ActiveMQ broker.
 
 ==== PoolMinSize
 
-Minimum number of physical connection to the ActiveMQ broker.
+Minimum number of physical connections to the ActiveMQ broker.
 
 ==== ConnectionMaxWaitTime
 

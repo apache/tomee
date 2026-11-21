@@ -99,7 +99,7 @@ The idea for instances (applications) scripts is to simply delegate to tomcat on
 
 Customizing the version (and locations) is done in `bin/setenv.sh` of instances.
 
-Here are an example for the common scripts (of course you can write helper version like restart etc).
+Here is an example for the common scripts (of course you can write helper version like restart etc).
 
 === setenv.sh
 

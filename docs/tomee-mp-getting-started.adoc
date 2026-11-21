@@ -93,7 +93,7 @@ maven, deploying and starting the generated application takes less than
 
 The application gets deployed to `target/apache-tomee/webapps`. If
 everything worked correctly, you should see a directory ('ROOT') as well
-as a web-archive ('ROOT.war'). The context-paths of the deployed
+as a web-archive ('ROOT.war'). The context path of the deployed
 application is ROOT. In our example the generated application contains a
 servlet mapped to '/index'. So you can access it via:
 

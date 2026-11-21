@@ -31,7 +31,7 @@ needed to get you started)
 
 == lib/
 
-Contains several jar files (you only need of few of these jars in your
+Contains several jar files (you only need a few of these jars in your
 classpath to do EJB development)
 
 == apps/

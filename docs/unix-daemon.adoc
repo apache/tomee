@@ -125,7 +125,7 @@ as long as the resulting command is one long line.
 
 == Common Issues
 
-Ensure your `$TOME_HOME` and `$JAVA_HOME` variables are set correctly.
+Ensure your `$TOMEE_HOME` and `$JAVA_HOME` variables are set correctly.
 You should see similar output with the following two commands
 
 [source,bash]

@@ -35,8 +35,8 @@ boolean
 
 -
 
-If true, display all settable properties for each goal.Default value is:
-false.User property is: detail.
+If true, display all settable properties for each goal. Default value is:
+false. User property is: detail.
 
 goal
 

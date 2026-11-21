@@ -6,9 +6,9 @@
 
 == Why my ActiveMQ/JMS MDB is not scaling as expected?
 
-There are multiple configurations points to ensure you scale as much as you want.
+There are multiple configuration points to ensure you scale as much as you want.
 
-Here some common configuration to validate (note that when possible the sample value is the default):
+Here are some common configurations to validate (note that when possible the sample value is the default):
 
 - The resource adapter thread pool ("worker threads" or `WorkManager`) limits the number of max work threads:
 

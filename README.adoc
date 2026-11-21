@@ -35,20 +35,20 @@ Official website: https://tomee.apache.org
 You can use TomEE to deploy Jakarta EE, Microprofile and Java EE
 compliant applications.
 
-* Apache TomEE is distributed 5 different flavors, you can check the
+* Apache TomEE is distributed in 5 different flavors, you can check the
 http://tomee.apache.org/comparison.html[comparison] table and then
 proceed to http://tomee.apache.org/download-ng.html[download] the
 distribution for your use case.
 * http://tomee.apache.org/docs.html[Documentation and examples] are
 available in the official website.
-* The dozens of application included in the examples/ folder of the
+* The dozens of applications included in the examples/ folder of the
 project.
 
 === Start developing TomEE
 
 TomEE is open source and you can help in its creation.
 
-Apache TomEE is built with Apache Maven >= 3.9.x and Java 17. The
+Apache TomEE is built with Apache Maven >= 3.9.x and Java 17. See the
 http://tomee.apache.org/community/sources.html[Contribute to TomEE]
 section from the official website for a complete Git, Github, Build,
 Test, and Continuous Integration details.
@@ -78,7 +78,7 @@ then build with:
 mvn clean install -DskipMulticastTests=true
 ....
 
-Full build that execute arquillian test on all TomEE distributions:
+Full build that executes Arquillian tests on all TomEE distributions:
 
 ....
 mvn clean install -Pall-adapters

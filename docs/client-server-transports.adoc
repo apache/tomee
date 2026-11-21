@@ -16,11 +16,11 @@ provides the 'ejbd' protocol. A binary protocol traveling over a socket
 
 openejb-derbynet-3.0.jar
 
-allows for derby to be accessed via it's network driver
+allows for derby to be accessed via its network driver
 
 openejb-hsql-3.0.jar
 
-allows for hsqldb to be accessed via it's network driver
+allows for hsqldb to be accessed via its network driver
 
 openejb-activemq-3.0.jar
 

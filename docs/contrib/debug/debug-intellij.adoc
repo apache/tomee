@@ -41,7 +41,7 @@ _______________________________________
 The above command will create the *openejb-4.7.1* directory in your home
 directory.
 
-Even though you can do a full build, We will run the following command
+Even though you can do a full build, we will run the following command
 to do a quick build so that you can have your meal before your hunger
 kills you.
 
@@ -57,7 +57,7 @@ https://tomee.apache.org/dev/source-code.html[here].
 == Deploy TomEE
 
 The TomEE build builds several distributions (zip & war files) to cater
-the different needs of different users. Here we discuss the tomee
+to the different needs of different users. Here we discuss the tomee
 plus distribution & TomEE war distribution only. TomEE+ is the full
 feature packed distribution from TomEE.
 

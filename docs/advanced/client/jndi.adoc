@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-TomEE has several JNDI client intended for multiple usages.
+TomEE has several JNDI clients intended for multiple usages.
 
 == Default one
 

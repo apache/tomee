@@ -1,4 +1,4 @@
-= Multiple Business Interface Hazzards
+= Multiple Business Interface Hazards
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -8,7 +8,7 @@
 
 When two java interfaces are implemented by a proxy and those two
 interfaces declare the _same method_ but with _different throws clauses_
-some very nasty side effects happen, namely you loose the ability to
+some very nasty side effects happen, namely you lose the ability to
 throw any checked exceptions that are not in the throws clause of both
 methods.
 

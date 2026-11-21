@@ -5,7 +5,7 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-Out of the box, TomEE is uses a Java-Util-Logging (JUL) based logging system, which is configured using conf/logging.properties.
+Out of the box, TomEE uses a Java-Util-Logging (JUL) based logging system, which is configured using conf/logging.properties.
 
 Occasionally, users may wish to swap over to using Log4j2. These instructions detail how to do this with the latest TomEE versions.
 These instructions have been tested with TomEE 7.x and TomEE 8.x (master).

@@ -32,7 +32,7 @@ server in front of them making a chain:
 * server3; `initialServers = *&lt;blank>*`
 
 Which is essentially `server1` -> `server2` -> `server3`. This scenario
-could work, but they servers would have to be started in exactly the
+could work, but the servers would have to be started in exactly the
 opposite order:
 
 [arabic]
@@ -81,7 +81,7 @@ eventually start.
 
 == Bootstrapping Three Servers or fewer
 
-In a three sever scenario, we recommend simply having all three servers
+In a three server scenario, we recommend simply having all three servers
 list all three servers.
 
 * server1/conf/multipoint.properties
@@ -97,7 +97,7 @@ three servers.
 
 == Bootstrapping Four Servers or More
 
-In a scenario of four or more, we recommend picking at least to servers
+In a scenario of four or more, we recommend picking at least two servers
 and focus on always keeping at least one of them running. Let's refer to
 them as "root" servers for simplicity sake.
 
@@ -137,14 +137,14 @@ but only of convenience.
 
 Always remember that any property in a
 `conf/<server-service>.properties` file can be overridden on the command
-line or via system properties. So it is possible easily set the
+line or via system properties. So it is possible to easily set the
 `initialServers` list in startup scripts.
 
 A bash example might look something like:
 
 [source,java]
 ----
-!/bin/bash
+#!/bin/bash
 
 OPENEJB_HOME=/opt/openejb-3.1.3
 INITIAL_LIST=$(cat /some/shared/directory/our_initial_servers.txt)

@@ -12,7 +12,7 @@ TomEE has several arquillian adapter flavors:
 
 == Embedded or Remote?
 
-Big advantage of embedded adapters is to be able to debug as usual. However it has few drawbacks which can make you
+Big advantage of embedded adapters is to be able to debug as usual. However it has a few drawbacks which can make you
 rethink this choice:
 
 - JVM resources are available where it will likely not be the case in war mode (src/main/resources typically)
@@ -47,7 +47,7 @@ NOTE: all configurations have defaults
 |properties|container properties, as in conf/system.properties (not in xml format)
 |preloadClasses|some class to load (ie enforce static block initialization)
 |startDefaultScopes|should CDI default scopes be started (includes `@RequestScoped`)
-|singleDeploymentByArchiveName |names of archives (or true for all) to dploy a single time
+|singleDeploymentByArchiveName |names of archives (or true for all) to deploy a single time
 |===
 
 Sample:
@@ -262,7 +262,7 @@ For really remote instances (= not on localhost) you need the `deployerPropertie
 |lib  |a folder to synchronize with TomEE lib folder
 |endorsed   |a folder to synchronize with TomEE endorsed folder
 |javaagent   |a list (flat format) of javaagent to add when launching tomee, can use maven coordinates if prefixed with `mvn:`
-|additionalLibs   |a list (flat format) of library to add to TomEE libraries, can use paths of maven coordinates when prefixed with `mvn:`
+|additionalLibs   |a list (flat format) of libraries to add to TomEE libraries, can use paths or maven coordinates when prefixed with `mvn:`
 |cleanOnStartUp   |should TomEE folder be deleted on startup if exists
 |debug   |should the container run in debug mode (`-Dopenejb.server.debug=true` activates it without touching the configuration)
 |debugPort   |if activated which port to use to debug

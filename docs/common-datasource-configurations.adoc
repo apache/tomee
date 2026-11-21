@@ -85,7 +85,7 @@ database.
 </Resource>
 ----
 
-== PosgreSQL
+== PostgreSQL
 
 [source,xml]
 ----

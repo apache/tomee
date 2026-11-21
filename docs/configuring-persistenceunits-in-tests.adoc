@@ -101,7 +101,7 @@ work:
     context = new InitialContext(p);
 ----
 
-Currently, only properties that start with the unit name are search and
+Currently, only properties that start with the unit name are searched and
 applied.
 
 == No need to specify a "transaction lookup" property

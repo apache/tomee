@@ -16,11 +16,10 @@ be invoked concurrently by multiple threads, like a servlet. It can do
 everything a Stateless can do such as support local and remote business
 interfaces, web services, security, transactions, and more.
 Additionally, the Singleton can have its `@PostConstruct` method called
-with the application starts up and its `@PreDestroy` method called when
+when the application starts up and its `@PreDestroy` method called when
 the application shuts down. This allows it to serve as an application
 lifecycle listener which is something only Servlets could do before. It
-has an `@Startup` annotation which is similar in concept to the servlet
-, but unlike servlets it doesn't take a number as an argument. Instead,
+has an `@Startup` annotation which is similar in concept to the servlet `<load-on-startup>`, but unlike servlets it doesn't take a number as an argument. Instead,
 you can use an `@DependsOn` annotation to say which other Singletons you
 need and the container will ensure they start before you.
 
@@ -37,7 +36,7 @@ Concurrency (the default) and Bean-Managed Concurrency.
 With Bean-Managed Concurrency, annotated as
 _@ConcurrencyManagement(BEAN)_, the container sends all invocations into
 the bean and lets the Singleton bean instance decide how and when to
-synchronize access, if at all. Here the 'synchronization' keyword is
+synchronize access, if at all. Here the 'synchronized' keyword is
 allowed as well as the full javax.util.concurrent set of libraries.
 
 === Container-Managed Concurrency
@@ -50,7 +49,7 @@ methods of the bean class.
 
 ==== Lock type
 
-The first and the default are a "write" lock, annotated as
+The first and the default is a "write" lock, annotated as
 _@Lock(WRITE)_. Essentially, with a write lock the caller holds an
 exclusive lock on the bean for the duration of the method call and all
 other threads for that or any other method must wait.
@@ -154,14 +153,14 @@ can be configured in many different scopes. Here is the order of
 preference:
 
 [arabic]
-. bean-level in openejb-jar.xml///
-. jar-level in openejb-jar.xml//
-. container-level in openejb.xml//
+. bean-level in openejb-jar.xml
+. jar-level in openejb-jar.xml
+. container-level in openejb.xml
 . boot-level via InitialContext(Properties) or
 EJBContainer.createEjbContainer(Map<Object,Object>)
 . system-level in System.getProperties()
 
-The value of the property can be phrased in plain english such as "1
+The value of the property can be phrased in plain English such as "1
 hour and 23 minutes and 17 seconds" see
 link:configuring-durations.html[Configuring Durations] for details.
 

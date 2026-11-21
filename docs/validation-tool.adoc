@@ -18,7 +18,7 @@ openejb validate [options] jarfiles
 The OpenEJB Validation tool must be executed from the OPENEJB_HOME
 directory. This is the directory where OpenEJB was installed or
 unpacked. For the remainder of this document, we will assume you
-unpacked OpenEJB into the directory C:.
+unpacked OpenEJB into the directory C:\openejb.
 
 In Windows, the validation tool can be executed as follows:
 
@@ -29,7 +29,7 @@ that doesn't allow you to execute the validate command as above. For
 that release, Windows users can execute the following command: _C:>
 bin.bat -help_
 
-In UNIX, Linux, or Mac OS X, the deploy tool can be executed as follows:
+In UNIX, Linux, or Mac OS X, the validation tool can be executed as follows:
 
 `[user@host openejb]# ./openejb.sh validate -help`
 
@@ -41,7 +41,7 @@ command.
 
 From here on out, it will be assumed that you know how to execute the
 right openejb script for your operating system and commands will appear
-in shorthand as show below.
+in shorthand as shown below.
 
 _openejb validate -help_
 

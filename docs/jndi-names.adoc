@@ -27,7 +27,7 @@ the JNDI name format.
 
 The _openejb.jndiname.format_ property allows you to supply a template
 for the global JNDI names of all your EJBs. With it, you have complete
-control over the structure of the JNDI layout can institute a design
+control over the structure of the JNDI layout and can institute a design
 pattern just right for your client apps. See the
 link:service-locator.html[Service Locator] doc for clever ways to use
 the JNDI name formatting functionality in client code.
@@ -213,7 +213,7 @@ The 'name' attribute can still use templates if it likes, such as:
 
 Multiple tags are allowed making it possible for you to be as specific
 as you need about the jndi name of each interface or each logical group
-of iterfaces (Local, Remote, LocalHome, RemoteHome).
+of interfaces (Local, Remote, LocalHome, RemoteHome).
 
 Given an ejb, FooBean, with the following interfaces: - business-local:
 org.superbiz.LocalOne - business-local: org.superbiz.LocalTwo -
@@ -305,7 +305,7 @@ interfaces, and two business local interfaces, this pattern would result
 in +
 _six_ proxies bound into JNDI. +
 
-Bordeline optimistic: +
+Borderline optimistic: +
 
 The above two settings would work if the interface wasn't shared by
 other beans.
@@ -354,7 +354,7 @@ implement your other business remote interfaces.
 === Advanced Details on EJB 3.0 Business Proxies (the complicated part)
 
 _Who should read?_ +
-Read this section of either of these two apply to you: +
+Read this section if either of these two apply to you: +
 - You do not implement your business interfaces in your bean class +
 - One or more of your business remote interfaces extend from
 javax.rmi.Remote
@@ -393,7 +393,7 @@ cannot throw javax.rmi.RemoteException. This is very bad as the
 container does need to throw RemoteException to any business interfaces
 extending java.rmi.Remote for any container related issues or connection
 issues. If the container attempts to throw a RemoteException from the
-proxies 'doIt()\{}' method, it will result in an
+proxy's 'doIt()\{}' method, it will result in an
 UndeclaredThrowableException thrown by the VM.
 
 The only way to guarantee the proxy has the 'doIt() throws

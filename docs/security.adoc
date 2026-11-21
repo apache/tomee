@@ -195,7 +195,7 @@ LoginModule Developer's Guide for more information.
 * _Client IdentityResolver_. This is the just mentioned interface you
 would have to implement to supply the OpenEJB client with alternate data
 to send to the server with each invocation request. If you're plugging
-in a new version of this it is likely that you may also want to plugin
+in a new version of this it is likely that you may also want to plug
 in your own SecurityService implementation. Reason being, the object
 returned from IdentityResolve.getIdentity() is sent across the wire and
 straight in to the SecurityService.associate(Object) method.

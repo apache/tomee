@@ -8,7 +8,7 @@
 
 The `EJBContainer` API is a Jakarta EE API enriched by some OpenEJB features to make the testing easier.
 
-It starts a container (embedded for case we are interested in) scanning the classpath. This operation can be
+It starts a container (embedded for the case we are interested in) scanning the classpath. This operation can be
 slow and if you go with this solution maybe think to start it only once for all tests.
 
 === Sample
@@ -66,7 +66,7 @@ public class ATest {
 }
 ----
 
-It will use `createEJBContainer()` method to start the container and application, and `close()` to shutdown it.
+It will use `createEJBContainer()` method to start the container and application, and `close()` to shut it down.
 
 OpenEJB provides the `bind("inject")` hack to be able to get injection in the test class.
 

@@ -14,7 +14,7 @@
 OpenEJB supports the Enterprise JavaBeans 3.0 specification and previous
 versions 2.1, 2.0 and 1.1.
 
-=== I don't plan to use EJBs, so why would I embed OpenEJB into Tomcat.
+=== I don't plan to use EJBs, so why would I embed OpenEJB into Tomcat?
 
 Adding OpenEJB to Tomcat gives servlets several new Java EE 5
 capabilities such as JPA, JAX-WS, JMS, J2EE Connectors, transactions,

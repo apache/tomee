@@ -46,7 +46,7 @@ change someday, but until then ServerServices are configurable via
 conf/.properties files such as conf/ejbd.properties to configure the
 main protocol that services EJB client requests.
 
-The format those properties files is greatly adapted from the xinet.d
+The format of those properties files is greatly adapted from the xinet.d
 style of configuration and even shares similar functionality and
 properties such as host-based authorization (HBA) via the 'only_from'
 property.

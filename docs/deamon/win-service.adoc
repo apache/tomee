@@ -7,7 +7,7 @@
 = Windows Service
 == TomEE as a Windows® Service
 
-It is possible to configure TomEE to run as Windows service, and batch 
+It is possible to configure TomEE to run as a Windows service, and batch 
 files are provided in the bin folder to accomplish this. The key batch
 file is `service.bat`, and this provides commands to install and 
 remove the service. Additionally two helper files are provided to 
@@ -70,7 +70,7 @@ C:\Java\apache-tomee-plus-10.1.4\bin>
 
 == Service Accounts
 
-Ny default, the service is installed to run at the user `NT-Authority\Local Service`, 
+By default, the service is installed to run as the user `NT-Authority\Local Service`, 
 which is a very restricted account. If you wish to use `LocalSystem`, which
 has more privileges, use:
 
@@ -127,7 +127,7 @@ Setting custom environment variables for TomEE to use is a little tricky
 as it can't be done through the UI, but can be accomplished via the 
 command line.
 
-After the service as been installed, at the Command Prompt, use the 
+After the service has been installed, at the Command Prompt, use the 
 following syntax (use the right TomEE exe for your platform)
 
 `TomEE.amd64.exe //US//TomEE ++Environment "variable=value"`

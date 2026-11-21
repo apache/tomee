@@ -75,7 +75,7 @@ java -jar myapp-1.0-SNAPSHOT.jar
 
 == Fat Jars with Gradle
 
-With Gradle you can rely on either jar plugin, fatjar plugin or shadowjar plugin. Last one is likely the closer to maven shade plugin
+With Gradle you can rely on either jar plugin, fatjar plugin or shadowjar plugin. Last one is likely the closest to maven shade plugin
 so that's the one used for next sample:
 
 [source,groovy]
@@ -213,7 +213,7 @@ Fat Wars are executable wars. Note they can be fancy for demos but they have the
 at packaging time (to ensure the war is actually an executable jar) so adding a filter preventing these files to be read
 can be needed if you don't already use a web technology doing it (a servlet bound to /*).
 
-Here how to do a fat war:
+Here is how to do a fat war:
 
 [source,xml]
 ----

@@ -38,9 +38,9 @@ annotation only (not `@PersistenceContext`)
 * You are *not* allowed to use @PersistenceContext to refer to a unit of
 type RESOURCE_LOCAL
 * You *must* use the *EntityTransaction* API to begin/commit around
-*every* call to your EntityManger
+*every* call to your EntityManager
 * Calling entityManagerFactory.createEntityManager() twice results in
-*two* separate EntityManager instances and therefor *two* separate
+*two* separate EntityManager instances and therefore *two* separate
 PersistenceContexts/Caches.
 * It is *almost never* a good idea to have more than one *instance* of
 an EntityManager in use (don't create a second one unless you've

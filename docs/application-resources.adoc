@@ -80,7 +80,7 @@ for the properties within the `<Resource>` tag.
 ----
 
 Specifying the key/value pairs specific to a Resource can also be done
-when defining the resource via system properties. This is done be
+when defining the resource via system properties. This is done by
 specifying an additional property for each key/value pair, using the
 resource ID as a prefix: `<resourceId>.<propertyName>=<value>`. The
 system properties equivalent of the resource above is:
@@ -95,7 +95,7 @@ p.setProperty("DB.Password", "password");
 ----
 
 The `<Resource>` tag has a number of attributes which control the way
-that the resource get created.
+that the resource gets created.
 
 * type
 
@@ -112,7 +112,7 @@ for any properties not specified.
 
 * class-name
 
-The fully qualified class that creates the resource. This might the
+The fully qualified class that creates the resource. This might be the
 resource class itself, which is created by calling the constructor, or a
 factory class that provides a specific factory method to create the
 resource.
@@ -305,7 +305,7 @@ The following properties can be used to change this behavior.
 This is a boolean value, which when true, creates a proxy that defers
 the actual instantiation of the resource until the first time it is
 looked up from JNDI. This can be useful if the resource's classpath
-until the application is started (see below), or to improve startup time
+is not available until the application is started (see below), or to improve startup time
 by not fully initializing resources that might not be used.
 
 * UseAppClassLoader

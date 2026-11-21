@@ -4,7 +4,7 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-This plugin has two goal:
+This plugin has two goals:
 
 - `applicationcomposer:run`: to start the application from mvn command line
 - `applicationcomposer:zip`: to package a zip with dependencies and start scripts
@@ -12,7 +12,7 @@ This plugin has two goal:
 The application runs on the ApplicationComposer, which has no HTTP server. Remote clients reach its EJBs over ejbd
 (`@EnableServices("ejbd")`), JAX-RS and JAX-WS endpoints are not served.
 
-IMPORTANT: the dependencies are retrieved with `MavenProject.getArtifacts()` which means you artifacts should be a `war`
+IMPORTANT: the dependencies are retrieved with `MavenProject.getArtifacts()` which means your artifacts should be a `war`
 - maven doesn't populate it with a `jar` - and the compile phase - at least - should be passed to ensure it is populated.
 
 == Run goal configuration

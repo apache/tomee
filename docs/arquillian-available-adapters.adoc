@@ -78,7 +78,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 
 The URL will get injected by Arquillian. Be careful, that injection only
 works if you're on the client side (it does not make sense in the
-server side). So, if for a specific need to need it, just use the system
+server side). So, if for a specific need you need it, just use the system
 property.
 
 == TomEE Embedded Adapter
@@ -131,7 +131,7 @@ Arquillian Adapters:
 * `tomee.httpPort`
 * `tomee.stopPort`
 
-Or more specifically as a System properties only applicable to the
+Or more specifically as System properties only applicable to the
 Embedded Adapter:
 
 * `tomee.embedded.httpPort`
@@ -211,7 +211,7 @@ Arquillian Adapters:
 * `tomee.version`
 * `tomee.classifier`
 
-Or more specifically as a System properties only applicable to the
+Or more specifically as System properties only applicable to the
 Remote Adapter:
 
 * `tomee.remote.httpPort`

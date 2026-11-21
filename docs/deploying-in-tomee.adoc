@@ -23,7 +23,7 @@ Deploying applications in TomEE is as simple as deploying them in
 Tomcat.
 
 You could deploy your application in Eclipse just like how you would
-deploy with Tomcat. For an example,
+deploy with Tomcat. For example,
 link:tomee-and-eclipse.html[tomee-and-eclipse] shows how to use TomEE
 with Eclipse.
 

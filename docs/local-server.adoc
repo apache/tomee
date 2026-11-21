@@ -6,7 +6,7 @@
 
 = Accessing EJBs Locally
 
-When OpenEJB embedded in your app, server, IDE, or JUnit, you can use
+When OpenEJB is embedded in your app, server, IDE, or JUnit, you can use
 what we call the Local Server and avoid the network overhead and enjoy
 an easy way to embed OpenEJB. Instead of putting the app in the server,
 put the server in the app!
@@ -39,7 +39,7 @@ In this case, your application, test suite, IDE, or client accesses
 beans as you would from any other EJB Server. The EJB Server just
 happens to be running in the same virtual machine as your application.
 This EJB Server is thusly called the IntraVM Server, and, for all
-intents purposes, your application an IntraVM Client.
+intents and purposes, your application is an IntraVM Client.
 
 There are some interesting differences though. The IntraVM Server isn't
 a heavyweight server as one normally associates with EJB. It doesn't

@@ -64,7 +64,7 @@ ifndef::backend-pdf[]
         label: 'conf',
         description: 'Folder containing the configuration of TomEE',
         children: [
-            {label:'Catalina',description:'A folder where Tomcat can copy web application configuration (typically context.xml can be overriden from there)'},
+            {label:'Catalina',description:'A folder where Tomcat can copy web application configuration (typically context.xml can be overridden from there)'},
             {label:'catalina.policy',description:'The server security policy rules'},
             {label:'catalina.properties',description:'The server boot configuration (classloader etc...)'},
             {label:'conf.d',description:'A TomEE folder where services can pick configuration'},
@@ -74,7 +74,7 @@ ifndef::backend-pdf[]
             {label:'server.xml.original',description:'The original server.xml, TomEE updates it to add its lifecycle manager.'},
             {label:'system.properties',description:'TomEE global configuration'},
             {label:'tomcat-users.xml',description:'The default location where tomcat stores users.'},
-            {label:'tomcat-users.xml.original',description:'The Tomcat tomcat-users.xml (TomEE add comments)'},
+            {label:'tomcat-users.xml.original',description:'The Tomcat tomcat-users.xml (TomEE adds comments)'},
             {label:'tomcat-users.xsd',description:'The XSD for tomcat-users.xml'},
             {label:'tomee.xml',description:'The TomEE configuration file, syntax is hybrid between XML and Properties and it is fully replaceable with system.properties but users generally prefer this file.'},
             {label:'web.xml',description:'The default web.xml'}
@@ -101,7 +101,7 @@ ifndef::backend-pdf[]
         label: 'temp',
         description: 'Java temporary directory is redirected by default to this folder',
         children: [
-            {label:'OpenEJB-dejlzdbhjzbfrzeofrh',description:'A temporary file TomEE can create (suffix depends the startup) to check the instance'}
+            {label:'OpenEJB-dejlzdbhjzbfrzeofrh',description:'A temporary file TomEE can create (suffix depends on the startup) to check the instance'}
         ]
     },
     {
@@ -121,7 +121,7 @@ ifndef::backend-pdf[]
                 label:'Catalina',description:'By default Tomcat Engine is called Catalina. This folder matches engine name.',
                 children: [
                     {
-                        label:'localhost',description:'A folder by host by engine to seggregate data of each ones',
+                        label:'localhost',description:'A folder by host by engine to segregate data of each one',
                         children: [
                             {
                                 label:'myapp',description:'An application deployed on the previous level host',

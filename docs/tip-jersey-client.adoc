@@ -24,7 +24,7 @@ jakarta.ws.rs.core.Configurable, so the jar is usually ignored by TomEE.
 
 You could switch to using the https://cxf.apache.org/[Apache CXF Client],
 which is what we would recommend. If you really want to keep Jersey then
-you can use set the following property in your _[TomEE].properties_
+you can set the following property in your _[TomEE].properties_
 
 [source,properties]
 ----

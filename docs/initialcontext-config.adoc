@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-A InitialContext can be declared via xml in the
+An InitialContext can be declared via xml in the
 `<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
 using a declaration like the following. All properties in the element
 body are optional.

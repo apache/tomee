@@ -16,7 +16,7 @@ functional reasons (filtering, aggregation, enriching...).
 
 == The API
 
-The interface Router (_org.apache.openejb.resource.jdbc.Router_) have
+The interface Router (_org.apache.openejb.resource.jdbc.Router_) has
 only one method to get the datasource to use:
 
 [source,java]
@@ -37,7 +37,7 @@ available to ease router development.
 You have to use the same kind of databases (same version, same
 configuration...).
 
-All database have to be created when you use the router. The way to do
+All databases have to be created when you use the router. The way to do
 it automatically can depend on your JPA provider.
 
 === OpenJPA

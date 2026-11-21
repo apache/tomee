@@ -5,7 +5,7 @@
 :jbake-status: published
 
 The time based configuration properties of containers
-and beans support plain english, such as:
+and beans support plain English, such as:
 
 * "1 hour"
 * "27 minutes"

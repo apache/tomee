@@ -33,20 +33,20 @@ asynchronism or reactive patterns. Therefore, it is possible to customize it add
 for quartz tasks to a custom implementation (using a database or anything for instance). Constructor can take a `TransactionManager`
 or nothing.
 
-All quartz properties prefixed with `org.apache.openejb.quartz.` (instead of `org.quartz.`) are passthrough to quartz.
+All quartz properties prefixed with `org.apache.openejb.quartz.` (instead of `org.quartz.`) are passed through to quartz.
 
 === CDI
 
 The boolean `openejb.cdi.skip-resource-validation` allows to not validate resources ie `@EJB` and `@Resource` usages in CDI beans.
 
-All properties understood by OpenWebBeans will also be passthrough to OpenWebBeans from this location, see https://openwebbeans.apache.org/owbconfig.html[OWB config] for more details.
+All properties understood by OpenWebBeans will also be passed through to OpenWebBeans from this location, see https://openwebbeans.apache.org/owbconfig.html[OWB config] for more details.
 
 === `@WebServiceRef`
 
 [.table.table-bordered,options="header"]
 |===
 | Name | Description
-| cxf.jaxws.client.wsFeatures | Allows to set WSFeature on the client injection. Values is a list (comma separated) of resource id in resources.xml or fully qualified names.
+| cxf.jaxws.client.wsFeatures | Allows to set WSFeature on the client injection. Value is a list (comma separated) of resource ids in resources.xml or fully qualified names.
 |===
 
 === `@Stateless`
@@ -97,7 +97,7 @@ in the global naming tree to be able to route the requests depending on the appl
 Typically, if your application is named `myapp` and your resource id is `myresource` then instead of being registered
 as `myresource`, it will get registered as `myapp/myresource`.
 
-If you get any ambiguity in resource name matching try to fully qualified your resource prefixing it with the application name.
+If you get any ambiguity in resource name matching try to fully qualify your resource by prefixing it with the application name.
 
 Inside an EAR, a plain `@Resource` whose name is just the resource id (or the field name) does not match the prefixed
 id. TomEE then injects the first resource of the requested type instead, without an error. If an EAR declares several

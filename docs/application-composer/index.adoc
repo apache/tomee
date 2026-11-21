@@ -6,8 +6,8 @@
 Here is the subdomain dedicated to the Application Composer.
 
 If you don't know at all what ApplicationComposer means,
-link:history.html[History] page will explain to you where does it come from
-and what it can be used to today.
+link:history.html[History] page will explain to you where it comes from
+and what it can be used for today.
 
 If you are already familiar with ApplicationComposer concept and are
 just looking for a sample, link:getting-started.html[Getting Started] is

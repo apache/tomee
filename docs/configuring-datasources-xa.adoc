@@ -42,8 +42,8 @@ or
 
 `tomee.bat setters -c com.mysql.cj.jdbc.MysqlXADataSource` on Windows systems.
 
-This will give a complete list of paramaters that are available for the XA 
-datasource. We'll simply use the `URL` paramater for the datasource.
+This will give a complete list of parameters that are available for the XA 
+datasource. We'll simply use the `URL` parameter for the datasource.
 
 [source]
 ----

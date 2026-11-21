@@ -14,7 +14,7 @@ What is not so known is these system properties can be read from several
 places. The order is important, it means if the second place provides
 the same property as the first one, the first one will be omitted.
 
-Here how it works:
+Here is how it works:
 
 * JVM system properties: -Dxxx=yyy
 * user system.properties: the file

@@ -133,7 +133,7 @@ public SecurityService mockSecurity() {
 
 === JUnit
 
-If you use JUnit you have mainly 2 solutions to run you "model" using
+If you use JUnit you have mainly 2 solutions to run your "model" using
 the ApplicationComposer:
 
 * using `ApplicationComposer` runner:
@@ -168,7 +168,7 @@ if the test class was a managed bean!
 === Standalone
 
 Since TomEE 2.x you can also use `ApplicationComposers` to directly run
-you ApplicationComposer model as a standalone application:
+your ApplicationComposer model as a standalone application:
 
 [source,java]
 ----
@@ -185,7 +185,7 @@ Tip: if `MyApp` has `@PostConstruct` methods they will be respected and
 if `MyApp` has a constructor taking an array of String it will be
 instantiated getting the second parameter as argument (ie you can
 propagate your main parameter to your model to modify your application
-depending it!)
+depending on it!)
 
 == JUnit Sample
 

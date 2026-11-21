@@ -24,7 +24,7 @@ with a 'jar' attribute pointing to the jar file on the file system.
 
 The last element in the example uses a relative path to point to the ejb
 jar. This path will be resolved relative to the catalina.base property.
-So, for example, of the value of catalina.base was 'c:' then TomEE
+So, for example, if the value of catalina.base was 'c:' then TomEE
 would look for the jar 'c:.jar'. See the link:configuration.html[Configuration] guide
 for more details.
 
@@ -50,7 +50,7 @@ The directories listed will be searched for jars containing
 `META-INF/ejb-jar.xml` files and will be added to the list of jars to
 load if they do. Better said, it's completely safe to point to a
 directory containing a mix of ejbs and regular jar files. TomEE will
-simply skip over jars that do contain the required
+simply skip over jars that do not contain the required
 `META-INF/ejb-jar.xml` file.
 
 The last Deployments element declares a 'beans' directory relative to
@@ -80,7 +80,7 @@ For example, if you have a directory structure like this:
 ----
 
 Then you would declare a 'Deployments' element with the 'dir' attribute
-set to 'C:' as shown below.
+set to 'C:\myapp\acmeEjbs' as shown below.
 
 [source,xml]
 ----
@@ -92,7 +92,7 @@ set to 'C:' as shown below.
 ----
 
 Note that this syntax is the same as the directory syntax above. If
-TomEE finds a META-INF directory with an `ejb-jar.xml` fine inside,
+TomEE finds a META-INF directory with an `ejb-jar.xml` file inside,
 then TomEE will treat the directory as an unpacked ejb jar. Otherwise,
 TomEE will look for ejb jar files to load as detailed in the above
 section.

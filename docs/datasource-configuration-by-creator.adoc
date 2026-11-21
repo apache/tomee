@@ -10,11 +10,11 @@ terms it means you can use any pool you want for DataSource in TomEE.
 Default provided pools are DBCP (default in embedded mode) and Tomcat
 JDBC (default in TomEE to be aligned on Tomcat).
 
-Depending which one you use the accept configuration are not 100% the
+Depending on which one you use, the accepted configuration is not 100% the
 same even if we try to align the most common entries to the historical
 configuration (ie DBCP).
 
-Here are a more detailed list of accepted properties by creator.
+Here is a more detailed list of accepted properties by creator.
 
 == DBCP2 (TomEE 7.x and 8.x)
 

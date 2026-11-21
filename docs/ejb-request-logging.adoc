@@ -60,7 +60,7 @@ time is effectively "business logic".
 * *Server time* -- this timer starts the (nano)second the request is
 seen by the server and the (nano)second the response is actually
 written. The serverTime minus the containerTime will effectively show
-you how long serialization and deserialization is taking pre request.
+you how long serialization and deserialization is taking per request.
 * *Client time* -- entire begin to end including attempting to contact
 the server and fully reading the response. The clientTime minus the
 serverTime will show network latency for the most part.

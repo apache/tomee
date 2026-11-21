@@ -34,9 +34,9 @@ needed dependency is org.apache.openejb:openejb-core.
 Once you got your deployer simply invoke the "deploy" method. Give it
 the location of your application (can be a file, http, https, maven
 location depending on the way you configured your container, for more
-information have a look to TomEE provisionning).
+information have a look to TomEE provisioning).
 
-Note: the "undeploy" method exists too and take the same path.
+Note: the "undeploy" method exists too and takes the same path.
 
 The Deployer is the base of all other solutions
 
@@ -78,7 +78,7 @@ If you want to cloudify your application, you'll get a configuration
 database (or any other storage system ;)).
 
 So it means it is easy for you to get a host and a port...so it is easy
-to deploy on all your server using the deployer: simply use the maven
+to deploy on all your servers using the deployer: simply use the maven
 provisioning then run the deployer on all your nodes and that's all!
 
 ==== Doing it with camel?

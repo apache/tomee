@@ -5,7 +5,7 @@
 :jbake-status: published
 
 As part of the Jakarta EE certification, Apache TomEE runs standalone TCKs for small components in a standalone manner.
-Of course, as a web profile implementation, Apache TomEE also runs bigger tests suites for web profile or MicroProfile for instance.
+Of course, as a web profile implementation, Apache TomEE also runs bigger test suites for web profile or MicroProfile for instance.
 
 == Technology Compatibility Kit (TCK)
 
@@ -80,4 +80,4 @@ The Jakarta Annotations, version 1.3 has been executed for the Apache Geronimo s
 
 == Certification request
 
-Apache TomEE filled a certification request under https://github.com/eclipse-ee4j/common-annotations-api/issues/61
+Apache TomEE filed a certification request under https://github.com/eclipse-ee4j/common-annotations-api/issues/61

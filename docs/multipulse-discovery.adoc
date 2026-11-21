@@ -57,8 +57,8 @@ discovery   = ejb:ejbd://{bind}:{port}
 ----
 
 NOTE: If either `0.0.0.0` (IPv4) or `[::]` (IPv6) wildcard bind
-addresses are used then the server will actually broadcast all of it's
-known public hosts to clients. Clients will then cycle though and
+addresses are used then the server will actually broadcast all of its
+known public hosts to clients. Clients will then cycle through and
 attempt to connect to the provided hosts until successful.
 
 If `localhost` is used then only clients on the same physical machine

@@ -34,9 +34,9 @@ of this document, we will assume you unpacked OpenEJB into the directory
 
 In Windows, the deploy tool can be executed as follows:
 
-________________________
-C:-3.0> bindeploy --help
-________________________
+----
+C:\openejb-3.0> bin\openejb deploy --help
+----
 
 In UNIX, Linux, or Mac OS X, the deploy tool can be executed as follows:
 
@@ -54,7 +54,7 @@ _______________________________
 
 From here on out, it will be assumed that you know how to execute the
 right openejb script for your operating system and commands will appear
-in shorthand as show below.
+in shorthand as shown below.
 
 _____________________
 openejb deploy --help
@@ -76,7 +76,7 @@ The type of the files passed is determined as follows:
 are assumed to be EAR files.
 * Archives containing a `META-INF/ejb-jar.xml` file or any classes
 annotated with `@Stateless`, `@Stateful` or `@MessageDriven`, are
-assumed to be _EJB_ applications. EJB applications older that EJB 3.0
+assumed to be _EJB_ applications. EJB applications older than EJB 3.0
 should contain a complete `META-INF/ejb-jar.xml` inside the jar, however
 we do not strictly enforce that -- the act of it being incomplete makes
 it an EJB 3.0 application by nature.
@@ -104,7 +104,7 @@ Sets the OpenEJB configuration to the specified file.
 
 -h, --help
 
-Lists these options and exit.
+Lists these options and exits.
 
 -o, --offline
 
@@ -131,9 +131,9 @@ Prints the OpenEJB version and exits.
 
 == Deploying multiple jar files
 
-__________________________________
-openejb deploy myapp.jar myapp.jar
-__________________________________
+----
+openejb deploy fooEjbs.jar barEjbs.jar
+----
 
 Deploys the beans in the fooEjbs.jar first, then deploys the beans in
 the barEjbs.jar. Wildcards can be used as well.

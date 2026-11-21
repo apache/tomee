@@ -83,7 +83,7 @@ blacklist and a whitelist. The default black list is defined as `*`,
 meaning that requests cannot be deserialized at all and the Ejbd
 transport in fact cannot be used.
 
-The blacklist and whitelist is configured via the system properties:
+The blacklist and whitelist are configured via the system properties:
 
 * `tomee.serialization.class.whitelist`
 * `tomee.serialization.class.blacklist`
@@ -174,7 +174,7 @@ TomEE 1.7.3 already contained a fixed blacklist that was not
 configurable and contained the packages org.codehaus.groovy.runtime,
 org.apache.commons.collections.functors and org.apache.xalan including
 subpackages and the class java.lang.Process. If you know that your
-applications runs on TomEE 1.7.3 but does not on TomEE 1.7.4 showing the
+applications run on TomEE 1.7.3 but do not on TomEE 1.7.4 showing the
 aforementioned log message, you can define the configuration so that the
 serialization will work in the same way as it did with TomEE 1.7.3:
 
@@ -225,7 +225,7 @@ Arquillian tests. As the Ejbd transport is already used for deploying
 applications all Arquillian tests would fail with the default settings.
 
 Therefore, the TomEE Arquillian adapter automatically starts the
-container so that all classes except for a set of well-know dangerous
+container so that all classes except for a set of well-known dangerous
 classes are whitelisted.
 
 As Ejbd is by default disabled since TomEE 7.0.0, the TomEE Arquillian

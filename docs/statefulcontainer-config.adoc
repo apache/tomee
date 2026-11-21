@@ -114,7 +114,7 @@ The passivator is responsible for writing beans to disk at passivation
 time. Different passivators can be used by setting this property to the
 fully qualified class name of the `PassivationStrategy` implementation.
 The passivator is not responsible for invoking any callbacks or other
-processing, its only responsibly is to write the bean state to disk.
+processing, its only responsibility is to write the bean state to disk.
 
 timeOut
 
@@ -146,7 +146,7 @@ The passivator is responsible for writing beans to disk at passivation
 time. Different passivators can be used by setting this property to the
 fully qualified class name of the `PassivationStrategy` implementation.
 The passivator is not responsible for invoking any callbacks or other
-processing, its only responsibly is to write the bean state to disk.
+processing, its only responsibility is to write the bean state to disk.
 
 Known implementations:
 

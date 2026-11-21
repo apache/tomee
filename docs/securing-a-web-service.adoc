@@ -9,7 +9,7 @@ Web Services are a very common way to implement a Service Oriented
 Architecture (SOA).
 
 There are lots of web service standards/specifications (XML, SOAP, WSDL,
-UUDI, WS-*, ...) coming from organizations like W3C, OASIS, WS-I, ...
+UDDI, WS-*, ...) coming from organizations like W3C, OASIS, WS-I, ...
 And there are java web service standards like JAX-WS 1.x (JSR 181),
 JAX-WS 2.0 (JSR 224).
 
@@ -39,7 +39,7 @@ have set up.
 https://github.com/apache/tomee/tree/master/examples
 
 WS-Security: works at the message (SOAP) level, enables a higher-level
-security, Nowadays, SOAP implementations use other protocols than just
+security. Nowadays, SOAP implementations use other protocols than just
 HTTP so we need to apply security to the message itself and not only at
 the transport layer. Moreover, HTTPS can only be used for securing
 point-to-point services which tend to decrease with Enterprise Service
@@ -81,7 +81,7 @@ messages (response).
 
 The configuration is made in the `openejb-jar.xml`.
 Each endpoint web service can provide a set of
-properties to customize WS-Security behavior through the element. The
+properties to customize WS-Security behavior through the `<properties>` element. The
 content of this element is consistent with the overall structure of
 _openejb.xml_. The format for properties is the same as if you would use
 a common java property file.
@@ -191,10 +191,10 @@ Server: OpenEJB/??? (unknown os)
 
 = JAAS with WS-Security
 
-1 doesn't work straight off with WS-Security, but you can add calls to
+JAAS doesn't work straight off with WS-Security, but you can add calls to
 the OpenEJB SecurityService to log in to a JAAS provider to a
 CallbackHandler. Once you have done this, any permissions configured
-with 1 should be honored.
+with JAAS should be honored.
 
 Here is a snippet from the webservice-ws-security example demonstrating
 this:

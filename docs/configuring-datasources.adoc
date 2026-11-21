@@ -7,9 +7,9 @@
 
 The __ element is used to configure a _javax.sql.DataSource_. It is also
 used to configure other resources like Timers, Topics, Queues. We will
-see some examples of using to configure a DataSource.
+see some examples of using `<Resource>` to configure a DataSource.
 
-The element is designed after `@Resource` annotation and has similar
+The `<Resource>` element is designed after the `@Resource` annotation and has similar
 attributes.
 
 For example, this annotation in your bean:

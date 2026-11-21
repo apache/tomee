@@ -32,7 +32,7 @@ membership of the cluster is stable there is essentially no clustering
 overhead to the protocol -- 8 byte overhead to each request and 1 byte
 on each response -- so you will _not_ see an exponential slowdown in
 response times the more members are added to the cluster. This new list
-takes affect for all proxies that share the same connection.
+takes effect for all proxies that share the same connection.
 
 When a server shuts down, more connections are refused, existing
 connections not in mid-request are closed, any remaining connections are
@@ -71,7 +71,7 @@ dead.
 
 The 'group' property, cluster1 in the example, is used to dissect the
 servers on the network into smaller logical clusters. A given server
-will broadcast all it's services with the group prefixed in the URI, as
+will broadcast all its services with the group prefixed in the URI, as
 well it will ignore any services it sees broadcast if they do not share
 the same group name.
 

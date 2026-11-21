@@ -19,7 +19,7 @@ or simply to cloudify it.
 == A word about this page
 
 This page will not explain to you how to deploy an application or how to
-enhance your container. It will simply explain to you how which kind of
+enhance your container. It will simply explain to you which kind of
 urls are supported for such features.
 
 These features are explained in other places.
@@ -28,7 +28,7 @@ These features are explained in other places.
 
 === file
 
-This is the default and well know provisioning. Simply give a file path
+This is the default and well known provisioning. Simply give a file path
 the container is able to access through its filesystem.
 
 Example:
@@ -71,7 +71,7 @@ or
 mvn:groupId:artifactId[:[version]:[type]]
 ----
 
-Note: classifier are supported (through version field)
+Note: classifiers are supported (through version field)
 
 For instance, you can use:
 

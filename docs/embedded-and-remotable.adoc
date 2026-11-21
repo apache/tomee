@@ -51,7 +51,7 @@ required.
 = The Code
 
 For this example we have a simple Stateful bean called TelephoneBean as
-defined below. As a simple way of demonstrating the state we have to
+defined below. As a simple way of demonstrating the state we have two
 methods: speak and listen. You call _speak_ and pass in some text, then
 you call _listen_ to get your answer.
 
@@ -105,7 +105,7 @@ business interface
 
 This is the part you would want to do in apps that are running a
 different VM than the one in which the ejb container is embedded. These
-"client" VMs need only have the the _openejb-client jar_ in their
+"client" VMs need only have the _openejb-client jar_ in their
 classpath and connect to OpenEJB via the RemoteInitialContextFactory
 like any other remote EJB client.
 

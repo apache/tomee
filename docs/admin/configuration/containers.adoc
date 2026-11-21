@@ -5,7 +5,7 @@
 :jbake-tomeepdf:
 
 All containers will be created automatically - which means you don't need to define them
-if you don't need to tune their configuration - when a bean of their type if found.
+if you don't need to tune their configuration - when a bean of their type is found.
 
 To avoid that use `openejb.offline` property and set it to `true`. See link:server.html[Server Configuration] for more detail.
 
@@ -62,13 +62,13 @@ Foo.EvictionThreads = 1
 
 ==== AccessTimeout
 
-Specifies the time an invokation should wait for an instance
+Specifies the time an invocation should wait for an instance
 of the pool to become available.
 
 After the timeout is reached, if an instance in the pool cannot
 be obtained, the method invocation will fail.
 
-Usable time units: nanoseconds, microsecons, milliseconds,
+Usable time units: nanoseconds, microseconds, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 "1 hour and 27 minutes and 10 seconds"
 
@@ -106,7 +106,7 @@ number of threads specified by `CallbackThreads`.
 ==== StrictPooling
 
 StrictPooling tells the container what to do when the pool
-reaches it's maximum size and there are incoming requests that
+reaches its maximum size and there are incoming requests that
 need instances.
 
 With strict pooling, requests will have to wait for instances to
@@ -130,7 +130,7 @@ gracefully.  Useful for situations where bean instances are
 designed to hold potentially expensive resources such as memory
 or file handles and need to be periodically cleared out.
 
-Usable time units: nanoseconds, microsecons, milliseconds,
+Usable time units: nanoseconds, microseconds, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
@@ -142,7 +142,7 @@ so that the pool will remain at its current size.  Replacement
 is done in a background queue so that incoming threads will not
 have to wait for instance creation.
 
-The aim of his option is to prevent user requests from paying
+The aim of this option is to prevent user requests from paying
 the instance creation cost as `MaxAge` is enforced, potentially
 while under heavy load at peak hours.
 
@@ -158,8 +158,8 @@ remain at its current size.  Replacement is done in a background
 queue so that incoming threads will not have to wait for
 instance creation.
 
-The aim of his option is to prevent user requests from paying
-the instance creation cost if a flush performed while under
+The aim of this option is to prevent user requests from paying
+the instance creation cost if a flush is performed while under
 heavy load at peak hours.
 
 Instances from the minimum side of the pool are always replaced
@@ -242,7 +242,7 @@ Specifies the maximum time that an instance should be allowed to
 sit idly in the pool without use before it should be retired and
 removed.
 
-Usable time units: nanoseconds, microsecons, milliseconds,
+Usable time units: nanoseconds, microseconds, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 "1 hour and 27 minutes and 10 seconds"
 
@@ -277,10 +277,10 @@ Instances in use are excluded from sweeping.  Should an instance
 expire while in use it will be evicted immediately upon return
 to the pool.  Effectively `MaxAge` and flushes will be enforced as
 a part of normal activity or sweeping, while IdleTimeout is only
-enforcable via sweeping.  This makes aggressive sweeping less
+enforceable via sweeping.  This makes aggressive sweeping less
 important for a pool under moderate load.
 
-Usable time units: nanoseconds, microsecons, milliseconds,
+Usable time units: nanoseconds, microseconds, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
@@ -300,7 +300,7 @@ when the bean is undeployed and its pool is closed.  The
 `CloseTimeout` specifies the maximum time to wait for the pool to
 close and `PostConstruct` methods to be invoked.
 
-Usable time units: nanoseconds, microsecons, milliseconds,
+Usable time units: nanoseconds, microseconds, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
@@ -357,7 +357,7 @@ Specifies the maximum time an invocation could wait for the
 After the timeout is reached a `jakarta.ejb.ConcurrentAccessTimeoutException`
 will be thrown.
 
-Usable time units: nanoseconds, microsecons, milliseconds,
+Usable time units: nanoseconds, microseconds, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 "1 hour and 27 minutes and 10 seconds"
 
@@ -380,7 +380,7 @@ at passivation time. Different passivators can be used
 by setting this property to the fully qualified class name
 of the `PassivationStrategy` implementation. The passivator
 is not responsible for invoking any callbacks or other
-processing, its only responsibly is to write the bean state
+processing, its only responsibility is to write the bean state
 to disk.
 
 Known implementations:
@@ -447,7 +447,7 @@ Specifies the maximum time an invocation could wait for the
 After the timeout is reached a `jakarta.ejb.ConcurrentAccessTimeoutException`
 will be thrown.
 
-Usable time units: nanoseconds, microsecons, milliseconds,
+Usable time units: nanoseconds, microseconds, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
@@ -458,7 +458,7 @@ annotation is used.
 
 == @MessageDriven
 
-A MDB container.
+An MDB container.
 
 Declarable in tomee.xml via
 
@@ -506,7 +506,7 @@ allowed to exist for each MDB deployment.
 
 ==== FailOnUnknowActivationSpec
 
-Log a warning if true or throw an exception if false is an activation spec can't be respected
+Log a warning if true or throw an exception if false if an activation spec can't be respected
 
 
 == @Managed

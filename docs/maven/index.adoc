@@ -139,7 +139,7 @@ The Synchronization block supports the following configuration options:
 * binariesDir (default target/classes)
 * targetBinariesDir (default tomee/webapps/finalName/WEB-INF/classes)
 * targetResourcesDir (default tomee/webapps/finalName)
-* updateInterval (default 5 - in second)
+* updateInterval (default 5 - in seconds)
 * extensions (default html, xhtml, js and css)
 * regex: a regex should match files to take into account when updating
 * reloadOnUpdate means to reload the entire context (webapp), i.e. undeploying/redeploying the application.

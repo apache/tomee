@@ -20,7 +20,7 @@ _tar xzvf openejb-3.0.tar.gz_
 
 Congratulations, you've installed OpenEJB.
 
-If you've unpacked OpenEJB into the directory C:-3.0, for example, then
+If you've unpacked OpenEJB into the directory C:\openejb-3.0, for example, then
 this directory is your OPENEJB_HOME directory. The OPENEJB_HOME
 directory is referred to in various parts of the documentation, so it's
 good to remember where it is.

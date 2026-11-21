@@ -33,7 +33,7 @@ the JAX-RPC API is not a planned feature.
 
 Our CMP implementation is a thin layer over the new Java Persistence API
 (JPA). This means when you deploy an old style CMP 1.1 or CMP 2.1 bean
-it is internally converted and ran as a JPA bean. This makes it possible
+it is internally converted and run as a JPA bean. This makes it possible
 to use both CMP and JPA in the same application without any coherence
 issues that can come from using two competing persistence technologies
 against the same data. Everything is ultimately JPA in the end.
@@ -77,15 +77,15 @@ env-entries. Env Entries are the source of data for all user supplied
 data injected into your bean; the aforementioned String, Boolean,
 Integer, etc. This is a very big burden as each env-entry is going to
 cost you 5 lines of xml and the complication of having to figure out how
-to add you bean declaration in xml as an override of an existing bean
+to add your bean declaration in xml as an override of an existing bean
 and not accidentally as a new bean. All this can be very painful when
 all you want is to supply the value of a few `@Resource` String fields in
-you bean class.
+your bean class.
 
 To fix this, OpenEJB supports the idea of a
 `META-INF/env-entries.properties` file where we will look for the value of
 things that need injection that are not container controlled resources
-(i.e. datasources and things of that nature). You can configure you ejbs
+(i.e. datasources and things of that nature). You can configure your ejbs
 via a properties file and skip the need for an `ejb-jar.xml` and its 5
 lines per property madness.
 
@@ -122,7 +122,7 @@ reported during the deployment process preventing strange errors and
 failures.
 
 As usual validation failures (non-compliant issues with your
-application) are printed out in complier-style "all-at-once" output
+application) are printed out in compiler-style "all-at-once" output
 allowing you to see and fix all your issues in one go. For example, if
 you have 10 `@PersistenceContext` annotations that reference an invalid
 persistence unit, you get all 10 errors on the _first_ deploy rather
@@ -153,5 +153,5 @@ this property:
 
 Then you can look up your business local interfaces from remote clients.
 
-You'd still have to ensure that you pass back and forth is
+You'd still have to ensure that what you pass back and forth is
 serializable.

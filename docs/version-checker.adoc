@@ -7,7 +7,7 @@
 
 == Update checker
 
-To check your OpenEJB version each time OpenEJB/TomEE starts simple add
+To check your OpenEJB version each time OpenEJB/TomEE starts, simply add
 the system property openejb.version.check=true.
 
 Note: it can be done through system.properties files.

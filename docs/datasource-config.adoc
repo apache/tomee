@@ -225,7 +225,7 @@ time
 
 -1 millisecond
 
-The maximum number of time that the pool will wait (when there are no
+The maximum amount of time that the pool will wait (when there are no
 available connections) for a connection to be returned before throwing
 an exception, or -1 to wait indefinitely.
 
@@ -462,8 +462,8 @@ ValidationQuery parameter must be set.
 
 == XADataSource
 
-There are several ways to configure a XADataSource. Depending the
-underlying datasource (Oracle, MySQL one or the other solution can be
+There are several ways to configure an XADataSource. Depending on the
+underlying datasource (Oracle, MySQL), one or the other solution can be
 more adapted.
 
 This part deals with `JtaManaged` XaDataSource since a not managed
@@ -516,12 +516,12 @@ And then wrap it in the pool:
 </Resource>
 ----
 
-Note: `dbcp` is more adapted than `dbcp-alternative` in most of the case
+Note: `dbcp` is more adapted than `dbcp-alternative` in most cases
 because it is reusing direct dbcp JTA management.
 
 === Known issues
 
-For TomEE 1.7.0/1.7.1 you can need to add the property:
+For TomEE 1.7.0/1.7.1 you may need to add the property:
 
 [source,properties]
 ----

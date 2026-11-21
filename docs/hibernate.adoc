@@ -40,7 +40,7 @@ may have implemented untouched.
 
 The result is that you can leave your
 `hibernate.transaction.manager_lookup_class` property configured to your
-production environment and OpenEJB will update it just for the scope
+production environment and OpenEJB will update it just for the scope of
 testing. On the other hand if you have implemented a custom
 `org.hibernate.transaction.TransactionManagerLookup` strategy it will
 always be used and never replaced by OpenEJB.

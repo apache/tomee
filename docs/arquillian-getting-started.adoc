@@ -35,7 +35,7 @@ agnostic way. Arquillian is responsible for the lifecycle of the
 container (start, deploy, undeploy, stop, etc).
 
 TomEE community heavily invested on that framework to prove it's really
-useful and can really help testing Java EE application. That's also an
+useful and can really help testing Java EE applications. That's also an
 opportunity to get the most out of TomEE (lightweight, fast,
 feature-rich, etc).
 

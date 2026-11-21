@@ -194,7 +194,7 @@ Sets the folder containing the web resources (docBase) of the web application. O
 
 == How to run it?
 === JUnit
-If you use JUnit you have mainly 2 solutions to run you "model" using the ApplicationComposer:
+If you use JUnit you have mainly 2 solutions to run your "model" using the ApplicationComposer:
 
 using ApplicationComposer runner:
 
@@ -216,7 +216,7 @@ TestNG integration is quite simple today and mainly ApplicationComposerListener 
 Finally just write TestNG `@Test` method using test class injections as if the test class was a managed bean!
 
 === Standalone
-Since TomEE 7.x you can also use ApplicationComposers to directly run you ApplicationComposer model as a standalone application:
+Since TomEE 7.x you can also use ApplicationComposers to directly run your ApplicationComposer model as a standalone application:
 
 [source,java]
 ----
@@ -229,7 +229,7 @@ public class MyApp {
 }
 ----
 
-Tip: if MyApp has `@PostConstruct` methods they will be respected and if MyApp has a constructor taking an array of String it will be instantiated getting the second parameter as argument (ie you can propagate your main parameter to your model to modify your application depending it!)
+Tip: if MyApp has `@PostConstruct` methods they will be respected and if MyApp has a constructor taking an array of String it will be instantiated getting the second parameter as argument (ie you can propagate your main parameter to your model to modify your application depending on it!)
 
 == JUnit Sample
 
@@ -254,15 +254,15 @@ public class MyTest {
 
 == Start and Deploy once
 
-When having a huge suite of test it can be long to start/deploy/undeploy/shutdown he container/application for each method.
+When having a huge suite of tests it can be long to start/deploy/undeploy/shutdown the container/application for each method.
 
-That's why `SingleApplicationComposerRunner` allows to just reuse the same instance across several test.
+That's why `SingleApplicationComposerRunner` allows to just reuse the same instance across several tests.
 
 The first test will start and deploy the application and then other tests will reuse this instance until the JVM is destroyed
 where the server/application will be undeployed/shutdown.
 
 
-Here a simple usage:
+Here is a simple usage:
 
 [source,java]
 ----
@@ -284,7 +284,7 @@ public class MyTest {
 }
 ----
 
-TIP: if you need a real TomEE container then you can have a look to `TomEEEmbeddedSingleRunner` which does deploys the classpath
+TIP: if you need a real TomEE container then you can have a look at `TomEEEmbeddedSingleRunner` which deploys the classpath
 using tomee-embedded.
 
 === Configure what to deploy
@@ -306,7 +306,7 @@ and the associated `@Category`.
 - CDI injections are supported
 - `@Application` on a field allows to get the application model to get injected
 
-Compared to a standalone usage it misses all other EE injections (`@PersistenceContext`, `@Resource` etc... but you can inject them in the application model
+Compared to a standalone usage it misses all other EE injections (`@PersistenceContext`, `@Resource` etc...) but you can inject them in the application model
 and just expose them or wrap them in your tests thanks to the `@Application` field.
 
 

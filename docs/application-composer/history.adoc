@@ -9,13 +9,13 @@ realize it is finally quite natural.
 == Internal tool
 
 TomEE (former OpenEJB) is an Application Server. One of the most
-important task writing an Application Server is to ensure the
+important tasks writing an Application Server is to ensure the
 implemented features do what is expected. However, it is hard to write N
 test applications, in N modules to ensure it works smoothly. In
 particular when you want to test a small part of the whole server.
 
 So you immediately think to mocking what is not needed. It works but has
-a big pitfall: test is often a noop or hide a lot of issues.
+a big pitfall: test is often a noop or hides a lot of issues.
 
 So the idea came to be able to shortcut the part we don't care much
 about runtime: the application packaging.

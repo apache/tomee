@@ -91,7 +91,7 @@ https://issues.apache.org/jira/browse/OPENEJB-1856[This is a pending
 feature] By default, the ejbds protocol connects with
 SSL_DH_anon_WITH_RC4_128_MD5. That means your connection is encrypted
 and the integrity of the transmission is verified. However, this only
-protects your from eavesdroppers, it offers absolutely zero protection
+protects you from eavesdroppers, it offers absolutely zero protection
 from Man in the Middle attacks. This sort of attack could be pulled off
 without your knowledge and the attacker has the ability to intercept,
 monitor, and even modify your messages. If the attacker could control a
@@ -130,7 +130,7 @@ On the client, you must supply a property:
 ----
 
 The final piece is to make sure your server has available a private
-certificate that the client can trust. This can be certificate from
+certificate that the client can trust. This can be a certificate from
 an authority or a self-signed certificate. The javax.net.ssl.trustStore
 and javax.net.ssl.keyStore JVM properties are
 used to set this up.

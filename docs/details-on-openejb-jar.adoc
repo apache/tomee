@@ -18,7 +18,7 @@ your jar, that's it.
 At startup, any jar containing an `openejb-jar.xml` is loaded by the
 container system. The configuration tools will go looking in all the
 directories and jars you have declared in your openejb.conf with the
-element. For every jar file it finds, it will look inside for an
+`<Deployments>` element. For every jar file it finds, it will look inside for an
 `openejb-jar.xml`. If it finds one, it will attempt to load and deploy it
 into the container system.
 
@@ -63,7 +63,7 @@ your jar.
 
 == What if my bean uses a JDBC datasource?
 
-Then you simply add an element to your element like this
+Then you simply add a `<resource-link>` element to your `<ejb-deployment>` element like this
 
 [source,xml]
 ----
@@ -89,7 +89,7 @@ and provide access to the desired resource.
 
 = How many resource-link elements will I need?
 
-You will need one element for every element in your `ejb-jar.xml`. So if
+You will need one `<resource-link>` element for every `<resource-ref>` element in your `ejb-jar.xml`. So if
 you had an `ejb-jar.xml` like the following
 
 [source,xml]

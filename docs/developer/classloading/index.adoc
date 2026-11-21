@@ -24,11 +24,11 @@ ifndef::backend-pdf[]
                         children: [
                             {
                                 label:'webapp1',
-                                description:'loader of one of your wars, it container WEB-INF/classes, WEB-INF/lib/*.jar'
+                                description:'loader of one of your wars, it contains WEB-INF/classes, WEB-INF/lib/*.jar'
                             },
                             {
                                 label:'webapp2',
-                                description:'loader of another one of your wars, it container WEB-INF/classes, WEB-INF/lib/*.jar'
+                                description:'loader of another one of your wars, it contains WEB-INF/classes, WEB-INF/lib/*.jar'
                             },
                             {
                                 label:'application1',

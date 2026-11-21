@@ -61,14 +61,14 @@ creation in java:comp/env.
 
 See rule 2 and rule 4. There will be nothing in java:comp/env unless you
 link:declaring-references.html[Declare a Reference] to it. It does not
-matter if is a DataSource configured at the server level, etc. Nothing
+matter if it is a DataSource configured at the server level, etc. Nothing
 is bound into java:comp/env unless you explicitly declare a reference to
 it. The Java EE 5 TCK (Technology Compatibility Kit) tests for this
 extensively and is a rule we cannot break. Java EE 6 does finally offer
-some new namesaces (java:global, java:app, and java:module) which will
+some new namespaces (java:global, java:app, and java:module) which will
 offer some great new options for more global-style lookups.
 
-* __"I deployed the EJB but can't look it up, it's name is Foo"__
+* __"I deployed the EJB but can't look it up, its name is Foo"__
 
 See rule 2 and the above. Just creating an EJB doesn't cause it to be
 added to java:comp/env. If a

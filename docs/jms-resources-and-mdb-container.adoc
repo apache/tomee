@@ -87,7 +87,7 @@ config will automatically set up JDBC Persistence using the
 
 The activemq.xml file format requires a number of Spring dependencies,
 and is therefore not included in the distribution by default. This is
-purley due to the fact that this ActiveMQ file format is parsed using
+purely due to the fact that this ActiveMQ file format is parsed using
 Spring libraries and this is beyond our control. However, the advantage
 is opening up the door to the huge number of configuration options
 available found here: https://activemq.apache.org/xml-configuration.html.
@@ -110,7 +110,7 @@ Create an link:activemq.xml[activemq.xml file] in
 `[tomee]/conf/activemq.xml`.
 
 Then use the `xbean:file:` url prefix in the `BrokerXmlConfig` as shown
-belog.
+below.
 
 [source,xml]
 ----

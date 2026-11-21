@@ -28,7 +28,7 @@ OpenEJB 1.0 (from 0.9.2 lineage) has some great features and many people
 that depend on them. Tomcat integration, Collapsed EARs, Container
 Driven Testing, easy embedding, and other features make OpenEJB a unique
 EJB implementation. We're going to take this code, kill all the static
-old-school techniques, modernize it with and IoC architecture based on
+old-school techniques, modernize it with an IoC architecture based on
 the gbean.org kernel. The gbean kernel is an IoC kernel compatible with
 both Spring and Geronimo.
 

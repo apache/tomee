@@ -40,12 +40,12 @@ openejb-3.0. If you look under this directory, you will find a few more
 directories: - _bin_: Contains commands to start/stop the server (You
 can also do a lot of other stuff like deploy/undeploy, but we will just
 talk about things needed to get you started) - _lib_: Contains several
-jar files (you only need of few of these jars in your classpath to do
+jar files (you only need a few of these jars in your classpath to do
 EJB development) - _apps_: Once you create your EJB's and jar them up,
 you can place your jar file in this directory and start the server. The
 server will automatically deploy all the EJB's contained in this JAR. -
 _conf_: This directory contains all the configuration files. Although
-you may not see any file except for a README.txt file right now, but
+you may not see any file except for a README.txt file right now,
 after you start the server, the required configuration files will be
 automatically created. It is highly recommended to read the README.txt
 file under this directory - _logs_: Contains log files.

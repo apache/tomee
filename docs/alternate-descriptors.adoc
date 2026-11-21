@@ -94,7 +94,7 @@ The "foo" test case could set the _openejb.altdd.prefix_ as follows:
  InitialContext initialContext = new InitialContext(properties);
 ----
 
-Resulting the following logical view of the app:
+Resulting in the following logical view of the app:
 
 * META-INF/ejb-jar.xml -> _footest_.ejb-jar.xml
 * META-INF/persistence.xml
@@ -110,7 +110,7 @@ And the "bar" test case could set the _openejb.altdd.prefix_ as follows:
  InitialContext initialContext = new InitialContext(properties);
 ----
 
-Resulting the following logical view of the app:
+Resulting in the following logical view of the app:
 
 * META-INF/ejb-jar.xml -> _bartest_.ejb-jar.xml
 * META-INF/persistence.xml

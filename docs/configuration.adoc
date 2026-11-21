@@ -63,7 +63,7 @@ OpenEJB will look for all the OpenEJB libraries. Usually openejb.base is
 not explicitly set and defaults to the value of openejb.home, so many
 people are used to only dealing with openejb.home.
 
-The point of having and openejb.base and openejb.home was basically to
+The point of having an openejb.base and openejb.home was basically to
 allow several independently configured instances of OpenEJB running on a
 system (perhaps embedded in Swing apps, in Tomcat, running as a
 standalone Server, or even in Groovy as Mr. Strachan did!) but without
@@ -83,12 +83,12 @@ is found, we create one in openejb.base/conf/openejb.conf
 
 _relative paths in openejb.conf_ * Deployment entries are resolved
 relative to openejb.base. * Containers use openejb.base to resolve their
-own config files. For example, Castor JDO to loads the database.xml and
+own config files. For example, Castor JDO loads the database.xml and
 all other files from the openejb.base directory. * Resource adapters
 that are embedded usually have config files of their own and are also
-loaded from the openeb.base.
+loaded from the openejb.base.
 
-_log files_ * The log4.configuration file is resolved relative to
+_log files_ * The log4j.configuration file is resolved relative to
 openejb.base. * The properties in the config file that point to files
 are also resolved relative to openejb.base.
 
@@ -112,7 +112,7 @@ Classpath includes openejb.home/lib and openejb.home/dist
 === Example layout
 
 In this one the openejb.home and openejb.base are set, everything else
-is defaulted. The openejb.conf file as been updated to point to the ejb
+is defaulted. The openejb.conf file has been updated to point to the ejb
 jars by name (abc-ejbs.jar and xyz-ejbs.jar).
 
 An example layout:

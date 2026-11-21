@@ -22,4 +22,4 @@ are read in `WEB-INF/application.properties`. When you can't use `tomee.xml` to 
 resources you can use `WEB-INF/resources.xml` which inherit from `tomee.xml` its syntax
 but binds the resources to the application and reuses the application classloader.
 
-More about link:application.html[Container Configuration].
+More about link:application.html[Application Configuration].
