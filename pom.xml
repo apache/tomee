@@ -217,7 +217,7 @@
     <version.geronimo-mail_2.1_provider>1.1.1</version.geronimo-mail_2.1_provider>
     <version.johnzon>2.2.0</version.johnzon>
     <version.myfaces>4.1.4</version.myfaces>
-    <version.openjpa>4.1.1</version.openjpa>
+    <version.openjpa>4.2.0</version.openjpa>
     <version.openwebbeans>4.1.1</version.openwebbeans>
     <!-- org.eclipse -->
     <version.eclipselink>5.0.2</version.eclipselink>

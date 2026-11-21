@@ -332,12 +332,8 @@ public class RepositoryInvocationHandler implements InvocationHandler {
     }
 
     /**
-     * Performs an update with version checking. The strategy depends on the JPA provider:
-     * <ul>
-     *   <li>Hibernate/EclipseLink: standard {@code em.merge()} handles @Version correctly</li>
-     *   <li>OpenJPA: requires a workaround — reflection-based field copying with
-     *       OPTIMISTIC_FORCE_INCREMENT because OpenJPA restricts setting @Version fields</li>
-     * </ul>
+     * Performs an update with version checking: verifies the entity exists and its
+     * {@code @Version} matches before delegating to {@code em.merge()}.
      */
     private Object mergeWithVersionCheck(final EntityManager em, final Object entity) {
         final Object id = getEntityId(em, entity);
@@ -351,57 +347,8 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                 "Entity not found for update: " + entity);
         }
 
-        // Check version before merge
         checkVersionMatch(em, entity, existing);
-
-        // Providers other than OpenJPA handle @Version correctly via em.merge()
-        if (!isOpenJpa(em)) {
-            return em.merge(entity);
-        }
-
-        // OpenJPA workaround: copy fields via reflection, force version increment
-        try {
-            final jakarta.persistence.metamodel.EntityType<?> entityType =
-                em.getMetamodel().entity(entity.getClass());
-
-            for (final jakarta.persistence.metamodel.Attribute<?, ?> attr : entityType.getAttributes()) {
-                if (attr instanceof jakarta.persistence.metamodel.SingularAttribute<?, ?> sa) {
-                    if (sa.isId() || sa.isVersion()) {
-                        continue;
-                    }
-                }
-                final java.lang.reflect.Field field = findField(entity.getClass(), attr.getName());
-                field.setAccessible(true);
-                final java.lang.reflect.Field existingField = findField(existing.getClass(), attr.getName());
-                existingField.setAccessible(true);
-                existingField.set(existing, field.get(entity));
-            }
-            em.lock(existing, jakarta.persistence.LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-            em.flush();
-            em.refresh(existing);
-            // Copy updated fields (including version) back to the input entity
-            for (final jakarta.persistence.metamodel.Attribute<?, ?> attr : entityType.getAttributes()) {
-                try {
-                    final java.lang.reflect.Field f = findField(entity.getClass(), attr.getName());
-                    f.setAccessible(true);
-                    final java.lang.reflect.Field ef = findField(existing.getClass(), attr.getName());
-                    ef.setAccessible(true);
-                    f.set(entity, ef.get(existing));
-                } catch (final NoSuchFieldException ignored) {
-                    // skip
-                }
-            }
-            return entity;
-        } catch (final jakarta.data.exceptions.OptimisticLockingFailureException e) {
-            throw e;
-        } catch (final Exception e) {
-            return em.merge(entity);
-        }
-    }
-
-    private static boolean isOpenJpa(final EntityManager em) {
-        return em.getClass().getName().startsWith("org.apache.openjpa.")
-            || em.getDelegate().getClass().getName().startsWith("org.apache.openjpa.");
+        return em.merge(entity);
     }
 
     private Object handleFindById(final EntityManager em, final Method method, final Object[] args) {
@@ -638,18 +585,6 @@ public class RepositoryInvocationHandler implements InvocationHandler {
                     "Entity not found for deletion: " + entity, e);
             }
         }
-    }
-
-    private static java.lang.reflect.Field findField(final Class<?> clazz, final String name) throws NoSuchFieldException {
-        Class<?> current = clazz;
-        while (current != null) {
-            try {
-                return current.getDeclaredField(name);
-            } catch (final NoSuchFieldException e) {
-                current = current.getSuperclass();
-            }
-        }
-        throw new NoSuchFieldException(name);
     }
 
     /**
