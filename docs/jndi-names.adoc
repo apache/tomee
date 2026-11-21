@@ -158,9 +158,6 @@ Given an ejb, FooBean, with the following interfaces:
 * business-remote: org.superbiz.RemoteTwo
 * home: org.superbiz.FooHome
 * local-home: org.superbiz.FooLocalHome
-business-remote: org.superbiz.RemoteOne - business-remote:
-org.superbiz.RemoteTwo - home: org.superbiz.FooHome - local-home:
-org.superbiz.FooLocalHome
 
 The following four examples would yield the same jndi names. The
 intention with these examples is to show the various ways you can

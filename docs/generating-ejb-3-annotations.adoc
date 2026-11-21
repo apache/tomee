@@ -47,12 +47,5 @@ Options:
 * Add `@Remote` and `@RemoteHome` annotations - This adds `@Remote` and `@RemoteHome` annotations appropriately.
 * Convert entity beans to POJOs - This option converts abstract CMP classes to POJOs generating simple getters and setters.
 
-implement your remote / local interfaces as opposed to
-jakarta.ejb.SessionBean, and stops your remote / local interfaces
-extending jakarta.ejb.EJBObject. * Add `@Remote` and `@RemoteHome` annotations
-- This adds `@Remote` and `@RemoteHome` annotations appropriately * Convert
-entity beans to POJOs - This option converts abstract CMP classes to
-POJOs generating simple getters and setters.
-
 Review the changes that the plugin will make to your source code.
 Uncheck any changes you don't want to apply, and click 'Finish'.

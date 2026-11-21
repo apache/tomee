@@ -40,8 +40,8 @@ against, you can set the _openejb.authentication.realmName_ property to
 any of the configured realm names in _login.config_. If you don't
 specify a realm name, the default (currently _PropertiesLogin_) is used.
 For examples and more information on JAAS configuration, see the
-JAAS
-Reference Guide .
+https://docs.oracle.com/en/java/javase/17/security/java-authentication-and-authorization-service-jaas-reference-guide.html[JAAS
+Reference Guide].
 
 == PropertiesLoginModule
 
@@ -71,7 +71,7 @@ the database. The driver should be autodetected (provided the
 appropriate jar is on your classpath), but if that fails for some
 reason, you can force a specific driver using the _jdbcDriver_ option.
 For more information on JDBC URLs, see the
-JDBC Guide
+https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/[JDBC Guide].
 
 The _userSelect_ query must return a two-column list of user names
 (column 1) and passwords (column 2). This query should normally return a
@@ -134,8 +134,8 @@ LoginModule, but you would have to supply your clients with your own way
 to authenticate to it and write a strategy for telling the OpenEJB
 client what data to send to the server with each invocation request. See
 the
-JAAS
-LoginModule Developer's Guide for more information.
+https://docs.oracle.com/en/java/javase/17/security/java-authentication-and-authorization-service-jaas-loginmodule-developers-guide1.html[JAAS
+LoginModule Developer's Guide] for more information.
 * _Client IdentityResolver_. This is the just mentioned interface you
 would have to implement to supply the OpenEJB client with alternate data
 to send to the server with each invocation request. If you're plugging

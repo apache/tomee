@@ -80,8 +80,8 @@ virtual machine. For this reason, it is often referred to as the IntraVM
 Server.
 
 For bean to bean communications, the Local Server must create a JNDI
-namespace (JNDI ENC) for each bean as defined by the bean's , , and
-elements of the bean's `ejb-jar.xml` file. Every bean literally gets its
+namespace (JNDI ENC) for each bean as defined by the bean's `<env-entry>`, `<ejb-ref>`, and
+`<resource-ref>` elements of the bean's `ejb-jar.xml` file. Every bean literally gets its
 very own JNDI namespace. When a bean makes a JNDI call, the Local Server
 intercepts this call and uses the deployment id of the calling bean to
 retrieve that bean's private JNDI namespace from the container system's
