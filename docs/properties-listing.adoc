@@ -4,736 +4,4006 @@
 :jbake-type: page
 :jbake-status: published
 
-
-== OpenEJB system properties
-
-Name
-
-Value
-
-Description
-
-openejb.embedded.remotable
-
-bool
-
-activate or not the remote services when available
-
-openejb.ejbd.datasource-metadata
-
-boolean (default: false)
-
-Allow remote datasource lookup over EJBd, including HTTP/HTTPS. Enabling this
-shares database connection details, including credentials, with clients able to
-reach the endpoint. Applies server-wide, including datasource references; it
-does not add per-user authorization. See link:ejbd-transport.html[Ejbd Transport]
-for compatibility and configuration details.
-
-<service prefix>.bind, <service prefix>.port, <service prefix>.disabled, <service
-prefix>.threads
-
-host or IP, port, bool
-
-override the host. Available for the ejbd service, number of threads to
-manage requests
-
-openejb.embedded.initialcontext.close
-
-LOGOUT or DESTROY
-
-configure the hook called when closing the initial context. Useful when
-starting OpenEJB from a new InitialContext([properties]) instantiation.
-By default, it simply logs out the logged user if it exists. DESTROY
-means clean the container.
-
-jakarta.persistence.provider
-
-string
-
-override the JPA provider value
-
-jakarta.persistence.transactionType
-
-string
-
-override the transaction type for persistence contexts
-
-jakarta.persistence.jtaDataSource
-
-string
-
-override the JTA datasource value for persistence contexts
-
-jakarta.persistence.nonJtaDataSource
-
-string
-
-override the non JTA datasource value for persistence contexts
-
-openejb.descriptors.output
-
-bool
-
-dump memory deployment descriptors. Can be used to set complete metadata
-to true and avoid scanning when starting the container or to check the
-used configuration.
-
-openejb.deployments.classpath.require.descriptor
-
-CLIENT or EJB
-
-can allow to filter what you want to scan (client modules or ejb
-modules)
-
-openejb.descriptors.output.folder
-
-path
-
-where to dump deployment descriptors if activated.
-
-openejb.strict.interface.declaration
-
-bool
-
-add some validations on session beans (spec validations in particular).
-false by default.
-
-openejb.conf.file or openejb.configuration
-
-string
-
-OpenEJB configuration file path
-
-openejb.debuggable-vm-hackery
-
-bool
-
-remove JMS information from deployment
-
-openejb.validation.skip
-
-bool
-
-skip the validations done when OpenEJB deploys beans
-
-openejb.deployments.classpath.ear
-
-bool
-
-deploy the classpath as an ear
-
-openejb.webservices.enabled
-
-bool
-
-activate or not webservices
-
-openejb.validation.output.level
-
-TERSE or MEDIUM or VERBOSE
-
-level of the logs used to report validation errors
-
-openejb.user.mbeans.list
-
-* or a list of classes separated by ,
-+
-+
-+
-list of mbeans to deploy automatically
-+
-+
-+
-+
-+
-openejb.deploymentId.format
-+
-+
-+
-composition (+string) of \{ejbName} \{ejbType} \{ejbClass} and
-\{ejbClass.simpleName}
-+
-+
-+
-default \{ejbName}. The format to use to deploy ejbs.
-+
-+
-+
-+
-+
-openejb.deployments.classpath
-+
-+
-+
-bool
-+
-+
-+
-whether or not deploy from classpath
-+
-+
-+
-+
-+
-openejb.deployments.classpath.include and
-openejb.deployments.classpath.exclude
-+
-+
-+
-regex
-+
-+
-+
-regex to filter the scanned classpath (when you are in this case)
-+
-+
-+
-+
-+
-openejb.deployments.package.include and
-openejb.deployments.package.exclude
-+
-+
-+
-regex
-+
-+
-+
-regex to filter scanned packages
-+
-+
-+
-+
-+
-openejb.autocreate.jta-datasource-from-non-jta-one
-+
-+
-+
-bool
-+
-+
-+
-whether or not auto create the jta datasource if it doesn't exist but a
-non jta datasource exists. Useful when using hibernate to be able to get
-a real non jta datasource.
-+
-+
-+
-+
-+
-openejb.altdd.prefix
-+
-+
-+
-string
-+
-+
-+
-prefix used for altDD (example test to use a test.ejb-jar.xml).
-+
-+
-+
-+
-+
-org.apache.openejb.default.system.interceptors
-+
-+
-+
-list of interceptor (qualified names) separated by a comma or a space
-+
-+
-+
-add these interceptors on all beans
-+
-+
-+
-+
-+
-openejb.jndiname.strategy.class
-+
-+
-+
-class name
-+
-+
-+
-an implementation of
-org.apache.openejb.assembler.classic.JndiBuilder.JndiNameStrategy
-+
-+
-+
-+
-+
-openejb.jndiname.failoncollision
-+
-+
-+
-bool
-+
-+
-+
-if a NameAlreadyBoundException is thrown or not when 2 EJBs have the
-same name
-+
-+
-+
-+
-+
-openejb.jndiname.format
-+
-+
-+
-composition (+string) of these properties: ejbType, ejbClass,
-ejbClass.simpleName, ejbClass.packageName, ejbName, deploymentId,
-interfaceType, interfaceType.annotationName,
-interfaceType.annotationNameLC, interfaceType.xmlName,
-interfaceType.xmlNameCc, interfaceType.openejbLegacyName,
-interfaceClass, interfaceClass.simpleName, interfaceClass.packageName
-+
-+
-+
-default \{deploymentId}\{interfaceType.annotationName}. Change the name
-used for the ejb.
-+
-+
-+
-+
-+
-openejb.org.quartz.threadPool.class
-+
-+
-+
-class qualified name which implements org.quartz.spi.ThreadPool
-+
-+
-+
-the thread pool used by quartz (used to manage ejb timers)
-+
-+
-+
-+
-+
-openejb.localcopy
-+
-+
-+
-bool
-+
-+
-+
-default true. whether or not copy EJB arguments[/method/interface] for
-remote invocations.
-+
-+
-+
-+
-+
-openejb.cxf.jax-rs.providers
-+
-+
-+
-the list of the qualified name of the JAX-RS providers separated by
-comma or space. Note: to specify a provider for a specific service
-suffix its class qualified name by ".providers", the value follows the
-same rules. Note 2: default is a shortcut for jaxb and json providers.
-+
-+
-+
-+
-+
-+
-+
-openejb.wsAddress.format
-+
-+
-+
-composition (+string) of \{ejbJarId}, ejbDeploymentId, ejbType,
-ejbClass, ejbClass.simpleName, ejbName, portComponentName, wsdlPort,
-wsdlService
-+
-+
-+
-default /\{ejbDeploymentId}. The WS name format.
-+
-+
-+
-+
-+
-org.apache.openejb.server.webservices.saaj.provider
-+
-+
-+
-axis2, sun or null
-+
-+
-+
-specifies the saaj configuration
-+
-+
-+
-+
-+
-[<uppercase service name>.]<service id>.<name> or [<uppercase service
-name>.]<service id>
-+
-+
-+
-whatever is supported (generally string, int ...)
-+
-+
-+
-set this value to the corresponding service. example:
-[EnterpriseBean.]<ejb-name>.activation.<property>,
-[PERSISTENCEUNIT.]<persistence unit name>.<property>, [RESOURCE.]<name>
-+
-+
-+
-+
-+
-log4j.category.OpenEJB.options
-+
-+
-+
-DEBUG, INFO, ...
-+
-+
-+
-active one OpenEJB log level. need log4j in the classpath
-+
-+
-+
-+
-+
-openejb.jmx.active
-+
-+
-+
-bool
-+
-+
-+
-activate (by default) or not the OpenEJB JMX MBeans
-+
-+
-+
-+
-+
-openejb.nobanner
-+
-+
-+
-bool
-+
-+
-+
-activate or not the OpenEJB banner (activated by default)
-+
-+
-+
-openejb.check.classloader
-+
-+
-+
-bool
-+
-+
-+
-if true print some information about duplicated classes
-+
-+
-+
-+
-+
-openejb.check.classloader.verbose
-+
-+
-+
-bool
-+
-+
-+
-if true print classes intersections
-+
-+
-+
-+
-+
-openejb.additional.exclude
-+
-+
-+
-string separated by comma
-+
-+
-+
-list of prefixes you want to exclude and are not in the default list of
-exclusion
-+
-+
-+
-+
-+
-openejb.additional.include
-+
-+
-+
-string separated by comma
-+
-+
-+
-list of prefixes you want to remove from the default list of exclusion
-+
-+
-+
-+
-+
-openejb.offline
-+
-+
-+
-bool
-+
-+
-+
-if true can create datasources and containers automatically
-+
-+
-+
-+
-+
-openejb.exclude-include.order
-+
-+
-+
-include-exclude or exclude-include
-+
-+
-+
-if the inclusion/exclusion should win on conflicts (intersection)
-+
-+
-+
-+
-+
-openejb.log.color
-+
-+
-+
-bool
-+
-+
-+
-activate or not the color in the console in embedded mode
-+
-+
-+
-+
-+
-openejb.log.color.<level in lowercase>
-+
-+
-+
-color in uppercase
-+
-+
-+
-set a color for a particular level. Colors are BLACK, RED, GREEN, YELLOW,
-BLUE, MAGENTA, CYAN, WHITE, DEFAULT.
-+
-+
-+
-+
-+
-tomee.serialization.class.blacklist
-+
-+
-+
-string
-+
-+
-+
-default list of packages/classnames excluded for EJBd deserialization
-(needs to be set on server and client sides). Please see the description
-of Ejbd Transport for details.
-+
-+
-+
-+
-+
-tomee.serialization.class.whitelist
-+
-+
-+
-string
-+
-+
-+
-default list of packages/classnames allowed for EJBd deserialization
-(blacklist wins over whitelist, needs to be set on server and client
-sides). Please see the description of Ejbd Transport for details.
-+
-+
-+
-+
-+
-tomee.remote.support
-+
-+
-+
-boolean
-+
-+
-+
-if true /tomee webapp is auto-deployed and EJBd is active (true by
-default for 1.x, false for 7.x except for tomee maven plugin and
-arquillian)
-+
-+
-+
-
-Note: all resources can be configured by properties, see
-https://tomee.apache.org/embedded-configuration.html and
-https://tomee.apache.org/properties-tool.html
-
-== OpenEJB client
-
-Name
-
-Value
-
-Description
-
-openejb.client.identityResolver
-
-implementation of org.apache.openejb.client.IdentityResolver
-
-default org.apache.openejb.client.JaasIdentityResolver. The class to get
-the client identity.
-
-openejb.client.connection.pool.timeout or
-openejb.client.connectionpool.timeout
-
-int (ms)
-
-the timeout of the client
-
-openejb.client.connection.pool.size or
-openejb.client.connectionpool.size
-
-int
-
-size of the socket pool
-
-openejb.client.keepalive
-
-int (ms)
-
-the keepalive duration
-
-openejb.client.protocol.version
-
-string
-
-Optional legacy server protocol compatibility level. Allows 4.6.x
-clients to potentially communicate with older servers. OpenEJB 4.5.2 and
-older use version "3.1", and 4.6.x currently uses version "4.6"
-(Default). This does not allow old clients to communicate with new
-servers prior to 4.6.0
-
-== TomEE specific system properties
-
-Name
-
-Value
-
-Description
-
-openejb.crosscontext
-
-bool
-
-set the cross context property on tomcat context (can be done in the
-traditional way if the deployment is done through the webapp discovery
-and not the OpenEJB Deployer EJB)
-
-openejb.jsessionid-support
-
-bool
-
-remove URL from session tracking modes for this context (see
-jakarta.servlet.SessionTrackingMode)
-
-openejb.myfaces.disable-default-values
-
-bool
-
-by default TomEE will initialize myfaces with some of its default values to
-avoid useless logging
-
-openejb.web.xml.major
-
-int
-
-major version of web.xml. Can be useful to force tomcat to scan servlet
-3 annotation when deploying with a servlet 2.x web.xml
-
-tomee.jaxws.subcontext
-
-string
-
-sub context used to bind jaxws web services, default is webservices
-
-openejb.servicemanager.enabled
-
-bool
-
-run all services detected or only known available services (WS and RS)
-
-tomee.jaxws.oldsubcontext
-
-bool
-
-whether or not activate old way to bind jaxws webservices directly on
-root context
-
-openejb.modulename.useHash
-
-bool
-
-add a hash after the module name of the webmodule if it is generated
-from the webmodule location, it avoids conflicts between multiple
-deployment (through ear) of the same webapp. Note: it is deactivated by
-default since names are less nice this way.
-
-openejb.session.manager
-
-qualified name (string)
-
-configure a session manager to use for all contexts
-
-== TomEE Arquillian adaptor
-
-Name
-
-Value
-
-Description
-
-tomee.ejbcontainer.http.port
-
-int
-
-tomee port, -1 means random. When using a random port you can retrieve
-it getting this property too.
-
-tomee.arquillian.http
-
-int
-
-http port used by the embedded arquillian adaptor
-
-tomee.arquillian.stop
-
-int
-
-shutdown port used by the embedded arquillian adaptor
+This page lists the properties that configure TomEE and its embedded OpenEJB container.
+Most of them are system properties, but some are read from other places (application
+properties, resource declarations, `logging.properties`, JAAS options, the TomEE Embedded
+configuration or the Arquillian adapter configuration). Each section says where its
+properties are set.
+
+== Setting properties
+
+System properties can be set in several ways:
+
+* as JVM options, for example `-Dopenejb.jndiname.format=...` in `CATALINA_OPTS` or `JAVA_OPTS`;
+* in `conf/system.properties` of the TomEE (or OpenEJB) base directory, which is read at startup;
+* in `conf/<profile>.system.properties` (see `openejb.profile`) or `~/.openejb/system.properties`;
+* as `<SystemProperty>` (`new://SystemProperty`) declarations in `tomee.xml`;
+* for embedded containers, in the `Properties` passed to `InitialContext` or `EJBContainer.createEJBContainer()`.
+
+Application properties go in `WEB-INF/application.properties` (web applications) or
+`META-INF/application.properties` (EJB jars and EARs). Most of them also accept a global
+default as a system property. Module properties go in `META-INF/module.properties`, and
+bean properties in the `<properties>` of an `openejb-jar.xml` `<ejb-deployment>`.
+
+Every `openejb.*` key read through the options API can also be written with the `tomee.`
+prefix (`tomee.foo` is an alias of `openejb.foo`; the `openejb.` key wins when both are set).
+
+Resources, containers and services can also be configured with properties, see
+link:embedded-configuration.html[Embedded Configuration] and
+link:properties-tool.html[Properties Tool].
+
+== OpenEJB and TomEE system properties
+
+The properties in this section are system properties. Unless noted otherwise, set them with `-D` or in `conf/system.properties`.
+
+=== Configuration and bootstrap
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+hsqldb.reconfig_logging+`
+|bool
+|`+false+` (set when absent)
+|HSQLDB setting. When it is not set, OpenEJB sets it to `false` (also as a JVM system property) so HSQLDB leaves the container's logging alone.
+
+|`+<id>=new://<ServiceType>?<params>+`
+|service URI
+|none
+|Declares a service (Resource, Container, JndiProvider, Service, Deployments, SystemProperty and so on) from a property whose value starts with `new://`. Supported query parameters: `type`, `provider`, `class-name`, `constructor`, `constructor-types`, `factory-name`, `properties-provider`, `template`, `classpath` and `classpath-api`. Resources also accept `aliases`, `depends-on`, `post-construct` and `pre-destroy`; Deployments accepts `dir`, `jar` and `classpath`; SystemProperty accepts `name` and `value`. Any other parameter becomes a service property.
+
+|`+openejb.additional.lib.folder+`
+|path (relative to openejb.base)
+|`+additionallib+`
+|Folder under the base directory whose jars the embedder adds to the container classpath. Provisioning also uses it as its default destination.
+
+|`+openejb.assembler+`
+|class name
+|`+org.apache.openejb.assembler.classic.Assembler+`
+|Assembler implementation class instantiated at OpenEJB startup.
+
+|`+openejb.base+`
+|path
+|value of `+openejb.home+`
+|Server base directory. `RemoteServer` uses it to find the `conf` directory that holds the shutdown secret.
+
+|`+openejb.conf.file+`
+|path or URL
+|none
+|OpenEJB configuration file path. It is resolved as given, then relative to `openejb.base`, then to `openejb.home`, or used as a URL. Takes precedence over `openejb.configuration`. When neither is set, `conf/openejb.xml`, `conf/openejb.conf` and `conf/openejb.json` are searched.
+
+|`+openejb.conf.schema.legacy+`
+|bool
+|auto-detected
+|JVM system property selecting where service property files are expected: `true` means `+conf/<service>.properties+` (legacy), `false` means `+conf/conf.d/<service>.properties+`. Auto-detected as legacy when two or more of `ejbd`, `ejbds` and `admin.properties` exist directly in `conf/`.
+
+|`+openejb.configuration+`
+|path or URL
+|none
+|OpenEJB configuration file path, used when `openejb.conf.file` is not set. After the search, TomEE writes the path of the file it found back to this key.
+
+|`+openejb.configuration.strict-tags+`
+|bool
+|`+false+`
+|Makes parsing of an application's `META-INF/app-ctx.xml` fail when the root element is not `appcontext`, `app-context` or `application`. By default other root elements are ignored.
+
+|`+openejb.configurator+`
+|class name
+|`+org.apache.openejb.config.ConfigurationFactory+`
+|Implementation class used by the Assembler to build the OpenEJB configuration (`OpenEjbConfigurationFactory`).
+
+|`+openejb.extract.configuration+`
+|bool
+|`+true+`
+|Writes the default configuration files (for example `conf/openejb.xml`, `logging.properties`) to the base `conf` directory if they are missing.
+
+|`+openejb.home+`
+|path
+|none
+|OpenEJB/TomEE home directory. The JSR-88 `VmDeploymentManager` requires it, and `RemoteServer` uses it to find the server to start and stop.
+
+|`+openejb.io.util.timeout+`
+|int (ms)
+|`+5000+`
+|Connect timeout for URL connections opened by OpenEJB's IO helper, for example when downloading remote files. Read once, at class load.
+
+|`+openejb.libs+`
+|path
+|`+<openejb.home>/lib+`
+|Directory of OpenEJB libraries that the Embedder loads.
+
+|`+openejb.nobanner+`
+|bool
+|`+true+`
+|Activate or not the OpenEJB banner. The container prints its version banner only when this is `false`. The standalone server prints its startup and services banner unless the property is set at all.
+
+|`+openejb.offline+`
+|bool
+|`+false+`
+|Offline mode: when true, containers and resources that applications reference are not created automatically. It is only used as the default value of `tomee.autoconfig`.
+
+|`+openejb.placeholder.delimiter+`
+|string
+|`+:-+`
+|Separator between a key and its default value in `+${key:-default}+` placeholders resolved by OpenEJB. Read as a JVM system property at class load.
+
+|`+openejb.profile+`
+|string
+|`+development+`
+|Name of the configuration profile. At init, `+conf/<profile>.system.properties+` is read as well as `conf/system.properties` and `+~/.openejb/system.properties+`.
+
+|`+openejb.provider.default+`
+|string (provider namespace)
+|`+org.apache.openejb+` (`+org.apache.openejb.embedded+` when embedded)
+|Default service provider namespace used to look up service providers (`service-jar.xml`) when no provider is given explicitly.
+
+|`+openejb.service-type-adjustement+`
+|bool
+|`+true+`
+|When a declared service (for example a `<Resource>`) has no type, TomEE guesses the type from its properties (for example `JdbcDriver`/`JdbcUrl` with `JtaManaged`/`UserName`/`Password` means `javax.sql.DataSource`). Set it to `false` to stop this guessing. Note the spelling `adjustement`.
+
+|`+<openejb.\|tomee.><property>+`
+|string
+|none
+|During deployment, every system property that starts with `openejb.` or `tomee.` is also published without that prefix. As a result `openejb.foo` always takes precedence over `foo`.
+
+|`+org.apache.activemq.broker.jmx.createConnector+`
+|bool
+|`+false+` (set when absent)
+|ActiveMQ setting that controls whether the embedded broker creates its own JMX connector. When it is not set, OpenEJB sets it to `false`.
+
+|`+org.apache.openejb.api.resource.PropertiesResourceProvider+`
+|class name
+|none
+|Global `PropertiesResourceProvider` used for every service that does not declare its own `properties-provider`. The properties it returns are applied last and override the declared ones.
+
+|`+org.apache.openejb.api.resource.Template+`
+|class name
+|none
+|Global `Template` implementation used for every service that does not declare its own `template`. A template can change a service's configuration before the service is built.
+
+|`+<serviceId>.<property>+`
+|string
+|none
+|Overrides or adds a property of the service (Resource, Container, JndiProvider and so on) whose id is `<serviceId>`. The id is matched without regard to case. Examples: `+<ejb-name>.activation.<property>+`, `+<persistence unit name>.<property>+`, `+<resource id>.<property>+`.
+
+|`+<SERVICETYPE>.<serviceId>.<property>+`
+|string
+|none
+|Full form of the service property override, with the uppercase service type as a prefix (for example `RESOURCE.myDs.MaxActive`, `CONTAINER.myContainer.PoolSize`, `ENTERPRISEBEAN.<ejb-name>.activation.<property>`, `PERSISTENCEUNIT.<unit>.<property>`). The forms `+<serviceId>\|<property>+` and `+<SERVICETYPE>.<serviceId>\|<property>+` also work.
+
+|`+tomee.<suffix>+`
+|string (alias)
+|none
+|Any `+openejb.<suffix>+` key read through the options API (system, application, module and bean options) can also be given as `+tomee.<suffix>+`. If both are set, the `openejb.` key wins. Keys read with plain `System.getProperty()` do not get this alias.
+
+|`+tomee.autoconfig+`
+|bool
+|`+true+` (`+false+` when `+openejb.offline=true+`)
+|When true, missing containers and resources that applications reference (for example default DataSources) are created automatically. Set it to `false` to turn off auto-configuration.
+|===
+
+=== Deployment and scanning
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+antiJarLocking+`
+|bool
+|`+false+`
+|Copies application jars to a temporary URL cache directory and loads them from there, so the original files are not locked (useful on Windows).
+
+|`+<appModuleId>.<property>+`
+|string
+|none
+|Overrides or adds a property of the application with this module id, with the same effect as declaring it in the application's `META-INF/application.properties`.
+
+|`+envprops.override+`
+|bool
+|`+false+`
+|Lets entries in `META-INF/env-entries.properties` override env-entries that are already declared. By default only missing entries are added.
+
+|`+<locationName>.moduleId+`
+|string
+|none
+|Sets the module id/name of a deployed archive or directory. `<locationName>` is the archive's file name, for example `myapp.war.moduleId`.
+
+|`+openejb.additional.exclude+`
+|comma-separated jar name prefixes
+|none
+|List of prefixes you want to exclude that are not in the default exclusion list (`conf/exclusions.list` or the built-in `default.exclusions`).
+
+|`+openejb.additional.include+`
+|comma-separated jar name prefixes
+|none
+|List of prefixes you want to remove from the default exclusion list, so the matching jars are scanned.
+
+|`+openejb.altdd.prefix+`
+|comma-separated prefixes
+|none
+|Prefix used for alternate deployment descriptors (for example `test` uses `META-INF/test.ejb-jar.xml`, `test.persistence.xml` and so on instead of the standard ones). With several prefixes, the first one wins.
+
+|`+openejb.autodeploy.interval+`
+|duration
+|`+2 seconds+`
+|How often the AutoDeployer checks deployment directories for added, changed or removed applications. A number without unit is read as seconds.
+
+|`+openejb.check.classloader+`
+|bool
+|`+false+`
+|If true, prints information about duplicated classes: adds the `CheckClassLoading` validation rule, which reports classes found both in the application and in the container classloader.
+
+|`+openejb.check.classloader.verbose+`
+|bool
+|`+false+`
+|If true, prints the class intersections (the duplicated files) in each `openejb.check.classloader` report entry.
+
+|`+openejb.connector.<moduleId>.aliases+`
+|comma-separated ids
+|none
+|Deploys the same standalone resource adapter additional times, once under each alias.
+
+|`+openejb.connector.<moduleId>.skip-default+`
+|bool
+|`+false+`
+|Skips the default deployment of a standalone resource adapter (rar). Use it with `+openejb.connector.<moduleId>.aliases+` to deploy only the aliased copies.
+
+|`+openejb.core.skip-war-in-loader+`
+|bool
+|`+true+`
+|Removes the war archive itself from the webapp's scannable URLs, which avoids scanning executable wars that embed TomEE.
+
+|`+openejb.debuggable-vm-hackery+`
+|bool
+|`+false+`
+|Debugging aid that strips the deployment: removes message-driven beans, entity beans, CMR relationships and the references to them from EJB modules.
+
+|`+openejb.default.deployment-module+`
+|class name
+|none
+|Module type (for example `org.apache.openejb.config.WebModule`) used for archives whose type cannot be detected. Without it, such archives fail with `UnknownModuleTypeException`.
+
+|`+openejb.deployer.jndiname+`
+|string
+|`+openejb/DeployerBusinessRemote+`
+|JNDI name of the remote Deployer EJB that the JSR-88 `VmDeploymentManager` looks up.
+
+|`+openejb.deployer.save-deployments+`
+|bool
+|`+false+`
+|Applications deployed through the Deployer EJB are saved to the additional-deployments list so they are redeployed on restart. The same key in the `Properties` of a `Deployer.deploy()` call overrides it for that deployment.
+
+|`+openejb.deployer.war+`
+|new or old
+|`+new+`
+|How the Deployer EJB deploys WAR files. `old` deploys WARs through the legacy OpenEJB app path instead of the web-app deployer.
+
+|`+openejb.deployments.classpath+`
+|bool
+|`+true+` (`+false+` for an embedded `EJBContainer`)
+|Whether or not to deploy from the classpath: searches the classpath for EJB, client and other modules and deploys them automatically.
+
+|`+openejb.deployments.classpath.ear+`
+|bool
+|`+true+`
+|Deploy the classpath as an ear: all modules found on the classpath are deployed together as one application named `classpath.ear`. When false, each jar is deployed as its own application.
+
+|`+openejb.deployments.classpath.exclude+`
+|regex
+|`+""+` (nothing)
+|Regex to filter the scanned classpath: selects which classpath entries are excluded from deployment and annotation scanning.
+
+|`+openejb.deployments.classpath.filter.descriptors+`
+|bool
+|`+false+`
+|Also applies the classpath include/exclude filters to entries found through their descriptors (`META-INF/ejb-jar.xml` and similar).
+
+|`+openejb.deployments.classpath.filter.systemapps+`
+|bool
+|`+true+`
+|Leaves the internal OpenEJB/TomEE jars (`openejb-*`) out of classpath deployment discovery.
+
+|`+openejb.deployments.classpath.include+`
+|regex
+|`+.*+`
+|Regex to filter the scanned classpath: selects which classpath entries are considered for deployment and annotation scanning.
+
+|`+openejb.deployments.classpath.require.descriptor+`
+|comma-separated set of EJB, CLIENT
+|`+CLIENT+`
+|Allows filtering what you want to scan (client modules or EJB modules): module types that are deployed from the classpath only when they contain their descriptor (`ejb-jar.xml` or `application-client.xml`).
+
+|`+openejb.deployments.package.exclude+`
+|regex
+|`+""+` (nothing)
+|Regex to filter scanned packages: class/package names to exclude when classpath modules are scanned for annotations.
+
+|`+openejb.deployments.package.include+`
+|regex
+|`+.*+`
+|Regex to filter scanned packages: class/package names to include when classpath modules are scanned for annotations. When both classpath and package include are left at their defaults, only the packages of the calling classes are included.
+
+|`+openejb.descriptors.output+`
+|bool
+|`+false+` (`+true+` for an EJB module with validation errors)
+|Dump in-memory deployment descriptors (`ejb-jar.xml`, `openejb-jar.xml`, CMP mappings...) to temporary files and log their locations. Can be used to set complete metadata to true and avoid scanning when starting the container, or to check the configuration in use. Can also be set per module in the `openejb-jar.xml` properties.
+
+|`+openejb.descriptors.output.folder+`
+|path
+|none (system temp dir)
+|Where to dump deployment descriptors when `openejb.descriptors.output` is on. The directory is created if needed.
+
+|`+openejb.ear.use-as-webcontext-base+`
+|bool
+|`+false+`
+|For web modules inside an EAR, puts the EAR's module id in front of the context root (`+<ear>/<context-root>+`).
+
+|`+openejb.exclude-include.order+`
+|include-exclude or exclude-include
+|`+include-exclude+`
+|Whether the inclusion or the exclusion wins on conflicts (intersection) when filtering classpath deployments.
+
+|`+openejb.finder.module-scoped+`
+|bool
+|`+false+`
+|Limits the annotation finder results of each module to that module's own classes.
+
+|`+openejb.ignore.directories+`
+|comma-separated list
+|`+.svn,_svn,cvs,.git,.hg+`
+|Names of directories skipped when deployment directories are scanned.
+
+|`+openejb.jarstxt.activated+`
+|bool
+|`+true+`
+|Reads `WEB-INF/jars.txt` (or `META-INF/jars.txt`), which lists extra jars or Maven coordinates to add to the application classloader.
+
+|`+openejb.modulename.useHash+`
+|bool
+|`+false+`
+|Adds a hash after the module name of a web module when the name is generated from the module location. It avoids conflicts between multiple deployments (through ear) of the same webapp. Deactivated by default since names are less nice this way.
+
+|`+openejb.resolver.windows.lowercase-urls+`
+|bool
+|`+true+`
+|On Windows, converts classpath URLs to lower case before they are compared during deployment discovery.
+
+|`+openejb.scan.webapp.container+`
+|bool
+|`+false+`
+|Also adds the container classpath, minus the built-in exclusions, to each webapp's URLs and scanned URLs.
+
+|`+openejb.scan.webapp.container.skip-folder+`
+|bool
+|`+true+`
+|When `openejb.scan.webapp.container` is on, skips directory entries of the container classpath.
+
+|`+openejb.scan.xml.name+`
+|string
+|`+scan.xml+`
+|Name of the descriptor under `META-INF` or `WEB-INF` that lists the classes and packages to scan, which avoids a full annotation scan.
+
+|`+openejb.scanning.xbean.jvm+`
+|comma-separated class name prefixes
+|`+java.+`
+|Class name prefixes that the annotation finder treats as JVM classes and does not scan.
+
+|`+openejb.system.apps+`
+|bool
+|`+false+`
+|Deploys the internal OpenEJB system applications (Deployer, configuration info EJBs). When true, the classpath is not scanned for deployments.
+
+|`+openejb.taglib.scan+`
+|bool
+|`+true+`
+|Scans classloaders and webapps for JSP tag library descriptors (TLDs). Set it to `false` to skip the scan.
+
+|`+openejb.validation.output.level+`
+|TERSE, MEDIUM or VERBOSE
+|`+MEDIUM+`
+|Level of detail of the messages used to report validation errors. The JSR-88 `VmDeploymentManager` reads it as an integer 1-3 (default 3).
+
+|`+openejb.validation.skip+`
+|bool
+|`+false+`
+|Skip the validations done when OpenEJB deploys beans (the `ValidateModules` step).
+
+|`+openejb.vendor.config+`
+|comma-separated set of GERONIMO, GLASSFISH, JBOSS, WEBLOGIC (also all/none)
+|all vendors
+|Vendor-specific deployment descriptors converted during deployment: Geronimo/OpenEJB2 (`openejb-jar` v2), GlassFish/Sun (`+sun-*.xml+`) and WebLogic (`+weblogic-*.xml+`).
+
+|`+tomee.deployement-exception-max-size+`
+|int
+|`+10+`
+|Maximum number of deployment exceptions kept in memory for retrieval by deployers. Note the spelling `deployement`.
+
+|`+tomee.unpack.dir+`
+|path (relative to base)
+|none
+|Directory where wars were unpacked. TomEE uses it to find the original war archive so it can leave that archive out of scanning.
+
+|`+<webModuleId>.host+`
+|string
+|none (default host)
+|Virtual host that the web module with this id is deployed on.
+|===
+
+=== Provisioning
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+openejb.deployer.cache.folder+`
+|path (relative to openejb.base)
+|`+temp+`
+|Folder where provisioned or downloaded archives (`mvn:`, `http:` locations) are cached. JVM system property.
+
+|`+openejb.deployer.repository+`
+|URL
+|`+https://repo1.maven.org/maven2/+`
+|Remote Maven repository used by `mvn:` provisioning for release artifacts. JVM system property.
+
+|`+openejb.deployer.snapshot.repository+`
+|URL
+|`+https://repository.apache.org/snapshots/+`
+|Remote repository used for `-SNAPSHOT` artifacts resolved through `mvn:` provisioning. JVM system property.
+
+|`+openejb.m2.home+`
+|path
+|`+${user.home}/.m2/repository/+`
+|Local Maven repository used by `mvn:` provisioning when `settings.xml` does not define `localRepository`.
+
+|`+openejb.m2.settings+`
+|path
+|`+${user.home}/.m2/settings.xml+`
+|Maven `settings.xml` read to find the local repository used by `mvn:` provisioning.
+
+|`+openejb.provisinig.archive-resolvers+`
+|comma-separated class names
+|none
+|Meant to register extra `ArchiveResolver` implementations next to `mvn:`, `http:` and `https:` (note the spelling `provisinig`). Because of a bug the listed classes are currently ignored.
+|===
+
+=== Classloading
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+<configurer name>.clazz+`
+|class name
+|none
+|When a classloader configurer `clazz` value is not a loadable class, it is read as a comma list of names. The class of each name is read from `+<name>.clazz+` and system properties starting with `<name>` are applied to it (the remaining property name keeps its leading dot, so property injection is unreliable in this mode).
+
+|`+<detection.class.name>.skip+`
+|bool
+|`+true+`
+|JVM system property per optional library, named after a detection class: `org.apache.log4j.Logger.skip`, `org.apache.myfaces.spi.FactoryFinderProvider.skip`, `org.hsqldb.lib.HsqlTimer.skip`, `org.apache.commons.net.pop3.POP3Client.skip`, `org.apache.cxf.jaxws.support.JaxWsImplementorInfo.skip`, `org.apache.activemq.broker.BrokerFactory.skip`. When true and the library is in the container, its classes (and the matching JAX-WS/JMS APIs) come from the container. Set it to `false` to let a webapp bring its own copy.
+
+|`+openejb.api.<class>.validation+`
+|bool
+|`+true+`
+|Per forbidden API class (`jakarta.persistence.Entity`, `jakarta.transaction.Transaction`, `jakarta.jws.WebService`, `jakarta.validation.Validation`, `jakarta.jms.Queue`, `jakarta.enterprise.context.ApplicationScoped`, `jakarta.inject.Inject`, `jakarta.ws.rs.Path`, `jakarta.ejb.EJB`, `jakarta.annotation.PostConstruct`), for example `openejb.api.jakarta.persistence.Entity.validation`. When true, a webapp jar that bundles this class is ignored with a warning. Set it to `false` to keep such jars.
+
+|`+openejb.classloader.configurer.<appId>.clazz+`
+|class name or comma list
+|none
+|Alias of `+tomee.classloader.configurer.<appId>.clazz+`, checked after the `tomee.` keys.
+
+|`+openejb.classloader.configurer.clazz+`
+|class name or comma list
+|none
+|Alias of `tomee.classloader.configurer.clazz`, checked last.
+
+|`+openejb.classloader.delegate-first+`
+|bool
+|`+true+` unless the container's parent classloader is the system classloader
+|Default delegation mode of application classloaders. True means the parent classloader is asked first.
+
+|`+openejb.classloader.filterable-resources+`
+|comma-separated resource paths
+|`+META-INF/services/jakarta.validation.spi.ValidationProvider+`, `+jakarta.ws.rs.client.ClientBuilder+`, `+jakarta.json.spi.JsonProvider+`, `+javax.cache.spi.CachingProvider+` and `+jakarta.persistence.spi.PersistenceProvider+` services, the JavaMail provider and mailcap files, `+org/slf4j/impl/StaticLoggerBinder.class+`
+|Resources for which the webapp classloader drops the container's copy from `getResources()` results when the application provides one too.
+
+|`+openejb.classloader.force-maven+`
+|bool
+|`+false+`
+|Development aid for the TomEE Maven plugin: resources from build output folders (`target/classes`, `target/test-classes`, `build/classes/main` or `test`) are put first in `getResources()` results, ahead of `WEB-INF/classes`.
+
+|`+openejb.classloader.forced-load+`
+|comma-separated package/class prefixes
+|none
+|Class name prefixes that the webapp-first classloader always loads from the application, even when they would normally be container classes. `forced-skip` is checked first.
+
+|`+openejb.classloader.forced-skip+`
+|comma-separated package/class prefixes
+|none
+|Class name prefixes that the webapp-first classloader (and the temp and JPA loaders) always load from the container, never from the application.
+
+|`+openejb.classloader.skip-app-loader-if-possible+`
+|bool
+|`+true+`
+|When an application is deployed from the classpath (embedded, tests) and all its URLs are already on the parent loader, reuses the parent classloader instead of creating an application classloader.
+
+|`+openejb.container.additional.exclude+`
+|comma-separated package prefixes
+|none
+|Extra package prefixes that the container-classes filter (TomEE Embedded, BVal CDI filtering) accepts, meaning they are not treated as container classes. Checked before the built-in lists.
+
+|`+openejb.container.additional.include+`
+|comma-separated package prefixes
+|none
+|Extra package prefixes that the container-classes filter rejects, treating them as container classes to skip during scanning.
+
+|`+openejb.skip.log4j+`
+|bool
+|`+true+`
+|When log4j 1.x is in the container, `org.apache.log4j` classes are treated as container classes, so applications do not load their own copy.
+
+|`+openejb.skip.myfaces+`
+|bool
+|`+true+`
+|When MyFaces is in the container, `org.apache.myfaces` classes are loaded from the container instead of the webapp.
+
+|`+openejb.tempclassloader.skip+`
+|comma-separated NONE, ANNOTATIONS, ENUMS, ALL
+|`+NONE+`
+|Kinds of classes that the temporary (scanning/enhancement) classloader does not define itself and leaves to the parent loader.
+
+|`+tomee.<context>.externalRepositories+`
+|comma-separated paths
+|unset
+|Additional directories or jars added to the classloader of the webapp. `<context>` is the context path without the leading slash, or `ROOT`.
+
+|`+tomee.<warName>.externalRepositories+`
+|comma-separated paths/URLs
+|none
+|Extra jars or directories placed first on the classpath of the webapp `<warName>` (the war file name without `.war`).
+
+|`+tomee.api.validation.skip+`
+|bool
+|`+false+`
+|When true, TomEE does not check webapp jars for classes that conflict with container-provided APIs (such as bundled `+jakarta.*+` API jars).
+
+|`+tomee.classloader.configurer.<appId>.clazz+`
+|class name or comma list of configurer names
+|none
+|`ClassLoaderConfigurer` for the given application (it can add or remove jars). Its properties are read as `+tomee.classloader.configurer.<appId>.<property>+`. Checked first.
+
+|`+tomee.classloader.configurer.<appId>.configuration+`
+|path
+|none
+|Property of `ProvisioningClassLoaderConfigurer` (also works with the global `tomee.classloader.configurer.configuration`): a file listing jars to add (`+location+`, with an optional `+\|algo\|hash+`) or to exclude (`-name`). Placeholders are resolved.
+
+|`+tomee.classloader.configurer.clazz+`
+|class name or comma list
+|none
+|`ClassLoaderConfigurer` applied to all applications when no per-application one is set. Its properties are read as `+tomee.classloader.configurer.<property>+`.
+
+|`+tomee.classloader.skip-background-process+`
+|bool
+|`+false+`
+|When true, the TomEE webapp loader skips Tomcat's background processing, so it does no modification checks and no automatic reloads.
+
+|`+tomee.ear.webapp-first+`
+|bool
+|`+false+`
+|When true, webapps inside an EAR use the plain webapp classloading behaviour. By default TomEE applies EAR-specific parent-first filtering for classes visible from the EAR classloader.
+
+|`+tomee.jsf.ignore-owb+`
+|bool
+|`+true+`
+|When a webapp has no CDI context, hides `META-INF/faces-config.xml` resources of `+openwebbeans-*+` jars. Mojarra workaround that stops the OWB JSF integration from being picked up.
+
+|`+tomee.webapp-first+`
+|bool
+|`+true+`
+|When true, webapp classloaders load classes from the webapp first. When false they delegate to the parent first (Tomcat `delegate=true`).
+
+|`+tomee.webapp.classloader.enrichment.classes+`
+|comma-separated class names
+|`+""+`
+|Extra classes whose containing container jars are added to every webapp classloader.
+
+|`+tomee.webapp.classloader.enrichment.prefixes+`
+|comma-separated jar name prefixes
+|`+""+`
+|Jar name prefixes from the container lib whose jars are added to every webapp classloader, on top of the built-in `openwebbeans-jsf`, `tomee-mojarra`, `tomee-myfaces` and `openejb-jpa-integration`.
+
+|`+tomee.webapp.classloader.enrichment.skip+`
+|bool
+|`+false+`
+|When true, no container jars (`openwebbeans-jsf`, `tomee-myfaces`, `tomee-mojarra`, `openejb-jpa-integration` and the configured extras) are added to webapp classloaders.
+
+|`+tomee.webapp.classloader.forced-skip+`
+|comma-separated class/package prefixes
+|unset
+|Class name prefixes that the webapp classloader always delegates to the parent and never loads from the webapp.
+
+|`+tomee.webappclassloader.force-stop-phase+`
+|bool
+|`+false+`
+|When true, the webapp classloader is really stopped (resources released) during Tomcat's stop phase, instead of being kept alive until TomEE destroys the application.
+|===
+
+=== JNDI
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+openejb.environment.default+`
+|bool
+|`+false+`
+|Adds the Jakarta default resource references to every component even when they are not declared: `java:comp/DefaultManagedExecutorService`, `DefaultManagedScheduledExecutorService`, `DefaultManagedThreadFactory` and `DefaultContextService`, plus `java:comp/DefaultJMSConnectionFactory` when ActiveMQ is present.
+
+|`+openejb.forceReadOnlyAppNamingContext+`
+|bool
+|`+false+`
+|Makes the JNDI naming contexts of deployed beans read-only after deployment.
+
+|`+openejb.jndiExceptionOnFailedWrite+`
+|bool
+|`+true+`
+|When true, writing to a read-only OpenEJB JNDI context (bind, rebind, unbind...) throws `OperationNotSupportedException`. When false the write is silently ignored, as with Tomcat's `jndiExceptionOnFailedWrite`.
+
+|`+openejb.jndiname.failoncollision+`
+|bool
+|`+true+`
+|Whether a `NameAlreadyBoundException` is thrown (deployment fails) when two EJBs have the same JNDI name. When false the collision is only logged.
+
+|`+openejb.jndiname.format+`
+|string template
+|`+{deploymentId}{interfaceType.annotationName}+`
+|Changes the name used for the EJB (`openejb/local` and `openejb/remote` names of the templated strategy). Composition of `ejbType`, `ejbClass`, `ejbClass.simpleName`, `ejbClass.packageName`, `ejbName`, `deploymentId`, `interfaceType`, `interfaceType.annotationName`, `interfaceType.annotationNameLC`, `interfaceType.xmlName`, `interfaceType.xmlNameCc`, `interfaceType.openejbLegacyName`, `interfaceClass`, `interfaceClass.simpleName` and `interfaceClass.packageName`, each written as `+{name}+`. Read from module properties, falling back to system properties. If the value contains a colon, everything up to and including the colon is removed and an error is logged.
+
+|`+openejb.jndiname.strategy.class+`
+|class name
+|`+org.apache.openejb.assembler.classic.JndiBuilder$TemplatedStrategy+`
+|An implementation of `org.apache.openejb.assembler.classic.JndiBuilder.JndiNameStrategy` computing EJB JNDI names. Read from the EJB module properties, falling back to system properties.
+
+|`+openejb.use-old-jndi-names+`
+|bool
+|`+false+`
+|Also binds EJBs under their legacy OpenEJB short JNDI names.
+|===
+
+=== EJB, containers and timers
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+<deploymentId>.activation.<property>+`
+|string
+|none
+|Overrides or adds an activation-config property on the MDB with this deployment id. Highest precedence of all activation overrides.
+
+|`+<ejbName>.activation.<property>+`
+|string
+|none
+|Overrides or adds an activation-config property on the MDB with this ejb-name.
+
+|`+EjbTimerPool.<CorePoolSize\|MaximumPoolSize\|QueueSize\|KeepAliveTime\|AllowCoreThreadTimeOut\|QueueType\|QueueFair\|RejectedExecutionHandlerClass\|OfferTimeout>+`
+|int / duration / bool / ARRAY, LINKED, PRIORITY, SYNCHRONOUS / class name
+|`+CorePoolSize+` = `+openejb.timer.pool.size+`, `+MaximumPoolSize+` and `+QueueSize+` = `+CorePoolSize+`, `+KeepAliveTime=60 seconds+`, `+AllowCoreThreadTimeOut=true+`, `+QueueType=LINKED+`, `+QueueFair=false+`, `+OfferTimeout=30 seconds+`
+|Tuning of the shared EJB timer executor: pool and queue sizes, keep-alive, queue type, fairness (SYNCHRONOUS queues only) and rejection policy (offer with a timeout, or a custom `RejectedExecutionHandler`).
+
+|`+mdb.activation.<property>+`
+|string
+|none
+|Overrides or adds an activation-config property on every message-driven bean. The forms with an `ENTERPRISEBEAN.` prefix or a `+\|+` separator also work, and application properties and `openejb-jar.xml` properties are read too.
+
+|`+mdb.container.<containerId>.activation.<property>+`
+|string
+|none
+|Overrides or adds an activation-config property on every MDB deployed in the MDB container with this id.
+
+|`+<messageListenerInterface>.activation.<property>+`
+|string
+|none
+|Overrides or adds an activation-config property on every MDB with this messaging type, for example `jakarta.jms.MessageListener.activation.maxSessions`.
+
+|`+openejb.activemq.deploymentId-as-clientId+`
+|bool
+|`+true+`
+|For JMS MDBs listening on a topic without a configured `clientId`, uses the deployment id as the JMS clientId. Can also be set as an EJB module property. `subscriptionName` defaults to `+<deploymentId>_subscription+` regardless.
+
+|`+openejb.batchee.integration.skip+`
+|bool (JVM -D only)
+|`+false+`
+|When true, TomEE does not install its BatchEE `ServicesManager` locator integration.
+
+|`+openejb.callbacks.override+`
+|bool
+|`+false+`
+|When true, lifecycle callback annotations (`@PostConstruct`, `@AroundConstruct`...) are processed even if callbacks are declared in XML. By default the XML declarations take over. Can also be set in the `openejb-jar.xml` properties.
+
+|`+openejb.deploymentId.format+`
+|string template
+|`+{ejbName}+`
+|The format used to build EJB deployment ids. Variables: `+{ejbName}+`, `+{ejbClass}+`, `+{ejbClass.simpleName}+`, `+{ejbType}+`, `+{moduleId}+`, `+{moduleUri}+`, `+{ejbJarId}+`, `+{appId}+`, `+{host}+` and `+{hash}+`. Can also be set per module in the `openejb-jar.xml` properties.
+
+|`+openejb.ejb-timer-pool.shutdown.timeout+`
+|int (seconds)
+|`+5+`
+|Seconds to wait for running timer jobs to finish when the timer thread pool shuts down and the scheduler asks to wait for jobs.
+
+|`+openejb.localcopy+`
+|bool
+|`+true+`
+|Whether or not to copy EJB arguments and return values for calls through remote interfaces in the same JVM (pass-by-value). Set it to `false` to pass references for performance. Read once, at class load.
+
+|`+openejb.quartz.timeout+`
+|long (ms)
+|`+10000+` (limited to 1000..60000)
+|Time to wait for the Quartz scheduler of the timer service or the Quartz resource adapter to start and to shut down.
+
+|`+openejb.stateful.passivation.shared-tmpdir+`
+|bool
+|`+false+`
+|Applies when no passivation directory is configured. `true` writes stateful session state straight into `java.io.tmpdir`, as older releases did. `false` uses a private, owner-only temp directory.
+
+|`+openejb.stats.interceptor.disable+`
+|bool
+|`+true+`
+|Despite its name, when true the EJB `StatsInterceptor` (JMX invocation statistics) is added to EJB containers. Set it to `false` to disable stats collection.
+
+|`+openejb.strict.interface.declaration+`
+|bool
+|`+false+`
+|Adds spec validations on business interface declarations of session beans (for example interfaces are not inherited from superclasses, and an interface may not be both `@Local` and `@Remote`). Can also be set in the `openejb-jar.xml` properties.
+
+|`+openejb.timer.pool.size+`
+|int
+|`+3+`
+|Thread count of the default EJB timer thread pool, used as the core size of the shared `EjbTimerPool` executor. Setting it also counts as custom Quartz configuration, so beans get their own scheduler instance.
+
+|`+org.apache.openejb.default.system.interceptors+`
+|class names separated by comma, space or semicolon
+|none
+|Adds these interceptors (qualified names) to all beans as system-level interceptors.
+
+|`+org.quartz.scheduler.interruptJobsOnShutdown+`
+|bool
+|`+true+` (set when absent)
+|JVM property. When the Quartz resource adapter starts and it is unset, TomEE sets it to `true` so interruptable jobs are interrupted on shutdown.
+
+|`+org.quartz.scheduler.interruptJobsOnShutdownWithWait+`
+|bool
+|`+true+` (set when absent)
+|JVM property. When unset, TomEE sets it to `true` when the Quartz resource adapter starts, so jobs are also interrupted on shutdown-with-wait.
+
+|`+org.quartz.threadPool.class+`
+|class name implementing org.quartz.spi.ThreadPool
+|none (TomEE's `+DefaultTimerThreadPoolAdapter+`)
+|The thread pool used by Quartz to run EJB timers. Can also be written `openejb.org.quartz.threadPool.class` (see the prefix rule above) or with the shaded prefix `org.apache.openejb.quartz.threadPool.class`.
+
+|`+org.terracotta.quartz.skipUpdateCheck+`
+|bool
+|`+true+`
+|Quartz update check. TomEE defaults it to `true` (skip) unless it is set.
+|===
+
+=== CDI and Bean Validation
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+openejb.bean-validation.provider+`
+|class name
+|none (`+Validation.byDefaultProvider()+`)
+|Bean Validation provider class used when the module's `validation.xml` does not name one.
+
+|`+openejb.cdi.activated-on-ejb+`
+|bool
+|`+true+`
+|Global switch for turning on CDI in EJB-only modules that have no `beans.xml`. When false, CDI is never turned on for those modules.
+
+|`+openejb.cdi.applicationScope.cached+`
+|bool
+|`+true+`
+|Uses TomEE's cached proxy handler for `@ApplicationScoped` beans (faster). `false` falls back to OWB's default normal-scope handler.
+
+|`+openejb.cdi.bval.filter+`
+|bool
+|`+true+`
+|Registers TomEE's annotated-type filter on the BVal CDI extension to limit which types get validation interception.
+
+|`+openejb.cdi.debug+`
+|bool
+|`+false+`
+|Logs at INFO the number and list of CDI bean classes found per application or web context.
+
+|`+openejb.cdi.jta.exception.client-only+`
+|bool
+|`+false+`
+|`@Transactional` `rollbackOn`/`dontRollbackOn` handling is applied only by the interceptor that started the transaction.
+
+|`+openejb.cdi.noclassdeffound.log+`
+|bool
+|`+true+`
+|Logs (at debug) classes skipped during CDI scanning because of `NoClassDefFoundError`.
+
+|`+openejb.cdi.producer.interception+`
+|bool
+|`+true+`
+|Enables OpenWebBeans support for interception of producer methods.
+
+|`+openejb.cdi.requestScope.cached+`
+|bool
+|`+true+`
+|In TomEE, uses the cached proxy handler for `@RequestScoped` beans. `false` uses OWB's default handler.
+
+|`+openejb.cdi.sessionScope.cached+`
+|bool
+|`+true+`
+|In TomEE, uses the cached proxy handler for `@SessionScoped` beans. `false` uses OWB's default handler.
+
+|`+openejb.cdi.support.@Startup+`
+|bool
+|`+true+`
+|In EJB modules with CDI enabled, registers classes annotated with `jakarta.ejb.Startup` as CDI startup beans, so they are instantiated eagerly when the application starts.
+
+|`+tomee.batchee.cdi.use-extension+`
+|bool
+|`+false+`
+|Controls BatchEE's `BatchCDIInjectionExtension`. Despite the name, `true` filters the extension out; with the default `false` it stays active.
+
+|`+tomee.jakarta-data.active+`
+|bool
+|`+true+`
+|Set it to `false` to turn off the Jakarta Data CDI extension. `@Repository` interfaces are then neither discovered nor implemented.
+
+|`+tomee.mp.scan+`
+|none, all, ...
+|none
+|MicroProfile scanning mode. With `none`, MicroProfile CDI extensions (listed in `tomee.mp.cdi.extensions`) are filtered out.
+|===
+
+=== JPA
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+jakarta.persistence.jtaDataSource+`
+|string (resource id or JNDI name)
+|none
+|Overrides the JTA datasource value of every persistence unit. As a persistence unit property, an id without namespace is converted to `+java:openejb/Resource/<id>+`.
+
+|`+jakarta.persistence.nonJtaDataSource+`
+|string (resource id or JNDI name)
+|none
+|Overrides the non-JTA datasource value of every persistence unit. As a persistence unit property, an id without namespace is converted to `+java:openejb/Resource/<id>+`.
+
+|`+jakarta.persistence.provider+`
+|class name
+|none (OpenJPA when the unit declares no provider)
+|Overrides the JPA provider value of every persistence unit, unless `openejb.jpa.force.jakarta.persistence.provider=false`.
+
+|`+jakarta.persistence.transactionType+`
+|JTA or RESOURCE_LOCAL
+|none
+|Overrides the transaction type of every persistence unit.
+
+|`+openejb.autocreate.jta-datasource-from-non-jta-one+`
+|bool
+|unset (`+true+` for JTA units, `+false+` for RESOURCE_LOCAL units)
+|Whether or not to auto-create the JTA datasource if it does not exist but a non-JTA datasource exists. Useful with Hibernate to get a real non-JTA datasource. A persistence unit property with the same name takes precedence.
+
+|`+openejb.cmp.openjpa.jdbc.SynchronizeMappings+`
+|string
+|`+buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)+`
+|Value of `openjpa.jdbc.SynchronizeMappings` in the persistence unit generated for CMP entity beans. An empty value leaves the property out.
+
+|`+openejb.convert-jpa-properties+`
+|bool
+|`+false+`
+|For OpenJPA units, converts some properties of other providers to their OpenJPA equivalent (currently only `eclipselink.ddl-generation=create-tables`).
+
+|`+openejb.eclipselink.jmx+`
+|bool
+|`+true+`
+|Default for EclipseLink runtime services (JMX MBeans) when the OpenEJB EclipseLink server platform is used. JVM system property.
+
+|`+openejb.force-unit-type+`
+|bool
+|`+true+`
+|Sets the transaction type of a persistence unit that has neither a `jta-data-source` nor a `non-jta-data-source` to JTA (JPA spec 8.2.1.5). Can also be set as a persistence unit property; the system property wins.
+
+|`+openejb.guess.resource-local-datasource-properties-configured+`
+|bool
+|`+true+`
+|For RESOURCE_LOCAL units configured with `jakarta.persistence.jdbc.driver` or `jakarta.persistence.jdbc.url`, lets the provider manage its own connections instead of having TomEE create a non-JTA DataSource.
+
+|`+openejb.jar.enhancement.exclude+`
+|regex
+|`+""+` (nothing)
+|Regex matched against the absolute path of `.class` files to exclude from deploy-time JPA enhancement.
+
+|`+openejb.jar.enhancement.include+`
+|regex
+|all classes
+|Regex matched against the absolute path of `.class` files to include in deploy-time JPA enhancement.
+
+|`+openejb.jpa.criteria.log.jpql+`
+|bool
+|`+false+`
+|Logs the JPQL generated from Criteria queries. Can also be set as a persistence unit property (the system property wins when set).
+
+|`+openejb.jpa.criteria.log.jpql.level+`
+|string (log level)
+|`+INFO+`
+|Log level of the Criteria-to-JPQL logging. Setting it also enables that logging. Can also be set as a persistence unit property.
+
+|`+openejb.jpa.deploy-time-enhancement+`
+|bool
+|`+false+`
+|Runs OpenJPA enhancement of the entity classes listed in persistence units at deploy time (requires the OpenJPA enhancer in the container).
+
+|`+openejb.jpa.force.jakarta.persistence.provider+`
+|bool
+|`+true+`
+|Applies when `jakarta.persistence.provider` is set globally. If true the provider is forced on all units; if false it is used only for units that declare no provider.
+
+|`+openejb.jpa.init-entitymanager+`
+|bool
+|`+false+`
+|Creates and closes an EntityManager right after the EntityManagerFactory is built, forcing provider initialization (for example schema creation) at deploy time. Can also be set as a persistence unit property (either one enables it).
+
+|`+openejb.jpa.root-url-from-webinf+`
+|bool
+|`+false+`
+|For a `persistence.xml` under `WEB-INF/classes/META-INF`, uses `WEB-INF` instead of `WEB-INF/classes` as the persistence unit root URL.
+
+|`+openejb.jpa.timer+`
+|bool
+|`+true+`
+|Enables timing of EntityManager operations logged by `JtaEntityManager`. Can be overridden per persistence context in its properties.
+
+|`+openejb.sql.import+`
+|bool
+|`+true+`
+|Executes an `+import-<unitName>.sql+` file found on the classpath against the persistence unit's non-JTA DataSource after the EntityManagerFactory is created.
+
+|`+openjpa.EntityManagerFactoryPool+`
+|string
+|none
+|If set as a TomEE system property, its value is passed to the persistence provider in the `createContainerEntityManagerFactory` properties map (OpenJPA EMF pooling).
+
+|`+openjpa.Log+`
+|string
+|`+org.apache.openejb.openjpa.JULOpenJPALogFactory+` (JUL) or `+log4j+`
+|OpenJPA logging channel factory. With the JUL log factory OpenEJB sets this JVM property to route OpenJPA logs to JUL, unless it is already set. The log4j factory always sets it to `log4j`.
+
+|`+<openjpa\|hibernate\|eclipselink\|toplink>.<property>+`
+|string
+|none
+|A system or application property such as `openjpa.Log` or `hibernate.show_sql` is applied to every persistence unit that uses the matching provider.
+
+|`+<persistenceUnitName>.<property>+`
+|string
+|none
+|Overrides or adds a property of the persistence unit with this name. Read from system and application properties. The form `+PERSISTENCEUNIT.<unit>.<property>+` and the `+\|+` separator also work.
+
+|`+tomee.jpa.cdi+`
+|bool
+|`+true+`
+|When CDI is active, passes the application BeanManager to the JPA provider as `jakarta.persistence.bean.manager`. Can also be set as a persistence unit property (both must be true for the integration to happen).
+|===
+
+=== Resources and DataSources
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+DATABASE_URL+`
+|URI (environment variable or system property)
+|none
+|Read by `HerokuDatabasePropertiesProvider` (a resource `PropertiesProvider`) to build `JdbcUrl`, `UserName` and `Password` (and the PostgreSQL driver for `postgres://`) from a Heroku-style database URL.
+
+|`+derby.system.home+`
+|path
+|`+openejb.base+` directory
+|Derby home directory. When the Derby DataSource plugin is used, TomEE sets the JVM property to this value or to `openejb.base`.
+
+|`+openejb.datasource.plugin.<Derby\|Hsqldb\|Instantdb>.activaed+`
+|bool
+|value of `+openejb.datasource.plugin.activated+`
+|Per-plugin switch for a built-in DataSource plugin. Note the spelling `activaed`.
+
+|`+openejb.datasource.plugin.activated+`
+|bool
+|`+true+`
+|Enables the built-in DataSource URL plugins (Derby, HSQLDB, InstantDB) that rewrite relative database paths to `openejb.base`.
+
+|`+openejb.datasource.xa.force-different-xaresource+`
+|bool or class name
+|none
+|Global override of `XAForceDifferent`: wraps XA DataSources so `XAResource.isSameRM()` always returns false (`true` uses the built-in wrapper, otherwise a wrapper class name).
+
+|`+openejb.jdbc.datasource-creator+`
+|dbcp, dbcp-alternative, tomcat or a class name
+|none (default creator)
+|Global `DataSourceCreator`, which is the connection pool implementation used to build DataSources. If it cannot be loaded, an error is logged and the default creator is used.
+
+|`+openejb.jdbc.flushable+`
+|bool
+|value of the `+Flushable+` DataSource property
+|Global override: decides for every DataSource whether it is flushable (re-creatable through `Flushable.flush()`).
+
+|`+openejb.jdbc.handler+`
+|class name (InvocationHandler)
+|none
+|Global override of the `TomEEProxyHandler` DataSource property: an `InvocationHandler` class wrapping every DataSource.
+
+|`+openejb.jdbc.log+`
+|bool
+|value of the `+LogSql+` DataSource property
+|Global switch deciding for every DataSource whether executed SQL is logged (overrides `LogSql`).
+
+|`+openejb.jdbc.log.packages+`
+|comma-separated package prefixes
+|value of `+LogSqlPackages+`
+|Global override of `LogSqlPackages`: when SQL logging is on, also logs the calling stack frames from these packages.
+
+|`+openejb.resources.destroy.stack-on-timeout+`
+|bool
+|`+false+`
+|When a resource destruction exceeds `openejb.resources.destroy.timeout`, also logs a dump of all thread stacks.
+
+|`+openejb.resources.destroy.timeout+`
+|duration
+|none (no timeout)
+|Maximum time allowed to destroy a resource on undeploy or shutdown. When exceeded, destruction is abandoned and an error is logged.
+
+|`+openejb.resources.use-container-loader+`
+|bool
+|`+true+`
+|When the JDBC driver is loadable by the container, creates DataSources with the container classloader rather than the application loader.
+
+|`+OPENSHIFT_<MYSQL\|POSTGRESQL>_DB_HOST / _DB_PORT / _DB_USERNAME / _DB_PASSWORD, OPENSHIFT_APP_NAME+`
+|string (environment variables)
+|none
+|Read by the `OpenshiftMySQLPropertiesProvider` and `OpenshiftPostgreSQLPropertiesProvider` resource `PropertiesProvider`s to build the DataSource `JdbcUrl` and credentials.
+
+|`+org.apache.openejb.resource.jdbc.hot.deploy+`
+|bool
+|`+false+`
+|When true, a DataSource whose `JdbcDriver` is itself a DataSource class is not instantiated directly from that class (driver-based creation is used instead), easing hot redeploys.
+|===
+
+=== Web services and JAX-RS
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+http.proxy.password+`
+|string
+|none
+|Password that goes with `http.proxy.user`.
+
+|`+http.proxy.user+`
+|string
+|none
+|When `http.proxyHost` is set, this user (with `http.proxy.password`) is sent as Basic `Proxy-Authorization` when OpenEJB fetches remote WSDL/XSD documents.
+
+|`+openejb.cxf.bus.id+`
+|string
+|`+openejb.cxf.bus+`
+|Id given to TomEE's shared CXF bus.
+
+|`+openejb.cxf.cdi+`
+|bool
+|`+true+`
+|POJO JAX-WS endpoints are created as CDI beans when a matching bean exists.
+
+|`+openejb.cxf.CxfContainerClassLoader+`
+|bool
+|`+true+`
+|CXF classes are loaded from the container classloader, which avoids conflicts with CXF jars shipped in applications.
+
+|`+openejb.cxf.jmx+`
+|bool
+|`+true+`
+|Enables CXF's JMX instrumentation manager on the shared bus, using TomEE's MBean server.
+
+|`+openejb.cxf.monitoring.jmx+`
+|bool
+|`+false+`
+|Enables CXF JMX instrumentation together with per-endpoint performance counters.
+
+|`+openejb.cxf.monitoring.jmx.clear-on-undeploy+`
+|bool
+|`+true+`
+|Clears the CXF monitoring counters when an application is undeployed, to avoid leaks.
+
+|`+openejb.cxf.rs.bval.active+`
+|bool
+|value of `+cxf.jaxrs.bval.active+` (`+true+`)
+|Global switch for CXF bean validation on JAX-RS endpoints when CDI is not in use. Takes precedence over `cxf.jaxrs.bval.active`.
+
+|`+openejb.cxf.rs.bval.log.level+`
+|java.util.logging level name
+|value of `+cxf.jaxrs.bval.log.level+`
+|Global log level of CXF's `ValidationExceptionMapper` logger. Takes precedence over `cxf.jaxrs.bval.log.level`.
+
+|`+openejb.jakarta.xml.ws.spi.Provider+`
+|class name
+|none
+|JVM property naming the JAX-WS `Provider` tried first when OpenEJB resolves the real `jakarta.xml.ws.spi.Provider` behind its wrapper. A user-supplied `jakarta.xml.ws.spi.Provider` value is copied here before the wrapper is installed.
+
+|`+openejb.jaxrs.client.providers+`
+|comma-separated class names
+|`+""+`
+|Additional providers registered on the shared CXF bus, so they apply to JAX-RS clients. They are placed before the default JSON providers. When `tomee.mp.scan` is not `none`, the OpenTelemetry client filter is added.
+
+|`+openejb.jaxrs.ejb-exception-mapper.expose-message+`
+|bool
+|`+false+`
+|Writes the message of an `EJBException` whose cause has no mapper to the 500 response body. Otherwise it is only logged.
+
+|`+openejb.jaxrs.fail-on-constrainedto+`
+|bool
+|`+true+`
+|Deployment fails if a JAX-RS provider annotated `@ConstrainedTo(CLIENT)` is registered on the server side. When false it is skipped and logged.
+
+|`+openejb.jaxrs.jsonProviders+`
+|comma-separated class names
+|`+org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider,org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider+`
+|Replaces the default JSON providers registered on the CXF bus, for server and client. When set, the WADL document writer is no longer added automatically.
+
+|`+openejb.jaxrs.scanning.methods+`
+|bool
+|`+false+`
+|Also detects JAX-RS resource classes that have `@Path` only on methods.
+
+|`+openejb.jaxrs.skip.jakarta.json.providers.registration+`
+|bool
+|`+true+`
+|Passed to CXF as `skip.jakarta.json.providers.registration` so that CXF does not register its own JSON-P/JSON-B providers; TomEE's Johnzon providers are used instead.
+
+|`+openejb.jaxrs.static-first+`
+|bool
+|`+true+`
+|The JAX-RS listener first tries to serve a matching static resource of the webapp before dispatching to JAX-RS.
+
+|`+openejb.jaxws.add-remote+`
+|bool
+|`+false+`
+|For a session bean that is a `@WebService` without a remote business interface, also registers its web service interface as a remote business interface.
+
+|`+openejb.soap.override-factory+`
+|bool
+|`+false+`
+|Sets the `+jakarta.xml.soap.*+` factory system properties to TomEE's delegating SAAJ factories, where they are not already set. Off by default for performance.
+
+|`+openejb.webservice.old-deployment+`
+|bool
+|`+false+`
+|Restores the legacy deployment of EJB web service and REST endpoints. When false, EJB endpoints that are not part of a webapp are deployed under the EJB module name as context.
+
+|`+openejb.webservices.enabled+`
+|bool
+|`+true+`
+|Activate or not JAX-WS web services (`WsDeployer`). If false, or WSDL4J is not available, web service metadata is removed from applications and `webservices.xml` is not read.
+
+|`+openejb.wsAddress.format+`
+|string template
+|`+/{ejbDeploymentId}+`
+|The address format of EJB web services. Composition of `+{ejbJarId}+`, `+{ejbDeploymentId}+`, `+{ejbType}+`, `+{ejbClass}+`, `+{ejbClass.simpleName}+`, `+{ejbName}+`, `+{portComponentName}+`, `+{wsdlPort}+` and `+{wsdlService}+`. Can also be set as a `cxf` service property or as an EJB module property.
+
+|`+org.apache.johnzon.max-string-length+`
+|int
+|`+8192+`
+|Maximum string length accepted by the Johnzon JSON parser. TomEE copies it to the JVM system property when the `cxf-rs` service starts. Can also be set as a `cxf-rs` service property.
+
+|`+org.apache.openejb.cxf.bus.<in-interceptors\|in-fault-interceptors\|out-interceptors\|out-fault-interceptors>+`
+|comma-separated service ids/class names
+|none
+|CXF interceptors added to the shared CXF bus.
+
+|`+org.apache.openejb.cxf.bus.features+`
+|comma-separated service ids/class names
+|none
+|CXF features added to the shared CXF bus. They apply to all endpoints and clients.
+
+|`+org.apache.openejb.cxf.bus.properties+`
+|service id
+|none
+|Id of a `<Service>` whose properties are copied into the shared CXF bus properties.
+
+|`+org.apache.openejb.server.webservices.saaj.provider+`
+|sun, axis2 or default
+|`+sun+`
+|Specifies the default SAAJ implementation used by TomEE's SAAJ factories. `default` leaves it unset. Any other value fails startup.
+
+|`+<provider-class-name>.activated+`
+|bool
+|`+true+`
+|Set it to `false` to deactivate a built-in JAX-RS provider, for example `org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider.activated=false`. Read from system properties, then from the `cxf-rs` service or endpoint properties.
+
+|`+tomee.jaxws.oldsubcontext+`
+|bool
+|`+false+`
+|Whether or not to activate the old way of binding JAX-WS EJB web services directly on the root context (their own context) instead of the sub-context.
+
+|`+tomee.jaxws.security-role.<context-name>+`
+|comma-separated strings
+|`+default+`
+|For JAX-WS EJB endpoints secured with BASIC, DIGEST or CLIENT-CERT, the names of the security collections (and roles declared on the context) created for the endpoint mapping in that context. Each constraint requires an authenticated user.
+
+|`+tomee.jaxws.subcontext+`
+|string (path)
+|`+/webservices+`
+|Sub context used to bind JAX-WS EJB web services packaged outside a webapp.
+|===
+
+=== Security
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+authconfigprovider.factory+`
+|class name (java.security property)
+|`+org.apache.catalina.authenticator.jaspic.AuthConfigFactoryImpl+`
+|JASPIC `AuthConfigFactory` implementation (a `java.security` Security property). If not set, TomEE sets it to Tomcat's `AuthConfigFactoryImpl` at startup.
+
+|`+jakarta.security.jacc.policy.provider+`
+|class name
+|none
+|If set, this `jakarta.security.jacc.Policy` implementation is created and registered through `PolicyFactory.setPolicy` when the security service starts.
+
+|`+jakarta.security.jacc.PolicyConfigurationFactory.provider+`
+|class name
+|`+org.apache.openejb.core.security.JaccProvider$Factory+` (set when absent)
+|Standard JACC factory property. OpenEJB sets its own factory only when it is not already set.
+
+|`+jakarta.security.jacc.PolicyFactory.provider+`
+|class name
+|`+org.apache.openejb.core.security.JaccProvider$PolicyFactory+` (set when absent)
+|Standard JACC `PolicyFactory` property. OpenEJB sets its own factory only when it is not already set.
+
+|`+java.security.auth.login.config+`
+|path/URL
+|`+conf/login.config+` (extracted from the classpath)
+|JAAS login configuration. If not set, OpenEJB installs its bundled `login.config` (`PropertiesLoginModule`) and sets the JVM property to it.
+
+|`+openejb.internal.beans.security.enabled+`
+|bool
+|`+true+`
+|Internal admin EJBs (for example the Deployer) can only be called by users in role `openejb-admin` or `tomee-admin`. `false` disables the check.
+
+|`+openejb.permission-collection.cache.size+`
+|int
+|`+3000+`
+|Maximum number of evaluated permission results cached by the default fast `PermissionCollection`.
+
+|`+openejb.permission-collection.class+`
+|class name (PermissionCollection)
+|`+org.apache.openejb.assembler.classic.DelegatePermissionCollection$FastPermissionCollection+`
+|`PermissionCollection` implementation used for JACC permissions.
+
+|`+openejb.ScriptLoginModule.scriptURI+`
+|path/URI
+|none
+|JVM property used as the `ScriptLoginModule` script when the `scriptURI` JAAS option is not set.
+
+|`+org.apache.openejb.core.security.JaccProvider+`
+|class name
+|`+org.apache.openejb.core.security.jacc.BasicJaccProvider+`
+|`JaccProvider` implementation installed by the security service, the backend for JACC policy configuration. The chosen value is also set as a JVM system property.
+
+|`+tomee.realm.only-default+`
+|bool
+|`+false+`
+|Programmatic logins always use the default (engine/host/context) Tomcat realm and ignore any requested realm name.
+
+|`+tomee.security.openid.state-cookie-secure+`
+|bool
+|`+true+`
+|JVM property. Whether the OpenID Connect state and nonce cookies get the Secure flag. Set it to `false` only for local testing over plain HTTP.
+
+|`+tomee.security.pbkdf2.allow-weak-parameters+`
+|bool
+|`+false+`
+|The `Pbkdf2PasswordHash` accepts unsupported algorithms and fewer than 1024 iterations (but at least 1), in its configuration and in stored hashes, and logs a warning. By default these are rejected.
+
+|`+tomee.serialization.class.blacklist+`
+|comma-separated class/package prefixes, or *
+|`+org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process+`
+|Default list of packages/class names excluded from EJBd deserialization (EJB remoting, passivation, Quartz timer data...). Needs to be set on server and client sides. `-` effectively disables it. Read at class load. See link:ejbd-transport.html[Ejbd Transport].
+
+|`+tomee.serialization.class.whitelist+`
+|comma-separated class/package prefixes, or *
+|none (any class not blacklisted is allowed)
+|Default list of packages/class names allowed for EJBd deserialization. The blacklist wins over the whitelist. Needs to be set on server and client sides. See link:ejbd-transport.html[Ejbd Transport].
+|===
+
+=== Logging and monitoring
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+<jul.property>+`
+|string
+|none
+|When OpenEJB's JUL LogManager is installed (embedded or `forceReload`), any JUL configuration key (for example `org.apache.openejb.level`) set as an OpenEJB system property overrides the value from `logging.properties`.
+
+|`+log4j.<property>+`
+|string
+|none
+|With the log4j (1.x) log factory, any `+log4j.*+` OpenEJB property except `log4j.configuration` overrides the matching entry of `conf/logging.properties`.
+
+|`+log4j.category.OpenEJB.options+`
+|DEBUG, INFO, ...
+|`+info+`
+|Activates one OpenEJB log level (here the `OpenEJB.options` category, which logs the options in use). Needs the log4j log factory and log4j in the classpath.
+
+|`+logging.level.<loggerName>+`
+|JUL level name
+|none
+|Sets the level of an OpenEJB-created logger's handlers. When OpenEJB's LogManager is active it also acts as `+<loggerName>.level+`. More generally `+logging.<attribute>.<loggerName>+` maps to the JUL key `+<loggerName>.<attribute>+`.
+
+|`+openejb.jmx.active+`
+|bool
+|`+true+`
+|Activate (by default) or not the OpenEJB JMX MBeans. When false, a no-op MBeanServer is used.
+
+|`+openejb.jul.consoleHandlerClazz+`
+|class name
+|`+org.apache.openejb.util.OpenEJBSimpleLayoutHandler+` (or `+ConsoleColorHandler+` with `+openejb.log.color+`)
+|JUL handler class that OpenEJB sets on its loggers when it manages JUL itself (outside TomEE, in TomEE Embedded, or with `forceReload`, and only if `java.util.logging.manager` is unset). Falls back to `java.util.logging.ConsoleHandler` if the class cannot be loaded.
+
+|`+openejb.jul.forceReload+`
+|bool
+|`+false+` (`+true+` with `+@SimpleLog+`)
+|Forces OpenEJB to install its own JUL LogManager and reset logging, even inside TomEE, so OpenEJB's console handler and format apply. Ignored when `java.util.logging.manager` is set.
+
+|`+openejb.jul.forceReload.use-openejb-handler+`
+|bool
+|`+true+`
+|With `openejb.jul.forceReload`: when true, OpenEJB's console handler is used for every logger without handlers. When false only OpenEJB, CXF, transaction, timer, OpenJPA and `org.apache` loggers get it.
+
+|`+openejb.log.async+`
+|bool
+|`+true+`
+|Outside Tomcat (when `catalina.home` is not set), OpenEJB log statements are handed to a background thread. Set it to `false` to log synchronously.
+
+|`+openejb.log.color+`
+|bool
+|`+false+`
+|Activate or not colors in the console in embedded mode (when OpenEJB manages JUL itself and no `consoleHandlerClazz` is set). No effect inside IntelliJ IDEA.
+
+|`+openejb.log.color.<level>+`
+|BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, DEFAULT
+|`+finest+`/`+finer+`/`+fine=DEFAULT+`, `+info=WHITE+`, `+warning=YELLOW+`, `+severe=RED+`
+|Sets a color (in uppercase) for a particular level (in lowercase: finest, finer, fine, info, warning, severe).
+
+|`+openejb.log.color.install+`
+|bool
+|`+true+`
+|On consoles that need wrapping (Windows), installs Jansi's `AnsiConsole` for the color handler.
+
+|`+openejb.log.factory+`
+|jul, juli, slf4j, log4j, log4j2, pax or a LogStreamFactory class name
+|`+jul+` (`+JuliLogStreamFactory+`)
+|Logging backend OpenEJB uses for its own loggers. `log4j` means log4j 1.x and is ignored, with a message, if log4j 1.x is not on the classpath.
+
+|`+openejb.log.level+`
+|JUL level name
+|`+INFO+`
+|Level of the `ConsoleColorHandler`. Unknown names fall back to INFO.
+
+|`+openejb.logger.external+`
+|bool
+|`+false+`
+|With the log4j (1.x) log factory, skips OpenEJB's own log4j configuration and leaves log4j configuration to the user.
+
+|`+openejb.logging.embedded+`
+|bool
+|`+false+`
+|With the log4j (1.x) log factory, marks embedded mode: `conf/logging.properties` is used only if it exists, otherwise log4j is configured with embedded defaults.
+
+|`+openejb.max.log.socket.errors+`
+|int
+|`+10+`
+|JVM property. Maximum number of failed service requests logged at WARN, to limit log flooding. Further failures are logged at debug level.
+
+|`+openejb.version.check.proxy+`
+|URL (protocol://user:pass@host:port)
+|none
+|Proxy for the optional `UpdateChecker`'s version lookup.
+
+|`+openejb.version.check.repo.url+`
+|URL
+|`+https://repo1.maven.org/maven2/+`
+|Repository base the optional `UpdateChecker` uses when `openejb.version.check.url` is `auto`.
+
+|`+openejb.version.check.url+`
+|URL or auto
+|`+auto+`
+|For the optional `UpdateChecker` observer (not registered by default): the `maven-metadata.xml` URL checked for a newer release. `auto` builds it from `openejb.version.check.repo.url`.
+
+|`+org.apache.juli.formatter+`
+|class name
+|`+java.util.logging.SimpleFormatter+`
+|Formatter applied to the console handlers by TomEE's `JULLogger` when neither `java.util.logging.config.file` nor `java.util.logging.config.class` is set.
+
+|`+tomee.skip-tomcat-log+`
+|bool
+|`+false+`
+|JVM property. TomEE's Tomcat JULI log bridge (`TomEELog`) does not force-initialize the OpenEJB logger delegate.
+|===
+
+=== Server services
+
+Properties of the network services themselves (`ejbd`, `admin`, discovery and so on) are listed in <<Server service properties>>.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+openejb.admin.shutdown.secret+`
+|string
+|none (read from the `+conf+` directory)
+|Shared secret sent with the shutdown command by `RemoteServer`. If not set, it is read from the secret file the server wrote to its `conf` directory.
+
+|`+openejb.admin.shutdown.secret.required+`
+|bool
+|`+true+`
+|Set it to `false` on the server to accept admin stop requests without a secret. A warning is logged, since any client reaching the admin port can then stop the server.
+
+|`+openejb.ejbd.datasource-metadata+`
+|bool
+|`+false+`
+|Allow remote datasource lookup over EJBd, including HTTP/HTTPS. Enabling this shares database connection details, including credentials, with clients able to reach the endpoint. Applies server-wide, including datasource references; it does not add per-user authorization. See link:ejbd-transport.html[Ejbd Transport] for compatibility and configuration details.
+
+|`+openejb.server.only_from.implicit-local+`
+|bool
+|`+false+`
+|When `only_from` is set, localhost addresses are always allowed in addition to the listed ones.
+
+|`+openejb.service.manager.class+`
+|class name
+|`+org.apache.tomee.catalina.TomEEServiceManager+`
+|Custom ServiceManager class used when the service manager is enabled. Falls back to the TomEE one if the class cannot be found.
+
+|`+openejb.servicemanager.enabled+`
+|bool
+|`+true+` (TomEE Embedded forces `+false+`)
+|Run all services detected (through the ServiceManager) or only the known available services (WS and RS).
+
+|`+org.apache.openejb.multipulse.ttl+`
+|int
+|`+32+`
+|JVM property. Multicast time-to-live of MultiPulse discovery packets, for the server agent and the client.
+|===
+
+=== Remote server control
+
+`RemoteServer` starts, stops and checks a standalone server. Tooling and the TomEE Arquillian remote adapter use it.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+connect.tries+`
+|int
+|`+60+`
+|Number of one-second attempts to connect to a server that is starting or stopping (1..3600).
+
+|`+ejbd.port+`
+|int
+|`+4201+`
+|EJBd port of the server, used to build the default `java.naming.provider.url`.
+
+|`+java.naming.provider.url+`
+|string
+|`+127.0.0.1:<ejbd.port>+`
+|Provider URL used to connect to the managed server.
+
+|`+java.opts+`
+|string
+|none
+|Extra JVM arguments for the started server. `+${openejb.base}+` in the value is replaced with the server home.
+
+|`+openejb.server.debug+`
+|bool
+|`+false+`
+|Starts the server JVM with a JDWP agent (`suspend=y`) on `server.debug.port`.
+
+|`+openejb.server.uri+`
+|URI
+|`+ejbd://localhost:4201+`
+|Server URI that the JSR-88 `VmDeploymentManager` uses to reach the remote Deployer.
+
+|`+openejb.server.waitFor.seconds+`
+|int (seconds)
+|`+10+`
+|How long to wait for the server process to exit before killing it. Must be a JVM system property.
+
+|`+server.debug.port+`
+|int
+|`+5005+`
+|JDWP port used when `openejb.server.debug=true`.
+
+|`+server.shutdown.command+`
+|string
+|`+SHUTDOWN+`
+|Shutdown command string sent to the shutdown port.
+
+|`+server.shutdown.host+`
+|string
+|`+localhost+`
+|Host used for the connection checks and the shutdown command.
+
+|`+server.shutdown.port+`
+|int
+|`+8005+` for Tomcat, `+4200+` otherwise
+|Port the shutdown command is sent to. Also used to check whether the server is up.
+
+|`+server.socket.timeout+`
+|int (ms)
+|`+1000+`
+|Socket connect timeout used when checking whether the server is up.
+
+|`+server.windows.fork+`
+|bool
+|`+false+`
+|On Windows, starts the server with `javaw` and does not wait for it.
+
+|`+verbose+`
+|bool
+|`+false+`
+|Prints the launch command and the connection attempts.
+|===
+
+=== TomEE and Tomcat integration
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+activated+`
+|bool (servlet init-param)
+|value of `+org.apache.tomee.catalina.remote.ServerServlet.activated+`
+|Init-param of `org.apache.tomee.catalina.remote.ServerServlet` that turns the EJBd-over-HTTP servlet on or off. Takes precedence over the system property.
+
+|`+<context>.openejb.web.xml.major+`
+|int
+|value of `+openejb.web.xml.major+`
+|Per-webapp override of the `web.xml` major version. `<context>` is the encoded context path without the leading slash.
+
+|`+<context>.tomcat-only+`
+|bool
+|value of `+tomcat-only+`
+|Per webapp: the webapp with this context name (without the leading slash) is deployed as a plain Tomcat webapp.
+
+|`+openejb.crosscontext+`
+|bool
+|`+false+`
+|Sets the cross context property on Tomcat contexts so that `ServletContext.getContext()` can reach other webapps (can be done the traditional way if the deployment goes through the webapp discovery and not the OpenEJB Deployer EJB).
+
+|`+openejb.jsessionid-support+`
+|bool
+|`+true+`
+|When false, removes URL from the session tracking modes of webapps (see `jakarta.servlet.SessionTrackingMode`).
+
+|`+openejb.jsf.skip+`
+|bool
+|`+false+`
+|TomEE's MyFaces `ServletContainerInitializer` does nothing, so MyFaces is not initialized automatically. The same happens with the context param `org.apache.myfaces.INITIALIZE_ALWAYS_STANDALONE=true` or when Mojarra is present.
+
+|`+openejb.myfaces.disable-default-values+`
+|bool
+|`+false+`
+|By default TomEE initializes MyFaces with some of its own default values (`LOG_WEB_CONTEXT_PARAMS=false`, the OWB EL resolver comparator, the Tomcat ExpressionFactory) to avoid useless logging. `true` disables this.
+
+|`+openejb.session.manager+`
+|class name
+|unset (Tomcat `+StandardManager+`)
+|Configures a session manager to use for all contexts. The class is loaded from the container classloader.
+
+|`+openejb.session.manager.<context-name>+`
+|class name
+|value of `+openejb.session.manager+`
+|Per-webapp session `Manager` class. `<context-name>` is the Tomcat context name, for example `/myapp`.
+
+|`+openejb.war+`
+|path
+|unset (searched in the host `+appBase+`)
+|JVM property giving the location of the TomEE webapp used by the `OpenEJBListener` when TomEE is installed as a webapp drop-in.
+
+|`+openejb.web.xml.major+`
+|int
+|major version declared in `+web.xml+`
+|Major version of `web.xml`. Can be useful to force Tomcat to scan Servlet 3 annotations when deploying with a Servlet 2.x `web.xml`.
+
+|`+org.apache.openejb.servlet.filters+`
+|comma-separated filterClass=urlPattern
+|unset
+|Servlet filters added before all other filters in every webapp, each mapped to the given URL pattern. The Arquillian integration uses it.
+
+|`+org.apache.tomee.catalina.remote.ServerServlet.activated+`
+|bool
+|`+true+`
+|JVM property enabling the EJBd-over-HTTP `ServerServlet` when its `activated` init-param is not set. A disabled servlet returns an empty response.
+
+|`+org.apache.tomee.catalina.TomcatWebAppBuilder.IGNORE+`
+|any (context init-param or ServletContext attribute)
+|unset
+|If present, TomEE ignores this webapp and does no EE deployment for it.
+
+|`+org.apache.tomee.loader.TomEEJarScanner.scanBootstrapClassPath+`
+|bool
+|Tomcat default (`+false+`)
+|Sets `scanBootstrapClassPath` on the `TomEEJarScanner`.
+
+|`+org.apache.tomee.loader.TomEEJarScanner.scanClassPath+`
+|bool
+|Tomcat default (`+true+`)
+|Sets `scanClassPath` on the `TomEEJarScanner` (classpath scanning for TLDs and web fragments).
+
+|`+org.apache.tomee.loader.TomEEJarScanner.useOriginalJarScannerFilter+`
+|bool
+|`+true+`
+|The `TomEEJarScanner` keeps the `JarScanFilter` configured on the original Tomcat jar scanner.
+
+|`+tomcat-only+`
+|bool
+|`+false+`
+|All webapps are deployed as plain Tomcat webapps and TomEE skips EE deployment for them.
+
+|`+tomee.<context>.docBases+`
+|comma-separated paths
+|value of the application property `+docBases+`
+|Additional external directories added as web resources of the webapp. `<context>` is the context path without the leading slash, or `ROOT`.
+
+|`+tomee.classpath.scanning.disabled+`
+|bool
+|`+false+`
+|JVM property. `TomEEJarScanner` does not additionally scan `java.class.path` entries when the system classloader is not a `URLClassLoader`.
+
+|`+tomee.cluster.deploy.send-archive+`
+|bool
+|`+false+`
+|With cluster deployment, sends the archive bytes in the deploy message instead of only its path.
+
+|`+tomee.cluster.deployment+`
+|bool
+|`+false+`
+|Application deploy and undeploy events are broadcast to the Tomcat cluster so other nodes deploy or undeploy the same archive.
+
+|`+tomee.eat-exception+`
+|any (presence)
+|unset
+|JVM property. An exception during EE deployment of a webapp is logged and swallowed (the webapp starts without its EE parts) instead of failing the deployment.
+
+|`+tomee.force-reloadable+`
+|bool
+|`+false+`
+|Standalone webapps (not EAR modules) are marked reloadable so Tomcat reloads them when classes change.
+
+|`+tomee.host.check+`
+|bool
+|`+true+`
+|When false, disables TomEE's periodic host check, which undeploys modified or removed applications and redeploys new ones on autoDeploy hosts.
+
+|`+tomee.http.request.wrap+`
+|bool
+|`+true+`
+|TomEE's `EEFilter` wraps HTTP requests so that logout and async requests are propagated to the TomEE security service.
+
+|`+tomee.init-J2EE-info+`
+|bool
+|`+true+`
+|Sets the J2EE server, application and module names on each `StandardContext`, used for JMX naming.
+
+|`+tomee.jsp-development+`
+|bool
+|`+false+`
+|Sets `development=true` on the Jasper `JspServlet` of every webapp so JSPs are checked for changes and recompiled.
+
+|`+tomee.noshutdownhook+`
+|any (presence)
+|unset
+|If set, TomEE disables Catalina's JVM shutdown hook at startup.
+
+|`+tomee.remote.support+`
+|bool
+|`+false+`
+|If true, the `/tomee` webapp is auto-deployed and EJBd over HTTP is active (at `/tomee/ejb` by default), so remote clients, the remote `EJBContainer` and the Arquillian remote adapter can connect. The TomEE Maven plugin and Arquillian turn it on.
+
+|`+tomee.remote.support.context+`
+|string (context path)
+|`+/tomee+`
+|Context path of the internal remote-support webapp.
+
+|`+tomee.remote.support.mapping+`
+|string (servlet mapping)
+|`+/ejb+`
+|Servlet mapping of the EJBd-over-HTTP servlet inside the remote-support webapp.
+
+|`+tomee.resources.adjust-web-xml-jndi-name+`
+|bool
+|`+true+`
+|Adjusts the mapped JNDI names of DataSource resource-refs declared in `web.xml` so they resolve to TomEE resources.
+
+|`+tomee.skip-tld+`
+|bool
+|`+false+`
+|Turns off Tomcat's default TLD scanning (`StandardJarScanFilter.defaultTldScan=false`) for deployed webapps to speed up startup.
+
+|`+tomee.tld.validation+`
+|bool
+|`+false+`
+|Turns on TLD validation for deployed webapps.
+
+|`+tomee.tomcat.cookieProcessor+`
+|class name
+|unset (Tomcat default)
+|`CookieProcessor` implementation set on every webapp, for example to get back the legacy Tomcat cookie processor.
+
+|`+tomee.tomcat.datasource.wrap+`
+|bool
+|`+false+`
+|Tomcat DataSource resources imported from `context.xml` are also wrapped and managed as TomEE DataSources.
+
+|`+tomee.tomcat.instance-manager.skip-cdi+`
+|comma-separated class name prefixes
+|`+""+`
+|Class name prefixes of Tomcat-instantiated objects (servlets, filters, listeners, tags) that are created with plain `newInstance()` and get no CDI or EE injection.
+
+|`+tomee.tomcat.instance-manager.skip-container-tags+`
+|comma-separated class name prefixes
+|`+org.apache.taglibs.standard.,jakarta.servlet.jsp.jstl.+`
+|Class name prefixes of tag handlers and other objects created without EE injection or post-construct processing.
+
+|`+tomee.tomcat.override.jar-scanner+`
+|bool
+|`+true+`
+|Replaces Tomcat's `StandardJarScanner` on each webapp with `TomEEJarScanner`.
+
+|`+tomee.tomcat.resource.wrap+`
+|bool
+|`+true+`
+|Tomcat `<Resource>` entries declared in `context.xml` or `server.xml` for a webapp are imported as TomEE resources so EE injection can use them.
+
+|`+tomee.valves+`
+|comma-separated class names
+|`+""+`
+|Extra Tomcat `Valve` classes added to the pipeline of every webapp after the `OpenEJBValve`.
+
+|`+tomee.warmup.skip+`
+|bool
+|`+false+`
+|JVM property. Skips the background preloading of frequently used classes (EL, JSF, BVal, Catalina...) at startup.
+
+|`+tomee.websocket.skip+`
+|bool
+|`+false+`
+|Tolerates a Tomcat WebSocket implementation lacking `PojoEndpointBase.getPojo` and skips injection into WebSocket POJO endpoints instead of failing.
+
+|`+tomee.webxml.deferred-urls+`
+|comma-separated URL patterns
+|unset
+|For these JSP URL patterns, adds a JSP property group with `deferred-syntax-allowed-as-literal=true` to each webapp's `web.xml`.
+
+|`+tomee.xml.validation+`
+|bool
+|`+false+`
+|Turns on `web.xml` validation for deployed webapps.
+|===
+
+== Service, resource and container properties
+
+These properties are set on a service declaration: in `conf/conf.d/<service>.properties` for server services, or on a `<Resource>`, `<Container>` or `<Service>` in `tomee.xml`, `resources.xml` or `new://` declarations. They can also be overridden with `+<serviceId>.<property>+` system properties.
+
+=== Server service properties
+
+`<service>` is the service name, for example `ejbd`, `ejbds`, `admin`, `httpejbd`, `hsql`, `derbynet`, `activemq`, `multicast`, `multipulse` or `multipoint`. Set them in `+conf/conf.d/<service>.properties+` or as `+<service>.<property>+` system properties.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+cxf.authMethod+`
+|NONE, BASIC, DIGEST, CLIENT-CERT
+|`+NONE+`
+|Property of the `cxf` service: authentication method of EJB web service endpoints whose port declares none.
+
+|`+cxf.realmName+`
+|string
+|none
+|Property of the `cxf` service: security realm of EJB web service endpoints whose port does not declare BASIC, DIGEST or CLIENT-CERT itself.
+
+|`+cxf.transportGuarantee+`
+|NONE, INTEGRAL, CONFIDENTIAL
+|`+NONE+`
+|Property of the `cxf` service: transport guarantee of EJB web service endpoints whose port declares no authentication.
+
+|`+<cxf\|cxf-rs>.virtualHost+`
+|string
+|`+localhost+`
+|Virtual host on which the `cxf` (SOAP) or `cxf-rs` (REST) service deploys EJB endpoints that are not inside a webapp.
+
+|`+derbynet.derby.system.home+`
+|path
+|`+openejb.base+` directory
+|`derby.system.home` property of the derbynet service, copied to the `derby.system.home` JVM property.
+
+|`+derbynet.verbose+`
+|bool
+|`+false+`
+|`verbose` property of the derbynet service: verbose output of the Derby network server.
+
+|`+ejbd.gzip+`
+|bool
+|`+false+`
+|`gzip` property of the ejbd/ejbds services: compresses the EJBd protocol stream. In TomEE it is also read from the system property `ejbd.gzip`.
+
+|`+ejbd.serializer+`
+|class name (EJBDSerializer)
+|none (Java serialization)
+|`serializer` property of the ejbd/ejbds services: custom serializer of EJBd payloads. In TomEE it is also read from the system property `ejbd.serializer`.
+
+|`+ejbd.stream.count+`
+|bool
+|`+true+` when the JNDI request logger is at debug level
+|`stream.count` property of the ejbd service: counts the bytes of request and response streams for debug logging.
+
+|`+hsql.<hsqldb-server-property>+`
+|string
+|none
+|Other hsql service properties (for example `server.silent`) are passed to the HSQLDB server configuration. `port` and `bind` map to `server.port` and `server.address`. `+server.dbname.*+` and `+server.database.*+` are rejected; databases come from the configured DataSources.
+
+|`+<service>.backlog+`
+|int
+|value of `+threads+` (ejbd/ejbds: 200)
+|Accept backlog of the server socket.
+
+|`+<service>.bind+`
+|host/IP
+|`+127.0.0.1+`; multicast/multipulse: `+239.255.2.3+`
+|Overrides the host or IP address a service binds to. For multicast agents it is the multicast group address.
+
+|`+<service>.block+`
+|bool
+|`+true+`
+|When both the pool and the queue are full, `true` runs the request in the accepting thread; otherwise it is rejected.
+
+|`+<service>.disabled+`
+|bool (true/yes)
+|`+false+` for admin and activemq, `+${openejb.profile.custom}+` for ejbd, ejbds, cxf, derbynet and discovery, `+true+` for hsql
+|Disables a server service.
+
+|`+<service>.discovery+`
+|string template
+|ejbd: `+ejb:ejbd://{bind}:{port}+`, ejbds: `+ejb:ejbds://{bind}:{port}+`
+|URI template the service announces to the discovery agents (multicast/multipoint).
+
+|`+<service>.enabledCipherSuites+`
+|comma-separated cipher suites
+|`+SSL_DH_anon_WITH_RC4_128_MD5+`
+|Cipher suites enabled on the socket of a secure service.
+
+|`+<service>.forceSocketClose+`
+|bool
+|`+true+`
+|Forces the client socket to close after the pool has processed a request.
+
+|`+<service>.keepAliveTime+`
+|long (ms)
+|`+60000+`
+|Idle time after which non-core threads of the service pool are discarded.
+
+|`+<service>.only_from+`
+|comma/space-separated hosts, IPs or masks
+|none (all allowed); admin: `+localhost+`
+|Restricts which client addresses may connect to the service.
+
+|`+<service>.port+`
+|int
+|ejbd `+4201+`, ejbds `+4203+`, admin `+4200+`, derbynet `+4205+`, activemq `+4206+`, hsql `+9001+`, multicast/multipulse `+6142+`, multipoint `+4212+`
+|Port of a standalone server service.
+
+|`+<service>.queue+`
+|int
+|`+0+` (meaning `+threadsCore - 1+`)
+|Size of the service pool's work queue. Values below 1 or at least `threadsCore` are replaced by `threadsCore - 1`.
+
+|`+<service>.secure+`
+|bool
+|`+false+` (ejbds: `+true+`)
+|Opens an SSL server socket for the service.
+
+|`+<service>.server+`
+|class name
+|from the service descriptor
+|Implementation class of a server service, also accepted as `className` or `classname`. Used to declare custom services.
+
+|`+<service>.threads+`
+|int
+|`+150+` (ejbd/ejbds/derbynet descriptors: `+200+`, admin: `+1+`)
+|Number of threads that manage requests (maximum of the service pool). Also the default socket backlog.
+
+|`+<service>.threadsCore+`
+|int
+|`+10+` (minimum 2)
+|Number of core threads kept in the service pool.
+
+|`+<service>.timeout+`
+|int (ms)
+|`+0+` (no socket timeout); ejbd/ejbds request timeout `+14400000+`
+|Socket `SO_TIMEOUT` of the service. For ejbd/ejbds it also sets the EJB daemon request timeout (4 hours by default).
+|===
+
+=== Discovery service properties
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+multicast.loopback_mode+`
+|bool
+|`+false+`
+|Multicast loopback mode of the multicast discovery agent.
+
+|`+<multicast\|multipoint>.exponential_backoff+`
+|long
+|`+0+`
+|Multiplier for exponential backoff of reconnect delays. `0` means no backoff.
+
+|`+<multicast\|multipoint>.heart_rate+`
+|long (ms)
+|`+500+`
+|Interval between discovery heartbeats.
+
+|`+<multicast\|multipoint>.max_missed_heartbeats+`
+|int
+|`+10+`
+|Number of missed heartbeats after which a discovered service is considered dead.
+
+|`+<multicast\|multipoint>.max_reconnect_attempts+`
+|int
+|`+10+`
+|Maximum number of reconnect attempts for a discovered service that failed.
+
+|`+<multicast\|multipoint>.max_reconnect_delay+`
+|long (ms)
+|`+30000+`
+|Upper limit of the reconnect delay when backing off.
+
+|`+<multicast\|multipoint>.reconnect_delay+`
+|long (ms)
+|`+5000+`
+|Delay before retrying a discovered service that failed.
+
+|`+<multicast\|multipoint\|multipulse>.group+`
+|string
+|`+default+`
+|Discovery group name. Only services in the same group are discovered.
+
+|`+multipoint.discoveryHost+`
+|host
+|value of `+bind+`
+|Host name the multipoint agent advertises to its peers.
+
+|`+multipoint.discoveryName+`
+|string
+|random color name
+|Name of this node in multipoint discovery logs.
+
+|`+multipoint.initialServers+`
+|comma-separated host:port list
+|`+""+`
+|Peers the multipoint agent connects to at startup. The `conn://` prefix is optional.
+
+|`+multipoint.reconnectDelay+`
+|duration
+|`+30 seconds+`
+|Delay before the multipoint server retries connecting to its initial peers.
+
+|`+multipulse.ignore+`
+|comma-separated hosts
+|`+""+` (localhost, ::1 and 127.0.0.1 are always ignored)
+|Hosts the multicast pulse agent leaves out of the address list it advertises.
+|===
+
+=== Container properties
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+activation.<property>+`
+|string
+|none
+|Property of a message-driven `<Container>`: default activation-config property for every MDB deployed in that container. Lowest precedence of the activation overrides.
+
+|`+Cache+`
+|class name or Cache instance
+|`+org.apache.openejb.core.stateful.SimpleCache+`
+|Stateful container property naming the `Cache` implementation (matched case-insensitively). The cache is created with the other container properties as bean properties.
+
+|`+LockFactory+`
+|class name
+|`+org.apache.openejb.core.stateful.DefaultLockFactory+`
+|Stateful container property naming a custom `LockFactory` for concurrent access to stateful beans.
+
+|`+PreventExtendedEntityManagerSerialization+`
+|bool
+|`+false+`
+|Stateful container property. Extended persistence contexts are not serialized with the bean on passivation.
+|===
+
+=== Properties of any resource or service
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+ApplicationWide+`
+|bool
+|`+false+`
+|For a container or resource declared inside an application (`resources.xml`): keeps it deployed when the application is undeployed, so the server manages it. On a resource, declaring the property with any value is enough.
+
+|`+IgnoreDefaultValues+`
+|bool
+|`+false+`
+|The provider's default property values from `service-jar.xml` are not applied; only explicitly declared properties are used.
+
+|`+InitializeAfterDeployment+`
+|bool
+|`+false+` (forced `+true+` with a `+cipher:cdi:+` password)
+|For a lazy resource declared by an application, forces its initialization (and `@PostConstruct`) once the application is deployed.
+
+|`+Lazy+`
+|bool
+|`+false+`
+|The resource is created on first use instead of at deployment. If an application resource's class cannot be loaded by the container classloader, TomEE sets `Lazy=true` and `UseAppClassLoader=true` automatically (and `InitializeAfterDeployment=true` unless `Lazy` was already true).
+
+|`+Qualifiers+`
+|comma-separated qualifier class names
+|none
+|On concurrency resources (ManagedExecutorService, ManagedScheduledExecutorService, ManagedThreadFactory, ContextService): CDI qualifiers under which the resource is exposed as a CDI bean.
+
+|`+SkipImplicitAttributes+`
+|bool
+|`+false+`
+|TomEE does not inject its implicit `transactionManager` and `ServiceId` attributes into the resource.
+
+|`+SkipPropertiesFallback+`
+|bool
+|`+false+`
+|Properties that match no setter or field are not injected into a `properties` field or setter of the resource class.
+
+|`+UseAppClassLoader+`
+|bool
+|`+false+` (always `+true+` for resources declared by an application)
+|With `Lazy=true`, creates the resource with the application (context) classloader instead of the container loader.
+|===
+
+=== DataSource properties
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+DataSourceCreator+`
+|simple, dbcp, dbcp-alternative, tomcat, bonecp or class name
+|container default (`+tomcat+` in TomEE)
+|Pool implementation used to create this DataSource.
+
+|`+Definition+`
+|string (properties text)
+|none
+|Block of properties-format text parsed to complete the DataSource properties. It never overrides explicitly set ones.
+
+|`+DefinitionEncoding+`
+|string (charset)
+|`+ISO-8859-1+`
+|Charset used to read the `Definition` property.
+
+|`+Flushable+`
+|bool
+|`+false+`
+|Wraps the DataSource so it can be flushed (recreated) at runtime.
+
+|`+LogSql+`
+|bool
+|`+false+`
+|Logs executed SQL statements.
+
+|`+LogSqlPackages+`
+|comma-separated package prefixes
+|none
+|Packages whose callers are shown with logged SQL.
+
+|`+openejb.datasource.pool+`
+|bool
+|pooled only if `+initialPoolSize+` or `+maxPoolSize+` is set
+|Only when `JdbcDriver` names a DataSource class (not a `java.sql.Driver`): whether that DataSource is wrapped in a connection pool. Can also be a global system property; the DataSource property wins.
+
+|`+ResetOnError+`
+|true, false, retry(n) or class name
+|none (disabled)
+|Recreates the pool when a connection error occurs. `retry(n)` retries up to n times; a class name gives a custom strategy.
+
+|`+ResetOnErrorMethods+`
+|comma-separated method names
+|`+getConnection,getXAConnection+`
+|DataSource methods on which `ResetOnError` applies.
+
+|`+TomEEProxyHandler+`
+|class name (InvocationHandler)
+|none
+|`InvocationHandler` class used to proxy the DataSource (for custom interception).
+
+|`+transactional+`
+|bool
+|`+false+`
+|Alias that is ORed with `JtaManaged`: when true the DataSource is JTA managed.
+
+|`+XAForceDifferent+`
+|bool or class name
+|none
+|For an `XADataSource` given as `JdbcDriver`: forces its XAResources to be considered different resource managers (`true` uses the built-in wrapper, or a wrapper class name taking an `XADataSource`).
+|===
+
+=== Resource adapter and mail session properties
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+eagerInit+`
+|bool
+|`+false+`
+|Connector (`ManagedConnectionFactory`) resource: the connection manager is started and a first connection opened at deploy time.
+
+|`+mail.<protocol>.user+`
+|string
+|falls back to `+mail.user+`
+|Mail `Session` resource: user name for the transport protocol (`mail.transport.protocol`, default smtp). Used only when `password` is set.
+
+|`+password+`
+|string
+|none
+|Mail `Session` resource: when set, an Authenticator is created from this password and the user given by `+mail.<protocol>.user+` or `mail.user`.
+
+|`+realm+`
+|string
+|resource id
+|Resource adapter: security realm name used by the WorkManager's security context handler.
+
+|`+threadPoolSize+`
+|int
+|`+30+`
+|Resource adapter: size of the WorkManager thread pool. `+<= 0+` uses an unbounded cached pool. The pool can be tuned further with `+<resourceId>.CorePoolSize+`, `MaximumPoolSize`, `QueueSize`, `KeepAliveTime` and the other `AsynchronousPool`-style options.
+
+|`+useDefault+`
+|bool
+|`+false+`
+|Mail `Session` resource: returns the JVM-wide default session (`Session.getDefaultInstance`) instead of a new instance.
+|===
+
+=== ActiveMQ broker URI parameters
+
+Query parameters of the `broker:` URI given in the ActiveMQ resource adapter's `BrokerXmlConfig`. Keys are written in lower case.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+amq.plugins+`
+|comma-separated plugin names
+|none
+|Broker plugins to install. Each `<name>` is created from the `+<name>.class+` parameter and configured by `+<name>.<property>+` parameters.
+
+|`+<kahadb\|leveldb\|persistence>.<setter name lowercased>+`
+|string
+|none
+|Sets a property on the persistence adapter chosen with `usekahadb`, `useleveldb` or `persistenceadapter` (for example `kahadb.directory`).
+
+|`+persistenceadapter+`
+|class name
+|none
+|Custom ActiveMQ `PersistenceAdapter` class configured by `+persistence.<setter name lowercased>+` parameters.
+
+|`+<plugin name>.class / <plugin name>.<property>+`
+|class name / string
+|none
+|Class (`BrokerPlugin`) and properties of a broker plugin listed in `amq.plugins`.
+
+|`+skipConnector+`
+|bool (presence)
+|unset
+|On a `network:` connector URI inside the broker URI: the URI parameters are not applied to the `DiscoveryNetworkConnector`.
+
+|`+systemUsage+`
+|bool
+|`+false+`
+|The broker gets a `SystemUsage` configured by the `+systemUsage.*.limit+` parameters.
+
+|`+systemUsage.memory.limit+`
+|int (bytes)
+|`+1073741824+` (1 GB)
+|Broker memory usage limit when `systemUsage=true`.
+
+|`+systemUsage.scheduler.limit+`
+|int (bytes)
+|`+1073741824+` (1 GB)
+|Broker job scheduler store limit when `systemUsage=true`.
+
+|`+systemUsage.store.limit+`
+|int (bytes)
+|`+107374182400+` (100 GB)
+|Broker persistent store limit when `systemUsage=true`. Explicit values are parsed as an int, so the maximum is about 2 GB.
+
+|`+systemUsage.temp.limit+`
+|int (bytes)
+|`+53687091200+` (50 GB)
+|Broker temp store limit when `systemUsage=true`. Explicit values are parsed as an int, so the maximum is about 2 GB.
+
+|`+usekahadb+`
+|bool
+|`+false+`
+|Uses a KahaDB persistence adapter configured by `+kahadb.<setter name lowercased>+` parameters.
+
+|`+useleveldb+`
+|bool
+|`+false+`
+|Uses a LevelDB persistence adapter configured by `+leveldb.<setter name lowercased>+` parameters.
+|===
+
+== Application properties
+
+Set these in `WEB-INF/application.properties` or `META-INF/application.properties`. Unless noted otherwise, a system property with the same key acts as the global default. Bean-level properties can also be set in `openejb-jar.xml`, and module-level ones in `META-INF/module.properties`.
+
+=== General
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+docBases+`
+|comma-separated paths
+|unset
+|Additional external web resource directories of the webapp. Fallback for `+tomee.<context>.docBases+`.
+
+|`+<ejbName>.<property>+`
+|string
+|none
+|Sets a deployment property on the EJB named `<ejbName>`, like an `openejb-jar.xml` `<ejb-deployment><properties>` entry. Read from system, application and module properties.
+
+|`+<extension class>.active+`
+|bool
+|`+true+`
+|Set `+<fully qualified CDI extension class>.active=false+` (application or system property) to disable a portable CDI extension.
+
+|`+<moduleId>.<property>+`
+|string
+|none
+|Overrides or adds a property of a module, with the same effect as declaring it in that module's `module.properties`. Read from system properties and `application.properties`.
+
+|`+openejb.cdi.activated+`
+|bool
+|unset (on when the module uses `+@Inject+`)
+|EJB module property that turns CDI on or off for an EJB-only module without `beans.xml`.
+
+|`+openejb.cdi.extensions.<extension class>.ordinal+`
+|int
+|`+0+`
+|Ordinal of a CDI extension used when `openejb.cdi.extensions.sorted=true`.
+
+|`+openejb.cdi.extensions.sorted+`
+|bool
+|`+false+`
+|Sorts CDI extensions by `+openejb.cdi.extensions.<class>.ordinal+`, then class name. Because of a comparator bug, sorting is currently by class name only.
+
+|`+openejb.cdi.filter.classloader+`
+|bool
+|`+true+`
+|CDI scanning skips classes loaded by a parent classloader (avoids duplicate beans in EARs). EJB module property.
+
+|`+openejb.cdi.ignore-not-loadable-extensions+`
+|bool
+|`+true+`
+|CDI extensions listed in `META-INF/services` that cannot be loaded are skipped instead of failing.
+
+|`+openejb.cdi.skip-resource-validation+`
+|bool (presence)
+|unset (validation runs)
+|If present in the application properties of a standalone module, skips the deploy-time check that CDI `@Produces` fields annotated `@Resource`, `@PersistenceContext` or `@EJB` resolve.
+
+|`+openejb.ejbmodule.MergeWebappJndiContext+`
+|flag (presence)
+|unset
+|EJB module property. When an EJB module inside a webapp is a separate module, copies the webapp's resource-env-refs into each bean of that module.
+
+|`+openejb.propagate.application-exceptions+`
+|bool
+|`+false+`
+|Application exceptions declared in one module are propagated to all EJB modules of the application. The system property is read first.
+
+|`+org.apache.batchee.spi.BatchArtifactFactory+`
+|class name
+|`+org.apache.openejb.batchee.TomEEArtifactFactory+`
+|BatchEE service override. If unset, TomEE installs its own artifact factory and thread pool service.
+
+|`+org.apache.batchee.spi.BatchThreadPoolService+`
+|class name
+|`+org.apache.openejb.batchee.TomEEThreadPoolService+`
+|BatchEE thread pool service. A custom value is overridden unless `org.apache.batchee.spi.BatchArtifactFactory` is also set.
+
+|`+org.apache.webbeans.component.PrincipalBean.proxy+`
+|bool
+|`+true+`
+|OpenWebBeans configuration (`openwebbeans.properties` or application properties). When false, TomEE wraps the injectable `Principal` in its own proxy implementing the interfaces of `org.apache.webbeans.component.PrincipalBean.proxyApis`.
+
+|`+org.apache.webbeans.component.PrincipalBean.proxyApis+`
+|comma-separated interface names
+|`+org.eclipse.microprofile.jwt.JsonWebToken+`
+|Extra interfaces the injectable `Principal` wrapper implements so it can be cast to them. Only used when `org.apache.webbeans.component.PrincipalBean.proxy=false`.
+
+|`+tomcat.unpackWar+`
+|bool
+|`+true+`
+|When false, the war is not unpacked (`StandardContext.unpackWAR=false`).
+
+|`+tomee.session.remove-cdi-beans-on-passivate+`
+|bool
+|`+false+`
+|OpenWebBeans configuration (`openwebbeans.properties`) read by TomEE. Session-scoped CDI beans are destroyed when the HTTP session is passivated.
+|===
+
+=== EJB, MDB and timer properties
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+AccessTimeout+`
+|duration
+|container `+AccessTimeout+` (30 seconds)
+|Bean property overriding the container's pool access timeout for a stateless bean. Unitless values are milliseconds. The other pool settings (`MinSize`, `MaxSize`, `MaxAge`, `IdleTimeout`...) can be overridden per bean the same way.
+
+|`+AsynchronousPool.<CorePoolSize\|MaximumPoolSize\|QueueSize\|KeepAliveTime\|AllowCoreThreadTimeOut\|QueueType\|QueueFair\|RejectedExecutionHandlerClass\|OfferTimeout>+`
+|int, duration, bool, enum or class
+|`+CorePoolSize=Size+`, `+MaximumPoolSize+` and `+QueueSize+` = `+CorePoolSize+`, `+KeepAliveTime=60s+`, `+AllowCoreThreadTimeOut=true+`, `+OfferTimeout=30s+`
+|Tuning of the `@Asynchronous` executor. The same suffixes apply to resource adapter work pools with the resource id as prefix.
+
+|`+AsynchronousPool.ShutdownWaitDuration+`
+|duration
+|`+1 minute+`
+|How long to wait for running `@Asynchronous` tasks on undeploy.
+
+|`+AsynchronousPool.Size+`
+|int
+|`+5+`
+|Core thread count of the pool running `@Asynchronous` EJB methods.
+
+|`+BackgroundStartup+`
+|bool
+|`+false+`
+|Per-bean property of stateless beans and pooled MDBs. Deployment does not create the `MinSize` instances eagerly and does not wait for them.
+
+|`+CloseTimeout+`
+|duration
+|container `+CloseTimeout+` (5 minutes)
+|Per-bean override of how long to wait for a stateless bean's pool instances to close on undeploy. Unitless values are minutes.
+
+|`+DeliveryActive+`
+|bool
+|`+true+`
+|Alias of `MdbActiveOnStartup`, used when `MdbActiveOnStartup` is not set.
+
+|`+EjbTimer.RetryAttempts+`
+|int
+|`+1+`
+|Number of times a failed EJB timeout callback is retried. Looked up in bean, module, application and then system properties.
+
+|`+InstanceLimit+`
+|int
+|container `+InstanceLimit+` (10)
+|Per-bean override of the maximum number of concurrent MDB instances in the non-pooled MDB container.
+
+|`+MdbActiveOnStartup+`
+|bool
+|`+true+`
+|MDB activation-config property. When false, the message endpoint is not activated at startup and can be started later, for example through JMX.
+
+|`+MdbJMXControl+`
+|bool or JMX ObjectName
+|`+true+`
+|MDB activation-config property. `true` registers a JMX MBean to start and stop the MDB under a default name, any other string is used as the ObjectName, `false` registers nothing.
+
+|`+openejb.quartz.use-TCCL+`
+|bool
+|`+false+`
+|The bean's Quartz scheduler starts with the application classloader as TCCL instead of the container loader, and the JDBC and trigger persistence delegates are not patched. Can be set at system, application, module or bean level.
+
+|`+openejb.timers.on+`
+|bool
+|`+true+`
+|Enables the EJB timer service. `false` prevents creation of timer services.
+
+|`+openejb.webservice.deployment.address+`
+|string
+|none
+|EJB bean property forcing the exact address of that bean's web service, bypassing `openejb.wsAddress.format`.
+
+|`+org.apache.openejb.quartz.<property>+`
+|string
+|none
+|Shaded-prefix form of the Quartz properties (for example `org.apache.openejb.quartz.jobStore.class`). Behaves like `+org.quartz.<property>+`.
+
+|`+org.apache.openejb.quartz.jobStore.driverDelegateClass+`
+|class name
+|none
+|Quartz JDBC driver delegate. `StdJDBCDelegate` is replaced by a patched delegate unless `openejb.quartz.use-TCCL` is true.
+
+|`+org.apache.openejb.quartz.jobStore.makeThreadsDaemon+`
+|bool
+|`+true+`
+|With a non-RAM job store, whether job store threads are daemons so shutdown works.
+
+|`+org.apache.openejb.quartz.scheduler.jmx.export+`
+|bool
+|`+true+` when JMX is active
+|Exports the EJB timer Quartz scheduler to JMX.
+
+|`+org.apache.openejb.quartz.scheduler.makeSchedulerThreadDaemon+`
+|bool
+|`+true+`
+|Makes the Quartz scheduler thread of the EJB timer service a daemon thread.
+
+|`+org.apache.openejb.quartz.threadPool.threadCount+`
+|int
+|none
+|Deprecated. Legacy way to size the default timer thread pool; copied to `openejb.timer.pool.size` when that is not set. Use `openejb.timer.pool.size`.
+
+|`+org.quartz.<property>+`
+|string
+|none
+|Any Quartz scheduler property set at system, application, module or bean level is passed to the EJB timer scheduler (internally rewritten to the shaded `+org.apache.openejb.quartz.*+` prefix). Setting any Quartz key gives the bean its own scheduler instead of the shared one.
+
+|`+org.quartz.threadPool.threadCount+`
+|int
+|none
+|Deprecated. Legacy alias of `openejb.timer.pool.size` when the default timer thread pool is used. Use `openejb.timer.pool.size`.
+
+|`+Timeout+`
+|duration
+|container `+AccessTimeout+`
+|Deprecated. Legacy per-bean alias of `AccessTimeout` for stateless beans, used when `AccessTimeout` is not set. Unitless values are milliseconds.
+
+|`+timerStore.class+`
+|class name (TimerStore)
+|none (in-memory store)
+|Custom EJB `TimerStore`, looked up in bean, module, then application properties. The class may take a `TransactionManager` constructor argument; on failure the memory store is used.
+
+|`+webservice.security.authMethod+`
+|NONE, BASIC, DIGEST, CLIENT-CERT
+|`+NONE+`
+|EJB deployment property: authentication method of the EJB's web service endpoint.
+
+|`+webservice.security.realm+`
+|string
+|none
+|EJB deployment property: realm name of the EJB's web service endpoint.
+
+|`+webservice.security.securityRealm+`
+|string
+|none
+|EJB deployment property: security realm used to authenticate calls to the EJB's web service endpoint.
+
+|`+webservice.security.transportGarantee+`
+|NONE, INTEGRAL, CONFIDENTIAL
+|`+NONE+`
+|EJB deployment property: transport guarantee of the EJB's web service endpoint. Note the spelling `Garantee`.
+|===
+
+=== Persistence unit properties
+
+Set these in the `<properties>` of a persistence unit, or with `+<unit name>.<property>+`.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+openejb.jpa.auto-scan+`
+|bool
+|`+false+`
+|When true and `exclude-unlisted-classes` is not true, the module is scanned for `@Entity`, `@Embeddable`, `@MappedSuperclass` and similar classes, which are added to the unit.
+
+|`+openejb.jpa.auto-scan.package+`
+|comma-separated package names
+|none (all packages)
+|Limits `openejb.jpa.auto-scan` to classes in these packages.
+
+|`+openejb.jpa.query.wrap-no-tx+`
+|bool
+|`+true+`
+|Queries run outside a transaction on a transaction-scoped EntityManager are wrapped so the temporary EntityManager is closed after use.
+
+|`+openejb.jpa.table_prefix+`
+|string
+|none
+|Adds a prefix to all table names. Works with OpenJPA, Hibernate and EclipseLink; TopLink only logs a warning.
+
+|`+openjpa.RuntimeUnenhancedClasses+`
+|string
+|`+supported+` (set if absent)
+|OpenJPA property that TomEE sets to `supported` when it is missing. The special value `disable` removes the property.
+
+|`+tomee.jpa.factory.lazy+`
+|bool
+|`+false+` (always lazy for units in a webapp)
+|Creates the EntityManagerFactory lazily on first use instead of at deployment. Falls back to the system property.
+|===
+
+=== JAX-RS and web service endpoint properties
+
+These are read from the application properties, or from the properties of the endpoint (for example `openejb-jar.xml` pojo-deployment properties or the `cxf-rs` service).
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+cxf.<jaxrs\|jaxws>.address+`
+|string
+|none (computed address)
+|Overrides the address the endpoint is published at.
+
+|`+cxf.<jaxrs\|jaxws>.databinding+`
+|service id or class name (DataBinding)
+|none
+|CXF `DataBinding` used by the endpoint and by the JAX-WS service factory.
+
+|`+cxf.<jaxrs\|jaxws>.debug+`
+|bool
+|`+false+`
+|Sets `faultStackTraceEnabled` on the endpoint so stack traces are returned in faults. The global system property is the fallback.
+
+|`+cxf.<jaxrs\|jaxws>.features+`
+|comma-separated service ids/class names
+|none
+|CXF features added to the endpoint.
+
+|`+cxf.<jaxrs\|jaxws>.in-fault-interceptors+`
+|comma-separated service ids/class names
+|none
+|CXF in-fault interceptors added to the endpoint.
+
+|`+cxf.<jaxrs\|jaxws>.in-interceptors+`
+|comma-separated service ids/class names
+|none
+|CXF in-interceptors added to the endpoint.
+
+|`+cxf.<jaxrs\|jaxws>.out-fault-interceptors+`
+|comma-separated service ids/class names
+|none
+|CXF out-fault interceptors added to the endpoint.
+
+|`+cxf.<jaxrs\|jaxws>.out-interceptors+`
+|comma-separated service ids/class names
+|none
+|CXF out-interceptors added to the endpoint.
+
+|`+cxf.<jaxrs\|jaxws>.properties+`
+|service id
+|none
+|Id of a `<Service>` whose properties are set as CXF endpoint properties.
+
+|`+cxf.<jaxrs\|jaxws>.published-url+`
+|URL
+|none
+|Endpoint URL CXF advertises (for example in WSDL or WADL). Useful behind a proxy.
+
+|`+cxf.jaxrs.bval.active+`
+|bool
+|`+true+`
+|Enables CXF bean validation on JAX-RS endpoints when CDI is not in use. The system property `openejb.cxf.rs.bval.active` overrides it.
+
+|`+cxf.jaxrs.bval.log.level+`
+|java.util.logging level name
+|none
+|Log level of CXF's `ValidationExceptionMapper` logger for the endpoint. The system property `openejb.cxf.rs.bval.log.level` overrides it.
+
+|`+cxf.jaxrs.providers+`
+|comma-separated class names or service ids
+|none
+|JAX-RS providers registered for an endpoint. As a global system property its value is added to every JAX-RS deployment. Replaces the former `openejb.cxf.jax-rs.providers`.
+
+|`+cxf.jaxrs.resourceComparator+`
+|service id or class name (ResourceComparator)
+|none
+|CXF `ResourceComparator` used to choose between matching JAX-RS resources and methods.
+
+|`+cxf.jaxrs.skip-provider-scanning+`
+|bool
+|`+false+`
+|Providers discovered by scanning are not added to the endpoint; only explicitly configured ones are used. A system property wins.
+
+|`+cxf.jaxrs.staticSubresourceResolution+`
+|bool
+|none (CXF default)
+|Enables CXF static sub-resource resolution for the endpoint.
+
+|`+cxf.jaxws.client.[<endpoint-qname>.]<in-interceptors\|in-fault-interceptors\|out-interceptors\|out-fault-interceptors>+`
+|comma-separated service ids/class names
+|none
+|CXF interceptors added to injected JAX-WS clients, globally or for a specific port QName.
+
+|`+cxf.jaxws.client.[<service-qname>.]wsFeatures+`
+|comma-separated service ids
+|none
+|`WebServiceFeature`s applied to injected JAX-WS client references, globally or only for the given service QName.
+
+|`+cxf.jaxws.schema-locations+`
+|comma-separated locations
+|none
+|XSD schema locations set on the JAX-WS server factory, used for schema validation.
+
+|`+cxf.jaxws.wsdl-location+`
+|string
+|none
+|WSDL location set on the JAX-WS server factory.
+
+|`+cxf.jaxws.wsFeatures+`
+|comma-separated service ids
+|none
+|`jakarta.xml.ws.WebServiceFeature` instances applied to the JAX-WS endpoint's service factory.
+
+|`+openejb.cxf-rs.cache-application+`
+|bool
+|`+true+`
+|The user's `Application` is wrapped so `getClasses()` and `getSingletons()` are computed once. Skipped when the `Application` has name-binding annotations.
+
+|`+openejb.endpoint.configurator+`
+|class name (EndpointConfigurator)
+|none (default WSS4J setup)
+|Port property naming a custom `EndpointConfigurator` that configures a JAX-WS endpoint's security instead of the default WSS4J chain.
+
+|`+openejb.jaxrs.application+`
+|bool
+|`+true+`
+|REST resources are deployed grouped in one JAX-RS `Application` per webapp or application. When false, each resource is deployed separately (legacy).
+
+|`+openejb.jaxrs.on+`
+|bool
+|`+true+`
+|Set it to `false` to disable JAX-RS deployment for the application.
+
+|`+openejb.jaxrs.providers.auto+`
+|bool
+|`+true+` (`+false+` with an explicit `+Application+`)
+|`@Provider` classes discovered in the application are registered automatically.
+
+|`+openejb.jaxws.add-missing-servlets+`
+|bool
+|`+true+`
+|When false, TomEE does not add servlet declarations for JAX-WS POJO endpoints missing from `web.xml`.
+
+|`+wss4j.in.<wss4j-option>+`
+|string
+|none
+|Properties of a secured web service port, passed without the prefix to CXF's `WSS4JInInterceptor`. `+wss4j.in.validator.<qname>=<class>+` and `+wss4j.in.processor.<qname>=<class>+` build the validator and processor maps.
+
+|`+wss4j.out.<wss4j-option>+`
+|string
+|none
+|Properties of a secured web service port, passed without the prefix to CXF's `WSS4JOutInterceptor`.
+|===
+
+=== MicroProfile Config properties
+
+These are read through MicroProfile Config, so they can be set in `META-INF/microprofile-config.properties`, as system properties or as environment variables.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+mp.health.default.readiness.empty.response+`
+|UP or DOWN
+|`+DOWN+`
+|Readiness status reported when no readiness checks exist yet.
+
+|`+mp.health.default.startup.empty.response+`
+|UP or DOWN
+|`+DOWN+`
+|Startup status reported when no startup checks exist yet.
+
+|`+mp.health.disable-default-procedures+`
+|bool
+|`+false+`
+|The default server health procedures (including the default readiness check) are not registered.
+
+|`+mp.jwt.decrypt.key+`
+|string (PEM/JWK/JWKS)
+|unset
+|Inline private key or keys used to decrypt encrypted (JWE) tokens.
+
+|`+mp.jwt.decrypt.key.algorithm+`
+|string (JWE key management algorithm)
+|unset
+|Required key management algorithm (for example `RSA-OAEP`) of encrypted JWTs.
+
+|`+mp.jwt.decrypt.key.location+`
+|string (URL/path)
+|unset
+|Location of the private key or keys used to decrypt encrypted (JWE) tokens.
+
+|`+mp.jwt.token.cookie+`
+|string
+|`+Bearer+`
+|Cookie holding the JWT when `mp.jwt.token.header=Cookie`.
+
+|`+mp.jwt.token.header+`
+|string
+|`+Authorization+`
+|HTTP header the JWT is read from, `Authorization` or `Cookie`.
+
+|`+mp.jwt.tomee.allow.no-exp+`
+|bool
+|`+false+`
+|Deprecated. Alias of `tomee.mp.jwt.allow.no-exp`. Still works but logs a warning; the new key wins when both are set.
+
+|`+mp.jwt.verify.audiences+`
+|comma-separated strings
+|unset (audience not checked)
+|Accepted `aud` values. A token must contain at least one of them.
+
+|`+mp.jwt.verify.clock.skew+`
+|int (seconds, >= 0)
+|`+0+`
+|Clock skew tolerated when validating `exp` and `iat`. A negative value fails deployment.
+
+|`+mp.jwt.verify.issuer+`
+|string
+|unset (issuer not checked)
+|Expected `iss` claim of incoming JWTs.
+
+|`+mp.jwt.verify.publickey+`
+|string (PEM/JWK/JWKS)
+|unset
+|Inline public key or keys used to verify JWT signatures. Cannot be combined with `mp.jwt.verify.publickey.location`.
+
+|`+mp.jwt.verify.publickey.algorithm+`
+|string (JWS algorithm)
+|unset
+|Required signature algorithm (for example `RS256` or `ES256`) of incoming JWTs.
+
+|`+mp.jwt.verify.publickey.location+`
+|string (URL/path)
+|unset
+|Location (classpath, file or http(s) URL) of the public key or JWKS used to verify signatures. http locations are cached and refreshed by default.
+
+|`+mp.jwt.verify.token.age+`
+|int (seconds)
+|unset
+|Maximum age of a token, based on its `iat` claim.
+
+|`+tomee.jwt.decrypt.key.cache+`
+|bool
+|`+true+` if `+mp.jwt.decrypt.key.location+` starts with http
+|Whether decryption keys are cached and refreshed in the background.
+
+|`+tomee.jwt.decrypt.key.cache.accessTimeout+`
+|duration
+|`+30 seconds+`
+|How long a request waits for cached decryption keys.
+
+|`+tomee.jwt.decrypt.key.cache.initialRetryDelay+`
+|duration
+|`+2 seconds+`
+|Initial delay before retrying a failed load of decryption keys.
+
+|`+tomee.jwt.decrypt.key.cache.maxRetryDelay+`
+|duration
+|`+1 hour+`
+|Maximum backoff delay between retries of a failed decryption key load.
+
+|`+tomee.jwt.decrypt.key.cache.refreshInterval+`
+|duration
+|`+1 day+`
+|Interval at which cached decryption keys are reloaded.
+
+|`+tomee.jwt.verify.publickey.cache+`
+|bool
+|`+true+` if `+mp.jwt.verify.publickey.location+` starts with http
+|Whether verification keys are cached and refreshed in the background. When false they are loaded once.
+
+|`+tomee.jwt.verify.publickey.cache.accessTimeout+`
+|duration
+|`+30 seconds+`
+|How long a request waits for cached verification keys.
+
+|`+tomee.jwt.verify.publickey.cache.initialRetryDelay+`
+|duration
+|`+2 seconds+`
+|Initial delay before retrying a failed load of verification keys.
+
+|`+tomee.jwt.verify.publickey.cache.maxRetryDelay+`
+|duration
+|`+1 hour+`
+|Maximum backoff delay between retries of a failed verification key load.
+
+|`+tomee.jwt.verify.publickey.cache.refreshInterval+`
+|duration
+|`+1 day+`
+|Interval at which cached verification keys are reloaded.
+
+|`+tomee.mp.jwt.allow.no-exp+`
+|bool
+|`+false+`
+|JWTs without an `exp` claim are accepted.
+|===
+
+== Logging configuration
+
+These keys go in `conf/logging.properties`. The `BackgroundTaskRunner` keys can also be system properties.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+<FileHandlerClass>.<rotatable\|directory\|prefix\|suffix\|bufferSize\|encoding\|level\|filter\|formatter>+`
+|bool / path / string / int / charset / level / class name
+|`+rotatable=true+`, `+directory=logs+`, `+prefix=juli.+`, `+suffix=.log+`, `+bufferSize=-1+`, `+level=ALL+`
+|Keys of `org.apache.openejb.log.FileHandler` or a subclass (keyed by its class name): location, name, buffering, encoding, level, filter and formatter of the daily-rotating log file.
+
+|`+org.apache.tomee.jul.formatter.AsyncConsoleHandler.encoding+`
+|string (charset)
+|platform default
+|Encoding of the asynchronous console handler.
+
+|`+org.apache.tomee.jul.formatter.AsyncConsoleHandler.filter+`
+|class name
+|unset
+|Filter class of the asynchronous console handler.
+
+|`+org.apache.tomee.jul.formatter.AsyncConsoleHandler.formatter+`
+|class name
+|`+ConsoleHandler+` default
+|Formatter class of the asynchronous console handler.
+
+|`+org.apache.tomee.jul.formatter.AsyncConsoleHandler.level+`
+|java.util.logging level
+|`+ConsoleHandler+` default
+|Level of the asynchronous console handler.
+
+|`+org.apache.tomee.jul.handler.rotating.BackgroundTaskRunner.shutdownTimeout+`
+|duration
+|`+30 seconds+`
+|How long to wait for pending background log tasks on shutdown.
+
+|`+org.apache.tomee.jul.handler.rotating.BackgroundTaskRunner.synchronous+`
+|bool
+|`+false+`
+|Log archiving and purging run synchronously instead of in a background thread pool.
+
+|`+org.apache.tomee.jul.handler.rotating.BackgroundTaskRunner.threads+`
+|int
+|`+2+`
+|Number of threads used for background log archiving and purging.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.archiveDirectory+`
+|path
+|`+${catalina.base}/logs/archives/+`
+|Directory where archived log files are stored.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.archiveFormat+`
+|gzip or zip
+|`+gzip+`
+|Archive format of old log files.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.archiveOlderThan+`
+|duration
+|`+-1 days+` (never)
+|Log files older than this are compressed into the archive directory.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.bufferSize+`
+|size
+|`+-1 b+` (default buffering)
+|Size of the write buffer of the log file stream.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.compressionLevel+`
+|int
+|`+-1+` (`+Deflater.DEFAULT_COMPRESSION+`)
+|Compression level used when log files are archived.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.dateCheckInterval+`
+|duration
+|`+5 seconds+`
+|How often the handler checks whether the date has changed so it rolls the file. The prefix is the handler class name, so subclasses use their own name (this applies to all `LocalFileHandler` keys).
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.encoding+`
+|string (charset)
+|platform default
+|Character encoding of the log file.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.filenamePattern+`
+|string (%s=date, %d=index, system property placeholders)
+|`+${catalina.base}/logs/logs.%s.%03d.log+`
+|Log file name pattern.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.filter+`
+|class name
+|unset
+|`java.util.logging.Filter` class applied by the handler.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.formatter+`
+|class name
+|pattern-based `+SimpleFormatter+`
+|Formatter class used by the handler.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.formatterLocale+`
+|locale (for example en_US)
+|JVM default locale
+|Locale used by the default pattern formatter.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.formatterPattern+`
+|String.format pattern
+|value of `+java.util.logging.SimpleFormatter.format+`, else `+%1$tb %1$td, %1$tY %1$tl:%1$tM:%1$tS %1$Tp %2$s%n%4$s: %5$s%6$s%n+`
+|Format pattern used when no formatter class is set.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.level+`
+|java.util.logging level
+|`+ALL+`
+|Minimum level written by the handler.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.limit+`
+|size
+|`+10 Mega+`
+|Maximum size of a log file before the handler rolls to the next index.
+
+|`+org.apache.tomee.jul.handler.rotating.LocalFileHandler.purgeOlderThan+`
+|duration
+|`+-1 days+` (never)
+|Archived log files older than this are deleted.
+|===
+
+== Security configuration options
+
+JAAS login module options (set in `login.config`) and password hash parameters.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+ClientLoginModule options: openejb.server.uri, RealmName, RealmNameSeparator, debug+`
+|JAAS login module options
+|none; `+debug=false+`
+|Options of `org.apache.openejb.client.ClientLoginModule`: server location (the system property wins), realm name and separator of the authentication request, and debug logging.
+
+|`+Debug+`
+|bool
+|`+false+`
+|`PropertiesLoginModule` option that turns on debug logging of the users and groups files and of the login steps.
+
+|`+delegate / <appId> / cdiName / loginModuleAsCdiBean+`
+|string / bool
+|none / none / none / `+false+`
+|`CDILoginModule` options. `delegate` is the LoginModule class to use; if missing, an option named after the application id gives a per-application delegate. With `loginModuleAsCdiBean=true` the delegate is looked up as a CDI bean (by `cdiName` if given), otherwise it is created and injected.
+
+|`+engineName+`
+|string (JSR-223 engine name)
+|none
+|`ScriptLoginModule` option: the `javax.script` engine that runs the login script (for example `js`).
+
+|`+GroupsFile+`
+|path (resolved through the conf dir or classpath)
+|none (the bundled `+login.config+` uses `+groups.properties+`)
+|`PropertiesLoginModule` option: the properties file of `group=user1,user2` entries.
+
+|`+Pbkdf2PasswordHash.Algorithm+`
+|PBKDF2WithHmacSHA1, SHA224, SHA256, SHA384 or SHA512 variant
+|`+PBKDF2WithHmacSHA1+`
+|`hashAlgorithmParameters` entry of a database identity store: PBKDF2 algorithm used for new hashes.
+
+|`+Pbkdf2PasswordHash.Iterations+`
+|int (>= 1024)
+|`+64000+`
+|`hashAlgorithmParameters` entry: PBKDF2 iteration count of new hashes.
+
+|`+Pbkdf2PasswordHash.KeySizeBytes+`
+|int
+|`+18+`
+|`hashAlgorithmParameters` entry: derived hash size in bytes of new hashes.
+
+|`+Pbkdf2PasswordHash.SaltSizeBytes+`
+|int
+|`+24+`
+|`hashAlgorithmParameters` entry: salt size in bytes of new hashes.
+
+|`+scriptURI+`
+|path/URI
+|`+<openejb.home>/conf/loginscript.js+`
+|`ScriptLoginModule` option: the login script. Relative paths are also resolved against `+<openejb.home>/conf+`. Falls back to the `openejb.ScriptLoginModule.scriptURI` system property.
+
+|`+userSelect / groupSelect / jdbcURL / jdbcUser / jdbcPassword / jdbcDriver / dataSourceName / digest / encoding+`
+|string
+|none
+|`SQLLoginModule` options. `userSelect` and `groupSelect` are the SQL queries. The connection comes from `dataSourceName` (id of an OpenEJB DataSource) or from `jdbcURL`, `jdbcUser`, `jdbcPassword` and `jdbcDriver`. `digest` names a `MessageDigest` algorithm and `encoding` (hex or base64) is applied to passwords.
+
+|`+UsersFile+`
+|path (resolved through the conf dir or classpath)
+|none (the bundled `+login.config+` uses `+users.properties+`)
+|`PropertiesLoginModule` option: the properties file of `user=password` entries.
+|===
+
+== Client properties
+
+=== InitialContext and JVM properties
+
+Properties read by the OpenEJB client (`openejb-client`). They are passed to the `InitialContext` or set as JVM system properties, as noted.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+<jndi-name>+`
+|URI (link:, datasource:, connectionfactory:, javamail:, queue:, topic:)
+|none
+|A JVM property named after a looked-up JNDI name (without `java:` or `comp/env/`) short-circuits the remote lookup; the object is created locally from the URI value.
+
+|`+openejb.authentication.realmName+`
+|string
+|none (default realm)
+|InitialContext property naming the JAAS realm used to log in the `Context.SECURITY_PRINCIPAL`/`SECURITY_CREDENTIALS` user (`LocalInitialContextFactory`, `InitContextFactory` and the openejb-junit runner).
+
+|`+openejb.client.allowTransportDowngrade+`
+|bool
+|`+false+`
+|JVM property. A client connected over TLS (ejbds, zejbds, https) may follow cluster, failover or redirect locations pushed by the server that use a non-TLS scheme.
+
+|`+openejb.client.connection.pool.size+`
+|int
+|`+5+`
+|JVM property. Size of the socket pool: maximum number of pooled socket connections per server URI.
+
+|`+openejb.client.connection.pool.timeout+`
+|long (ms)
+|`+1000+`
+|JVM property. The timeout of the client to get a free pooled connection. Also used (in seconds, minimum 1) as the socket linger time.
+
+|`+openejb.client.connection.socket.read+`
+|int (ms)
+|`+14400000+`
+|JVM property. Socket read timeout (`SO_TIMEOUT`) of EJBd connections (4 hours).
+
+|`+openejb.client.connection.socket.timeout+`
+|int (ms)
+|`+1000+`
+|JVM property. Socket connect timeout of EJBd connections.
+
+|`+openejb.client.connection.strategy+`
+|default, sticky, direct, random, roundrobin, round-robin, sticky+random, sticky+round
+|`+default+` (sticky)
+|Cluster connection strategy for remote EJB calls. InitialContext property, falling back to the system property. Can also be set per EJB as a bean property (bean properties starting with `openejb.client.` are sent to clients).
+
+|`+openejb.client.connectionpool.size+`
+|int
+|`+5+`
+|Deprecated. Alias of `openejb.client.connection.pool.size`; takes precedence when both are set.
+
+|`+openejb.client.connectionpool.timeout+`
+|long (ms)
+|`+1000+`
+|Deprecated. Alias of `openejb.client.connection.pool.timeout`; takes precedence when both are set.
+
+|`+openejb.client.disableEndpointIdentification+`
+|bool
+|`+false+`
+|JVM property. Disables HTTPS hostname verification on client SSL socket connections (ejbds).
+
+|`+openejb.client.enabledCipherSuites+`
+|comma-separated cipher suites
+|`+SSL_DH_anon_WITH_RC4_128_MD5+`
+|JVM property. Cipher suites enabled on client ejbds sockets.
+
+|`+openejb.client.flus-tasks+`
+|bool
+|`+false+`
+|JVM property (spelled `flus`). Registers a shutdown hook that waits for pending asynchronous client tasks, even when the client is loaded by an application classloader.
+
+|`+openejb.client.http.drain-buffer.size+`
+|int (bytes)
+|`+64+`
+|JVM property. Buffer size used to drain HTTP responses so the JVM keep-alive cache can reuse connections.
+
+|`+openejb.client.identityResolver+`
+|jaas, simple, or a custom name
+|`+jaas+`
+|JVM property. The strategy (an `org.apache.openejb.client.IdentityResolver`, by default `JaasIdentityResolver`) used to get the client identity sent with requests. Custom names are registered under `+META-INF/org.apache.openejb.client.IdentityResolver/<name>+`.
+
+|`+openejb.client.invoker.queue+`
+|int
+|`+2+` (minimum 2)
+|InitialContext or system property. Queue size of the client pool for asynchronous invocations.
+
+|`+openejb.client.invoker.threads+`
+|int
+|`+-1+` (shared global pool)
+|InitialContext or system property. Size of a per-context thread pool for asynchronous EJB invocations (minimum 3).
+
+|`+openejb.client.keepalive+`
+|PING, PING_PONG, PING_PING
+|`+PING+`
+|JVM property. Keep-alive handshake style used on pooled EJBd socket connections.
+
+|`+openejb.client.moduleId+`
+|string
+|none
+|InitialContext property (system property for the `java:` URL context factory): module whose `java:comp` namespace remote lookups are resolved against.
+
+|`+openejb.client.protocol.version+`
+|version string
+|none (current protocol)
+|JVM property. Optional legacy server protocol compatibility level. Allows 4.6.x clients to potentially communicate with older servers: OpenEJB 4.5.2 and older use version `3.1`, 4.6.x uses `4.6`. This does not allow old clients to communicate with new servers.
+
+|`+openejb.client.requestretry+`
+|bool
+|`+false+`
+|JVM property. After a connection failure, retries a remote request on another cluster member.
+
+|`+openejb.ejb-link+`
+|string (JNDI name)
+|none
+|Attribute of a Tomcat `<Ejb>` reference handled by `TomcatEjbFactory`: the name to look up. Other `+openejb.<x>+` attributes are passed as `+java.<x>+` InitialContext properties, for example `openejb.naming.provider.url`.
+
+|`+openejb.ejbd.authenticate-with-request+`
+|bool
+|`+false+`
+|InitialContext property. Sends credentials with each request instead of authenticating once when the context is created.
+
+|`+openejb.ejbd.serializer+`
+|class name (EJBDSerializer)
+|none (Java serialization)
+|InitialContext property. Custom serializer of EJBd payloads. It must match the serializer configured on the server.
+
+|`+org.apache.openejb.multipulse.uri.limit+`
+|int
+|`+50000+`
+|JVM property. Maximum number of distinct `multipulse:` URIs for which the client caches discovery results.
+
+|`+Resource/<type>+`
+|URI
+|none
+|JVM property used to build a client-side object when the server answers a lookup with a resource of the given type.
+|===
+
+=== Provider URL parameters
+
+Query parameters appended to the `java.naming.provider.url`.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+<multicast-or-multipulse-url>?group\|schemes\|timeout+`
+|URI query parameters
+|`+group=default+`, `+schemes=ejbd,ejbds,http,https+`, `+timeout=1500+` ms (multicast) or `+250+` ms (multipulse, minimum 50)
+|Parameters of `multicast://` and `multipulse://` provider URLs: group to match, accepted service schemes and discovery timeout.
+
+|`+<provider-url>?authorization / authorizationHeader+`
+|string
+|header `+Authorization+`
+|HTTP(S) provider URL: raw authorization value and the name of the header it is sent in.
+
+|`+<provider-url>?basic.username / basic.password+`
+|string
+|none
+|HTTP(S) provider URL: produce a Basic `Authorization` header. Cannot be combined with `authorization`.
+
+|`+<provider-url>?connectTimeout+`
+|int (ms)
+|`+10000+`
+|HTTP(S) provider URL: connect timeout of the HTTP EJB transport.
+
+|`+<provider-url>?readTimeout+`
+|int (ms)
+|JVM default
+|HTTP(S) provider URL: read timeout of the HTTP EJB transport.
+
+|`+<provider-url>?sslKeyStore\|sslKeyStorePassword\|sslKeyStoreType\|sslKeyStoreProvider+`
+|URI query parameters
+|password `+changeit+`, JVM default type and algorithm
+|HTTPS provider URL: client key store of the HTTP EJB transport. `sslKeyStoreProvider` is the `KeyManagerFactory` algorithm.
+
+|`+<provider-url>?sslTrustStore\|sslTrustStorePassword\|sslTrustStoreType\|sslTrustStoreProvider+`
+|URI query parameters
+|password `+changeit+`, JVM default type and algorithm
+|HTTPS provider URL: client trust store of the HTTP EJB transport. `sslTrustStoreProvider` is the `TrustManagerFactory` algorithm.
+|===
+
+=== Deployer properties
+
+Keys of the `Properties` passed to `Deployer.deploy()`.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+filename+`
+|path
+|none
+|Location of the archive to deploy when no location argument is passed.
+
+|`+openejb.deployer.binaries.path+`
+|string (file name)
+|`+dump.war+`
+|File name (in the provisioning cache) used to store the uploaded archive bytes.
+
+|`+openejb.deployer.binaries.use+`
+|bool
+|`+false+`
+|The archive bytes are sent in the call (`openejb.deployer.binaries.value`) and written to a local file before deploying, instead of reading a server-side path.
+
+|`+openejb.deployer.binaries.value+`
+|byte[]
+|none
+|Raw archive bytes to deploy when `openejb.deployer.binaries.use=true`.
+
+|`+openejb.deployer.forced.appId+`
+|string
+|none (derived from the archive)
+|Forces the application id of the deployed application.
+
+|`+openejb.deployer.host+`
+|string
+|none (default host)
+|Tomcat host a WAR is deployed to.
+
+|`+webapp.<archive name or path>.context-root+`
+|string
+|none (derived from the file name)
+|Overrides the context root of a web module, keyed by the jar/war file name (or path when the file does not exist locally).
+|===
+
+== Embedded containers and testing
+
+=== EJBContainer and InitialContext properties
+
+Properties passed to `EJBContainer.createEJBContainer()` or to the `InitialContext` that boots an embedded container. Most can also be system properties.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+debug+`
+|bool
+|`+false+`
+|Remote TomEE `EJBContainer` provider: starts the remote TomEE in debug mode.
+
+|`+jakarta.ejb.embeddable.appName+`
+|string
+|derived from the modules
+|Spec `EJBContainer.APP_NAME`: application name of the embedded deployment.
+
+|`+jakarta.ejb.embeddable.modules+`
+|String, String[], File or File[]
+|classpath modules
+|Spec `EJBContainer.MODULES`: modules the embedded container deploys.
+
+|`+jakarta.ejb.embeddable.provider+`
+|class or class name
+|none (any provider)
+|Spec `EJBContainer.PROVIDER`. OpenEJB handles the request only when it is unset or names `OpenEjbContainer` or `openejb`.
+
+|`+openejb.additionnal.callers+`
+|comma-separated class names
+|auto-detected callers
+|Caller (test) classes treated as part of the application, overriding automatic caller detection. Note the spelling `additionnal`.
+
+|`+openejb.embedded.initialcontext.close+`
+|LOGOUT or DESTROY
+|`+LOGOUT+`
+|Configures the hook called when closing the initial context. Useful when starting OpenEJB from a `new InitialContext(properties)`. By default it simply logs out the logged user if it exists; `DESTROY` also stops the network services and shuts down (cleans) the container.
+
+|`+openejb.embedded.remotable+`
+|bool
+|`+false+`
+|Activate or not the remote services (ejbd, HTTP...) when available, so the embedded container can be called remotely.
+
+|`+retries+`
+|int
+|`+4+`
+|Remote TomEE `EJBContainer` provider: number of attempts, 250 ms apart, to look up the remote Deployer after the server starts.
+
+|`+tomee.ejbcontainer.http.port+`
+|int
+|`+8080+` (`+-1+` or less: random)
+|TomEE embedded `EJBContainer`: the HTTP port; a value of 0 or less means random. When using a random port, read this system property after startup to get the effective port. Other String properties are passed to the embedded configuration.
+|===
+
+=== Embedded and ApplicationComposer system properties
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+<name>.port+`
+|int
+|random free port
+|For an ApplicationComposer `@RandomPort("<name>")` field: if `+<name>.port+` (for example `httpejbd.port`) is set, that port is injected. Otherwise a free port is chosen and stored under this key.
+
+|`+openejb.ejbcontainer.close+`
+|by-invocation or single-jvm
+|`+by-invocation+`
+|With `single-jvm`, `EJBContainer.close()` is ignored so one embedded container is shared across the tests of the JVM.
+
+|`+openejb.testing.start-cdi-contexts+`
+|bool
+|`+true+`
+|ApplicationComposer starts the CDI request, session and conversation contexts around each test.
+
+|`+tomee.application-composer.application+`
+|class name
+|none
+|JVM property of the single-application ApplicationComposer rule or runner: the `@Application` class deployed once for all tests.
+
+|`+tomee.embedded.add-callers+`
+|bool
+|`+true+`
+|TomEE Embedded adds the caller classes of a classpath deployment as an extra EJB module.
+
+|`+tomee.embedded.descriptors.classpath.<descriptor>.skip+`
+|bool
+|`+false+`
+|TomEE Embedded does not pick up this descriptor (for example `web.xml`, `ejb-jar.xml`, `application.properties`) from `META-INF/tomee/` or `META-INF/` on the classpath.
+
+|`+tomee.embedded.filter-container-classes+`
+|bool
+|`+false+` (filtering is applied anyway with 4 jars or fewer)
+|TomEE Embedded always applies the container-classes filter when scanning the classpath deployment.
+
+|`+tomee.embedded.javaagent.auto.skip+`
+|bool
+|`+false+`
+|JVM property. TomEE Embedded does not try to self-attach the OpenEJB javaagent (needed for JPA enhancement).
+
+|`+tomee.embedded.main.basic.display-name+`
+|string
+|`+Basic security+`
+|With the TomEE Embedded `Main` `--basic` option: display name of the generated security constraint.
+
+|`+tomee.embedded.main.basic.pattern+`
+|string (URL pattern)
+|`+/*+`
+|With `--basic`: URL pattern protected by the generated security constraint.
+
+|`+tomee.embedded.main.basic.realm+`
+|string
+|`+Security+`
+|With `--basic`: realm name of the BASIC login config.
+
+|`+tomee.embedded.main.basic.role+`
+|string
+|`+*+`
+|With `--basic`: role required by the generated security constraint.
+
+|`+tomee.embedded.resources.add-war-as-jar+`
+|bool
+|`+false+`
+|JVM property. `.war` files on the embedded classpath are mounted as `WEB-INF/lib` jars like `.jar` files. Otherwise they are ignored.
+|===
+
+=== TomEE Embedded configuration
+
+Keys of the TomEE Embedded `Configuration`: the `--configuration` properties file of `Main`, the system properties of `TomEEEmbeddedApplicationRunner`, or `Configuration.loadFrom()`.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+classesFilter+`
+|class name (xbean Filter)
+|unset
+|Filter selecting which classes are scanned in a classpath deployment.
+
+|`+clientAuth+`
+|string
+|unset
+|Client certificate authentication mode of the HTTPS connector.
+
+|`+conf+`
+|path
+|unset
+|Directory whose files are copied into the embedded server `conf/` folder.
+
+|`+connector.<property>+`
+|string
+|unset
+|Bean property set on the HTTP `Connector`.
+
+|`+connector.attributes.<attribute>+`
+|string
+|unset
+|Protocol attribute set on the HTTP `Connector` through `Connector.setProperty`.
+
+|`+customWebResources+`
+|path
+|unset
+|Additional web resource directory added to deployed webapps.
+
+|`+deleteBaseOnStartup+`
+|bool
+|`+true+`
+|Deletes the working directory at startup.
+
+|`+deployOpenEjbApp+`
+|bool
+|`+false+`
+|Deploys the internal OpenEJB system application.
+
+|`+dir+`
+|path
+|unset (temporary directory)
+|Working directory (`catalina.base`) of the embedded server.
+
+|`+host+`
+|string
+|`+localhost+`
+|Default host name.
+
+|`+http+`
+|int
+|`+8080+`
+|HTTP port.
+
+|`+http2+`
+|bool
+|`+false+`
+|Adds the HTTP/2 upgrade protocol to the connector.
+
+|`+https+`
+|int
+|`+8443+`
+|HTTPS port used when `ssl=true`.
+
+|`+keepServerXmlAsThis+`
+|bool
+|`+false+`
+|Uses the given `server.xml` as is, without adjusting its ports.
+
+|`+keyAlias+`
+|string
+|unset
+|Key alias in the keystore of the HTTPS connector.
+
+|`+keystoreFile+`
+|path
+|unset
+|Keystore of the HTTPS connector.
+
+|`+keystorePass+`
+|string
+|unset
+|Keystore password of the HTTPS connector.
+
+|`+keystoreType+`
+|string
+|`+JKS+`
+|Keystore type of the HTTPS connector.
+
+|`+login+`
+|any
+|unset
+|When present, a login config is created from the `+login.<property>+` keys.
+
+|`+login.<property>+`
+|string
+|unset
+|Property of the `LoginConfigBuilder` used for webapps (for example `authMethod` or `realmName`).
+
+|`+properties.<key>+`
+|string
+|unset
+|Adds `<key>` as a container (system instance) property.
+
+|`+quickSession+`
+|bool
+|`+false+`
+|Uses a faster session manager (`QuickSessionManager`) whose session ids are not secure random.
+
+|`+realm.<property>+`
+|string
+|unset
+|Bean property set on the configured `Realm`.
+
+|`+roles.<user>+`
+|comma-separated roles
+|unset
+|Assigns roles to a user of the embedded realm.
+
+|`+securityConstraint+`
+|any
+|unset
+|When present, a security constraint is created from the `+securityConstraint.<property>+` keys.
+
+|`+securityConstraint.<property>+`
+|string
+|unset
+|Property of the security constraint builder applied to webapps.
+
+|`+serverXml+`
+|path
+|unset
+|`server.xml` used to configure the embedded Tomcat.
+
+|`+skipHttp+`
+|bool
+|`+false+`
+|No HTTP connector is created.
+
+|`+ssl+`
+|bool
+|`+false+`
+|Creates an HTTPS connector.
+
+|`+sslProtocol+`
+|string
+|unset
+|SSL protocol of the HTTPS connector.
+
+|`+stop+`
+|int
+|`+8005+`
+|Shutdown port.
+
+|`+tempDir+`
+|path
+|`+${java.io.tmpdir}/tomee-embedded_<timestamp>+`
+|Temporary directory, used for example when the classpath is deployed as a webapp.
+
+|`+tomee.embedded.application.runner.<configuration-key>+`
+|string
+|unset
+|In `@ContainerProperties` of a `TomEEEmbeddedApplicationRunner` application, sets the embedded configuration key after the prefix (for example `tomee.embedded.application.runner.http=0`). Other properties become container properties.
+
+|`+users.<user>+`
+|string (password)
+|unset
+|Adds a user with this password to the embedded Tomcat realm.
+
+|`+webResourceCached+`
+|bool
+|`+true+`
+|Whether web resources are cached.
+
+|`+webXml+`
+|path
+|unset
+|Global `web.xml` (`conf/web.xml`) of the embedded server.
+
+|`+withEjbRemote+`
+|bool
+|`+false+`
+|Enables remote EJB over HTTP (`/tomee/ejb`).
+
+|`+${tomee.embedded.http} / ${tomee.embedded.https} / ${tomee.embedded.stop}+`
+|placeholder
+|actual HTTP / HTTPS / shutdown port
+|Placeholders usable in TomEE Embedded configuration property values. They are replaced with the effective ports, which is useful with random ports.
+|===
+
+=== Javaagent and PersistenceBootstrap
+
+Arguments of the OpenEJB javaagent, or entries of `PersistenceBootstrap.properties`, used to bootstrap persistence units for JPA class enhancement at startup.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+debug+`
+|bool
+|`+false+`
+|Prints `PersistenceBootstrap` debug output to stdout.
+
+|`+enabled+`
+|bool
+|`+true+`
+|Set it to `false` to disable the agent's persistence unit bootstrap.
+
+|`+fast-scan+`
+|bool
+|`+true+`
+|When `web-scan` is on, excludes JVM and built-in excluded jars from the classpath URL scan.
+
+|`+<provider class>@classes+`
+|comma/whitespace-separated class names
+|none
+|Extra entity classes added to the bootstrap persistence unit of the given provider.
+
+|`+<provider class>@unitName+`
+|string
+|`+classpath-bootstrap+`
+|Unit name of the synthetic bootstrap persistence unit of the given provider.
+
+|`+<unit name>@skip+`
+|bool
+|`+false+`
+|Skips the named persistence unit during agent bootstrap.
+
+|`+web-scan+`
+|bool
+|`+false+`
+|Also looks for `persistence.xml` in `WEB-INF` of exploded webapps on the classpath.
+|===
+
+== TomEE Arquillian adapter properties
+
+=== Adapter settings
+
+Set these in `arquillian.xml` (`<container><configuration><property name="...">`). Each one can be overridden with the system property `+tomee.<setting>+`, `+tomee.remote.<setting>+` or `+tomee.embedded.<setting>+`. The descriptions say which adapters read them (remote: `arquillian-tomee-remote`, embedded: `arquillian-tomee-embedded`, OpenEJB: `arquillian-openejb-embedded`). The former `tomee.arquillian.http` and `tomee.arquillian.stop` are now `tomee.httpPort` and `tomee.stopPort`.
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+additionalLibs+`
+|multiline list (mvn coordinates/paths)
+|none
+|Remote: extra libraries resolved and copied into the server's `lib/` folder.
+
+|`+ajpPort+`
+|int
+|`+8009+`
+|Remote: AJP connector port written into `server.xml`. 0 or less picks a random free port.
+
+|`+appWorkingDir+`
+|path
+|`+${java.io.tmpdir}/arquillian-tomee-app-working-dir-<pid>+`
+|Remote, embedded: directory where deployment archives are exported before they are deployed. Deleted on exit.
+
+|`+arquillianProtocol+`
+|string (Arquillian protocol name)
+|`+Servlet 5.0+` (remote), `+Local+` (embedded)
+|Remote, embedded: Arquillian protocol the adapter uses by default.
+
+|`+artifactId+`
+|string
+|`+apache-tomee+`
+|Remote: Maven artifactId of the TomEE distribution to download.
+
+|`+bin+`
+|path
+|none
+|Remote: folder whose files are copied over the server's `bin/` folder.
+
+|`+catalina_opts+`
+|string (JVM options)
+|none
+|Remote: JVM options of the forked server. The adapter always adds `-Dopenejb.system.apps=true`, `-Dtomee.remote.support=true` and the Arquillian filter option, adds `STRICT_SERVLET_COMPLIANCE=false` and `openejb.internal.beans.security.enabled=false` unless set, and applies default memory settings when no `-Xm` or `-XX:...Size=` option is present.
+
+|`+classifier+`
+|string (webprofile, plus, plume, microprofile...)
+|`+webprofile+`
+|Remote: classifier of the distribution to download. Empty or `ignore` downloads without a classifier.
+
+|`+classpathConfiguration+`
+|string (classpath resource)
+|none
+|Embedded: classpath resource from which the embedded server `Configuration` is loaded, on top of the adapter settings.
+
+|`+cleanOnStartUp+`
+|bool
+|`+false+`
+|Remote: deletes the working directory (`dir`) before configuring and starting the server, forcing a fresh download and unpack.
+
+|`+clientAuth+`
+|string
+|unset
+|Embedded: client certificate authentication mode of the HTTPS connector.
+
+|`+conf+`
+|path
+|none
+|Remote, embedded: folder whose files are copied over the server's `conf/` folder.
+
+|`+configurationCustomizers+`
+|comma-separated class names
+|none
+|Embedded: `Configuration.ConfigurationCustomizer` classes that can modify the embedded configuration programmatically.
+
+|`+debug+`
+|bool
+|`+false+`
+|Remote: starts the server in debug mode (JDWP on `debugPort`).
+
+|`+debugPort+`
+|int
+|`+5005+`
+|Remote: JDWP port used when `debug=true`. 0 or less picks a random free port.
+
+|`+deployerProperties+`
+|multiline properties
+|`+""+`
+|Remote: properties passed to the server-side Deployer with each deployment, for example `openejb.deployer.binaries.use=true`.
+
+|`+dir+`
+|path
+|none
+|Remote, embedded: working directory of the server (TomEE install for the remote adapter).
+
+|`+endorsed+`
+|multiline list (mvn coordinates/paths)
+|none
+|Remote: libraries resolved and copied into an `endorsed/` folder of the server.
+
+|`+exportConfAsSystemProperty+`
+|bool
+|`+false+`
+|Remote, embedded: after overrides are applied, exports every setting as the JVM system properties `+tomee.<setting>+` and `+tomee.remote.<setting>+` or `+tomee.embedded.<setting>+`. Leave it off when one JVM runs several containers.
+
+|`+groupId+`
+|string
+|`+org.apache.tomee+`
+|Remote: Maven groupId of the TomEE distribution to download when no install is found in `dir`.
+
+|`+host+`
+|string
+|`+localhost+`
+|Remote, embedded: host of the container.
+
+|`+http2+`
+|bool
+|`+false+`
+|Embedded: adds the HTTP/2 upgrade protocol to the connector.
+
+|`+httpPort+`
+|int
+|`+8080+`
+|Remote, embedded: HTTP port. 0 or less picks a random free port (within `portRange` when set). The remote adapter writes it into `server.xml`.
+
+|`+httpsPort+`
+|int
+|`+8443+`
+|Remote, embedded: HTTPS port. 0 or less picks a random free port. The embedded adapter uses it when `ssl=true`.
+
+|`+javaagent+`
+|multiline list (mvn coordinates/paths, optional agent options)
+|none
+|Remote: agent jars resolved into a `javaagent/` folder and added to `catalina_opts` as `-javaagent:` options.
+
+|`+keepServerXmlAsThis+`
+|bool
+|`+false+`
+|Remote, embedded: uses the given `server.xml` as is, without adjusting its ports.
+
+|`+keyAlias+`
+|string
+|unset
+|Embedded: key alias of the HTTPS connector.
+
+|`+keystoreFile+`
+|path
+|unset
+|Embedded: keystore of the HTTPS connector.
+
+|`+keystorePass+`
+|string
+|unset
+|Embedded: keystore password of the HTTPS connector.
+
+|`+keystoreType+`
+|string
+|`+JKS+`
+|Embedded: keystore type of the HTTPS connector.
+
+|`+lib+`
+|path
+|none
+|Remote: folder whose files are copied over the server's `lib/` folder.
+
+|`+portRange+`
+|string (min-max or a single port)
+|`+""+` (any free port)
+|Remote, embedded: range random ports are taken from when a port setting is 0 or less, for example `1024-65535`.
+
+|`+preloadClasses+`
+|comma-separated class names
+|none
+|Remote, embedded, OpenEJB: classes loaded asynchronously in the client classloader at setup, to warm up slow classes.
+
+|`+properties+`
+|multiline properties
+|`+""+`
+|Server or container properties. Remote: merged into `conf/system.properties`. Embedded: passed to the embedded server. OpenEJB: InitialContext properties used to boot the container. The remote and OpenEJB adapters also read `openejb.arquillian.predeploy-archives` from it.
+
+|`+providerUrlPattern+`
+|string (String.format pattern with one %s)
+|`+%s+`
+|Remote: pattern applied to the default provider URL `+http://<host>:<httpPort>/tomee/ejb+` used to look up the Deployer, to add a prefix or suffix (proxy, credentials).
+
+|`+quickSession+`
+|bool
+|`+false+`
+|Remote, embedded: uses the faster, not secure-random, `QuickSessionManager`.
+
+|`+removeUnusedWebapps+`
+|bool
+|`+true+`
+|Remote: deletes every webapp shipped in the distribution's `webapps` folder (docs, manager, ROOT...) before starting.
+
+|`+roles+`
+|multiline properties (user=role1,role2)
+|none
+|Embedded: roles of the users of the embedded in-memory realm.
+
+|`+serverXml+`
+|path
+|unset
+|Remote, embedded: `server.xml` to use.
+
+|`+simpleLog+`
+|bool
+|`+false+`
+|Remote: replaces `conf/logging.properties` with a console-only INFO configuration using `SimpleTomEEFormatter`, unless `conf` already provides a logging configuration.
+
+|`+singleDeploymentByArchiveName+`
+|comma-separated archive names, or * or true
+|empty
+|Remote, embedded, OpenEJB: archives with these names are deployed once and reused across test classes, not undeployed in between. `+*+` or `true` applies to every archive. On the TomEE adapters it also turns on `singleDumpByArchiveName`.
+
+|`+singleDumpByArchiveName+`
+|bool
+|`+false+`
+|Remote, embedded: exports each archive to `+<appWorkingDir>/<archive name>+` once and reuses an existing file, instead of a new numbered subfolder each time.
+
+|`+ssl+`
+|bool
+|`+false+`
+|Embedded: creates an HTTPS connector.
+
+|`+sslProtocol+`
+|string
+|unset
+|Embedded: SSL protocol of the HTTPS connector.
+
+|`+startDefaultScopes+`
+|bool
+|`+false+`
+|OpenEJB: starts the CDI request, session and conversation scopes for each deployment with a mock `ServletContext` and `HttpSession`.
+
+|`+stopCommand+`
+|string
+|`+SHUTDOWN+`
+|Remote: shutdown command sent to the stop port. Must match the `shutdown` attribute in `server.xml`.
+
+|`+stopHost+`
+|string
+|`+localhost+`
+|Remote: host that receives the shutdown command.
+
+|`+stopPort+`
+|int
+|`+8005+`
+|Remote, embedded: Tomcat shutdown port. 0 or less picks a random free port.
+
+|`+type+`
+|string
+|`+zip+`
+|Remote: packaging type of the distribution artifact to download.
+
+|`+unpackWars+`
+|bool
+|`+true+`
+|Remote: sets `unpackWARs` on the Host in `server.xml`.
+
+|`+unsafeEjbd+`
+|bool
+|`+true+`
+|Remote, embedded: when the `properties` setting contains `+tomee.serialization.class.blacklist=*+`, the blacklist is removed and `+tomee.serialization.class.whitelist=*+` is set on server and client, so EJBd serialization accepts every class during tests.
+
+|`+users+`
+|multiline properties (user=password)
+|none
+|Embedded: users of the embedded in-memory realm.
+
+|`+version+`
+|string
+|the adapter's own version
+|Remote: version of the TomEE distribution to download.
+
+|`+webContextToUseWithEars+`
+|string
+|none (every web module context of the EAR)
+|Remote: web context hosting the Arquillian servlet when the deployment is an EAR. `tomee.arquillian.ear.context` takes precedence.
+
+|`+webResourcesCached+`
+|bool
+|`+true+`
+|Embedded: turns Tomcat's web resource caching on or off.
+
+|`+withEjbRemote+`
+|bool
+|`+false+`
+|Embedded: enables remote EJB over HTTP (`/tomee/ejb`).
+|===
+
+=== Arquillian system properties
+
+[options="header",cols="2,1,1,3"]
+|===
+|Property |Type |Default |Description
+
+|`+java.util.logging.config.class+`
+|class name
+|none
+|OpenEJB adapter: checked with `java.util.logging.config.file`. Unless both are set, the adapter installs its own simple JUL handler on all loggers.
+
+|`+java.util.logging.config.file+`
+|path
+|none
+|OpenEJB adapter: see `java.util.logging.config.class`.
+
+|`+openejb.arquillian.adapter+`
+|openejb, tomee-embedded or tomee-remote
+|none (every adapter on the classpath registers)
+|Selects which adapter registers itself when several are on the test classpath.
+
+|`+openejb.arquillian.cdi.extension.skip-externals+`
+|bool
+|`+false+`
+|OpenEJB adapter: CDI extensions from the test classpath are not added to the deployed archive; only extensions inside the archive are used. Can be a system property or an entry of the `properties` setting.
+
+|`+openejb.arquillian.debug+`
+|bool
+|`+false+`
+|Remote adapter debugging aid: if the Deployer lookup fails, waits 10 seconds and retries once. On final failure, triggers a thread dump of the server and logs the provider URL and `server.xml`.
+
+|`+openejb.arquillian.predeploy-archives+`
+|comma-separated class names (pkg.[ClassA\|ClassB] supported)
+|none
+|Set inside the adapter's `properties` setting (OpenEJB and remote adapters). Classes whose public static `@Deployment` methods are called when the container starts; their archives stay deployed for the whole run.
+
+|`+tomee.<setting>+`
+|string
+|none
+|Overrides any TomEE remote or embedded adapter setting (for example `-Dtomee.httpPort=0`). Defaults from `+default.arquillian-tomee*.properties+` and overrides from `arquillian-tomee.properties`, `arquillian-tomee-remote.properties` or `arquillian-tomee-embedded.properties` on the classpath are applied first; system properties always win.
+
+|`+tomee.appinfo.output+`
+|bool
+|`+false+`
+|Remote adapter: after each deployment, dumps the `AppInfo` tree returned by the Deployer, for debugging.
+
+|`+tomee.arquillian.adapter+`
+|openejb, tomee-embedded or tomee-remote
+|none
+|Alias of `openejb.arquillian.adapter`, used only when that is not set.
+
+|`+tomee.arquillian.ear.context+`
+|string
+|value of `+webContextToUseWithEars+`
+|Remote adapter: web context of an EAR deployment that hosts the Arquillian test servlet.
+
+|`+tomee.embedded.<setting>+`
+|string
+|none
+|Overrides a TomEE embedded adapter setting, for example `-Dtomee.embedded.httpPort=-1`.
+
+|`+tomee.remote.<setting>+`
+|string
+|none
+|Overrides a TomEE remote adapter setting, for example `-Dtomee.remote.classifier=plus`.
+
+|`+xbean.finder.use.get-resources+`
+|bool
+|`+false+`
+|Ziplock: classpath URLs are found by resource lookup instead of `URLClassLoader.getURLs()`.
+|===
