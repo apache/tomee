@@ -98,3 +98,8 @@ Typically, if your application is named `myapp` and your resource id is `myresou
 as `myresource`, it will get registered as `myapp/myresource`.
 
 If you get any ambiguity in resource name matching try to fully qualified your resource prefixing it with the application name.
+
+Inside an EAR, a plain `@Resource` whose name is just the resource id (or the field name) does not match the prefixed
+id. TomEE then injects the first resource of the requested type instead, without an error. If an EAR declares several
+resources of the same type, name them explicitly, for instance with `@Resource(lookup = "openejb:Resource/myresource")`.
+See link:../../application-resources.html#ear-resource-injection[Injecting resources declared in an EAR].
