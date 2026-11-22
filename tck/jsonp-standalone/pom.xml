@@ -84,6 +84,8 @@
                         <configuration>
                             <reuseForks>false</reuseForks>
                             <forkCount>1</forkCount>
+                            <!-- the TCK writes U+FFFF to stdout, which makes the XML reports unreadable for Jenkins -->
+                            <enableOutErrElements>false</enableOutErrElements>
                         </configuration>
 
                         <!-- Pluggability tests need to be run separately from normal TCKs as they bring their

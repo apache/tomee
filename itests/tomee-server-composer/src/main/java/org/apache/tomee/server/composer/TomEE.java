@@ -227,10 +227,12 @@ public class TomEE {
                 http = ports.next();
 
                 final File serverxml = Files.file(home, "conf", "server.xml");
+                // replace the port attributes, not the bare numbers: a random port such as 38009
+                // would otherwise be rewritten again by the next replacement
                 final String config = IO.slurp(serverxml)
-                        .replace("8080", http + "")
-                        .replace("8005", ports.next() + "")
-                        .replace("8009", ports.next() + "");
+                        .replace("port=\"8080\"", "port=\"" + http + "\"")
+                        .replace("port=\"8005\"", "port=\"" + ports.next() + "\"")
+                        .replace("port=\"8009\"", "port=\"" + ports.next() + "\"");
                 IO.copy(IO.read(config), serverxml);
             }
 
