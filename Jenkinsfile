@@ -69,7 +69,8 @@ pipeline {
                         stage('Core and Arquillian') {
                             steps {
                                 // quick = every module except examples, itests and tck
-                                sh 'mvn install -Pquick,all-adapters'
+                                // clean: the -T 2C build above can leave runtime files (conf/conf.d) in the distribution work dirs
+                                sh 'mvn clean install -Pquick,all-adapters'
                             }
                         }
                         stage('Integration tests') {
@@ -90,7 +91,7 @@ pipeline {
                     agent { label 'ubuntu' }
                     steps {
                         sh 'mvn -T 2C clean install -DskipTests'
-                        sh 'mvn install -pl tck -amd -Pall-adapters,tck-jax-rs,mp-tck-all,tck-concurrency,tck-security,tck-data'
+                        sh 'mvn install -pl tck -amd -Pall-adapters,tck-cdi,tck-jsonp,tck-jsonb,tck-jax-rs,mp-tck-all,tck-concurrency,tck-security,tck-data'
                     }
                     post { always { junit allowEmptyResults: true, testResults: '**/target/*-reports/TEST-*.xml' } }
                 }

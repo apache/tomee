@@ -136,7 +136,8 @@ public class GenerateBoms {
         Files.mkdirs(destConf);
 
         for (File file : srcConf.listFiles()) {
-            if (file.getName().endsWith(".original")) continue;
+            // conf.d and other directories hold runtime-generated files, not distribution configuration
+            if (file.isDirectory() || file.getName().endsWith(".original")) continue;
             try {
                 // Read the content and update the line endings to reduce
                 // git status pollution as these files are checked in
