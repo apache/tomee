@@ -49,6 +49,27 @@
         </configuration>
       </plugin>
       
+      <!-- enhance the entities at build time: OpenJPA 4.2.0 cannot enhance entities that are
+           already loaded when the persistence unit starts, see OPENJPA-3097 -->
+      <plugin>
+        <groupId>org.apache.openjpa</groupId>
+        <artifactId>openjpa-maven-plugin</artifactId>
+        <version>4.2.0</version>
+        <configuration>
+          <includes>org/superbiz/inheritance/Item.class,org/superbiz/inheritance/Tower.class,org/superbiz/inheritance/Wakeboard.class,org/superbiz/inheritance/WakeboardBinding.class,org/superbiz/inheritance/Wearable.class</includes>
+          <addDefaultConstructor>true</addDefaultConstructor>
+          <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+        </configuration>
+        <executions>
+          <execution>
+            <id>enhancer</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>enhance</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <repositories>
