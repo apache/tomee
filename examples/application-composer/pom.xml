@@ -74,6 +74,14 @@
             </goals>
           </execution>
         </executions>
+        <dependencies>
+          <!-- TomEE sets openjpa.Log to its JUL log factory when it runs in the same JVM (e.g. a reactor build) -->
+          <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>openejb-core</artifactId>
+            <version>11.0.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
