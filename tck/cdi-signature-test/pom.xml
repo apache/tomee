@@ -95,7 +95,7 @@
                     <artifactItem>
                       <groupId>jakarta.enterprise</groupId>
                       <artifactId>cdi-tck-core-impl</artifactId>
-                      <classifier>sigtest-jdk11</classifier>
+                      <classifier>sigtest-jdk17</classifier>
                       <type>sig</type>
                       <version>${cdi-tck.version}</version>
                       <overWrite>true</overWrite>
@@ -121,7 +121,7 @@
               </execution>
             </executions>
             <configuration>
-              <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-${cdi-tck.version}-sigtest-jdk11.sig
+              <sigfile>${project.build.directory}/api-signature/cdi-tck-core-impl-${cdi-tck.version}-sigtest-jdk17.sig
               </sigfile>
               <packages>jakarta.decorator,jakarta.enterprise,jakarta.interceptor</packages>
             </configuration>
