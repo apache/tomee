@@ -41,6 +41,8 @@
         openejb.cdi.requestScope.cached = false
         openejb.cdi.conversation.http.use-get-parameter = true
         openejb.classloader.forced-load = org.apache.webbeans.test.tck.,org.apache.openejb.tck.cdi.tomee.
+        # CDI 4.0: an empty beans.xml means bean-discovery-mode="annotated" (TomEE defaults to ALL for compatibility)
+        org.apache.webbeans.defaultBeanDiscoveryMode = ANNOTATED
 
         jmsRa = new://Resource?type=ActiveMQResourceAdapter
         jmsRa.BrokerXmlConfig = broker:(tcp://localhost:0)?useJmx=false

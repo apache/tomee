@@ -849,6 +849,11 @@ The properties in this section are system properties. Unless noted otherwise, se
 |`+true+`
 |In EJB modules with CDI enabled, registers classes annotated with `jakarta.ejb.Startup` as CDI startup beans, so they are instantiated eagerly when the application starts.
 
+|`+org.apache.webbeans.defaultBeanDiscoveryMode+`
+|`+ALL+`, `+ANNOTATED+`, `+NONE+` or `+TRIM+`
+|`+ALL+`
+|Bean discovery mode of an empty `beans.xml`. CDI 4.0 changed it from `all` to `annotated`; TomEE keeps `ALL` for backward compatibility, like OpenWebBeans. Set it to `ANNOTATED` for the CDI 4.0 behavior. Archives without a `beans.xml` or with an explicit `bean-discovery-mode` are not affected.
+
 |`+tomee.batchee.cdi.use-extension+`
 |bool
 |`+false+`

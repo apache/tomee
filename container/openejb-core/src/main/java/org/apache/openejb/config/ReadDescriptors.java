@@ -82,12 +82,18 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ReadDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
 
     private static final boolean ROOT_URL_FROM_WEBINF = SystemInstance.get().getOptions().get("openejb.jpa.root-url-from-webinf", false);
+
+    /**
+     * Bean discovery mode of an empty beans.xml, same key as the OpenWebBeans configuration.
+     */
+    public static final String DEFAULT_BEAN_DISCOVERY_MODE = "org.apache.webbeans.defaultBeanDiscoveryMode";
 
     public static final TldTaglib SKIP_TAGLIB = new TldTaglib();
 
@@ -679,7 +685,9 @@ public class ReadDescriptors implements DynamicDeployer {
             final String content = IO.slurp(inputStream).trim();
             if (content.length() == 0) { // otherwise we want to read <beans /> attributes
                 final Beans beans = new Beans();
-                beans.setBeanDiscoveryMode("ALL"); // backward compatibility
+                // CDI 4.0 switched an empty beans.xml to ANNOTATED, we keep ALL by default for backward compatibility
+                beans.setBeanDiscoveryMode(SystemInstance.get().getOptions()
+                        .get(DEFAULT_BEAN_DISCOVERY_MODE, "ALL").trim().toUpperCase(Locale.ENGLISH));
                 return beans;
             }
             return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, new ByteArrayInputStream(content.getBytes()));

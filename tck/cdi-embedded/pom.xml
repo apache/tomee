@@ -239,6 +239,8 @@
                 <jdbc>new://Resource?type=DataSource</jdbc>
                 <jms>new://Resource?type=jakarta.jms.ConnectionFactory</jms>
 
+                <!-- CDI 4.0: an empty beans.xml means bean-discovery-mode="annotated" (TomEE defaults to ALL for compatibility) -->
+                <org.apache.webbeans.defaultBeanDiscoveryMode>ANNOTATED</org.apache.webbeans.defaultBeanDiscoveryMode>
                 <openejb.cdi.applicationScope.cached>false</openejb.cdi.applicationScope.cached>
                 <openejb.cdi.producer.interception>false</openejb.cdi.producer.interception>
                 <openejb.cdi.filter.classloader>false</openejb.cdi.filter.classloader>
