@@ -36,6 +36,8 @@ pipeline {
         timeout(time: 12, unit: 'HOURS')
     }
 
+    // every mvn call uses a local repository inside its stage's workspace: the agents' shared ~/.m2 gets
+    // modified by other stages and jobs while a build reads it (missing classes in plugin and dependency jars)
     environment {
         MAVEN_ARGS = '-B -U --show-version --fail-at-end -Dmaven.test.failure.ignore=true'
     }
@@ -44,7 +46,7 @@ pipeline {
         stage('Sanity checks') {
             agent { label 'ubuntu' }
             steps {
-                sh 'mvn -T 2C clean install -Pstyle,rat -DskipTests'
+                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" -T 2C clean install -Pstyle,rat -DskipTests'
             }
         }
 
@@ -54,7 +56,7 @@ pipeline {
                 stage('Deploy snapshots') {
                     agent { label 'ubuntu' }
                     steps {
-                        sh 'mvn clean deploy -DskipTests -Pno-examples'
+                        sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" clean deploy -DskipTests -Pno-examples'
                     }
                 }
 
@@ -63,24 +65,24 @@ pipeline {
                     stages {
                         stage('Build') {
                             steps {
-                                sh 'mvn -T 2C clean install -DskipTests'
+                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" -T 2C clean install -DskipTests'
                             }
                         }
                         stage('Core and Arquillian') {
                             steps {
                                 // quick = every module except examples, itests and tck
                                 // clean: the -T 2C build above can leave runtime files (conf/conf.d) in the distribution work dirs
-                                sh 'mvn clean install -Pquick,all-adapters'
+                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" clean install -Pquick,all-adapters'
                             }
                         }
                         stage('Integration tests') {
                             steps {
-                                sh 'mvn install -f itests/pom.xml'
+                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" install -f itests/pom.xml'
                             }
                         }
                         stage('Examples') {
                             steps {
-                                sh 'mvn install -f examples/pom.xml'
+                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" install -f examples/pom.xml'
                             }
                         }
                     }
@@ -90,8 +92,8 @@ pipeline {
                 stage('TCK') {
                     agent { label 'ubuntu' }
                     steps {
-                        sh 'mvn -T 2C clean install -DskipTests'
-                        sh 'mvn install -pl tck -amd -Pall-adapters,tck-cdi,tck-jsonp,tck-jsonb,tck-jax-rs,mp-tck-all,tck-concurrency,tck-security,tck-data'
+                        sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" -T 2C clean install -DskipTests'
+                        sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" install -pl tck -amd -Pall-adapters,tck-cdi,tck-jsonp,tck-jsonb,tck-jax-rs,mp-tck-all,tck-concurrency,tck-security,tck-data'
                     }
                     post { always { junit allowEmptyResults: true, testResults: '**/target/*-reports/TEST-*.xml' } }
                 }

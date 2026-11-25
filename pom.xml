@@ -788,6 +788,8 @@
               <excludes>
                 <exclude>doap_tomee.rdf</exclude>
                 <exclude>.git/**</exclude>
+                <!-- local Maven repository of the CI pipeline (Jenkinsfile) -->
+                <exclude>.repository/**</exclude>
                 <exclude>.github/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/js/livereload.js</exclude>
