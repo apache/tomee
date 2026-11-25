@@ -53,6 +53,7 @@ import jakarta.enterprise.context.ConversationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.event.Shutdown;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Provider;
@@ -286,6 +287,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             if (WebappBeanManager.class.isInstance(beanManager)) {
                 WebappBeanManager.class.cast(beanManager).beforeStop();
             }
+
+            // CDI 4.0: Shutdown is fired before @BeforeDestroyed(ApplicationScoped.class)
+            this.beanManager.fireEvent(new Shutdown());
 
             webBeansContext.getContextsService().endContext(RequestScoped.class, endObject);
             webBeansContext.getContextsService().endContext(ConversationScoped.class, endObject);

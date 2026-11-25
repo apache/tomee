@@ -30,6 +30,7 @@ import org.apache.webbeans.web.context.WebContextsService;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import jakarta.enterprise.event.Startup;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletRequest;
@@ -101,6 +102,9 @@ public class CdiAppContextsService extends WebContextsService implements Context
                         new Annotation[]{InitializedLiteral.INSTANCE_APPLICATION_SCOPED},
                         webBeansContext),
                 false);
+
+        // CDI 4.0: Startup is fired right after @Initialized(ApplicationScoped.class)
+        webBeansContext.getBeanManagerImpl().fireEvent(new Startup());
     }
 
     public void destroy(final Object destroyObject) {
