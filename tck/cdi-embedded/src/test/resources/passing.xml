@@ -43,6 +43,7 @@
                  We have to verify this again when it is setup in a sane way.
                  -->
                 <exclude name="se" />
+                <exclude name="javaee-full" />
             </run>
         </groups>
 
@@ -255,6 +256,8 @@
                 <exclude name="org.jboss.cdi.tck.tests.full.extensions.lite.*"/>
                 <exclude name="org.jboss.cdi.tck.tests.invokers.*"/>
             </package>
+
+            <package name="org.jboss.cdi.tck.interceptors.tests.*"/>
         </packages>
     </test>
 </suite>
