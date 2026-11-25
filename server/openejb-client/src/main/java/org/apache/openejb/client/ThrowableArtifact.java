@@ -17,10 +17,14 @@
  */
 package org.apache.openejb.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -54,9 +58,62 @@ public class ThrowableArtifact implements Externalizable {
 
         out.writeObject(stack);
         try {
+            out.writeObject(isSerializable(throwable) ? throwable : portable(throwable));
+        } catch (final IOException | RuntimeException | LinkageError e) {
+            //Ignore, readExternal recreates the exception from the stack
+        }
+    }
+
+    /**
+     * Recreates a chain that cannot be serialized, e.g. because one of its exceptions belongs to an application
+     * whose class loader is already stopped (TOMEE-4736). Every exception keeps its type when a copy of it can be
+     * serialized, the others are replaced by a stand-in with their class name, message and stack trace.
+     */
+    private static Throwable portable(final Throwable throwable) {
+        final List<Throwable> chain = new ArrayList<>();
+        for (Throwable cause = throwable; cause != null && !chain.contains(cause); cause = cause.getCause()) {
+            chain.add(cause);
+        }
+
+        Throwable portable = null;
+        for (int i = chain.size() - 1; i >= 0; i--) {
+            final Throwable original = chain.get(i);
+            Throwable copy = copy(original, portable);
+            if (copy == null || !isSerializable(copy)) {
+                copy = new MockThrowable(original);
+                copy.initCause(portable);
+            }
+            copy.setStackTrace(original.getStackTrace());
+            portable = copy;
+        }
+
+        return new ClientRuntimeException("The exception sent could not be serialized.  This is a recreation:\n" + throwable, portable);
+    }
+
+    private static Throwable copy(final Throwable original, final Throwable cause) {
+        final Class<? extends Throwable> type = original.getClass();
+        try {
+            return type.getConstructor(String.class, Throwable.class).newInstance(original.getMessage(), cause);
+        } catch (final Exception | LinkageError e) {
+            // no (String, Throwable) constructor
+        }
+        try {
+            final Throwable copy = type.getConstructor(String.class).newInstance(original.getMessage());
+            if (cause != null) {
+                copy.initCause(cause);
+            }
+            return copy;
+        } catch (final Exception | LinkageError e) {
+            return null;
+        }
+    }
+
+    private static boolean isSerializable(final Throwable throwable) {
+        try (final ObjectOutputStream out = new ObjectOutputStream(new ByteArrayOutputStream())) {
             out.writeObject(throwable);
-        } catch (IOException e) {
-            //Ignore
+            return true;
+        } catch (final Exception | LinkageError e) {
+            return false;
         }
     }
 

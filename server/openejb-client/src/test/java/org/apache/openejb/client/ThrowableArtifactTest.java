@@ -56,6 +56,21 @@ public class ThrowableArtifactTest extends TestCase {
         assertEquals("stackTrace", expectedStackTrace, actualStackTrace);
     }
 
+    // TOMEE-4736: an application exception whose class loader is already stopped must not break the response
+    public void testExceptionFailingWithRuntimeExceptionWhileSerialized() throws Throwable {
+        final Throwable inner = throwCatchReturn(new StoppedClassLoaderException("inner"));
+        final Throwable outer = throwCatchReturn(new IllegalArgumentException("outer", inner));
+
+        final Throwable received = marshal(new ThrowableArtifact(outer)).getThrowable();
+
+        assertTrue(received.toString(), received instanceof ClientRuntimeException);
+        final Throwable receivedOuter = received.getCause();
+        assertEquals(IllegalArgumentException.class, receivedOuter.getClass());
+        assertEquals("outer", receivedOuter.getMessage());
+        assertEquals(getPrintedStackTrace(outer), getPrintedStackTrace(receivedOuter));
+        assertEquals(StoppedClassLoaderException.class.getName() + ": inner", receivedOuter.getCause().toString());
+    }
+
     private String getPrintedStackTrace(Throwable exception) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);
@@ -90,6 +105,18 @@ public class ThrowableArtifactTest extends TestCase {
 
         public BadException(String message, Throwable throwable) {
             super(message, throwable);
+        }
+    }
+
+    public static class StoppedClassLoaderException extends Exception {
+
+        public StoppedClassLoaderException(final String message) {
+            super(message);
+        }
+
+        private void writeObject(final ObjectOutputStream out) {
+            // what Tomcat does when the class loader of a stopped web application is used
+            throw new IllegalStateException("Illegal access: this web application instance has been stopped already");
         }
     }
 
