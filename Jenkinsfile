@@ -37,7 +37,9 @@ pipeline {
     }
 
     // every mvn call uses a local repository inside its stage's workspace: the agents' shared ~/.m2 gets
-    // modified by other stages and jobs while a build reads it (missing classes in plugin and dependency jars)
+    // modified by other stages and jobs while a build reads it (missing classes in plugin and dependency jars).
+    // JAVA_TOOL_OPTIONS also hands it to the test JVMs, so Arquillian and ShrinkWrap resolve the TomEE
+    // distributions and test dependencies built by the stage instead of whatever is in ~/.m2
     environment {
         MAVEN_ARGS = '-B -U --show-version --fail-at-end -Dmaven.test.failure.ignore=true'
     }
@@ -46,7 +48,7 @@ pipeline {
         stage('Sanity checks') {
             agent { label 'ubuntu' }
             steps {
-                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" -T 2C clean install -Pstyle,rat -DskipTests'
+                sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn -T 2C clean install -Pstyle,rat -DskipTests'
             }
         }
 
@@ -56,7 +58,7 @@ pipeline {
                 stage('Deploy snapshots') {
                     agent { label 'ubuntu' }
                     steps {
-                        sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" clean deploy -DskipTests -Pno-examples'
+                        sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn clean deploy -DskipTests -Pno-examples'
                     }
                 }
 
@@ -65,24 +67,24 @@ pipeline {
                     stages {
                         stage('Build') {
                             steps {
-                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" -T 2C clean install -DskipTests'
+                                sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn -T 2C clean install -DskipTests'
                             }
                         }
                         stage('Core and Arquillian') {
                             steps {
                                 // quick = every module except examples, itests and tck
                                 // clean: the -T 2C build above can leave runtime files (conf/conf.d) in the distribution work dirs
-                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" clean install -Pquick,all-adapters'
+                                sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn clean install -Pquick,all-adapters'
                             }
                         }
                         stage('Integration tests') {
                             steps {
-                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" install -f itests/pom.xml'
+                                sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn install -f itests/pom.xml'
                             }
                         }
                         stage('Examples') {
                             steps {
-                                sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" install -f examples/pom.xml'
+                                sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn install -f examples/pom.xml'
                             }
                         }
                     }
@@ -92,8 +94,8 @@ pipeline {
                 stage('TCK') {
                     agent { label 'ubuntu' }
                     steps {
-                        sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" -T 2C clean install -DskipTests'
-                        sh 'mvn -Dmaven.repo.local="$WORKSPACE/.repository" install -pl tck -amd -Pall-adapters,tck-cdi,tck-jsonp,tck-jsonb,tck-jax-rs,mp-tck-all,tck-concurrency,tck-security,tck-data'
+                        sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn -T 2C clean install -DskipTests'
+                        sh 'JAVA_TOOL_OPTIONS="-Dmaven.repo.local=$WORKSPACE/.repository" mvn install -pl tck -amd -Pall-adapters,tck-cdi,tck-jsonp,tck-jsonb,tck-jax-rs,mp-tck-all,tck-concurrency,tck-security,tck-data'
                     }
                     post { always { junit allowEmptyResults: true, testResults: '**/target/*-reports/TEST-*.xml' } }
                 }

@@ -151,6 +151,12 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
             properties = System.getProperties();
         }
 
+        // the standard Maven property wins, so builds using -Dmaven.repo.local resolve from that repository
+        final String mavenRepoLocal = properties.getProperty("maven.repo.local", System.getProperty("maven.repo.local"));
+        if (mavenRepoLocal != null && !mavenRepoLocal.isEmpty()) {
+            return mavenRepoLocal.endsWith("/") ? mavenRepoLocal : mavenRepoLocal + "/";
+        }
+
         String home = "";
 
         File f = new File(properties.getProperty("openejb.m2.settings", System.getProperty("user.home") + "/.m2/settings.xml"));
